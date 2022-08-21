@@ -1,31 +1,33 @@
-.container {
-  padding: 0 2rem;
+.section1 {
+  height: 100vh;
+  padding: 4rem 0rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 }
 
-.main {
-  min-height: 100vh;
-  padding: 4rem 0;
-  flex: 1;
-  display: flex;
+.section2 {
+  min-height: 80vh;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  padding: 4rem 4rem;
+  background-color: #bf9e7b;
 }
 
-.footer {
+.section3 {
+  min-height: 120vh;
+  padding: 4rem 0rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  flex: 1;
+  position: relative;
+}
+
+.subsection {
   display: flex;
   flex: 1;
-  padding: 2rem 0;
-  border-top: 1px solid #eaeaea;
-  justify-content: center;
-  align-items: center;
-}
-
-.footer a {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
 }
 
 .title a {
@@ -33,44 +35,41 @@
   text-decoration: none;
 }
 
-.title a:hover,
-.title a:focus,
-.title a:active {
-  text-decoration: underline;
-}
-
 .title {
-  margin: 0;
-  line-height: 1.15;
-  font-size: 4rem;
+  font-family: "Montserrat-ExtraBold";
+  font-size: 8rem;
+  color: #19aa6e;
+  text-shadow: 4px 4px #bf9e7b;
+  text-transform: uppercase;
 }
 
-.title,
-.description {
+.subtitle {
+  font-size: 1.5rem;
+  text-align: center;
+  color: #bf9e7b;
+}
+
+.secondTitle {
+  font-family: "Montserrat-ExtraBold";
+  font-size: 2rem;
+  margin-top: 0.5rem;
+  color: #402d28;
+  text-transform: uppercase;
+}
+
+.thirdTitle {
+  font-family: "Montserrat-ExtraBold";
+  font-size: 4rem;
+  color: #19aa6e;
+  text-shadow: 2px 2px #bf9e7b;
+  text-transform: uppercase;
   text-align: center;
 }
 
+.title,
+.secondTitle,
 .description {
-  margin: 4rem 0;
-  line-height: 1.5;
-  font-size: 1.5rem;
-}
-
-.code {
-  background: #fafafa;
-  border-radius: 5px;
-  padding: 0.75rem;
-  font-size: 1.1rem;
-  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
-    Bitstream Vera Sans Mono, Courier New, monospace;
-}
-
-.grid {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 800px;
+  text-align: center;
 }
 
 .card {
@@ -79,22 +78,48 @@
   text-align: left;
   color: inherit;
   text-decoration: none;
-  border: 1px solid #eaeaea;
+  border: 4px solid #fff9f0;
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
-  max-width: 300px;
+  width: 33%;
+  background-color: #fff9f0;
 }
 
+.card2 {
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 4px solid #fff9f0;
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff9f0;
+  justify-content: center;
+}
+
+.card2:active,
+.card2:hover,
+.card2:focus,
 .card:hover,
 .card:focus,
 .card:active {
-  color: #0070f3;
-  border-color: #0070f3;
+  border-color: #19aa6e;
 }
-
-.card h2 {
+.card h2 .card h2 {
   margin: 0 0 1rem 0;
   font-size: 1.5rem;
+}
+.card2:hover h2,
+.card2:focus h2,
+.card2:active h2,
+.card:hover h2,
+.card:focus h2,
+.card:active h2 {
+  color: #19aa6e;
 }
 
 .card p {
@@ -103,27 +128,79 @@
   line-height: 1.5;
 }
 
-.logo {
-  height: 1em;
-  margin-left: 0.5rem;
+.firstLeaf {
+  position: absolute;
+  bottom: -1%;
+  width: 300px;
+  z-index: -1000;
+  overflow: hidden;
 }
 
-@media (max-width: 600px) {
-  .grid {
-    width: 100%;
+.secondLeaf {
+  position: absolute;
+  right: 0%;
+  bottom: -1%;
+  width: 300px;
+  z-index: -1000;
+  overflow: hidden;
+}
+
+.thirdLeaf {
+  position: absolute;
+  right: 0%;
+  top: -1%;
+  transform: rotate(180deg);
+  width: 300px;
+  z-index: -1000;
+  overflow: hidden;
+}
+
+.fourthLeaf {
+  position: absolute;
+  transform: rotate(180deg);
+  left: -1%;
+  top: -1%;
+  width: 300px;
+  z-index: -1000;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .title {
+    font-size: 6rem;
+  }
+
+  .subsection {
+    padding: 2rem 2rem;
+  }
+
+  .section2 {
+    padding: 2rem 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 3rem;
+  }
+  .card {
+    width: 90%;
+  }
+  .card2 {
+    width: 90%;
+  }
+  .section2 {
+    padding: 1rem 1rem;
+  }
+  .subsection {
     flex-direction: column;
   }
-}
-
-@media (prefers-color-scheme: dark) {
-  .card,
-  .footer {
-    border-color: #222;
+  .firstLeaf,
+  .secondLeaf {
+    width: 200px;
   }
-  .code {
-    background: #111;
-  }
-  .logo img {
-    filter: invert(1);
+  .thirdLeaf,
+  .fourthLeaf {
+    width: 100px;
   }
 }

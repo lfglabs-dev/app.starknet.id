@@ -1,0 +1,29 @@
+.secondTitle {
+  font-family: "Montserrat-ExtraBold";
+  font-size: 2rem;
+  margin-top: 2rem;
+  color: #bf9e7b;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.title {
+  font-family: "Montserrat-ExtraBold";
+  font-size: 4rem;
+  color: #19aa6e;
+  text-shadow: 2px 2px #bf9e7b;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.firstLeaf {
+  position: absolute;
+  bottom: 200%;
+  z-index: 1000;
+}
+
+.secondLeaf {
+  position: absolute;
+  right: 0%;
+  bottom: 0%;
+}

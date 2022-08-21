@@ -1,0 +1,38 @@
+.footer {
+  display: flex;
+  flex: 1;
+  padding: 2rem 0;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.fifthLeaf {
+  position: absolute;
+  transform: rotate(270deg);
+  bottom: 0%;
+  left: 0%;
+  width: 300px;
+  z-index: -1000;
+}
+
+.sixthLeaf {
+  position: absolute;
+  right: 0%;
+  bottom: 0%;
+  width: 300px;
+  z-index: -1000;
+}
+
+@media (max-width: 768px) {
+  .fifthLeaf,
+  .sixthLeaf {
+    width: 100px;
+  }
+}

@@ -1,3 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "Montserrat-ExtraBold";
+    src: url(../public/fonts/montserrat/Montserrat-ExtraBold.ttf);
+  }
+  @font-face {
+    font-family: "Montserrat-Regular";
+    src: url(../public/fonts/montserrat/Montserrat-Regular.ttf);
+  }
+}
+
 html,
 body {
   padding: 0;
@@ -6,9 +21,31 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
+h1 {
+  font-family: "Montserrat-ExtraBold";
+  font-size: 8em;
+  color: #19aa6e;
+  text-shadow: 4px 4px #bf9e7b;
+}
+
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.custom-btn {
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px 25px;
+  font-family: "Lato", sans-serif;
+  font-weight: 500;
+  background: #19aa6e;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+  box-shadow: 7px 7px 20px 0px black;
+  outline: none;
 }
 
 * {
@@ -20,7 +57,7 @@ a {
     color-scheme: dark;
   }
   body {
-    color: white;
-    background: black;
+    color: #402d28;
+    background: #fff9f0;
   }
 }
