@@ -8,7 +8,9 @@ const Roadmap: FunctionComponent = () => {
       <div className="my-5">
         <h2 className={styles.secondTitle}>Phase 1 : Eclosion</h2>
         <p className="text-center text-xl">Recruiting</p>
-        <p className="text-center text-xl">First partnership (Eykar quests)</p>
+        <p className="text-center text-xl">
+          First partnership with Eykar quest
+        </p>
         <p className="text-center text-xl">Live testnet</p>
       </div>
       <div className="my-5">
@@ -21,12 +23,12 @@ const Roadmap: FunctionComponent = () => {
         <p className="text-center text-xl">ENS bridge</p>
       </div>
       <div className="my-5">
-        <h2 className={styles.secondTitle}>Phase 3 : Launch</h2>
+        <h2 className={styles.secondTitle}>Phase 3 : Maturation</h2>
         <p className="text-center text-xl">
           Eternal contract (deleting upgradable functions)
         </p>
         <p className="text-center text-xl">
-          DAO based on game theory and identities
+          New DAO system based on game theory and identities
         </p>
       </div>
     </div>

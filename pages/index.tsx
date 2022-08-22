@@ -37,8 +37,8 @@ const Home: NextPage = () => {
             </h2>
             <div className="text-md max-w-3xl mt-4 sm:mt-10">
               <p className="text-xl">
-                Mint your starknet identity for free, Confirm it by linking your
-                twitter, discord or github.
+                Mint your starknet identity for free and confirm it by linking
+                your twitter, discord or github.
               </p>
             </div>
           </div>
@@ -98,11 +98,12 @@ const Home: NextPage = () => {
               you&rsquo;ll be able to be rewarded for your off-chain
               contributions (retweet something, invite people on discord ...)
               but also for your on-chain actions (testing an alpha game, minting
-              an NFT ...). In that sense, starknet.id is the tool that enabled
-              all starknet protocols to reward their true community by making
-              the difference between engaged users and airdrop farmers or bots.
-              Therefore If you want to contribute in the starknet ecosystem and
-              be rewarded to do so, you should mint a starknet identity.
+              an NFT ...). In that sense, starknet.id is the unique tool that
+              enabled all starknet protocols to reward their true community by
+              making the difference between engaged users and airdrop farmers or
+              bots. Therefore If you want to contribute in the starknet
+              ecosystem and be rewarded to do so, you should mint a starknet
+              identity.
             </p>
           </div>
         </div>
