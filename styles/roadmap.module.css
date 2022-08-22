@@ -2,7 +2,7 @@
   font-family: "Montserrat-ExtraBold";
   font-size: 2rem;
   margin-top: 2rem;
-  color: #bf9e7b;
+  color: var(--soft-brown);
   text-transform: uppercase;
   text-align: center;
 }
@@ -10,8 +10,8 @@
 .title {
   font-family: "Montserrat-ExtraBold";
   font-size: 4rem;
-  color: #19aa6e;
-  text-shadow: 2px 2px #bf9e7b;
+  color: var(--green);
+  text-shadow: 2px 2px var(--soft-brown);
   text-transform: uppercase;
   text-align: center;
 }

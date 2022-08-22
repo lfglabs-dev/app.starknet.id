@@ -13,6 +13,14 @@
   }
 }
 
+:root {
+  --green: #19aa6e;
+  --brown: #402d28;
+  --soft-brown: #bf9e7b;
+  --beige: #fff9f0;
+  --nimiq-ease: cubic-bezier(0.25, 0, 0, 1);
+}
+
 html,
 body {
   padding: 0;
@@ -24,8 +32,8 @@ body {
 h1 {
   font-family: "Montserrat-ExtraBold";
   font-size: 8em;
-  color: #19aa6e;
-  text-shadow: 4px 4px #bf9e7b;
+  color: var(--green);
+  text-shadow: 4px 4px var(--soft-brown);
 }
 
 a {
@@ -39,7 +47,7 @@ a {
   padding: 10px 25px;
   font-family: "Lato", sans-serif;
   font-weight: 500;
-  background: #19aa6e;
+  background: var(--green);
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -57,7 +65,7 @@ a {
     color-scheme: dark;
   }
   body {
-    color: #402d28;
-    background: #fff9f0;
+    color: var(--brown);
+    background: var(--beige);
   }
 }

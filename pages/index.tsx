@@ -21,7 +21,7 @@ const Home: NextPage = () => {
           </h3>
         </div>
       </div>
-      <div id="#info" className={styles.section2}>
+      <div id="info" className={styles.section2}>
         <div className={styles.subsection}>
           <div className={styles.card}>
             <div className="flex justify-center">
@@ -30,7 +30,7 @@ const Home: NextPage = () => {
                 height={250}
                 width={250}
                 src="/identicons/identicon_3.svg"
-              />{" "}
+              />
             </div>
             <h2 className={styles.secondTitle}>
               #1 Claim your on-chain identity
@@ -69,7 +69,7 @@ const Home: NextPage = () => {
                 height={250}
                 width={250}
                 src="/identicons/identicon_5.svg"
-              />{" "}
+              />
             </div>
             <h2 className={styles.secondTitle}>#3 Get a free .eth domain</h2>
             <div className="text-md max-w-3xl mt-4 sm:mt-10">
@@ -114,7 +114,7 @@ const Home: NextPage = () => {
         </div>
         <div className={styles.fourthLeaf}>
           <img width={"100%"} alt="leaf" src="/leaves/leaf_1.png" />
-        </div>{" "}
+        </div>
         <Roadmap />
       </div>
       <Footer />

@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from "react";
+import styles from "../styles/button.module.css";
 
 type ButtonProps = {
   onClick: () => void;
@@ -7,11 +8,8 @@ type ButtonProps = {
 
 const Button: FunctionComponent<ButtonProps> = ({ children, onClick }) => {
   return (
-    <button
-      onClick={onClick}
-      className="custom-btn btn-3 uppercase hover:bg-white hover:text-red-600"
-    >
-      <strong>{children}</strong>
+    <button onClick={onClick} className={styles["nq-button"]}>
+      {children}
     </button>
   );
 };

@@ -4,6 +4,7 @@ import React, { useState, FunctionComponent } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { FaTwitter } from "react-icons/fa";
 import styles from "../styles/navbar.module.css";
+import Button from "./button";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState(false);
@@ -33,17 +34,17 @@ const Navbar: FunctionComponent = () => {
             <Link href="#info">
               <li className={styles.menuItem}>What is Starknet.id ?</li>
             </Link>
-            <Link href="/identities">
-              <li className={styles.menuItem}>Identities</li>
-            </Link>
-            <Link href="/domains">
-              <li className={styles.menuItem}>Domains</li>
+            <Link href="#roadmap">
+              <li className={styles.menuItem}>Roadmap</li>
             </Link>
             <Link href="https://twitter.com/starknet_id">
               <li className="ml-10 mr-10 text-sm uppercase cursor-pointer">
                 <FaTwitter color={green} size={"30px"} />
               </li>
             </Link>
+            <div className="text-beige mr-5">
+              <Button onClick={() => window.open("")}>Launch App</Button>
+            </div>
           </ul>
           <div onClick={handleNav} className="md:hidden">
             <AiOutlineMenu color={brown} size={25} className="mr-3" />
@@ -88,20 +89,12 @@ const Navbar: FunctionComponent = () => {
           </div>
           <div className="py-4 flex flex-col">
             <ul className="uppercase text-babe-blue">
-              <Link href="#team">
+              <Link href="#info">
                 <li
                   onClick={() => setNav(false)}
                   className={styles.menuItemSmall}
                 >
-                  Team
-                </li>
-              </Link>
-              <Link href="#game">
-                <li
-                  onClick={() => setNav(false)}
-                  className={styles.menuItemSmall}
-                >
-                  Game
+                  What is starknet.id ?
                 </li>
               </Link>
               <Link href="#roadmap">
@@ -119,9 +112,12 @@ const Navbar: FunctionComponent = () => {
               </p>
               <div className="flex items-center my-4 w-full sm:w-[80%]">
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300">
-                  <Link href="https://twitter.com/SalvadorianApe">
+                  <Link href="https://twitter.com/Starknet_id">
                     <FaTwitter size={20} color={green} />
                   </Link>
+                </div>
+                <div className="text-beige ml-3">
+                  <Button onClick={() => window.open("")}>Launch App</Button>
                 </div>
               </div>
             </div>

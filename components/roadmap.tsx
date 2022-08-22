@@ -3,7 +3,7 @@ import styles from "../styles/roadmap.module.css";
 
 const Roadmap: FunctionComponent = () => {
   return (
-    <div className="flex flex-col relative">
+    <div id="roadmap" className="flex flex-col relative">
       <h1 className={styles.title}>Roadmap</h1>
       <div className="my-5">
         <h2 className={styles.secondTitle}>Phase 1 : Eclosion</h2>

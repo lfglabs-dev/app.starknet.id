@@ -68,6 +68,11 @@
   "resolved" "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-12.2.5.tgz"
   "version" "12.2.5"
 
+"@nimiq/style@^0.8.4":
+  "integrity" "sha512-k8M6+aP2AWEIILg0O1XFVYQunkOCuvtZ31Bnk1qpqkWt1l0BofLr8NQA3Z9o7tWkOCUWgABFQIoz9+2fR9Vz1g=="
+  "resolved" "https://registry.npmjs.org/@nimiq/style/-/style-0.8.4.tgz"
+  "version" "0.8.4"
+
 "@nodelib/fs.scandir@2.1.5":
   "integrity" "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="
   "resolved" "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
