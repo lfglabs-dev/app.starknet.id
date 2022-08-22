@@ -58,7 +58,7 @@ const Home: NextPage = () => {
               <p className="text-xl">
                 You’re not 0x072d4…b2Be7, transact directly from domain to
                 domain instead of a cryptic key by claiming your unique .stark
-                domain that can be used, transferred or sold on our marketplace.
+                domain that can be used, transferred or sold.
               </p>
             </div>
           </div>
@@ -74,8 +74,8 @@ const Home: NextPage = () => {
             <h2 className={styles.secondTitle}>#3 Get a free .eth domain</h2>
             <div className="text-md max-w-3xl mt-4 sm:mt-10">
               <p className="text-xl">
-                We&rsquo;ll implement a bridging system to permit to each .stark
-                domain owners to get a free .starknet.eth domain on ethereum.
+                We&rsquo;ll implement a bridging system to allow each .stark
+                domain owner to get a free .starknet.eth domain on ethereum.
               </p>
             </div>
           </div>
@@ -100,7 +100,7 @@ const Home: NextPage = () => {
               an NFT ...). In that sense, starknet.id is the unique tool that
               enabled all starknet protocols to reward their true community by
               making the difference between engaged users and airdrop farmers or
-              bots. Therefore If you want to contribute in the starknet
+              bots. Therefore If you want to contribute to the starknet
               ecosystem and be rewarded to do so, you should mint a starknet
               identity.
             </p>
