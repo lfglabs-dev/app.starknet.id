@@ -82,11 +82,10 @@ const Home: NextPage = () => {
         </div>
         <div className={styles.subsection}>
           <div className={styles.card2}>
-            <div className="flex justify-center">
+            <div className="flex justify-center w-full my-5">
               <img
+                className="md:w-1/2"
                 alt="identicon"
-                height={250}
-                width={250}
                 src="/visuals/Partners.png"
               />
             </div>
