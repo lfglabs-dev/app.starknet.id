@@ -1,121 +1,88 @@
-.section1 {
-  height: 100vh;
-  padding: 4rem 0rem;
+.screen {
+  width: 100vw;
+  height: auto;
+  padding-top: 5rem;
+  z-index: 0;
+}
+
+.container {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex: 1;
-}
-
-.section2 {
-  min-height: 80vh;
+  height: 75vh;
   flex-direction: column;
-  padding: 4rem 4rem;
-  background-color: var(--soft-brown);
-}
-
-.section3 {
-  min-height: 120vh;
-  padding: 4rem 0rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  flex: 1;
+  text-align: center;
   position: relative;
 }
 
-.subsection {
+.containerGallery {
   display: flex;
-  flex: 1;
-}
-
-.title a {
-  color: #0070f3;
-  text-decoration: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  max-height: 22rem;
+  max-width: 40rem;
+  overflow-y: auto;
 }
 
 .title {
   font-family: "Montserrat-ExtraBold";
-  font-size: 8rem;
+  font-size: 2.5rem;
   color: var(--green);
-  text-shadow: 4px 4px var(--soft-brown);
+  text-shadow: 1px 1px var(--soft-brown);
   text-transform: uppercase;
-}
-
-.subtitle {
-  font-size: 1.5rem;
   text-align: center;
-  color: var(--soft-brown);
 }
 
-.secondTitle {
+.cardTitle {
   font-family: "Montserrat-ExtraBold";
   font-size: 2rem;
-  margin-top: 0.5rem;
-  color: var(--brown);
-  text-transform: uppercase;
-}
-
-.thirdTitle {
-  font-family: "Montserrat-ExtraBold";
-  font-size: 4rem;
   color: var(--green);
-  text-shadow: 2px 2px var(--soft-brown);
-  text-transform: uppercase;
+  text-transform: lowercase;
   text-align: center;
 }
 
-.title,
-.secondTitle,
-.description {
-  text-align: center;
-}
-
+.cardColumn,
+.cardCenter,
 .card {
-  margin: 1rem;
-  padding: 1.5rem;
-  text-align: left;
+  margin-top: 1rem;
+  padding: 1rem;
   color: inherit;
   text-decoration: none;
-  border: 4px solid var(--beige);
-  border-radius: 10px;
-  transition: color 0.15s ease, border-color 0.15s ease;
-  width: 33%;
-  background-color: var(--beige);
-}
-
-.card2 {
-  margin: 1rem;
-  padding: 1.5rem;
-  text-align: left;
-  color: inherit;
-  text-decoration: none;
-  border: 4px solid var(--beige);
+  border: 2px solid var(--soft-brown);
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
   width: 100%;
-  display: flex;
-  flex-direction: column;
   background-color: var(--beige);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  overflow-wrap: break-word;
+}
+
+.cardColumn,
+.cardCenter {
   justify-content: center;
 }
 
-.card2:active,
-.card2:hover,
-.card2:focus,
+.cardColumn {
+  flex-direction: column;
+}
+
+.cardColumn:hover,
+.cardColumn:focus,
+.cardColumn:active,
+.cardCenter:hover,
+.cardCenter:focus,
+.cardCenter:active,
 .card:hover,
 .card:focus,
 .card:active {
   border-color: var(--green);
 }
-.card h2 .card h2 {
-  margin: 0 0 1rem 0;
-  font-size: 1.5rem;
-}
-.card2:hover h2,
-.card2:focus h2,
-.card2:active h2,
+
 .card:hover h2,
 .card:focus h2,
 .card:active h2 {
@@ -126,6 +93,12 @@
   margin: 0;
   font-size: 1.25rem;
   line-height: 1.5;
+}
+
+.cardCenter p {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1;
 }
 
 .firstLeaf {
@@ -145,62 +118,34 @@
   overflow: hidden;
 }
 
-.thirdLeaf {
-  position: absolute;
-  right: 0%;
-  top: -1%;
-  transform: rotate(180deg);
-  width: 300px;
-  z-index: -1000;
-  overflow: hidden;
-}
-
-.fourthLeaf {
-  position: absolute;
-  transform: rotate(180deg);
-  left: -1%;
-  top: -1%;
-  width: 300px;
-  z-index: -1000;
-  overflow: hidden;
-}
-
 @media (min-width: 768px) and (max-width: 1024px) {
   .title {
-    font-size: 6rem;
+    font-size: 2rem;
+  }
+  .container {
+    height: 85vh;
   }
 
-  .subsection {
-    padding: 2rem 2rem;
-  }
-
-  .section2 {
-    padding: 2rem 2rem;
+  .firstLeaf,
+  .secondLeaf {
+    width: 150px;
   }
 }
 
 @media (max-width: 768px) {
+  .container {
+    height: 85vh;
+  }
   .title {
-    font-size: 3rem;
+    font-size: 2rem;
   }
-  .card {
-    width: 90%;
+
+  .cardTitle {
+    font-size: 1.5rem;
   }
-  .card2 {
-    width: 90%;
-  }
-  .section2 {
-    padding: 1rem 1rem;
-  }
-  .subsection {
-    flex-direction: column;
-  }
+
   .firstLeaf,
   .secondLeaf {
-    width: 200px;
-  }
-  .thirdLeaf,
-  .fourthLeaf {
-    width: 100px;
+    visibility: hidden;
   }
 }

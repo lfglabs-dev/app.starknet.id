@@ -29,13 +29,6 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-h1 {
-  font-family: "Montserrat-ExtraBold";
-  font-size: 8em;
-  color: var(--green);
-  text-shadow: 4px 4px var(--soft-brown);
-}
-
 a {
   color: inherit;
   text-decoration: none;

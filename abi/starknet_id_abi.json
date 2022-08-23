@@ -1,0 +1,456 @@
+[
+  {
+    "members": [
+      {
+        "name": "low",
+        "offset": 0,
+        "type": "felt"
+      },
+      {
+        "name": "high",
+        "offset": 1,
+        "type": "felt"
+      }
+    ],
+    "name": "Uint256",
+    "size": 2,
+    "type": "struct"
+  },
+  {
+    "data": [
+      {
+        "name": "from_",
+        "type": "felt"
+      },
+      {
+        "name": "to",
+        "type": "felt"
+      },
+      {
+        "name": "tokenId",
+        "type": "Uint256"
+      }
+    ],
+    "keys": [],
+    "name": "Transfer",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "owner",
+        "type": "felt"
+      },
+      {
+        "name": "approved",
+        "type": "felt"
+      },
+      {
+        "name": "tokenId",
+        "type": "Uint256"
+      }
+    ],
+    "keys": [],
+    "name": "Approval",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "owner",
+        "type": "felt"
+      },
+      {
+        "name": "operator",
+        "type": "felt"
+      },
+      {
+        "name": "approved",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "ApprovalForAll",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      },
+      {
+        "name": "field",
+        "type": "felt"
+      },
+      {
+        "name": "data",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "UserDataUpdate",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      },
+      {
+        "name": "field",
+        "type": "felt"
+      },
+      {
+        "name": "data",
+        "type": "felt"
+      },
+      {
+        "name": "verifier",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "VerifierDataUpdate",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "constructor",
+    "outputs": [],
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "name": "name",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "name": "symbol",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "felt"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "name": "balance",
+        "type": "Uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      }
+    ],
+    "name": "ownerOf",
+    "outputs": [
+      {
+        "name": "owner",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      }
+    ],
+    "name": "getApproved",
+    "outputs": [
+      {
+        "name": "approved",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "owner",
+        "type": "felt"
+      },
+      {
+        "name": "operator",
+        "type": "felt"
+      }
+    ],
+    "name": "isApprovedForAll",
+    "outputs": [
+      {
+        "name": "is_approved",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "Uint256"
+      }
+    ],
+    "name": "tokenURI",
+    "outputs": [
+      {
+        "name": "tokenURI_len",
+        "type": "felt"
+      },
+      {
+        "name": "tokenURI",
+        "type": "felt*"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      },
+      {
+        "name": "field",
+        "type": "felt"
+      }
+    ],
+    "name": "get_user_data",
+    "outputs": [
+      {
+        "name": "data",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      },
+      {
+        "name": "field",
+        "type": "felt"
+      },
+      {
+        "name": "address",
+        "type": "felt"
+      }
+    ],
+    "name": "get_verifier_data",
+    "outputs": [
+      {
+        "name": "data",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      },
+      {
+        "name": "field",
+        "type": "felt"
+      },
+      {
+        "name": "address",
+        "type": "felt"
+      }
+    ],
+    "name": "get_confirmed_data",
+    "outputs": [
+      {
+        "name": "data",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "to",
+        "type": "felt"
+      },
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      }
+    ],
+    "name": "approve",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "operator",
+        "type": "felt"
+      },
+      {
+        "name": "approved",
+        "type": "felt"
+      }
+    ],
+    "name": "setApprovalForAll",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "_from",
+        "type": "felt"
+      },
+      {
+        "name": "to",
+        "type": "felt"
+      },
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      }
+    ],
+    "name": "transferFrom",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "_from",
+        "type": "felt"
+      },
+      {
+        "name": "to",
+        "type": "felt"
+      },
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      },
+      {
+        "name": "data_len",
+        "type": "felt"
+      },
+      {
+        "name": "data",
+        "type": "felt*"
+      }
+    ],
+    "name": "safeTransferFrom",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "tokenId",
+        "type": "Uint256"
+      }
+    ],
+    "name": "mint",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      },
+      {
+        "name": "tokenURI_len",
+        "type": "felt"
+      },
+      {
+        "name": "tokenURI",
+        "type": "felt*"
+      }
+    ],
+    "name": "set_uri",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      },
+      {
+        "name": "field",
+        "type": "felt"
+      },
+      {
+        "name": "data",
+        "type": "felt"
+      }
+    ],
+    "name": "set_user_data",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "token_id",
+        "type": "Uint256"
+      },
+      {
+        "name": "field",
+        "type": "felt"
+      },
+      {
+        "name": "data",
+        "type": "felt"
+      }
+    ],
+    "name": "set_verifier_data",
+    "outputs": [],
+    "type": "function"
+  }
+]

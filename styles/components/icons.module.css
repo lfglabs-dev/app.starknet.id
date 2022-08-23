@@ -1,0 +1,23 @@
+.clickableIcon {
+  cursor: pointer;
+  margin: 1rem;
+  border-radius: 25%;
+}
+
+.clickablePlus {
+  cursor: pointer;
+  border-radius: 25%;
+  margin: 1rem;
+}
+
+.clickablePlus :hover {
+  background-color: rgba(82, 45, 24, 0.063);
+  border-radius: 25%;
+  padding: 1rem;
+}
+
+.clickableIcon :hover {
+  background-color: rgba(82, 45, 24, 0.063);
+  border-radius: 25%;
+  padding: 1rem;
+}

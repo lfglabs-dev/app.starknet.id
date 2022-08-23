@@ -1,7 +1,19 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-}
 
-module.exports = nextConfig
+module.exports = {
+  reactStrictMode: true,
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback.fs = false;
+    }
+    return config;
+  },
+  images: {
+    domains: [
+      "starknet.id",
+      "app.starknet.id",
+      "starknetid.netlify.app",
+      "robohash.org",
+    ],
+  },
+};
