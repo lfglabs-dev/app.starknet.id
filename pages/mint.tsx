@@ -9,7 +9,7 @@ import {
 import Button from "../components/UI/button";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import { useStarknetIdContract } from "../hooks/starknetId";
+import { useStarknetIdContract } from "../hooks/contracts";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import LoadingScreen from "../components/UI/screens/loadingScreen";

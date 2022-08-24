@@ -14,7 +14,7 @@ import IdentitiesGallery, {
 } from "../components/identities/identitiesGalleryV1";
 import MintIdentity from "../components/identities/mintIdentity";
 import { useRouter } from "next/router";
-import { useStarknetIdContract } from "../hooks/starknetId";
+import { useStarknetIdContract } from "../hooks/contracts";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
