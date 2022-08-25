@@ -60,12 +60,20 @@ export function useDomainFromAddress(address: BigNumberish) {
     return { domain, error }
 }
 
-export function useAddressFromDomain(domain: string[]) {
+export function useAddressFromDomain(domain: string) {
     const { contract } = useNamingContract();
     const encoded = []
-    for (const subdomain of domain)
+    for (const subdomain of domain.split("."))
         encoded.push(useEncoded(subdomain))
 
     const { data, error } = useStarknetCall({ contract, method: "domain_to_address", args: [encoded] })
     return { address: data, error }
+}
+
+
+export function useIsValid(domain: string) {
+    for (const char of domain)
+        if (char !== "." && !basicAlphabet.includes(char) && !bigAlphabet.includes(char))
+            return false;
+    return true;
 }
