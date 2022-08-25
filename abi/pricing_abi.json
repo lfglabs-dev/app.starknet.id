@@ -1,0 +1,80 @@
+[
+  {
+    "members": [
+      {
+        "name": "low",
+        "offset": 0,
+        "type": "felt"
+      },
+      {
+        "name": "high",
+        "offset": 1,
+        "type": "felt"
+      }
+    ],
+    "name": "Uint256",
+    "size": 2,
+    "type": "struct"
+  },
+  {
+    "inputs": [
+      {
+        "name": "erc20_address",
+        "type": "felt"
+      }
+    ],
+    "name": "constructor",
+    "outputs": [],
+    "type": "constructor"
+  },
+  {
+    "inputs": [
+      {
+        "name": "domain",
+        "type": "felt"
+      },
+      {
+        "name": "days",
+        "type": "felt"
+      }
+    ],
+    "name": "compute_buy_price",
+    "outputs": [
+      {
+        "name": "erc20_address",
+        "type": "felt"
+      },
+      {
+        "name": "price",
+        "type": "Uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "domain",
+        "type": "felt"
+      },
+      {
+        "name": "days",
+        "type": "felt"
+      }
+    ],
+    "name": "compute_renew_price",
+    "outputs": [
+      {
+        "name": "erc20_address",
+        "type": "felt"
+      },
+      {
+        "name": "price",
+        "type": "Uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

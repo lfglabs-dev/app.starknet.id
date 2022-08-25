@@ -3,14 +3,12 @@ import { useRouter } from "next/router";
 import { InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { FunctionComponent, KeyboardEvent, useState } from "react";
-
-// type SearchBarProps = {
-//   context: string;
-// };
+import { useIsValid } from "../../hooks/naming";
 
 const SearchBar: FunctionComponent = () => {
   const router = useRouter();
   const [typedValue, setTypedValue] = useState<string>("");
+  const domainEncoded = useIsValid(typedValue);
 
   function handleChange(e: any) {
     setTypedValue(e.target.value);
@@ -24,7 +22,7 @@ const SearchBar: FunctionComponent = () => {
   }
 
   function search(typedValue: string) {
-    router.push(`/search?value=${typedValue}`);
+    router.push(`/search?domain=${typedValue}`);
   }
 
   return (
@@ -48,6 +46,10 @@ const SearchBar: FunctionComponent = () => {
           </InputAdornment>
         ),
       }}
+      helperText={
+        domainEncoded != true && `"${domainEncoded}" is not a valid character`
+      }
+      error={domainEncoded != true}
     />
   );
 };

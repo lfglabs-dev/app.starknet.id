@@ -12,11 +12,11 @@ const ErrorScreen: FunctionComponent<ErrorScreenProps> = ({
   onClick,
 }) => {
   return (
-    <>
+    <div className="sm:w-2/3 w-4/5">
       <Image
-        src="https://i.ibb.co/PWQkkN9/error-Meme.gif"
-        height={227}
-        width={270}
+        src="/identicons/identicon_4.svg"
+        height={300}
+        width={300}
         alt="error meme"
       />
       <h1 className="sm:text-5xl text-5xl mt-4">
@@ -25,7 +25,7 @@ const ErrorScreen: FunctionComponent<ErrorScreenProps> = ({
       <div className="mt-8">
         <Button onClick={onClick}>{buttonText}</Button>
       </div>
-    </>
+    </div>
   );
 };
 

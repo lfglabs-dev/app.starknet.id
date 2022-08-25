@@ -15,9 +15,6 @@ const Navbar: FunctionComponent = () => {
   const { account } = useStarknet();
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
-  console.log(account);
-  console.log(isConnected);
-
   const green = "#19AA6E";
   const brown = "#402d28";
   const { available, connect, disconnect } = useConnectors();

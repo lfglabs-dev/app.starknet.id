@@ -23,8 +23,8 @@ const LoadingScreen: FunctionComponent = () => {
         <MutatingDots
           height="100"
           width="100"
-          color="#ff5008"
-          secondaryColor="white"
+          color="#19AA6E"
+          secondaryColor="#BF9E7B"
           ariaLabel="loading"
         />
       </div>

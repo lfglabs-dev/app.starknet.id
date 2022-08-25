@@ -48,13 +48,27 @@
     box-shadow 200ms cubic-bezier(0.41, 0.34, 0.26, 1.55) !important;
 }
 
+.nq-button:disabled,
+.nq-button[disabled] {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+  box-shadow: none;
+}
+
+.nq-button:disabled:hover,
+.nq-button:disabled:focus {
+  box-shadow: none;
+  transform: none;
+  cursor: default;
+}
+
 /* Color variations */
 
 /* green */
 .nq-button {
-  color: var(--beige-);
+  color: var(--beige);
   background: var(--green);
-  background-image: var(--green-bg);
 }
 
 .nq-button::before {

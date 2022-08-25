@@ -1,7 +1,8 @@
 .clickableIcon {
   cursor: pointer;
-  margin: 1rem;
+  margin: 0.5rem;
   border-radius: 25%;
+  position: relative;
 }
 
 .clickablePlus {
@@ -19,5 +20,5 @@
 .clickableIcon :hover {
   background-color: rgba(82, 45, 24, 0.063);
   border-radius: 25%;
-  padding: 1rem;
+  padding: 0.25rem;
 }

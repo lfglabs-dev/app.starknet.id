@@ -26,11 +26,7 @@ export default function Identities() {
   );
 
   // Connection
-  const { disconnect, connectors } = useConnectors();
-  const connector = connectors[0];
   const { account } = useStarknet();
-
-  console.log("connector", connector);
 
   //Contract
   const { contract } = useStarknetIdContract();
@@ -109,7 +105,7 @@ export default function Identities() {
           <SuccessScreen
             onClick={() => router.push(`/identities/${rightTokenId}`)}
             buttonText="Verify your discord identity now !"
-            successMessage="What a chad, your starknet.id is minted !"
+            successMessage="Congrats, your starknet.id is minted !"
           />
         )}
       </div>
