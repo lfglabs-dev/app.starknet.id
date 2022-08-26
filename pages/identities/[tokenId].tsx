@@ -1,5 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 import React from "react";
 import styles from "../../styles/home.module.css";
+import styles2 from "../../styles/components/identitiesV1.module.css";
 import { useStarknet } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import Button from "../../components/UI/button";
@@ -23,9 +25,15 @@ const TokenIdPage: NextPage = () => {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.container}>
-        <h1 className="sm:text-5xl text-5xl my-2">
-          Your identity : {tokenIdAbbreviation}
+      <div className={styles.firstLeaf}>
+        <img alt="leaf" src="/leaves/leaf_2.png" />
+      </div>
+      <div className={styles.secondLeaf}>
+        <img alt="leaf" src="/leaves/leaf_1.png" />
+      </div>
+      <div className={styles2.containerIdentity}>
+        <h1 className="sm:text-5xl text-5xl my-5">
+          Identity : {tokenIdAbbreviation}
         </h1>
         <div className="mt-3">
           <Image
@@ -71,7 +79,7 @@ const TokenIdPage: NextPage = () => {
             />
           </div>
         </div>
-        <div className="mt-1">
+        <div className="mt-5">
           <Button onClick={() => router.push("/")}>
             Back to your identities
           </Button>

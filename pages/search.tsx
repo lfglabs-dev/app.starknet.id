@@ -7,11 +7,25 @@ import styles2 from "../styles/search.module.css";
 import SearchBar from "../components/UI/searchBar";
 import DomainCard from "../components/domains/domainCard";
 import DomainMenu from "../components/domains/domainMenu";
+import { useAddressFromDomain } from "../hooks/naming";
 
 const SearchPage: NextPage = () => {
   const router = useRouter();
-  const domain = router.query.domain as string;
+  const domain = (router.query.domain as string) ?? "";
   const [isMenuVisible, setIsMenuVisible] = useState<boolean>(false);
+
+  const [isAvailable, setIsAvailable] = useState<boolean | undefined>(
+    undefined
+  );
+  const { address: data, error } = useAddressFromDomain(domain);
+
+  useEffect(() => {
+    if (error || !data || Number(data?.["address"]) != 0) {
+      setIsAvailable(false);
+    } else {
+      setIsAvailable(true);
+    }
+  }, [data, error]);
 
   return (
     <div className={styles.screen}>
@@ -26,6 +40,7 @@ const SearchPage: NextPage = () => {
           <SearchBar />
           {domain && (
             <DomainCard
+              isAvailable={isAvailable}
               domain={domain}
               onClick={() => setIsMenuVisible(true)}
             />
@@ -33,7 +48,7 @@ const SearchPage: NextPage = () => {
         </div>
 
         {isMenuVisible ? (
-          <DomainMenu isAvailable domain={domain as string} />
+          <DomainMenu isAvailable={isAvailable} domain={domain as string} />
         ) : null}
       </div>
     </div>

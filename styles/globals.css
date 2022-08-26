@@ -132,6 +132,26 @@ button[disabled] {
 
 /* ---------------------- */
 
+/* Scroll bar */
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #19aa6e50;
+  border-radius: 10px;
+}
+
+/* ---------------------- */
+
 * {
   box-sizing: border-box;
 }

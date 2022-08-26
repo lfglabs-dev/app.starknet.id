@@ -98,3 +98,9 @@
 .nq-button:focus::after {
   opacity: 1;
 }
+
+@media (max-width: 1024px) {
+  .nq-button {
+    font-size: 0.75rem;
+  }
+}

@@ -7,7 +7,7 @@ import styles from "../../styles/components/navbar.module.css";
 import Button from "./button";
 import { useConnectors, useStarknet } from "@starknet-react/core";
 import Wallets from "./wallets";
-import { ConstructionOutlined } from "@mui/icons-material";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
@@ -43,8 +43,8 @@ const Navbar: FunctionComponent = () => {
 
   return (
     <>
-      <div className={"fixed w-full h-20 z-[1] bg-beige"}>
-        <div className="flex justify-between items-center w-full h-full px-2 2xl:px-16">
+      <div className={"fixed w-full z-[1] bg-beige"}>
+        <div className={styles.navbarContainer}>
           <div className="ml-4">
             <Link href="/" className="cursor-pointer">
               <img
@@ -75,7 +75,14 @@ const Navbar: FunctionComponent = () => {
                     isConnected ? () => disconnect() : () => setHasWallet(true)
                   }
                 >
-                  {isConnected ? minifyAddress(account) : "connect"}
+                  {isConnected ? (
+                    <div className="flex justify-center items-center">
+                      <div>{minifyAddress(account)}</div>
+                      <LogoutIcon className="ml-3" />
+                    </div>
+                  ) : (
+                    "connect"
+                  )}
                 </Button>
               </div>
             </ul>

@@ -1,16 +1,17 @@
 import { FunctionComponent, useEffect, useState } from "react";
-import DiscordIcon from "../UI/icons/discordIcon";
-import TwitterIcon from "../UI/icons/twitterIcon";
-import GithubIcon from "../UI/icons/githubIcon";
-import { useNamingContract } from "../../hooks/contracts";
-import { useStarknetCall } from "@starknet-react/core";
-import { stringToFelt } from "../../utils/felt";
+import { bnToHex } from "../../utils/felt";
 import Link from "next/link";
-import { useAddressFromDomain } from "../../hooks/naming";
+import {
+  useAddressFromDomain,
+  useExpiryFromDomain,
+  useTokenIdFromDomain,
+} from "../../hooks/naming";
+import { ThreeDots } from "react-loader-spinner";
+import styles from "../../styles/home.module.css";
 
 type DetailsProps = {
   domain: string;
-  isAvailable: boolean;
+  isAvailable?: boolean;
 };
 
 const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
@@ -18,28 +19,47 @@ const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
     undefined
   );
   const [tokenId, setTokenId] = useState<number | undefined>(undefined);
+  const [expiryDate, setExpiryDate] = useState<string | undefined>(undefined);
 
-  const { contract } = useNamingContract();
-  const { address: domainData, error: domainError } = useAddressFromDomain([
-    domain,
-  ]);
+  const { address: domainData, error: domainError } =
+    useAddressFromDomain(domain);
 
-  const { data: tokenIdData, error: tokenIdError } = useStarknetCall({
-    contract: contract,
-    method: "domain_to_token_id",
-    args: [[stringToFelt(domain)]],
-  });
+  const { tokenId: tokenIdData, error: tokenIdError } =
+    useTokenIdFromDomain(domain);
+
+  const { expiry: expiryData, error: expiryError } =
+    useExpiryFromDomain(domain);
 
   useEffect(() => {
-    if (domainError || tokenIdError) {
+    if (domainError) {
       return;
     } else {
-      if (tokenIdData || domainData) {
-        setTokenId(tokenIdData?.["token_id"] as any);
-        setOwnerAddress(domainData?.["address"] as any);
+      if (domainData) {
+        setOwnerAddress(domainData?.["address"].toString(16) as string);
       }
     }
-  }, [domainData, domainError, tokenIdData, tokenIdError]);
+  }, [domainData, domainError]);
+
+  useEffect(() => {
+    if (tokenIdError) {
+      return;
+    } else {
+      if (tokenIdData) {
+        setTokenId(tokenIdData?.["owner"].low.toNumber());
+      }
+    }
+  }, [tokenIdData, tokenIdError]);
+
+  useEffect(() => {
+    if (expiryError) {
+      return;
+    } else {
+      if (expiryData) {
+        console.log(expiryData?.["expiry"]);
+        setExpiryDate(expiryData?.["expiry"] as string);
+      }
+    }
+  }, [expiryData, expiryError]);
 
   if (isAvailable)
     return (
@@ -57,17 +77,38 @@ const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
 
   return (
     <div className="sm:w-2/3 w-4/5 break-all">
-      <p>
-        <strong>Owner :</strong>&nbsp;
-        {ownerAddress}
-      </p>
-      <p>
-        <strong>Starknet.id owner :</strong>&nbsp;
-        <Link className="underline" href={`/identities/${tokenId}`}>
-          {tokenId}
+      {ownerAddress && (
+        <>
+          {" "}
+          <p>
+            <strong>Points to :</strong>&nbsp;
+            <span>{"0x" + ownerAddress}</span>
+          </p>
+          <p>
+            <strong>Expiration date :</strong>&nbsp;
+            <span>{"0x" + ownerAddress}</span>
+          </p>
+        </>
+      )}
+      {(!ownerAddress || !tokenId) && (
+        <ThreeDots
+          wrapperClass="flex justify-center"
+          height="25"
+          width="80"
+          radius="9"
+          color="#19AA6E"
+          ariaLabel="three-dots-loading"
+          visible={true}
+        />
+      )}
+      {tokenId && (
+        <Link href={`/identities/${tokenId}`}>
+          <div className={styles.cardCenter}>
+            <p>See owner identity</p>
+          </div>
         </Link>
-      </p>
-      <div className="flex justify-center align-center mt-2">
+      )}
+      {/* <div className="flex justify-center align-center mt-2">
         <div className="m-2">
           <DiscordIcon color="#19aa6e" width={"25"} />
         </div>
@@ -77,7 +118,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
         <div className="m-2">
           <GithubIcon color="#19aa6e" width={"25"} />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

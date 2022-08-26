@@ -6,25 +6,14 @@ import styles from "../../styles/home.module.css";
 type DomainCardProps = {
   domain: string;
   onClick: () => void;
+  isAvailable?: boolean;
 };
 
 const DomainCard: FunctionComponent<DomainCardProps> = ({
   domain,
   onClick,
+  isAvailable,
 }) => {
-  const [isAvailable, setIsAvailable] = useState<boolean | undefined>(
-    undefined
-  );
-  const { address: data, error } = useAddressFromDomain(domain);
-
-  useEffect(() => {
-    if (error || !data || Number(data?.["address"]) != 0) {
-      setIsAvailable(false);
-    } else {
-      setIsAvailable(true);
-    }
-  }, [data, error]);
-
   return (
     <div className={styles.card} onClick={onClick}>
       <h2 className={styles.cardTitle}>{domain}.stark</h2>

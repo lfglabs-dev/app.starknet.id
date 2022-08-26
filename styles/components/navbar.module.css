@@ -18,3 +18,13 @@
   font-size: 0.875rem /* 14px */;
   line-height: 1.25rem /* 20px */;
 }
+
+.navbarContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  max-height: 14vh;
+}

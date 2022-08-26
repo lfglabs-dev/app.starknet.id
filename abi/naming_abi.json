@@ -135,6 +135,27 @@
   {
     "inputs": [
       {
+        "name": "domain_len",
+        "type": "felt"
+      },
+      {
+        "name": "domain",
+        "type": "felt*"
+      }
+    ],
+    "name": "domain_to_expiry",
+    "outputs": [
+      {
+        "name": "expiry",
+        "type": "felt"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "name": "address",
         "type": "felt"
       }
@@ -248,10 +269,6 @@
   },
   {
     "inputs": [
-      {
-        "name": "token_id",
-        "type": "Uint256"
-      },
       {
         "name": "domain",
         "type": "felt"

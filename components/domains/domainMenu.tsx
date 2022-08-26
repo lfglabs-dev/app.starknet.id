@@ -6,7 +6,7 @@ import Subdomain from "./subdomain";
 
 type DomainMenuProps = {
   domain: string;
-  isAvailable: boolean;
+  isAvailable?: boolean;
 };
 
 const DomainMenu: FunctionComponent<DomainMenuProps> = ({

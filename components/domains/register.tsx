@@ -13,18 +13,27 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import styles from "../../styles/home.module.css";
 import { usePricingContract } from "../../hooks/contracts";
-import { useStarknet, useStarknetCall } from "@starknet-react/core";
+import {
+  useStarknet,
+  useStarknetCall,
+  // useStarknetExecute,
+} from "@starknet-react/core";
 import { stringToFelt } from "../../utils/felt";
-import { useStarknetExecute } from "@starknet-react/core";
+import { Call } from "starknet";
 
 type RegisterProps = {
   domain: string;
-  isAvailable: boolean;
+  isAvailable?: boolean;
 };
 
 type Identity = {
   token_id: number;
   image_uri: string;
+};
+
+type starknetExecute = {
+  calls?: Call | Call[];
+  metadata?: any;
 };
 
 const Register: FunctionComponent<RegisterProps> = ({
@@ -166,7 +175,7 @@ const Register: FunctionComponent<RegisterProps> = ({
       </div>
     );
 
-  return <p>This domain is not available you can&rsquot register it</p>;
+  return <p>This domain is not available you can&rsquo;t register it</p>;
 };
 
 export default Register;

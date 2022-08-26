@@ -6,7 +6,7 @@ import GithubIcon from "../UI/icons/githubIcon";
 
 type SubdomainProps = {
   domain: string;
-  isAvailable: boolean;
+  isAvailable?: boolean;
 };
 
 const Details: FunctionComponent<SubdomainProps> = ({

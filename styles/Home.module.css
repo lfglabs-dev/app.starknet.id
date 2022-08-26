@@ -1,18 +1,17 @@
 .screen {
-  width: 100vw;
-  height: auto;
-  padding-top: 5rem;
+  height: 100vh;
   z-index: 0;
+  position: relative;
+  padding-top: 14vh;
 }
 
 .container {
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 75vh;
   flex-direction: column;
   text-align: center;
-  position: relative;
 }
 
 .containerGallery {
@@ -21,7 +20,7 @@
   justify-content: center;
   align-items: center;
   margin-top: 2rem;
-  max-height: 22rem;
+  max-height: 25rem;
   max-width: 40rem;
   overflow-y: auto;
 }
@@ -104,8 +103,8 @@
 
 .firstLeaf {
   position: absolute;
-  bottom: -1%;
-  width: 300px;
+  bottom: 0%;
+  width: 200px;
   z-index: -1000;
   overflow: hidden;
 }
@@ -113,8 +112,8 @@
 .secondLeaf {
   position: absolute;
   right: 0%;
-  bottom: -1%;
-  width: 300px;
+  bottom: 0%;
+  width: 200px;
   z-index: -1000;
   overflow: hidden;
 }
