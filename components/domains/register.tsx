@@ -20,6 +20,8 @@ import {
 } from "@starknet-react/core";
 import { stringToFelt } from "../../utils/felt";
 import { Call } from "starknet";
+import { useStarknetExecute } from '@starknet-react/core'
+import { useEncoded } from "../../hooks/naming";
 
 type RegisterProps = {
   domain: string;
@@ -45,7 +47,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [duration, setDuration] = useState<number>(20);
   const [tokenId, setTokenId] = useState<number>(0);
   const [ownedIdentities, setOwnedIdentities] = useState<any>([]);
-  const [price, setPrice] = useState<number | any>(0);
+  const [price, setPrice] = useState<number | any>("0x10000000000000000000000000000000000000000000000000000000000000");
   const { contract } = usePricingContract();
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: contract,
@@ -53,6 +55,27 @@ const Register: FunctionComponent<RegisterProps> = ({
     args: [stringToFelt(domain), duration * 365],
   });
   const { account } = useStarknet();
+  const encodedDomain = useEncoded(domain);
+
+  const { data, error, execute } = useStarknetExecute({
+    calls: [
+      {
+        contractAddress: "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+        entrypoint: "approve",
+        calldata: ["0x051a28475a0169c67d656fb968343d5769c198700a398e8315b8e54c3fb4284b", price, 0]
+      },
+      /*
+      {
+        contractAddress: "0x051a28475a0169c67d656fb968343d5769c198700a398e8315b8e54c3fb4284b",
+        entrypoint: "buy",
+        calldata: [tokenId, 0, encodedDomain, duration * 365, account]
+      }
+      */
+    ]
+  })
+
+  console.log("err", error, account)
+
   // const { data, loading, error, reset, execute } = useStarknetExecute({
   //   calls,
   //   metadata,
@@ -87,12 +110,6 @@ const Register: FunctionComponent<RegisterProps> = ({
   function changeTokenId(e: any): void {
     setTokenId(e.target.value);
   }
-
-  function register(
-    ownerAddress: string,
-    duration: number,
-    domain: string
-  ): void {}
 
   if (isAvailable)
     return (
@@ -169,7 +186,10 @@ const Register: FunctionComponent<RegisterProps> = ({
         </div>
         <div className="text-beige mt-5">
           <Button
-            onClick={() => register(ownerAddress, duration, domain)}
+            onClick={() => {
+             console.log("hello")
+              execute()
+            }}
             disabled={
               !Boolean(account) || !duration || !ownerAddress || !tokenId
             }
