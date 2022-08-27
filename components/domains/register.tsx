@@ -98,33 +98,36 @@ const Register: FunctionComponent<RegisterProps> = ({
     return (
       <div className="sm:w-full w-2/3">
         <div className="flex">
-          <TextField
-            fullWidth
-            className="mr-1 z-[0]"
-            id="outlined-basic"
-            label="Owner address"
-            placeholder="Owner address"
-            variant="outlined"
-            onChange={changeAddress}
-            color="secondary"
-            required
-          />
-          <TextField
-            fullWidth
-            className="ml-1 z-[0]"
-            id="outlined-basic"
-            label="years"
-            type="number"
-            placeholder="years"
-            variant="outlined"
-            onChange={changeDuration}
-            InputProps={{
-              inputProps: { min: 0, max: maxYearsToRegister },
-            }}
-            defaultValue={duration}
-            color="secondary"
-            required
-          />
+          <div className="mr-1 z-[0] w-1/2">
+            <TextField
+              fullWidth
+              id="outlined-basic"
+              label="Owner address"
+              placeholder="Owner address"
+              variant="outlined"
+              onChange={changeAddress}
+              color="secondary"
+              required
+            />
+          </div>
+          <div className="mr-1 z-[0] w-1/2">
+            <TextField
+              fullWidth
+              className="ml-1 z-[0]"
+              id="outlined-basic"
+              label="years"
+              type="number"
+              placeholder="years"
+              variant="outlined"
+              onChange={changeDuration}
+              InputProps={{
+                inputProps: { min: 0, max: maxYearsToRegister },
+              }}
+              defaultValue={duration}
+              color="secondary"
+              required
+            />
+          </div>
         </div>
         {ownedIdentities.length ? (
           <FormControl fullWidth className="mt-3">
@@ -167,7 +170,9 @@ const Register: FunctionComponent<RegisterProps> = ({
         <div className="text-beige mt-5">
           <Button
             onClick={() => register(ownerAddress, duration, domain)}
-            disabled={!Boolean(account) || !duration || !ownerAddress}
+            disabled={
+              !Boolean(account) || !duration || !ownerAddress || !tokenId
+            }
           >
             Register
           </Button>

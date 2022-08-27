@@ -25,9 +25,7 @@ const DomainMenu: FunctionComponent<DomainMenuProps> = ({
       <div className="mt-5 flex justify-center">
         {tab == "one" && <Register isAvailable={isAvailable} domain={domain} />}
         {tab == "two" && <Details domain={domain} isAvailable={isAvailable} />}
-        {tab == "three" && (
-          <Subdomain domain={domain} isAvailable={isAvailable} />
-        )}
+        {tab == "three" && <Subdomain domain={domain} />}
       </div>
     </div>
   );

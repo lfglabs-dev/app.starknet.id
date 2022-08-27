@@ -72,7 +72,11 @@ const Navbar: FunctionComponent = () => {
               <div className="text-beige mr-5">
                 <Button
                   onClick={
-                    isConnected ? () => disconnect() : () => setHasWallet(true)
+                    isConnected
+                      ? () => disconnect()
+                      : available.length === 1
+                      ? () => connect(available[0])
+                      : () => setHasWallet(true)
                   }
                 >
                   {isConnected ? (

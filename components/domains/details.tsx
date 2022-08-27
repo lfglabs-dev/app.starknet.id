@@ -1,5 +1,7 @@
 import { FunctionComponent, useEffect, useState } from "react";
-import { bnToHex } from "../../utils/felt";
+// import DiscordIcon from "../UI/icons/discordIcon";
+// import TwitterIcon from "../UI/icons/twitterIcon";
+// import GithubIcon from "../UI/icons/githubIcon";
 import Link from "next/link";
 import {
   useAddressFromDomain,
@@ -19,7 +21,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
     undefined
   );
   const [tokenId, setTokenId] = useState<number | undefined>(undefined);
-  const [expiryDate, setExpiryDate] = useState<string | undefined>(undefined);
+  const [expiryDate, setExpiryDate] = useState<Date | undefined>(undefined);
 
   const { address: domainData, error: domainError } =
     useAddressFromDomain(domain);
@@ -55,8 +57,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
       return;
     } else {
       if (expiryData) {
-        console.log(expiryData?.["expiry"]);
-        setExpiryDate(expiryData?.["expiry"] as string);
+        setExpiryDate(new Date(expiryData?.["expiry"].toNumber() * 1000));
       }
     }
   }, [expiryData, expiryError]);
@@ -78,19 +79,18 @@ const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
   return (
     <div className="sm:w-2/3 w-4/5 break-all">
       {ownerAddress && (
-        <>
-          {" "}
-          <p>
-            <strong>Points to :</strong>&nbsp;
-            <span>{"0x" + ownerAddress}</span>
-          </p>
-          <p>
-            <strong>Expiration date :</strong>&nbsp;
-            <span>{"0x" + ownerAddress}</span>
-          </p>
-        </>
+        <p>
+          <strong>Points to :</strong>&nbsp;
+          <span>{"0x" + ownerAddress}</span>
+        </p>
       )}
-      {(!ownerAddress || !tokenId) && (
+      {expiryDate && (
+        <p>
+          <strong>Expiration date :</strong>&nbsp;
+          <span>{expiryDate.toDateString()}</span>
+        </p>
+      )}
+      {(!ownerAddress || !tokenId || !expiryDate) && (
         <ThreeDots
           wrapperClass="flex justify-center"
           height="25"

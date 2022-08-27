@@ -18,7 +18,7 @@ export function useNamingContract() {
   return useContract({
     abi: naming_abi as Abi,
     address:
-      "0x04a018022c8c3a141a90fc7cc051998fef678e6e71d55c99ee34dbb9d4821504",
+      "0x051a28475a0169c67d656fb968343d5769c198700a398e8315b8e54c3fb4284b",
   });
 }
 
