@@ -22,6 +22,7 @@ import { stringToFelt } from "../../utils/felt";
 import { Call } from "starknet";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
+import BN from "bn.js";
 
 type RegisterProps = {
   domain: string;
@@ -47,8 +48,8 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [duration, setDuration] = useState<number>(20);
   const [tokenId, setTokenId] = useState<number>(0);
   const [ownedIdentities, setOwnedIdentities] = useState<any>([]);
-  const [price, setPrice] = useState<number | any>(
-    "0x10000000000000000000000000000000000000000000000000000000000000"
+  const [price, setPrice] = useState<string>(
+    "0"
   );
   const { contract } = usePricingContract();
   const { data: priceData, error: priceError } = useStarknetCall({
@@ -61,22 +62,21 @@ const Register: FunctionComponent<RegisterProps> = ({
 
   const { data, error, execute } = useStarknetExecute({
     calls: [
-      // {
-      //   contractAddress:
-      //     "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-      //   entrypoint: "approve",
-      //   calldata: [
-      //     "0x020ca36ee7cf524e41dfbb8e8f22b60af47e63678bd5dc24acf72b674d1ddc08",
-      //     price,
-      //     0,
-      //   ],
-      // },
-
+      {
+        contractAddress:
+          "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+        entrypoint: "approve",
+        calldata: [
+          "0x020ca36ee7cf524e41dfbb8e8f22b60af47e63678bd5dc24acf72b674d1ddc08",
+          price,
+          0,
+        ],
+      },
       {
         contractAddress:
           "0x020ca36ee7cf524e41dfbb8e8f22b60af47e63678bd5dc24acf72b674d1ddc08",
         entrypoint: "buy",
-        calldata: [tokenId, 0, encodedDomain, duration * 365, account],
+        calldata: [(new BN(tokenId)).toString(10), "0", encodedDomain.toString(10), (new BN(duration * 365)).toString(10), new BN(account?.slice(2), 16).toString(10)],
       },
     ],
   });
@@ -89,11 +89,10 @@ const Register: FunctionComponent<RegisterProps> = ({
   // });
 
   useEffect(() => {
-    if (priceError || !priceData) {
-      setPrice(0);
-    } else {
-      setPrice(priceData?.["price"].low.words[0] / (10 ^ 18));
-    }
+    if (priceError || !priceData)
+      setPrice("0");
+     else 
+      setPrice(new BN(priceData?.["price"].low.words[0]).toString(10))
   }, [priceData, priceError]);
 
   useEffect(() => {
@@ -200,7 +199,7 @@ const Register: FunctionComponent<RegisterProps> = ({
         </div>
 
         <div className={styles.cardCenter}>
-          <p>Price Approximation : 0 ETH</p>
+          <p>Price : {price} wei</p>
         </div>
         <div className="text-beige mt-5">
           <Button

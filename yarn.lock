@@ -598,10 +598,10 @@
     "@noble/hashes" "~1.1.1"
     "@scure/base" "~1.1.0"
 
-"@starknet-react/core@^0.13.2":
-  "integrity" "sha512-SimSePRVVk4EtbSFzuohgOSUmPZ1Q049ky00togG8kdjCWklh4ZlI2SLkHH1AoMIge0BzdyT8qjxvU5k791Q5Q=="
-  "resolved" "https://registry.npmjs.org/@starknet-react/core/-/core-0.13.2.tgz"
-  "version" "0.13.2"
+"@starknet-react/core@^0.13.3":
+  "integrity" "sha512-7Y2I/hdJqG8GqWa7klSQr4QySRBRULFF9cV3Krc49S87EhUwaedx8TdDyJ/MqMkfwJiwgfHYTaNRaGn/iUBZ2A=="
+  "resolved" "https://registry.npmjs.org/@starknet-react/core/-/core-0.13.3.tgz"
+  "version" "0.13.3"
   dependencies:
     "immutable" "^4.0.0"
 
