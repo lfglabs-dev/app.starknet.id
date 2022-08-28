@@ -52,10 +52,6 @@ const Home: NextPage = () => {
     setRightTokenId(randomTokenId);
   }
 
-  function generateNewTokenId() {
-    setRandomTokenId(Math.floor(Math.random() * 1000000000000));
-  }
-
   useEffect(() => {
     if (account) {
       fetch(

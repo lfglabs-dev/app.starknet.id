@@ -79,12 +79,8 @@ const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
 
   return (
     <div className="flex justify-center align-center mt-2">
-      <p>
-        We can not see subdomains for the moment on this testnet version (but
-        you can register it).
-      </p>
-      {isOwnerOf && (
-        <>
+      {isOwnerOf ? (
+        <div className="flex flex-col">
           <TextField
             fullWidth
             id="outlined-basic"
@@ -95,10 +91,20 @@ const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
             color="secondary"
             required
           />
-          <Button disabled={!subdomain} onClick={() => renew(subdomain ?? "")}>
-            Register a subdomain
-          </Button>
-        </>
+          <div className="mt-2">
+            <Button
+              disabled={!subdomain}
+              onClick={() => renew(subdomain ?? "")}
+            >
+              Register
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <p>
+          We can not see subdomains for the moment on this testnet version (but
+          you can register it).
+        </p>
       )}
     </div>
   );

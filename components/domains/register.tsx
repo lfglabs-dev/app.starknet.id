@@ -20,7 +20,7 @@ import {
 } from "@starknet-react/core";
 import { stringToFelt } from "../../utils/felt";
 import { Call } from "starknet";
-import { useStarknetExecute } from '@starknet-react/core'
+import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
 
 type RegisterProps = {
@@ -47,7 +47,9 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [duration, setDuration] = useState<number>(20);
   const [tokenId, setTokenId] = useState<number>(0);
   const [ownedIdentities, setOwnedIdentities] = useState<any>([]);
-  const [price, setPrice] = useState<number | any>("0x10000000000000000000000000000000000000000000000000000000000000");
+  const [price, setPrice] = useState<number | any>(
+    "0x10000000000000000000000000000000000000000000000000000000000000"
+  );
   const { contract } = usePricingContract();
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: contract,
@@ -60,9 +62,14 @@ const Register: FunctionComponent<RegisterProps> = ({
   const { data, error, execute } = useStarknetExecute({
     calls: [
       {
-        contractAddress: "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+        contractAddress:
+          "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
         entrypoint: "approve",
-        calldata: ["0x051a28475a0169c67d656fb968343d5769c198700a398e8315b8e54c3fb4284b", price, 0]
+        calldata: [
+          "0x051a28475a0169c67d656fb968343d5769c198700a398e8315b8e54c3fb4284b",
+          price,
+          0,
+        ],
       },
       /*
       {
@@ -71,10 +78,10 @@ const Register: FunctionComponent<RegisterProps> = ({
         calldata: [tokenId, 0, encodedDomain, duration * 365, account]
       }
       */
-    ]
-  })
+    ],
+  });
 
-  console.log("err", error, account)
+  console.log("err", error, account);
 
   // const { data, loading, error, reset, execute } = useStarknetExecute({
   //   calls,
@@ -147,38 +154,50 @@ const Register: FunctionComponent<RegisterProps> = ({
           </div>
         </div>
         {ownedIdentities.length ? (
-          <FormControl fullWidth className="mt-3">
-            <InputLabel>Starknet.id</InputLabel>
-            <Select
-              value={tokenId}
-              defaultValue={ownedIdentities[0]?.token_id}
-              label="Starknet.id"
-              onChange={changeTokenId}
-              sx={{
-                "& .MuiSelect-select": {
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-              }}
-            >
-              {ownedIdentities.map((identity: Identity, index: number) => (
-                <MenuItem key={index} value={identity.token_id}>
+          <div className="mt-3">
+            <FormControl fullWidth>
+              <InputLabel>Starknet.id</InputLabel>
+              <Select
+                value={tokenId}
+                defaultValue={ownedIdentities[0]?.token_id}
+                label="Starknet.id"
+                onChange={changeTokenId}
+                sx={{
+                  "& .MuiSelect-select": {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  },
+                }}
+              >
+                <MenuItem value={0}>
                   <ListItemIcon>
                     <img
                       width={"25px"}
-                      src={identity.image_uri}
+                      src="/visuals/starknetIdLogo.png"
                       alt="starknet.id avatar"
                     />
                   </ListItemIcon>
-                  <ListItemText primary={identity.token_id} />
+                  <ListItemText primary="Mint a new starknet.id" />
                 </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>
-              Choose the starknet identity you want to link with your domain
-            </FormHelperText>
-          </FormControl>
+                {ownedIdentities.map((identity: Identity, index: number) => (
+                  <MenuItem key={index} value={identity.token_id}>
+                    <ListItemIcon>
+                      <img
+                        width={"25px"}
+                        src={identity.image_uri}
+                        alt="starknet.id avatar"
+                      />
+                    </ListItemIcon>
+                    <ListItemText primary={identity.token_id} />
+                  </MenuItem>
+                ))}
+              </Select>
+              <FormHelperText>
+                Choose the starknet identity you want to link with your domain
+              </FormHelperText>
+            </FormControl>
+          </div>
         ) : null}
 
         <div className={styles.cardCenter}>
@@ -187,8 +206,8 @@ const Register: FunctionComponent<RegisterProps> = ({
         <div className="text-beige mt-5">
           <Button
             onClick={() => {
-             console.log("hello")
-              execute()
+              console.log("hello");
+              execute();
             }}
             disabled={
               !Boolean(account) || !duration || !ownerAddress || !tokenId
