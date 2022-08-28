@@ -1,5 +1,5 @@
 import { FunctionComponent, useEffect, useState } from "react";
-import { useTokenIdFromDomain } from "../../hooks/naming";
+import { useEncoded, useTokenIdFromDomain } from "../../hooks/naming";
 import {
   useStarknet,
   useStarknetCall,
@@ -11,15 +11,18 @@ import {
 } from "../../hooks/contracts";
 import Button from "../UI/button";
 import { TextField } from "@mui/material";
-("");
+
 type SubdomainProps = {
   domain: string;
 };
 
 const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
   const { account } = useStarknet();
-  const [tokenId, setTokenId] = useState<number | undefined>(undefined);
-  const [subdomain, setSubdomain] = useState<string | undefined>(undefined);
+  const [tokenId, setTokenId] = useState<number | undefined>();
+  const [targetTokenId, setTargetTokenId] = useState<number>();
+  const [subdomain, setSubdomain] = useState<string>("");
+  const encodedRootDomain = useEncoded(domain);
+  const encodedSubdomain = useEncoded(subdomain);
   const [isOwnerOf, setIsOwnerOf] = useState<boolean>(false);
   const { tokenId: tokenIdData, error: tokenIdError } =
     useTokenIdFromDomain(domain);
@@ -28,13 +31,9 @@ const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
   const { data, error } = useStarknetCall({
     contract: starknetIdContract,
     method: "ownerOf",
-    args: [[tokenId, 0]],
+    args: [[tokenId, 0], ""],
   });
-  const {
-    data: transferData,
-    invoke,
-    error: transferError,
-  } = useStarknetInvoke({
+  const { invoke } = useStarknetInvoke({
     contract: namingContract,
     method: "transfer_domain",
   });
@@ -60,41 +59,63 @@ const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
     }
   }, [tokenIdData, tokenIdError]);
 
-  // useEffect(() => {
-  //   if (account) {
-
-  //     return;
-  //   }
-  // }, [account]);
-
   function changeSubdomain(e: any): void {
     setSubdomain(e.target.value);
   }
 
-  function renew(domain: string) {
+  function createSubdomain() {
     invoke({
-      args: [[domain, [tokenId, 0]]],
+      args: [
+        [encodedSubdomain.toString(), encodedRootDomain.toString()],
+        [targetTokenId, 0],
+      ],
     });
+  }
+
+  function changeTargetTokenId(e: any): void {
+    setTargetTokenId(e.target.value);
   }
 
   return (
     <div className="flex justify-center align-center mt-2">
       {isOwnerOf ? (
         <div className="flex flex-col">
-          <TextField
-            fullWidth
-            id="outlined-basic"
-            label="Subdomain"
-            placeholder="Subdomain"
-            variant="outlined"
-            onChange={changeSubdomain}
-            color="secondary"
-            required
-          />
+          <div className="flex">
+            <div className="mr-1 z-[0] w-1/2">
+              <TextField
+                fullWidth
+                id="outlined-basic"
+                label="Subdomain"
+                placeholder="Subdomain"
+                variant="outlined"
+                onChange={changeSubdomain}
+                color="secondary"
+                required
+              />
+            </div>
+            <div className="ml-1 z-[0] w-1/2">
+              <TextField
+                fullWidth
+                className="ml-1 z-[0]"
+                id="outlined-basic"
+                label="Target starknet.id"
+                type="number"
+                placeholder="token id"
+                variant="outlined"
+                onChange={changeTargetTokenId}
+                InputProps={{
+                  inputProps: { min: 1 },
+                }}
+                defaultValue={targetTokenId}
+                color="secondary"
+                required
+              />
+            </div>
+          </div>
           <div className="mt-2">
             <Button
-              disabled={!subdomain}
-              onClick={() => renew(subdomain ?? "")}
+              disabled={!subdomain || !targetTokenId}
+              onClick={() => createSubdomain()}
             >
               Register
             </Button>

@@ -47,10 +47,10 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [targetAddress, setTargetAddress] = useState<string>(""); // mettre la get caller address par défaut
   const [duration, setDuration] = useState<number>(20);
   const [tokenId, setTokenId] = useState<number>(0);
+  const newTokenId: number = Math.floor(Math.random() * 1000000000000);
+  const [callData, setCallData] = useState<any>();
   const [ownedIdentities, setOwnedIdentities] = useState<any>([]);
-  const [price, setPrice] = useState<string>(
-    "0"
-  );
+  const [price, setPrice] = useState<string>("0");
   const { contract } = usePricingContract();
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: contract,
@@ -61,38 +61,12 @@ const Register: FunctionComponent<RegisterProps> = ({
   const encodedDomain = useEncoded(domain);
 
   const { data, error, execute } = useStarknetExecute({
-    calls: [
-      {
-        contractAddress:
-          "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-        entrypoint: "approve",
-        calldata: [
-          "0x020ca36ee7cf524e41dfbb8e8f22b60af47e63678bd5dc24acf72b674d1ddc08",
-          price,
-          0,
-        ],
-      },
-      {
-        contractAddress:
-          "0x020ca36ee7cf524e41dfbb8e8f22b60af47e63678bd5dc24acf72b674d1ddc08",
-        entrypoint: "buy",
-        calldata: [(new BN(tokenId)).toString(10), "0", encodedDomain.toString(10), (new BN(duration * 365)).toString(10), new BN(account?.slice(2), 16).toString(10)],
-      },
-    ],
+    calls: callData,
   });
 
-  console.log("err", error, account);
-
-  // const { data, loading, error, reset, execute } = useStarknetExecute({
-  //   calls,
-  //   metadata,
-  // });
-
   useEffect(() => {
-    if (priceError || !priceData)
-      setPrice("0");
-     else 
-      setPrice(new BN(priceData?.["price"].low.words[0]).toString(10))
+    if (priceError || !priceData) setPrice("0");
+    else setPrice(new BN(priceData?.["price"].low.words[0]).toString(10));
   }, [priceData, priceError]);
 
   useEffect(() => {
@@ -105,6 +79,66 @@ const Register: FunctionComponent<RegisterProps> = ({
         .then((data) => setOwnedIdentities(data.assets));
     }
   }, [account]);
+
+  useEffect(() => {
+    if (tokenId != 0) {
+      setCallData([
+        {
+          contractAddress:
+            "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+          entrypoint: "approve",
+          calldata: [
+            "0x020ca36ee7cf524e41dfbb8e8f22b60af47e63678bd5dc24acf72b674d1ddc08",
+            price,
+            0,
+          ],
+        },
+        {
+          contractAddress:
+            "0x020ca36ee7cf524e41dfbb8e8f22b60af47e63678bd5dc24acf72b674d1ddc08",
+          entrypoint: "buy",
+          calldata: [
+            new BN(tokenId).toString(10),
+            "0",
+            encodedDomain.toString(10),
+            new BN(duration * 365).toString(10),
+            new BN((account ?? "").slice(2), 16).toString(10),
+          ],
+        },
+      ]);
+    } else {
+      setCallData([
+        {
+          contractAddress:
+            "0x0798e884450c19e072d6620fefdbeb7387d0453d3fd51d95f5ace1f17633d88b",
+          entrypoint: "mint",
+          calldata: [new BN(newTokenId).toString(10), "0"],
+        },
+        {
+          contractAddress:
+            "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+          entrypoint: "approve",
+          calldata: [
+            "0x020ca36ee7cf524e41dfbb8e8f22b60af47e63678bd5dc24acf72b674d1ddc08",
+            price,
+            0,
+          ],
+        },
+        {
+          contractAddress:
+            "0x020ca36ee7cf524e41dfbb8e8f22b60af47e63678bd5dc24acf72b674d1ddc08",
+          entrypoint: "buy",
+          calldata: [
+            new BN(newTokenId).toString(10),
+            "0",
+            encodedDomain.toString(10),
+            new BN(duration * 365).toString(10),
+            new BN((account ?? "").slice(2), 16).toString(10),
+          ],
+        },
+      ]);
+    }
+  }, [tokenId]);
 
   function changeAddress(e: any): void {
     setTargetAddress(e.target.value);
@@ -206,9 +240,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             onClick={() => {
               execute();
             }}
-            disabled={
-              !Boolean(account) || !duration || !targetAddress || !tokenId
-            }
+            disabled={!Boolean(account) || !duration || !targetAddress}
           >
             Register
           </Button>

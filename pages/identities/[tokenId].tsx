@@ -48,15 +48,17 @@ const TokenIdPage: NextPage = () => {
       </div>
 
       {!identity ? (
-        <ThreeDots
-          wrapperClass="flex justify-center"
-          height="25"
-          width="80"
-          radius="9"
-          color="#19AA6E"
-          ariaLabel="three-dots-loading"
-          visible={true}
-        />
+        <div className={styles.container}>
+          <ThreeDots
+            wrapperClass="flex justify-center"
+            height="25"
+            width="80"
+            radius="9"
+            color="#19AA6E"
+            ariaLabel="three-dots-loading"
+            visible={true}
+          />
+        </div>
       ) : (
         <div className={styles2.containerIdentity}>
           <h1 className="sm:text-5xl text-5xl my-5">{identity.name}</h1>
