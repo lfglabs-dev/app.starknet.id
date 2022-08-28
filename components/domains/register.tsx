@@ -119,14 +119,14 @@ const Register: FunctionComponent<RegisterProps> = ({
             "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
           entrypoint: "approve",
           calldata: [
-            "0x020ca36ee7cf524e41dfbb8e8f22b60af47e63678bd5dc24acf72b674d1ddc08",
+            "0x0449af81aa1b018adc9fc37dbceecdb8197a9c7b50e252f714a3c0d502f76435",
             price,
             0,
           ],
         },
         {
           contractAddress:
-            "0x020ca36ee7cf524e41dfbb8e8f22b60af47e63678bd5dc24acf72b674d1ddc08",
+            "0x0449af81aa1b018adc9fc37dbceecdb8197a9c7b50e252f714a3c0d502f76435",
           entrypoint: "buy",
           calldata: [
             new BN(newTokenId).toString(10),
