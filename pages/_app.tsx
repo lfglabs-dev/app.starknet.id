@@ -8,8 +8,8 @@ import { InjectedConnector, StarknetProvider } from "@starknet-react/core";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const connectors = [
-    new InjectedConnector({ options: { id: "braavos" } }),
     new InjectedConnector({ options: { id: "argent-x" } }),
+    new InjectedConnector({ options: { id: "braavos" } }),
   ];
 
   return (
