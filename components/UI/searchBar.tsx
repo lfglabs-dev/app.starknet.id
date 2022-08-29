@@ -5,7 +5,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import { FunctionComponent, KeyboardEvent, useState } from "react";
 import { useIsValid } from "../../hooks/naming";
 
-const SearchBar: FunctionComponent = () => {
+type SearchBarProps = {
+  onChangeTypedValue: (typedValue: string) => void;
+};
+
+const SearchBar: FunctionComponent<SearchBarProps> = ({
+  onChangeTypedValue,
+}) => {
   const router = useRouter();
   const [typedValue, setTypedValue] = useState<string>("");
   const domainEncoded = useIsValid(typedValue);
@@ -22,6 +28,7 @@ const SearchBar: FunctionComponent = () => {
   }
 
   function search(typedValue: string) {
+    onChangeTypedValue(typedValue);
     router.push(`/search?domain=${typedValue}`);
   }
 

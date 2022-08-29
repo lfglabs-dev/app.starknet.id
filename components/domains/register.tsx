@@ -110,12 +110,6 @@ const Register: FunctionComponent<RegisterProps> = ({
       setCallData([
         {
           contractAddress:
-            "0x0798e884450c19e072d6620fefdbeb7387d0453d3fd51d95f5ace1f17633d88b",
-          entrypoint: "mint",
-          calldata: [new BN(newTokenId).toString(10), "0"],
-        },
-        {
-          contractAddress:
             "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
           entrypoint: "approve",
           calldata: [
@@ -123,6 +117,12 @@ const Register: FunctionComponent<RegisterProps> = ({
             price,
             0,
           ],
+        },
+        {
+          contractAddress:
+            "0x0798e884450c19e072d6620fefdbeb7387d0453d3fd51d95f5ace1f17633d88b",
+          entrypoint: "mint",
+          calldata: [new BN(newTokenId).toString(10), "0"],
         },
         {
           contractAddress:
@@ -138,7 +138,7 @@ const Register: FunctionComponent<RegisterProps> = ({
         },
       ]);
     }
-  }, [tokenId]);
+  }, [tokenId, price, encodedDomain, duration, account, newTokenId]);
 
   function changeAddress(e: any): void {
     setTargetAddress(e.target.value);

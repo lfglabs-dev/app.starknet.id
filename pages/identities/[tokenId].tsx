@@ -19,20 +19,11 @@ type Identity = {
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
   const tokenId: string = router.query.tokenId as string;
-  const tokenIdAbbreviation =
-    tokenId?.length > 5
-      ? tokenId?.charAt(0) +
-        tokenId?.charAt(1) +
-        "..." +
-        tokenId?.charAt(tokenId?.length - 2) +
-        tokenId?.charAt(tokenId?.length - 1)
-      : tokenId;
   const [identity, setIdentity] = useState<Identity>();
-  const { account } = useStarknet();
 
   useEffect(() => {
     if (tokenId) {
-      fetch(`https://goerli.indexer.starknet.id/uri?id=${tokenId}`)
+      fetch(`https://indexer.starknet.id/uri?id=${tokenId}`)
         .then((response) => response.json())
         .then((data) => setIdentity(data));
     }

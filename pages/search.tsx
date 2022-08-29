@@ -11,8 +11,8 @@ import { useAddressFromDomain } from "../hooks/naming";
 
 const SearchPage: NextPage = () => {
   const router = useRouter();
-  const domain = (router.query.domain as string) ?? "";
   const [isMenuVisible, setIsMenuVisible] = useState<boolean>(false);
+  const [domain, setDomain] = useState((router.query.domain as string) ?? "");
 
   const [isAvailable, setIsAvailable] = useState<boolean | undefined>(
     undefined
@@ -37,7 +37,9 @@ const SearchPage: NextPage = () => {
       </div>
       <div className={styles2.container}>
         <div className="sm:w-2/3 w-4/5 min-w-fit mt-5">
-          <SearchBar />
+          <SearchBar
+            onChangeTypedValue={(typeValue: string) => setDomain(typeValue)}
+          />
           {domain && (
             <DomainCard
               isAvailable={isAvailable}
