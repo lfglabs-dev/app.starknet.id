@@ -202,7 +202,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                 <ListItemIcon>
                   <img
                     width={"25px"}
-                    src="/visuals/starknetIdLogo.png"
+                    src="/visuals/StarknetIdLogo.png"
                     alt="starknet.id avatar"
                   />
                 </ListItemIcon>
