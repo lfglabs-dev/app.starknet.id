@@ -12,13 +12,18 @@ import {
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import styles from "../../styles/home.module.css";
-import { usePricingContract } from "../../hooks/contracts";
+import {
+  starknetIdContract,
+  usePricingContract,
+  etherContract,
+  namingContract,
+} from "../../hooks/contracts";
 import {
   useStarknet,
   useStarknetCall,
   // useStarknetExecute,
 } from "@starknet-react/core";
-import { stringToFelt } from "../../utils/felt";
+import { hexToFelt, stringToFelt } from "../../utils/felt";
 import { Call } from "starknet";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
@@ -49,7 +54,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [tokenId, setTokenId] = useState<number>(0);
   const newTokenId: number = Math.floor(Math.random() * 1000000000000);
   const [callData, setCallData] = useState<any>();
-  const [ownedIdentities, setOwnedIdentities] = useState<any>([]);
+  const [ownedIdentities, setOwnedIdentities] = useState<number[] | []>([]);
   const [price, setPrice] = useState<string>("0");
   const { contract } = usePricingContract();
   const { data: priceData, error: priceError } = useStarknetCall({
@@ -73,29 +78,27 @@ const Register: FunctionComponent<RegisterProps> = ({
     if (account) {
       setTargetAddress(account);
       fetch(
-        `https://api-testnet.aspect.co/api/v0/assets?contract_address=0x0798e884450c19e072d6620fefdbeb7387d0453d3fd51d95f5ace1f17633d88b&owner_address=${account}&sort_by=minted_at&order_by=desc`
+        `https://goerli.indexer.starknet.id/address_to_available_ids?address=${hexToFelt(
+          account
+        )?.replace("0x", "")}`
       )
         .then((response) => response.json())
-        .then((data) => setOwnedIdentities(data.assets));
+        .then((data) => setOwnedIdentities(data.ids));
     }
   }, [account]);
 
   useEffect(() => {
+    if (!isAvailable) return;
+
     if (tokenId != 0) {
       setCallData([
         {
-          contractAddress:
-            "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+          contractAddress: etherContract,
           entrypoint: "approve",
-          calldata: [
-            "0x0449af81aa1b018adc9fc37dbceecdb8197a9c7b50e252f714a3c0d502f76435",
-            price,
-            0,
-          ],
+          calldata: [namingContract, price, 0],
         },
         {
-          contractAddress:
-            "0x0449af81aa1b018adc9fc37dbceecdb8197a9c7b50e252f714a3c0d502f76435",
+          contractAddress: namingContract,
           entrypoint: "buy",
           calldata: [
             new BN(tokenId).toString(10),
@@ -109,24 +112,17 @@ const Register: FunctionComponent<RegisterProps> = ({
     } else {
       setCallData([
         {
-          contractAddress:
-            "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
+          contractAddress: etherContract,
           entrypoint: "approve",
-          calldata: [
-            "0x0449af81aa1b018adc9fc37dbceecdb8197a9c7b50e252f714a3c0d502f76435",
-            price,
-            0,
-          ],
+          calldata: [namingContract, price, 0],
         },
         {
-          contractAddress:
-            "0x0798e884450c19e072d6620fefdbeb7387d0453d3fd51d95f5ace1f17633d88b",
+          contractAddress: starknetIdContract,
           entrypoint: "mint",
           calldata: [new BN(newTokenId).toString(10), "0"],
         },
         {
-          contractAddress:
-            "0x0449af81aa1b018adc9fc37dbceecdb8197a9c7b50e252f714a3c0d502f76435",
+          contractAddress: namingContract,
           entrypoint: "buy",
           calldata: [
             new BN(newTokenId).toString(10),
@@ -138,7 +134,7 @@ const Register: FunctionComponent<RegisterProps> = ({
         },
       ]);
     }
-  }, [tokenId, price, encodedDomain, duration, account, newTokenId]);
+  }, [tokenId, domain, duration, account, isAvailable]);
 
   function changeAddress(e: any): void {
     setTargetAddress(e.target.value);
@@ -192,7 +188,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             <InputLabel>Starknet.id</InputLabel>
             <Select
               value={tokenId}
-              defaultValue={ownedIdentities[0]?.token_id}
+              defaultValue={ownedIdentities[0]}
               label="Starknet.id"
               onChange={changeTokenId}
               sx={{
@@ -213,16 +209,16 @@ const Register: FunctionComponent<RegisterProps> = ({
                 </ListItemIcon>
                 <ListItemText primary="Mint a new starknet.id" />
               </MenuItem>
-              {ownedIdentities.map((identity: Identity, index: number) => (
-                <MenuItem key={index} value={identity.token_id}>
+              {ownedIdentities.map((tokenId: number, index: number) => (
+                <MenuItem key={index} value={tokenId}>
                   <ListItemIcon>
                     <img
                       width={"25px"}
-                      src={identity.image_uri}
+                      src={`https://www.starknet.id/api/identicons/${tokenId}.svg`}
                       alt="starknet.id avatar"
                     />
                   </ListItemIcon>
-                  <ListItemText primary={identity.token_id} />
+                  <ListItemText primary={tokenId} />
                 </MenuItem>
               ))}
             </Select>

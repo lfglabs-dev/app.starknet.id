@@ -16,10 +16,11 @@ import { useStarknetIdContract } from "../hooks/contracts";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
+import { hexToFelt } from "../utils/felt";
 
 const Home: NextPage = () => {
   const { account } = useStarknet();
-  const [ownedIdentities, setOwnedIdentities] = useState([]);
+  const [ownedIdentities, setOwnedIdentities] = useState<number[]>([]);
   const [rightTokenId, setRightTokenId] = useState<number | undefined>(
     undefined
   );
@@ -53,10 +54,12 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (account) {
       fetch(
-        `https://api-testnet.aspect.co/api/v0/assets?contract_address=0x0798e884450c19e072d6620fefdbeb7387d0453d3fd51d95f5ace1f17633d88b&owner_address=${account}&sort_by=minted_at&order_by=desc`
+        `https://goerli.indexer.starknet.id/address_to_ids?address=${hexToFelt(
+          account
+        )?.replace("0x", "")}`
       )
         .then((response) => response.json())
-        .then((data) => setOwnedIdentities(data.assets));
+        .then((data) => setOwnedIdentities(data.ids));
     }
   }, [account]);
 
@@ -88,7 +91,7 @@ const Home: NextPage = () => {
           <>
             <h1 className={styles.title}>Your Starknet identities</h1>
             <div className={styles.containerGallery}>
-              <IdentitiesGallery identities={ownedIdentities as Identity[]} />
+              <IdentitiesGallery identities={ownedIdentities} />
               <MintIdentity onClick={() => mint()} />
             </div>
           </>

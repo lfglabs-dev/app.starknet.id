@@ -6,7 +6,7 @@ import { FunctionComponent, KeyboardEvent, useState } from "react";
 import { useIsValid } from "../../hooks/naming";
 
 type SearchBarProps = {
-  onChangeTypedValue: (typedValue: string) => void;
+  onChangeTypedValue?: (typedValue: string) => void;
 };
 
 const SearchBar: FunctionComponent<SearchBarProps> = ({
@@ -28,7 +28,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   }
 
   function search(typedValue: string) {
-    onChangeTypedValue(typedValue);
+    onChangeTypedValue?.(typedValue);
     router.push(`/search?domain=${typedValue}`);
   }
 

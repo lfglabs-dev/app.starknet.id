@@ -5,14 +5,16 @@ const LoadingScreen: FunctionComponent = () => {
   const [loadingMessageNumber, setLoadingMessageNumber] = useState<number>(0);
   const loadingMessages: string[] = [
     "Patience is a virtue, especially when it comes to ETH 2.0",
+    "Patience is also a virtue when it comes to Starknet testnet",
     "Ok it's slow but at least it does not stop like Solana",
-    "I have no inspiration left ser, just wait.",
+    "Just a few moments left ser",
+    "Alright now it shouldn't be long",
   ];
 
   setTimeout(() => {
-    if (loadingMessageNumber != 2)
+    if (loadingMessageNumber != loadingMessages.length - 1)
       setLoadingMessageNumber(loadingMessageNumber + 1);
-  }, 10000);
+  }, 15000);
 
   return (
     <>

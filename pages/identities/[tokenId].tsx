@@ -23,7 +23,7 @@ const TokenIdPage: NextPage = () => {
 
   useEffect(() => {
     if (tokenId) {
-      fetch(`https://indexer.starknet.id/uri?id=${tokenId}`)
+      fetch(`https://goerli.indexer.starknet.id/uri?id=${tokenId}`)
         .then((response) => response.json())
         .then((data) => setIdentity(data));
     }
@@ -55,7 +55,7 @@ const TokenIdPage: NextPage = () => {
           <h1 className="sm:text-5xl text-5xl my-5">{identity.name}</h1>
           <div className="mt-3">
             <Image
-              src={identity.image}
+              src={`https://www.starknet.id/api/identicons/${tokenId}.svg`}
               height={200}
               width={200}
               alt="identicon"

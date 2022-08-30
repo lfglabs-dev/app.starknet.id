@@ -1,7 +1,10 @@
 import React, { FunctionComponent } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { useStarknetCall } from "@starknet-react/core";
-import { useStarknetIdContract } from "../../../hooks/contracts";
+import {
+  useStarknetIdContract,
+  verifierContract,
+} from "../../../hooks/contracts";
 import { stringToFelt } from "../../../utils/felt";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -19,11 +22,7 @@ const Verified: FunctionComponent<VerifiedProps> = ({ type, width }) => {
   const { data, error } = useStarknetCall({
     contract: contract,
     method: "get_verifier_data",
-    args: [
-      [router.query.tokenId, 0],
-      stringToFelt(type),
-      "0x06520a4a1934c84a385a3088952c3812c96f9e9c614bc4d483daff5622ea9fad",
-    ],
+    args: [[router.query.tokenId, 0], stringToFelt(type), verifierContract],
   });
   const [isValid, setIsValid] = useState(false);
 

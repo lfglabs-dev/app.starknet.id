@@ -27,3 +27,7 @@ export function toFelt(number) {
   if (output.isNeg()) return output.add(P);
   return output;
 }
+
+export function hexToFelt(number) {
+  return new BN(number.slice(2), 16).toString(10);
+}
