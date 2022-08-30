@@ -104,7 +104,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             "0",
             encodedDomain.toString(10),
             new BN(duration * 365).toString(10),
-            new BN((account ?? "").slice(2), 16).toString(10),
+            new BN(targetAddress.slice(2), 16).toString(10),
           ],
         },
       ]);
@@ -128,12 +128,12 @@ const Register: FunctionComponent<RegisterProps> = ({
             "0",
             encodedDomain.toString(10),
             new BN(duration * 365).toString(10),
-            new BN((account ?? "").slice(2), 16).toString(10),
+            new BN(targetAddress.slice(2), 16).toString(10),
           ],
         },
       ]);
     }
-  }, [tokenId, domain, duration, account, isAvailable]);
+  }, [tokenId, domain, duration, targetAddress, isAvailable]);
 
   function changeAddress(e: any): void {
     setTargetAddress(e.target.value);
