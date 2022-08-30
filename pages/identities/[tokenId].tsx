@@ -54,8 +54,8 @@ const TokenIdPage: NextPage = () => {
         <div className={styles2.containerIdentity}>
           <h1 className="sm:text-5xl text-5xl my-5">{identity.name}</h1>
           <div className="mt-3">
-            <Image
-              src={`https://www.starknet.id/api/identicons/${tokenId}.svg`}
+            <img
+              src={`https://www.starknet.id/api/identicons/${tokenId}`}
               height={200}
               width={200}
               alt="identicon"

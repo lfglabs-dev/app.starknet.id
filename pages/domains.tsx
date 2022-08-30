@@ -19,12 +19,14 @@ const Domain: NextPage = () => {
       </div>
       <div className={styles2.containerSearch}>
         <div className={styles2.searchBarContainer}>
-          <Image
-            src="/visuals/starknetIdLogo.png"
-            height={250}
-            width={250}
-            alt="logo"
-          />
+          <div className="flex flex-col items-center">
+            <img
+              src="/visuals/starknetIdLogo.png"
+              height={250}
+              width={250}
+              alt="logo"
+            />
+          </div>
           <h1 className={styles.title}>Choose your .stark domain</h1>
           <div className="min-w-content mx-5 mt-5 flex justify-center align-center">
             <SearchBar />

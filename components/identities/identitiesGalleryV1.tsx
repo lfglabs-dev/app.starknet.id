@@ -2,7 +2,6 @@
 import React, { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
-import Image from "next/image";
 
 export type Identity = {
   image_uri: string;
@@ -22,10 +21,10 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
     <>
       {identities.map((tokenId, index) => (
         <div key={index} className={styles.imageGallery}>
-          <Image
+          <img
             width={150}
             height={150}
-            src={`https://www.starknet.id/api/identicons/${tokenId}.svg`}
+            src={`https://www.starknet.id/api/identicons/${tokenId}`}
             alt="avatar"
             onClick={() => router.push(`/identities/${tokenId}`)}
           />

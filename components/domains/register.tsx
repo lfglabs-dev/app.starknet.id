@@ -214,7 +214,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                   <ListItemIcon>
                     <img
                       width={"25px"}
-                      src={`https://www.starknet.id/api/identicons/${tokenId}.svg`}
+                      src={`https://www.starknet.id/api/identicons/${tokenId}`}
                       alt="starknet.id avatar"
                     />
                   </ListItemIcon>
