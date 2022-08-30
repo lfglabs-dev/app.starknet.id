@@ -1,4 +1,4 @@
-import styles from "../../styles/components/Wallets.module.css";
+import styles from "../../styles/components/wallets.module.css";
 import { Connector, useConnectors, useStarknet } from "@starknet-react/core";
 import Button from "./button";
 import { FunctionComponent, useEffect } from "react";

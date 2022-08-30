@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import { useAddressFromDomain } from "../../hooks/naming";
-import styles from "../../styles/home.module.css";
+import styles from "../../styles/Home.module.css";
 
 type DomainCardProps = {
   domain: string;

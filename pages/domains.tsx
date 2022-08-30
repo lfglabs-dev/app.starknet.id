@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import type { NextPage } from "next";
-import styles from "../styles/home.module.css";
+import styles from "../styles/Home.module.css";
 import styles2 from "../styles/domain.module.css";
 import { useRouter } from "next/router";
 import SearchBar from "../components/UI/searchBar";
