@@ -217,10 +217,6 @@
   {
     "inputs": [
       {
-        "name": "address",
-        "type": "felt"
-      },
-      {
         "name": "domain_len",
         "type": "felt"
       },
