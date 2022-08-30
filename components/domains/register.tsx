@@ -64,7 +64,6 @@ const Register: FunctionComponent<RegisterProps> = ({
   });
   const { account } = useStarknet();
   const encodedDomain = useEncoded(domain);
-
   const { data, error, execute } = useStarknetExecute({
     calls: callData,
   });

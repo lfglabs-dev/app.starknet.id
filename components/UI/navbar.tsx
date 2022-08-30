@@ -8,29 +8,33 @@ import Button from "./button";
 import { useConnectors, useStarknet } from "@starknet-react/core";
 import Wallets from "./wallets";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useDomainFromAddress } from "../../hooks/naming";
+import { BN } from "bn.js";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
   const [hasWallet, setHasWallet] = useState<boolean>(false);
   const { account } = useStarknet();
   const [isConnected, setIsConnected] = useState<boolean>(false);
-
   const green = "#19AA6E";
   const brown = "#402d28";
   const { available, connect, disconnect } = useConnectors();
+  const { domain } = useDomainFromAddress(
+    new BN((account ?? "").slice(2), 16).toString(10)
+  );
 
-  function minifyAddress(address: string | undefined): string | undefined {
-    if (!address) {
-      return;
+  function minifyAddressOrDomain(address: string): string | undefined {
+    if (address.length > 24) {
+      const firstPart =
+        address.charAt(0) + address.charAt(1) + address.charAt(2);
+      const secondPart =
+        address.charAt(address.length - 3) +
+        address.charAt(address.length - 2) +
+        address.charAt(address.length - 1);
+      return firstPart + "..." + secondPart;
+    } else {
+      return address;
     }
-
-    const firstPart = address.charAt(0) + address.charAt(1) + address.charAt(2);
-    const secondPart =
-      address.charAt(address.length - 3) +
-      address.charAt(address.length - 2) +
-      address.charAt(address.length - 1);
-
-    return firstPart + "..." + secondPart;
   }
 
   useEffect(() => {
@@ -81,7 +85,11 @@ const Navbar: FunctionComponent = () => {
                 >
                   {isConnected ? (
                     <div className="flex justify-center items-center">
-                      <div>{minifyAddress(account)}</div>
+                      <div>
+                        {minifyAddressOrDomain(
+                          domain ? domain : (account as string)
+                        )}
+                      </div>
                       <LogoutIcon className="ml-3" />
                     </div>
                   ) : (
@@ -172,7 +180,11 @@ const Navbar: FunctionComponent = () => {
                           : setHasWallet(true)
                       }
                     >
-                      {isConnected ? minifyAddress(account) : "connect"}
+                      {isConnected
+                        ? minifyAddressOrDomain(
+                            domain ? domain : (account as string)
+                          )
+                        : "connect"}
                     </Button>
                   </div>
                 </div>

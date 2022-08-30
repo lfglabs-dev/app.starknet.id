@@ -65,12 +65,12 @@ export function useDomainFromAddress(address: BigNumberish): DomainData {
     args: [address],
   });
 
-  if (!data || (data as any[]).length === 0)
+  if (!data || data?.["domain_len"] === 0) {
     return { domain: "", error: error ? error : "error" };
-
-  let domain = useDecoded((data as BN[][])[0]) + ".stark";
-
-  return { domain, error };
+  } else {
+    let domain = useDecoded(data[0] as any);
+    return { domain: domain as any, error };
+  }
 }
 
 type AddressData = {

@@ -7,9 +7,10 @@ import Button from "../../components/UI/button";
 import ClickableIcon from "../../components/UI/icons/clickableIcon";
 import { NextPage } from "next";
 import { ThreeDots } from "react-loader-spinner";
-import { useStarknetInvoke } from "@starknet-react/core";
+import { useStarknet, useStarknetInvoke } from "@starknet-react/core";
 import { useNamingContract } from "../../hooks/contracts";
-import { useEncoded } from "../../hooks/naming";
+import { useDomainFromAddress, useEncoded } from "../../hooks/naming";
+import { BN } from "bn.js";
 
 type Identity = {
   name: string;
@@ -29,6 +30,10 @@ const TokenIdPage: NextPage = () => {
     contract: contract,
     method: "set_address_to_domain",
   });
+  const { account } = useStarknet();
+  const { domain } = useDomainFromAddress(
+    new BN((account ?? "").slice(2), 16).toString(10)
+  );
 
   useEffect(() => {
     if (tokenId) {
@@ -116,7 +121,9 @@ const TokenIdPage: NextPage = () => {
             </div>
           </div>
           <div className="mt-5 flex flex-col">
-            {identity && identity.name.includes(".stark") ? (
+            {identity &&
+            identity.name.includes(".stark") &&
+            domain != identity.name ? (
               <Button onClick={() => setAddressToDomain()}>
                 Set as main domain
               </Button>
