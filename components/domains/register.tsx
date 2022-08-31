@@ -28,6 +28,7 @@ import { Call } from "starknet";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
+import { isHexString } from "../../hooks/string";
 
 type RegisterProps = {
   domain: string;
@@ -136,7 +137,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   }, [tokenId, duration, targetAddress, isAvailable, price, domain]);
 
   function changeAddress(e: any): void {
-    setTargetAddress(e.target.value);
+    isHexString(e.target.value) ? setTargetAddress(e.target.value) : null;
   }
 
   function changeDuration(e: any): void {
