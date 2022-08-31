@@ -125,9 +125,19 @@ export default function Twitter() {
   return (
     <div className={styles.screen}>
       <div className={styles.container}>
-        {!isConnected && (
-          <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
-        )}
+        {screen === "verifyTwitter" &&
+          (!isConnected ? (
+            <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
+          ) : (
+            <>
+              <h1 className="sm:text-5xl text-5xl mt-4">
+                It&apos;s time to verify your twitter on chain !
+              </h1>
+              <div className="mt-8">
+                <Button onClick={verifyTwitter}>Verify my Twitter</Button>
+              </div>
+            </>
+          ))}
         {screen === "loading" && <LoadingScreen />}
         {errorScreen && (
           <ErrorScreen
@@ -142,16 +152,6 @@ export default function Twitter() {
               buttonText="Get back to your starknet identity"
               successMessage="Congrats, your twitter is verified !"
             />
-          </>
-        )}
-        {screen === "verifyTwitter" && (
-          <>
-            <h1 className="sm:text-5xl text-5xl mt-4">
-              It&apos;s time to verify your twitter on chain !
-            </h1>
-            <div className="mt-8">
-              <Button onClick={verifyTwitter}>Verify my Twitter</Button>
-            </div>
           </>
         )}
       </div>

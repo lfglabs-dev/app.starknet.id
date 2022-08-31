@@ -125,9 +125,19 @@ export default function Github() {
   return (
     <div className={styles.screen}>
       <div className={styles.container}>
-        {!isConnected && (
-          <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
-        )}
+        {screen === "verifyGithub" &&
+          (!isConnected ? (
+            <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
+          ) : (
+            <>
+              <h1 className="sm:text-5xl text-5xl mt-4">
+                It&apos;s time to verify your github on chain !
+              </h1>
+              <div className="mt-8">
+                <Button onClick={verifyGithub}>Verify my Github</Button>
+              </div>
+            </>
+          ))}
         {screen === "loading" && <LoadingScreen />}
         {errorScreen && (
           <ErrorScreen
@@ -150,16 +160,6 @@ export default function Github() {
                 Check your transaction state
               </a>
             </p> */}
-          </>
-        )}
-        {screen === "verifyGithub" && (
-          <>
-            <h1 className="sm:text-5xl text-5xl mt-4">
-              It&apos;s time to verify your github on chain !
-            </h1>
-            <div className="mt-8">
-              <Button onClick={verifyGithub}>Verify my Github</Button>
-            </div>
           </>
         )}
       </div>
