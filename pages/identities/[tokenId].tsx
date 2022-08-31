@@ -59,67 +59,78 @@ const TokenIdPage: NextPage = () => {
       <div className={styles.secondLeaf}>
         <img alt="leaf" src="/leaves/leaf_1.png" />
       </div>
+      {!identity ? (
+        <ThreeDots
+          wrapperClass="flex justify-center"
+          height="25"
+          width="80"
+          radius="9"
+          color="#19AA6E"
+          ariaLabel="three-dots-loading"
+          visible={true}
+        />
+      ) : (
+        <div className={styles2.containerIdentity}>
+          <h1 className="sm:text-5xl text-5xl my-5">{identity.name}</h1>
+          <div className="mt-3">
+            <img
+              src={`https://www.starknet.id/api/identicons/${tokenId}`}
+              height={200}
+              width={200}
+              alt="identicon"
+            />
+          </div>
 
-      <div className={styles2.containerIdentity}>
-        <h1 className="sm:text-5xl text-5xl my-5">Starknet ID : {tokenId}</h1>
-        <div className="mt-3">
-          <img
-            src={`https://www.starknet.id/api/identicons/${tokenId}`}
-            height={200}
-            width={200}
-            alt="identicon"
-          />
-        </div>
-
-        <div className="flex">
-          <div className="m-1">
-            <ClickableIcon
-              icon="twitter"
-              onClick={() => {
-                sessionStorage.setItem("tokenId", tokenId);
-                router.push(
-                  "https://twitter.com/i/oauth2/authorize?response_type=code&client_id=Rkp6QlJxQzUzbTZtRVljY2paS0k6MTpjaQ&redirect_uri=https://starknet.id/twitter&scope=users.read%20tweet.read&state=state&code_challenge=challenge&code_challenge_method=plain"
-                );
-              }}
-            />
+          <div className="flex">
+            <div className="m-1">
+              <ClickableIcon
+                icon="twitter"
+                onClick={() => {
+                  sessionStorage.setItem("tokenId", tokenId);
+                  router.push(
+                    "https://twitter.com/i/oauth2/authorize?response_type=code&client_id=Rkp6QlJxQzUzbTZtRVljY2paS0k6MTpjaQ&redirect_uri=https://goerli.app.starknet.id/twitter&scope=users.read%20tweet.read&state=state&code_challenge=challenge&code_challenge_method=plain"
+                  );
+                }}
+              />
+            </div>
+            <div className="m-1">
+              <ClickableIcon
+                icon="discord"
+                onClick={() => {
+                  sessionStorage.setItem("tokenId", tokenId);
+                  router.push(
+                    "https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=https%3A%2F%2Fgoerli.app.starknet.id%2Fdiscord&response_type=code&scope=identify"
+                  );
+                }}
+              />
+              <div className="flex justify-center items-center"></div>
+            </div>
+            <div className="m-1">
+              <ClickableIcon
+                icon="github"
+                onClick={() => {
+                  sessionStorage.setItem("tokenId", tokenId);
+                  router.push(
+                    "https://github.com/login/oauth/authorize?client_id=bd72ec641d75c2608121"
+                  );
+                }}
+              />
+            </div>
           </div>
-          <div className="m-1">
-            <ClickableIcon
-              icon="discord"
-              onClick={() => {
-                sessionStorage.setItem("tokenId", tokenId);
-                router.push(
-                  "https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=https%3A%2F%2Fstarknet.id%2Fdiscord&response_type=code&scope=identify"
-                );
-              }}
-            />
-            <div className="flex justify-center items-center"></div>
-          </div>
-          <div className="m-1">
-            <ClickableIcon
-              icon="github"
-              onClick={() => {
-                sessionStorage.setItem("tokenId", tokenId);
-                router.push(
-                  "https://github.com/login/oauth/authorize?client_id=bd72ec641d75c2608121"
-                );
-              }}
-            />
-          </div>
-        </div>
-        <div className="mt-5 flex flex-col">
-          {identity &&
-          identity.name.includes(".stark") &&
-          domain != identity.name ? (
-            <Button onClick={() => setAddressToDomain()}>
-              Set as main domain
+          <div className="mt-5 flex flex-col">
+            {identity &&
+            identity.name.includes(".stark") &&
+            domain != identity.name ? (
+              <Button onClick={() => setAddressToDomain()}>
+                Set as main domain
+              </Button>
+            ) : null}
+            <Button onClick={() => router.push("/")}>
+              Back to your identities
             </Button>
-          ) : null}
-          <Button onClick={() => router.push("/")}>
-            Back to your identities
-          </Button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
