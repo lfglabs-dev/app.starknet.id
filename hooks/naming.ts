@@ -14,10 +14,8 @@ const bigAlphabetSizePlusOne = new BN(bigAlphabet.length + 1);
 export function useDecoded(encoded: BN[]): string {
   let decoded = "";
   for (let subdomain of encoded) {
-    console.log("hey")
     while (!subdomain.isZero()) {
       const code = subdomain.mod(basicSizePlusOne).toNumber();
-      console.log("code:", code)
       subdomain = subdomain.div(basicSizePlusOne);
       if (code === basicAlphabet.length) {
         const nextSubdomain = subdomain.div(bigAlphabetSizePlusOne);
