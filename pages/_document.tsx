@@ -11,8 +11,8 @@ export default function Document() {
                 <meta property="og:title" content="Starknet.ID" />
                 <meta property="og:type" content="website" />
                 <meta property="og:description" content="Mint your Starknet ID and connect it to discord, twitter and other external services." />
-                <meta property="og:url" content="%PUBLIC_URL%" />
-                <meta property="og:image" content="%PUBLIC_URL%/visuals/StarknetIdLogo.png" />
+                <meta property="og:url" content="https://goerli.app.starknet.id/" />
+                <meta property="og:image" content="/visuals/StarknetIdLogo.png" />
                 <meta name="description" content="Use your Starknet ID to prove your identity on-chain." />
             </Head>
 
