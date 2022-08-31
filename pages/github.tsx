@@ -125,30 +125,9 @@ export default function Github() {
   return (
     <div className={styles.screen}>
       <div className={styles.container}>
-        {!isConnected &&
-          connectors.map((connector) =>
-            connector.available() && connector.options.id === "argent-x" ? (
-              <>
-                {hasWallet ? (
-                  <Wallets close={() => setHasWallet(false)} />
-                ) : null}
-                <h1 className="sm:text-5xl text-5xl">
-                  You need to connect anon
-                </h1>
-                <div className="mt-8">
-                  <Button
-                    onClick={() =>
-                      available.length === 1
-                        ? connect(available[0])
-                        : setHasWallet(true)
-                    }
-                  >
-                    Connect Wallet
-                  </Button>
-                </div>
-              </>
-            ) : null
-          )}
+        {!isConnected && (
+          <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
+        )}
         {screen === "loading" && <LoadingScreen />}
         {errorScreen && (
           <ErrorScreen

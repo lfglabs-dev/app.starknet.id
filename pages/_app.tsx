@@ -5,11 +5,10 @@ import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
 import { InjectedConnector, StarknetProvider } from "@starknet-react/core";
-import { useEffect } from "react";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const connectors = [
-    new InjectedConnector({ options: { id: "argent-x" } }),
+    new InjectedConnector({ options: { id: "argentX" } }),
     new InjectedConnector({ options: { id: "braavos" } }),
   ];
 

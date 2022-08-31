@@ -12,7 +12,7 @@ type WalletsProps = {
 };
 
 const Icon: FunctionComponent<IconProps> = ({ id }) => {
-  if (id === "argent-x")
+  if (id === "argentX")
     return (
       <svg
         className={styles.button_icon}
