@@ -18,7 +18,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <ThemeProvider theme={theme}>
           <Head>
             <title>Starknet.id</title>
-          </Head>{" "}
+          </Head>
           <Navbar />
           <Component {...pageProps} />
         </ThemeProvider>
