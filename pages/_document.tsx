@@ -10,7 +10,7 @@ export default function Document() {
                 <meta property="og:site_name" content="StarkNet identity and naming service" />
                 <meta property="og:title" content="Starknet.ID" />
                 <meta property="og:type" content="website" />
-                <meta property="og:description" content="Identity and naming service for Starknet. Mint your identity and choose your .stark domain now" />
+                <meta property="og:description" content="Identity and naming service for Starknet. Mint your identity and choose your .stark domain now 🔥" />
                 <meta property="og:url" content="https://goerli.app.starknet.id/" />
                 <meta property="og:image" content="/visuals/StarknetIdLogo.png" />
                 <meta name="description" content="Use your Starknet ID to prove your identity on-chain." />
