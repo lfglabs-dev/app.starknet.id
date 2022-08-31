@@ -5,6 +5,7 @@ import { useStarknetCall } from "@starknet-react/core";
 import { useNamingContract } from "./contracts";
 
 const basicAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-";
+const basicSizePlusOne = new BN(basicAlphabet.length + 1);
 const bigAlphabet = "这来";
 const basicAlphabetSize = new BN(basicAlphabet.length);
 const bigAlphabetSize = new BN(bigAlphabet.length);
@@ -13,9 +14,9 @@ export function useDecoded(encoded: BN[]): string {
   let decoded = "";
   for (let subdomain of encoded) {
     while (!subdomain.isZero()) {
-      const code = subdomain.mod(basicAlphabetSize).toNumber();
-      subdomain = subdomain.div(basicAlphabetSize);
-      if (code === basicAlphabet.length - 1) {
+      const code = subdomain.mod(basicSizePlusOne).toNumber();
+      subdomain = subdomain.div(basicSizePlusOne);
+      if (code === basicAlphabet.length) {
         let code2 = subdomain.mod(bigAlphabetSize).toNumber();
         decoded += basicAlphabet[code2];
         subdomain = subdomain.div(bigAlphabetSize);
@@ -27,9 +28,8 @@ export function useDecoded(encoded: BN[]): string {
 }
 
 export function useEncoded(decoded: string): BN {
-  var encoded = new BN(0);
-  var multiplier = new BN(1);
-  const basicSizeMinusOne = new BN(basicAlphabet.length - 1);
+  let encoded = new BN(0);
+  let multiplier = new BN(1);
 
   for (let char of decoded) {
     const index = basicAlphabet.indexOf(char);
@@ -38,11 +38,11 @@ export function useEncoded(decoded: string): BN {
     if (index !== -1) {
       // add encoded + multiplier * index
       encoded = encoded.add(multiplier.mul(bnIndex));
-      multiplier = multiplier.mul(basicAlphabetSize);
+      multiplier = multiplier.mul(basicSizePlusOne);
     } else {
-      // add encoded + multiplier * (basicAlphabetSize-1)
-      encoded = encoded.add(multiplier.mul(basicSizeMinusOne));
-      multiplier = multiplier.mul(basicAlphabetSize);
+      // add encoded + multiplier * (basicAlphabetSize)
+      encoded = encoded.add(multiplier.mul(basicAlphabetSize));
+      multiplier = multiplier.mul(basicSizePlusOne);
       // add encoded + multiplier * index
       encoded = encoded.add(multiplier.mul(bnIndex));
       multiplier = multiplier.mul(bigAlphabetSize);
