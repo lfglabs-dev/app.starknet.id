@@ -16,6 +16,8 @@ const Navbar: FunctionComponent = () => {
   const [hasWallet, setHasWallet] = useState<boolean>(false);
   const { account } = useStarknet();
   const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [isDisconnectedOnClick, setIsDisconnectedOnClick] =
+    useState<boolean>(false);
   const green = "#19AA6E";
   const brown = "#402d28";
   const { available, connect, disconnect } = useConnectors();
@@ -23,7 +25,9 @@ const Navbar: FunctionComponent = () => {
     new BN((account ?? "").slice(2), 16).toString(10)
   );
 
-  function minifyAddressOrDomain(address: string): string | undefined {
+  function minifyAddressOrDomain(address?: string): string | undefined {
+    if (!address) return;
+
     if (address.length > 24) {
       const firstPart =
         address.charAt(0) + address.charAt(1) + address.charAt(2);
@@ -37,9 +41,20 @@ const Navbar: FunctionComponent = () => {
     }
   }
 
+  function disconnectByClick(): void {
+    disconnect();
+    setIsDisconnectedOnClick(true);
+  }
+
   useEffect(() => {
     account ? setIsConnected(true) : setIsConnected(false);
   }, [account]);
+
+  useEffect(() => {
+    if (!isDisconnectedOnClick && !isConnected) {
+      available.length === 1 ? connect(available[0]) : setHasWallet(true);
+    }
+  }, [isConnected]);
 
   const handleNav = () => {
     setNav(!nav);
@@ -77,7 +92,7 @@ const Navbar: FunctionComponent = () => {
                 <Button
                   onClick={
                     isConnected
-                      ? () => disconnect()
+                      ? () => disconnectByClick()
                       : available.length === 1
                       ? () => connect(available[0])
                       : () => setHasWallet(true)
@@ -86,9 +101,7 @@ const Navbar: FunctionComponent = () => {
                   {isConnected ? (
                     <div className="flex justify-center items-center">
                       <div>
-                        {minifyAddressOrDomain(
-                          domain ? domain : (account as string)
-                        )}
+                        {minifyAddressOrDomain(domain ? domain : account)}
                       </div>
                       <LogoutIcon className="ml-3" />
                     </div>

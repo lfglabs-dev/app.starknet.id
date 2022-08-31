@@ -52,8 +52,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [targetAddress, setTargetAddress] = useState<string>(""); // mettre la get caller address par défaut
   const [duration, setDuration] = useState<number>(20);
   const [tokenId, setTokenId] = useState<number>(0);
-  const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-  const [callData, setCallData] = useState<any>();
+  const [callData, setCallData] = useState<any>([]);
   const [ownedIdentities, setOwnedIdentities] = useState<number[] | []>([]);
   const [price, setPrice] = useState<string>("0");
   const { contract } = usePricingContract();
@@ -88,6 +87,7 @@ const Register: FunctionComponent<RegisterProps> = ({
 
   useEffect(() => {
     if (!isAvailable) return;
+    const newTokenId: number = Math.floor(Math.random() * 1000000000000);
 
     if (tokenId != 0) {
       setCallData([
@@ -102,9 +102,9 @@ const Register: FunctionComponent<RegisterProps> = ({
           calldata: [
             new BN(tokenId).toString(10),
             "0",
-            encodedDomain.toString(10),
+            new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
-            new BN((account ?? "").slice(2), 16).toString(10),
+            new BN(targetAddress?.slice(2), 16).toString(10),
           ],
         },
       ]);
@@ -126,14 +126,14 @@ const Register: FunctionComponent<RegisterProps> = ({
           calldata: [
             new BN(newTokenId).toString(10),
             "0",
-            encodedDomain.toString(10),
+            new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
-            new BN((account ?? "").slice(2), 16).toString(10),
+            new BN(targetAddress?.slice(2), 16).toString(10),
           ],
         },
       ]);
     }
-  }, [tokenId, domain, duration, account, isAvailable]);
+  }, [tokenId, duration, targetAddress, isAvailable, price, domain]);
 
   function changeAddress(e: any): void {
     setTargetAddress(e.target.value);
@@ -202,7 +202,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                 <ListItemIcon>
                   <img
                     width={"25px"}
-                    src="/visuals/starknetIdLogo.png"
+                    src="/visuals/StarknetIdLogo.png"
                     alt="starknet.id avatar"
                   />
                 </ListItemIcon>

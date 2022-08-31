@@ -16,7 +16,7 @@ const SuccessScreen: FunctionComponent<SuccessScreenProps> = ({
   return (
     <div className="sm:w-2/3 w-4/5">
       <Image
-        src="/visuals/starknetIdLogo.png"
+        src="/visuals/StarknetIdLogo.png"
         height={300}
         width={300}
         alt="logo"
