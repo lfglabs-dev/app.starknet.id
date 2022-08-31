@@ -9,17 +9,30 @@ const basicSizePlusOne = new BN(basicAlphabet.length + 1);
 const bigAlphabet = "这来";
 const basicAlphabetSize = new BN(basicAlphabet.length);
 const bigAlphabetSize = new BN(bigAlphabet.length);
+const bigAlphabetSizePlusOne = new BN(bigAlphabet.length + 1);
 
 export function useDecoded(encoded: BN[]): string {
   let decoded = "";
   for (let subdomain of encoded) {
+    console.log("hey")
     while (!subdomain.isZero()) {
       const code = subdomain.mod(basicSizePlusOne).toNumber();
+      console.log("code:", code)
       subdomain = subdomain.div(basicSizePlusOne);
       if (code === basicAlphabet.length) {
-        let code2 = subdomain.mod(bigAlphabetSize).toNumber();
-        decoded += basicAlphabet[code2];
-        subdomain = subdomain.div(bigAlphabetSize);
+        const nextSubdomain = subdomain.div(bigAlphabetSizePlusOne);
+        if (nextSubdomain.isZero()) {
+          let code2 = subdomain.mod(bigAlphabetSizePlusOne).toNumber();
+          subdomain = nextSubdomain;
+          if (code2 === 0)
+            decoded += basicAlphabet[0];
+          else
+            decoded += bigAlphabet[code2 - 1];
+        } else {
+          let code2 = subdomain.mod(bigAlphabetSize).toNumber();
+          decoded += bigAlphabet[code2];
+          subdomain = subdomain.div(bigAlphabetSize)
+        }
       } else decoded += basicAlphabet[code];
     }
     decoded += ".";
@@ -31,20 +44,29 @@ export function useEncoded(decoded: string): BN {
   let encoded = new BN(0);
   let multiplier = new BN(1);
 
-  for (let char of decoded) {
+  for (let i = 0; i < decoded.length; i++) {
+    const char = decoded[i];
     const index = basicAlphabet.indexOf(char);
     const bnIndex = new BN(basicAlphabet.indexOf(char));
 
     if (index !== -1) {
       // add encoded + multiplier * index
-      encoded = encoded.add(multiplier.mul(bnIndex));
-      multiplier = multiplier.mul(basicSizePlusOne);
-    } else {
+      if (i === decoded.length - 1 && decoded[i] === basicAlphabet[0]) {
+        encoded = encoded.add(multiplier.mul(basicAlphabetSize));
+        multiplier = multiplier.mul(basicSizePlusOne);
+        // add 0
+        multiplier = multiplier.mul(basicSizePlusOne);
+      } else {
+        encoded = encoded.add(multiplier.mul(bnIndex));
+        multiplier = multiplier.mul(basicSizePlusOne);
+      }
+    } else if (bigAlphabet.indexOf(char) !== -1) {
       // add encoded + multiplier * (basicAlphabetSize)
       encoded = encoded.add(multiplier.mul(basicAlphabetSize));
       multiplier = multiplier.mul(basicSizePlusOne);
       // add encoded + multiplier * index
-      encoded = encoded.add(multiplier.mul(bnIndex));
+      let newid = (i === decoded.length - 1 ? 1 : 0) + bigAlphabet.indexOf(char);
+      encoded = encoded.add(multiplier.mul(new BN(newid)));
       multiplier = multiplier.mul(bigAlphabetSize);
     }
   }
