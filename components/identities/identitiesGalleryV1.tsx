@@ -9,7 +9,7 @@ export type Identity = {
 };
 
 type IdentitiesGalleryV1Props = {
-  identities: number[];
+  identities: Identity[];
 };
 
 const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
@@ -19,14 +19,14 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
 
   return (
     <>
-      {identities.map((tokenId, index) => (
+      {identities.map((Identity, index) => (
         <div key={index} className={styles.imageGallery}>
           <img
             width={150}
             height={150}
-            src={`https://www.starknet.id/api/identicons/${tokenId}`}
+            src={`https://www.starknet.id/api/identicons/${Identity.token_id}`}
             alt="avatar"
-            onClick={() => router.push(`/identities/${tokenId}`)}
+            onClick={() => router.push(`/identities/${Identity.token_id}`)}
           />
         </div>
       ))}
