@@ -3,6 +3,7 @@
   z-index: 0;
   position: relative;
   padding-top: 14vh;
+  background-color: var(--beige);
 }
 
 .container {

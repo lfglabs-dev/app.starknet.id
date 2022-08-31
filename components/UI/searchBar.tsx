@@ -37,7 +37,11 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
       fullWidth
       className="z-[0]"
       id="outlined-basic"
-      label="You username"
+      label={
+        domainEncoded != true
+          ? `"${domainEncoded}" is not a valid character`
+          : "Your Username"
+      }
       placeholder="Type your .stark domain here"
       variant="outlined"
       onChange={handleChange}
@@ -53,9 +57,6 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
           </InputAdornment>
         ),
       }}
-      helperText={
-        domainEncoded != true && `"${domainEncoded}" is not a valid character`
-      }
       error={domainEncoded != true}
     />
   );
