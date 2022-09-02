@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from "react";
-import { ThreeDots } from "react-loader-spinner";
 import { useStarknetCall } from "@starknet-react/core";
 import {
   useStarknetIdContract,
@@ -8,8 +7,8 @@ import {
 import { stringToFelt } from "../../../utils/felt";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import VerifiedIcon from "./verifiedIcon";
-import UnverifiedIcon from "./unverifiedIcon";
+import VerifiedIcon from "./icons/verifiedIcon";
+import UnverifiedIcon from "./icons/unverifiedIcon";
 
 type VerifiedProps = {
   type: string;

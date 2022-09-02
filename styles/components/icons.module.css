@@ -1,6 +1,5 @@
 .clickableIcon {
   cursor: pointer;
-  margin: 0.5rem;
   border-radius: 25%;
   position: relative;
 }
@@ -21,4 +20,9 @@
   background-color: rgba(82, 45, 24, 0.063);
   border-radius: 25%;
   padding: 0.25rem;
+}
+
+.button_icon {
+  width: 24px;
+  margin-right: 12px;
 }
