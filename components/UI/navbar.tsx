@@ -206,7 +206,7 @@ const Navbar: FunctionComponent = () => {
           </div>
         </div>
       </div>
-      {hasWallet ? <Wallets close={() => setHasWallet(false)} /> : null}
+      <Wallets closeWallet={() => setHasWallet(false)} hasWallet={hasWallet} />
     </>
   );
 };

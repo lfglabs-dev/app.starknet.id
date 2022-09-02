@@ -1,7 +1,4 @@
 import { FunctionComponent, useEffect, useState } from "react";
-// import DiscordIcon from "../UI/icons/discordIcon";
-// import TwitterIcon from "../UI/icons/twitterIcon";
-// import GithubIcon from "../UI/icons/githubIcon";
 import Link from "next/link";
 import {
   useAddressFromDomain,

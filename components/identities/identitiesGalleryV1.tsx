@@ -3,7 +3,7 @@ import React, { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
 
-export type Identity = {
+export type IndexerIdentity = {
   image_uri: string;
   token_id: string;
 };

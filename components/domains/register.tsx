@@ -35,22 +35,12 @@ type RegisterProps = {
   isAvailable?: boolean;
 };
 
-type Identity = {
-  token_id: number;
-  image_uri: string;
-};
-
-type starknetExecute = {
-  calls?: Call | Call[];
-  metadata?: any;
-};
-
 const Register: FunctionComponent<RegisterProps> = ({
   domain,
   isAvailable,
 }) => {
   const maxYearsToRegister = 25;
-  const [targetAddress, setTargetAddress] = useState<string>(""); // mettre la get caller address par défaut
+  const [targetAddress, setTargetAddress] = useState<string>("");
   const [duration, setDuration] = useState<number>(20);
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<any>([]);

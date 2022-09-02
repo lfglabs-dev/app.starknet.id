@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import PlusIcon from "../UI/icons/plusIcon";
+import PlusIcon from "../UI/iconsComponents/icons/plusIcon";
 import styles from "../../styles/components/icons.module.css";
 
 type MintIdentityProps = {

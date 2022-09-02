@@ -1,13 +1,13 @@
 .menu {
   position: absolute;
-  background-color: var(--soft-brown);
+  background-color: var(--beige);
   align-self: center;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   border-radius: 20px;
   padding: 45px;
-  max-width: 450px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
   z-index: 1000;
@@ -26,7 +26,7 @@
   top: 12px;
   right: 12px;
   width: 22px;
-  stroke: rgba(255, 255, 255, 0.931);
+  stroke: var(--brown);
   cursor: pointer;
   transition: 0.3s;
   background-color: transparent;
@@ -38,21 +38,16 @@
 }
 
 .menu_title {
-  color: white;
+  color: var(--brown);
   font-family: "Readex Pro", Verdana, sans-serif;
   font-size: 21px;
   font-weight: bold;
   text-align: center;
 }
 
-.button_icon {
-  width: 24px;
-  margin-right: 12px;
-}
-
 @media (max-width: 820px) {
   .menu {
-    width: 95%;
+    width: 90%;
   }
 
   .menu_title {
