@@ -9,24 +9,24 @@ export type IndexerIdentity = {
 };
 
 type IdentitiesGalleryV1Props = {
-  identities: number[];
+  identities?: IndexerIdentity[];
 };
 
 const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
-  identities,
+  identities = [],
 }) => {
   const router = useRouter();
 
   return (
     <>
-      {identities.map((tokenId, index) => (
+      {identities.map((data, index) => (
         <div key={index} className={styles.imageGallery}>
           <img
             width={150}
             height={150}
-            src={`https://www.starknet.id/api/identicons/${tokenId}`}
+            src={`https://www.starknet.id/api/identicons/${data.token_id}`}
             alt="avatar"
-            onClick={() => router.push(`/identities/${tokenId}`)}
+            onClick={() => router.push(`/identities/${data.token_id}`)}
           />
         </div>
       ))}

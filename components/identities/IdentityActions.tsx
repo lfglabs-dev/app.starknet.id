@@ -28,11 +28,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   domain,
 }) => {
   const router = useRouter();
+  const currentTokenId = router.query.tokenId;
   const [isAddressFormOpen, setOpenAddressForm] = useState<boolean>(false);
+  const [isTokenIdFormOpen, setOpenTokenIdForm] = useState<boolean>(false);
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [ownerAddress, setOwnerAddress] = useState<string | undefined>();
-  const handleOpen = () => setOpenAddressForm(true);
-  const handleClose = () => setOpenAddressForm(false);
+  const [tokenIdOwner, setTokenIdOwner] = useState<number | undefined>();
+  const handleOpenAddressForm = () => setOpenAddressForm(true);
+  const handleCloseAddressForm = () => setOpenAddressForm(false);
+  const handleOpenTokenIdForm = () => setOpenTokenIdForm(true);
+  const handleCloseTokenIdForm = () => setOpenTokenIdForm(false);
   const { account } = useStarknet();
   const { domain: domainFromAddress } = useDomainFromAddress(
     new BN((account ?? "").slice(2), 16).toString(10)
@@ -48,9 +53,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     contract: contract,
     method: "set_address_to_domain",
   });
-  const { invoke: set_domain_to_address, error } = useStarknetInvoke({
+  const { invoke: set_domain_to_address } = useStarknetInvoke({
     contract: contract,
     method: "set_domain_to_address",
+  });
+  const { invoke: transfer_domain } = useStarknetInvoke({
+    contract: contract,
+    method: "transfer_domain",
   });
 
   const isMainDomain =
@@ -71,6 +80,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   function changeAddress(e: any): void {
     isHexString(e.target.value) ? setTargetAddress(e.target.value) : null;
+  }
+
+  function changeTokenId(e: any): void {
+    setTokenIdOwner(e.target.value);
   }
 
   useEffect(() => {
@@ -95,6 +108,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         [encodedDomain.toString(10)],
         new BN(targetAddress?.slice(2), 16).toString(10),
       ],
+    });
+  }
+
+  function transferDomain(): void {
+    transfer_domain({
+      args: [[encodedDomain.toString(10)], [tokenIdOwner, 0]],
     });
   }
 
@@ -139,7 +158,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             <ClickableIcon
               title="Change redirection address"
               icon="change"
-              onClick={handleOpen}
+              onClick={handleOpenAddressForm}
+            />
+          </div>
+        )}
+        {domain && (
+          <div className="m-2">
+            <ClickableIcon
+              title="Transfer domain to another starknet.id"
+              icon="change2"
+              onClick={handleOpenTokenIdForm}
             />
           </div>
         )}
@@ -172,12 +200,15 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       <Modal
         disableAutoFocus
         open={isAddressFormOpen}
-        onClose={handleClose}
+        onClose={handleCloseAddressForm}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
         <div className={styles3.menu}>
-          <button className={styles3.menu_close} onClick={handleClose}>
+          <button
+            className={styles3.menu_close}
+            onClick={handleCloseAddressForm}
+          >
             <svg viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -212,6 +243,58 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 disabled={!targetAddress}
                 onClick={() => setDomainToAddress()}
               >
+                Set new address
+              </Button>
+            </div>
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        disableAutoFocus
+        open={isTokenIdFormOpen}
+        onClose={handleCloseTokenIdForm}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <div className={styles3.menu}>
+          <button
+            className={styles3.menu_close}
+            onClick={handleCloseTokenIdForm}
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+          <p className={styles3.menu_title}>Change the starknet.id owner</p>
+          <div className="mt-5 flex flex-col justify-center">
+            {ownerAddress && (
+              <p className="break-all">
+                <p className="break-all">
+                  <strong>Current owner (token id) :</strong>&nbsp;
+                  <span>{currentTokenId}</span>
+                </p>
+              </p>
+            )}
+            <div className="mt-5">
+              <TextField
+                fullWidth
+                label="new starknet.id owner"
+                id="outlined-basic"
+                value={tokenIdOwner}
+                variant="outlined"
+                type="number"
+                onChange={changeTokenId}
+                color="secondary"
+                required
+              />
+            </div>
+            <div className="mt-5">
+              <Button disabled={!tokenIdOwner} onClick={() => transferDomain()}>
                 Set new address
               </Button>
             </div>
