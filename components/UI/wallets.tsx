@@ -1,7 +1,12 @@
 import styles from "../../styles/components/wallets.module.css";
-import { Connector, useConnectors, useStarknet } from "@starknet-react/core";
+import {
+  Connector,
+  InjectedConnector,
+  useConnectors,
+  useStarknet,
+} from "@starknet-react/core";
 import Button from "./button";
-import { FunctionComponent, useEffect } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { Modal } from "@mui/material";
 import WalletIcons from "./iconsComponents/icons/walletIcons";
 
@@ -14,6 +19,9 @@ const Wallets: FunctionComponent<WalletsProps> = ({
   closeWallet,
   hasWallet,
 }) => {
+  const [manualConnectors, setManualConnectors] = useState<
+    InjectedConnector[] | undefined
+  >();
   const { available, connect, connectors } = useConnectors();
   const { account } = useStarknet();
 
@@ -22,6 +30,15 @@ const Wallets: FunctionComponent<WalletsProps> = ({
       closeWallet();
     }
   }, [account]);
+
+  useEffect(() => {
+    if (!available && !connectors) {
+      setManualConnectors([
+        new InjectedConnector({ options: { id: "argentX" } }),
+        new InjectedConnector({ options: { id: "braavos" } }),
+      ]);
+    }
+  }, [available, connectors]);
 
   function connectWallet(connector: Connector): void {
     connect(connector);
@@ -53,7 +70,7 @@ const Wallets: FunctionComponent<WalletsProps> = ({
           </svg>
         </button>
         <p className={styles.menu_title}>You need a Starknet wallet</p>
-        {(available || connectors).map((connector) => (
+        {(available || connectors || manualConnectors).map((connector) => (
           <div className="mt-5 flex justify-center" key={connector.id()}>
             <Button onClick={() => connectWallet(connector)}>
               <div className="flex">
