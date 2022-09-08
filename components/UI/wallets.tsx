@@ -19,9 +19,6 @@ const Wallets: FunctionComponent<WalletsProps> = ({
   closeWallet,
   hasWallet,
 }) => {
-  const [manualConnectors, setManualConnectors] = useState<
-    InjectedConnector[] | undefined
-  >();
   const { available, connect, connectors } = useConnectors();
   const { account } = useStarknet();
 
@@ -30,15 +27,6 @@ const Wallets: FunctionComponent<WalletsProps> = ({
       closeWallet();
     }
   }, [account]);
-
-  useEffect(() => {
-    if (!available && !connectors) {
-      setManualConnectors([
-        new InjectedConnector({ options: { id: "argentX" } }),
-        new InjectedConnector({ options: { id: "braavos" } }),
-      ]);
-    }
-  }, [available, connectors]);
 
   function connectWallet(connector: Connector): void {
     connect(connector);
@@ -70,16 +58,20 @@ const Wallets: FunctionComponent<WalletsProps> = ({
           </svg>
         </button>
         <p className={styles.menu_title}>You need a Starknet wallet</p>
-        {(available || connectors || manualConnectors).map((connector) => (
-          <div className="mt-5 flex justify-center" key={connector.id()}>
-            <Button onClick={() => connectWallet(connector)}>
-              <div className="flex">
-                <WalletIcons id={connector.id()} />
-                {`Connect ${connector.name()}`}
+        {connectors.map((connector) => {
+          if (connector.available()) {
+            return (
+              <div className="mt-5 flex justify-center" key={connector.id()}>
+                <Button onClick={() => connectWallet(connector)}>
+                  <div className="flex">
+                    <WalletIcons id={connector.id()} />
+                    {`Connect ${connector.name()}`}
+                  </div>
+                </Button>
               </div>
-            </Button>
-          </div>
-        ))}
+            );
+          }
+        })}
       </div>
     </Modal>
   );
