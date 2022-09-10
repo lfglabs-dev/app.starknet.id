@@ -52,12 +52,15 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (account) {
       fetch(
-        `https://goerli.indexer.starknet.id/addr_to_ids?address=${hexToFelt(
+        `https://goerli.indexer.starknet.id/addr_to_ids?addr=${hexToFelt(
           account
         )?.replace("0x", "")}`
       )
         .then((response) => response.json())
-        .then((data) => setOwnedIdentities(data.ids));
+        .then((data) => {
+          console.log(data);
+          setOwnedIdentities(data.ids);
+        });
     }
   }, [account]);
 
