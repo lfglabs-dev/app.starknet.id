@@ -67,7 +67,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     if (account) {
       setTargetAddress(account);
       fetch(
-        `https://goerli.indexer.starknet.id/address_to_available_ids?address=${hexToFelt(
+        `https://goerli.indexer.starknet.id/addr_to_available_ids?address=${hexToFelt(
           account
         )?.replace("0x", "")}`
       )

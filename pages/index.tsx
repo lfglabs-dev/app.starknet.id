@@ -52,7 +52,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (account) {
       fetch(
-        `https://goerli.indexer.starknet.id/address_to_ids?address=${hexToFelt(
+        `https://goerli.indexer.starknet.id/addr_to_ids?address=${hexToFelt(
           account
         )?.replace("0x", "")}`
       )
