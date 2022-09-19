@@ -58,8 +58,12 @@ const Home: NextPage = () => {
       )
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);
-          setOwnedIdentities(data.ids);
+          const dataFiltered = data.ids.filter(
+            (element: string, index: number) => {
+              return data.ids.indexOf(element) === index;
+            }
+          );
+          setOwnedIdentities(dataFiltered);
         });
     }
   }, [account]);

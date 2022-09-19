@@ -72,7 +72,14 @@ const Register: FunctionComponent<RegisterProps> = ({
         )?.replace("0x", "")}`
       )
         .then((response) => response.json())
-        .then((data) => setOwnedIdentities(data.ids));
+        .then((data) => {
+          const dataFiltered = data.ids.filter(
+            (element: string, index: number) => {
+              return data.ids.indexOf(element) === index;
+            }
+          );
+          setOwnedIdentities(dataFiltered);
+        });
     }
   }, [account]);
 
