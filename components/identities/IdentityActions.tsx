@@ -17,7 +17,7 @@ import { useNamingContract } from "../../hooks/contracts";
 import Button from "../UI/button";
 
 type IdentityActionsProps = {
-  identity: Identity;
+  identity?: Identity;
   tokenId: string;
   domain?: string;
 };
