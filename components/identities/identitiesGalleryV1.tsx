@@ -9,7 +9,7 @@ export type IndexerIdentity = {
 };
 
 type IdentitiesGalleryV1Props = {
-  identities: number[];
+  identities: any[];
 };
 
 const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
@@ -18,15 +18,31 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
   const router = useRouter();
 
   return (
+    // // Our Indexer
+    // <>
+    //   {identities.map((tokenId, index) => (
+    //     <div key={index} className={styles.imageGallery}>
+    //       <img
+    //         width={150}
+    //         height={150}
+    //         src={`https://www.starknet.id/api/identicons/${tokenId}`}
+    //         alt="avatar"
+    //         onClick={() => router.push(`/identities/${tokenId}`)}
+    //       />
+    //     </div>
+    //   ))}
+    // </>
+
+    // Aspect indexer
     <>
-      {identities.map((tokenId, index) => (
+      {identities.map((asset, index) => (
         <div key={index} className={styles.imageGallery}>
           <img
             width={150}
             height={150}
-            src={`https://www.starknet.id/api/identicons/${tokenId}`}
+            src={`https://www.starknet.id/api/identicons/${asset.token_id}`}
             alt="avatar"
-            onClick={() => router.push(`/identities/${tokenId}`)}
+            onClick={() => router.push(`/identities/${asset.token_id}`)}
           />
         </div>
       ))}

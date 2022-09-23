@@ -1,12 +1,7 @@
 import styles from "../../styles/components/wallets.module.css";
-import {
-  Connector,
-  InjectedConnector,
-  useConnectors,
-  useStarknet,
-} from "@starknet-react/core";
+import { Connector, useConnectors, useStarknet } from "@starknet-react/core";
 import Button from "./button";
-import { FunctionComponent, useEffect, useState } from "react";
+import { FunctionComponent, useEffect } from "react";
 import { Modal } from "@mui/material";
 import WalletIcons from "./iconsComponents/icons/walletIcons";
 
@@ -19,7 +14,7 @@ const Wallets: FunctionComponent<WalletsProps> = ({
   closeWallet,
   hasWallet,
 }) => {
-  const { available, connect, connectors } = useConnectors();
+  const { connect, connectors } = useConnectors();
   const { account } = useStarknet();
 
   useEffect(() => {
