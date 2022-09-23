@@ -52,30 +52,29 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (account) {
       // // Our Indexer
-      // fetch(
-      //   `https://goerli.indexer.starknet.id/addr_to_ids?addr=${hexToFelt(
-      //     account
-      //   )?.replace("0x", "")}`
-      // )
-      //   .then((response) => response.json())
-      //   .then((data) => {
-      //     console.log(data);
-      //     const dataFiltered = data.ids.filter(
-      //       (element: string, index: number) => {
-      //         return data.ids.indexOf(element) === index;
-      //       }
-      //     );
-      //     setOwnedIdentities(dataFiltered);
-      //   });
-
-      // // Aspect Indexer
       fetch(
-        `https://api-testnet.aspect.co/api/v0/assets?contract_address=0x0798e884450c19e072d6620fefdbeb7387d0453d3fd51d95f5ace1f17633d88b&owner_address=${account}&sort_by=minted_at&order_by=desc`
+        `https://goerli.indexer.starknet.id/addr_to_ids?addr=${hexToFelt(
+          account
+        )?.replace("0x", "")}`
       )
         .then((response) => response.json())
         .then((data) => {
-          setOwnedIdentities(data.assets);
+          const dataFiltered = data.ids.filter(
+            (element: string, index: number) => {
+              return data.ids.indexOf(element) === index;
+            }
+          );
+          setOwnedIdentities(dataFiltered);
         });
+
+      // // Aspect Indexer
+      // fetch(
+      //   `https://api-testnet.aspect.co/api/v0/assets?contract_address=0x0798e884450c19e072d6620fefdbeb7387d0453d3fd51d95f5ace1f17633d88b&owner_address=${account}&sort_by=minted_at&order_by=desc`
+      // )
+      //   .then((response) => response.json())
+      //   .then((data) => {
+      //     setOwnedIdentities(data.assets);
+      //   });
     }
   }, [account]);
 

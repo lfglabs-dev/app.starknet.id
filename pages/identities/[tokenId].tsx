@@ -21,11 +21,11 @@ const TokenIdPage: NextPage = () => {
 
   useEffect(() => {
     if (tokenId) {
-      // fetch(`https://goerli.indexer.starknet.id/uri?id=${tokenId}`)
-      //   .then((response) => response.json())
-      //   .then((data) => {
-      //     setIdentity(data);
-      //   });
+      fetch(`https://goerli.indexer.starknet.id/uri?id=${tokenId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setIdentity(data);
+        });
     }
   }, [tokenId]);
 
@@ -37,7 +37,7 @@ const TokenIdPage: NextPage = () => {
       <div className={styles.secondLeaf}>
         <img alt="leaf" src="/leaves/leaf_1.png" />
       </div>
-      {/* !identity ? (
+      {!identity ? (
         <ThreeDots
           wrapperClass="flex justify-center"
           height="25"
@@ -73,29 +73,7 @@ const TokenIdPage: NextPage = () => {
             </Button>
           </div>
         </div>
-          )} */}
-
-      <div className={styles2.containerIdentity}>
-        <h1 className="sm:text-5xl text-5xl my-5">StarknetId: {tokenId}</h1>
-        <div className="mt-3">
-          <img
-            src={`https://www.starknet.id/api/identicons/${tokenId}`}
-            height={200}
-            width={200}
-            alt="identicon"
-          />
-        </div>
-        <IdentityActions
-          identity={undefined}
-          tokenId={tokenId}
-          domain={undefined}
-        />
-        <div className="mt-5">
-          <Button onClick={() => router.push("/")}>
-            Back to your identities
-          </Button>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
