@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import {
   useStarknet,
@@ -32,12 +31,6 @@ export default function Twitter() {
     tokenId = window.sessionStorage.getItem("tokenId");
   }
 
-  //Set twitter code
-  const [code, setCode] = useState<string>("");
-  useEffect(() => {
-    setCode(routerCode);
-  }, [routerCode]);
-
   //Manage Connection
   const { connect, connectors, available } = useConnectors();
   const { account } = useStarknet();
@@ -55,7 +48,7 @@ export default function Twitter() {
   const [signRequestData, setSignRequestData] = useState<any>();
 
   useEffect(() => {
-    if (!code || !tokenId) return;
+    if (!routerCode || !tokenId) return;
 
     const requestOptions = {
       method: "POST",
@@ -63,14 +56,14 @@ export default function Twitter() {
         type: "twitter",
         token_id_low: Number(tokenId),
         token_id_high: 0,
-        code: code,
+        code: routerCode,
       }),
     };
 
     fetch("https://goerli.verifier.starknet.id/sign", requestOptions)
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
-  }, [code]);
+  }, [routerCode]);
 
   //Contract
   const { contract } = useVerifierIdContract();
