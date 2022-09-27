@@ -20,19 +20,17 @@ import { Screen } from "./discord";
 export default function Twitter() {
   const router = useRouter();
   const [isConnected, setIsConnected] = useState(true);
-  const [hasWallet, setHasWallet] = useState(false);
   const routerCode: string = router.query.code as string;
 
   // Access localStorage
   const isServer = typeof window === "undefined";
-  let tokenId: string | null;
+  let tokenId: string | undefined;
 
   if (!isServer) {
-    tokenId = window.sessionStorage.getItem("tokenId");
+    tokenId = window.sessionStorage.getItem("tokenId") ?? undefined;
   }
 
   //Manage Connection
-  const { connect, connectors, available } = useConnectors();
   const { account } = useStarknet();
 
   useEffect(() => {
@@ -44,11 +42,17 @@ export default function Twitter() {
     }
   }, [account]);
 
+  //Set discord code
+  const [code, setCode] = useState<string>("");
+  useEffect(() => {
+    setCode(routerCode);
+  }, [routerCode]);
+
   //Server Sign Request
   const [signRequestData, setSignRequestData] = useState<any>();
 
   useEffect(() => {
-    if (!routerCode || !tokenId) return;
+    if (!code || !tokenId) return;
 
     const requestOptions = {
       method: "POST",
@@ -56,14 +60,14 @@ export default function Twitter() {
         type: "twitter",
         token_id_low: Number(tokenId),
         token_id_high: 0,
-        code: routerCode,
+        code: code,
       }),
     };
 
     fetch("https://goerli.verifier.starknet.id/sign", requestOptions)
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
-  }, [routerCode]);
+  }, [code, tokenId]);
 
   //Contract
   const { contract } = useVerifierIdContract();

@@ -28,7 +28,6 @@ export type Screen =
 export default function Discord() {
   const router = useRouter();
   const [isConnected, setIsConnected] = useState(true);
-  const [hasWallet, setHasWallet] = useState(false);
   const routerCode: string = router.query.code as string;
 
   // Access localStorage
@@ -46,7 +45,6 @@ export default function Discord() {
   }, [routerCode]);
 
   //Manage Connection
-  const { connect, connectors, available } = useConnectors();
   const { account } = useStarknet();
 
   useEffect(() => {
