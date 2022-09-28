@@ -13,7 +13,7 @@ import {
 import { BN } from "bn.js";
 import { useStarknet, useStarknetInvoke } from "@starknet-react/core";
 import { isHexString } from "../../hooks/string";
-import { useNamingContract } from "../../hooks/contracts";
+import { useNamingContract, starknetIdContract } from "../../hooks/contracts";
 import Button from "../UI/button";
 
 type IdentityActionsProps = {
@@ -130,6 +130,17 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             onClick={() =>
               startVerification(
                 "https://github.com/login/oauth/authorize?client_id=bd72ec641d75c2608121"
+              )
+            }
+          />
+        </div>
+        <div className="m-2">
+          <ClickableIcon
+            title="View on Mintsquare"
+            icon="mintsquare"
+            onClick={() =>
+              window.open(
+                `https://mintsquare.io/asset/starknet-testnet/${starknetIdContract}/${tokenId}`
               )
             }
           />
