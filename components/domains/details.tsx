@@ -6,7 +6,7 @@ import {
   useTokenIdFromDomain,
 } from "../../hooks/naming";
 import { ThreeDots } from "react-loader-spinner";
-import styles from "../../styles/Home.module.css";
+import styles from "../../styles/home.module.css";
 
 type DetailsProps = {
   domain: string;
@@ -44,7 +44,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
       return;
     } else {
       if (tokenIdData) {
-        setTokenId(tokenIdData?.["owner"].low.toNumber());
+        setTokenId(tokenIdData?.["owner"]);
       }
     }
   }, [tokenIdData, tokenIdError]);
@@ -101,7 +101,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
       {tokenId && (
         <Link href={`/identities/${tokenId}`}>
           <div className={styles.cardCenter}>
-            <p>See owner identity</p>
+            <p className="text">See owner identity</p>
           </div>
         </Link>
       )}

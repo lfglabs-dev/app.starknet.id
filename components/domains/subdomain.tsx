@@ -33,7 +33,7 @@ const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
     method: "ownerOf",
     args: [[tokenId, 0], ""],
   });
-  const { invoke } = useStarknetInvoke({
+  const { invoke, error: invokeError } = useStarknetInvoke({
     contract: namingContract,
     method: "transfer_domain",
   });
@@ -54,7 +54,7 @@ const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
       return;
     } else {
       if (tokenIdData) {
-        setTokenId(tokenIdData?.["owner"].low.toNumber());
+        setTokenId(tokenIdData?.["owner"]);
       }
     }
   }, [tokenIdData, tokenIdError]);
@@ -67,7 +67,7 @@ const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
     invoke({
       args: [
         [encodedSubdomain.toString(), encodedRootDomain.toString()],
-        [targetTokenId, 0],
+        targetTokenId,
       ],
     });
   }
@@ -112,7 +112,7 @@ const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
               />
             </div>
           </div>
-          <div className="mt-2">
+          <div className="mt-2 flex justify-center">
             <Button
               disabled={!subdomain || !targetTokenId}
               onClick={() => createSubdomain()}

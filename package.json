@@ -14,15 +14,16 @@
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.10.1",
     "@nimiq/style": "^0.8.4",
-    "@starknet-react/core": "^0.13.4",
+    "@starknet-react/core": "^0.14.3",
     "bn.js": "^5.2.1",
+    "ethers": "^5.7.1",
     "get-starknet": "^1.4.2",
     "next": "12.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
     "react-loader-spinner": "^5.2.0",
-    "starknet": "^3.5.1"
+    "starknet": "^4.4.2"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",

@@ -18,7 +18,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
   const router = useRouter();
 
   return (
-    // // Our Indexer
+    // Our Indexer
     <>
       {identities.map((tokenId, index) => (
         <div key={index} className={styles.imageGallery}>
@@ -33,7 +33,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
       ))}
     </>
 
-    // Aspect indexer
+    // // Aspect indexer
     // <>
     //   {identities.map((asset, index) => (
     //     <div key={index} className={styles.imageGallery}>

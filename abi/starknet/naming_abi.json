@@ -38,6 +38,25 @@
   {
     "data": [
       {
+        "name": "domain_len",
+        "type": "felt"
+      },
+      {
+        "name": "domain",
+        "type": "felt*"
+      },
+      {
+        "name": "resolver",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "domain_to_resolver_update",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
         "name": "address",
         "type": "felt"
       },
@@ -66,7 +85,7 @@
       },
       {
         "name": "owner",
-        "type": "Uint256"
+        "type": "felt"
       },
       {
         "name": "expiry",
@@ -104,6 +123,14 @@
       },
       {
         "name": "admin",
+        "type": "felt"
+      },
+      {
+        "name": "whitelisting_key",
+        "type": "felt"
+      },
+      {
+        "name": "l1_contract",
         "type": "felt"
       }
     ],
@@ -189,7 +216,7 @@
     "outputs": [
       {
         "name": "owner",
-        "type": "Uint256"
+        "type": "felt"
       }
     ],
     "stateMutability": "view",
@@ -223,6 +250,25 @@
       {
         "name": "domain",
         "type": "felt*"
+      },
+      {
+        "name": "resolver",
+        "type": "felt"
+      }
+    ],
+    "name": "set_domain_to_resolver",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "domain_len",
+        "type": "felt"
+      },
+      {
+        "name": "domain",
+        "type": "felt*"
       }
     ],
     "name": "set_address_to_domain",
@@ -244,7 +290,7 @@
     "inputs": [
       {
         "name": "token_id",
-        "type": "Uint256"
+        "type": "felt"
       },
       {
         "name": "domain",
@@ -255,6 +301,10 @@
         "type": "felt"
       },
       {
+        "name": "resolver",
+        "type": "felt"
+      },
+      {
         "name": "address",
         "type": "felt"
       }
@@ -262,6 +312,37 @@
     "name": "buy",
     "outputs": [],
     "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "from_address",
+        "type": "felt"
+      },
+      {
+        "name": "token_id",
+        "type": "felt"
+      },
+      {
+        "name": "domain",
+        "type": "felt"
+      },
+      {
+        "name": "days",
+        "type": "felt"
+      },
+      {
+        "name": "resolver",
+        "type": "felt"
+      },
+      {
+        "name": "address",
+        "type": "felt"
+      }
+    ],
+    "name": "buy_from_eth",
+    "outputs": [],
+    "type": "l1_handler"
   },
   {
     "inputs": [
@@ -290,7 +371,7 @@
       },
       {
         "name": "target_token_id",
-        "type": "Uint256"
+        "type": "felt"
       }
     ],
     "name": "transfer_domain",
@@ -335,7 +416,7 @@
       },
       {
         "name": "token_id",
-        "type": "Uint256"
+        "type": "felt"
       }
     ],
     "name": "set_domain_owner",
@@ -365,6 +446,39 @@
       }
     ],
     "name": "transfer_balance",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "domain",
+        "type": "felt"
+      },
+      {
+        "name": "expiry",
+        "type": "felt"
+      },
+      {
+        "name": "starknet_id",
+        "type": "felt"
+      },
+      {
+        "name": "receiver_address",
+        "type": "felt"
+      },
+      {
+        "name": "sig",
+        "type": "(felt, felt)"
+      }
+    ],
+    "name": "whitelisted_mint",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "end_whitelist",
     "outputs": [],
     "type": "function"
   }

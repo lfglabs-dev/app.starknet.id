@@ -1,34 +1,23 @@
 /* eslint-disable @next/next/no-img-element */
-import {
-  FormControl,
-  FormHelperText,
-  InputLabel,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
+import { TextField } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import styles from "../../styles/Home.module.css";
+import styles from "../../styles/home.module.css";
 import {
   starknetIdContract,
   usePricingContract,
   etherContract,
   namingContract,
+  L1buyingContract,
 } from "../../hooks/contracts";
-import {
-  useStarknet,
-  useStarknetCall,
-  // useStarknetExecute,
-} from "@starknet-react/core";
-import { hexToFelt, stringToFelt } from "../../utils/felt";
-import { Call } from "starknet";
+import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
 import { isHexString } from "../../hooks/string";
+import { ethers } from "ethers";
+import L1buying_abi from "../../abi/L1/L1buying_abi.json";
+import SelectDomain from "./selectDomains";
 
 type RegisterProps = {
   domain: string;
@@ -44,42 +33,42 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [duration, setDuration] = useState<number>(20);
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<any>([]);
-  const [ownedIdentities, setOwnedIdentities] = useState<number[] | []>([]);
   const [price, setPrice] = useState<string>("0");
+  const [priceWithoutDiscount, setPriceWithoutDiscount] = useState<number>(
+    Math.round(getPriceFromDomain(domain) * 1000) / 1000
+  );
   const { contract } = usePricingContract();
+  const encodedDomain = useEncoded(domain);
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: contract,
     method: "compute_buy_price",
-    args: [stringToFelt(domain), duration * 365],
+    args: [encodedDomain, duration * 365],
   });
-  const { account } = useStarknet();
-  const encodedDomain = useEncoded(domain);
-  const { data, error, execute } = useStarknetExecute({
+  const { account } = useAccount();
+  const { execute } = useStarknetExecute({
     calls: callData,
   });
 
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
-    else setPrice(new BN(priceData?.["price"].low.words[0]).toString(10));
+    else {
+      setPrice(
+        priceData?.["price"].low
+          .add(priceData?.["price"].high.mul(new BN(2).pow(new BN(128))))
+          .toString(10)
+      );
+    }
   }, [priceData, priceError]);
 
   useEffect(() => {
+    setPriceWithoutDiscount(
+      Math.round(duration * getPriceFromDomain(domain) * 1000) / 1000
+    );
+  }, [duration]);
+
+  useEffect(() => {
     if (account) {
-      setTargetAddress(account);
-      fetch(
-        `https://goerli.indexer.starknet.id/addr_to_available_ids?addr=${hexToFelt(
-          account
-        )?.replace("0x", "")}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          const dataFiltered = data.ids.filter(
-            (element: string, index: number) => {
-              return data.ids.indexOf(element) === index;
-            }
-          );
-          setOwnedIdentities(dataFiltered);
-        });
+      setTargetAddress(account.address);
     }
   }, [account]);
 
@@ -99,9 +88,9 @@ const Register: FunctionComponent<RegisterProps> = ({
           entrypoint: "buy",
           calldata: [
             new BN(tokenId).toString(10),
-            "0",
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
+            0,
             new BN(targetAddress?.slice(2), 16).toString(10),
           ],
         },
@@ -116,16 +105,16 @@ const Register: FunctionComponent<RegisterProps> = ({
         {
           contractAddress: starknetIdContract,
           entrypoint: "mint",
-          calldata: [new BN(newTokenId).toString(10), "0"],
+          calldata: [new BN(newTokenId).toString(10)],
         },
         {
           contractAddress: namingContract,
           entrypoint: "buy",
           calldata: [
             new BN(newTokenId).toString(10),
-            "0",
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
+            0,
             new BN(targetAddress?.slice(2), 16).toString(10),
           ],
         },
@@ -143,6 +132,45 @@ const Register: FunctionComponent<RegisterProps> = ({
 
   function changeTokenId(e: any): void {
     setTokenId(Number(e.target.value));
+  }
+
+  function getPriceFromDomain(domain: string): number {
+    switch (domain.length) {
+      case 1:
+        return 0.49;
+      case 2:
+        return 0.44;
+      case 3:
+        return 0.39;
+      case 4:
+        return 0.095;
+      default:
+        return 0.007;
+    }
+  }
+
+  // register from L1
+  const [L1Signer, setL1Signer] = useState<
+    ethers.providers.JsonRpcSigner | undefined
+  >();
+  const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+
+  async function L1connect() {
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    setL1Signer(signer);
+  }
+
+  async function L1register() {
+    const L1buyingContract_rw = new ethers.Contract(
+      L1buyingContract,
+      L1buying_abi,
+      L1Signer
+    );
+    const address = await L1Signer?.getAddress();
+    const balanceOf = await L1buyingContract_rw.balanceOf(address);
+
+    console.log("balanceOf", balanceOf);
   }
 
   if (isAvailable)
@@ -180,63 +208,51 @@ const Register: FunctionComponent<RegisterProps> = ({
             />
           </div>
         </div>
-        <div className="mt-3">
-          <FormControl fullWidth>
-            <InputLabel>Starknet.id</InputLabel>
-            <Select
-              value={tokenId}
-              defaultValue={ownedIdentities[0]}
-              label="Starknet.id"
-              onChange={changeTokenId}
-              sx={{
-                "& .MuiSelect-select": {
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                },
-              }}
-            >
-              <MenuItem value={0}>
-                <ListItemIcon>
-                  <img
-                    width={"25px"}
-                    src="/visuals/StarknetIdLogo.png"
-                    alt="starknet.id avatar"
-                  />
-                </ListItemIcon>
-                <ListItemText primary="Mint a new starknet.id" />
-              </MenuItem>
-              {ownedIdentities.map((tokenId: number, index: number) => (
-                <MenuItem key={index} value={tokenId}>
-                  <ListItemIcon>
-                    <img
-                      width={"25px"}
-                      src={`https://www.starknet.id/api/identicons/${tokenId}`}
-                      alt="starknet.id avatar"
-                    />
-                  </ListItemIcon>
-                  <ListItemText primary={tokenId} />
-                </MenuItem>
-              ))}
-            </Select>
-            <FormHelperText>
-              Choose the starknet identity you want to link with your domain
-            </FormHelperText>
-          </FormControl>
-        </div>
-
+        <SelectDomain tokenId={tokenId} changeTokenId={changeTokenId} />
         <div className={styles.cardCenter}>
-          <p>Price : {price} wei</p>
+          <p className="text">
+            Price :{" "}
+            {duration >= 3 ? (
+              <span className="line-through text-soft-brown">{`${priceWithoutDiscount} ETH`}</span>
+            ) : null}
+            &nbsp;
+            <span className="font-semibold text-brown">
+              {Math.round(Number(price) * 0.000000000000000001 * 10000) / 10000}{" "}
+              ETH
+            </span>
+          </p>
         </div>
-        <div className="text-beige mt-5">
-          <Button
-            onClick={() => {
-              execute();
-            }}
-            disabled={!Boolean(account) || !duration || !targetAddress}
-          >
-            Register
-          </Button>
+        <div className="flex justify-center content-center w-full">
+          <div className="text-beige m-1 mt-5">
+            <Button
+              onClick={() => execute()}
+              disabled={!Boolean(account) || !duration || !targetAddress}
+            >
+              Register from L2
+            </Button>
+          </div>
+          <div className="text-beige m-1 mt-5">
+            {!L1Signer && (
+              <Button
+                onClick={() => {
+                  L1connect();
+                }}
+                disabled={!Boolean(account) || !duration || !targetAddress}
+              >
+                Connect to L1
+              </Button>
+            )}
+            {L1Signer && (
+              <Button
+                onClick={() => {
+                  L1register();
+                }}
+                disabled={!Boolean(account) || !duration || !targetAddress}
+              >
+                Register from L1
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     );

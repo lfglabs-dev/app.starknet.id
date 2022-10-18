@@ -14,7 +14,7 @@ const SuccessScreen: FunctionComponent<SuccessScreenProps> = ({
   successMessage,
 }) => {
   return (
-    <div className="sm:w-2/3 w-4/5">
+    <div className="sm:w-2/3 w-5/5">
       <Image
         src="/visuals/StarknetIdLogo.png"
         height={300}

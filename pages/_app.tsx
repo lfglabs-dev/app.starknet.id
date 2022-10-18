@@ -19,6 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <Head>
             <title>Starknet.id</title>
           </Head>
+
           <Navbar />
           <Component {...pageProps} />
         </ThemeProvider>

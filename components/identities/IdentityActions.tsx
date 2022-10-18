@@ -8,12 +8,16 @@ import styles3 from "../../styles/components/wallets.module.css";
 import {
   useAddressFromDomain,
   useDomainFromAddress,
-  useEncoded,
+  useEncodedSeveral,
 } from "../../hooks/naming";
 import { BN } from "bn.js";
-import { useStarknet, useStarknetInvoke } from "@starknet-react/core";
+import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import { isHexString } from "../../hooks/string";
-import { useNamingContract, starknetIdContract } from "../../hooks/contracts";
+import {
+  useNamingContract,
+  starknetIdContract,
+  namingContract,
+} from "../../hooks/contracts";
 import Button from "../UI/button";
 
 type IdentityActionsProps = {
@@ -33,30 +37,49 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [ownerAddress, setOwnerAddress] = useState<string | undefined>();
   const handleOpen = () => setOpenAddressForm(true);
   const handleClose = () => setOpenAddressForm(false);
-  const { account } = useStarknet();
+  const { account } = useAccount();
   const { domain: domainFromAddress } = useDomainFromAddress(
-    new BN((account ?? "").slice(2), 16).toString(10)
+    new BN((account?.address ?? "").slice(2), 16).toString(10)
   );
-  const encodedDomain = useEncoded(
-    (identity?.name.replace(".stark", "") as string) ?? ""
+  const encodedDomains = useEncodedSeveral(
+    identity?.name.replace(".stark", "").split(".") ?? []
   );
   const { address: domainData, error: domainError } = useAddressFromDomain(
     domain ?? ""
   );
-  const { contract } = useNamingContract();
-  const { invoke: set_address_to_domain } = useStarknetInvoke({
-    contract: contract,
-    method: "set_address_to_domain",
-  });
-  const { invoke: set_domain_to_address, error } = useStarknetInvoke({
-    contract: contract,
-    method: "set_domain_to_address",
-  });
-
   const isMainDomain =
     identity &&
     identity.name.includes(".stark") &&
     domainFromAddress != identity.name;
+
+  // Add all subdomains to the parameters
+  const callDataEncodedDomain: unknown[] = [encodedDomains.length];
+  encodedDomains.forEach((domain) => {
+    callDataEncodedDomain.push(domain);
+  });
+
+  //set_address_to_domain execute
+  const set_address_to_domain_calls = {
+    contractAddress: namingContract,
+    entrypoint: "set_address_to_domain",
+    calldata: callDataEncodedDomain,
+  };
+  const { execute: set_address_to_domain } = useStarknetExecute({
+    calls: set_address_to_domain_calls,
+  });
+
+  //set_domain_to_address execute
+  const set_domain_to_address_calls = {
+    contractAddress: namingContract,
+    entrypoint: "set_domain_to_address",
+    calldata: [
+      ...callDataEncodedDomain,
+      new BN(targetAddress?.slice(2), 16).toString(10),
+    ],
+  };
+  const { execute: set_domain_to_address } = useStarknetExecute({
+    calls: set_domain_to_address_calls,
+  });
 
   function startVerification(link: string): void {
     sessionStorage.setItem("tokenId", tokenId);
@@ -65,7 +88,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   useEffect(() => {
     if (account) {
-      setTargetAddress(account);
+      setTargetAddress(account.address);
     }
   }, [account]);
 
@@ -84,24 +107,17 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   }, [domainData, domainError]);
 
   function setAddressToDomain(): void {
-    set_address_to_domain({
-      args: [[encodedDomain.toString(10)]],
-    });
+    set_address_to_domain();
   }
 
   function setDomainToAddress(): void {
-    set_domain_to_address({
-      args: [
-        [encodedDomain.toString(10)],
-        new BN(targetAddress?.slice(2), 16).toString(10),
-      ],
-    });
+    set_domain_to_address();
   }
 
   return (
     <>
       <div className="flex">
-        <div className="m-2">
+        {/* <div className="m-2">
           <ClickableIcon
             title="Start verifying twitter"
             icon="twitter"
@@ -133,7 +149,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
               )
             }
           />
-        </div>
+        </div> */}
         <div className="m-2">
           <ClickableIcon
             title="View on Mintsquare"

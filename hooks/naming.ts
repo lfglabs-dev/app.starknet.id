@@ -22,14 +22,12 @@ export function useDecoded(encoded: BN[]): string {
         if (nextSubdomain.isZero()) {
           let code2 = subdomain.mod(bigAlphabetSizePlusOne).toNumber();
           subdomain = nextSubdomain;
-          if (code2 === 0)
-            decoded += basicAlphabet[0];
-          else
-            decoded += bigAlphabet[code2 - 1];
+          if (code2 === 0) decoded += basicAlphabet[0];
+          else decoded += bigAlphabet[code2 - 1];
         } else {
           let code2 = subdomain.mod(bigAlphabetSize).toNumber();
           decoded += bigAlphabet[code2];
-          subdomain = subdomain.div(bigAlphabetSize)
+          subdomain = subdomain.div(bigAlphabetSize);
         }
       } else decoded += basicAlphabet[code];
     }
@@ -63,13 +61,23 @@ export function useEncoded(decoded: string): BN {
       encoded = encoded.add(multiplier.mul(basicAlphabetSize));
       multiplier = multiplier.mul(basicSizePlusOne);
       // add encoded + multiplier * index
-      let newid = (i === decoded.length - 1 ? 1 : 0) + bigAlphabet.indexOf(char);
+      let newid =
+        (i === decoded.length - 1 ? 1 : 0) + bigAlphabet.indexOf(char);
       encoded = encoded.add(multiplier.mul(new BN(newid)));
       multiplier = multiplier.mul(bigAlphabetSize);
     }
   }
 
   return encoded;
+}
+
+export function useEncodedSeveral(domains: string[]): string[] {
+  let encodedArray: string[] = [];
+
+  domains.forEach((domain) => {
+    encodedArray.push(useEncoded(domain).toString(10));
+  });
+  return encodedArray;
 }
 
 type DomainData = {

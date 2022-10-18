@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
-import styles from "../../styles/Home.module.css";
+import styles from "../../styles/home.module.css";
 import styles2 from "../../styles/components/identitiesV1.module.css";
 import { useRouter } from "next/router";
 import Button from "../../components/UI/button";
@@ -21,7 +21,7 @@ const TokenIdPage: NextPage = () => {
 
   useEffect(() => {
     if (tokenId) {
-      fetch(`https://goerli.indexer.starknet.id/uri?id=${tokenId}`)
+      fetch(`https://goerli.indexer2.starknet.id/uri?id=${tokenId}`)
         .then((response) => response.json())
         .then((data) => {
           setIdentity(data);
