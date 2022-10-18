@@ -17,11 +17,11 @@ const LoadingScreen: FunctionComponent = () => {
   }, 15000);
 
   return (
-    <>
-      <h1 className="sm:text-5xl text-5xl">
+    <div className="max-w-3xl">
+      <h1 className="sm:text-5xl text-5xl mr-3 ml-3">
         {loadingMessages[loadingMessageNumber]}
       </h1>
-      <div className="mt-5">
+      <div className="m-5 flex justify-center">
         <MutatingDots
           height="100"
           width="100"
@@ -30,7 +30,7 @@ const LoadingScreen: FunctionComponent = () => {
           ariaLabel="loading"
         />
       </div>
-    </>
+    </div>
   );
 };
 

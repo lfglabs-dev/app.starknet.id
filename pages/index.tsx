@@ -1,97 +1,85 @@
 /* eslint-disable @next/next/no-img-element */
 import type { NextPage } from "next";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/home.module.css";
 import {
-  useStarknet,
-  useStarknetInvoke,
-  useStarknetTransactionManager,
+  useAccount,
+  useStarknetExecute,
+  useTransactionReceipt,
 } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
 import MintIdentity from "../components/identities/mintIdentity";
 import { useRouter } from "next/router";
-import { useStarknetIdContract } from "../hooks/contracts";
+import { starknetIdContract } from "../hooks/contracts";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
-import { hexToFelt } from "../utils/felt";
 
 const Home: NextPage = () => {
-  const { account } = useStarknet();
+  const { account } = useAccount();
   const [ownedIdentities, setOwnedIdentities] = useState<number[]>([]);
   const [rightTokenId, setRightTokenId] = useState<number | undefined>(
     undefined
   );
-  const [minted, setMinted] = useState("false");
-  const [randomTokenId, setRandomTokenId] = useState(
-    Math.floor(Math.random() * 1000000000000)
-  );
+  const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
-
-  //Contract
-  const { contract } = useStarknetIdContract();
+  const [minted, setMinted] = useState<boolean>(false);
 
   //Mint
-  const {
-    data: mintData,
-    invoke,
-    error,
-  } = useStarknetInvoke({
-    contract: contract,
-    method: "mint",
+  const callData = {
+    contractAddress: starknetIdContract,
+    entrypoint: "mint",
+    calldata: [randomTokenId],
+  };
+  const { execute, data: mintData } = useStarknetExecute({
+    calls: callData,
   });
-  const { transactions } = useStarknetTransactionManager();
 
   function mint() {
-    invoke({
-      args: [[randomTokenId, 0]],
-    });
+    execute();
     setRightTokenId(randomTokenId);
   }
+  const {
+    data,
+    loading,
+    error: transactionError,
+  } = useTransactionReceipt({ hash: mintData?.transaction_hash, watch: true });
 
   useEffect(() => {
     if (account) {
       // // Our Indexer
-      fetch(
-        `https://goerli.indexer.starknet.id/addr_to_ids?addr=${hexToFelt(
-          account
-        )?.replace("0x", "")}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          const dataFiltered = data.ids.filter(
-            (element: string, index: number) => {
-              return data.ids.indexOf(element) === index;
-            }
-          );
-          setOwnedIdentities(dataFiltered);
-        });
-
-      // // Aspect Indexer
       // fetch(
-      //   `https://api-testnet.aspect.co/api/v0/assets?contract_address=0x0798e884450c19e072d6620fefdbeb7387d0453d3fd51d95f5ace1f17633d88b&owner_address=${account}&sort_by=minted_at&order_by=desc`
+      //   `https://goerli.indexer.starknet.id/addr_to_ids?addr=${hexToFelt(
+      //     account
+      //   )?.replace("0x", "")}`
       // )
       //   .then((response) => response.json())
       //   .then((data) => {
-      //     setOwnedIdentities(data.assets);
+      //     const dataFiltered = data.ids.filter(
+      //       (element: string, index: number) => {
+      //         return data.ids.indexOf(element) === index;
+      //       }
+      //     );
+      //     setOwnedIdentities(dataFiltered);
       //   });
+
+      // Aspect Indexer
+      fetch(
+        `https://api-testnet.aspect.co/api/v0/assets?contract_address=${starknetIdContract}&owner_address=${account.address}&sort_by=minted_at&order_by=desc`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setOwnedIdentities(data.assets);
+        });
     }
   }, [account]);
 
   useEffect(() => {
-    for (const transaction of transactions)
-      if (transaction.transactionHash === mintData) {
-        if (transaction.status === "TRANSACTION_RECEIVED") {
-          setMinted("loading");
-        }
-        if (
-          transaction.status === "ACCEPTED_ON_L2" ||
-          transaction.status === "ACCEPTED_ON_L1"
-        ) {
-          setMinted("true");
-        }
-      }
-  }, [router, contract, mintData, transactions, error]);
+    console.log("loading", loading);
+    console.log("data", data);
+    console.log("transactionError", transactionError);
+    console.log("mintData?.transaction_hash", mintData?.transaction_hash);
+  }, [loading, data, transactionError]);
 
   return (
     <div className={styles.screen}>
@@ -102,29 +90,36 @@ const Home: NextPage = () => {
         <img width="100%" alt="leaf" src="/leaves/leaf_1.png" />
       </div>
       <div className={styles.container}>
-        {minted === "false" && (
-          <>
-            <h1 className={styles.title}>Your Starknet identities</h1>
-            <div className={styles.containerGallery}>
-              <IdentitiesGallery identities={ownedIdentities} />
-              <MintIdentity onClick={() => mint()} />
-            </div>
-          </>
-        )}
-        {minted === "loading" && !error && <LoadingScreen />}
-        {error && minted === "loading" && (
-          <ErrorScreen
-            onClick={() => setMinted("false")}
-            buttonText="Retry to mint"
-          />
-        )}
-        {minted === "true" && (
-          <SuccessScreen
-            onClick={() => router.push(`/identities/${rightTokenId}`)}
-            buttonText="Verify your discord"
-            successMessage="Congrats, your starknet identity is minted !"
-          />
-        )}
+        <>
+          {!mintData?.transaction_hash ? (
+            <>
+              <h1 className="title">Your Starknet identities</h1>
+              <div className={styles.containerGallery}>
+                <IdentitiesGallery identities={ownedIdentities} />
+                <MintIdentity onClick={() => mint()} />
+              </div>
+            </>
+          ) : (
+            <>
+              {data?.status &&
+                !transactionError &&
+                !data?.status.includes("ACCEPTED") && <LoadingScreen />}
+              {transactionError && (
+                <ErrorScreen
+                  onClick={() => setMinted(false)}
+                  buttonText="Retry to mint"
+                />
+              )}
+              {data?.status === "ACCEPTED_ON_L2" && (
+                <SuccessScreen
+                  onClick={() => router.push(`/identities/${rightTokenId}`)}
+                  buttonText="Verify your discord"
+                  successMessage="Congrats, your starknet identity is minted !"
+                />
+              )}
+            </>
+          )}
+        </>
       </div>
     </div>
   );

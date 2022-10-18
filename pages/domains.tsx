@@ -1,10 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import type { NextPage } from "next";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/home.module.css";
 import styles2 from "../styles/domain.module.css";
 import { useRouter } from "next/router";
 import SearchBar from "../components/UI/searchBar";
-import Image from "next/image";
 
 const Domain: NextPage = () => {
   const router = useRouter();
@@ -27,7 +26,7 @@ const Domain: NextPage = () => {
               alt="logo"
             />
           </div>
-          <h1 className={styles.title}>Choose your .stark domain</h1>
+          <h1 className="title">Choose your .stark domain</h1>
           <div className="min-w-content mx-5 mt-5 flex justify-center align-center">
             <SearchBar />
           </div>

@@ -21,7 +21,7 @@ const Verified: FunctionComponent<VerifiedProps> = ({ type, width }) => {
   const { data, error } = useStarknetCall({
     contract: contract,
     method: "get_verifier_data",
-    args: [[router.query.tokenId, 0], stringToFelt(type), verifierContract],
+    args: [router.query.tokenId, stringToFelt(type), verifierContract],
   });
   const [isValid, setIsValid] = useState(false);
 

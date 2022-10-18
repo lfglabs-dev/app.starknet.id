@@ -1,7 +1,6 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { ThreeDots } from "react-loader-spinner";
-import { useAddressFromDomain } from "../../hooks/naming";
-import styles from "../../styles/Home.module.css";
+import styles from "../../styles/home.module.css";
 
 type DomainCardProps = {
   domain: string;
@@ -27,7 +26,7 @@ const DomainCard: FunctionComponent<DomainCardProps> = ({
           visible={true}
         />
       ) : (
-        <p>{isAvailable ? "Available" : "Unavailable"}</p>
+        <p className="text">{isAvailable ? "Available" : "Unavailable"}</p>
       )}
     </div>
   );

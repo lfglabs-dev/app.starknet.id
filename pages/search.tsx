@@ -2,7 +2,7 @@
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/home.module.css";
 import styles2 from "../styles/search.module.css";
 import SearchBar from "../components/UI/searchBar";
 import DomainCard from "../components/domains/domainCard";

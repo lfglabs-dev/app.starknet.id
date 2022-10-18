@@ -1,37 +1,47 @@
 import React, { useState } from "react";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/home.module.css";
 import {
-  useStarknet,
-  useConnectors,
-  useStarknetInvoke,
-  useStarknetTransactionManager,
+  useAccount,
+  useStarknetExecute,
+  useTransactionManager,
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
-import { useVerifierIdContract } from "../hooks/contracts";
+import { verifierContract } from "../hooks/contracts";
 import SuccessScreen from "../components/UI/screens/successScreen";
-import { stringToFelt, toFelt } from "../utils/felt";
-import Wallets from "../components/UI/wallets";
 import { Screen } from "./discord";
+import { stringToFelt } from "../utils/felt";
+import { toFelt } from "starknet/utils/number";
 
 export default function Twitter() {
   const router = useRouter();
   const [isConnected, setIsConnected] = useState(true);
   const routerCode: string = router.query.code as string;
+  const [signRequestData, setSignRequestData] = useState<any>();
 
   // Access localStorage
   const isServer = typeof window === "undefined";
   let tokenId: string | undefined;
-
+  let calls;
   if (!isServer) {
     tokenId = window.sessionStorage.getItem("tokenId") ?? undefined;
+    calls = {
+      contractAddress: verifierContract,
+      entrypoint: "write_confirmation",
+      calldata: [
+        tokenId,
+        stringToFelt("twitter"),
+        toFelt(signRequestData.user_id),
+        [signRequestData.sign0, signRequestData.sign1],
+      ],
+    };
   }
 
   //Manage Connection
-  const { account } = useStarknet();
+  const { account } = useAccount();
 
   useEffect(() => {
     if (!account) {
@@ -47,9 +57,6 @@ export default function Twitter() {
   useEffect(() => {
     setCode(routerCode);
   }, [routerCode]);
-
-  //Server Sign Request
-  const [signRequestData, setSignRequestData] = useState<any>();
 
   useEffect(() => {
     if (!code || !tokenId) return;
@@ -67,29 +74,18 @@ export default function Twitter() {
     fetch("https://goerli.verifier.starknet.id/sign", requestOptions)
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
-  }, [code, tokenId]);
+  }, [code]);
 
   //Contract
-  const { contract } = useVerifierIdContract();
   const {
     data: twitterVerificationData,
-    invoke,
+    execute,
     error: twitterVerificationError,
-  } = useStarknetInvoke({
-    contract: contract,
-    method: "write_confirmation",
-  });
-  const { transactions } = useStarknetTransactionManager();
+  } = useStarknetExecute({ calls });
+  const { transactions } = useTransactionManager();
 
   function verifyTwitter() {
-    invoke({
-      args: [
-        [tokenId, 0],
-        stringToFelt("twitter"),
-        toFelt(signRequestData.user_id),
-        [signRequestData.sign0, signRequestData.sign1],
-      ],
-    });
+    execute();
   }
 
   //Screen management
@@ -97,7 +93,7 @@ export default function Twitter() {
 
   useEffect(() => {
     for (const transaction of transactions)
-      if (transaction.transactionHash === twitterVerificationData) {
+      if (transaction.hash === twitterVerificationData?.transaction_hash) {
         if (transaction.status === "TRANSACTION_RECEIVED") {
           setScreen("loading");
         }

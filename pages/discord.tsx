@@ -1,21 +1,20 @@
 import React, { useState } from "react";
-import Head from "next/head";
-import styles from "../styles/Home.module.css";
+import styles from "../styles/home.module.css";
 import {
   useStarknet,
-  useConnectors,
-  useStarknetInvoke,
-  useStarknetTransactionManager,
+  useStarknetExecute,
+  useTransactionManager,
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
-import { useVerifierIdContract } from "../hooks/contracts";
+import { verifierContract } from "../hooks/contracts";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { stringToFelt, toFelt } from "../utils/felt";
-import Wallets from "../components/UI/wallets";
+import { Call } from "starknet/types";
+import { RawCalldata } from "starknet";
 
 export type Screen =
   | "verifyDiscord"
@@ -29,13 +28,26 @@ export default function Discord() {
   const router = useRouter();
   const [isConnected, setIsConnected] = useState(true);
   const routerCode: string = router.query.code as string;
+  //Server Sign Request
+  const [signRequestData, setSignRequestData] = useState<any>();
 
   // Access localStorage
   const isServer = typeof window === "undefined";
   let tokenId: string | null;
-
+  let calls;
   if (!isServer) {
     tokenId = window.sessionStorage.getItem("tokenId");
+    calls = {
+      contractAddress: verifierContract,
+      entrypoint: "write_confirmation",
+      calldata: [
+        tokenId,
+        Math.floor(Date.now() / 1000),
+        stringToFelt("discord"),
+        toFelt(signRequestData.user_id),
+        [signRequestData.sign0, signRequestData.sign1],
+      ],
+    };
   }
 
   //Set discord code
@@ -56,9 +68,6 @@ export default function Discord() {
     }
   }, [account]);
 
-  //Server Sign Request
-  const [signRequestData, setSignRequestData] = useState<any>();
-
   useEffect(() => {
     if (!code || !tokenId) return;
 
@@ -78,26 +87,15 @@ export default function Discord() {
   }, [code]);
 
   //Contract
-  const { contract } = useVerifierIdContract();
   const {
     data: discordVerificationData,
-    invoke,
+    execute,
     error: discordVerificationError,
-  } = useStarknetInvoke({
-    contract: contract,
-    method: "write_confirmation",
-  });
-  const { transactions } = useStarknetTransactionManager();
+  } = useStarknetExecute({ calls });
+  const { transactions } = useTransactionManager();
 
   function verifyDiscord() {
-    invoke({
-      args: [
-        [tokenId, 0],
-        stringToFelt("discord"),
-        toFelt(signRequestData.user_id),
-        [signRequestData.sign0, signRequestData.sign1],
-      ],
-    });
+    execute();
   }
 
   //Screen management
@@ -105,7 +103,7 @@ export default function Discord() {
 
   useEffect(() => {
     for (const transaction of transactions)
-      if (transaction.transactionHash === discordVerificationData) {
+      if (transaction.hash === discordVerificationData?.transaction_hash) {
         if (transaction.status === "TRANSACTION_RECEIVED") {
           setScreen("loading");
         }

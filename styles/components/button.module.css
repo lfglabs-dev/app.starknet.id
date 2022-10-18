@@ -16,7 +16,7 @@
   padding: 0 2rem;
   border-radius: 500px;
   min-width: 5rem;
-  margin: 0.25rem auto;
+  margin: 0.25rem;
   box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
   cursor: pointer;
   transition: transform 450ms var(--nimiq-ease),
@@ -102,5 +102,6 @@
 @media (max-width: 1024px) {
   .nq-button {
     font-size: 0.75rem;
+    line-height: 1.2rem;
   }
 }

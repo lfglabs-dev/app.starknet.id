@@ -19,34 +19,34 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
 
   return (
     // // Our Indexer
-    <>
-      {identities.map((tokenId, index) => (
-        <div key={index} className={styles.imageGallery}>
-          <img
-            width={150}
-            height={150}
-            src={`https://www.starknet.id/api/identicons/${tokenId}`}
-            alt="avatar"
-            onClick={() => router.push(`/identities/${tokenId}`)}
-          />
-        </div>
-      ))}
-    </>
-
-    // Aspect indexer
     // <>
-    //   {identities.map((asset, index) => (
+    //   {identities.map((tokenId, index) => (
     //     <div key={index} className={styles.imageGallery}>
     //       <img
     //         width={150}
     //         height={150}
-    //         src={`https://www.starknet.id/api/identicons/${asset.token_id}`}
+    //         src={`https://www.starknet.id/api/identicons/${tokenId}`}
     //         alt="avatar"
-    //         onClick={() => router.push(`/identities/${asset.token_id}`)}
+    //         onClick={() => router.push(`/identities/${tokenId}`)}
     //       />
     //     </div>
     //   ))}
     // </>
+
+    // Aspect indexer
+    <>
+      {identities.map((asset, index) => (
+        <div key={index} className={styles.imageGallery}>
+          <img
+            width={150}
+            height={150}
+            src={`https://www.starknet.id/api/identicons/${asset.token_id}`}
+            alt="avatar"
+            onClick={() => router.push(`/identities/${asset.token_id}`)}
+          />
+        </div>
+      ))}
+    </>
   );
 };
 

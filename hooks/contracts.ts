@@ -1,25 +1,29 @@
 import { useContract } from "@starknet-react/core";
-import starknet_id_abi from "../abi/starknet_id_abi.json";
-import naming_abi from "../abi/naming_abi.json";
-import pricing_abi from "../abi/pricing_abi.json";
-import verifier_abi from "../abi/verifier_abi.json";
-import erc20_abi from "../abi/erc20_abi.json";
+import starknet_id_abi from "../abi/starknet/starknet_id_abi.json";
+import naming_abi from "../abi/starknet/naming_abi.json";
+import pricing_abi from "../abi/starknet/pricing_abi.json";
+import verifier_abi from "../abi/starknet/verifier_abi.json";
+import erc20_abi from "../abi/starknet/erc20_abi.json";
 import { Abi } from "starknet";
 
+//L2 Contracts
 export const starknetIdContract: string =
-  "0x0798e884450c19e072d6620fefdbeb7387d0453d3fd51d95f5ace1f17633d88b";
+  "0x02bd08dabdd6e1f21acb8d36cd515d454642c53da5b83fa03f5a1f594bf0521f";
 
 export const namingContract: string =
-  "0x05cf267a0af6101667013fc6bd3f6c11116a14cda9b8c4b1198520d59f900b17";
+  "0x00b4c4100723f587ff1340fab8b56ac6be8ed24d9a042c347be718bde72b762b";
 
 export const pricingContract: string =
-  "0x0348b9e4e4cbd6516f01c40e7ba90310ff1a9c7c706bab67528196b1a3bd556f";
+  "0x05f1924909087bffb887b31bd79abb515d292fa77797f9f3b028c9c6ec5e9e6b";
 
 export const verifierContract: string =
-  "0x06520a4a1934c84a385a3088952c3812c96f9e9c614bc4d483daff5622ea9fad";
+  "0x004107cbd7113cb1dd22cf496add384cbec7baf22a2677a0b377400430584862";
 
 export const etherContract: string =
   "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
+
+// L1 Contracts
+export const L1buyingContract = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
 
 export function useStarknetIdContract() {
   return useContract({

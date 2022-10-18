@@ -1,0 +1,29 @@
+[
+  {
+    "inputs": [
+      {
+        "name": "token_id",
+        "type": "felt"
+      },
+      {
+        "name": "timestamp",
+        "type": "felt"
+      },
+      {
+        "name": "field",
+        "type": "felt"
+      },
+      {
+        "name": "data",
+        "type": "felt"
+      },
+      {
+        "name": "sig",
+        "type": "(felt, felt)"
+      }
+    ],
+    "name": "write_confirmation",
+    "outputs": [],
+    "type": "function"
+  }
+]
