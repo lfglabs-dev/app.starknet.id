@@ -14,8 +14,8 @@ import { starknetIdContract } from "../hooks/contracts";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
-import { useEncoded } from "../hooks/naming";
 import { hexToFelt } from "../utils/felt";
+import { useEncoded } from "../hooks/naming";
 
 const Home: NextPage = () => {
   const { account } = useAccount();
@@ -75,13 +75,6 @@ const Home: NextPage = () => {
       //   });
     }
   }, [account]);
-
-  useEffect(() => {
-    console.log("loading", loading);
-    console.log("data", data);
-    console.log("transactionError", transactionError);
-    console.log("mintData?.transaction_hash", mintData?.transaction_hash);
-  }, [loading, data, transactionError]);
 
   return (
     <div className={styles.screen}>

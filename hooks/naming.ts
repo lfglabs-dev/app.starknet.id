@@ -80,6 +80,15 @@ export function useEncodedSeveral(domains: string[]): string[] {
   return encodedArray;
 }
 
+export function useDecodedSeveral(domains: BN[][]): string[] {
+  let encodedArray: string[] = [];
+
+  domains.forEach((domain) => {
+    encodedArray.push(useDecoded(domain));
+  });
+  return encodedArray;
+}
+
 type DomainData = {
   domain?: string;
   error?: string;

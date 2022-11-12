@@ -77,3 +77,9 @@ a {
     background: var(--beige);
   }
 }
+
+@media (max-width: 1024px) {
+  .title {
+    font-size: 2rem;
+  }
+}

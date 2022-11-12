@@ -1,5 +1,5 @@
 import styles from "../../styles/components/wallets.module.css";
-import { Connector, useConnectors, useStarknet } from "@starknet-react/core";
+import { Connector, useAccount, useConnectors } from "@starknet-react/core";
 import Button from "./button";
 import { FunctionComponent, useEffect } from "react";
 import { Modal } from "@mui/material";
@@ -15,7 +15,7 @@ const Wallets: FunctionComponent<WalletsProps> = ({
   hasWallet,
 }) => {
   const { connect, connectors } = useConnectors();
-  const { account } = useStarknet();
+  const { account } = useAccount();
 
   useEffect(() => {
     if (account) {

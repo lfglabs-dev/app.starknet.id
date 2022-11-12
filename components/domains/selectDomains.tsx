@@ -9,12 +9,7 @@ import {
   Select,
 } from "@mui/material";
 import { useAccount } from "@starknet-react/core";
-import React, {
-  FunctionComponent,
-  ReactNode,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { hexToFelt } from "../../utils/felt";
 
 type SelectDomainProps = {

@@ -24,7 +24,7 @@ const ErrorScreen: FunctionComponent<ErrorScreenProps> = ({
       <h1 className="sm:text-5xl text-5xl mt-4">
         {errorMessage ? errorMessage : "Shit ... an error occurred !"}
       </h1>
-      <div className="mt-8">
+      <div className="mt-8 flex justify-center">
         <Button onClick={onClick}>{buttonText}</Button>
       </div>
     </div>

@@ -74,11 +74,20 @@ const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
     );
 
   return (
-    <div className="sm:w-2/3 w-4/5 break-all">
+    <div className="w-full break-all">
       {ownerAddress && (
         <p>
           <strong>Points to :</strong>&nbsp;
-          <span>{"0x" + ownerAddress}</span>
+          <span>
+            {"0x" +
+              ownerAddress[0] +
+              ownerAddress[1] +
+              ownerAddress[2] +
+              "..." +
+              ownerAddress[ownerAddress.length - 3] +
+              ownerAddress[ownerAddress.length - 2] +
+              ownerAddress[ownerAddress.length - 1]}
+          </span>
         </p>
       )}
       {expiryDate && (

@@ -13,7 +13,7 @@ import LoadingScreen from "../components/UI/screens/loadingScreen";
 import { verifierContract } from "../hooks/contracts";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { stringToFelt } from "../utils/felt";
-import { Screen } from "./discord";
+import { Calls, Screen } from "./discord";
 
 export default function Github() {
   const router = useRouter();
@@ -23,13 +23,12 @@ export default function Github() {
   const [signRequestData, setSignRequestData] = useState<any>();
 
   // Access localStorage
-  const isServer = typeof window === "undefined";
-  let tokenId: string | null;
-  let calls;
+  const [tokenId, setTokenId] = useState<string>("");
+  const [calls, setCalls] = useState<Calls | undefined>();
 
-  if (!isServer) {
-    tokenId = window.sessionStorage.getItem("tokenId");
-    calls = {
+  useEffect(() => {
+    setTokenId(window.sessionStorage.getItem("tokenId") ?? "");
+    setCalls({
       contractAddress: verifierContract,
       entrypoint: "write_confirmation",
       calldata: [
@@ -39,8 +38,8 @@ export default function Github() {
         stringToFelt(signRequestData.user_id),
         [signRequestData.sign0, signRequestData.sign1],
       ],
-    };
-  }
+    });
+  }, []);
 
   //Set github code
   const [code, setCode] = useState<string>("");
@@ -92,21 +91,6 @@ export default function Github() {
 
   //Screen management
   const [screen, setScreen] = useState<Screen | undefined>();
-
-  useEffect(() => {
-    for (const transaction of transactions)
-      if (transaction.hash === githubVerificationData?.transaction_hash) {
-        if (transaction.status === "TRANSACTION_RECEIVED") {
-          setScreen("loading");
-        }
-        if (
-          transaction.status === "ACCEPTED_ON_L2" ||
-          transaction.status === "ACCEPTED_ON_L1"
-        ) {
-          setScreen("success");
-        }
-      }
-  }, [githubVerificationData, transactions]);
 
   // Error Management
   useEffect(() => {

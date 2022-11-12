@@ -1,7 +1,7 @@
 import { FunctionComponent, useEffect, useState } from "react";
 import { useEncoded, useTokenIdFromDomain } from "../../hooks/naming";
 import {
-  useStarknet,
+  useAccount,
   useStarknetCall,
   useStarknetInvoke,
 } from "@starknet-react/core";
@@ -17,7 +17,7 @@ type SubdomainProps = {
 };
 
 const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
-  const { account } = useStarknet();
+  const { account } = useAccount();
   const [tokenId, setTokenId] = useState<number | undefined>();
   const [targetTokenId, setTargetTokenId] = useState<number>();
   const [subdomain, setSubdomain] = useState<string>("");
@@ -44,7 +44,8 @@ const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
     }
     if (tokenId && data && account) {
       setIsOwnerOf(
-        data?.["owner"].toString(16) === account.substr(2, account.length - 1)
+        data?.["owner"].toString(16) ===
+          account.address.substr(2, account.address.length - 1)
       );
     }
   }, [tokenId, data, account]);

@@ -19,6 +19,32 @@
   {
     "data": [
       {
+        "name": "implementation",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "Upgraded",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
+        "name": "previousAdmin",
+        "type": "felt"
+      },
+      {
+        "name": "newAdmin",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "AdminChanged",
+    "type": "event"
+  },
+  {
+    "data": [
+      {
         "name": "domain_len",
         "type": "felt"
       },
@@ -134,9 +160,9 @@
         "type": "felt"
       }
     ],
-    "name": "constructor",
+    "name": "initializer",
     "outputs": [],
-    "type": "constructor"
+    "type": "function"
   },
   {
     "inputs": [
@@ -479,6 +505,28 @@
   {
     "inputs": [],
     "name": "end_whitelist",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "l1_contract",
+        "type": "felt"
+      }
+    ],
+    "name": "set_l1_contract",
+    "outputs": [],
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "name": "new_implementation",
+        "type": "felt"
+      }
+    ],
+    "name": "upgrade",
     "outputs": [],
     "type": "function"
   }

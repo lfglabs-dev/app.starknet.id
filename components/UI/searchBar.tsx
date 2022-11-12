@@ -1,8 +1,7 @@
-import { useStarknet } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import { InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { FunctionComponent, KeyboardEvent, useState } from "react";
+import { FunctionComponent, KeyboardEvent, useEffect, useState } from "react";
 import { useIsValid } from "../../hooks/naming";
 
 type SearchBarProps = {
@@ -28,8 +27,10 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   }
 
   function search(typedValue: string) {
-    onChangeTypedValue?.(typedValue);
-    router.push(`/search?domain=${typedValue}`);
+    if (typeof domainEncoded === "boolean") {
+      onChangeTypedValue?.(typedValue);
+      router.push(`/search?domain=${typedValue}`);
+    }
   }
 
   return (

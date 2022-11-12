@@ -7,100 +7,12 @@
 }
 
 .container {
-  overflow: auto;
-  padding-bottom: 2rem;
+  margin-bottom: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   text-align: center;
-}
-
-.containerGallery {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  margin-top: 2rem;
-  max-height: 100%;
-  max-width: 50rem;
-  overflow-y: auto;
-}
-
-.title {
-  font-family: "Montserrat-ExtraBold";
-  font-size: 2.5rem;
-  color: var(--green);
-  text-shadow: 1px 1px var(--soft-brown);
-  text-transform: uppercase;
-  text-align: center;
-}
-
-.cardTitle {
-  font-family: "Montserrat-ExtraBold";
-  font-size: 2rem;
-  color: var(--green);
-  text-transform: lowercase;
-  text-align: center;
-}
-
-.cardColumn,
-.cardCenter,
-.card {
-  margin-top: 1rem;
-  padding: 1rem;
-  color: inherit;
-  text-decoration: none;
-  border: 2px solid var(--soft-brown);
-  border-radius: 10px;
-  transition: color 0.15s ease, border-color 0.15s ease;
-  width: 100%;
-  background-color: var(--beige);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  overflow-wrap: break-word;
-}
-
-.cardColumn,
-.cardCenter {
-  justify-content: center;
-  margin-top: 0.5rem;
-}
-
-.cardColumn {
-  flex-direction: column;
-}
-
-.cardColumn:hover,
-.cardColumn:focus,
-.cardColumn:active,
-.cardCenter:hover,
-.cardCenter:focus,
-.cardCenter:active,
-.card:hover,
-.card:focus,
-.card:active {
-  border-color: var(--green);
-}
-
-.card:hover h2,
-.card:focus h2,
-.card:active h2 {
-  color: var(--green);
-}
-
-.card text {
-  margin: 0;
-  font-size: 1.25rem;
-  line-height: 1.5;
-}
-
-.cardCenter p {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1;
 }
 
 .firstLeaf {
@@ -120,12 +32,31 @@
   overflow: hidden;
 }
 
+.domainContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 1rem;
+  max-width: 1000px;
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
+.domainTitle {
+  font-family: "Montserrat-ExtraBold";
+  font-size: 2rem;
+  color: var(--soft-brown);
+  margin: 0.5rem;
+}
+
 @media (min-width: 768px) and (max-width: 1024px) {
   .title {
     font-size: 2rem;
   }
-  .container {
-    height: 85vh;
+
+  .domainTitle {
+    font-size: 1.5rem;
   }
 
   .firstLeaf,
@@ -135,19 +66,21 @@
 }
 
 @media (max-width: 768px) {
-  .container {
-    height: 85vh;
-  }
   .title {
     font-size: 2rem;
   }
 
-  .cardTitle {
-    font-size: 1.5rem;
+  .container {
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
 
   .firstLeaf,
   .secondLeaf {
     visibility: hidden;
+  }
+
+  .domainTitle {
+    font-size: 1.5rem;
   }
 }

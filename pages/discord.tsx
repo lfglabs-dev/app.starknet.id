@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import styles from "../styles/home.module.css";
-import {
-  useStarknet,
-  useStarknetExecute,
-  useTransactionManager,
-} from "@starknet-react/core";
+import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Button from "../components/UI/button";
@@ -13,8 +9,7 @@ import LoadingScreen from "../components/UI/screens/loadingScreen";
 import { verifierContract } from "../hooks/contracts";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { stringToFelt, toFelt } from "../utils/felt";
-import { Call } from "starknet/types";
-import { RawCalldata } from "starknet";
+import BN from "bn.js";
 
 export type Screen =
   | "verifyDiscord"
@@ -24,6 +19,12 @@ export type Screen =
   | "verifyTwitter"
   | "verifyGithub";
 
+export type Calls = {
+  contractAddress: string;
+  entrypoint: string;
+  calldata: (string | number | BN | any[] | undefined)[];
+};
+
 export default function Discord() {
   const router = useRouter();
   const [isConnected, setIsConnected] = useState(true);
@@ -32,12 +33,12 @@ export default function Discord() {
   const [signRequestData, setSignRequestData] = useState<any>();
 
   // Access localStorage
-  const isServer = typeof window === "undefined";
-  let tokenId: string | null;
-  let calls;
-  if (!isServer) {
-    tokenId = window.sessionStorage.getItem("tokenId");
-    calls = {
+  const [tokenId, setTokenId] = useState<string>("");
+  const [calls, setCalls] = useState<Calls | undefined>();
+
+  useEffect(() => {
+    setTokenId(window.sessionStorage.getItem("tokenId") ?? "");
+    setCalls({
       contractAddress: verifierContract,
       entrypoint: "write_confirmation",
       calldata: [
@@ -47,8 +48,8 @@ export default function Discord() {
         toFelt(signRequestData.user_id),
         [signRequestData.sign0, signRequestData.sign1],
       ],
-    };
-  }
+    });
+  }, []);
 
   //Set discord code
   const [code, setCode] = useState<string>("");
@@ -57,7 +58,7 @@ export default function Discord() {
   }, [routerCode]);
 
   //Manage Connection
-  const { account } = useStarknet();
+  const { account } = useAccount();
 
   useEffect(() => {
     if (!account) {
@@ -92,7 +93,6 @@ export default function Discord() {
     execute,
     error: discordVerificationError,
   } = useStarknetExecute({ calls });
-  const { transactions } = useTransactionManager();
 
   function verifyDiscord() {
     execute();
@@ -100,21 +100,6 @@ export default function Discord() {
 
   //Screen management
   const [screen, setScreen] = useState<Screen | undefined>(undefined);
-
-  useEffect(() => {
-    for (const transaction of transactions)
-      if (transaction.hash === discordVerificationData?.transaction_hash) {
-        if (transaction.status === "TRANSACTION_RECEIVED") {
-          setScreen("loading");
-        }
-        if (
-          transaction.status === "ACCEPTED_ON_L2" ||
-          transaction.status === "ACCEPTED_ON_L1"
-        ) {
-          setScreen("success");
-        }
-      }
-  }, [discordVerificationData, transactions]);
 
   // Error Management
   useEffect(() => {

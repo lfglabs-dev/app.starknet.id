@@ -169,8 +169,6 @@ const Register: FunctionComponent<RegisterProps> = ({
     );
     const address = await L1Signer?.getAddress();
     const balanceOf = await L1buyingContract_rw.balanceOf(address);
-
-    console.log("balanceOf", balanceOf);
   }
 
   if (isAvailable)

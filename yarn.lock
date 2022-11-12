@@ -936,9 +936,9 @@
     "@scure/base" "~1.1.0"
 
 "@starknet-react/core@^0.14.3":
-  "integrity" "sha512-xUjPhYG30bKhn5IuIJkj9wXxMC48MjPRNcpqtdYDftUGXsBxtuKm+j1poseDRsJTsYepFwBEDXYgHFJdzaSJKQ=="
-  "resolved" "https://registry.npmjs.org/@starknet-react/core/-/core-0.14.3.tgz"
-  "version" "0.14.3"
+  "integrity" "sha512-3fXCyFxaNoBlXCv6hzRSw9y8r2O+jeAjVVxIRg7klgC22CTP/3bYq5+u9CeUxYwVtIl1SniOtCVTxuKsaY5BHA=="
+  "resolved" "https://registry.npmjs.org/@starknet-react/core/-/core-0.14.6.tgz"
+  "version" "0.14.6"
   dependencies:
     "@tanstack/react-query" "^4.3.4"
     "immutable" "^4.0.0"

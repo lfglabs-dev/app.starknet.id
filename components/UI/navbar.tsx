@@ -5,16 +5,17 @@ import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import Button from "./button";
-import { useConnectors, useStarknet } from "@starknet-react/core";
+import { useConnectors, useAccount } from "@starknet-react/core";
 import Wallets from "./wallets";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useDomainFromAddress } from "../../hooks/naming";
 import { BN } from "bn.js";
+import SelectNetwork from "./selectNetwork";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
   const [hasWallet, setHasWallet] = useState<boolean>(false);
-  const { account } = useStarknet();
+  const { account } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isDisconnectedOnClick, setIsDisconnectedOnClick] =
     useState<boolean>(false);
@@ -22,7 +23,7 @@ const Navbar: FunctionComponent = () => {
   const brown = "#402d28";
   const { available, connect, disconnect } = useConnectors();
   const { domain } = useDomainFromAddress(
-    new BN((account ?? "").slice(2), 16).toString(10)
+    new BN((account?.address ?? "").slice(2), 16).toString(10)
   );
 
   function minifyAddressOrDomain(address?: string): string | undefined {
@@ -60,6 +61,26 @@ const Navbar: FunctionComponent = () => {
     setNav(!nav);
   };
 
+  function onTopButtonClick(): void {
+    if (available.length > 0) {
+      if (available.length === 1) {
+        connect(available[0]);
+      } else {
+        setHasWallet(true);
+      }
+    } else {
+      setHasWallet(true);
+    }
+  }
+
+  function topButtonText(): string | undefined {
+    const textToReturn = isConnected
+      ? minifyAddressOrDomain(domain ? domain : (account?.address as string))
+      : "connect";
+
+    return textToReturn;
+  }
+
   return (
     <>
       <div className={"fixed w-full z-[1] bg-beige"}>
@@ -84,10 +105,11 @@ const Navbar: FunctionComponent = () => {
                 <li className={styles.menuItem}>Domains</li>
               </Link>
               <Link href="https://twitter.com/starknet_id">
-                <li className="ml-10 mr-10 text-sm uppercase cursor-pointer">
+                <li className="ml-10 mr-5 text-sm uppercase cursor-pointer">
                   <FaTwitter color={green} size={"30px"} />
                 </li>
               </Link>
+              <SelectNetwork />
               <div className="text-beige mr-5">
                 <Button
                   onClick={
@@ -101,7 +123,9 @@ const Navbar: FunctionComponent = () => {
                   {isConnected ? (
                     <div className="flex justify-center items-center">
                       <div>
-                        {minifyAddressOrDomain(domain ? domain : account)}
+                        {minifyAddressOrDomain(
+                          domain ? domain : account?.address
+                        )}
                       </div>
                       <LogoutIcon className="ml-3" />
                     </div>
@@ -183,21 +207,9 @@ const Navbar: FunctionComponent = () => {
                       <FaTwitter size={20} color={green} />
                     </Link>
                   </div>
-                  <div className="text-beige ml-3">
-                    <Button
-                      onClick={() =>
-                        available.length > 0
-                          ? available.length === 1
-                            ? connect(available[0])
-                            : setHasWallet(true)
-                          : setHasWallet(true)
-                      }
-                    >
-                      {isConnected
-                        ? minifyAddressOrDomain(
-                            domain ? domain : (account as string)
-                          )
-                        : "connect"}
+                  <div className="text-beige">
+                    <Button onClick={onTopButtonClick}>
+                      {topButtonText()}
                     </Button>
                   </div>
                 </div>

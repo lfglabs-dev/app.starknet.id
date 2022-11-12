@@ -12,7 +12,7 @@ import ErrorScreen from "../components/UI/screens/errorScreen";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import { verifierContract } from "../hooks/contracts";
 import SuccessScreen from "../components/UI/screens/successScreen";
-import { Screen } from "./discord";
+import { Calls, Screen } from "./discord";
 import { stringToFelt } from "../utils/felt";
 import { toFelt } from "starknet/utils/number";
 
@@ -23,12 +23,12 @@ export default function Twitter() {
   const [signRequestData, setSignRequestData] = useState<any>();
 
   // Access localStorage
-  const isServer = typeof window === "undefined";
-  let tokenId: string | undefined;
-  let calls;
-  if (!isServer) {
-    tokenId = window.sessionStorage.getItem("tokenId") ?? undefined;
-    calls = {
+  const [tokenId, setTokenId] = useState<string>("");
+  const [calls, setCalls] = useState<Calls | undefined>();
+
+  useEffect(() => {
+    setTokenId(window.sessionStorage.getItem("tokenId") ?? "");
+    setCalls({
       contractAddress: verifierContract,
       entrypoint: "write_confirmation",
       calldata: [
@@ -37,8 +37,8 @@ export default function Twitter() {
         toFelt(signRequestData.user_id),
         [signRequestData.sign0, signRequestData.sign1],
       ],
-    };
-  }
+    });
+  }, []);
 
   //Manage Connection
   const { account } = useAccount();
@@ -90,21 +90,6 @@ export default function Twitter() {
 
   //Screen management
   const [screen, setScreen] = useState<Screen | undefined>();
-
-  useEffect(() => {
-    for (const transaction of transactions)
-      if (transaction.hash === twitterVerificationData?.transaction_hash) {
-        if (transaction.status === "TRANSACTION_RECEIVED") {
-          setScreen("loading");
-        }
-        if (
-          transaction.status === "ACCEPTED_ON_L2" ||
-          transaction.status === "ACCEPTED_ON_L1"
-        ) {
-          setScreen("success");
-        }
-      }
-  }, [twitterVerificationData, transactions]);
 
   // Error Management
   useEffect(() => {
