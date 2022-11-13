@@ -11,7 +11,10 @@ export const starknetIdContract: string =
   "0x0122ea781b9ee73e57e991092d88dfea17c0c4cbf335c6c70c349d98dd5d510c";
 
 export const namingContract: string =
-  "0x07bb1b694dea5f117a380ab56d2ad5c656196a14192d549b74a04a59220ab3a3";
+  "0x01401a716901df470faa0411a3f8f6565bdb35212afa00d93b0da1feff8caf52";
+
+// test whitelist
+// 0x07bb1b694dea5f117a380ab56d2ad5c656196a14192d549b74a04a59220ab3a3;
 
 export const pricingContract: string =
   "0x06ce507f6d3eb83bccd4a8a041a86c9f9a55eeeff10cac84bf00c3cd8a87f6ba";
@@ -23,7 +26,7 @@ export const etherContract: string =
   "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 
 // L1 Contracts
-export const L1buyingContract = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+export const L1buyingContract = "0x590b11c6e7af1e6091a9577149e7864b577b714a";
 
 export function useStarknetIdContract() {
   return useContract({

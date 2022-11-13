@@ -30,7 +30,7 @@ const Register: FunctionComponent<RegisterProps> = ({
 }) => {
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
-  const [duration, setDuration] = useState<number>(20);
+  const [duration, setDuration] = useState<number>(5);
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<any>([]);
   const [price, setPrice] = useState<string>("0");
@@ -167,8 +167,14 @@ const Register: FunctionComponent<RegisterProps> = ({
       L1buying_abi,
       L1Signer
     );
-    const address = await L1Signer?.getAddress();
-    const balanceOf = await L1buyingContract_rw.balanceOf(address);
+    await L1buyingContract_rw.purchase(
+      price,
+      encodedDomain,
+      tokenId,
+      duration,
+      0,
+      targetAddress
+    );
   }
 
   if (isAvailable)
