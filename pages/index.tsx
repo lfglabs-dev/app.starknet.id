@@ -15,7 +15,6 @@ import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { hexToFelt } from "../utils/felt";
-import { useEncoded } from "../hooks/naming";
 
 const Home: NextPage = () => {
   const { account } = useAccount();
@@ -41,11 +40,10 @@ const Home: NextPage = () => {
     execute();
     setRightTokenId(randomTokenId);
   }
-  const {
-    data,
-    loading,
-    error: transactionError,
-  } = useTransactionReceipt({ hash: mintData?.transaction_hash, watch: true });
+  const { data, error: transactionError } = useTransactionReceipt({
+    hash: mintData?.transaction_hash,
+    watch: true,
+  });
 
   useEffect(() => {
     if (account) {
@@ -84,6 +82,7 @@ const Home: NextPage = () => {
       <div className={styles.secondLeaf}>
         <img width="100%" alt="leaf" src="/leaves/leaf_1.png" />
       </div>
+
       <div className={styles.container}>
         <>
           {!mintData?.transaction_hash ? (

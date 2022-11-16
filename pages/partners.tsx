@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import styles from "../styles/whitelist.module.css";
-import { hexToFelt, scientificToString } from "../utils/felt";
+import { hexToFelt } from "../utils/felt";
 import { starknetIdContract, namingContract } from "../hooks/contracts";
 import { useDecodedSeveral } from "../hooks/naming";
 import BN from "bn.js";
