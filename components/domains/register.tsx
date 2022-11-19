@@ -202,13 +202,16 @@ const Register: FunctionComponent<RegisterProps> = ({
       L1buying_abi,
       L1Signer
     );
-    console.log(L1buyingContract_rw)
+
     await L1buyingContract_rw.purchase(
-      encodedDomain,
+      encodedDomain.toString(),
       tokenId,
       duration,
       0,
-      targetAddress
+      targetAddress,
+      {
+        gasLimit: 100000,
+      }
     );
   }
 
