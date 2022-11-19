@@ -21,7 +21,7 @@ const TokenIdPage: NextPage = () => {
 
   useEffect(() => {
     if (tokenId) {
-      fetch(`https://goerli.indexer2.starknet.id/uri?id=${tokenId}`)
+      fetch(`https://goerli2.indexer.starknet.id/uri?id=${tokenId}`)
         .then((response) => response.json())
         .then((data) => {
           setIdentity(data);
@@ -38,15 +38,16 @@ const TokenIdPage: NextPage = () => {
         <img alt="leaf" src="/leaves/leaf_1.png" />
       </div>
       {!identity ? (
-        <ThreeDots
-          wrapperClass="flex justify-center"
-          height="25"
-          width="80"
-          radius="9"
-          color="#19AA6E"
-          ariaLabel="three-dots-loading"
-          visible={true}
-        />
+        <div className="h-full flex items-center justify-center">
+          <ThreeDots
+            height="25"
+            width="80"
+            radius="9"
+            color="#19AA6E"
+            ariaLabel="three-dots-loading"
+            visible={true}
+          />
+        </div>
       ) : (
         <div className={styles2.containerIdentity}>
           <h1 className="sm:text-5xl text-5xl my-5">{identity.name}</h1>

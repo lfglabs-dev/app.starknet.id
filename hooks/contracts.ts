@@ -11,7 +11,7 @@ export const starknetIdContract: string =
   "0x3b960d41dfbe13c9f0c712d81627cf58dc3538180b4e95f9cbec50a29985e80";
 
 export const namingContract: string =
-  "0x063d1baa3f186d2736af28a471a3aa9bdde3c014f5ae1babfc5350c99860cc93";
+  "0x63d1baa3f186d2736af28a471a3aa9bdde3c014f5ae1babfc5350c99860cc93";
 
 // test whitelist
 // 0x07bb1b694dea5f117a380ab56d2ad5c656196a14192d549b74a04a59220ab3a3;

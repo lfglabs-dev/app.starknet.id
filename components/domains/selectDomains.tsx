@@ -27,7 +27,7 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
   useEffect(() => {
     if (account) {
       fetch(
-        `https://goerli.indexer2.starknet.id/addr_to_available_ids?addr=${hexToFelt(
+        `https://goerli2.indexer.starknet.id/addr_to_available_ids?addr=${hexToFelt(
           account.address
         )?.replace("0x", "")}`
       )

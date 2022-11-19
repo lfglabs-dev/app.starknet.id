@@ -49,7 +49,7 @@ const Home: NextPage = () => {
     if (account) {
       // Our Indexer
       fetch(
-        `https://goerli.indexer2.starknet.id/addr_to_ids?addr=${hexToFelt(
+        `https://goerli2.indexer.starknet.id/addr_to_ids?addr=${hexToFelt(
           account.address
         )?.replace("0x", "")}`
       )
