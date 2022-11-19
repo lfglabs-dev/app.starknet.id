@@ -77,6 +77,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       new BN(targetAddress?.slice(2), 16).toString(10),
     ],
   };
+
   const { execute: set_domain_to_address } = useStarknetExecute({
     calls: set_domain_to_address_calls,
   });

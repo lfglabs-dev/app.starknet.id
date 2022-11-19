@@ -1,11 +1,10 @@
-import { Router } from "@mui/icons-material";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styles from "../styles/wait.module.css";
 
-export const countDownDate = new Date("Nov 16, 2022 11:29:35").getTime();
+export const countDownDate = new Date("Nov 14, 2022 11:29:35").getTime();
 
 const Wait: NextPage = () => {
   const [dateToShow, setDateToShow] = useState<number[]>([]);

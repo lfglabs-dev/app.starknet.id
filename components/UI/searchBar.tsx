@@ -16,7 +16,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   const domainEncoded = useIsValid(typedValue);
 
   function handleChange(e: any) {
-    setTypedValue(e.target.value);
+    setTypedValue(e.target.value.toLowerCase());
   }
 
   function onEnter(ev: KeyboardEvent<HTMLDivElement>) {

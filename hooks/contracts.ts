@@ -8,16 +8,16 @@ import { Abi } from "starknet";
 
 //L2 Contracts
 export const starknetIdContract: string =
-  "0x040ba3f7cfd1296b404706bd1a215a2e13e8cd61b9572a0d1b2f960d1432c942";
+  "0x3b960d41dfbe13c9f0c712d81627cf58dc3538180b4e95f9cbec50a29985e80";
 
 export const namingContract: string =
-  "0x01401a716901df470faa0411a3f8f6565bdb35212afa00d93b0da1feff8caf52";
+  "0x063d1baa3f186d2736af28a471a3aa9bdde3c014f5ae1babfc5350c99860cc93";
 
 // test whitelist
 // 0x07bb1b694dea5f117a380ab56d2ad5c656196a14192d549b74a04a59220ab3a3;
 
 export const pricingContract: string =
-  "0x06ce507f6d3eb83bccd4a8a041a86c9f9a55eeeff10cac84bf00c3cd8a87f6ba";
+  "0x6f670aaf8279931e6de21f831530cb990da81f51717d7e80e442aa010bc6ef5";
 
 export const verifierContract: string =
   "0x004107cbd7113cb1dd22cf496add384cbec7baf22a2677a0b377400430584862";

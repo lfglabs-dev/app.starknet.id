@@ -78,7 +78,7 @@ const Subdomain: FunctionComponent<SubdomainProps> = ({ domain }) => {
   }
 
   return (
-    <div className="flex justify-center align-center mt-2">
+    <div className="flex justify-center align-center m-2">
       {isOwnerOf ? (
         <div className="flex flex-col">
           <div className="flex">

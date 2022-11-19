@@ -13,9 +13,27 @@ const DomainCard: FunctionComponent<DomainCardProps> = ({
   onClick,
   isAvailable,
 }) => {
+  function minifyAddressOrDomain(address: string): string | undefined {
+    const characterToBreak = window.innerWidth < 640 ? 9 : 18;
+
+    if (address.length > characterToBreak) {
+      const firstPart =
+        address.charAt(0) + address.charAt(1) + address.charAt(2);
+      const secondPart =
+        address.charAt(address.length - 3) +
+        address.charAt(address.length - 2) +
+        address.charAt(address.length - 1);
+      return firstPart + "..." + secondPart;
+    } else {
+      return address;
+    }
+  }
+
   return (
     <div className={styles.card} onClick={onClick}>
-      <h2 className={styles.cardTitle}>{domain}.stark</h2>
+      <h2 className={styles.cardTitle}>
+        {minifyAddressOrDomain(domain)}.stark
+      </h2>
       {isAvailable === undefined ? (
         <ThreeDots
           height="25"

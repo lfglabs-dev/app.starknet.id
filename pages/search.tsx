@@ -36,7 +36,7 @@ const SearchPage: NextPage = () => {
         <img width="100%" alt="leaf" src="/leaves/leaf_1.png" />
       </div>
       <div className={styles2.container}>
-        <div className="sm:w-2/3 w-4/5 min-w-fit mt-5">
+        <div className="sm:w-2/3 w-4/5 mt-5">
           <SearchBar
             onChangeTypedValue={(typeValue: string) => setDomain(typeValue)}
           />
