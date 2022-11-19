@@ -2,7 +2,7 @@
 import { TextField } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import styles from "../../styles/home.module.css";
+import styles from "../../styles/Home.module.css";
 import {
   starknetIdContract,
   usePricingContract,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "../styles/home.module.css";
+import styles from "../styles/Home.module.css";
 import {
   useStarknetExecute,
   useTransactionManager,

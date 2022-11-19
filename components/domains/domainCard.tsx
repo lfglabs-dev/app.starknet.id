@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { ThreeDots } from "react-loader-spinner";
-import styles from "../../styles/home.module.css";
+import styles from "../../styles/Home.module.css";
 
 type DomainCardProps = {
   domain: string;

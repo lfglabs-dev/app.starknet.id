@@ -6,7 +6,7 @@ import {
   useTokenIdFromDomain,
 } from "../../hooks/naming";
 import { ThreeDots } from "react-loader-spinner";
-import styles from "../../styles/home.module.css";
+import styles from "../../styles/Home.module.css";
 
 type DetailsProps = {
   domain: string;
