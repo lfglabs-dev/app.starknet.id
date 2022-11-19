@@ -158,14 +158,41 @@ const Register: FunctionComponent<RegisterProps> = ({
   >();
   const [provider, setProvider] = useState<ethers.providers.Web3Provider>();
   useEffect(() => {
-    if (provider) {
+    if (!provider) {
       setProvider(new ethers.providers.Web3Provider((window as any).ethereum));
     }
   }, [provider]);
 
   async function L1connect() {
+    try {
+      await (window as any).ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0x5' }],
+      });
+    } catch (switchError) {
+      if ((switchError as any).code === 4902) {
+        await (window as any).ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [{
+            chainId: "0x5",
+            rpcUrls: ["https://goerli.infura.io/v3/"],
+            chainName: "Goerli",
+            nativeCurrency: {
+              name: "GoerliETH",
+              symbol: "tETH",
+              decimals: 18
+            },
+            blockExplorerUrls: ["https://goerli.etherscan.io/"]
+          }]
+        });
+      }
+    }
+
     await provider?.send("eth_requestAccounts", []);
+
     const signer = provider?.getSigner();
+    console.log(provider, signer)
+
     setL1Signer(signer);
   }
 
@@ -175,6 +202,7 @@ const Register: FunctionComponent<RegisterProps> = ({
       L1buying_abi,
       L1Signer
     );
+    console.log(L1buyingContract_rw)
     await L1buyingContract_rw.purchase(
       price,
       encodedDomain,
