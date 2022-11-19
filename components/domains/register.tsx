@@ -134,30 +134,38 @@ const Register: FunctionComponent<RegisterProps> = ({
     setTokenId(Number(e.target.value));
   }
 
+  // Change price
   function getPriceFromDomain(domain: string): number {
     switch (domain.length) {
       case 1:
-        return 0.49;
-      case 2:
-        return 0.44;
-      case 3:
         return 0.39;
+      case 2:
+        return 0.374;
+      case 3:
+        return 0.34;
       case 4:
-        return 0.095;
+        return 0.085;
       default:
-        return 0.007;
+        return 0.009;
     }
   }
+
+  //TO DO régler bug safari (du provider)
 
   // register from L1
   const [L1Signer, setL1Signer] = useState<
     ethers.providers.JsonRpcSigner | undefined
   >();
-  const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+  const [provider, setProvider] = useState<ethers.providers.Web3Provider>();
+  useEffect(() => {
+    if (provider) {
+      setProvider(new ethers.providers.Web3Provider((window as any).ethereum));
+    }
+  }, [provider]);
 
   async function L1connect() {
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
+    await provider?.send("eth_requestAccounts", []);
+    const signer = provider?.getSigner();
     setL1Signer(signer);
   }
 
