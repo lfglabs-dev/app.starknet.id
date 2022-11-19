@@ -210,6 +210,7 @@ const Register: FunctionComponent<RegisterProps> = ({
       0,
       targetAddress,
       {
+        value: price,
         gasLimit: 100000,
       }
     );
