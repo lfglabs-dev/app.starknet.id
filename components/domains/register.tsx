@@ -204,7 +204,6 @@ const Register: FunctionComponent<RegisterProps> = ({
     );
     console.log(L1buyingContract_rw)
     await L1buyingContract_rw.purchase(
-      price,
       encodedDomain,
       tokenId,
       duration,
