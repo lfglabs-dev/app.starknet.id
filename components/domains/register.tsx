@@ -16,7 +16,7 @@ import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
 import { isHexString } from "../../hooks/string";
 import { ethers } from "ethers";
-import L1buying_abi from "../../abi/L1/L1buying_abi.json";
+import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
 
 type RegisterProps = {
