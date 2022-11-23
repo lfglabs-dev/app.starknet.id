@@ -15,11 +15,13 @@ import { hexToFelt } from "../../utils/felt";
 type SelectDomainProps = {
   tokenId: number;
   changeTokenId: (e: any) => void;
+  defaultText?: string;
 };
 
 const SelectDomain: FunctionComponent<SelectDomainProps> = ({
   tokenId,
   changeTokenId,
+  defaultText = "Mint a new starknet.id",
 }) => {
   const { account } = useAccount();
   const [ownedIdentities, setOwnedIdentities] = useState<number[] | []>([]);
@@ -68,7 +70,7 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
                 alt="starknet.id avatar"
               />
             </ListItemIcon>
-            <ListItemText primary="Mint a new starknet.id" />
+            <ListItemText primary={defaultText} />
           </MenuItem>
           {ownedIdentities.map((tokenId: number, index: number) => (
             <MenuItem key={index} value={tokenId}>

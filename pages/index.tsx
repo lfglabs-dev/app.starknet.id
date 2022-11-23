@@ -15,6 +15,8 @@ import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { hexToFelt } from "../utils/felt";
+import { useDecoded } from "../hooks/naming";
+import BN from "bn.js";
 
 const Home: NextPage = () => {
   const { account } = useAccount();

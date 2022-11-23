@@ -48,6 +48,7 @@
 @media (max-width: 820px) {
   .menu {
     width: 90%;
+    padding: 30px;
   }
 
   .menu_title {

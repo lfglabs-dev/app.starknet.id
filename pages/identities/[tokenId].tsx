@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import Button from "../../components/UI/button";
 import { NextPage } from "next";
 import { ThreeDots } from "react-loader-spinner";
-import IdentityActions from "../../components/identities/IdentityActions";
+import IdentityActions from "../../components/identities/identityActions";
+import { removeStarkFromString } from "../../utils/stringService";
 
 export type Identity = {
   name: string;
@@ -50,8 +51,8 @@ const TokenIdPage: NextPage = () => {
         </div>
       ) : (
         <div className={styles2.containerIdentity}>
-          <h1 className="sm:text-5xl text-5xl my-5">{identity.name}</h1>
-          <div className="mt-3">
+          <h1 className="sm:text-5xl text-4xl my-5">{identity.name}</h1>
+          <div>
             <img
               src={`https://www.starknet.id/api/identicons/${tokenId}`}
               height={200}
@@ -64,7 +65,7 @@ const TokenIdPage: NextPage = () => {
             tokenId={tokenId}
             domain={
               identity?.name.includes(".stark")
-                ? identity.name.replace(".stark", "")
+                ? removeStarkFromString(identity.name)
                 : undefined
             }
           />

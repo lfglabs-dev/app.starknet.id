@@ -26,10 +26,13 @@ const Navbar: FunctionComponent = () => {
     new BN((account?.address ?? "").slice(2), 16).toString(10)
   );
 
-  function minifyAddressOrDomain(address?: string): string | undefined {
+  function minifyAddressOrDomain(
+    maxCharacters: number,
+    address?: string
+  ): string | undefined {
     if (!address) return;
 
-    if (address.length > 24) {
+    if (address.length > maxCharacters) {
       const firstPart =
         address.charAt(0) + address.charAt(1) + address.charAt(2);
       const secondPart =
@@ -75,7 +78,7 @@ const Navbar: FunctionComponent = () => {
 
   function topButtonText(): string | undefined {
     const textToReturn = isConnected
-      ? minifyAddressOrDomain(domain ? domain : (account?.address as string))
+      ? minifyAddressOrDomain(8, domain ? domain : (account?.address as string))
       : "connect";
 
     return textToReturn;
@@ -97,7 +100,7 @@ const Navbar: FunctionComponent = () => {
             </Link>
           </div>
           <div>
-            <ul className="hidden md:flex uppercase items-center">
+            <ul className="hidden lg:flex uppercase items-center">
               <Link href="/">
                 <li className={styles.menuItem}>Identities</li>
               </Link>
@@ -124,6 +127,7 @@ const Navbar: FunctionComponent = () => {
                     <div className="flex justify-center items-center">
                       <div>
                         {minifyAddressOrDomain(
+                          24,
                           domain ? domain : account?.address
                         )}
                       </div>
@@ -135,7 +139,7 @@ const Navbar: FunctionComponent = () => {
                 </Button>
               </div>
             </ul>
-            <div onClick={handleNav} className="md:hidden">
+            <div onClick={handleNav} className="lg:hidden">
               <AiOutlineMenu color={brown} size={25} className="mr-3" />
             </div>
           </div>
@@ -144,15 +148,15 @@ const Navbar: FunctionComponent = () => {
         <div
           className={
             nav
-              ? "md:hidden fixed left-0 top-0 w-full h-screen bg-black/10"
+              ? "lg:hidden fixed left-0 top-0 w-full h-screen bg-black/10"
               : ""
           }
         >
           <div
             className={
               nav
-                ? " fixed left-0 top-0 w-[75%] sm:w-[60%] md:w-[45%] h-screen bg-beige p-10 ease-in duration-500"
-                : "fixed left-[-100%] top-0 p-10 ease-in duration-500"
+                ? "fixed left-0 top-0 w-[75%] sm:w-[60%] lg:w-[45%] h-screen bg-beige p-10 ease-in duration-500 flex justify-between flex-col"
+                : "fixed left-[-100%] top-0 p-10 ease-in h-screen flex justify-between flex-col"
             }
           >
             <div>
@@ -173,45 +177,44 @@ const Navbar: FunctionComponent = () => {
                 </div>
               </div>
               <div className="border-b border-soft-brown-300 my-4">
-                <p className="w-[85%] md:w-[90%] py-4 text-babe-blue">
+                <p className="w-[85%] lg:w-[90%] py-4 text-babe-blue">
                   Own your on-chain identity
                 </p>
               </div>
+              <div className="py-4 flex flex-col">
+                <ul className="uppercase text-babe-blue">
+                  <Link href="/">
+                    <li
+                      onClick={() => setNav(false)}
+                      className={styles.menuItemSmall}
+                    >
+                      Identities
+                    </li>
+                  </Link>
+                  <Link href="/domains">
+                    <li
+                      onClick={() => setNav(false)}
+                      className={styles.menuItemSmall}
+                    >
+                      Domains
+                    </li>
+                  </Link>
+                </ul>
+              </div>
             </div>
-            <div className="py-4 flex flex-col">
-              <ul className="uppercase text-babe-blue">
-                <Link href="/">
-                  <li
-                    onClick={() => setNav(false)}
-                    className={styles.menuItemSmall}
-                  >
-                    Identities
-                  </li>
-                </Link>
-                <Link href="/domains">
-                  <li
-                    onClick={() => setNav(false)}
-                    className={styles.menuItemSmall}
-                  >
-                    Domains
-                  </li>
-                </Link>
-              </ul>
-              <div className="pt-40">
-                <p className="uppercase tracking-widest white">
-                  Claim your starknet identity
-                </p>
-                <div className="flex items-center my-4 w-full sm:w-[80%]">
-                  <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300">
-                    <Link href="https://twitter.com/Starknet_id">
-                      <FaTwitter size={20} color={green} />
-                    </Link>
-                  </div>
-                  <div className="text-beige">
-                    <Button onClick={onTopButtonClick}>
-                      {topButtonText()}
-                    </Button>
-                  </div>
+
+            <div>
+              <p className="uppercase tracking-widest white">
+                Claim your starknet identity
+              </p>
+              <div className="flex items-center my-4 w-full sm:w-[80%]">
+                <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300">
+                  <Link href="https://twitter.com/Starknet_id">
+                    <FaTwitter size={20} color={green} />
+                  </Link>
+                </div>
+                <div className="text-beige">
+                  <Button onClick={onTopButtonClick}>{topButtonText()}</Button>
                 </div>
               </div>
             </div>

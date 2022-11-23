@@ -1,24 +1,15 @@
-import { Modal, TextField, Tooltip } from "@mui/material";
-import { useRouter } from "next/router";
-import { FunctionComponent, useEffect, useState } from "react";
+import { Tooltip } from "@mui/material";
+import { FunctionComponent, useState } from "react";
 import { Identity } from "../../pages/identities/[tokenId]";
 import ClickableIcon from "../UI/iconsComponents/clickableIcon";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
-import styles3 from "../../styles/components/wallets.module.css";
-import {
-  useAddressFromDomain,
-  useDomainFromAddress,
-  useEncodedSeveral,
-} from "../../hooks/naming";
+import { useDomainFromAddress, useEncodedSeveral } from "../../hooks/naming";
 import { BN } from "bn.js";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
-import { isHexString } from "../../hooks/string";
-import {
-  useNamingContract,
-  starknetIdContract,
-  namingContract,
-} from "../../hooks/contracts";
-import Button from "../UI/button";
+import { starknetIdContract, namingContract } from "../../hooks/contracts";
+import ChangeAddressModal from "./actions/changeAddressModal";
+import { removeStarkFromString } from "../../utils/stringService";
+import TransferFormModal from "./actions/transferFormModal";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -31,29 +22,23 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   tokenId,
   domain,
 }) => {
-  const router = useRouter();
-  const [isAddressFormOpen, setOpenAddressForm] = useState<boolean>(false);
-  const [targetAddress, setTargetAddress] = useState<string>("");
-  const [ownerAddress, setOwnerAddress] = useState<string | undefined>();
-  const handleOpen = () => setOpenAddressForm(true);
-  const handleClose = () => setOpenAddressForm(false);
+  const [isAddressFormOpen, setIsAddressFormOpen] = useState<boolean>(false);
+  const [isTransferFormOpen, setIsTransferFormOpen] = useState<boolean>(false);
   const { account } = useAccount();
   const { domain: domainFromAddress } = useDomainFromAddress(
     new BN((account?.address ?? "").slice(2), 16).toString(10)
   );
   const encodedDomains = useEncodedSeveral(
-    identity?.name.replace(".stark", "").split(".") ?? []
+    removeStarkFromString(identity ? identity.name : "").split(".") ?? []
   );
-  const { address: domainData, error: domainError } = useAddressFromDomain(
-    domain ?? ""
-  );
+
   const isMainDomain =
     identity &&
     identity.name.includes(".stark") &&
     domainFromAddress != identity.name;
 
   // Add all subdomains to the parameters
-  const callDataEncodedDomain: unknown[] = [encodedDomains.length];
+  const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
   encodedDomains.forEach((domain) => {
     callDataEncodedDomain.push(domain);
   });
@@ -68,51 +53,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     calls: set_address_to_domain_calls,
   });
 
-  //set_domain_to_address execute
-  const set_domain_to_address_calls = {
-    contractAddress: namingContract,
-    entrypoint: "set_domain_to_address",
-    calldata: [
-      ...callDataEncodedDomain,
-      new BN(targetAddress?.slice(2), 16).toString(10),
-    ],
-  };
-
-  const { execute: set_domain_to_address } = useStarknetExecute({
-    calls: set_domain_to_address_calls,
-  });
-
-  function startVerification(link: string): void {
-    sessionStorage.setItem("tokenId", tokenId);
-    router.push(link);
-  }
-
-  useEffect(() => {
-    if (account) {
-      setTargetAddress(account.address);
-    }
-  }, [account]);
-
-  function changeAddress(e: any): void {
-    isHexString(e.target.value) ? setTargetAddress(e.target.value) : null;
-  }
-
-  useEffect(() => {
-    if (domainError) {
-      return;
-    } else {
-      if (domainData) {
-        setOwnerAddress(domainData?.["address"].toString(16) as string);
-      }
-    }
-  }, [domainData, domainError]);
+  // function startVerification(link: string): void {
+  //   sessionStorage.setItem("tokenId", tokenId);
+  //   router.push(link);
+  // }
 
   function setAddressToDomain(): void {
     set_address_to_domain();
-  }
-
-  function setDomainToAddress(): void {
-    set_domain_to_address();
   }
 
   return (
@@ -151,25 +98,35 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             }
           />
         </div> */}
-        <div className="m-2">
-          <ClickableIcon
-            title="View on Mintsquare"
-            icon="mintsquare"
-            onClick={() =>
-              window.open(
-                `https://mintsquare.io/asset/starknet-testnet/${starknetIdContract}/${tokenId}`
-              )
-            }
-          />
-        </div>
+
         {domain && (
-          <div className="m-2">
-            <ClickableIcon
-              title="Change redirection address"
-              icon="change"
-              onClick={handleOpen}
-            />
-          </div>
+          <>
+            <div className="m-2">
+              <ClickableIcon
+                title="View on Mintsquare"
+                icon="mintsquare"
+                onClick={() =>
+                  window.open(
+                    `https://mintsquare.io/asset/starknet-testnet/${starknetIdContract}/${tokenId}`
+                  )
+                }
+              />
+            </div>
+            <div className="m-2">
+              <ClickableIcon
+                title="Change redirection address"
+                icon="change"
+                onClick={() => setIsAddressFormOpen(true)}
+              />
+            </div>
+            <div className="m-2">
+              <ClickableIcon
+                title="Transfer domain"
+                icon="transfer"
+                onClick={() => setIsTransferFormOpen(true)}
+              />
+            </div>
+          </>
         )}
         {identity && identity.name.includes(".stark") ? (
           isMainDomain ? (
@@ -197,55 +154,18 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           )
         ) : null}
       </div>
-      <Modal
-        disableAutoFocus
-        open={isAddressFormOpen}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <div className={styles3.menu}>
-          <button className={styles3.menu_close} onClick={handleClose}>
-            <svg viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-          </button>
-          <p className={styles3.menu_title}>Change the redirection address</p>
-          <div className="mt-5 flex flex-col justify-center">
-            {ownerAddress && (
-              <p className="break-all">
-                <strong>Current Address :</strong>&nbsp;
-                <span>{"0x" + ownerAddress}</span>
-              </p>
-            )}
-            <div className="mt-5">
-              <TextField
-                fullWidth
-                label="new target address"
-                id="outlined-basic"
-                value={targetAddress ?? "0x.."}
-                variant="outlined"
-                onChange={changeAddress}
-                color="secondary"
-                required
-              />
-            </div>
-            <div className="mt-5">
-              <Button
-                disabled={!targetAddress}
-                onClick={() => setDomainToAddress()}
-              >
-                Set new address
-              </Button>
-            </div>
-          </div>
-        </div>
-      </Modal>
+      <ChangeAddressModal
+        handleClose={() => setIsAddressFormOpen(false)}
+        isAddressFormOpen={isAddressFormOpen}
+        callDataEncodedDomain={callDataEncodedDomain}
+        domain={domain}
+      />
+      <TransferFormModal
+        handleClose={() => setIsTransferFormOpen(false)}
+        isTransferFormOpen={isTransferFormOpen}
+        callDataEncodedDomain={callDataEncodedDomain}
+        domain={domain}
+      />
     </>
   );
 };
