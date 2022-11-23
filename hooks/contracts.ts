@@ -26,7 +26,7 @@ export const etherContract: string =
   "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 
 // L1 Contracts
-export const L1buyingContract = "0x590b11c6e7af1e6091a9577149e7864b577b714a";
+export const L1buyingContract = "0xd3d5e8afb1bb4d7c1073f0b704ff78b65818df0f";
 
 export function useStarknetIdContract() {
   return useContract({

@@ -156,19 +156,17 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [L1Signer, setL1Signer] = useState<
     ethers.providers.JsonRpcSigner | undefined
   >();
-  const [provider, setProvider] = useState<ethers.providers.Web3Provider>();
-  useEffect(() => {
-    if (!provider) {
-      setProvider(new ethers.providers.Web3Provider((window as any).ethereum));
-    }
-  }, [provider]);
+
+
 
   async function L1connect() {
+    let provider;
     try {
       await (window as any).ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: '0x5' }],
       });
+      provider = new ethers.providers.Web3Provider((window as any).ethereum);
     } catch (switchError) {
       if ((switchError as any).code === 4902) {
         await (window as any).ethereum.request({
@@ -185,18 +183,17 @@ const Register: FunctionComponent<RegisterProps> = ({
             blockExplorerUrls: ["https://goerli.etherscan.io/"]
           }]
         });
+        provider = new ethers.providers.Web3Provider((window as any).ethereum);
       }
     }
 
     await provider?.send("eth_requestAccounts", []);
-
     const signer = provider?.getSigner();
-    console.log(provider, signer)
-
     setL1Signer(signer);
   }
 
   async function L1register() {
+    console.log(L1buyingContract, L1buying_abi, L1Signer)
     const L1buyingContract_rw = new ethers.Contract(
       L1buyingContract,
       L1buying_abi,
@@ -206,10 +203,11 @@ const Register: FunctionComponent<RegisterProps> = ({
     await L1buyingContract_rw.purchase(
       encodedDomain.toString(),
       tokenId,
-      duration,
+      duration * 365,
       0,
       targetAddress,
       {
+        value: price,
         gasLimit: 100000,
       }
     );
@@ -289,7 +287,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                 onClick={() => {
                   L1register();
                 }}
-                disabled={!Boolean(account) || !duration || !targetAddress}
+                disabled={!Boolean(account) || !duration || !targetAddress || !Boolean(tokenId)}
               >
                 Register from L1
               </Button>
