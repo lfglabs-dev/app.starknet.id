@@ -30,7 +30,6 @@ const DomainTabs: FunctionComponent<DomainTabsProps> = ({ changeTab, tab }) => {
       >
         <Tab value="one" label="Register" />
         <Tab value="two" label="Details" />
-        <Tab value="three" label="Subdomain" />
       </Tabs>
     </Box>
   );

@@ -58,7 +58,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
           </svg>
         </button>
         <h2 className={styles.menu_title}>
-          Move {domain}.stark to a different starknet.id
+          Move {domain} to a different identity
         </h2>
         <div className="mt-5 flex flex-col justify-center">
           <p className="break-all">

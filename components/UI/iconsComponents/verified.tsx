@@ -8,7 +8,6 @@ import { stringToFelt } from "../../../utils/felt";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import VerifiedIcon from "./icons/verifiedIcon";
-import UnverifiedIcon from "./icons/unverifiedIcon";
 
 type VerifiedProps = {
   type: string;

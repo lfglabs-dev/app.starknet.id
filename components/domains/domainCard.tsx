@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styles from "../../styles/Home.module.css";
+import { minifyAddressOrDomain } from "../../utils/stringService";
 
 type DomainCardProps = {
   domain: string;
@@ -13,22 +14,6 @@ const DomainCard: FunctionComponent<DomainCardProps> = ({
   onClick,
   isAvailable,
 }) => {
-  function minifyAddressOrDomain(address: string): string | undefined {
-    const characterToBreak = window.innerWidth < 640 ? 9 : 18;
-
-    if (address.length > characterToBreak) {
-      const firstPart =
-        address.charAt(0) + address.charAt(1) + address.charAt(2);
-      const secondPart =
-        address.charAt(address.length - 3) +
-        address.charAt(address.length - 2) +
-        address.charAt(address.length - 1);
-      return firstPart + "..." + secondPart;
-    } else {
-      return address;
-    }
-  }
-
   return (
     <div className={styles.card} onClick={onClick}>
       <h2 className={styles.cardTitle}>

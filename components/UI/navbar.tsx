@@ -11,11 +11,12 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useDomainFromAddress } from "../../hooks/naming";
 import { BN } from "bn.js";
 import SelectNetwork from "./selectNetwork";
+import { minifyAddressOrDomain } from "../../utils/stringService";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
   const [hasWallet, setHasWallet] = useState<boolean>(false);
-  const { account } = useAccount();
+  const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isDisconnectedOnClick, setIsDisconnectedOnClick] =
     useState<boolean>(false);
@@ -23,27 +24,8 @@ const Navbar: FunctionComponent = () => {
   const brown = "#402d28";
   const { available, connect, disconnect } = useConnectors();
   const { domain } = useDomainFromAddress(
-    new BN((account?.address ?? "").slice(2), 16).toString(10)
+    new BN((address ?? "").slice(2), 16).toString(10)
   );
-
-  function minifyAddressOrDomain(
-    maxCharacters: number,
-    address?: string
-  ): string | undefined {
-    if (!address) return;
-
-    if (address.length > maxCharacters) {
-      const firstPart =
-        address.charAt(0) + address.charAt(1) + address.charAt(2);
-      const secondPart =
-        address.charAt(address.length - 3) +
-        address.charAt(address.length - 2) +
-        address.charAt(address.length - 1);
-      return firstPart + "..." + secondPart;
-    } else {
-      return address;
-    }
-  }
 
   function disconnectByClick(): void {
     disconnect();
@@ -51,8 +33,8 @@ const Navbar: FunctionComponent = () => {
   }
 
   useEffect(() => {
-    account ? setIsConnected(true) : setIsConnected(false);
-  }, [account]);
+    address ? setIsConnected(true) : setIsConnected(false);
+  }, [address]);
 
   useEffect(() => {
     if (!isDisconnectedOnClick && !isConnected) {
@@ -78,7 +60,7 @@ const Navbar: FunctionComponent = () => {
 
   function topButtonText(): string | undefined {
     const textToReturn = isConnected
-      ? minifyAddressOrDomain(8, domain ? domain : (account?.address as string))
+      ? minifyAddressOrDomain(domain ? domain : (address as string), 8)
       : "connect";
 
     return textToReturn;
@@ -127,8 +109,8 @@ const Navbar: FunctionComponent = () => {
                     <div className="flex justify-center items-center">
                       <div>
                         {minifyAddressOrDomain(
-                          24,
-                          domain ? domain : account?.address
+                          domain ? domain : (address as string),
+                          24
                         )}
                       </div>
                       <LogoutIcon className="ml-3" />

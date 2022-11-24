@@ -4,9 +4,9 @@ import { MutatingDots } from "react-loader-spinner";
 const LoadingScreen: FunctionComponent = () => {
   const [loadingMessageNumber, setLoadingMessageNumber] = useState<number>(0);
   const loadingMessages: string[] = [
-    "Patience is a virtue, especially when it comes to ETH 2.0",
+    "Patience is a virtue, especially when it comes to Starknet Alpha",
     "Patience is also a virtue when it comes to Starknet testnet",
-    "Ok it's slow but at least it does not stop like Solana",
+    "Ok it's slow but at least it does not stop like Cardano",
     "Just a few moments left ser",
     "Alright now it shouldn't be long",
   ];

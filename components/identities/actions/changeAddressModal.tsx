@@ -1,9 +1,8 @@
 import { Modal, TextField } from "@mui/material";
-import { useStarknetExecute } from "@starknet-react/core";
+import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import BN from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { namingContract } from "../../../hooks/contracts";
-import { useAddressFromDomain } from "../../../hooks/naming";
 import { isHexString } from "../../../hooks/string";
 import styles from "../../../styles/components/wallets.module.css";
 import Button from "../../UI/button";
@@ -13,6 +12,7 @@ type ChangeAddressModalProps = {
   isModalOpen: boolean;
   callDataEncodedDomain: (number | string)[];
   domain?: string;
+  currentTargetAddress?: string;
 };
 
 const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
@@ -20,23 +20,10 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   isModalOpen,
   callDataEncodedDomain,
   domain,
+  currentTargetAddress = "0",
 }) => {
+  const { address } = useAccount();
   const [targetAddress, setTargetAddress] = useState<string>("");
-  const [ownerAddress, setOwnerAddress] = useState<string | undefined>();
-
-  const { address: domainData, error: domainError } = useAddressFromDomain(
-    domain ?? ""
-  );
-
-  useEffect(() => {
-    if (domainError) {
-      return;
-    } else {
-      if (domainData) {
-        setOwnerAddress(domainData?.["address"].toString(16) as string);
-      }
-    }
-  }, [domainData, domainError]);
 
   //set_domain_to_address execute
   const set_domain_to_address_calls = {
@@ -79,12 +66,14 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
             ></path>
           </svg>
         </button>
-        <p className={styles.menu_title}>Change the redirection address</p>
+        <p className={styles.menu_title}>
+          Change the redirection address of {domain}
+        </p>
         <div className="mt-5 flex flex-col justify-center">
-          {ownerAddress && (
+          {currentTargetAddress && (
             <p className="break-all">
               <strong>Current Address :</strong>&nbsp;
-              <span>{"0x" + ownerAddress}</span>
+              <span>{"0x" + currentTargetAddress}</span>
             </p>
           )}
           <div className="mt-5">
@@ -93,7 +82,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
               fullWidth
               label="new target address"
               id="outlined-basic"
-              value={targetAddress ?? "0x.."}
+              value={targetAddress ?? address}
               variant="outlined"
               onChange={changeAddress}
               color="secondary"

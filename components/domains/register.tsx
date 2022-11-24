@@ -194,7 +194,6 @@ const Register: FunctionComponent<RegisterProps> = ({
   }
 
   async function L1register() {
-    console.log(L1buyingContract, L1buying_abi, L1Signer);
     const L1buyingContract_rw = new ethers.Contract(
       L1buyingContract,
       L1buying_abi,

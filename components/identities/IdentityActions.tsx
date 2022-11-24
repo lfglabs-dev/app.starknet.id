@@ -5,11 +5,7 @@ import ClickableIcon from "../UI/iconsComponents/clickableIcon";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import { useDomainFromAddress, useEncodedSeveral } from "../../hooks/naming";
 import { BN } from "bn.js";
-import {
-  useAccount,
-  useStarknetCall,
-  useStarknetExecute,
-} from "@starknet-react/core";
+import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import { namingContract, useStarknetIdContract } from "../../hooks/contracts";
 import ChangeAddressModal from "./actions/changeAddressModal";
 import {
@@ -32,23 +28,20 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isTransferFormOpen, setIsTransferFormOpen] = useState<boolean>(false);
   const [isSubdomainFormOpen, setIsSubdomainFormOpen] =
     useState<boolean>(false);
-  const { account } = useAccount();
+  const { address } = useAccount();
   const { domain: domainFromAddress } = useDomainFromAddress(
-    new BN((account?.address ?? "").slice(2), 16).toString(10)
+    new BN((address ?? "").slice(2), 16).toString(10)
   );
   const encodedDomains = useEncodedSeveral(
     removeStarkFromString(identity ? identity.name : "").split(".") ?? []
   );
-  const [isOwnerOf, setIsOwnerOf] = useState<boolean>(false);
+  const [targetAddress, setTargetAddress] = useState<string | undefined>();
+  const [isAccountTargetAddress, setIsAccountTargetAddress] =
+    useState<boolean>(false);
   const isMainDomain = domainFromAddress != identity?.name;
 
   //Check if connected account is owner
   const { contract: starknetIdContract } = useStarknetIdContract();
-  const { data: owner, error: ownerError } = useStarknetCall({
-    contract: starknetIdContract,
-    method: "ownerOf",
-    args: [[tokenId, 0], ""],
-  });
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -56,15 +49,42 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     callDataEncodedDomain.push(domain);
   });
 
-  //set_address_to_domain execute
+  //Set as main domain execute
   const set_address_to_domain_calls = {
     contractAddress: namingContract,
     entrypoint: "set_address_to_domain",
     calldata: callDataEncodedDomain,
   };
+  const set_domain_to_address_calls = {
+    contractAddress: namingContract,
+    entrypoint: "set_domain_to_address",
+    calldata: [
+      ...callDataEncodedDomain,
+      new BN((address ?? "").slice(2), 16).toString(10),
+    ],
+  };
   const { execute: set_address_to_domain } = useStarknetExecute({
-    calls: set_address_to_domain_calls,
+    calls: isAccountTargetAddress
+      ? set_address_to_domain_calls
+      : [set_domain_to_address_calls, set_address_to_domain_calls],
   });
+
+  //Get redirection address
+
+  useEffect(() => {
+    if (identity && isStarkDomain(identity.name) && address) {
+      fetch(
+        `https://goerli2.indexer.starknet.id/domain_to_addr?domain=${identity.name}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            setIsAccountTargetAddress(false);
+          }
+          setTargetAddress(data.addr);
+        });
+    }
+  }, [identity, address]);
 
   // function startVerification(link: string): void {
   //   sessionStorage.setItem("tokenId", tokenId);
@@ -74,15 +94,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   function setAddressToDomain(): void {
     set_address_to_domain();
   }
-
-  useEffect(() => {
-    if (ownerError) {
-      return;
-    }
-    if (tokenId && owner && account) {
-      setIsOwnerOf(owner?.["owner"].toString(16) === account.address.slice(2));
-    }
-  }, [tokenId, owner, ownerError, account]);
 
   return (
     <>
@@ -121,7 +132,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           />
         </div> */}
 
-        {/* CHANGE THAT FOR ONLY .STARK DOMAIN */}
         {identity && isStarkDomain(identity.name) && (
           <>
             <div className="m-2">
@@ -190,6 +200,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         isModalOpen={isAddressFormOpen}
         callDataEncodedDomain={callDataEncodedDomain}
         domain={identity?.name}
+        currentTargetAddress={targetAddress}
       />
       <TransferFormModal
         handleClose={() => setIsTransferFormOpen(false)}

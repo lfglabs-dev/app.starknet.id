@@ -6,8 +6,7 @@ import { useRouter } from "next/router";
 import Button from "../../components/UI/button";
 import { NextPage } from "next";
 import { ThreeDots } from "react-loader-spinner";
-import IdentityActions from "../../components/identities/identityActions";
-import { removeStarkFromString } from "../../utils/stringService";
+import IdentityActions from "../../components/identities/IdentityActions";
 
 export type Identity = {
   name: string;
