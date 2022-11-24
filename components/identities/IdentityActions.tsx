@@ -1,29 +1,37 @@
 import { Tooltip } from "@mui/material";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useEffect, useState } from "react";
 import { Identity } from "../../pages/identities/[tokenId]";
 import ClickableIcon from "../UI/iconsComponents/clickableIcon";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import { useDomainFromAddress, useEncodedSeveral } from "../../hooks/naming";
 import { BN } from "bn.js";
-import { useAccount, useStarknetExecute } from "@starknet-react/core";
-import { starknetIdContract, namingContract } from "../../hooks/contracts";
+import {
+  useAccount,
+  useStarknetCall,
+  useStarknetExecute,
+} from "@starknet-react/core";
+import { namingContract, useStarknetIdContract } from "../../hooks/contracts";
 import ChangeAddressModal from "./actions/changeAddressModal";
-import { removeStarkFromString } from "../../utils/stringService";
+import {
+  isStarkDomain,
+  removeStarkFromString,
+} from "../../utils/stringService";
 import TransferFormModal from "./actions/transferFormModal";
+import SubdomainModal from "./actions/subdomainModal";
 
 type IdentityActionsProps = {
   identity?: Identity;
   tokenId: string;
-  domain?: string;
 };
 
 const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   identity,
   tokenId,
-  domain,
 }) => {
   const [isAddressFormOpen, setIsAddressFormOpen] = useState<boolean>(false);
   const [isTransferFormOpen, setIsTransferFormOpen] = useState<boolean>(false);
+  const [isSubdomainFormOpen, setIsSubdomainFormOpen] =
+    useState<boolean>(false);
   const { account } = useAccount();
   const { domain: domainFromAddress } = useDomainFromAddress(
     new BN((account?.address ?? "").slice(2), 16).toString(10)
@@ -31,11 +39,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const encodedDomains = useEncodedSeveral(
     removeStarkFromString(identity ? identity.name : "").split(".") ?? []
   );
+  const [isOwnerOf, setIsOwnerOf] = useState<boolean>(false);
+  const isMainDomain = domainFromAddress != identity?.name;
 
-  const isMainDomain =
-    identity &&
-    identity.name.includes(".stark") &&
-    domainFromAddress != identity.name;
+  //Check if connected account is owner
+  const { contract: starknetIdContract } = useStarknetIdContract();
+  const { data: owner, error: ownerError } = useStarknetCall({
+    contract: starknetIdContract,
+    method: "ownerOf",
+    args: [[tokenId, 0], ""],
+  });
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -61,6 +74,15 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   function setAddressToDomain(): void {
     set_address_to_domain();
   }
+
+  useEffect(() => {
+    if (ownerError) {
+      return;
+    }
+    if (tokenId && owner && account) {
+      setIsOwnerOf(owner?.["owner"].toString(16) === account.address.slice(2));
+    }
+  }, [tokenId, owner, ownerError, account]);
 
   return (
     <>
@@ -99,7 +121,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           />
         </div> */}
 
-        {domain && (
+        {/* CHANGE THAT FOR ONLY .STARK DOMAIN */}
+        {identity && isStarkDomain(identity.name) && (
           <>
             <div className="m-2">
               <ClickableIcon
@@ -126,45 +149,59 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 onClick={() => setIsTransferFormOpen(true)}
               />
             </div>
-          </>
-        )}
-        {identity && identity.name.includes(".stark") ? (
-          isMainDomain ? (
             <div className="m-2">
               <ClickableIcon
-                title="Set this domain as your main domain"
-                icon="main"
-                onClick={() => setAddressToDomain()}
+                title="Create subdomain"
+                icon="plus"
+                onClick={() => setIsSubdomainFormOpen(true)}
               />
             </div>
-          ) : (
-            <div className="m-2">
-              <>
-                <Tooltip title="This domain is already your main domain" arrow>
-                  <div>
-                    <MainIcon
-                      width="40"
-                      firstColor="#19aa6e"
-                      secondColor="#19aa6e"
-                    />
-                  </div>
-                </Tooltip>
-              </>
-            </div>
-          )
-        ) : null}
+            {isMainDomain ? (
+              <div className="m-2">
+                <ClickableIcon
+                  title="Set this domain as your main domain"
+                  icon="main"
+                  onClick={() => setAddressToDomain()}
+                />
+              </div>
+            ) : (
+              <div className="m-2">
+                <>
+                  <Tooltip
+                    title="This domain is already your main domain"
+                    arrow
+                  >
+                    <div>
+                      <MainIcon
+                        width="40"
+                        firstColor="#19aa6e"
+                        secondColor="#19aa6e"
+                      />
+                    </div>
+                  </Tooltip>
+                </>
+              </div>
+            )}
+          </>
+        )}
       </div>
       <ChangeAddressModal
         handleClose={() => setIsAddressFormOpen(false)}
-        isAddressFormOpen={isAddressFormOpen}
+        isModalOpen={isAddressFormOpen}
         callDataEncodedDomain={callDataEncodedDomain}
-        domain={domain}
+        domain={identity?.name}
       />
       <TransferFormModal
         handleClose={() => setIsTransferFormOpen(false)}
-        isTransferFormOpen={isTransferFormOpen}
+        isModalOpen={isTransferFormOpen}
         callDataEncodedDomain={callDataEncodedDomain}
-        domain={domain}
+        domain={identity?.name}
+      />
+      <SubdomainModal
+        handleClose={() => setIsSubdomainFormOpen(false)}
+        isModalOpen={isSubdomainFormOpen}
+        callDataEncodedDomain={callDataEncodedDomain}
+        domain={identity?.name}
       />
     </>
   );

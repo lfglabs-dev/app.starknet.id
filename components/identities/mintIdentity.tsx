@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import PlusIcon from "../UI/iconsComponents/icons/plusIcon";
+import MintIcon from "../UI/iconsComponents/icons/mintIcon";
 import styles from "../../styles/components/icons.module.css";
 
 type MintIdentityProps = {
@@ -9,7 +9,7 @@ type MintIdentityProps = {
 const MintIdentity: FunctionComponent<MintIdentityProps> = ({ onClick }) => {
   return (
     <div className={styles.clickablePlus} onClick={onClick}>
-      <PlusIcon />
+      <MintIcon />
     </div>
   );
 };

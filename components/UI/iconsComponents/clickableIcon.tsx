@@ -8,6 +8,7 @@ import MainIcon from "./icons/mainIcon";
 import ChangeIcon from "./icons/changeIcon";
 import MintsquareIcon from "./icons/mintsquareIcon";
 import TransferIcon from "./icons/transferIcon";
+import PlusIcon from "./icons/plusIcon";
 import { Tooltip } from "@mui/material";
 
 type ClickableIconProps = {
@@ -37,6 +38,7 @@ const ClickableIcon: FunctionComponent<ClickableIconProps> = ({
               <MintsquareIcon width="40" color="#402D28" />
             )}
             {icon === "transfer" && <TransferIcon width="40" color="#402D28" />}
+            {icon === "plus" && <PlusIcon width="40" color="#402D28" />}
           </div>
           {icon === "github" && <Verified type="github" width="15" />}
           {icon === "twitter" && <Verified type="twitter" width="15" />}

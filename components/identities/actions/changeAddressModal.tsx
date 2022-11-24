@@ -10,14 +10,14 @@ import Button from "../../UI/button";
 
 type ChangeAddressModalProps = {
   handleClose: () => void;
-  isAddressFormOpen: boolean;
+  isModalOpen: boolean;
   callDataEncodedDomain: (number | string)[];
   domain?: string;
 };
 
 const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   handleClose,
-  isAddressFormOpen,
+  isModalOpen,
   callDataEncodedDomain,
   domain,
 }) => {
@@ -63,7 +63,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   return (
     <Modal
       disableAutoFocus
-      open={isAddressFormOpen}
+      open={isModalOpen}
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"

@@ -60,15 +60,7 @@ const TokenIdPage: NextPage = () => {
               alt="identicon"
             />
           </div>
-          <IdentityActions
-            identity={identity}
-            tokenId={tokenId}
-            domain={
-              identity?.name.includes(".stark")
-                ? removeStarkFromString(identity.name)
-                : undefined
-            }
-          />
+          <IdentityActions identity={identity} tokenId={tokenId} />
           <div className="mt-5">
             <Button onClick={() => router.push("/")}>
               Back to your identities

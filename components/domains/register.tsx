@@ -18,6 +18,7 @@ import { isHexString } from "../../hooks/string";
 import { ethers } from "ethers";
 import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
+import { Call } from "starknet/types";
 
 type RegisterProps = {
   domain: string;
@@ -32,7 +33,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [duration, setDuration] = useState<number>(5);
   const [tokenId, setTokenId] = useState<number>(0);
-  const [callData, setCallData] = useState<any>([]);
+  const [callData, setCallData] = useState<Call[]>([]);
   const [price, setPrice] = useState<string>("0");
   const [priceWithoutDiscount, setPriceWithoutDiscount] = useState<number>(
     Math.round(getPriceFromDomain(domain) * 1000) / 1000
@@ -46,7 +47,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   });
   const { account } = useAccount();
   const { execute } = useStarknetExecute({
-    calls: callData,
+    calls: callData as any,
   });
 
   useEffect(() => {
@@ -157,31 +158,31 @@ const Register: FunctionComponent<RegisterProps> = ({
     ethers.providers.JsonRpcSigner | undefined
   >();
 
-
-
   async function L1connect() {
     let provider;
     try {
       await (window as any).ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: '0x5' }],
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x5" }],
       });
       provider = new ethers.providers.Web3Provider((window as any).ethereum);
     } catch (switchError) {
       if ((switchError as any).code === 4902) {
         await (window as any).ethereum.request({
           method: "wallet_addEthereumChain",
-          params: [{
-            chainId: "0x5",
-            rpcUrls: ["https://goerli.infura.io/v3/"],
-            chainName: "Goerli",
-            nativeCurrency: {
-              name: "GoerliETH",
-              symbol: "tETH",
-              decimals: 18
+          params: [
+            {
+              chainId: "0x5",
+              rpcUrls: ["https://goerli.infura.io/v3/"],
+              chainName: "Goerli",
+              nativeCurrency: {
+                name: "GoerliETH",
+                symbol: "tETH",
+                decimals: 18,
+              },
+              blockExplorerUrls: ["https://goerli.etherscan.io/"],
             },
-            blockExplorerUrls: ["https://goerli.etherscan.io/"]
-          }]
+          ],
         });
         provider = new ethers.providers.Web3Provider((window as any).ethereum);
       }
@@ -193,7 +194,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   }
 
   async function L1register() {
-    console.log(L1buyingContract, L1buying_abi, L1Signer)
+    console.log(L1buyingContract, L1buying_abi, L1Signer);
     const L1buyingContract_rw = new ethers.Contract(
       L1buyingContract,
       L1buying_abi,
@@ -287,7 +288,12 @@ const Register: FunctionComponent<RegisterProps> = ({
                 onClick={() => {
                   L1register();
                 }}
-                disabled={!Boolean(account) || !duration || !targetAddress || !Boolean(tokenId)}
+                disabled={
+                  !Boolean(account) ||
+                  !duration ||
+                  !targetAddress ||
+                  !Boolean(tokenId)
+                }
               >
                 Register from L1
               </Button>

@@ -9,14 +9,14 @@ import Button from "../../UI/button";
 
 type TransferFormModalProps = {
   handleClose: () => void;
-  isTransferFormOpen: boolean;
+  isModalOpen: boolean;
   callDataEncodedDomain: (number | string)[];
   domain?: string;
 };
 
 const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   handleClose,
-  isTransferFormOpen,
+  isModalOpen,
   callDataEncodedDomain,
   domain,
 }) => {
@@ -41,7 +41,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   return (
     <Modal
       disableAutoFocus
-      open={isTransferFormOpen}
+      open={isModalOpen}
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
@@ -57,9 +57,9 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
             ></path>
           </svg>
         </button>
-        <p className={styles.menu_title}>
+        <h2 className={styles.menu_title}>
           Move {domain}.stark to a different starknet.id
-        </p>
+        </h2>
         <div className="mt-5 flex flex-col justify-center">
           <p className="break-all">
             <strong>Current Owner Identity number : </strong>
