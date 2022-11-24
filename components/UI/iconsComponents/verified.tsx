@@ -39,11 +39,7 @@ const Verified: FunctionComponent<VerifiedProps> = ({ type, width }) => {
     <div className="absolute bottom-0 right-1">
       <VerifiedIcon color="#19AA6E" width={width} />
     </div>
-  ) : (
-    <div className="absolute bottom-0 right-1">
-      <UnverifiedIcon color="#19AA6E" width={width} />
-    </div>
-  );
+  ) : null;
 };
 
 export default Verified;
