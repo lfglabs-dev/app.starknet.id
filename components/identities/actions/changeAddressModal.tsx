@@ -67,7 +67,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
           </svg>
         </button>
         <p className={styles.menu_title}>
-          Change the redirection address of {domain}
+          Change the target address of {domain}
         </p>
         <div className="mt-5 flex flex-col justify-center">
           {currentTargetAddress && (

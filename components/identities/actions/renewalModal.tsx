@@ -66,7 +66,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
           </svg>
         </button>
         <p className={styles.menu_title}>
-          Change the redirection address of {identity?.domain ?? ""}
+          Change the target address of {identity?.domain ?? ""}
         </p>
         <div className="mt-5 flex flex-col justify-center">
           {identity?.domain_expiry && (

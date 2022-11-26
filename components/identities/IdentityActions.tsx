@@ -132,7 +132,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             </div>
             <div className="m-2">
               <ClickableIcon
-                title="Change redirection address"
+                title="Change target address"
                 icon="address"
                 onClick={() => setIsAddressFormOpen(true)}
               />
