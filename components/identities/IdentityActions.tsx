@@ -110,7 +110,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           />
         </div> */}
 
-        {identity && (
+        {identity && identity.domain && (
           <>
             <div className="m-2">
               <ClickableIcon
