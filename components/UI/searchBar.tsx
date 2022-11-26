@@ -13,7 +13,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
 }) => {
   const router = useRouter();
   const [typedValue, setTypedValue] = useState<string>("");
-  const domainEncoded = useIsValid(typedValue);
+  const isDomainValid = useIsValid(typedValue);
 
   function handleChange(e: any) {
     setTypedValue(e.target.value.toLowerCase());
@@ -27,7 +27,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   }
 
   function search(typedValue: string) {
-    if (typeof domainEncoded === "boolean") {
+    if (typeof isDomainValid === "boolean") {
       onChangeTypedValue?.(typedValue);
       router.push(`/search?domain=${typedValue}`);
     }
@@ -39,8 +39,8 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
       className="z-[0]"
       id="outlined-basic"
       label={
-        domainEncoded != true
-          ? `"${domainEncoded}" is not a valid character`
+        isDomainValid != true
+          ? `"${isDomainValid}" is not a valid character`
           : "Your Username"
       }
       placeholder="Type your .stark domain here"
@@ -58,7 +58,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
           </InputAdornment>
         ),
       }}
-      error={domainEncoded != true}
+      error={isDomainValid != true}
     />
   );
 };

@@ -19,6 +19,7 @@ import { ethers } from "ethers";
 import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
 import { Call } from "starknet/types";
+import { getPriceFromDomain } from "../../utils/price";
 
 type RegisterProps = {
   domain: string;
@@ -134,24 +135,6 @@ const Register: FunctionComponent<RegisterProps> = ({
   function changeTokenId(e: any): void {
     setTokenId(Number(e.target.value));
   }
-
-  // Change price
-  function getPriceFromDomain(domain: string): number {
-    switch (domain.length) {
-      case 1:
-        return 0.39;
-      case 2:
-        return 0.374;
-      case 3:
-        return 0.34;
-      case 4:
-        return 0.085;
-      default:
-        return 0.009;
-    }
-  }
-
-  //TO DO régler bug safari (du provider)
 
   // register from L1
   const [L1Signer, setL1Signer] = useState<

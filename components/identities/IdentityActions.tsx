@@ -123,13 +123,15 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 }
               />
             </div>
-            <div className="m-2">
-              <ClickableIcon
-                title="Renew domain"
-                icon="change"
-                onClick={() => setIsRenewFormOpen(true)}
-              />
-            </div>
+            {callDataEncodedDomain[0] === 1 ? (
+              <div className="m-2">
+                <ClickableIcon
+                  title="Renew domain"
+                  icon="change"
+                  onClick={() => setIsRenewFormOpen(true)}
+                />
+              </div>
+            ) : null}
             <div className="m-2">
               <ClickableIcon
                 title="Change target address"

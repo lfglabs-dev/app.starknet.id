@@ -4,7 +4,7 @@ import { BN } from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Call } from "starknet/types";
 import { namingContract, starknetIdContract } from "../../../hooks/contracts";
-import { useEncoded } from "../../../hooks/naming";
+import { useEncoded, useIsValid } from "../../../hooks/naming";
 import styles from "../../../styles/components/wallets.module.css";
 import SelectDomain from "../../domains/selectDomains";
 import Button from "../../UI/button";
@@ -25,6 +25,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   const [targetTokenId, setTargetTokenId] = useState<number>(0);
   const [subdomain, setSubdomain] = useState<string>();
   const encodedSubdomain: string = useEncoded(subdomain ?? "").toString(10);
+  const isDomainValid = useIsValid(subdomain ?? "");
   const [callData, setCallData] = useState<Call[]>([]);
 
   const { execute: transfer_domain } = useStarknetExecute({
@@ -100,16 +101,26 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
           <TextField
             fullWidth
             id="outlined-basic"
-            label="Subdomain"
+            label={
+              isDomainValid != true
+                ? `"${isDomainValid}" is not a valid character`
+                : "Subdomain"
+            }
             placeholder="Subdomain"
             variant="outlined"
             onChange={changeSubdomain}
             color="secondary"
             required
+            error={isDomainValid != true}
           />
           <SelectDomain tokenId={targetTokenId} changeTokenId={changeTokenId} />
           <div className="mt-5 flex justify-center">
-            <Button disabled={!subdomain} onClick={() => transfer_domain()}>
+            <Button
+              disabled={
+                Boolean(!subdomain) || typeof isDomainValid === "string"
+              }
+              onClick={() => transfer_domain()}
+            >
               Create subdomain
             </Button>
           </div>

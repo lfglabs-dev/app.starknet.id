@@ -1,12 +1,22 @@
 import { Modal, TextField } from "@mui/material";
-import { useAccount, useStarknetExecute } from "@starknet-react/core";
+import {
+  useAccount,
+  useStarknetCall,
+  useStarknetExecute,
+} from "@starknet-react/core";
 import BN from "bn.js";
-import React, { FunctionComponent, useState } from "react";
-import { namingContract } from "../../../hooks/contracts";
-import { isHexString } from "../../../hooks/string";
+import React, { FunctionComponent, useEffect, useState } from "react";
+import {
+  etherContract,
+  namingContract,
+  usePricingContract,
+} from "../../../hooks/contracts";
 import { Identity } from "../../../pages/identities/[tokenId]";
 import styles from "../../../styles/components/wallets.module.css";
+import styles2 from "../../../styles/Home.module.css";
+import { timeStampToDate } from "../../../utils/dateService";
 import Button from "../../UI/button";
+import { getPriceFromDomain } from "../../../utils/price";
 
 type RenewalModalProps = {
   handleClose: () => void;
@@ -21,29 +31,57 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
   callDataEncodedDomain,
   identity,
 }) => {
-  const { address } = useAccount();
-  const [targetAddress, setTargetAddress] = useState<string>("");
-
-  //set_domain_to_address execute
-  const set_domain_to_address_calls = {
-    contractAddress: namingContract,
-    entrypoint: "set_domain_to_address",
-    calldata: [
-      ...callDataEncodedDomain,
-      new BN(targetAddress?.slice(2), 16).toString(10),
-    ],
-  };
-
-  const { execute: set_domain_to_address } = useStarknetExecute({
-    calls: set_domain_to_address_calls,
+  const [duration, setDuration] = useState<number>(1);
+  const maxYearsToRegister = 25;
+  const [price, setPrice] = useState<string>("0");
+  const [priceWithoutDiscount, setPriceWithoutDiscount] = useState<number>(
+    Math.round(getPriceFromDomain(identity?.domain ?? "") * 1000) / 1000
+  );
+  const { contract: pricingContract } = usePricingContract();
+  const { data: priceData, error: priceError } = useStarknetCall({
+    contract: pricingContract,
+    method: "compute_buy_price",
+    args: [callDataEncodedDomain[1], duration * 365],
   });
 
-  function setDomainToAddress(): void {
-    set_domain_to_address();
-  }
+  useEffect(() => {
+    if (priceError || !priceData) setPrice("0");
+    else {
+      setPrice(
+        priceData?.["price"].low
+          .add(priceData?.["price"].high.mul(new BN(2).pow(new BN(128))))
+          .toString(10)
+      );
+    }
+  }, [priceData, priceError]);
 
-  function changeAddress(e: any): void {
-    isHexString(e.target.value) ? setTargetAddress(e.target.value) : null;
+  useEffect(() => {
+    setPriceWithoutDiscount(
+      Math.round(duration * getPriceFromDomain(identity?.domain ?? "") * 1000) /
+        1000
+    );
+  }, [duration]);
+
+  //  renew execute
+  const renew_calls = [
+    {
+      contractAddress: etherContract,
+      entrypoint: "approve",
+      calldata: [namingContract, price, 0],
+    },
+    {
+      contractAddress: namingContract,
+      entrypoint: "renew",
+      calldata: [callDataEncodedDomain[1], duration * 365],
+    },
+  ];
+
+  const { execute: renew } = useStarknetExecute({
+    calls: renew_calls,
+  });
+
+  function changeDuration(e: any): void {
+    setDuration(e.target.value);
   }
 
   return (
@@ -65,34 +103,47 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
             ></path>
           </svg>
         </button>
-        <p className={styles.menu_title}>
-          Change the target address of {identity?.domain ?? ""}
-        </p>
+        <p className={styles.menu_title}>Renew {identity?.domain}</p>
         <div className="mt-5 flex flex-col justify-center">
           {identity?.domain_expiry && (
             <p className="break-all">
               <strong>Expiry date :</strong>&nbsp;
-              <span>{"0x" + identity?.domain_expiry}</span>
+              <span>{timeStampToDate(identity?.domain_expiry)}</span>
             </p>
           )}
           <div className="mt-5">
             <TextField
-              helperText="You need to copy paste a wallet address or it won't work"
               fullWidth
-              label="new target address"
               id="outlined-basic"
-              value={targetAddress ?? address}
+              label="years"
+              type="number"
+              placeholder="years"
               variant="outlined"
-              onChange={changeAddress}
+              onChange={changeDuration}
+              InputProps={{
+                inputProps: { min: 0, max: maxYearsToRegister },
+              }}
+              defaultValue={duration}
               color="secondary"
               required
             />
           </div>
+          <div className={styles2.cardCenter}>
+            <p className="text">
+              Price :
+              {duration >= 3 ? (
+                <span className="line-through text-soft-brown">{`${priceWithoutDiscount} ETH`}</span>
+              ) : null}
+              &nbsp;
+              <span className="font-semibold text-brown">
+                {Math.round(Number(price) * 0.000000000000000001 * 10000) /
+                  10000}
+                ETH
+              </span>
+            </p>
+          </div>
           <div className="mt-5 flex justify-center">
-            <Button
-              disabled={!targetAddress}
-              onClick={() => setDomainToAddress()}
-            >
+            <Button disabled={!duration || !price} onClick={() => renew()}>
               Set new address
             </Button>
           </div>
