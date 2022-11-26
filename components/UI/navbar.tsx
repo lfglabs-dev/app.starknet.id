@@ -60,7 +60,7 @@ const Navbar: FunctionComponent = () => {
 
   function topButtonText(): string | undefined {
     const textToReturn = isConnected
-      ? minifyAddressOrDomain(domain ? domain : (address as string), 8)
+      ? minifyAddressOrDomain(domain ? domain : address ?? "", 8)
       : "connect";
 
     return textToReturn;
@@ -109,7 +109,7 @@ const Navbar: FunctionComponent = () => {
                     <div className="flex justify-center items-center">
                       <div>
                         {minifyAddressOrDomain(
-                          domain ? domain : (address as string),
+                          domain ? domain : address ?? "",
                           24
                         )}
                       </div>

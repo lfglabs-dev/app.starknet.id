@@ -15,18 +15,20 @@ import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { hexToFelt } from "../utils/felt";
-import { useDecoded } from "../hooks/naming";
-import BN from "bn.js";
+
+export type FullId = {
+  id: string;
+  domain: string;
+};
 
 const Home: NextPage = () => {
-  const { account } = useAccount();
-  const [ownedIdentities, setOwnedIdentities] = useState<number[]>([]);
+  const { address } = useAccount();
+  const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
   const [rightTokenId, setRightTokenId] = useState<number | undefined>(
     undefined
   );
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
-  const [minted, setMinted] = useState<boolean>(false);
 
   //Mint
   const callData = {
@@ -48,21 +50,16 @@ const Home: NextPage = () => {
   });
 
   useEffect(() => {
-    if (account) {
+    if (address) {
       // Our Indexer
       fetch(
-        `https://goerli2.indexer.starknet.id/addr_to_ids?addr=${hexToFelt(
-          account.address
+        `https://goerli2.indexer.starknet.id/addr_to_full_ids?addr=${hexToFelt(
+          address
         )?.replace("0x", "")}`
       )
         .then((response) => response.json())
         .then((data) => {
-          const dataFiltered = data.ids.filter(
-            (element: string, index: number) => {
-              return data.ids.indexOf(element) === index;
-            }
-          );
-          setOwnedIdentities(dataFiltered);
+          setOwnedIdentities(data.full_ids);
         });
 
       // // Aspect Indexer
@@ -74,7 +71,7 @@ const Home: NextPage = () => {
       //     setOwnedIdentities(data.assets);
       //   });
     }
-  }, [account]);
+  }, [address]);
 
   return (
     <div className={styles.screen}>
@@ -102,7 +99,7 @@ const Home: NextPage = () => {
                 !data?.status.includes("ACCEPTED") && <LoadingScreen />}
               {transactionError && (
                 <ErrorScreen
-                  onClick={() => setMinted(false)}
+                  onClick={() => router.push("/")}
                   buttonText="Retry to mint"
                 />
               )}

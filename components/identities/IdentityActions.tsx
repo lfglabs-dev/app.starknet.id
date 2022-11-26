@@ -3,17 +3,16 @@ import { FunctionComponent, useEffect, useState } from "react";
 import { Identity } from "../../pages/identities/[tokenId]";
 import ClickableIcon from "../UI/iconsComponents/clickableIcon";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
-import { useDomainFromAddress, useEncodedSeveral } from "../../hooks/naming";
+import { useEncodedSeveral } from "../../hooks/naming";
 import { BN } from "bn.js";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import { namingContract, useStarknetIdContract } from "../../hooks/contracts";
 import ChangeAddressModal from "./actions/changeAddressModal";
-import {
-  isStarkDomain,
-  removeStarkFromString,
-} from "../../utils/stringService";
+import { removeStarkFromString } from "../../utils/stringService";
 import TransferFormModal from "./actions/transferFormModal";
 import SubdomainModal from "./actions/subdomainModal";
+import { hexToFelt } from "../../utils/felt";
+import RenewalModal from "./actions/renewalModal";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -25,20 +24,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   tokenId,
 }) => {
   const [isAddressFormOpen, setIsAddressFormOpen] = useState<boolean>(false);
+  const [isRenewFormOpen, setIsRenewFormOpen] = useState<boolean>(false);
   const [isTransferFormOpen, setIsTransferFormOpen] = useState<boolean>(false);
   const [isSubdomainFormOpen, setIsSubdomainFormOpen] =
     useState<boolean>(false);
   const { address } = useAccount();
-  const { domain: domainFromAddress } = useDomainFromAddress(
-    new BN((address ?? "").slice(2), 16).toString(10)
-  );
   const encodedDomains = useEncodedSeveral(
-    removeStarkFromString(identity ? identity.name : "").split(".") ?? []
+    removeStarkFromString(identity ? identity.domain : "").split(".") ?? []
   );
-  const [targetAddress, setTargetAddress] = useState<string | undefined>();
-  const [isAccountTargetAddress, setIsAccountTargetAddress] =
-    useState<boolean>(false);
-  const isMainDomain = domainFromAddress != identity?.name;
+
+  const isAccountTargetAddress = identity?.addr === hexToFelt(address ?? "");
 
   //Check if connected account is owner
   const { contract: starknetIdContract } = useStarknetIdContract();
@@ -68,23 +63,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       ? set_address_to_domain_calls
       : [set_domain_to_address_calls, set_address_to_domain_calls],
   });
-
-  //Get redirection address
-
-  useEffect(() => {
-    if (identity && isStarkDomain(identity.name) && address) {
-      fetch(
-        `https://goerli2.indexer.starknet.id/domain_to_addr?domain=${identity.name}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            setIsAccountTargetAddress(false);
-          }
-          setTargetAddress(data.addr);
-        });
-    }
-  }, [identity, address]);
 
   // function startVerification(link: string): void {
   //   sessionStorage.setItem("tokenId", tokenId);
@@ -132,7 +110,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           />
         </div> */}
 
-        {identity && isStarkDomain(identity.name) && (
+        {identity && (
           <>
             <div className="m-2">
               <ClickableIcon
@@ -140,15 +118,22 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 icon="mintsquare"
                 onClick={() =>
                   window.open(
-                    `https://mintsquare.io/asset/starknet-testnet/${starknetIdContract}/${tokenId}`
+                    `https://mintsquare.io/asset/starknet/${starknetIdContract}/${tokenId}`
                   )
                 }
               />
             </div>
             <div className="m-2">
               <ClickableIcon
-                title="Change redirection address"
+                title="Renew domain"
                 icon="change"
+                onClick={() => setIsRenewFormOpen(true)}
+              />
+            </div>
+            <div className="m-2">
+              <ClickableIcon
+                title="Change redirection address"
+                icon="address"
                 onClick={() => setIsAddressFormOpen(true)}
               />
             </div>
@@ -166,7 +151,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 onClick={() => setIsSubdomainFormOpen(true)}
               />
             </div>
-            {isMainDomain ? (
+            {!identity.is_main ? (
               <div className="m-2">
                 <ClickableIcon
                   title="Set this domain as your main domain"
@@ -195,24 +180,30 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           </>
         )}
       </div>
+      <RenewalModal
+        handleClose={() => setIsRenewFormOpen(false)}
+        isModalOpen={isRenewFormOpen}
+        callDataEncodedDomain={callDataEncodedDomain}
+        identity={identity}
+      />
       <ChangeAddressModal
         handleClose={() => setIsAddressFormOpen(false)}
         isModalOpen={isAddressFormOpen}
         callDataEncodedDomain={callDataEncodedDomain}
-        domain={identity?.name}
-        currentTargetAddress={targetAddress}
+        domain={identity?.domain}
+        currentTargetAddress={identity?.addr}
       />
       <TransferFormModal
         handleClose={() => setIsTransferFormOpen(false)}
         isModalOpen={isTransferFormOpen}
         callDataEncodedDomain={callDataEncodedDomain}
-        domain={identity?.name}
+        domain={identity?.domain}
       />
       <SubdomainModal
         handleClose={() => setIsSubdomainFormOpen(false)}
         isModalOpen={isSubdomainFormOpen}
         callDataEncodedDomain={callDataEncodedDomain}
-        domain={identity?.name}
+        domain={identity?.domain}
       />
     </>
   );

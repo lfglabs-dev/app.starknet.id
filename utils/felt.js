@@ -68,3 +68,7 @@ export function scientificToString(num) {
 
   return nsign < 0 ? "-" + num : num;
 }
+
+export function stringDecimalToHex(decimal) {
+  return new BN(decimal).toString(16);
+}

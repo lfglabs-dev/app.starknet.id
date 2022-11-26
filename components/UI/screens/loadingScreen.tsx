@@ -6,7 +6,7 @@ const LoadingScreen: FunctionComponent = () => {
   const loadingMessages: string[] = [
     "Patience is a virtue, especially when it comes to Starknet Alpha",
     "Patience is also a virtue when it comes to Starknet testnet",
-    "Ok it's slow but at least it does not stop like Cardano",
+    "Ok it's slow but at least it does not stop like Solana",
     "Just a few moments left ser",
     "Alright now it shouldn't be long",
   ];

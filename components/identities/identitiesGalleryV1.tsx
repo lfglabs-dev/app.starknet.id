@@ -2,6 +2,8 @@
 import React, { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
+import { minifyAddressOrDomain } from "../../utils/stringService";
+import { FullId } from "../../pages";
 
 export type IndexerIdentity = {
   image_uri: string;
@@ -9,7 +11,7 @@ export type IndexerIdentity = {
 };
 
 type IdentitiesGalleryV1Props = {
-  identities: any[];
+  identities: FullId[];
 };
 
 const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
@@ -20,15 +22,20 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
   return (
     // Our Indexer
     <>
-      {identities.map((tokenId, index) => (
+      {identities.map((identity, index) => (
         <div key={index} className={styles.imageGallery}>
           <img
             width={150}
             height={150}
-            src={`https://www.starknet.id/api/identicons/${tokenId}`}
+            src={`https://www.starknet.id/api/identicons/${identity.id}`}
             alt="avatar"
-            onClick={() => router.push(`/identities/${tokenId}`)}
+            onClick={() => router.push(`/identities/${identity.id}`)}
           />
+          {identity.domain ? (
+            <p className="font-bold">
+              {minifyAddressOrDomain(identity.domain, 18)}
+            </p>
+          ) : null}
         </div>
       ))}
     </>

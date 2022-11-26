@@ -17,7 +17,7 @@ const Wait: NextPage = () => {
     if (isMainnetDatePassed) {
       router.push("/");
     }
-  }, [dateToShow]);
+  }, [dateToShow, countDownDate]);
 
   // Set the date we're counting down to
 
@@ -40,8 +40,6 @@ const Wait: NextPage = () => {
       setDateToShow([days, hours, minutes, seconds]);
     }, 1000);
   }, [dateToShow]);
-
-  // Update the count down every 1 second
 
   return (
     <div className={styles.screen}>
