@@ -28,10 +28,9 @@ const TokenIdPage: NextPage = () => {
 
   useEffect(() => {
     if (tokenId) {
-      fetch(`https://goerli2.indexer.starknet.id/id_to_data?id=${tokenId}`)
+      const refreshData = () => fetch(`https://goerli2.indexer.starknet.id/id_to_data?id=${tokenId}`)
         .then((response) => response.json())
         .then((data: Identity) => {
-          console.log("data", data);
           if (data.error) {
             setHasIdentityADomain(false);
             return;
@@ -39,6 +38,9 @@ const TokenIdPage: NextPage = () => {
           setIdentity(data);
           setHasIdentityADomain(true);
         });
+      refreshData();
+      const timer = setInterval(() => refreshData(), 8e3)
+      return () => clearInterval(timer)
     }
   }, [tokenId]);
 

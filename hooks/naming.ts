@@ -3,7 +3,7 @@ import BN from "bn.js";
 import { BigNumberish } from "starknet/utils/number";
 import { useStarknetCall } from "@starknet-react/core";
 import { useNamingContract } from "./contracts";
-
+import { useState, useEffect } from "react";
 const basicAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-";
 const basicSizePlusOne = new BN(basicAlphabet.length + 1);
 const bigAlphabet = "这来";
@@ -108,6 +108,37 @@ export function useDomainFromAddress(address: BigNumberish): DomainData {
     let domain = useDecoded(data[0] as any);
     return { domain: domain as any, error };
   }
+}
+
+type AddrToDomain = {
+  domain: string;
+  domain_expiry: Number;
+};
+
+export function useUpdatedDomainFromAddress(address: string | undefined): String {
+  const [domain, setDomain] = useState("");
+  const [decimalAddr, setDecimalAddr] = useState("0");
+
+  useEffect(() => {
+    if (!address)
+      return;
+    setDecimalAddr(new BN((address ?? "").slice(2), 16).toString(10));
+    updateDomain(decimalAddr);
+  }, [decimalAddr, address]);
+
+  const updateDomain = (decimalAddr: String) => fetch(`https://goerli2.indexer.starknet.id/addr_to_domain?addr=${decimalAddr}`)
+    .then((response) => response.json())
+    .then((data: AddrToDomain) => {
+      console.log("domain updated", data);
+      setDomain(data.domain);
+    });
+
+  useEffect(() => {
+    const timer = setInterval(() => updateDomain(decimalAddr), 8e3)
+    return () => clearInterval(timer)
+  }, [decimalAddr])
+
+  return domain;
 }
 
 type AddressData = {
