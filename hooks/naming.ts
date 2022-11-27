@@ -115,28 +115,32 @@ type AddrToDomain = {
   domain_expiry: Number;
 };
 
-export function useUpdatedDomainFromAddress(address: string | undefined): String {
+export function useUpdatedDomainFromAddress(
+  address: string | undefined
+): string {
   const [domain, setDomain] = useState("");
   const [decimalAddr, setDecimalAddr] = useState("0");
 
   useEffect(() => {
-    if (!address)
-      return;
+    if (!address) return;
     setDecimalAddr(new BN((address ?? "").slice(2), 16).toString(10));
     updateDomain(decimalAddr);
   }, [decimalAddr, address]);
 
-  const updateDomain = (decimalAddr: String) => fetch(`https://goerli2.indexer.starknet.id/addr_to_domain?addr=${decimalAddr}`)
-    .then((response) => response.json())
-    .then((data: AddrToDomain) => {
-      console.log("domain updated", data);
-      setDomain(data.domain);
-    });
+  const updateDomain = (decimalAddr: String) =>
+    fetch(
+      `https://goerli2.indexer.starknet.id/addr_to_domain?addr=${decimalAddr}`
+    )
+      .then((response) => response.json())
+      .then((data: AddrToDomain) => {
+        console.log("domain updated", data);
+        setDomain(data.domain);
+      });
 
   useEffect(() => {
-    const timer = setInterval(() => updateDomain(decimalAddr), 8e3)
-    return () => clearInterval(timer)
-  }, [decimalAddr])
+    const timer = setInterval(() => updateDomain(decimalAddr), 8e3);
+    return () => clearInterval(timer);
+  }, [decimalAddr]);
 
   return domain;
 }
