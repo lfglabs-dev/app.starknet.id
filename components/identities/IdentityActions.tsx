@@ -153,7 +153,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 onClick={() => setIsSubdomainFormOpen(true)}
               />
             </div>
-            {!identity.is_main ? (
+            {!identity.is_owner_main ? (
               <div className="m-2">
                 <ClickableIcon
                   title="Set this domain as your main domain"

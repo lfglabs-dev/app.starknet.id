@@ -12,7 +12,7 @@ export type Identity = {
   addr: string;
   domain: string;
   domain_expiry: string;
-  is_main: Boolean;
+  is_owner_main: Boolean;
   error?: string;
 };
 
@@ -28,19 +28,20 @@ const TokenIdPage: NextPage = () => {
 
   useEffect(() => {
     if (tokenId) {
-      const refreshData = () => fetch(`https://goerli2.indexer.starknet.id/id_to_data?id=${tokenId}`)
-        .then((response) => response.json())
-        .then((data: Identity) => {
-          if (data.error) {
-            setHasIdentityADomain(false);
-            return;
-          }
-          setIdentity(data);
-          setHasIdentityADomain(true);
-        });
+      const refreshData = () =>
+        fetch(`https://goerli2.indexer.starknet.id/id_to_data?id=${tokenId}`)
+          .then((response) => response.json())
+          .then((data: Identity) => {
+            if (data.error) {
+              setHasIdentityADomain(false);
+              return;
+            }
+            setIdentity(data);
+            setHasIdentityADomain(true);
+          });
       refreshData();
-      const timer = setInterval(() => refreshData(), 8e3)
-      return () => clearInterval(timer)
+      const timer = setInterval(() => refreshData(), 8e3);
+      return () => clearInterval(timer);
     }
   }, [tokenId]);
 
@@ -79,11 +80,11 @@ const TokenIdPage: NextPage = () => {
                 alt="identicon"
               />
             </div>
-            {
-              hasIdentityADomain
-                ? <IdentityActions identity={identity} tokenId={tokenId} />
-                : ""
-            }
+            {hasIdentityADomain ? (
+              <IdentityActions identity={identity} tokenId={tokenId} />
+            ) : (
+              ""
+            )}
             <div className="mt-5">
               <Button onClick={() => router.push("/")}>
                 Back to your identities
