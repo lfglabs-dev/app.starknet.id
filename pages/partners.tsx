@@ -1,6 +1,9 @@
-import { useAccount, useStarknetExecute } from "@starknet-react/core";
+import {
+  useAccount,
+  useConnectors,
+  useStarknetExecute,
+} from "@starknet-react/core";
 import { NextPage } from "next";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
@@ -19,14 +22,13 @@ type WhitelistedDomain = {
 const Whitelist: NextPage = () => {
   const { account } = useAccount();
   const [errorMessage, setErrorMessage] = useState<string>();
-  const router = useRouter();
+  const { disconnect } = useConnectors();
   const [callData, setCallData] = useState<any>([]);
   const [whitelistedDomains, setWhitelistedDomains] = useState<
     WhitelistedDomain[]
   >([]);
   const [domainsBN, setDomainsBN] = useState<BN[][]>([]);
-  const decondedDomains = useDecodedSeveral(domainsBN);
-
+  const decodedDomains = useDecodedSeveral(domainsBN);
   const { execute } = useStarknetExecute({
     calls: callData,
   });
@@ -45,7 +47,6 @@ const Whitelist: NextPage = () => {
           } else {
             setErrorMessage(undefined);
             let domainsBN: BN[][] = [];
-
             data.forEach((element: WhitelistedDomain) => {
               domainsBN.push([new BN(element.domain)]);
             });
@@ -77,8 +78,8 @@ const Whitelist: NextPage = () => {
               new BN(whitelistedDomain.expiry).toString(10),
               new BN(newTokenId).toString(10),
               new BN((account?.address as string).slice(2), 16).toString(10),
-              whitelistedDomain.signature[0],
-              whitelistedDomain.signature[1],
+              new BN(whitelistedDomain.signature[0]).toString(10),
+              new BN(whitelistedDomain.signature[1]).toString(10),
             ],
           }
         );
@@ -87,6 +88,10 @@ const Whitelist: NextPage = () => {
       setCallData(localCallData);
     }
   }, [whitelistedDomains, account]);
+
+  function retry() {
+    disconnect();
+  }
 
   return (
     <div className={styles.screen}>
@@ -98,11 +103,19 @@ const Whitelist: NextPage = () => {
       </div>
       <div className={styles.container}>
         {!account ? (
-          <h1 className="title mt-5">Please connect your wallet</h1>
+          <div className="flex flex-col items-center">
+            <img
+              src="/visuals/StarknetIdLogo.png"
+              height={250}
+              width={250}
+              alt="logo"
+            />
+            <h1 className="title">Please connect your wallet</h1>
+          </div>
         ) : errorMessage ? (
           <ErrorScreen
-            buttonText="back to identities"
-            onClick={() => router.push("/")}
+            buttonText="Retry with another wallet"
+            onClick={retry}
             errorMessage="Well tried but ... you're not whitelisted"
           />
         ) : (
@@ -111,7 +124,7 @@ const Whitelist: NextPage = () => {
 
             <div className={styles.domainContainer}>
               <div className="flex justify-evenly items-center flex-wrap">
-                {decondedDomains.map((decodedDomain, index) => (
+                {decodedDomains.map((decodedDomain, index) => (
                   <h4 key={index} className={styles.domainTitle}>
                     {decodedDomain}
                   </h4>
@@ -120,7 +133,7 @@ const Whitelist: NextPage = () => {
 
               <div className="mt-2">
                 <Button
-                  disabled={decondedDomains.length === 0}
+                  disabled={decodedDomains.length === 0}
                   onClick={() => register()}
                 >
                   Mint all domains
