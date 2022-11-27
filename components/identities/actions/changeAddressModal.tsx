@@ -5,6 +5,7 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { namingContract } from "../../../hooks/contracts";
 import { isHexString } from "../../../hooks/string";
 import styles from "../../../styles/components/wallets.module.css";
+import { stringDecimalToHex } from "../../../utils/felt";
 import Button from "../../UI/button";
 
 type ChangeAddressModalProps = {
@@ -73,7 +74,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
           {currentTargetAddress && (
             <p className="break-all">
               <strong>Current Address :</strong>&nbsp;
-              <span>{"0x" + currentTargetAddress}</span>
+              <span>{"0x" + stringDecimalToHex(currentTargetAddress)}</span>
             </p>
           )}
           <div className="mt-5">

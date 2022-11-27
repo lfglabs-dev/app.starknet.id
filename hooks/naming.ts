@@ -133,7 +133,6 @@ export function useUpdatedDomainFromAddress(
     )
       .then((response) => response.json())
       .then((data: AddrToDomain) => {
-        console.log("domain updated", data);
         setDomain(data.domain);
       });
 

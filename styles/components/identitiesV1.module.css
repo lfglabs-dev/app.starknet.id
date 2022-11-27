@@ -1,6 +1,7 @@
 .imageGallery {
   cursor: pointer;
   margin: 1rem;
+  height: 160px;
 }
 
 .containerIdentity {

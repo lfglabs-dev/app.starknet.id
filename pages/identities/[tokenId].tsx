@@ -82,9 +82,7 @@ const TokenIdPage: NextPage = () => {
             </div>
             {hasIdentityADomain ? (
               <IdentityActions identity={identity} tokenId={tokenId} />
-            ) : (
-              ""
-            )}
+            ) : null}
             <div className="mt-5">
               <Button onClick={() => router.push("/")}>
                 Back to your identities

@@ -6,7 +6,7 @@ import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import { useEncodedSeveral } from "../../hooks/naming";
 import { BN } from "bn.js";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
-import { namingContract, useStarknetIdContract } from "../../hooks/contracts";
+import { namingContract, starknetIdContract } from "../../hooks/contracts";
 import ChangeAddressModal from "./actions/changeAddressModal";
 import { removeStarkFromString } from "../../utils/stringService";
 import TransferFormModal from "./actions/transferFormModal";
@@ -34,9 +34,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   );
 
   const isAccountTargetAddress = identity?.addr === hexToFelt(address ?? "");
-
-  //Check if connected account is owner
-  const { contract: starknetIdContract } = useStarknetIdContract();
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
