@@ -15,6 +15,7 @@
     "@mui/material": "^5.10.1",
     "@nimiq/style": "^0.8.4",
     "@starknet-react/core": "^0.13.4",
+    "@vercel/analytics": "^0.1.5",
     "bn.js": "^5.2.1",
     "get-starknet": "^1.4.2",
     "next": "12.2.5",
