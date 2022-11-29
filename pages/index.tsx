@@ -96,14 +96,14 @@ const Home: NextPage = () => {
             <>
               {data?.status &&
                 !transactionError &&
-                !data?.status.includes("ACCEPTED") && <LoadingScreen />}
+                !data?.status.includes("ACCEPTED") && data?.status !== "PENDING" && <LoadingScreen />}
               {transactionError && (
                 <ErrorScreen
                   onClick={() => router.push("/")}
                   buttonText="Retry to mint"
                 />
               )}
-              {data?.status === "ACCEPTED_ON_L2" && (
+              {data?.status === "ACCEPTED_ON_L2" || data?.status === "PENDING" && (
                 <SuccessScreen
                   onClick={() => router.push(`/identities/${rightTokenId}`)}
                   buttonText="See your new identity"
