@@ -51,6 +51,8 @@ const Register: FunctionComponent<RegisterProps> = ({
     calls: callData as any,
   });
 
+  const [domainsMinting, setDomainsMinting] = useState<Map<String, Boolean>>(new Map());
+
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
     else {
@@ -194,6 +196,7 @@ const Register: FunctionComponent<RegisterProps> = ({
         gasLimit: 100000,
       }
     );
+    setDomainsMinting((prev) => new Map(prev).set(encodedDomain.toString(), true));
   }
 
   if (isAvailable)
@@ -248,8 +251,10 @@ const Register: FunctionComponent<RegisterProps> = ({
         <div className="flex justify-center content-center w-full">
           <div className="text-beige m-1 mt-5">
             <Button
-              onClick={() => execute()}
-              disabled={!Boolean(account) || !duration || !targetAddress}
+              onClick={() =>
+                execute().then(tx => setDomainsMinting((prev) => new Map(prev).set(encodedDomain.toString(), true)))
+              }
+              disabled={(domainsMinting.get(encodedDomain.toString()) as boolean) || !Boolean(account) || !duration || !targetAddress}
             >
               Register from L2
             </Button>
@@ -260,7 +265,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                 onClick={() => {
                   L1connect();
                 }}
-                disabled={!Boolean(account) || !duration || !targetAddress}
+                disabled={(domainsMinting.get(encodedDomain.toString()) as boolean) || !Boolean(account) || !duration || !targetAddress}
               >
                 Connect to L1
               </Button>
@@ -271,6 +276,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                   L1register();
                 }}
                 disabled={
+                  (domainsMinting.get(encodedDomain.toString()) as boolean) ||
                   !Boolean(account) ||
                   !duration ||
                   !targetAddress ||
