@@ -19,10 +19,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   const isMainnetDatePassed = Boolean(now - countDownDate > 0);
 
   useEffect(() => {
-    if (!isMainnetDatePassed) {
+    if (!isMainnetDatePassed && !router.asPath.includes("partners")) {
       router.push("/wait");
     }
-  }, []);
+  }, [router, isMainnetDatePassed]);
 
   return (
     <>
@@ -32,7 +32,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             <title>Starknet.id</title>
           </Head>
 
-          {isMainnetDatePassed ? <Navbar /> : null}
+          {isMainnetDatePassed || router.asPath.includes("partners") ? (
+            <Navbar />
+          ) : null}
           <Component {...pageProps} />
         </ThemeProvider>
       </StarknetProvider>

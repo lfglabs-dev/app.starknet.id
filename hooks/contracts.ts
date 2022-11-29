@@ -19,8 +19,7 @@ export const namingContract: string =
 export const pricingContract: string =
   "0x2383504fa1365cf31921c1411e14ea45b6376e9a0da8890d51359fd05575f48";
 
-export const verifierContract: string =
-  "0x0"; // no verifier on mainnet for now
+export const verifierContract: string = "0x0"; // no verifier on mainnet for now
 
 export const etherContract: string =
   "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";

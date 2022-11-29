@@ -10,7 +10,11 @@ import {
   namingContract,
   L1buyingContract,
 } from "../../hooks/contracts";
-import { useAccount, useStarknetCall } from "@starknet-react/core";
+import {
+  useAccount,
+  useStarknetCall,
+  useTransactionReceipt,
+} from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
@@ -47,7 +51,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     args: [encodedDomain, duration * 365],
   });
   const { account } = useAccount();
-  const { execute } = useStarknetExecute({
+  const { execute, data: buyData } = useStarknetExecute({
     calls: callData as any,
   });
 
