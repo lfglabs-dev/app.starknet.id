@@ -146,7 +146,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     try {
       await (window as any).ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x5" }],
+        params: [{ chainId: "0x1" }],
       });
       provider = new ethers.providers.Web3Provider((window as any).ethereum);
     } catch (switchError) {
@@ -155,15 +155,15 @@ const Register: FunctionComponent<RegisterProps> = ({
           method: "wallet_addEthereumChain",
           params: [
             {
-              chainId: "0x5",
-              rpcUrls: ["https://goerli.infura.io/v3/"],
-              chainName: "Goerli",
+              chainId: "0x1",
+              rpcUrls: ["https://mainnet.infura.io/v3/"],
+              chainName: "Ethereum",
               nativeCurrency: {
-                name: "GoerliETH",
-                symbol: "tETH",
+                name: "Ether",
+                symbol: "ETH",
                 decimals: 18,
               },
-              blockExplorerUrls: ["https://goerli.etherscan.io/"],
+              blockExplorerUrls: ["https://etherscan.io/"],
             },
           ],
         });
