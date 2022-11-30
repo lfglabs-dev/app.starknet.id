@@ -6,7 +6,6 @@ import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import { useEncodedSeveral } from "../../hooks/naming";
 import { BN } from "bn.js";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
-import { namingContract, starknetIdContract } from "../../hooks/contracts";
 import ChangeAddressModal from "./actions/changeAddressModal";
 import { removeStarkFromString } from "../../utils/stringService";
 import TransferFormModal from "./actions/transferFormModal";
@@ -43,12 +42,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   //Set as main domain execute
   const set_address_to_domain_calls = {
-    contractAddress: namingContract,
+    contractAddress: process.env.NAMING_CONTRACT as string,
     entrypoint: "set_address_to_domain",
     calldata: callDataEncodedDomain,
   };
   const set_domain_to_address_calls = {
-    contractAddress: namingContract,
+    contractAddress: process.env.NAMING_CONTRACT as string,
     entrypoint: "set_domain_to_address",
     calldata: [
       ...callDataEncodedDomain,
@@ -115,7 +114,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 icon="mintsquare"
                 onClick={() =>
                   window.open(
-                    `https://mintsquare.io/asset/starknet/${starknetIdContract}/${tokenId}`
+                    `https://mintsquare.io/asset/starknet/${process.env.STARKNETID_CONTRACT}/${tokenId}`
                   )
                 }
               />

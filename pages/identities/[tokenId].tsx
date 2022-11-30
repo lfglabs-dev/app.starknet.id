@@ -29,7 +29,7 @@ const TokenIdPage: NextPage = () => {
   useEffect(() => {
     if (tokenId) {
       const refreshData = () =>
-        fetch(`https://indexer.starknet.id/id_to_data?id=${tokenId}`)
+        fetch(`https://${process.env.INDEXER_LINK}/id_to_data?id=${tokenId}`)
           .then((response) => response.json())
           .then((data: Identity) => {
             if (data.error) {

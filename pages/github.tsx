@@ -10,7 +10,6 @@ import { useRouter } from "next/router";
 import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
-import { verifierContract } from "../hooks/contracts";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { stringToFelt } from "../utils/felt";
 import { Calls, Screen } from "./discord";
@@ -29,7 +28,7 @@ export default function Github() {
   useEffect(() => {
     setTokenId(window.sessionStorage.getItem("tokenId") ?? "");
     setCalls({
-      contractAddress: verifierContract,
+      contractAddress: process.env.VERIFIER_CONTRACT as string,
       entrypoint: "write_confirmation",
       calldata: [
         tokenId,
@@ -72,7 +71,7 @@ export default function Github() {
       }),
     };
 
-    fetch("https://goerli.verifier.starknet.id/sign", requestOptions)
+    fetch(`https://${process.env.VERIFIER_LINK}/sign`, requestOptions)
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
   }, [code]);

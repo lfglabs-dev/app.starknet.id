@@ -9,7 +9,6 @@ import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import styles from "../styles/whitelist.module.css";
 import { hexToFelt } from "../utils/felt";
-import { starknetIdContract, namingContract } from "../hooks/contracts";
 import { useDecodedSeveral } from "../hooks/naming";
 import BN from "bn.js";
 
@@ -66,12 +65,12 @@ const Whitelist: NextPage = () => {
 
         localCallData.push(
           {
-            contractAddress: starknetIdContract,
+            contractAddress: process.env.STARKNETID_CONTRACT as string,
             entrypoint: "mint",
             calldata: [new BN(newTokenId).toString(10)],
           },
           {
-            contractAddress: namingContract,
+            contractAddress: process.env.NAMING_CONTRACT as string,
             entrypoint: "whitelisted_mint",
             calldata: [
               whitelistedDomain.domain,

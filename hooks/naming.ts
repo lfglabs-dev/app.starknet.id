@@ -129,7 +129,7 @@ export function useUpdatedDomainFromAddress(
 
   const updateDomain = (decimalAddr: String) =>
     fetch(
-      `https://indexer.starknet.id/addr_to_domain?addr=${decimalAddr}`
+      `https://${process.env.INDEXER_LINK}/addr_to_domain?addr=${decimalAddr}`
     )
       .then((response) => response.json())
       .then((data: AddrToDomain) => {
