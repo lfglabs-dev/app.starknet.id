@@ -83,12 +83,16 @@ const Register: FunctionComponent<RegisterProps> = ({
     if (tokenId != 0) {
       setCallData([
         {
-          contractAddress: process.env.ETHER_CONTRACT as string,
+          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
           entrypoint: "approve",
-          calldata: [process.env.NAMING_CONTRACT as string, price, 0],
+          calldata: [
+            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+            price,
+            0,
+          ],
         },
         {
-          contractAddress: process.env.NAMING_CONTRACT as string,
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "buy",
           calldata: [
             new BN(tokenId).toString(10),
@@ -102,17 +106,22 @@ const Register: FunctionComponent<RegisterProps> = ({
     } else {
       setCallData([
         {
-          contractAddress: process.env.ETHER_CONTRACT as string,
+          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
           entrypoint: "approve",
-          calldata: [process.env.NAMING_CONTRACT as string, price, 0],
+          calldata: [
+            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+            price,
+            0,
+          ],
         },
         {
-          contractAddress: process.env.STARKNETID_CONTRACT as string,
+          contractAddress: process.env
+            .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
           entrypoint: "mint",
           calldata: [new BN(newTokenId).toString(10)],
         },
         {
-          contractAddress: process.env.NAMING_CONTRACT as string,
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "buy",
           calldata: [
             new BN(newTokenId).toString(10),
@@ -180,7 +189,7 @@ const Register: FunctionComponent<RegisterProps> = ({
 
   async function L1register() {
     const L1buyingContract_rw = new ethers.Contract(
-      process.env.L1BUYING_CONTRACT as string,
+      process.env.NEXT_PUBLIC_L1BUYING_CONTRACT as string,
       L1buying_abi,
       L1Signer
     );

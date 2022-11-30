@@ -65,12 +65,13 @@ const Whitelist: NextPage = () => {
 
         localCallData.push(
           {
-            contractAddress: process.env.STARKNETID_CONTRACT as string,
+            contractAddress: process.env
+              .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
             entrypoint: "mint",
             calldata: [new BN(newTokenId).toString(10)],
           },
           {
-            contractAddress: process.env.NAMING_CONTRACT as string,
+            contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
             entrypoint: "whitelisted_mint",
             calldata: [
               whitelistedDomain.domain,

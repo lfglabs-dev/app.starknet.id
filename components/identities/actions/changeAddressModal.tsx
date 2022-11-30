@@ -27,7 +27,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
 
   //set_domain_to_address execute
   const set_domain_to_address_calls = {
-    contractAddress: process.env.NAMING_CONTRACT as string,
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_domain_to_address",
     calldata: [
       ...callDataEncodedDomain,

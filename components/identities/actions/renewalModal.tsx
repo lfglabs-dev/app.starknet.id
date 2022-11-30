@@ -61,12 +61,12 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
   //  renew execute
   const renew_calls = [
     {
-      contractAddress: process.env.ETHER_CONTRACT as string,
+      contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
       entrypoint: "approve",
-      calldata: [process.env.NAMING_CONTRACT as string, price, 0],
+      calldata: [process.env.NEXT_PUBLIC_NAMING_CONTRACT as string, price, 0],
     },
     {
-      contractAddress: process.env.NAMING_CONTRACT as string,
+      contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
       entrypoint: "renew",
       calldata: [callDataEncodedDomain[1], duration * 365],
     },

@@ -30,7 +30,7 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
     if (account) {
       fetch(
         `https://${
-          process.env.INDEXER_LINK
+          process.env.NEXT_PUBLIC_INDEXER_LINK
         }/addr_to_available_ids?addr=${hexToFelt(account.address)?.replace(
           "0x",
           ""

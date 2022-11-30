@@ -24,7 +24,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
 
   //transfer_domain
   const transfer_domain_calls = {
-    contractAddress: process.env.NAMING_CONTRACT as string,
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "transfer_domain",
     calldata: [...callDataEncodedDomain, targetTokenId],
   };

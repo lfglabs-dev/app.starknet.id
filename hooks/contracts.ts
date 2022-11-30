@@ -9,34 +9,34 @@ import { Abi } from "starknet";
 export function useStarknetIdContract() {
   return useContract({
     abi: starknet_id_abi as Abi,
-    address: process.env.STARKNETID_CONTRACT,
+    address: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT,
   });
 }
 
 export function useNamingContract() {
   return useContract({
     abi: naming_abi as Abi,
-    address: process.env.NAMING_CONTRACT,
+    address: process.env.NEXT_PUBLIC_NAMING_CONTRACT,
   });
 }
 
 export function usePricingContract() {
   return useContract({
     abi: pricing_abi as Abi,
-    address: process.env.PRICING_CONTRACT,
+    address: process.env.NEXT_PUBLIC_PRICING_CONTRACT,
   });
 }
 
 export function useVerifierIdContract() {
   return useContract({
     abi: verifier_abi as Abi,
-    address: process.env.VERIFIER_CONTRACT,
+    address: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT,
   });
 }
 
 export function useEtherContract() {
   return useContract({
     abi: erc20_abi as Abi,
-    address: process.env.ETHER_CONTRACT,
+    address: process.env.NEXT_PUBLIC_ETHER_CONTRACT,
   });
 }

@@ -31,7 +31,7 @@ const Home: NextPage = () => {
 
   //Mint
   const callData = {
-    contractAddress: process.env.STARKNETID_CONTRACT as string,
+    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
     entrypoint: "mint",
     calldata: [randomTokenId],
   };
@@ -50,11 +50,12 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (address) {
+      console.log("INDEXER_LINK", process.env.NEXT_PUBLIC_INDEXER_LINK);
       // Our Indexer
       fetch(
-        `https://${process.env.INDEXER_LINK}/addr_to_full_ids?addr=${hexToFelt(
-          address
-        )?.replace("0x", "")}`
+        `https://${
+          process.env.NEXT_PUBLIC_INDEXER_LINK
+        }/addr_to_full_ids?addr=${hexToFelt(address)?.replace("0x", "")}`
       )
         .then((response) => response.json())
         .then((data) => {
@@ -63,7 +64,7 @@ const Home: NextPage = () => {
 
       // // Aspect Indexer
       // fetch(
-      //   `https://api-testnet.aspect.co/api/v0/assets?contract_address=${process.env.STARKNETID_CONTRACT as string}&owner_address=${account.address}&sort_by=minted_at&order_by=desc`
+      //   `https://api-testnet.aspect.co/api/v0/assets?contract_address=${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string}&owner_address=${account.address}&sort_by=minted_at&order_by=desc`
       // )
       //   .then((response) => response.json())
       //   .then((data) => {

@@ -28,7 +28,7 @@ export default function Github() {
   useEffect(() => {
     setTokenId(window.sessionStorage.getItem("tokenId") ?? "");
     setCalls({
-      contractAddress: process.env.VERIFIER_CONTRACT as string,
+      contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
       entrypoint: "write_confirmation",
       calldata: [
         tokenId,
@@ -71,7 +71,10 @@ export default function Github() {
       }),
     };
 
-    fetch(`https://${process.env.VERIFIER_LINK}/sign`, requestOptions)
+    fetch(
+      `https://${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
   }, [code]);

@@ -20,7 +20,7 @@ const Verified: FunctionComponent<VerifiedProps> = ({ type, width }) => {
     args: [
       router.query.tokenId,
       stringToFelt(type),
-      process.env.VERIFIER_CONTRACT as string,
+      process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
     ],
   });
   const [isValid, setIsValid] = useState(false);

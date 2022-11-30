@@ -42,12 +42,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   //Set as main domain execute
   const set_address_to_domain_calls = {
-    contractAddress: process.env.NAMING_CONTRACT as string,
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_address_to_domain",
     calldata: callDataEncodedDomain,
   };
   const set_domain_to_address_calls = {
-    contractAddress: process.env.NAMING_CONTRACT as string,
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_domain_to_address",
     calldata: [
       ...callDataEncodedDomain,
@@ -114,7 +114,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 icon="mintsquare"
                 onClick={() =>
                   window.open(
-                    `https://mintsquare.io/asset/starknet/${process.env.STARKNETID_CONTRACT}/${tokenId}`
+                    `https://mintsquare.io/asset/starknet/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
                   )
                 }
               />
