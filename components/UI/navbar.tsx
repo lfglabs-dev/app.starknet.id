@@ -9,10 +9,8 @@ import { useConnectors, useAccount } from "@starknet-react/core";
 import Wallets from "./wallets";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useUpdatedDomainFromAddress } from "../../hooks/naming";
-import { BN } from "bn.js";
 import SelectNetwork from "./selectNetwork";
 import { minifyAddressOrDomain } from "../../utils/stringService";
-import { setInterval, clearInterval } from "timers";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
@@ -101,8 +99,8 @@ const Navbar: FunctionComponent = () => {
                     isConnected
                       ? () => disconnectByClick()
                       : available.length === 1
-                        ? () => connect(available[0])
-                        : () => setHasWallet(true)
+                      ? () => connect(available[0])
+                      : () => setHasWallet(true)
                   }
                 >
                   {isConnected ? (

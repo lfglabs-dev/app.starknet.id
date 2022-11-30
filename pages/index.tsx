@@ -53,7 +53,7 @@ const Home: NextPage = () => {
     if (address) {
       // Our Indexer
       fetch(
-        `https://goerli2.indexer.starknet.id/addr_to_full_ids?addr=${hexToFelt(
+        `https://indexer.starknet.id/addr_to_full_ids?addr=${hexToFelt(
           address
         )?.replace("0x", "")}`
       )
@@ -96,20 +96,22 @@ const Home: NextPage = () => {
             <>
               {data?.status &&
                 !transactionError &&
-                !data?.status.includes("ACCEPTED") && <LoadingScreen />}
+                !data?.status.includes("ACCEPTED") &&
+                data?.status !== "PENDING" && <LoadingScreen />}
               {transactionError && (
                 <ErrorScreen
                   onClick={() => router.push("/")}
                   buttonText="Retry to mint"
                 />
               )}
-              {data?.status === "ACCEPTED_ON_L2" && (
-                <SuccessScreen
-                  onClick={() => router.push(`/identities/${rightTokenId}`)}
-                  buttonText="See your new identity"
-                  successMessage="Congrats, your starknet identity is minted !"
-                />
-              )}
+              {data?.status === "ACCEPTED_ON_L2" ||
+                (data?.status === "PENDING" && (
+                  <SuccessScreen
+                    onClick={() => router.push(`/identities/${rightTokenId}`)}
+                    buttonText="See your new identity"
+                    successMessage="Congrats, your starknet identity is minted !"
+                  />
+                ))}
             </>
           )}
         </>
