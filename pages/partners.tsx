@@ -131,7 +131,7 @@ const Whitelist: NextPage = () => {
                 ))}
               </div>
 
-              <div className="mt-2">
+              <div className="mt-2 mb-5">
                 <Button
                   disabled={decodedDomains.length === 0}
                   onClick={() => register()}
