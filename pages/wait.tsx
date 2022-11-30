@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styles from "../styles/wait.module.css";
 
-export const countDownDate = new Date("Dec 7, 2022 15:00:00").getTime();
+export const countDownDate = Date.UTC(2022, 11, 7, 14, 0, 0);
 
 const Wait: NextPage = () => {
   const [dateToShow, setDateToShow] = useState<number[]>([]);
