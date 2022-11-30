@@ -5,9 +5,10 @@ import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
 import { InjectedConnector, StarknetProvider } from "@starknet-react/core";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { countDownDate } from "./wait";
+import { Analytics } from '@vercel/analytics/react';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const connectors = [
@@ -37,6 +38,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           ) : null}
           <Component {...pageProps} />
         </ThemeProvider>
+        <Analytics />
       </StarknetProvider>
     </>
   );
