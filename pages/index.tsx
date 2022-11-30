@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
 import MintIdentity from "../components/identities/mintIdentity";
 import { useRouter } from "next/router";
-import { starknetIdContract } from "../hooks/contracts";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
@@ -32,7 +31,7 @@ const Home: NextPage = () => {
 
   //Mint
   const callData = {
-    contractAddress: starknetIdContract,
+    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
     entrypoint: "mint",
     calldata: [randomTokenId],
   };
@@ -51,11 +50,12 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (address) {
+      console.log("INDEXER_LINK", process.env.NEXT_PUBLIC_INDEXER_LINK);
       // Our Indexer
       fetch(
-        `https://indexer.starknet.id/addr_to_full_ids?addr=${hexToFelt(
-          address
-        )?.replace("0x", "")}`
+        `https://${
+          process.env.NEXT_PUBLIC_INDEXER_LINK
+        }/addr_to_full_ids?addr=${hexToFelt(address)?.replace("0x", "")}`
       )
         .then((response) => response.json())
         .then((data) => {
@@ -64,7 +64,7 @@ const Home: NextPage = () => {
 
       // // Aspect Indexer
       // fetch(
-      //   `https://api-testnet.aspect.co/api/v0/assets?contract_address=${starknetIdContract}&owner_address=${account.address}&sort_by=minted_at&order_by=desc`
+      //   `https://api-testnet.aspect.co/api/v0/assets?contract_address=${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string}&owner_address=${account.address}&sort_by=minted_at&order_by=desc`
       // )
       //   .then((response) => response.json())
       //   .then((data) => {

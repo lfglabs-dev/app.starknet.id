@@ -29,9 +29,12 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
   useEffect(() => {
     if (account) {
       fetch(
-        `https://indexer.starknet.id/addr_to_available_ids?addr=${hexToFelt(
-          account.address
-        )?.replace("0x", "")}`
+        `https://${
+          process.env.NEXT_PUBLIC_INDEXER_LINK
+        }/addr_to_available_ids?addr=${hexToFelt(account.address)?.replace(
+          "0x",
+          ""
+        )}`
       )
         .then((response) => response.json())
         .then((data) => {

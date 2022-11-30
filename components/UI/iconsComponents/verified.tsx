@@ -1,9 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { useStarknetCall } from "@starknet-react/core";
-import {
-  useStarknetIdContract,
-  verifierContract,
-} from "../../../hooks/contracts";
+import { useStarknetIdContract } from "../../../hooks/contracts";
 import { stringToFelt } from "../../../utils/felt";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
@@ -20,7 +17,11 @@ const Verified: FunctionComponent<VerifiedProps> = ({ type, width }) => {
   const { data, error } = useStarknetCall({
     contract: contract,
     method: "get_verifier_data",
-    args: [router.query.tokenId, stringToFelt(type), verifierContract],
+    args: [
+      router.query.tokenId,
+      stringToFelt(type),
+      process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
+    ],
   });
   const [isValid, setIsValid] = useState(false);
 

@@ -2,7 +2,6 @@ import React, { FunctionComponent, useState } from "react";
 import Details from "./details";
 import DomainTabs from "./domainTabs";
 import Register from "./register";
-import Subdomain from "./subdomain";
 
 type DomainMenuProps = {
   domain: string;

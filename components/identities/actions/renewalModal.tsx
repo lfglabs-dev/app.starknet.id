@@ -6,11 +6,7 @@ import {
 } from "@starknet-react/core";
 import BN from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import {
-  etherContract,
-  namingContract,
-  usePricingContract,
-} from "../../../hooks/contracts";
+import { usePricingContract } from "../../../hooks/contracts";
 import { Identity } from "../../../pages/identities/[tokenId]";
 import styles from "../../../styles/components/wallets.module.css";
 import styles2 from "../../../styles/Home.module.css";
@@ -65,12 +61,12 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
   //  renew execute
   const renew_calls = [
     {
-      contractAddress: etherContract,
+      contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
       entrypoint: "approve",
-      calldata: [namingContract, price, 0],
+      calldata: [process.env.NEXT_PUBLIC_NAMING_CONTRACT as string, price, 0],
     },
     {
-      contractAddress: namingContract,
+      contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
       entrypoint: "renew",
       calldata: [callDataEncodedDomain[1], duration * 365],
     },

@@ -3,13 +3,7 @@ import { TextField } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import styles from "../../styles/Home.module.css";
-import {
-  starknetIdContract,
-  usePricingContract,
-  etherContract,
-  namingContract,
-  L1buyingContract,
-} from "../../hooks/contracts";
+import { usePricingContract } from "../../hooks/contracts";
 import {
   useAccount,
   useStarknetCall,
@@ -55,7 +49,9 @@ const Register: FunctionComponent<RegisterProps> = ({
     calls: callData as any,
   });
 
-  const [domainsMinting, setDomainsMinting] = useState<Map<String, Boolean>>(new Map());
+  const [domainsMinting, setDomainsMinting] = useState<Map<String, Boolean>>(
+    new Map()
+  );
 
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
@@ -87,12 +83,16 @@ const Register: FunctionComponent<RegisterProps> = ({
     if (tokenId != 0) {
       setCallData([
         {
-          contractAddress: etherContract,
+          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
           entrypoint: "approve",
-          calldata: [namingContract, price, 0],
+          calldata: [
+            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+            price,
+            0,
+          ],
         },
         {
-          contractAddress: namingContract,
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "buy",
           calldata: [
             new BN(tokenId).toString(10),
@@ -106,17 +106,22 @@ const Register: FunctionComponent<RegisterProps> = ({
     } else {
       setCallData([
         {
-          contractAddress: etherContract,
+          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
           entrypoint: "approve",
-          calldata: [namingContract, price, 0],
+          calldata: [
+            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+            price,
+            0,
+          ],
         },
         {
-          contractAddress: starknetIdContract,
+          contractAddress: process.env
+            .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
           entrypoint: "mint",
           calldata: [new BN(newTokenId).toString(10)],
         },
         {
-          contractAddress: namingContract,
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "buy",
           calldata: [
             new BN(newTokenId).toString(10),
@@ -184,7 +189,7 @@ const Register: FunctionComponent<RegisterProps> = ({
 
   async function L1register() {
     const L1buyingContract_rw = new ethers.Contract(
-      L1buyingContract,
+      process.env.NEXT_PUBLIC_L1BUYING_CONTRACT as string,
       L1buying_abi,
       L1Signer
     );
@@ -200,7 +205,9 @@ const Register: FunctionComponent<RegisterProps> = ({
         gasLimit: 100000,
       }
     );
-    setDomainsMinting((prev) => new Map(prev).set(encodedDomain.toString(), true));
+    setDomainsMinting((prev) =>
+      new Map(prev).set(encodedDomain.toString(), true)
+    );
   }
 
   if (isAvailable)
@@ -256,9 +263,18 @@ const Register: FunctionComponent<RegisterProps> = ({
           <div className="text-beige m-1 mt-5">
             <Button
               onClick={() =>
-                execute().then(tx => setDomainsMinting((prev) => new Map(prev).set(encodedDomain.toString(), true)))
+                execute().then((tx) =>
+                  setDomainsMinting((prev) =>
+                    new Map(prev).set(encodedDomain.toString(), true)
+                  )
+                )
               }
-              disabled={(domainsMinting.get(encodedDomain.toString()) as boolean) || !Boolean(account) || !duration || !targetAddress}
+              disabled={
+                (domainsMinting.get(encodedDomain.toString()) as boolean) ||
+                !Boolean(account) ||
+                !duration ||
+                !targetAddress
+              }
             >
               Register from L2
             </Button>
@@ -269,7 +285,12 @@ const Register: FunctionComponent<RegisterProps> = ({
                 onClick={() => {
                   L1connect();
                 }}
-                disabled={(domainsMinting.get(encodedDomain.toString()) as boolean) || !Boolean(account) || !duration || !targetAddress}
+                disabled={
+                  (domainsMinting.get(encodedDomain.toString()) as boolean) ||
+                  !Boolean(account) ||
+                  !duration ||
+                  !targetAddress
+                }
               >
                 Connect to L1
               </Button>

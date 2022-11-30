@@ -2,7 +2,6 @@ import { Modal } from "@mui/material";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
-import { namingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/wallets.module.css";
 import SelectDomain from "../../domains/selectDomains";
 import Button from "../../UI/button";
@@ -25,7 +24,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
 
   //transfer_domain
   const transfer_domain_calls = {
-    contractAddress: namingContract,
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "transfer_domain",
     calldata: [...callDataEncodedDomain, targetTokenId],
   };

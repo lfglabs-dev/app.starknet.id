@@ -3,7 +3,6 @@ import { useStarknetExecute } from "@starknet-react/core";
 import { BN } from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Call } from "starknet/types";
-import { namingContract, starknetIdContract } from "../../../hooks/contracts";
 import { useEncoded, useIsValid } from "../../../hooks/naming";
 import styles from "../../../styles/components/wallets.module.css";
 import SelectDomain from "../../domains/selectDomains";
@@ -46,7 +45,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
     if (targetTokenId != 0) {
       setCallData([
         {
-          contractAddress: namingContract,
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "transfer_domain",
           calldata: [
             Number(callDataEncodedDomain[0]) + 1,
@@ -59,12 +58,13 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
     } else {
       setCallData([
         {
-          contractAddress: starknetIdContract,
+          contractAddress: process.env
+            .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
           entrypoint: "mint",
           calldata: [new BN(newTokenId).toString(10)],
         },
         {
-          contractAddress: namingContract,
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "transfer_domain",
           calldata: [
             Number(callDataEncodedDomain[0]) + 1,
