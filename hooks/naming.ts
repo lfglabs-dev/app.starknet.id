@@ -11,6 +11,15 @@ const basicAlphabetSize = new BN(basicAlphabet.length);
 const bigAlphabetSize = new BN(bigAlphabet.length);
 const bigAlphabetSizePlusOne = new BN(bigAlphabet.length + 1);
 
+function extractStars(str: string): [string, number] {
+  let k = 0;
+  while (str.endsWith(bigAlphabet[bigAlphabet.length - 1])) {
+    str = str.substring(0, str.length - 1);
+    k++;
+  }
+  return [str, k];
+}
+
 export function useDecoded(encoded: BN[]): string {
   let decoded = "";
   for (let subdomain of encoded) {
@@ -22,23 +31,39 @@ export function useDecoded(encoded: BN[]): string {
         if (nextSubdomain.isZero()) {
           let code2 = subdomain.mod(bigAlphabetSizePlusOne).toNumber();
           subdomain = nextSubdomain;
-          if (code2 === 0) decoded += basicAlphabet[0];
-          else decoded += bigAlphabet[code2 - 1];
+          if (code2 === 0)
+            decoded += basicAlphabet[0];
+          else
+            decoded += bigAlphabet[code2 - 1];
         } else {
           let code2 = subdomain.mod(bigAlphabetSize).toNumber();
           decoded += bigAlphabet[code2];
-          subdomain = subdomain.div(bigAlphabetSize);
+          subdomain = subdomain.div(bigAlphabetSize)
         }
       } else decoded += basicAlphabet[code];
     }
+
+    let [str, k] = extractStars(decoded);
+    if (k)
+      decoded = str + (k % 2 == 0 ? bigAlphabet[bigAlphabet.length - 1].repeat(k / 2 - 1) + bigAlphabet[0] + basicAlphabet[1] : bigAlphabet[bigAlphabet.length - 1].repeat((k - 1) / 2 + 1));
     decoded += ".";
   }
   return decoded + "stark";
 }
 
+
 export function useEncoded(decoded: string): BN {
   let encoded = new BN(0);
   let multiplier = new BN(1);
+
+  if (decoded.endsWith(bigAlphabet[0] + basicAlphabet[1])) {
+    let [str, k] = extractStars(decoded.substring(0, decoded.length - 2));
+    decoded = str + bigAlphabet[bigAlphabet.length - 1].repeat(2 * (k + 1));
+  } else {
+    let [str, k] = extractStars(decoded);
+    if (k)
+      decoded = str + bigAlphabet[bigAlphabet.length - 1].repeat(1 + 2 * (k - 1));
+  }
 
   for (let i = 0; i < decoded.length; i++) {
     const char = decoded[i];
@@ -61,8 +86,7 @@ export function useEncoded(decoded: string): BN {
       encoded = encoded.add(multiplier.mul(basicAlphabetSize));
       multiplier = multiplier.mul(basicSizePlusOne);
       // add encoded + multiplier * index
-      let newid =
-        (i === decoded.length - 1 ? 1 : 0) + bigAlphabet.indexOf(char);
+      let newid = (i === decoded.length - 1 ? 1 : 0) + bigAlphabet.indexOf(char);
       encoded = encoded.add(multiplier.mul(new BN(newid)));
       multiplier = multiplier.mul(bigAlphabetSize);
     }
@@ -129,7 +153,7 @@ export function useUpdatedDomainFromAddress(
 
   const updateDomain = (decimalAddr: String) =>
     fetch(
-      `https://${process.env.NEXT_PUBLIC_INDEXER_LINK}/addr_to_domain?addr=${decimalAddr}`
+      `/api/indexer/addr_to_domain?addr=${decimalAddr}`
     )
       .then((response) => response.json())
       .then((data: AddrToDomain) => {

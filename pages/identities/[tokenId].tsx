@@ -30,7 +30,7 @@ const TokenIdPage: NextPage = () => {
     if (tokenId) {
       const refreshData = () =>
         fetch(
-          `https://${process.env.NEXT_PUBLIC_INDEXER_LINK}/id_to_data?id=${tokenId}`
+          `/api/indexer/id_to_data?id=${tokenId}`
         )
           .then((response) => response.json())
           .then((data: Identity) => {
