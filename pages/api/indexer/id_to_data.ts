@@ -65,4 +65,5 @@ export default async function handler(
             });
     });
 
+    await client.close();
 }

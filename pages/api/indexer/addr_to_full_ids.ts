@@ -33,4 +33,6 @@ export default async function handler(
     });
   }
   res.status(200).json({ full_ids: full_ids })
+
+  await client.close();
 }
