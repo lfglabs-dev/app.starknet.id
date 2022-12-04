@@ -52,7 +52,7 @@ const Home: NextPage = () => {
     if (address) {
       // Our Indexer
       fetch(
-        `/api/indexer/addr_to_full_ids?addr=${hexToFelt(address)?.replace("0x", "")}`
+        `/api/indexer/addr_to_full_ids?addr=${hexToFelt(address)}`
       )
         .then((response) => response.json())
         .then((data) => {
