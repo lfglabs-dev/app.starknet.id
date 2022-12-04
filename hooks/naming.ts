@@ -13,8 +13,8 @@ const bigAlphabetSizePlusOne = new BN(bigAlphabet.length + 1);
 
 function extractStars(str: string): [string, number] {
   let k = 0;
-  while (str.endsWith("*")) {
-    str = str.slice(0, -1);
+  while (str.endsWith(bigAlphabet[bigAlphabet.length - 1])) {
+    str = str.substring(0, str.length - 1);
     k++;
   }
   return [str, k];
@@ -45,7 +45,7 @@ export function useDecoded(encoded: BN[]): string {
 
     let [str, k] = extractStars(decoded);
     if (k)
-      decoded = str + (k % 2 == 0 ? bigAlphabet[-1].repeat(k / 2 - 1) + bigAlphabet[0] + basicAlphabet[1] : bigAlphabet[-1].repeat((k - 1) / 2 + 1));
+      decoded = str + (k % 2 == 0 ? bigAlphabet[bigAlphabet.length - 1].repeat(k / 2 - 1) + bigAlphabet[0] + basicAlphabet[1] : bigAlphabet[bigAlphabet.length - 1].repeat((k - 1) / 2 + 1));
     decoded += ".";
   }
   return decoded + "stark";
@@ -57,12 +57,12 @@ export function useEncoded(decoded: string): BN {
   let multiplier = new BN(1);
 
   if (decoded.endsWith(bigAlphabet[0] + basicAlphabet[1])) {
-    let [str, k] = extractStars(decoded);
-    decoded = str + bigAlphabet[-1].repeat(2 * (k + 1));
+    let [str, k] = extractStars(decoded.substring(0, decoded.length - 2));
+    decoded = str + bigAlphabet[bigAlphabet.length - 1].repeat(2 * (k + 1));
   } else {
     let [str, k] = extractStars(decoded);
     if (k)
-      decoded = str + bigAlphabet[-1].repeat(1 + 2 * (k - 1));
+      decoded = str + bigAlphabet[bigAlphabet.length - 1].repeat(1 + 2 * (k - 1));
   }
 
   for (let i = 0; i < decoded.length; i++) {
