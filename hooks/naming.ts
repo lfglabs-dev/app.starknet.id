@@ -153,7 +153,7 @@ export function useUpdatedDomainFromAddress(
 
   const updateDomain = (decimalAddr: String) =>
     fetch(
-      `https://${process.env.NEXT_PUBLIC_INDEXER_LINK}/addr_to_domain?addr=${decimalAddr}`
+      `/api/indexer/addr_to_domain?addr=${decimalAddr}`
     )
       .then((response) => response.json())
       .then((data: AddrToDomain) => {
