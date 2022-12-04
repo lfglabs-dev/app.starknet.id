@@ -50,12 +50,9 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (address) {
-      console.log("INDEXER_LINK", process.env.NEXT_PUBLIC_INDEXER_LINK);
       // Our Indexer
       fetch(
-        `https://${
-          process.env.NEXT_PUBLIC_INDEXER_LINK
-        }/addr_to_full_ids?addr=${hexToFelt(address)?.replace("0x", "")}`
+        `/api/indexer/addr_to_full_ids?addr=${hexToFelt(address)?.replace("0x", "")}`
       )
         .then((response) => response.json())
         .then((data) => {

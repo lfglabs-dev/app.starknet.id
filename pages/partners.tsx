@@ -38,7 +38,7 @@ const Whitelist: NextPage = () => {
 
   useEffect(() => {
     if (account) {
-      fetch(`/api/${hexToFelt(account.address)}`)
+      fetch(`/api/whitelist/${hexToFelt(account.address)}`)
         .then((response) => response.json())
         .then((data) => {
           if (data.error) {
