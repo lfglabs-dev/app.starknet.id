@@ -23,3 +23,7 @@ export function minifyAddressOrDomain(
     return address.toLowerCase();
   }
 }
+
+export function is1234Domain(domain: string): boolean {
+  return /^\d{4}$/.test(domain) && parseInt(domain) < 1234
+}
