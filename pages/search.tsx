@@ -8,6 +8,7 @@ import SearchBar from "../components/UI/searchBar";
 import DomainCard from "../components/domains/domainCard";
 import DomainMenu from "../components/domains/domainMenu";
 import { useAddressFromDomain } from "../hooks/naming";
+import { is1234Domain } from "../utils/stringService";
 
 const SearchPage: NextPage = () => {
   const router = useRouter();
@@ -20,7 +21,8 @@ const SearchPage: NextPage = () => {
   const { address: data, error } = useAddressFromDomain(domain);
 
   useEffect(() => {
-    if (error || !data || Number(data?.["address"]) != 0) {
+    if (error || !data || Number(data?.["address"]) != 0
+      || is1234Domain(domain)) {
       setIsAvailable(false);
     } else {
       setIsAvailable(true);
