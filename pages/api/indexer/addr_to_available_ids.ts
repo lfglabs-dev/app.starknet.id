@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { MongoClient, ServerApiVersion } from 'mongodb';
-
+import { connectToDatabase } from "../../../lib/mongodb";
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,9 +9,7 @@ export default async function handler(
 
   const { query: { addr }, } = req;
   const ids: Array<string> = [];
-  const client = new MongoClient(process.env.NEXT_PUBLIC_MONGODB_LINK as string, { serverApi: ServerApiVersion.v1 });
-  await client.connect();
-  const db = client.db("starknet_id");
+  const { db } = await connectToDatabase();
   const documents = db.collection("starknet_ids").find({ "owner": addr, "_chain.valid_to": null });
   const domains = db.collection("domains");
   for (const doc of await documents.toArray()) {
@@ -25,7 +22,5 @@ export default async function handler(
         ids.push(tokenId);
     });
   }
-  res.status(200).json({ "ids": ids })
-
-  await client.close();
+  res.setHeader("cache-control", "max-age=30").status(200).json({ "ids": ids })
 }
