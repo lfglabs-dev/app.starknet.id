@@ -11,10 +11,13 @@ export async function connectToDatabase() {
         return { client, db };
     }
     if (process.env.NODE_ENV === "development") {
+        // @ts-ignore
         if (!global._client) {
             client = await (new MongoClient(uri as string)).connect();
+            // @ts-ignore
             global._client = client;
         } else {
+            // @ts-ignore
             client = global._client;
         }
     } else {
