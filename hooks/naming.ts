@@ -161,7 +161,7 @@ export function useUpdatedDomainFromAddress(
       });
 
   useEffect(() => {
-    const timer = setInterval(() => updateDomain(decimalAddr), 8e3);
+    const timer = setInterval(() => updateDomain(decimalAddr), 30e3);
     return () => clearInterval(timer);
   }, [decimalAddr]);
 

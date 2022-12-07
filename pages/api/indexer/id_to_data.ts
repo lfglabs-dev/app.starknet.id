@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { MongoClient, ServerApiVersion } from 'mongodb';
+import { connectToDatabase } from "../../../lib/mongodb";
 
 type Data = {
     domain: string,
@@ -13,9 +13,7 @@ export default async function handler(
     res: NextApiResponse<Data>) {
 
     const { query: { id }, } = req;
-    const client = new MongoClient(process.env.NEXT_PUBLIC_MONGODB_LINK as string, { serverApi: ServerApiVersion.v1 });
-    await client.connect();
-    const db = client.db("starknet_id");
+    const { db } = await connectToDatabase();
     const domainCollection = db.collection("domains");
     let domain: string | undefined;
     let addr: string | undefined;
@@ -38,7 +36,7 @@ export default async function handler(
     ).then((doc) => { owner = (doc as any).owner; })
 
     if (!domain || !owner) {
-        res.status(200).json({ "error": "no domain associated to this starknet id was found" });
+        res.setHeader("cache-control", "max-age=30").status(200).json({ "error": "no domain associated to this starknet id was found" });
         return;
     }
 
@@ -51,19 +49,18 @@ export default async function handler(
         }
     ).then((doc) => {
         if (addr)
-            res.status(200).json({
+            res.setHeader("cache-control", "max-age=30").status(200).json({
                 "domain": domain as string,
                 "addr": addr,
                 "domain_expiry": expiry,
                 "is_owner_main": doc ? true : false,
             });
         else
-            res.status(200).json({
+            res.setHeader("cache-control", "max-age=30").status(200).json({
                 "domain": domain as string,
                 "domain_expiry": expiry,
                 "is_owner_main": doc ? true : false,
             });
     });
 
-    await client.close();
 }
