@@ -42,7 +42,7 @@ const TokenIdPage: NextPage = () => {
             setHasIdentityADomain(true);
           });
       refreshData();
-      const timer = setInterval(() => refreshData(), 8e3);
+      const timer = setInterval(() => refreshData(), 30e3);
       return () => clearInterval(timer);
     }
   }, [tokenId]);
