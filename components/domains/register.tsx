@@ -273,6 +273,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                 (domainsMinting.get(encodedDomain.toString()) as boolean) ||
                 !Boolean(account) ||
                 !duration ||
+                duration < 1 ||
                 !targetAddress
               }
             >
@@ -289,6 +290,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                   (domainsMinting.get(encodedDomain.toString()) as boolean) ||
                   !Boolean(account) ||
                   !duration ||
+                  duration < 1 ||
                   !targetAddress
                 }
               >
@@ -304,6 +306,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                   (domainsMinting.get(encodedDomain.toString()) as boolean) ||
                   !Boolean(account) ||
                   !duration ||
+                  duration < 1 ||
                   !targetAddress ||
                   !Boolean(tokenId)
                 }
