@@ -12,7 +12,7 @@ import styles from "../../../styles/components/wallets.module.css";
 import styles2 from "../../../styles/Home.module.css";
 import { timeStampToDate } from "../../../utils/dateService";
 import Button from "../../UI/button";
-import { getPriceFromDomain } from "../../../utils/price";
+import { getYearlyPriceFromDomain } from "../../../utils/priceService";
 
 type RenewalModalProps = {
   handleClose: () => void;
@@ -31,7 +31,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
   const maxYearsToRegister = 25;
   const [price, setPrice] = useState<string>("0");
   const [priceWithoutDiscount, setPriceWithoutDiscount] = useState<number>(
-    Math.round(getPriceFromDomain(identity?.domain ?? "") * 1000) / 1000
+    Math.round(getYearlyPriceFromDomain(identity?.domain ?? "") * 1000) / 1000
   );
   const { contract: pricingContract } = usePricingContract();
   const { data: priceData, error: priceError } = useStarknetCall({
@@ -53,8 +53,9 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
 
   useEffect(() => {
     setPriceWithoutDiscount(
-      Math.round(duration * getPriceFromDomain(identity?.domain ?? "") * 1000) /
-        1000
+      Math.round(
+        duration * getYearlyPriceFromDomain(identity?.domain ?? "") * 1000
+      ) / 1000
     );
   }, [duration]);
 
@@ -139,7 +140,10 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
             </p>
           </div>
           <div className="mt-5 flex justify-center">
-            <Button disabled={!duration || !price} onClick={() => renew()}>
+            <Button
+              disabled={!duration || !price || duration < 1}
+              onClick={() => renew()}
+            >
               Set new address
             </Button>
           </div>
