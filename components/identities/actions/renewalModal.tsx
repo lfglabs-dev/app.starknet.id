@@ -140,7 +140,10 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
             </p>
           </div>
           <div className="mt-5 flex justify-center">
-            <Button disabled={!duration || !price} onClick={() => renew()}>
+            <Button
+              disabled={!duration || !price || duration < 1}
+              onClick={() => renew()}
+            >
               Set new address
             </Button>
           </div>
