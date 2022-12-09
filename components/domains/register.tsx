@@ -17,7 +17,7 @@ import { ethers } from "ethers";
 import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
 import { Call } from "starknet/types";
-import { getPriceFromDomain } from "../../utils/price";
+import { getYearlyPriceFromDomain } from "../../utils/priceService";
 
 type RegisterProps = {
   domain: string;
@@ -35,7 +35,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [callData, setCallData] = useState<Call[]>([]);
   const [price, setPrice] = useState<string>("0");
   const [priceWithoutDiscount, setPriceWithoutDiscount] = useState<number>(
-    Math.round(getPriceFromDomain(domain) * 1000) / 1000
+    Math.round(getYearlyPriceFromDomain(domain) * 1000) / 1000
   );
   const { contract } = usePricingContract();
   const encodedDomain = useEncoded(domain);
@@ -66,7 +66,7 @@ const Register: FunctionComponent<RegisterProps> = ({
 
   useEffect(() => {
     setPriceWithoutDiscount(
-      Math.round(duration * getPriceFromDomain(domain) * 1000) / 1000
+      Math.round(duration * getYearlyPriceFromDomain(domain) * 1000) / 1000
     );
   }, [duration]);
 
