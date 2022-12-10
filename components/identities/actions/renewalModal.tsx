@@ -33,6 +33,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
   const [priceWithoutDiscount, setPriceWithoutDiscount] = useState<number>(
     Math.round(getYearlyPriceFromDomain(identity?.domain ?? "") * 1000) / 1000
   );
+  const currentTimeStamp = new Date().getTime() / 1000;
   const { contract: pricingContract } = usePricingContract();
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: pricingContract,
@@ -139,6 +140,12 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
               </span>
             </p>
           </div>
+          {Number(identity?.domain_expiry) < currentTimeStamp ? (
+            <strong className="mt-2 text-red-600 text-center">
+              (This domain has expired you can renew by buying it again on the
+              domain page)
+            </strong>
+          ) : null}
           <div className="mt-5 flex justify-center">
             <Button
               disabled={!duration || !price || duration < 1}
