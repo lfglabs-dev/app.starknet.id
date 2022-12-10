@@ -31,26 +31,29 @@ export function useDecoded(encoded: BN[]): string {
         if (nextSubdomain.isZero()) {
           let code2 = subdomain.mod(bigAlphabetSizePlusOne).toNumber();
           subdomain = nextSubdomain;
-          if (code2 === 0)
-            decoded += basicAlphabet[0];
-          else
-            decoded += bigAlphabet[code2 - 1];
+          if (code2 === 0) decoded += basicAlphabet[0];
+          else decoded += bigAlphabet[code2 - 1];
         } else {
           let code2 = subdomain.mod(bigAlphabetSize).toNumber();
           decoded += bigAlphabet[code2];
-          subdomain = subdomain.div(bigAlphabetSize)
+          subdomain = subdomain.div(bigAlphabetSize);
         }
       } else decoded += basicAlphabet[code];
     }
 
     let [str, k] = extractStars(decoded);
     if (k)
-      decoded = str + (k % 2 == 0 ? bigAlphabet[bigAlphabet.length - 1].repeat(k / 2 - 1) + bigAlphabet[0] + basicAlphabet[1] : bigAlphabet[bigAlphabet.length - 1].repeat((k - 1) / 2 + 1));
+      decoded =
+        str +
+        (k % 2 == 0
+          ? bigAlphabet[bigAlphabet.length - 1].repeat(k / 2 - 1) +
+            bigAlphabet[0] +
+            basicAlphabet[1]
+          : bigAlphabet[bigAlphabet.length - 1].repeat((k - 1) / 2 + 1));
     decoded += ".";
   }
   return decoded + "stark";
 }
-
 
 export function useEncoded(decoded: string): BN {
   let encoded = new BN(0);
@@ -62,7 +65,8 @@ export function useEncoded(decoded: string): BN {
   } else {
     let [str, k] = extractStars(decoded);
     if (k)
-      decoded = str + bigAlphabet[bigAlphabet.length - 1].repeat(1 + 2 * (k - 1));
+      decoded =
+        str + bigAlphabet[bigAlphabet.length - 1].repeat(1 + 2 * (k - 1));
   }
 
   for (let i = 0; i < decoded.length; i++) {
@@ -86,7 +90,8 @@ export function useEncoded(decoded: string): BN {
       encoded = encoded.add(multiplier.mul(basicAlphabetSize));
       multiplier = multiplier.mul(basicSizePlusOne);
       // add encoded + multiplier * index
-      let newid = (i === decoded.length - 1 ? 1 : 0) + bigAlphabet.indexOf(char);
+      let newid =
+        (i === decoded.length - 1 ? 1 : 0) + bigAlphabet.indexOf(char);
       encoded = encoded.add(multiplier.mul(new BN(newid)));
       multiplier = multiplier.mul(bigAlphabetSize);
     }
@@ -152,9 +157,7 @@ export function useUpdatedDomainFromAddress(
   }, [decimalAddr, address]);
 
   const updateDomain = (decimalAddr: String) =>
-    fetch(
-      `/api/indexer/addr_to_domain?addr=${decimalAddr}`
-    )
+    fetch(`/api/indexer/addr_to_domain?addr=${decimalAddr}`)
       .then((response) => response.json())
       .then((data: AddrToDomain) => {
         setDomain(data.domain);

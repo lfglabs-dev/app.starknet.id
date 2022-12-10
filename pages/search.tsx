@@ -7,7 +7,7 @@ import styles2 from "../styles/search.module.css";
 import SearchBar from "../components/UI/searchBar";
 import DomainCard from "../components/domains/domainCard";
 import DomainMenu from "../components/domains/domainMenu";
-import { useAddressFromDomain } from "../hooks/naming";
+import { useExpiryFromDomain } from "../hooks/naming";
 import { is1234Domain } from "../utils/stringService";
 
 const SearchPage: NextPage = () => {
@@ -18,16 +18,17 @@ const SearchPage: NextPage = () => {
   const [isAvailable, setIsAvailable] = useState<boolean | undefined>(
     undefined
   );
-  const { address: data, error } = useAddressFromDomain(domain);
+  const { expiry: data, error } = useExpiryFromDomain(domain);
 
   useEffect(() => {
-    if (error || !data || Number(data?.["address"]) != 0
-      || is1234Domain(domain)) {
+    const currentTimeStamp = new Date().getTime() / 1000;
+
+    if (error || !data || is1234Domain(domain)) {
       setIsAvailable(false);
     } else {
-      setIsAvailable(true);
+      setIsAvailable(Number(data?.["expiry"]) < currentTimeStamp);
     }
-  }, [data, error]);
+  }, [data, error, domain]);
 
   return (
     <div className={styles.screen}>

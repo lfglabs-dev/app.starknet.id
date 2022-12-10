@@ -25,5 +25,5 @@ export function minifyAddressOrDomain(
 }
 
 export function is1234Domain(domain: string): boolean {
-  return /^\d{4}$/.test(domain) && parseInt(domain) < 1234
+  return /^\d{4}$/.test(domain) && parseInt(domain) < 1234;
 }
