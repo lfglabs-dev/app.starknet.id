@@ -8,6 +8,7 @@ import { NextPage } from "next";
 import { ThreeDots } from "react-loader-spinner";
 import IdentityActions from "../../components/identities/IdentityActions";
 import Link from "next/link";
+import { getDomainWithoutStark } from "../../utils/stringService";
 
 export type Identity = {
   addr: string;
@@ -90,7 +91,12 @@ const TokenIdPage: NextPage = () => {
               <strong className="mt-2 text-red-600 text-center">
                 (This domain has expired you can buy it on the&nbsp;
                 <span className="underline">
-                  <Link href={"/search?domain=" + identity?.domain}>
+                  <Link
+                    href={
+                      "/search?domain=" +
+                      getDomainWithoutStark(identity?.domain ?? "")
+                    }
+                  >
                     domain page
                   </Link>
                 </span>
