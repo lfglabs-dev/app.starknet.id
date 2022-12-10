@@ -2,7 +2,7 @@ import { Modal, TextField } from "@mui/material";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import BN from "bn.js";
 import React, { FunctionComponent, useState } from "react";
-import { isHexString } from "../../../hooks/string";
+import { isHexString } from "../../../utils/stringService";
 import styles from "../../../styles/components/wallets.module.css";
 import { stringDecimalToHex } from "../../../utils/felt";
 import Button from "../../UI/button";

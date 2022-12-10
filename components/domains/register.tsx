@@ -12,7 +12,7 @@ import {
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
-import { isHexString } from "../../hooks/string";
+import { isHexString } from "../../utils/stringService";
 import { ethers } from "ethers";
 import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
