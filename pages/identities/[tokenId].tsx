@@ -7,6 +7,7 @@ import Button from "../../components/UI/button";
 import { NextPage } from "next";
 import { ThreeDots } from "react-loader-spinner";
 import IdentityActions from "../../components/identities/IdentityActions";
+import Link from "next/link";
 
 export type Identity = {
   addr: string;
@@ -25,13 +26,12 @@ const TokenIdPage: NextPage = () => {
   const [hasIdentityADomain, setHasIdentityADomain] = useState<
     boolean | undefined
   >();
+  const currentTimeStamp = new Date().getTime() / 1000;
 
   useEffect(() => {
     if (tokenId) {
       const refreshData = () =>
-        fetch(
-          `/api/indexer/id_to_data?id=${tokenId}`
-        )
+        fetch(`/api/indexer/id_to_data?id=${tokenId}`)
           .then((response) => response.json())
           .then((data: Identity) => {
             if (data.error) {
@@ -82,8 +82,20 @@ const TokenIdPage: NextPage = () => {
                 alt="identicon"
               />
             </div>
+
             {hasIdentityADomain ? (
               <IdentityActions identity={identity} tokenId={tokenId} />
+            ) : null}
+            {Number(identity?.domain_expiry) < currentTimeStamp ? (
+              <strong className="mt-2 text-red-600 text-center">
+                (This domain has expired you can buy it on the&nbsp;
+                <span className="underline">
+                  <Link href={"/search?domain=" + identity?.domain}>
+                    domain page
+                  </Link>
+                </span>
+                )
+              </strong>
             ) : null}
             <div className="mt-5">
               <Button onClick={() => router.push("/")}>
