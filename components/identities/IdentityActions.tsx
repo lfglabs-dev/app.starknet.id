@@ -7,7 +7,7 @@ import { useEncodedSeveral } from "../../hooks/naming";
 import { BN } from "bn.js";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import ChangeAddressModal from "./actions/changeAddressModal";
-import { removeStarkFromString } from "../../utils/stringService";
+import { getDomainWithoutStark } from "../../utils/stringService";
 import TransferFormModal from "./actions/transferFormModal";
 import SubdomainModal from "./actions/subdomainModal";
 import { hexToFelt } from "../../utils/felt";
@@ -29,7 +29,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     useState<boolean>(false);
   const { address } = useAccount();
   const encodedDomains = useEncodedSeveral(
-    removeStarkFromString(identity ? identity.domain : "").split(".") ?? []
+    getDomainWithoutStark(identity ? identity.domain : "").split(".") ?? []
   );
 
   const isAccountTargetAddress = identity?.addr === hexToFelt(address ?? "");

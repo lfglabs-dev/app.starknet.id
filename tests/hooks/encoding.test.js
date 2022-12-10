@@ -1,6 +1,6 @@
 import { BN } from "bn.js";
 import { useDecoded, useEncoded } from "../../hooks/naming";
-import { generateString } from "../../hooks/string";
+import { generateString } from "../../utils/stringService";
 
 describe("Should test encoding/decoding hooks 2500 times", () => {
   it("Should test useEncoded and useDecoded hook with a random string", () => {

@@ -1,5 +1,5 @@
 import { PRICES, getYearlyPriceFromDomain } from "../../utils/priceService";
-import { generateString } from "../../hooks/string";
+import { generateString } from "../../utils/stringService";
 
 describe("Should test price service file", () => {
   it("Test getYearlyPriceFromDomain functions with different domains", () => {

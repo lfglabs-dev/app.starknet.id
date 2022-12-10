@@ -59,7 +59,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
     }
   }, [expiryData, expiryError]);
 
-  if (isAvailable)
+  if (ownerAddress === "0")
     return (
       <div className="flex justify-center align-center mt-2">
         <p>There is no data attached to this domain</p>
