@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import Button from "../../components/UI/button";
 import { NextPage } from "next";
 import { ThreeDots } from "react-loader-spinner";
-import IdentityActions from "../../components/identities/IdentityActions";
+import IdentityActions from "../../components/identities/identityActions";
 import Link from "next/link";
 import { getDomainWithoutStark } from "../../utils/stringService";
 
