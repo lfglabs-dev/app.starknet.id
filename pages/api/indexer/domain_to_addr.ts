@@ -1,32 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../lib/mongodb";
-import { queryError } from "./domain_to_addr";
 
-type addrToDomainData = { domain: string; domain_expiry: number };
+export type domainToAddrData = { addr: string; domain_expiry: number };
+export type queryError = { error: string };
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<addrToDomainData | queryError>
+  res: NextApiResponse<domainToAddrData | queryError>
 ) {
   const {
-    query: { addr },
+    query: { domain },
   } = req;
   const { db } = await connectToDatabase();
   await db
     .collection("domains")
     .findOne({
-      addr: addr,
-      rev_addr: addr,
+      domain: domain,
       "_chain.valid_to": null,
     })
     .then((domainDoc) => {
       res
-        .setHeader("cache-control", "max-age=30")
+        .setHeader("cache-control", "max-age=60")
         .status(200)
         .json(
           domainDoc
-            ? { domain: domainDoc.domain, domain_expiry: domainDoc.expiry }
-            : { error: "no domain found" }
+            ? { addr: domainDoc.addr, domain_expiry: domainDoc.expiry }
+            : { error: "no address found" }
         );
     });
 }

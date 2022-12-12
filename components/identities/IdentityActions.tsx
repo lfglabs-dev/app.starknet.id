@@ -31,8 +31,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const encodedDomains = useEncodedSeveral(
     getDomainWithoutStark(identity ? identity.domain : "").split(".") ?? []
   );
-
   const isAccountTargetAddress = identity?.addr === hexToFelt(address ?? "");
+  const [isOwner, setIsOwner] = useState<boolean>(false);
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -68,6 +68,17 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   function setAddressToDomain(): void {
     set_address_to_domain();
   }
+
+  useEffect(() => {
+    if (address && identity?.domain) {
+      // Our Indexer
+      fetch(`/api/indexer/domain_to_addr?domain=${identity.domain}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setIsOwner(data?.addr === hexToFelt(address));
+        });
+    }
+  }, [address, identity]);
 
   return (
     <>
@@ -105,8 +116,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             }
           />
         </div> */}
-
-        {identity && (
+        {!isOwner && (
           <>
             <div className="m-2">
               <ClickableIcon
@@ -119,6 +129,22 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 }
               />
             </div>
+            <div className="m-2">
+              <ClickableIcon
+                title="View on Aspect"
+                icon="aspect"
+                onClick={() =>
+                  window.open(
+                    `https://aspect.co/asset/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
+                  )
+                }
+              />
+            </div>
+          </>
+        )}
+
+        {identity && isOwner && (
+          <>
             {callDataEncodedDomain[0] === 1 ? (
               <div className="m-2">
                 <ClickableIcon
