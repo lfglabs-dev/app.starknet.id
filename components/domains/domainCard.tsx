@@ -1,3 +1,4 @@
+import { useAccount } from "@starknet-react/core";
 import React, { FunctionComponent } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styles from "../../styles/Home.module.css";
@@ -14,6 +15,8 @@ const DomainCard: FunctionComponent<DomainCardProps> = ({
   onClick,
   isAvailable,
 }) => {
+  const { account } = useAccount();
+
   return (
     <div className={styles.card} onClick={onClick}>
       <h2 className={styles.cardTitle}>
@@ -29,7 +32,13 @@ const DomainCard: FunctionComponent<DomainCardProps> = ({
           visible={true}
         />
       ) : (
-        <p className="text">{isAvailable ? "Available" : "Unavailable"}</p>
+        <p className="text">
+          {isAvailable
+            ? "Available"
+            : account
+            ? "Unavailable"
+            : "Connect your wallet first"}
+        </p>
       )}
     </div>
   );
