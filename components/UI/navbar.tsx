@@ -38,7 +38,7 @@ const Navbar: FunctionComponent = () => {
     if (!isDisconnectedOnClick && !isConnected) {
       available.length === 1 ? connect(available[0]) : setHasWallet(true);
     }
-  }, [isConnected]);
+  }, [isConnected, isDisconnectedOnClick, available, connect]);
 
   const handleNav = () => {
     setNav(!nav);
