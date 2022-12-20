@@ -70,15 +70,29 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   }
 
   useEffect(() => {
-    if (address && identity?.domain) {
+    type fullIds = { id: string; domain: string };
+
+    function checkIfOwner(fullIds: fullIds[]): boolean {
+      let isOwner = false;
+
+      for (let i = 0; i < fullIds.length; i++) {
+        if (fullIds[i].id === tokenId) {
+          isOwner = true;
+        }
+      }
+
+      return isOwner;
+    }
+
+    if (address && tokenId) {
       // Our Indexer
-      fetch(`/api/indexer/domain_to_addr?domain=${identity.domain}`)
+      fetch(`/api/indexer/addr_to_full_ids?addr=${hexToFelt(address)}`)
         .then((response) => response.json())
         .then((data) => {
-          setIsOwner(data?.addr === hexToFelt(address));
+          setIsOwner(checkIfOwner(data.full_ids));
         });
     }
-  }, [address, identity]);
+  }, [address, tokenId]);
 
   return (
     <>
