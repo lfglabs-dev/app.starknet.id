@@ -135,7 +135,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
               <span className="font-semibold text-brown">
                 {Math.round(Number(price) * 0.000000000000000001 * 10000) /
                   10000}
-                ETH
+                &nbsp; ETH
               </span>
             </p>
           </div>
@@ -144,7 +144,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
               disabled={!duration || !price || duration < 1}
               onClick={() => renew()}
             >
-              Set new address
+              Renew domain
             </Button>
           </div>
         </div>
