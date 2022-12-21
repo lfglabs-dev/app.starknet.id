@@ -37,7 +37,6 @@ export default async function handler(
 
     let domains_count: number | undefined;
     await domainCollection.countDocuments({
-        'expiry': { "$gte": Math.ceil(Date.now() / 100000) * 100, },
         'creation_date': {
             '$gte': new Date(sinceTime),
         },
