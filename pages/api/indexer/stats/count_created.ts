@@ -4,12 +4,9 @@ import { queryError } from "../domain_to_addr";
 
 export default async function handler(
     req: NextApiRequest,
-    res: NextApiResponse<{ from: number, count: number } | queryError>
+    res: NextApiResponse<{ from: number, count: number }[] | queryError>
 ) {
-    const {
-        query: { begin, end, segments },
-    } = req;
-
+    const { query: { begin, end, segments }, } = req;
     const beginTime = parseInt(begin as string) * 1000;
     const endTime = parseInt(end as string) * 1000;
     const deltaTime = Math.round((endTime - beginTime) / parseInt(segments as string));
@@ -75,7 +72,7 @@ export default async function handler(
         res
             .setHeader("cache-control", "max-age=30")
             .status(200)
-            .json(output as any);
+            .json(output);
     } else {
         res
             .setHeader("cache-control", "max-age=30")
