@@ -8,14 +8,18 @@ export default async function handler(
         count: number;
     } | queryError>
 ) {
-
+    const { query: { since }, } = req;
+    const sinceTime = parseInt(since as string) * 1000;
     const { db } = await connectToDatabase();
     const domainCollection = db.collection("starknet_ids");
 
     await domainCollection.aggregate([
         {
             '$match': {
-                '_chain_valid_to': null
+                '_chain_valid_to': null,
+                'creation_date': {
+                    '$gte': new Date(sinceTime),
+                }
             }
         }, {
             '$group': {
@@ -30,7 +34,7 @@ export default async function handler(
             .setHeader("cache-control", "max-age=30")
             .status(200)
             .json({
-                count: doc?.total
+                count: doc ? doc.total : 0
             });
     });
 

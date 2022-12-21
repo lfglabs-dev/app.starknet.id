@@ -8,11 +8,15 @@ export default async function handler(
     count: number;
   } | queryError>
 ) {
-
+  const { query: { since }, } = req;
+  const sinceTime = parseInt(since as string) * 1000;
   const { db } = await connectToDatabase();
   const domainCollection = db.collection("starknet_ids");
 
   await domainCollection.countDocuments({
+    'creation_date': {
+      '$gte': new Date(sinceTime),
+    },
     "_chain.valid_to": { "$eq": null },
   }).then((count) => {
     res
