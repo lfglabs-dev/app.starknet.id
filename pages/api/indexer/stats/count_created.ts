@@ -1,11 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../../lib/mongodb";
 import { queryError } from "../domain_to_addr";
+import NextCors from 'nextjs-cors';
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse<{ from: number, count: number }[] | queryError>
 ) {
+    await NextCors(req, res, {
+        methods: ['GET'],
+        origin: '*',
+        optionsSuccessStatus: 200,
+    });
     const { query: { begin, end, segments }, } = req;
     const beginTime = parseInt(begin as string) * 1000;
     const endTime = parseInt(end as string) * 1000;
