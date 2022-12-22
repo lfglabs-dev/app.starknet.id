@@ -11,7 +11,7 @@ export default async function handler(
     const endTime = parseInt(end as string) * 1000;
     const deltaTime = Math.round((endTime - beginTime) / parseInt(segments as string));
 
-    if (deltaTime > 3600) {
+    if (deltaTime > 3600000) {
 
         const { db } = await connectToDatabase();
         const domainCollection = db.collection("domains");
