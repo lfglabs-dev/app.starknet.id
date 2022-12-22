@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../lib/mongodb";
+import NextCors from 'nextjs-cors';
 
 type FullId = {
   id: string,
@@ -11,7 +12,11 @@ export default async function handler(
   res: NextApiResponse<{
     full_ids: Array<FullId>;
   }>) {
-
+    await NextCors(req, res, {
+      methods: ['GET'],
+      origin: '*',
+      optionsSuccessStatus: 200,
+  });
   const { query: { addr }, } = req;
   const full_ids: Array<FullId> = [];
   const { db } = await connectToDatabase();
