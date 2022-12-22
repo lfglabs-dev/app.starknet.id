@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../../lib/mongodb";
 import { queryError } from "../domain_to_addr";
+import NextCors from 'nextjs-cors';
 
 export default async function handler(
     req: NextApiRequest,
@@ -8,6 +9,11 @@ export default async function handler(
         count: number;
     } | queryError>
 ) {
+    await NextCors(req, res, {
+        methods: ['GET'],
+        origin: '*',
+        optionsSuccessStatus: 200,
+    });
     const { query: { club, since }, } = req;
     const sinceTime = parseInt(since as string) * 1000;
     const { db } = await connectToDatabase();
