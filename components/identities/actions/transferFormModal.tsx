@@ -33,8 +33,8 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     calls: transfer_domain_calls,
   });
 
-  function changeTokenId(e: any): void {
-    setTargetTokenId(Number(e.target.value));
+  function changeTokenId(value: number): void {
+    setTargetTokenId(value);
   }
 
   return (

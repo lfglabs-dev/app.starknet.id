@@ -15,9 +15,9 @@ type SelectNetworkProps = {
 const SelectNetwork: FunctionComponent<SelectNetworkProps> = ({ network }) => {
   const router = useRouter();
 
-  function changeTokenId(e: any): void {
-    if (e.target.value != network) {
-      if (e.target.value === "testnet") {
+  function changeTokenId(value: string): void {
+    if (value != network) {
+      if (value === "testnet") {
         router.push("https://goerli.app.starknet.id" + router.asPath);
       } else {
         router.push("https://app.starknet.id" + router.asPath);
@@ -31,7 +31,7 @@ const SelectNetwork: FunctionComponent<SelectNetworkProps> = ({ network }) => {
         <Select
           value={network}
           defaultValue={"Testnet"}
-          onChange={changeTokenId}
+          onChange={(e) => changeTokenId(e.target.value)}
           sx={{
             "& .MuiSelect-select": {
               display: "flex",

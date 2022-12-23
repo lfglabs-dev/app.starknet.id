@@ -13,7 +13,7 @@ import { hexToFelt } from "../../utils/felt";
 
 type SelectDomainProps = {
   tokenId: number;
-  changeTokenId: (e: any) => void;
+  changeTokenId: (value: number) => void;
   defaultText?: string;
 };
 
@@ -50,7 +50,7 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
           value={tokenId}
           defaultValue={ownedIdentities[0]}
           label="Starknet.id"
-          onChange={changeTokenId}
+          onChange={(e) => changeTokenId(Number(e.target.value))}
           sx={{
             "& .MuiSelect-select": {
               display: "flex",

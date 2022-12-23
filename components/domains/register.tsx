@@ -131,16 +131,16 @@ const Register: FunctionComponent<RegisterProps> = ({
     }
   }, [tokenId, duration, targetAddress, isAvailable, price, domain]);
 
-  function changeAddress(e: any): void {
-    isHexString(e.target.value) ? setTargetAddress(e.target.value) : null;
+  function changeAddress(value: string): void {
+    isHexString(value) ? setTargetAddress(value) : null;
   }
 
-  function changeDuration(e: any): void {
-    setDuration(e.target.value);
+  function changeDuration(value: number): void {
+    setDuration(value);
   }
 
-  function changeTokenId(e: any): void {
-    setTokenId(Number(e.target.value));
+  function changeTokenId(value: number): void {
+    setTokenId(Number(value));
   }
 
   // register from L1
@@ -217,7 +217,7 @@ const Register: FunctionComponent<RegisterProps> = ({
               id="outlined-basic"
               value={targetAddress ?? "0x.."}
               variant="outlined"
-              onChange={changeAddress}
+              onChange={(e) => changeAddress(e.target.value)}
               color="secondary"
               required
             />
@@ -231,7 +231,7 @@ const Register: FunctionComponent<RegisterProps> = ({
               type="number"
               placeholder="years"
               variant="outlined"
-              onChange={changeDuration}
+              onChange={(e) => changeDuration(Number(e.target.value))}
               InputProps={{
                 inputProps: { min: 0, max: maxYearsToRegister },
               }}

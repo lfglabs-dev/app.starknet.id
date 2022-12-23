@@ -1,9 +1,5 @@
 import { Modal, TextField } from "@mui/material";
-import {
-  useAccount,
-  useStarknetCall,
-  useStarknetExecute,
-} from "@starknet-react/core";
+import { useStarknetCall, useStarknetExecute } from "@starknet-react/core";
 import BN from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { usePricingContract } from "../../../hooks/contracts";
@@ -12,6 +8,7 @@ import styles2 from "../../../styles/Home.module.css";
 import { timeStampToDate } from "../../../utils/dateService";
 import Button from "../../UI/button";
 import { getYearlyPriceFromDomain } from "../../../utils/priceService";
+import { Identity } from "../../../types/backTypes";
 
 type RenewalModalProps = {
   handleClose: () => void;
@@ -56,7 +53,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
         duration * getYearlyPriceFromDomain(identity?.domain ?? "") * 1000
       ) / 1000
     );
-  }, [duration]);
+  }, [duration, identity]);
 
   //  renew execute
   const renew_calls = [
@@ -76,8 +73,8 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
     calls: renew_calls,
   });
 
-  function changeDuration(e: any): void {
-    setDuration(e.target.value);
+  function changeDuration(value: number): void {
+    setDuration(value);
   }
 
   return (
@@ -115,7 +112,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
               type="number"
               placeholder="years"
               variant="outlined"
-              onChange={changeDuration}
+              onChange={(e) => changeDuration(Number(e.target.value))}
               InputProps={{
                 inputProps: { min: 0, max: maxYearsToRegister },
               }}
