@@ -1,33 +1,40 @@
-/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 import React, { useState, FunctionComponent, useEffect } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import Button from "./button";
-import { useConnectors, useAccount } from "@starknet-react/core";
+import { useConnectors, useAccount, useStarknet } from "@starknet-react/core";
 import Wallets from "./wallets";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useUpdatedDomainFromAddress } from "../../hooks/naming";
 import SelectNetwork from "./selectNetwork";
 import { minifyAddressOrDomain } from "../../utils/stringService";
+import ModalMessage from "./modalMessage";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
   const [hasWallet, setHasWallet] = useState<boolean>(false);
   const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const [isDisconnectedOnClick, setIsDisconnectedOnClick] =
     useState<boolean>(false);
+  const { available, connect, disconnect } = useConnectors();
+  const { library } = useStarknet();
+  const domain = useUpdatedDomainFromAddress(address);
   const green = "#19AA6E";
   const brown = "#402d28";
-  const { available, connect, disconnect } = useConnectors();
-
-  const domain = useUpdatedDomainFromAddress(address);
+  const network = process.env.NEXT_PUBLIC_IS_TESTNET ? "testnet" : "mainnet";
 
   function disconnectByClick(): void {
     disconnect();
     setIsDisconnectedOnClick(true);
+  }
+
+  function disconnectByNetwork(): void {
+    disconnect();
+    setHasWallet(true);
   }
 
   useEffect(() => {
@@ -40,9 +47,27 @@ const Navbar: FunctionComponent = () => {
     }
   }, [isConnected, isDisconnectedOnClick, available, connect]);
 
-  const handleNav = () => {
+  useEffect(() => {
+    const STARKNET_NETWORK = {
+      mainnet: "0x534e5f4d41494e",
+      testnet: "0x534e5f474f45524c49",
+    };
+
+    if (library.chainId === STARKNET_NETWORK.testnet && network === "mainnet") {
+      setIsWrongNetwork(true);
+    } else if (
+      library.chainId === STARKNET_NETWORK.mainnet &&
+      network === "testnet"
+    ) {
+      setIsWrongNetwork(true);
+    } else {
+      setIsWrongNetwork(false);
+    }
+  }, [library, network]);
+
+  function handleNav(): void {
     setNav(!nav);
-  };
+  }
 
   function onTopButtonClick(): void {
     if (available.length > 0) {
@@ -92,7 +117,7 @@ const Navbar: FunctionComponent = () => {
                   <FaTwitter color={green} size={"30px"} />
                 </li>
               </Link>
-              <SelectNetwork />
+              <SelectNetwork network={network} />
               <div className="text-beige mr-5">
                 <Button
                   onClick={
@@ -152,7 +177,10 @@ const Navbar: FunctionComponent = () => {
                   </Link>
                 </div>
 
-                <div onClick={handleNav} className="rounded-fullcursor-pointer">
+                <div
+                  onClick={handleNav}
+                  className="rounded-full cursor-pointer"
+                >
                   <AiOutlineClose color={brown} />
                 </div>
               </div>
@@ -201,7 +229,28 @@ const Navbar: FunctionComponent = () => {
           </div>
         </div>
       </div>
-      <Wallets closeWallet={() => setHasWallet(false)} hasWallet={hasWallet} />
+      <ModalMessage
+        open={isWrongNetwork}
+        title={"Wrong network"}
+        closeModal={() => setIsWrongNetwork(false)}
+        message={
+          <div className="mt-3 flex flex-col items-center justify-center text-center">
+            <p>
+              This app only supports Starknet {network}, you have to change your
+              network to be able use it.
+            </p>
+            <div className="mt-3">
+              <Button onClick={() => disconnectByNetwork()}>
+                {`Disconnect from ${network}`}
+              </Button>
+            </div>
+          </div>
+        }
+      />
+      <Wallets
+        closeWallet={() => setHasWallet(false)}
+        hasWallet={Boolean(hasWallet && !isWrongNetwork)}
+      />
     </>
   );
 };

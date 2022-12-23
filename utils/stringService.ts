@@ -48,3 +48,7 @@ export function generateString(length: number): string {
 
   return result;
 }
+
+export function isSubdomain(domain: string): boolean {
+  return Boolean((domain.match(/\./g) || []).length > 1);
+}

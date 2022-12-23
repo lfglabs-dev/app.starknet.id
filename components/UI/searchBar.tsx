@@ -1,10 +1,12 @@
+import React from "react";
 import { useRouter } from "next/router";
 import { InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { FunctionComponent, KeyboardEvent, useEffect, useState } from "react";
+import { FunctionComponent, KeyboardEvent, useState } from "react";
 import { useIsValid } from "../../hooks/naming";
 
 type SearchBarProps = {
+  // eslint-disable-next-line no-unused-vars
   onChangeTypedValue?: (typedValue: string) => void;
 };
 

@@ -1,14 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
+import React from "react";
 import { TextField } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import styles from "../../styles/Home.module.css";
 import { usePricingContract } from "../../hooks/contracts";
-import {
-  useAccount,
-  useStarknetCall,
-  useTransactionReceipt,
-} from "@starknet-react/core";
+import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
@@ -45,11 +41,11 @@ const Register: FunctionComponent<RegisterProps> = ({
     args: [encodedDomain, duration * 365],
   });
   const { account } = useAccount();
-  const { execute, data: buyData } = useStarknetExecute({
+  const { execute } = useStarknetExecute({
     calls: callData as any,
   });
 
-  const [domainsMinting, setDomainsMinting] = useState<Map<String, Boolean>>(
+  const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
 
@@ -68,7 +64,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     setPriceWithoutDiscount(
       Math.round(duration * getYearlyPriceFromDomain(domain) * 1000) / 1000
     );
-  }, [duration]);
+  }, [duration, domain]);
 
   useEffect(() => {
     if (account) {
@@ -263,7 +259,7 @@ const Register: FunctionComponent<RegisterProps> = ({
           <div className="text-beige m-1 mt-5">
             <Button
               onClick={() =>
-                execute().then((tx) =>
+                execute().then(() =>
                   setDomainsMinting((prev) =>
                     new Map(prev).set(encodedDomain.toString(), true)
                   )
@@ -271,7 +267,7 @@ const Register: FunctionComponent<RegisterProps> = ({
               }
               disabled={
                 (domainsMinting.get(encodedDomain.toString()) as boolean) ||
-                !Boolean(account) ||
+                !account ||
                 !duration ||
                 duration < 1 ||
                 !targetAddress
@@ -288,7 +284,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                 }}
                 disabled={
                   (domainsMinting.get(encodedDomain.toString()) as boolean) ||
-                  !Boolean(account) ||
+                  !account ||
                   !duration ||
                   duration < 1 ||
                   !targetAddress
@@ -304,11 +300,11 @@ const Register: FunctionComponent<RegisterProps> = ({
                 }}
                 disabled={
                   (domainsMinting.get(encodedDomain.toString()) as boolean) ||
-                  !Boolean(account) ||
+                  !account ||
                   !duration ||
                   duration < 1 ||
                   !targetAddress ||
-                  !Boolean(tokenId)
+                  !tokenId
                 }
               >
                 Register from L1

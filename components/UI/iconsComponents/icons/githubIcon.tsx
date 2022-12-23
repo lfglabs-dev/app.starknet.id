@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from "react";
-import { IconProps } from "./discordIcon";
 
-const gitHubIcon: FunctionComponent<IconProps> = ({ width, color }) => {
+const GitHubIcon: FunctionComponent<IconProps> = ({ width, color }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -15,4 +14,4 @@ const gitHubIcon: FunctionComponent<IconProps> = ({ width, color }) => {
   );
 };
 
-export default gitHubIcon;
+export default GitHubIcon;

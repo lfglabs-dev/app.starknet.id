@@ -3,6 +3,7 @@ import {
   getDomainWithoutStark,
   isStarkDomain,
   isHexString,
+  isSubdomain,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -50,5 +51,17 @@ describe("Should test isHexString", () => {
         "0x061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3"
       )
     ).toBe(true);
+  });
+});
+
+describe("Should test isSubdomain", () => {
+  it("Should return false cause string is not a subdomain", () => {
+    expect(isSubdomain("1232575.stark")).toBe(false);
+    expect(isSubdomain("")).toBe(false);
+  });
+
+  it("Should return false cause string is a subdomain", () => {
+    expect(isSubdomain("1232575.ben.stark")).toBe(true);
+    expect(isSubdomain("qsdqsdqsd.fricoben.stark")).toBe(true);
   });
 });

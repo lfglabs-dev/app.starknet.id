@@ -21,7 +21,7 @@ const SuccessScreen: FunctionComponent<SuccessScreenProps> = ({
         width={300}
         alt="logo"
       />
-      <h1 className="sm:text-5xl text-5xl mt-2">{successMessage}</h1>
+      <h1 className="sm:text-5xl text-5xl">{successMessage}</h1>
       <div className="mt-8 flex justify-center">
         <Button onClick={onClick}>{buttonText}</Button>
       </div>

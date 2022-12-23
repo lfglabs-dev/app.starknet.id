@@ -1,13 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
+import React from "react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 import styles2 from "../styles/domain.module.css";
-import { useRouter } from "next/router";
 import SearchBar from "../components/UI/searchBar";
 
 const Domain: NextPage = () => {
-  const router = useRouter();
-
   return (
     <div className={styles.screen}>
       <div className={styles.firstLeaf}>

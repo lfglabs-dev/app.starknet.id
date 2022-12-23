@@ -1,11 +1,6 @@
 import React, { FunctionComponent } from "react";
 
-export type IconProps = {
-  color: string;
-  width: string;
-};
-
-const discordIcon: FunctionComponent<IconProps> = ({ color, width }) => {
+const DiscordIcon: FunctionComponent<IconProps> = ({ color, width }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -19,4 +14,4 @@ const discordIcon: FunctionComponent<IconProps> = ({ color, width }) => {
   );
 };
 
-export default discordIcon;
+export default DiscordIcon;

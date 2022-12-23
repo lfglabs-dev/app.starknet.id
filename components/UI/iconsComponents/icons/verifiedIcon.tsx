@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from "react";
-import { IconProps } from "./discordIcon";
 
 const verifiedIcon: FunctionComponent<IconProps> = ({ width, color }) => {
   return (

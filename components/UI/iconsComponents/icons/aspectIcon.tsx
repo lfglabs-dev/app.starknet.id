@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from "react";
-import { IconProps } from "./discordIcon";
 
-const aspectIcon: FunctionComponent<IconProps> = ({ width, color }) => {
+const AspectIcon: FunctionComponent<IconProps> = ({ width }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -130,4 +129,4 @@ const aspectIcon: FunctionComponent<IconProps> = ({ width, color }) => {
   );
 };
 
-export default aspectIcon;
+export default AspectIcon;
