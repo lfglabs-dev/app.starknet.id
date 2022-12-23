@@ -96,25 +96,27 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   return (
     <>
       {process.env.NEXT_PUBLIC_IS_TESTNET && (
-        <SocialMediaActions
-          domain={identity?.domain}
-          isOwner={isOwner}
-          tokenId={tokenId}
-        />
+        <>
+          <SocialMediaActions
+            domain={identity?.domain}
+            isOwner={isOwner}
+            tokenId={tokenId}
+          />
+          <Divider
+            light={true}
+            component="div"
+            style={{
+              width: "3rem",
+              height: "0.2rem",
+              marginBottom: "0.25rem",
+              marginTop: "0.25rem",
+            }}
+          ></Divider>
+        </>
       )}
       <div className="flex">
         {identity && !isOwner && isIdentityADomain && (
           <>
-            <Divider
-              light={true}
-              component="div"
-              style={{
-                width: "3rem",
-                height: "0.2rem",
-                marginBottom: "0.25rem",
-                marginTop: "0.25rem",
-              }}
-            ></Divider>
             <div className="m-2">
               <ClickableIcon
                 title="View on Mintsquare"
