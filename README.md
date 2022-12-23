@@ -33,3 +33,7 @@ yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result and to be able to use the app.
+
+## License 🌴
+
+Currently there is no license, this means you cannot modify or redistribute this code without explicit permission from the copyright holder.
