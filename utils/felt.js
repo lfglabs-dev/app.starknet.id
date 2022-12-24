@@ -10,7 +10,7 @@ export function feltToString(felt) {
   return newStrB.toString();
 }
 
-export function stringToFelt(str) {
+export function stringToHex(str) {
   if (!str) {
     return;
   }

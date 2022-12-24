@@ -1,14 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 import React, { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
 import { minifyAddressOrDomain } from "../../utils/stringService";
-import { FullId } from "../../pages";
-
-export type IndexerIdentity = {
-  image_uri: string;
-  token_id: string;
-};
 
 type IdentitiesGalleryV1Props = {
   identities: FullId[];

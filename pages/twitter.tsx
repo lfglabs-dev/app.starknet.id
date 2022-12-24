@@ -3,7 +3,7 @@ import styles from "../styles/Home.module.css";
 import {
   useAccount,
   useStarknetExecute,
-  useTransactionManager,
+  useTransactionReceipt,
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
@@ -11,33 +11,56 @@ import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
-import { Calls, Screen } from "./discord";
-import { stringToFelt } from "../utils/felt";
+import { Screen } from "./discord";
+import { stringToHex } from "../utils/felt";
 import { toFelt } from "starknet/utils/number";
+import { NextPage } from "next";
 
-export default function Twitter() {
+type SignRequestData = {
+  status: Status;
+  name: string;
+  user_id: string;
+  sign0: string;
+  sign1: string;
+  timestamp: number;
+};
+
+const Twitter: NextPage = () => {
   const router = useRouter();
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState<boolean>(true);
   const routerCode: string = router.query.code as string;
-  const [signRequestData, setSignRequestData] = useState<any>();
+  const [signRequestData, setSignRequestData] = useState<
+    SignRequestData | ErrorRequestData
+  >();
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Calls | undefined>();
 
   useEffect(() => {
-    setTokenId(window.sessionStorage.getItem("tokenId") ?? "");
+    if (!tokenId) {
+      setTokenId(window.sessionStorage.getItem("tokenId") ?? "");
+    }
+  }, [tokenId]);
+
+  useEffect(() => {
+    if (!signRequestData || signRequestData.status === "error") return;
+
     setCalls({
       contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
       entrypoint: "write_confirmation",
       calldata: [
         tokenId,
-        stringToFelt("twitter"),
-        toFelt(signRequestData.user_id),
-        [signRequestData.sign0, signRequestData.sign1],
+        (signRequestData as SignRequestData).timestamp.toString(),
+        stringToHex("twitter"),
+        toFelt((signRequestData as SignRequestData).user_id),
+        (signRequestData as SignRequestData).sign0,
+        (signRequestData as SignRequestData).sign1,
       ],
     });
-  }, []);
+  }, [signRequestData, tokenId]);
+
+  // ["", "0x74776974746572", "0", [null, null]];
 
   //Manage Connection
   const { account } = useAccount();
@@ -64,8 +87,7 @@ export default function Twitter() {
       method: "POST",
       body: JSON.stringify({
         type: "twitter",
-        token_id_low: Number(tokenId),
-        token_id_high: 0,
+        token_id: tokenId,
         code: code,
       }),
     };
@@ -76,7 +98,7 @@ export default function Twitter() {
     )
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
-  }, [code]);
+  }, [code, tokenId]);
 
   //Contract
   const {
@@ -84,11 +106,36 @@ export default function Twitter() {
     execute,
     error: twitterVerificationError,
   } = useStarknetExecute({ calls });
-  const { transactions } = useTransactionManager();
+
+  const { data: transactionData, error: transactionError } =
+    useTransactionReceipt({
+      hash: twitterVerificationData?.transaction_hash,
+      watch: true,
+    });
 
   function verifyTwitter() {
     execute();
   }
+
+  useEffect(() => {
+    if (twitterVerificationData?.transaction_hash) {
+      if (
+        transactionData?.status &&
+        !transactionError &&
+        !transactionData?.status.includes("ACCEPTED") &&
+        transactionData?.status !== "PENDING"
+      ) {
+        setScreen("loading");
+      } else if (transactionError) {
+        setScreen("error");
+      } else if (
+        transactionData?.status === "ACCEPTED_ON_L2" ||
+        transactionData?.status === "PENDING"
+      ) {
+        setScreen("success");
+      }
+    }
+  }, [twitterVerificationData, transactionData, transactionError]);
 
   //Screen management
   const [screen, setScreen] = useState<Screen | undefined>();
@@ -137,4 +184,6 @@ export default function Twitter() {
       </div>
     </div>
   );
-}
+};
+
+export default Twitter;

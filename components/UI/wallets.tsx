@@ -1,3 +1,4 @@
+import React from "react";
 import styles from "../../styles/components/wallets.module.css";
 import { Connector, useAccount, useConnectors } from "@starknet-react/core";
 import Button from "./button";
@@ -21,7 +22,7 @@ const Wallets: FunctionComponent<WalletsProps> = ({
     if (account) {
       closeWallet();
     }
-  }, [account]);
+  }, [account, closeWallet]);
 
   function connectWallet(connector: Connector): void {
     connect(connector);

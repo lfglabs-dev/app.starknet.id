@@ -31,12 +31,12 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
     calls: callData as any,
   });
 
-  function changeTokenId(e: any): void {
-    setTargetTokenId(Number(e.target.value));
+  function changeTokenId(value: number): void {
+    setTargetTokenId(value);
   }
 
-  function changeSubdomain(e: any): void {
-    setSubdomain(e.target.value);
+  function changeSubdomain(value: string): void {
+    setSubdomain(value);
   }
 
   useEffect(() => {
@@ -108,7 +108,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             }
             placeholder="Subdomain"
             variant="outlined"
-            onChange={changeSubdomain}
+            onChange={(e) => changeSubdomain(e.target.value)}
             color="secondary"
             required
             error={isDomainValid != true}

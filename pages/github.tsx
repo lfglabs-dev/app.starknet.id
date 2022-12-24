@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
 import {
-  useStarknetExecute,
-  useTransactionManager,
   useAccount,
+  useStarknetExecute,
+  useTransactionReceipt,
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
@@ -11,40 +11,53 @@ import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
-import { stringToFelt } from "../utils/felt";
-import { Calls, Screen } from "./discord";
+import { Screen } from "./discord";
+import { stringToHex } from "../utils/felt";
+import { NextPage } from "next";
 
-export default function Github() {
+type SignRequestData = {
+  status: Status;
+  name: string;
+  user_id: string;
+  sign0: string;
+  sign1: string;
+  timestamp: number;
+};
+
+const Github: NextPage = () => {
   const router = useRouter();
-  const [isConnected, setIsConnected] = useState(true);
+  const [isConnected, setIsConnected] = useState<boolean>(true);
   const routerCode: string = router.query.code as string;
-  //Server Sign Request
-  const [signRequestData, setSignRequestData] = useState<any>();
+  const [signRequestData, setSignRequestData] = useState<
+    SignRequestData | ErrorRequestData
+  >();
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Calls | undefined>();
 
   useEffect(() => {
-    setTokenId(window.sessionStorage.getItem("tokenId") ?? "");
+    if (!tokenId) {
+      setTokenId(window.sessionStorage.getItem("tokenId") ?? "");
+    }
+  }, [tokenId]);
+
+  useEffect(() => {
+    if (!signRequestData || signRequestData.status === "error") return;
+
     setCalls({
       contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
       entrypoint: "write_confirmation",
       calldata: [
         tokenId,
-        Math.floor(Date.now() / 1000),
-        stringToFelt("github"),
-        stringToFelt(signRequestData.user_id),
-        [signRequestData.sign0, signRequestData.sign1],
+        (signRequestData as SignRequestData).timestamp.toString(),
+        stringToHex("github"),
+        (signRequestData as SignRequestData).user_id,
+        (signRequestData as SignRequestData).sign0,
+        (signRequestData as SignRequestData).sign1,
       ],
     });
-  }, []);
-
-  //Set github code
-  const [code, setCode] = useState<string>("");
-  useEffect(() => {
-    setCode(routerCode);
-  }, [routerCode]);
+  }, [signRequestData, tokenId]);
 
   //Manage Connection
   const { account } = useAccount();
@@ -58,6 +71,12 @@ export default function Github() {
     }
   }, [account]);
 
+  //Set discord code
+  const [code, setCode] = useState<string>("");
+  useEffect(() => {
+    setCode(routerCode);
+  }, [routerCode]);
+
   useEffect(() => {
     if (!code || !tokenId) return;
 
@@ -65,8 +84,7 @@ export default function Github() {
       method: "POST",
       body: JSON.stringify({
         type: "github",
-        token_id_low: Number(tokenId),
-        token_id_high: 0,
+        token_id: tokenId,
         code: code,
       }),
     };
@@ -77,7 +95,7 @@ export default function Github() {
     )
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
-  }, [code]);
+  }, [code, tokenId]);
 
   //Contract
   const {
@@ -85,11 +103,36 @@ export default function Github() {
     execute,
     error: githubVerificationError,
   } = useStarknetExecute({ calls });
-  const { transactions } = useTransactionManager();
+
+  const { data: transactionData, error: transactionError } =
+    useTransactionReceipt({
+      hash: githubVerificationData?.transaction_hash,
+      watch: true,
+    });
 
   function verifyGithub() {
     execute();
   }
+
+  useEffect(() => {
+    if (githubVerificationData?.transaction_hash) {
+      if (
+        transactionData?.status &&
+        !transactionError &&
+        !transactionData?.status.includes("ACCEPTED") &&
+        transactionData?.status !== "PENDING"
+      ) {
+        setScreen("loading");
+      } else if (transactionError) {
+        setScreen("error");
+      } else if (
+        transactionData?.status === "ACCEPTED_ON_L2" ||
+        transactionData?.status === "PENDING"
+      ) {
+        setScreen("success");
+      }
+    }
+  }, [githubVerificationData, transactionData, transactionError]);
 
   //Screen management
   const [screen, setScreen] = useState<Screen | undefined>();
@@ -115,7 +158,7 @@ export default function Github() {
                 It&apos;s time to verify your github on chain !
               </h1>
               <div className="mt-8">
-                <Button onClick={verifyGithub}>Verify my Github</Button>
+                <Button onClick={verifyGithub}>Verify my github</Button>
               </div>
             </>
           ))}
@@ -133,17 +176,11 @@ export default function Github() {
               buttonText="Get back to your starknet identity"
               successMessage="Congrats, your github is verified !"
             />
-            {/* <p className="mt-2">
-              <a
-                className="footerLink"
-                href={`https://alpha4.starknet.io/feeder_gateway/get_transaction_receipt?transactionHash=${verifyData?.txid}`}
-              >
-                Check your transaction state
-              </a>
-            </p> */}
           </>
         )}
       </div>
     </div>
   );
-}
+};
+
+export default Github;

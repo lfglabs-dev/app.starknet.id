@@ -1,13 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
+import React from "react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 import styles2 from "../styles/domain.module.css";
-import { useRouter } from "next/router";
 import SearchBar from "../components/UI/searchBar";
 
 const Domain: NextPage = () => {
-  const router = useRouter();
-
   return (
     <div className={styles.screen}>
       <div className={styles.firstLeaf}>
@@ -20,7 +17,7 @@ const Domain: NextPage = () => {
         <div className={styles2.searchBarContainer}>
           <div className="flex flex-col items-center">
             <img
-              src="/visuals/StarknetIdLogo.png"
+              src="/visuals/StarknetIdLogo.svg"
               height={250}
               width={250}
               alt="logo"

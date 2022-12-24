@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import {
   FormControl,
   FormHelperText,
@@ -14,7 +13,7 @@ import { hexToFelt } from "../../utils/felt";
 
 type SelectDomainProps = {
   tokenId: number;
-  changeTokenId: (e: any) => void;
+  changeTokenId: (value: number) => void;
   defaultText?: string;
 };
 
@@ -51,7 +50,7 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
           value={tokenId}
           defaultValue={ownedIdentities[0]}
           label="Starknet.id"
-          onChange={changeTokenId}
+          onChange={(e) => changeTokenId(Number(e.target.value))}
           sx={{
             "& .MuiSelect-select": {
               display: "flex",
@@ -64,7 +63,7 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
             <ListItemIcon>
               <img
                 width={"25px"}
-                src="/visuals/StarknetIdLogo.png"
+                src="/visuals/StarknetIdLogo.svg"
                 alt="starknet.id avatar"
               />
             </ListItemIcon>

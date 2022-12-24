@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+import React from "react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 import {
@@ -14,11 +14,6 @@ import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { hexToFelt } from "../utils/felt";
-
-export type FullId = {
-  id: string;
-  domain: string;
-};
 
 const Home: NextPage = () => {
   const { address } = useAccount();
@@ -51,9 +46,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (address) {
       // Our Indexer
-      fetch(
-        `/api/indexer/addr_to_full_ids?addr=${hexToFelt(address)}`
-      )
+      fetch(`/api/indexer/addr_to_full_ids?addr=${hexToFelt(address)}`)
         .then((response) => response.json())
         .then((data) => {
           setOwnedIdentities(data.full_ids);
