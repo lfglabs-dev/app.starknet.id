@@ -20,6 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <ThemeProvider theme={theme}>
           <Head>
             <title>Starknet.id</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
           </Head>
           <Navbar />
           <Component {...pageProps} />
