@@ -63,7 +63,7 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
             <ListItemIcon>
               <img
                 width={"25px"}
-                src="/visuals/StarknetIdLogo.png"
+                src="/visuals/StarknetIdLogo.svg"
                 alt="starknet.id avatar"
               />
             </ListItemIcon>

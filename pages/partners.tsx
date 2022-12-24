@@ -106,7 +106,7 @@ const Whitelist: NextPage = () => {
         {!account ? (
           <div className="flex flex-col items-center">
             <img
-              src="/visuals/StarknetIdLogo.png"
+              src="/visuals/StarknetIdLogo.svg"
               height={250}
               width={250}
               alt="logo"

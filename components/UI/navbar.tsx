@@ -97,7 +97,7 @@ const Navbar: FunctionComponent = () => {
             <Link href="/" className="cursor-pointer">
               <img
                 className="cursor-pointer"
-                src="/visuals/StarknetIdLogo.png"
+                src="/visuals/StarknetIdLogo.svg"
                 alt="Starknet.id Logo"
                 width={90}
                 height={90}

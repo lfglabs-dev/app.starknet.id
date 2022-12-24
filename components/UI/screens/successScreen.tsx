@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React, { FunctionComponent } from "react";
 import Button from "../button";
 
@@ -14,9 +13,9 @@ const SuccessScreen: FunctionComponent<SuccessScreenProps> = ({
   successMessage,
 }) => {
   return (
-    <div className="sm:w-2/3 w-5/5">
-      <Image
-        src="/visuals/StarknetIdLogo.png"
+    <div className="sm:w-2/3 w-5/5 flex flex-col justify-center items-center">
+      <img
+        src="/visuals/StarknetIdLogo.svg"
         height={300}
         width={300}
         alt="logo"
