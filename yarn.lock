@@ -4197,13 +4197,6 @@
   "resolved" "https://registry.npmjs.org/get-package-type/-/get-package-type-0.1.0.tgz"
   "version" "0.1.0"
 
-"get-starknet@^1.4.2":
-  "integrity" "sha512-6A14mdPoMwO4orETjG5D+wwaZOzuAyNp/5+ZlDJnU+UU7QRGMYILUo8WjgqeVTg0mcN0BZoUE0C/Qhgd7dBvVQ=="
-  "resolved" "https://registry.npmjs.org/get-starknet/-/get-starknet-1.5.0.tgz"
-  "version" "1.5.0"
-  dependencies:
-    "bowser" "^2.11.0"
-
 "get-stream@^6.0.0":
   "integrity" "sha512-ts6Wi+2j3jQjqi70w5AlN8DFnkSwC+MqmxEzdEALB2qXZYV3X/b1CTfgPLGJNMeAWxdPfU8FO1ms3NUfaHCPYg=="
   "resolved" "https://registry.npmjs.org/get-stream/-/get-stream-6.0.1.tgz"
@@ -5987,7 +5980,7 @@
   dependencies:
     "escape-string-regexp" "^2.0.0"
 
-"starknet@^3.12.3", "starknet@^4.0", "starknet@^4.4.2":
+"starknet@^4.0", "starknet@^4.4.2":
   "integrity" "sha512-tSQNwsx0+27pf2oi1fc1bgGDQO7cHFTWBIm+HLT6yAGs53Y/YRrc6jaxbcEl/826gv36ck53pqmF+85t1ILNMg=="
   "resolved" "https://registry.npmjs.org/starknet/-/starknet-4.4.2.tgz"
   "version" "4.4.2"

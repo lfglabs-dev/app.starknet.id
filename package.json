@@ -19,7 +19,6 @@
     "@vercel/analytics": "^0.1.5",
     "bn.js": "^5.2.1",
     "ethers": "^5.7.1",
-    "get-starknet": "^1.4.2",
     "mongodb": "^4.12.1",
     "next": "12.2.5",
     "nextjs-cors": "^2.1.2",
