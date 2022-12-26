@@ -241,7 +241,7 @@ const Navbar: FunctionComponent = () => {
             </p>
             <div className="mt-3">
               <Button onClick={() => disconnectByNetwork()}>
-                {`Disconnect from ${network}`}
+                {`Disconnect`}
               </Button>
             </div>
           </div>
