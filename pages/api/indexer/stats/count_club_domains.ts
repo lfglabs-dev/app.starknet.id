@@ -48,30 +48,30 @@ export default async function handler(
                     {
                       '$regexMatch': {
                         'input': '$domain',
-                        'regex': /^.{2}\.stark$/
+                        'regex': /^\d{2}\.stark$/
                       }
-                    }, 'two_letters', {
+                    }, '99', {
                       '$cond': [
                         {
                           '$regexMatch': {
                             'input': '$domain',
-                            'regex': /^.{3}\.stark$/
+                            'regex': /^.{2}\.stark$/
                           }
-                        }, 'three_letters', {
+                        }, 'two_letters', {
                           '$cond': [
                             {
                               '$regexMatch': {
                                 'input': '$domain',
-                                'regex': /^\d{2}\.stark$/
+                                'regex': /^\d{3}\.stark$/
                               }
-                            }, '99', {
+                            }, '999', {
                               '$cond': [
                                 {
                                   '$regexMatch': {
                                     'input': '$domain',
-                                    'regex': /^\d{3}\.stark$/
+                                    'regex': /^.{3}\.stark$/
                                   }
-                                }, '999', {
+                                }, 'three_letters', {
                                   '$cond': [
                                     {
                                       '$regexMatch': {
