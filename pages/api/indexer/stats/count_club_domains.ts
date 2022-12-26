@@ -6,9 +6,7 @@ import { QueryError } from "../../../../types/backTypes";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<
-    | {
-        count: number;
-      }
+    Array<{ club: string, count: number }>
     | QueryError
   >
 ) {
@@ -18,51 +16,99 @@ export default async function handler(
     optionsSuccessStatus: 200,
   });
   const {
-    query: { club, since },
+    query: { since },
   } = req;
-  const sinceTime = parseInt(since as string) * 1000;
+
+  const beginTime = parseInt(since as string) * 1000;
   const { db } = await connectToDatabase();
   const domainCollection = db.collection("domains");
 
-  let regex;
-  switch (club) {
-    case "single_letter":
-      regex = /^.\.stark$/;
-      break;
-    case "two_letters":
-      regex = /^.{2}\.stark$/;
-      break;
-    case "three_letters":
-      regex = /^.{3}\.stark$/;
-      break;
-    case "99": // according to the enlightened despot, this club is called "99" even though it contains 100 domains
-      regex = /^\d{2}\.stark$/;
-      break;
-    case "999":
-      regex = /^\d{3}\.stark$/;
-      break;
-    case "10k":
-      regex = /^\d{4}\.stark$/;
-      break;
-  }
-
-  let domains_count: number | undefined;
-  await domainCollection
-    .countDocuments({
-      creation_date: {
-        $gte: new Date(sinceTime),
-      },
-      domain: { $regex: regex },
-      "_chain.valid_to": { $eq: null },
-    })
-    .then((count) => {
-      domains_count = count;
-    });
+  const output = (
+    await domainCollection
+      .aggregate([
+        {
+          $match: {
+            _chain_valid_to: null,
+            creation_date: {
+              $gte: new Date(beginTime),
+            },
+          },
+        },
+        {
+          '$group': {
+            '_id': {
+              '$cond': [
+                {
+                  '$regexMatch': {
+                    'input': '$domain',
+                    'regex': /^.\.stark$/
+                  }
+                }, 'single_letter', {
+                  '$cond': [
+                    {
+                      '$regexMatch': {
+                        'input': '$domain',
+                        'regex': /^.{2}\.stark$/
+                      }
+                    }, 'two_letters', {
+                      '$cond': [
+                        {
+                          '$regexMatch': {
+                            'input': '$domain',
+                            'regex': /^.{3}\.stark$/
+                          }
+                        }, 'three_letters', {
+                          '$cond': [
+                            {
+                              '$regexMatch': {
+                                'input': '$domain',
+                                'regex': /^\d{2}\.stark$/
+                              }
+                            }, '99', {
+                              '$cond': [
+                                {
+                                  '$regexMatch': {
+                                    'input': '$domain',
+                                    'regex': /^\d{3}\.stark$/
+                                  }
+                                }, '999', {
+                                  '$cond': [
+                                    {
+                                      '$regexMatch': {
+                                        'input': '$domain',
+                                        'regex': /^\d{4}\.stark$/
+                                      }
+                                    }, '10k', 'nothing'
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            'count': {
+              '$sum': 1
+            }
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            club: "$_id",
+            count: "$count",
+          },
+        },
+      ])
+      .toArray()
+  ).map((doc) => ({ club: doc.club, count: doc.count }))
 
   res
     .setHeader("cache-control", "max-age=30")
     .status(200)
-    .json({
-      count: domains_count as number,
-    });
+    .json(output);
 }
