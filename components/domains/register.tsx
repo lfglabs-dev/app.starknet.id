@@ -150,31 +150,61 @@ const Register: FunctionComponent<RegisterProps> = ({
 
   async function L1connect() {
     let provider;
-    try {
-      await (window as any).ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x1" }],
-      });
-      provider = new ethers.providers.Web3Provider((window as any).ethereum);
-    } catch (switchError) {
-      if ((switchError as any).code === 4902) {
+    if (process.env.NEXT_PUBLIC_IS_TESTNET == "true") {
+      try {
         await (window as any).ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [
-            {
-              chainId: "0x1",
-              rpcUrls: ["https://mainnet.infura.io/v3/"],
-              chainName: "Ethereum",
-              nativeCurrency: {
-                name: "Ether",
-                symbol: "ETH",
-                decimals: 18,
-              },
-              blockExplorerUrls: ["https://etherscan.io/"],
-            },
-          ],
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x5" }],
         });
         provider = new ethers.providers.Web3Provider((window as any).ethereum);
+      } catch (switchError) {
+        if ((switchError as any).code === 4902) {
+          await (window as any).ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0x5",
+                rpcUrls: ["https://goerli.infura.io/v3/"],
+                chainName: "Goerli",
+                nativeCurrency: {
+                  name: "GoerliETH",
+                  symbol: "tETH",
+                  decimals: 18,
+                },
+                blockExplorerUrls: ["https://goerli.etherscan.io/"],
+              },
+            ],
+          });
+          provider = new ethers.providers.Web3Provider((window as any).ethereum);
+        }
+      }
+    } else {
+      try {
+        await (window as any).ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x1" }],
+        });
+        provider = new ethers.providers.Web3Provider((window as any).ethereum);
+      } catch (switchError) {
+        if ((switchError as any).code === 4902) {
+          await (window as any).ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0x1",
+                rpcUrls: ["https://mainnet.infura.io/v3/"],
+                chainName: "Ethereum",
+                nativeCurrency: {
+                  name: "Ether",
+                  symbol: "ETH",
+                  decimals: 18,
+                },
+                blockExplorerUrls: ["https://etherscan.io/"],
+              },
+            ],
+          });
+          provider = new ethers.providers.Web3Provider((window as any).ethereum);
+        }
       }
     }
 
