@@ -34,42 +34,42 @@ export default async function handler(
                 {
                   '$regexMatch': {
                     'input': '$domain',
-                    'regex': new RegExp('^.\.stark$')
+                    'regex': /^.\.stark$/
                   }
                 }, 'single_letter', {
                   '$cond': [
                     {
                       '$regexMatch': {
                         'input': '$domain',
-                        'regex': new RegExp('^\d{2}\.stark$')
+                        'regex': /^\d{2}\.stark$/
                       }
                     }, '99', {
                       '$cond': [
                         {
                           '$regexMatch': {
                             'input': '$domain',
-                            'regex': new RegExp('^.{2}\.stark$')
+                            'regex': /^.{2}\.stark$/
                           }
                         }, 'two_letters', {
                           '$cond': [
                             {
                               '$regexMatch': {
                                 'input': '$domain',
-                                'regex': new RegExp('^\d{3}\.stark$')
+                                'regex': /^\d{3}\.stark$/
                               }
                             }, '999', {
                               '$cond': [
                                 {
                                   '$regexMatch': {
                                     'input': '$domain',
-                                    'regex': new RegExp('^.{3}\.stark$')
+                                    'regex': /^.{3}\.stark$/
                                   }
                                 }, 'three_letters', {
                                   '$cond': [
                                     {
                                       '$regexMatch': {
                                         'input': '$domain',
-                                        'regex': new RegExp('^\d{4}\.stark$')
+                                        'regex': /^\d{4}\.stark$/
                                       }
                                     }, '10k', 'none'
                                   ]
