@@ -78,7 +78,7 @@ export default async function handler(
                                         'input': '$domain',
                                         'regex': /^\d{4}\.stark$/
                                       }
-                                    }, '10k', 'nothing'
+                                    }, '10k', 'none'
                                   ]
                                 }
                               ]

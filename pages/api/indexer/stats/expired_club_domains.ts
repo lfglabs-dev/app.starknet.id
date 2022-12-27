@@ -5,50 +5,101 @@ import { QueryError } from "../../../../types/backTypes";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<{ domain: string; expiry: number }[] | QueryError>
+  res: NextApiResponse<{ domain: string; club: string }[] | QueryError>
 ) {
   await NextCors(req, res, {
     methods: ["GET"],
     origin: "*",
     optionsSuccessStatus: 200,
   });
-  const {
-    query: { club },
-  } = req;
+
   const { db } = await connectToDatabase();
   const domainCollection = db.collection("domains");
-
-  let regex;
-  switch (club) {
-    case "single_letter":
-      regex = /^.\.stark$/;
-      break;
-    case "two_letters":
-      regex = /^.{2}\.stark$/;
-      break;
-    case "three_letters":
-      regex = /^.{3}\.stark$/;
-      break;
-    case "99": // according to the enlightened despot, this club is called "99" even though it contains 100 domains
-      regex = /^\d{2}\.stark$/;
-      break;
-    case "999":
-      regex = /^\d{3}\.stark$/;
-      break;
-    case "10k":
-      regex = /^\d{4}\.stark$/;
-      break;
-  }
-
-  const documents = domainCollection.find({
-    expiry: { $lte: Math.ceil(Date.now() / 100000) * 100 },
-    domain: { $regex: regex },
-    "_chain.valid_to": { $eq: null },
+  const current = Math.ceil(Date.now() / 100000) * 100;
+  const output = (
+    await domainCollection
+      .aggregate([
+        {
+          '$match': {
+            '_chain.valid_to': null,
+            'expiry': {
+              '$lte': current
+            }
+          }
+        }, {
+          '$project': {
+            'domain': '$domain',
+            'club': {
+              '$cond': [
+                {
+                  '$regexMatch': {
+                    'input': '$domain',
+                    'regex': new RegExp('^.\.stark$')
+                  }
+                }, 'single_letter', {
+                  '$cond': [
+                    {
+                      '$regexMatch': {
+                        'input': '$domain',
+                        'regex': new RegExp('^\d{2}\.stark$')
+                      }
+                    }, '99', {
+                      '$cond': [
+                        {
+                          '$regexMatch': {
+                            'input': '$domain',
+                            'regex': new RegExp('^.{2}\.stark$')
+                          }
+                        }, 'two_letters', {
+                          '$cond': [
+                            {
+                              '$regexMatch': {
+                                'input': '$domain',
+                                'regex': new RegExp('^\d{3}\.stark$')
+                              }
+                            }, '999', {
+                              '$cond': [
+                                {
+                                  '$regexMatch': {
+                                    'input': '$domain',
+                                    'regex': new RegExp('^.{3}\.stark$')
+                                  }
+                                }, 'three_letters', {
+                                  '$cond': [
+                                    {
+                                      '$regexMatch': {
+                                        'input': '$domain',
+                                        'regex': new RegExp('^\d{4}\.stark$')
+                                      }
+                                    }, '10k', 'none'
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }, {
+          '$match': {
+            'club': {
+              '$ne': 'none'
+            }
+          }
+        }
+      ])
+      .toArray()
+  ).map((doc) => {
+    return {
+      domain: doc.domain,
+      club: doc.club,
+    }
   });
-  const output = [];
-  for (const doc of await documents.toArray()) {
-    output.push({ domain: doc.domain, expiry: doc.expiry });
-  }
 
   res.setHeader("cache-control", "max-age=30").status(200).json(output);
 }
