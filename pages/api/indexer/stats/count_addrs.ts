@@ -28,7 +28,7 @@ export default async function handler(
     .aggregate([
       {
         $match: {
-          _chain_valid_to: null,
+          "_chain.valid_to": null,
           creation_date: {
             $gte: new Date(sinceTime),
           },

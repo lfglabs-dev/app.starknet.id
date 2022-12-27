@@ -23,12 +23,12 @@ export default async function handler(
   const { db } = await connectToDatabase();
   const domainCollection = db.collection("domains");
 
-  const output = (
+  const dbOutput = (
     await domainCollection
       .aggregate([
         {
           $match: {
-            _chain_valid_to: null,
+            "_chain.valid_to": null,
             creation_date: {
               $gte: new Date(beginTime),
             },
@@ -105,7 +105,37 @@ export default async function handler(
         },
       ])
       .toArray()
-  ).map((doc) => ({ club: doc.club, count: doc.count }))
+  );
+
+
+  let _99;
+  let _999;
+  for (const doc of dbOutput) {
+    if (doc.club === "99")
+      _99 = doc.count;
+    else if (doc.club === "999")
+      _999 = doc.count;
+  }
+
+  const output = [];
+  for (const doc of dbOutput) {
+    if (doc.club === "two_letters") {
+      output.push({
+        club: doc.club,
+        count: doc.count + _99,
+      })
+    } else if (doc.club === "three_letters") {
+      output.push({
+        club: doc.club,
+        count: doc.count + _999,
+      })
+    } else {
+      output.push({
+        club: doc.club,
+        count: doc.count,
+      });
+    }
+  }
 
   res
     .setHeader("cache-control", "max-age=30")
