@@ -3,6 +3,8 @@ import { BN } from "bn.js";
 import { totalAlphabet, useDecoded, useEncoded } from "../../hooks/naming";
 import { generateString } from "../../utils/stringService";
 
+const charactersWithBigAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-这来";
+
 describe("Should test encoding/decoding hooks 2500 times", () => {
   it("Should test useEncoded and useDecoded hook with a random string", () => {
     for (let index = 0; index < 2500; index++) {
