@@ -5,6 +5,8 @@ import {
   generateString,
 } from "../../utils/stringService";
 
+const charactersWithBigAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-这来";
+
 describe("Should test price service file", () => {
   it("Test getYearlyPriceFromDomain functions with different domains", () => {
     let randomString = generateString(0, charactersWithBigAlphabet);
