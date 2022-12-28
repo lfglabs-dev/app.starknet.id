@@ -1,7 +1,3 @@
-export function isStarkDomain(domain: string): boolean {
-  return domain.endsWith(".stark");
-}
-
 export function minifyAddress(address: string): string {
   const firstPart = address.substring(0, 4);
   const secondPart = address.substring(address.length - 3, address.length);
