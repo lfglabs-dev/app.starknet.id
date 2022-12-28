@@ -5,7 +5,7 @@ import NextCors from 'nextjs-cors';
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<{
-    domains: Array<String>;
+    domains: Array<string>;
   }>) {
   await NextCors(req, res, {
     methods: ['GET'],
@@ -13,7 +13,7 @@ export default async function handler(
     optionsSuccessStatus: 200,
   });
   const { query: { addr }, } = req;
-  const _domains: Array<String> = [];
+  const _domains: Array<string> = [];
   const { db } = await connectToDatabase();
   const documents = db.collection("starknet_ids").find({ "owner": addr, "_chain.valid_to": null });
   const domains = db.collection("domains");
