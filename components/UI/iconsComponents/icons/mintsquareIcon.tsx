@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from "react";
-import { IconProps } from "./discordIcon";
 
-const mintSquareIcon: FunctionComponent<IconProps> = ({ width, color }) => {
+const MintSquareIcon: FunctionComponent<IconProps> = ({ width, color }) => {
   return (
     <svg
       width={width}
@@ -36,4 +35,4 @@ const mintSquareIcon: FunctionComponent<IconProps> = ({ width, color }) => {
   );
 };
 
-export default mintSquareIcon;
+export default MintSquareIcon;

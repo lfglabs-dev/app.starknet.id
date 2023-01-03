@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
-import { useAccount, useStarknetExecute } from "@starknet-react/core";
+import {
+  useAccount,
+  useStarknetExecute,
+  useTransactionReceipt,
+} from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
-import { stringToFelt, toFelt } from "../utils/felt";
-import BN from "bn.js";
+import { stringToHex } from "../utils/felt";
+import { NextPage } from "next";
 
 export type Screen =
   | "verifyDiscord"
@@ -18,37 +22,51 @@ export type Screen =
   | "verifyTwitter"
   | "verifyGithub";
 
-export type Calls = {
-  contractAddress: string;
-  entrypoint: string;
-  calldata: (string | number | BN | any[] | undefined)[];
+type SignRequestData = {
+  status: Status;
+  username: string;
+  user_id: number;
+  sign0: string;
+  sign1: string;
+  timestamp: number;
+  discriminator: string;
 };
 
-export default function Discord() {
+const Discord: NextPage = () => {
   const router = useRouter();
   const [isConnected, setIsConnected] = useState(true);
   const routerCode: string = router.query.code as string;
   //Server Sign Request
-  const [signRequestData, setSignRequestData] = useState<any>();
+  const [signRequestData, setSignRequestData] = useState<
+    SignRequestData | ErrorRequestData
+  >();
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Calls | undefined>();
 
   useEffect(() => {
-    setTokenId(window.sessionStorage.getItem("tokenId") ?? "");
+    if (!tokenId) {
+      setTokenId(window.sessionStorage.getItem("tokenId") ?? "");
+    }
+  }, [tokenId]);
+
+  useEffect(() => {
+    if (!signRequestData || signRequestData.status === "error") return;
+
     setCalls({
       contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
       entrypoint: "write_confirmation",
       calldata: [
         tokenId,
-        Math.floor(Date.now() / 1000),
-        stringToFelt("discord"),
-        toFelt(signRequestData.user_id),
-        [signRequestData.sign0, signRequestData.sign1],
+        (signRequestData as SignRequestData).timestamp.toString(),
+        stringToHex("discord"),
+        (signRequestData as SignRequestData).user_id.toString(),
+        (signRequestData as SignRequestData).sign0,
+        (signRequestData as SignRequestData).sign1,
       ],
     });
-  }, []);
+  }, [signRequestData, tokenId]);
 
   //Set discord code
   const [code, setCode] = useState<string>("");
@@ -75,8 +93,7 @@ export default function Discord() {
       method: "POST",
       body: JSON.stringify({
         type: "discord",
-        token_id_low: Number(tokenId),
-        token_id_high: 0,
+        token_id: Number(tokenId),
         code: code,
       }),
     };
@@ -86,8 +103,10 @@ export default function Discord() {
       requestOptions
     )
       .then((response) => response.json())
-      .then((data) => setSignRequestData(data));
-  }, [code]);
+      .then((data) => {
+        setSignRequestData(data);
+      });
+  }, [code, tokenId]);
 
   //Contract
   const {
@@ -96,9 +115,35 @@ export default function Discord() {
     error: discordVerificationError,
   } = useStarknetExecute({ calls });
 
+  const { data: transactionData, error: transactionError } =
+    useTransactionReceipt({
+      hash: discordVerificationData?.transaction_hash,
+      watch: true,
+    });
+
   function verifyDiscord() {
     execute();
   }
+
+  useEffect(() => {
+    if (discordVerificationData?.transaction_hash) {
+      if (
+        transactionData?.status &&
+        !transactionError &&
+        !transactionData?.status.includes("ACCEPTED") &&
+        transactionData?.status !== "PENDING"
+      ) {
+        setScreen("loading");
+      } else if (transactionError) {
+        setScreen("error");
+      } else if (
+        transactionData?.status === "ACCEPTED_ON_L2" ||
+        transactionData?.status === "PENDING"
+      ) {
+        setScreen("success");
+      }
+    }
+  }, [discordVerificationData, transactionData, transactionError]);
 
   //Screen management
   const [screen, setScreen] = useState<Screen | undefined>(undefined);
@@ -147,4 +192,6 @@ export default function Discord() {
       </div>
     </div>
   );
-}
+};
+
+export default Discord;

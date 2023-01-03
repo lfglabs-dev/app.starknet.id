@@ -1,19 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../lib/mongodb";
-import { queryError } from "./domain_to_addr";
-import NextCors from 'nextjs-cors';
+import NextCors from "nextjs-cors";
+import { QueryError } from "../../../types/backTypes";
 
-type addrToDomainData = { domain: string; domain_expiry: number };
+type AddrToDomainData = { domain: string; domain_expiry: number };
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<addrToDomainData | queryError>
+  res: NextApiResponse<AddrToDomainData | QueryError>
 ) {
   await NextCors(req, res, {
-    methods: ['GET'],
-    origin: '*',
+    methods: ["GET"],
+    origin: "*",
     optionsSuccessStatus: 200,
-});
+  });
   const {
     query: { addr },
   } = req;

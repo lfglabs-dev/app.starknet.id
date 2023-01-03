@@ -1,7 +1,8 @@
+import React from "react";
 import { useRouter } from "next/router";
 import { InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { FunctionComponent, KeyboardEvent, useEffect, useState } from "react";
+import { FunctionComponent, KeyboardEvent, useState } from "react";
 import { useIsValid } from "../../hooks/naming";
 
 type SearchBarProps = {
@@ -15,8 +16,8 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   const [typedValue, setTypedValue] = useState<string>("");
   const isDomainValid = useIsValid(typedValue);
 
-  function handleChange(e: any) {
-    setTypedValue(e.target.value.toLowerCase());
+  function handleChange(value: string) {
+    setTypedValue(value.toLowerCase());
   }
 
   function onEnter(ev: KeyboardEvent<HTMLDivElement>) {
@@ -45,7 +46,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
       }
       placeholder="Type your .stark domain here"
       variant="outlined"
-      onChange={handleChange}
+      onChange={(e) => handleChange(e.target.value)}
       onKeyPress={(ev) => onEnter(ev)}
       InputProps={{
         endAdornment: (

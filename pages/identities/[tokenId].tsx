@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import React, { useEffect, useState } from "react";
 import styles from "../../styles/Home.module.css";
 import styles2 from "../../styles/components/identitiesV1.module.css";
@@ -6,25 +5,16 @@ import { useRouter } from "next/router";
 import Button from "../../components/UI/button";
 import { NextPage } from "next";
 import { ThreeDots } from "react-loader-spinner";
-import IdentityActions from "../../components/identities/IdentityActions";
+import IdentityActions from "../../components/identities/identitiesActions";
 import Link from "next/link";
-import { getDomainWithoutStark } from "../../utils/stringService";
-
-export type Identity = {
-  addr: string;
-  domain: string;
-  domain_expiry: string;
-  is_owner_main: Boolean;
-  error?: string;
-};
-
-export type IndexerError = {};
+import { getDomainWithoutStark, isSubdomain } from "../../utils/stringService";
+import { Identity } from "../../types/backTypes";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
   const tokenId: string = router.query.tokenId as string;
   const [identity, setIdentity] = useState<Identity>();
-  const [hasIdentityADomain, setHasIdentityADomain] = useState<
+  const [isIdentityADomain, setIsIdentityADomain] = useState<
     boolean | undefined
   >();
   const currentTimeStamp = new Date().getTime() / 1000;
@@ -36,11 +26,11 @@ const TokenIdPage: NextPage = () => {
           .then((response) => response.json())
           .then((data: Identity) => {
             if (data.error) {
-              setHasIdentityADomain(false);
+              setIsIdentityADomain(false);
               return;
             }
             setIdentity(data);
-            setHasIdentityADomain(true);
+            setIsIdentityADomain(true);
           });
       refreshData();
       const timer = setInterval(() => refreshData(), 30e3);
@@ -57,7 +47,7 @@ const TokenIdPage: NextPage = () => {
         <img alt="leaf" src="/leaves/leaf_1.png" />
       </div>
       <div className={styles2.containerIdentity}>
-        {hasIdentityADomain === undefined ? (
+        {isIdentityADomain === undefined ? (
           <div className="h-full flex items-center justify-center">
             <ThreeDots
               height="25"
@@ -71,7 +61,7 @@ const TokenIdPage: NextPage = () => {
         ) : (
           <>
             <h1 className="sm:text-5xl text-4xl my-5 break-all mx-3">
-              {hasIdentityADomain
+              {isIdentityADomain
                 ? identity?.domain
                 : `Starknet ID : ${tokenId}`}
             </h1>
@@ -84,10 +74,13 @@ const TokenIdPage: NextPage = () => {
               />
             </div>
 
-            {hasIdentityADomain ? (
-              <IdentityActions identity={identity} tokenId={tokenId} />
-            ) : null}
-            {Number(identity?.domain_expiry) < currentTimeStamp ? (
+            <IdentityActions
+              identity={identity}
+              tokenId={tokenId}
+              isIdentityADomain={isIdentityADomain}
+            />
+            {Number(identity?.domain_expiry) < currentTimeStamp &&
+            !isSubdomain(identity?.domain ?? "") ? (
               <strong className="mt-2 text-red-600 text-center">
                 (This domain has expired you can buy it on the&nbsp;
                 <span className="underline">

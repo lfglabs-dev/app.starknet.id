@@ -1,3 +1,4 @@
+import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Link from "next/link";
 import {
@@ -10,10 +11,9 @@ import styles from "../../styles/Home.module.css";
 
 type DetailsProps = {
   domain: string;
-  isAvailable?: boolean;
 };
 
-const Details: FunctionComponent<DetailsProps> = ({ domain, isAvailable }) => {
+const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
   const [ownerAddress, setOwnerAddress] = useState<string | undefined>(
     undefined
   );

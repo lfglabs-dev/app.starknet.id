@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../lib/mongodb";
-import { queryError } from "./domain_to_addr";
-import NextCors from 'nextjs-cors';
+import NextCors from "nextjs-cors";
+import { QueryError } from "../../../types/backTypes";
 
 type Data = {
   domain: string;
@@ -12,11 +12,11 @@ type Data = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data | queryError>
+  res: NextApiResponse<Data | QueryError>
 ) {
   await NextCors(req, res, {
-    methods: ['GET'],
-    origin: '*',
+    methods: ["GET"],
+    origin: "*",
     optionsSuccessStatus: 200,
   });
   const {
@@ -44,8 +44,8 @@ export default async function handler(
   await db
     .collection("starknet_ids")
     .findOne({ token_id: id, "_chain.valid_to": null })
-    .then((doc) => {
-      owner = (doc as any).owner;
+    .then((doc: any) => {
+      owner = doc.owner;
     });
 
   if (!domain || !owner) {

@@ -43,8 +43,8 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
     set_domain_to_address();
   }
 
-  function changeAddress(e: any): void {
-    isHexString(e.target.value) ? setTargetAddress(e.target.value) : null;
+  function changeAddress(value: string): void {
+    isHexString(value) ? setTargetAddress(value) : null;
   }
 
   return (
@@ -84,7 +84,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
               id="outlined-basic"
               value={targetAddress ?? address}
               variant="outlined"
-              onChange={changeAddress}
+              onChange={(e) => changeAddress(e.target.value)}
               color="secondary"
               required
             />

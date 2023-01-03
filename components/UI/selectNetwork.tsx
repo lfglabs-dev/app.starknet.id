@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent } from "react";
 import {
   FormControl,
   ListItemIcon,
@@ -7,18 +7,17 @@ import {
   Select,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const SelectNetwork: FunctionComponent = () => {
+type SelectNetworkProps = {
+  network: "testnet" | "mainnet";
+};
+
+const SelectNetwork: FunctionComponent<SelectNetworkProps> = ({ network }) => {
   const router = useRouter();
-  const [network, setNetwork] = useState("testnet");
-  useEffect(() => {
-    setNetwork(window.location.href.includes("goerli") ? "testnet" : "mainnet");
-  }, []);
 
-  function changeTokenId(e: any): void {
-    if (e.target.value != network) {
-      if (e.target.value === "testnet") {
+  function changeTokenId(value: string): void {
+    if (value != network) {
+      if (value === "testnet") {
         router.push("https://goerli.app.starknet.id" + router.asPath);
       } else {
         router.push("https://app.starknet.id" + router.asPath);
@@ -32,7 +31,7 @@ const SelectNetwork: FunctionComponent = () => {
         <Select
           value={network}
           defaultValue={"Testnet"}
-          onChange={changeTokenId}
+          onChange={(e) => changeTokenId(e.target.value)}
           sx={{
             "& .MuiSelect-select": {
               display: "flex",

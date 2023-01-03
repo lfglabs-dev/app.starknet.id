@@ -1,14 +1,10 @@
-/* eslint-disable @next/next/no-img-element */
+import React from "react";
 import { TextField } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import styles from "../../styles/Home.module.css";
 import { usePricingContract } from "../../hooks/contracts";
-import {
-  useAccount,
-  useStarknetCall,
-  useTransactionReceipt,
-} from "@starknet-react/core";
+import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
@@ -45,11 +41,11 @@ const Register: FunctionComponent<RegisterProps> = ({
     args: [encodedDomain, duration * 365],
   });
   const { account } = useAccount();
-  const { execute, data: buyData } = useStarknetExecute({
+  const { execute } = useStarknetExecute({
     calls: callData as any,
   });
 
-  const [domainsMinting, setDomainsMinting] = useState<Map<String, Boolean>>(
+  const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
 
@@ -68,7 +64,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     setPriceWithoutDiscount(
       Math.round(duration * getYearlyPriceFromDomain(domain) * 1000) / 1000
     );
-  }, [duration]);
+  }, [duration, domain]);
 
   useEffect(() => {
     if (account) {
@@ -135,16 +131,16 @@ const Register: FunctionComponent<RegisterProps> = ({
     }
   }, [tokenId, duration, targetAddress, isAvailable, price, domain]);
 
-  function changeAddress(e: any): void {
-    isHexString(e.target.value) ? setTargetAddress(e.target.value) : null;
+  function changeAddress(value: string): void {
+    isHexString(value) ? setTargetAddress(value) : null;
   }
 
-  function changeDuration(e: any): void {
-    setDuration(e.target.value);
+  function changeDuration(value: number): void {
+    setDuration(value);
   }
 
-  function changeTokenId(e: any): void {
-    setTokenId(Number(e.target.value));
+  function changeTokenId(value: number): void {
+    setTokenId(Number(value));
   }
 
   // register from L1
@@ -154,31 +150,61 @@ const Register: FunctionComponent<RegisterProps> = ({
 
   async function L1connect() {
     let provider;
-    try {
-      await (window as any).ethereum.request({
-        method: "wallet_switchEthereumChain",
-        params: [{ chainId: "0x1" }],
-      });
-      provider = new ethers.providers.Web3Provider((window as any).ethereum);
-    } catch (switchError) {
-      if ((switchError as any).code === 4902) {
+    if (process.env.NEXT_PUBLIC_IS_TESTNET == "true") {
+      try {
         await (window as any).ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [
-            {
-              chainId: "0x1",
-              rpcUrls: ["https://mainnet.infura.io/v3/"],
-              chainName: "Ethereum",
-              nativeCurrency: {
-                name: "Ether",
-                symbol: "ETH",
-                decimals: 18,
-              },
-              blockExplorerUrls: ["https://etherscan.io/"],
-            },
-          ],
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x5" }],
         });
         provider = new ethers.providers.Web3Provider((window as any).ethereum);
+      } catch (switchError) {
+        if ((switchError as any).code === 4902) {
+          await (window as any).ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0x5",
+                rpcUrls: ["https://goerli.infura.io/v3/"],
+                chainName: "Goerli",
+                nativeCurrency: {
+                  name: "GoerliETH",
+                  symbol: "tETH",
+                  decimals: 18,
+                },
+                blockExplorerUrls: ["https://goerli.etherscan.io/"],
+              },
+            ],
+          });
+          provider = new ethers.providers.Web3Provider((window as any).ethereum);
+        }
+      }
+    } else {
+      try {
+        await (window as any).ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x1" }],
+        });
+        provider = new ethers.providers.Web3Provider((window as any).ethereum);
+      } catch (switchError) {
+        if ((switchError as any).code === 4902) {
+          await (window as any).ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0x1",
+                rpcUrls: ["https://mainnet.infura.io/v3/"],
+                chainName: "Ethereum",
+                nativeCurrency: {
+                  name: "Ether",
+                  symbol: "ETH",
+                  decimals: 18,
+                },
+                blockExplorerUrls: ["https://etherscan.io/"],
+              },
+            ],
+          });
+          provider = new ethers.providers.Web3Provider((window as any).ethereum);
+        }
       }
     }
 
@@ -221,7 +247,7 @@ const Register: FunctionComponent<RegisterProps> = ({
               id="outlined-basic"
               value={targetAddress ?? "0x.."}
               variant="outlined"
-              onChange={changeAddress}
+              onChange={(e) => changeAddress(e.target.value)}
               color="secondary"
               required
             />
@@ -235,7 +261,7 @@ const Register: FunctionComponent<RegisterProps> = ({
               type="number"
               placeholder="years"
               variant="outlined"
-              onChange={changeDuration}
+              onChange={(e) => changeDuration(Number(e.target.value))}
               InputProps={{
                 inputProps: { min: 0, max: maxYearsToRegister },
               }}
@@ -263,7 +289,7 @@ const Register: FunctionComponent<RegisterProps> = ({
           <div className="text-beige m-1 mt-5">
             <Button
               onClick={() =>
-                execute().then((tx) =>
+                execute().then(() =>
                   setDomainsMinting((prev) =>
                     new Map(prev).set(encodedDomain.toString(), true)
                   )
@@ -271,7 +297,7 @@ const Register: FunctionComponent<RegisterProps> = ({
               }
               disabled={
                 (domainsMinting.get(encodedDomain.toString()) as boolean) ||
-                !Boolean(account) ||
+                !account ||
                 !duration ||
                 duration < 1 ||
                 !targetAddress
@@ -288,7 +314,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                 }}
                 disabled={
                   (domainsMinting.get(encodedDomain.toString()) as boolean) ||
-                  !Boolean(account) ||
+                  !account ||
                   !duration ||
                   duration < 1 ||
                   !targetAddress
@@ -304,11 +330,11 @@ const Register: FunctionComponent<RegisterProps> = ({
                 }}
                 disabled={
                   (domainsMinting.get(encodedDomain.toString()) as boolean) ||
-                  !Boolean(account) ||
+                  !account ||
                   !duration ||
                   duration < 1 ||
                   !targetAddress ||
-                  !Boolean(tokenId)
+                  !tokenId
                 }
               >
                 Register from L1

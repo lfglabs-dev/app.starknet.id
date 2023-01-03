@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from "react";
-import { IconProps } from "./discordIcon";
 
-const transferIcon: FunctionComponent<IconProps> = ({ color, width }) => {
+const TransferIcon: FunctionComponent<IconProps> = ({ color, width }) => {
   return (
     <svg
       width={width}
@@ -25,4 +24,4 @@ const transferIcon: FunctionComponent<IconProps> = ({ color, width }) => {
   );
 };
 
-export default transferIcon;
+export default TransferIcon;

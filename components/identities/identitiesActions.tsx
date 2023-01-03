@@ -1,6 +1,7 @@
+import React from "react";
 import { Tooltip } from "@mui/material";
+import Divider from "@mui/material/Divider";
 import { FunctionComponent, useEffect, useState } from "react";
-import { Identity } from "../../pages/identities/[tokenId]";
 import ClickableIcon from "../UI/iconsComponents/clickableIcon";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import { useEncodedSeveral } from "../../hooks/naming";
@@ -12,15 +13,19 @@ import TransferFormModal from "./actions/transferFormModal";
 import SubdomainModal from "./actions/subdomainModal";
 import { hexToFelt } from "../../utils/felt";
 import RenewalModal from "./actions/renewalModal";
+import SocialMediaActions from "./actions/socialmediaActions";
+import { Identity } from "../../types/backTypes";
 
 type IdentityActionsProps = {
   identity?: Identity;
   tokenId: string;
+  isIdentityADomain: boolean;
 };
 
 const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   identity,
   tokenId,
+  isIdentityADomain,
 }) => {
   const [isAddressFormOpen, setIsAddressFormOpen] = useState<boolean>(false);
   const [isRenewFormOpen, setIsRenewFormOpen] = useState<boolean>(false);
@@ -59,12 +64,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       ? set_address_to_domain_calls
       : [set_domain_to_address_calls, set_address_to_domain_calls],
   });
-
-  // function startVerification(link: string): void {
-  //   sessionStorage.setItem("tokenId", tokenId);
-  //   router.push(link);
-  // }
-
   function setAddressToDomain(): void {
     set_address_to_domain();
   }
@@ -96,41 +95,27 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   return (
     <>
+      {process.env.NEXT_PUBLIC_IS_TESTNET && (
+        <>
+          <SocialMediaActions
+            domain={identity?.domain}
+            isOwner={isOwner}
+            tokenId={tokenId}
+          />
+          <Divider
+            light={true}
+            component="div"
+            style={{
+              width: "3rem",
+              height: "0.2rem",
+              marginBottom: "0.25rem",
+              marginTop: "0.25rem",
+            }}
+          ></Divider>
+        </>
+      )}
       <div className="flex">
-        {/* <div className="m-2">
-          <ClickableIcon
-            title="Start verifying twitter"
-            icon="twitter"
-            onClick={() =>
-              startVerification(
-                "https://twitter.com/i/oauth2/authorize?response_type=code&client_id=Rkp6QlJxQzUzbTZtRVljY2paS0k6MTpjaQ&redirect_uri=https://goerli.app.starknet.id/twitter&scope=users.read%20tweet.read&state=state&code_challenge=challenge&code_challenge_method=plain"
-              )
-            }
-          />
-        </div>
-        <div className="m-2">
-          <ClickableIcon
-            title="Start verifying discord"
-            icon="discord"
-            onClick={() =>
-              startVerification(
-                "https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=https%3A%2F%2Fgoerli.app.starknet.id%2Fdiscord&response_type=code&scope=identify"
-              )
-            }
-          />
-        </div>
-        <div className="m-2">
-          <ClickableIcon
-            title="Start verifying github"
-            icon="github"
-            onClick={() =>
-              startVerification(
-                "https://github.com/login/oauth/authorize?client_id=bd72ec641d75c2608121"
-              )
-            }
-          />
-        </div> */}
-        {!isOwner && (
+        {identity && !isOwner && isIdentityADomain && (
           <>
             <div className="m-2">
               <ClickableIcon
@@ -218,6 +203,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           </>
         )}
       </div>
+
       <RenewalModal
         handleClose={() => setIsRenewFormOpen(false)}
         isModalOpen={isRenewFormOpen}

@@ -1,55 +1,105 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../../lib/mongodb";
-import { queryError } from "../domain_to_addr";
-import NextCors from 'nextjs-cors';
+import NextCors from "nextjs-cors";
+import { QueryError } from "../../../../types/backTypes";
 
 export default async function handler(
-    req: NextApiRequest,
-    res: NextApiResponse<{ domain: string, expiry: number }[] | queryError>
+  req: NextApiRequest,
+  res: NextApiResponse<{ domain: string; club: string }[] | QueryError>
 ) {
-    await NextCors(req, res, {
-        methods: ['GET'],
-        origin: '*',
-        optionsSuccessStatus: 200,
-    });
-    const { query: { club }, } = req;
-    const { db } = await connectToDatabase();
-    const domainCollection = db.collection("domains");
+  await NextCors(req, res, {
+    methods: ["GET"],
+    origin: "*",
+    optionsSuccessStatus: 200,
+  });
 
-    let regex;
-    switch (club) {
-        case "single_letter":
-            regex = /^.\.stark$/;
-            break;
-        case "two_letters":
-            regex = /^.{2}\.stark$/;
-            break;
-        case "three_letters":
-            regex = /^.{3}\.stark$/;
-            break;
-        case "99": // according to the enlightened despot, this club is called "99" even though it contains 100 domains
-            regex = /^\d{2}\.stark$/;
-            break;
-        case "999":
-            regex = /^\d{3}\.stark$/;
-            break;
-        case "10k":
-            regex = /^\d{4}\.stark$/;
-            break;
+  const { db } = await connectToDatabase();
+  const domainCollection = db.collection("domains");
+  const current = Math.ceil(Date.now() / 100000) * 100;
+  const output = (
+    await domainCollection
+      .aggregate([
+        {
+          '$match': {
+            '_chain.valid_to': null,
+            'expiry': {
+              '$lte': current
+            }
+          }
+        }, {
+          '$project': {
+            'domain': '$domain',
+            'club': {
+              '$cond': [
+                {
+                  '$regexMatch': {
+                    'input': '$domain',
+                    'regex': /^.\.stark$/
+                  }
+                }, 'single_letter', {
+                  '$cond': [
+                    {
+                      '$regexMatch': {
+                        'input': '$domain',
+                        'regex': /^\d{2}\.stark$/
+                      }
+                    }, '99', {
+                      '$cond': [
+                        {
+                          '$regexMatch': {
+                            'input': '$domain',
+                            'regex': /^.{2}\.stark$/
+                          }
+                        }, 'two_letters', {
+                          '$cond': [
+                            {
+                              '$regexMatch': {
+                                'input': '$domain',
+                                'regex': /^\d{3}\.stark$/
+                              }
+                            }, '999', {
+                              '$cond': [
+                                {
+                                  '$regexMatch': {
+                                    'input': '$domain',
+                                    'regex': /^.{3}\.stark$/
+                                  }
+                                }, 'three_letters', {
+                                  '$cond': [
+                                    {
+                                      '$regexMatch': {
+                                        'input': '$domain',
+                                        'regex': /^\d{4}\.stark$/
+                                      }
+                                    }, '10k', 'none'
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }, {
+          '$match': {
+            'club': {
+              '$ne': 'none'
+            }
+          }
+        }
+      ])
+      .toArray()
+  ).map((doc) => {
+    return {
+      domain: doc.domain,
+      club: doc.club,
     }
+  });
 
-    const documents = domainCollection.find({
-        'expiry': { "$lte": Math.ceil(Date.now() / 100000) * 100, },
-        'domain': { '$regex': regex },
-        '_chain.valid_to': { "$eq": null },
-    })
-    let output = [];
-    for (const doc of await documents.toArray()) {
-        output.push({ domain: doc.domain, expiry: doc.expiry });
-    }
-
-    res
-        .setHeader("cache-control", "max-age=30")
-        .status(200)
-        .json(output);
+  res.setHeader("cache-control", "max-age=30").status(200).json(output);
 }

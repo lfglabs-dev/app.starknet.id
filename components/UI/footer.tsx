@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import React, { FunctionComponent } from "react";
 import styles from "../styles/components/footer.module.css";
 

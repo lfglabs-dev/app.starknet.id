@@ -1,3 +1,4 @@
+import React from "react";
 import {
   useAccount,
   useConnectors,
@@ -45,7 +46,7 @@ const Whitelist: NextPage = () => {
             setErrorMessage(data.error);
           } else {
             setErrorMessage(undefined);
-            let domainsBN: BN[][] = [];
+            const domainsBN: BN[][] = [];
             data.forEach((element: WhitelistedDomain) => {
               domainsBN.push([new BN(element.domain)]);
             });
@@ -59,7 +60,7 @@ const Whitelist: NextPage = () => {
 
   useEffect(() => {
     if (account && whitelistedDomains.length !== 0) {
-      let localCallData: any[] = [];
+      const localCallData: any[] = [];
       whitelistedDomains.forEach((whitelistedDomain) => {
         const newTokenId: number = Math.floor(Math.random() * 1000000000000);
 
@@ -105,7 +106,7 @@ const Whitelist: NextPage = () => {
         {!account ? (
           <div className="flex flex-col items-center">
             <img
-              src="/visuals/StarknetIdLogo.png"
+              src="/visuals/StarknetIdLogo.svg"
               height={250}
               width={250}
               alt="logo"

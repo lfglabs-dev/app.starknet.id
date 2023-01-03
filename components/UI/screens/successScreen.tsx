@@ -1,4 +1,3 @@
-import Image from "next/image";
 import React, { FunctionComponent } from "react";
 import Button from "../button";
 
@@ -14,14 +13,14 @@ const SuccessScreen: FunctionComponent<SuccessScreenProps> = ({
   successMessage,
 }) => {
   return (
-    <div className="sm:w-2/3 w-5/5">
-      <Image
-        src="/visuals/StarknetIdLogo.png"
+    <div className="sm:w-2/3 w-5/5 flex flex-col justify-center items-center">
+      <img
+        src="/visuals/StarknetIdLogo.svg"
         height={300}
         width={300}
         alt="logo"
       />
-      <h1 className="sm:text-5xl text-5xl mt-2">{successMessage}</h1>
+      <h1 className="sm:text-5xl text-5xl">{successMessage}</h1>
       <div className="mt-8 flex justify-center">
         <Button onClick={onClick}>{buttonText}</Button>
       </div>
