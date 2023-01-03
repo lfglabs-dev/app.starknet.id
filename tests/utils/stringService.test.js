@@ -5,9 +5,10 @@ import {
   isStarkDomain,
   isHexString,
   isSubdomain,
-  generateString,
   minifyAddress,
   minifyDomain,
+  generateString,
+  charactersWithoutBigAlphabet,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
