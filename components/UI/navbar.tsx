@@ -14,12 +14,11 @@ import ModalMessage from "./modalMessage";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
-  const [hasWallet, setHasWallet] = useState<boolean>(false);
+  const [hasWallet, setHasWallet] = useState<boolean>(true);
   const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const [isDisconnectedOnClick, setIsDisconnectedOnClick] =
-    useState<boolean>(false);
+
   const { available, connect, disconnect } = useConnectors();
   const { library } = useStarknet();
   const domain = useUpdatedDomainFromAddress(address);
@@ -30,12 +29,8 @@ const Navbar: FunctionComponent = () => {
 
   function disconnectByClick(): void {
     disconnect();
-    setIsDisconnectedOnClick(true);
-  }
-
-  function disconnectByNetwork(): void {
-    disconnect();
-    setHasWallet(true);
+    setIsConnected(false);
+    setIsWrongNetwork(false);
   }
 
   useEffect(() => {
@@ -43,12 +38,8 @@ const Navbar: FunctionComponent = () => {
   }, [address]);
 
   useEffect(() => {
-    if (!isDisconnectedOnClick && !isConnected) {
-      available.length === 1 ? connect(available[0]) : setHasWallet(true);
-    }
-  }, [isConnected, isDisconnectedOnClick, available, connect]);
+    if (!isConnected) return;
 
-  useEffect(() => {
     const STARKNET_NETWORK = {
       mainnet: "0x534e5f4d41494e",
       testnet: "0x534e5f474f45524c49",
@@ -64,7 +55,7 @@ const Navbar: FunctionComponent = () => {
     } else {
       setIsWrongNetwork(false);
     }
-  }, [library, network]);
+  }, [library, network, isConnected]);
 
   function handleNav(): void {
     setNav(!nav);
@@ -241,7 +232,7 @@ const Navbar: FunctionComponent = () => {
               network to be able use it.
             </p>
             <div className="mt-3">
-              <Button onClick={() => disconnectByNetwork()}>
+              <Button onClick={() => disconnectByClick()}>
                 {`Disconnect`}
               </Button>
             </div>
