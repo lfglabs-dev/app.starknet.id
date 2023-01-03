@@ -6,9 +6,8 @@ import {
   isHexString,
   isSubdomain,
   generateString,
+  charactersWithoutBigAlphabet,
 } from "../../utils/stringService";
-
-const charactersWithoutChinese = "abcdefghijklmnopqrstuvwxyz0123456789";
 
 describe("Should test is1234Domain", () => {
   it("Should return false cause there are valid 1234 domains", () => {
