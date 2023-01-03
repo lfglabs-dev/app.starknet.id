@@ -25,7 +25,8 @@ const Navbar: FunctionComponent = () => {
   const domain = useUpdatedDomainFromAddress(address);
   const green = "#19AA6E";
   const brown = "#402d28";
-  const network = process.env.NEXT_PUBLIC_IS_TESTNET ? "testnet" : "mainnet";
+  const network =
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
 
   function disconnectByClick(): void {
     disconnect();
