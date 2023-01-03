@@ -1,3 +1,8 @@
+export const charactersWithoutBigAlphabet =
+  "abcdefghijklmnopqrstuvwxyz0123456789";
+export const charactersWithBigAlphabet =
+  "abcdefghijklmnopqrstuvwxyz0123456789-这来";
+
 export function minifyAddressOrDomain(
   address: string,
   characterToBreak?: number
