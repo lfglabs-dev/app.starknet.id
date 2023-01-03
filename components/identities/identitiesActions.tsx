@@ -95,7 +95,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   return (
     <>
-      {process.env.NEXT_PUBLIC_IS_TESTNET && (
+      {process.env.NEXT_PUBLIC_IS_TESTNET === "true" && (
         <>
           <SocialMediaActions
             domain={identity?.domain}
