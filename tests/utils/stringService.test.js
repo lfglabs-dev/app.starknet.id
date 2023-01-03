@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import { basicAlphabet } from "../../hooks/naming";
 import {
   is1234Domain,
   getDomainWithoutStark,
@@ -6,7 +7,6 @@ import {
   isHexString,
   isSubdomain,
   generateString,
-  charactersWithoutBigAlphabet,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -56,7 +56,7 @@ describe("Should test getDomainWithoutStark", () => {
 describe("Should test isStarkDomain", () => {
   it("Should return true cause string is a stark domain", () => {
     for (let index = 0; index < 2500; index++) {
-      const randomString = generateString(10, charactersWithoutBigAlphabet);
+      const randomString = generateString(10, basicAlphabet);
       expect(isStarkDomain(randomString + ".stark")).toBe(true);
     }
   });
