@@ -1,8 +1,9 @@
 /* eslint-disable no-undef */
 import { PRICES, getYearlyPriceFromDomain } from "../../utils/priceService";
-import { generateString } from "../../utils/stringService";
-
-const charactersWithBigAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-这来";
+import {
+  charactersWithBigAlphabet,
+  generateString,
+} from "../../utils/stringService";
 
 describe("Should test price service file", () => {
   it("Test getYearlyPriceFromDomain functions with different domains", () => {
