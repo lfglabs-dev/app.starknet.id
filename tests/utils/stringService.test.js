@@ -7,6 +7,8 @@ import {
   isHexString,
   isSubdomain,
   generateString,
+  minifyAddress,
+  minifyDomain,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
