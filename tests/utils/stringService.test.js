@@ -1,9 +1,12 @@
+/* eslint-disable no-undef */
+import { basicAlphabet } from "../../hooks/naming";
 import {
   is1234Domain,
   getDomainWithoutStark,
   isStarkDomain,
   isHexString,
   isSubdomain,
+  generateString,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -31,12 +34,22 @@ describe("Should test getDomainWithoutStark", () => {
 });
 
 describe("Should test isStarkDomain", () => {
-  it("Should return true cause string ends with .stark", () => {
-    expect(isStarkDomain("1232575.stark")).toBe(true);
+  it("Should return true cause string is a stark domain", () => {
+    for (let index = 0; index < 2500; index++) {
+      const randomString = generateString(10, basicAlphabet);
+      expect(isStarkDomain(randomString + ".stark")).toBe(true);
+    }
   });
 
   it("Should return false cause string does not end with .stark", () => {
-    expect(isStarkDomain("1232575")).toBe(false);
+    expect(isStarkDomain("test.star")).toBe(false);
+  });
+
+  it("Should return false cause string contains a wrong character", () => {
+    expect(isStarkDomain("test)ben.stark")).toBe(false);
+    expect(isStarkDomain("test,ben.stark")).toBe(false);
+    expect(isStarkDomain("qsd12$)ben.stark")).toBe(false);
+    expect(isStarkDomain("_.stark")).toBe(false);
   });
 });
 
