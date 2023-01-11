@@ -46,7 +46,7 @@ const SearchPage: NextPage = () => {
           {domain && (
             <DomainCard
               isAvailable={isAvailable}
-              domain={domain}
+              domain={domain.concat(".stark")}
               onClick={() => setIsMenuVisible(true)}
             />
           )}
