@@ -4,11 +4,9 @@ export function isStarkDomain(domain: string): boolean {
 
 export function minifyAddressOrDomain(
   address: string,
-  characterToBreak?: number
+  characterToBreak: number
 ): string {
-  const characterToBreakAlternative = window.innerWidth < 640 ? 9 : 18;
-
-  if (address.length > (characterToBreak ?? characterToBreakAlternative)) {
+  if (address.length > characterToBreak) {
     const firstPart = address.charAt(0) + address.charAt(1) + address.charAt(2);
     const secondPart =
       address.charAt(address.length - 3) +

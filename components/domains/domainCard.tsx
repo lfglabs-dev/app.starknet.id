@@ -16,11 +16,12 @@ const DomainCard: FunctionComponent<DomainCardProps> = ({
   isAvailable,
 }) => {
   const { account } = useAccount();
+  const characterToBreak = window.innerWidth < 640 ? 9 : 18;
 
   return (
     <div className={styles.card} onClick={onClick}>
       <h2 className={styles.cardTitle}>
-        {minifyAddressOrDomain(domain)}.stark
+        {minifyAddressOrDomain(domain, characterToBreak)}.stark
       </h2>
       {isAvailable === undefined ? (
         <ThreeDots
