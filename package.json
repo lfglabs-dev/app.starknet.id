@@ -22,6 +22,7 @@
     "mongodb": "^4.12.1",
     "next": "12.2.5",
     "nextjs-cors": "^2.1.2",
+    "nextjs-google-analytics": "^2.2.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
