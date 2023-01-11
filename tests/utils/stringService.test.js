@@ -40,7 +40,7 @@ describe("Should test minifyDomain", () => {
   });
 
   it("Should return the minified domain", () => {
-    expect(minifyDomain("bennnnnnnnnnnnnnnn.stark")).toBe("benn...ark");
+    expect(minifyDomain("bennnnnnnnnnnnnnnn.stark")).toBe("benn...");
   });
 });
 

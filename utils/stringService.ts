@@ -15,7 +15,7 @@ export function minifyDomain(
 ): string {
   if (domain.length > (characterToBreak ?? 18)) {
     const firstPart = domain.substring(0, 4);
-    return (firstPart + "...ark").toLowerCase();
+    return (firstPart + "...").toLowerCase();
   } else {
     return domain.toLowerCase();
   }
