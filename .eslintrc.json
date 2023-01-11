@@ -8,5 +8,13 @@
   "rules": {
     "@next/next/no-img-element": "off"
   },
+  "overrides": [
+    {
+      "files": ["**/*.test.js"],
+      "rules": {
+        "no-undef": "off"
+      }
+    }
+  ],
   "root": true
 }

@@ -6,7 +6,7 @@ import { useStarknetIdContract } from "../../../../hooks/contracts";
 import { stringToHex } from "../../../../utils/felt";
 import DiscordIcon from "../../../UI/iconsComponents/icons/discordIcon";
 import styles from "../../../../styles/components/icons.module.css";
-import { minifyAddressOrDomain } from "../../../../utils/stringService";
+import { minifyDomain } from "../../../../utils/stringService";
 
 type ClickableDiscordIconProps = {
   color: string;
@@ -51,7 +51,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
     <Tooltip
       title={
         DiscordId
-          ? `Check ${minifyAddressOrDomain(domain, 18)} discord`
+          ? `Check ${minifyDomain(domain)} discord`
           : "Start Discord verification"
       }
       arrow

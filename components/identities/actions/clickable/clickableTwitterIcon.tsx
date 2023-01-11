@@ -6,7 +6,7 @@ import { useStarknetIdContract } from "../../../../hooks/contracts";
 import { stringToHex } from "../../../../utils/felt";
 import TwitterIcon from "../../../UI/iconsComponents/icons/twitterIcon";
 import styles from "../../../../styles/components/icons.module.css";
-import { minifyAddressOrDomain } from "../../../../utils/stringService";
+import { minifyDomain } from "../../../../utils/stringService";
 
 type ClickableTwitterIconProps = {
   color: string;
@@ -62,7 +62,7 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
     <Tooltip
       title={
         twitterUsername
-          ? `Check ${minifyAddressOrDomain(domain, 18)} twitter`
+          ? `Check ${minifyDomain(domain)} twitter`
           : "Start twitter verification"
       }
       arrow

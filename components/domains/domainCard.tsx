@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { ThreeDots } from "react-loader-spinner";
 import styles from "../../styles/Home.module.css";
-import { minifyAddressOrDomain } from "../../utils/stringService";
+import { minifyDomain } from "../../utils/stringService";
 
 type DomainCardProps = {
   domain: string;

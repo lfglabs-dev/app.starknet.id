@@ -9,7 +9,7 @@ import Wallets from "./wallets";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useUpdatedDomainFromAddress } from "../../hooks/naming";
 import SelectNetwork from "./selectNetwork";
-import { minifyAddressOrDomain } from "../../utils/stringService";
+import { minifyAddress, minifyDomain } from "../../utils/stringService";
 import ModalMessage from "./modalMessage";
 
 const Navbar: FunctionComponent = () => {
@@ -75,7 +75,9 @@ const Navbar: FunctionComponent = () => {
 
   function topButtonText(): string | undefined {
     const textToReturn = isConnected
-      ? minifyAddressOrDomain(domain ? domain : address ?? "", 8)
+      ? domain
+        ? minifyDomain(domain)
+        : minifyAddress(address ?? "")
       : "connect";
 
     return textToReturn;
@@ -123,10 +125,9 @@ const Navbar: FunctionComponent = () => {
                   {isConnected ? (
                     <div className="flex justify-center items-center">
                       <div>
-                        {minifyAddressOrDomain(
-                          domain ? domain : address ?? "",
-                          24
-                        )}
+                        {domain
+                          ? minifyDomain(domain)
+                          : minifyAddress(address ?? "")}
                       </div>
                       <LogoutIcon className="ml-3" />
                     </div>
