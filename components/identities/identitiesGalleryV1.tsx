@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
-import { minifyAddressOrDomain } from "../../utils/stringService";
+import { minifyDomain } from "../../utils/stringService";
 
 type IdentitiesGalleryV1Props = {
   identities: FullId[];
@@ -25,9 +25,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
             onClick={() => router.push(`/identities/${identity.id}`)}
           />
           {identity.domain ? (
-            <p className="font-bold">
-              {minifyAddressOrDomain(identity.domain, 18)}
-            </p>
+            <p className="font-bold">{minifyDomain(identity.domain)}</p>
           ) : null}
         </div>
       ))}

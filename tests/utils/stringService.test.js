@@ -4,6 +4,8 @@ import {
   isStarkDomain,
   isHexString,
   isSubdomain,
+  minifyAddress,
+  minifyDomain,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -19,6 +21,26 @@ describe("Should test is1234Domain", () => {
     expect(is1234Domain("231")).toBe(false);
     expect(is1234Domain("12043")).toBe(false);
     expect(is1234Domain("1234")).toBe(false);
+  });
+});
+
+describe("Should test minifyAddress", () => {
+  it("Should return the right minify address ", () => {
+    expect(
+      minifyAddress(
+        "0x072D4F3FA4661228ed0c9872007fc7e12a581E000FAd7b8f3e3e5bF9E6133207"
+      )
+    ).toBe("0x07...207");
+  });
+});
+
+describe("Should test minifyDomain", () => {
+  it("Should return the entire domain ", () => {
+    expect(minifyDomain("ben.stark")).toBe("ben.stark");
+  });
+
+  it("Should return the minified domain", () => {
+    expect(minifyDomain("bennnnnnnnnnnnnnnn.stark")).toBe("benn...");
   });
 });
 

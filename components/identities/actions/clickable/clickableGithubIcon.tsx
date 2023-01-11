@@ -6,7 +6,7 @@ import { useStarknetIdContract } from "../../../../hooks/contracts";
 import { stringToHex } from "../../../../utils/felt";
 import GithubIcon from "../../../UI/iconsComponents/icons/githubIcon";
 import styles from "../../../../styles/components/icons.module.css";
-import { minifyAddressOrDomain } from "../../../../utils/stringService";
+import { minifyDomain } from "../../../../utils/stringService";
 
 type ClickableGithubIconProps = {
   color: string;
@@ -63,7 +63,7 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
     <Tooltip
       title={
         githubUsername
-          ? `Check ${minifyAddressOrDomain(domain, 18)} github`
+          ? `Check ${minifyDomain(domain)} github`
           : "Start github verification"
       }
       arrow

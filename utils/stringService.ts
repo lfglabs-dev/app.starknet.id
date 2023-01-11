@@ -2,21 +2,22 @@ export function isStarkDomain(domain: string): boolean {
   return domain.endsWith(".stark");
 }
 
-export function minifyAddressOrDomain(
-  address: string,
+export function minifyAddress(address: string): string {
+  const firstPart = address.substring(0, 4);
+  const secondPart = address.substring(address.length - 3, address.length);
+
+  return (firstPart + "..." + secondPart).toLowerCase();
+}
+
+export function minifyDomain(
+  domain: string,
   characterToBreak?: number
 ): string {
-  const characterToBreakAlternative = window.innerWidth < 640 ? 9 : 18;
-
-  if (address.length > (characterToBreak ?? characterToBreakAlternative)) {
-    const firstPart = address.charAt(0) + address.charAt(1) + address.charAt(2);
-    const secondPart =
-      address.charAt(address.length - 3) +
-      address.charAt(address.length - 2) +
-      address.charAt(address.length - 1);
-    return (firstPart + "..." + secondPart).toLowerCase();
+  if (domain.length > (characterToBreak ?? 18)) {
+    const firstPart = domain.substring(0, 4);
+    return (firstPart + "...").toLowerCase();
   } else {
-    return address.toLowerCase();
+    return domain.toLowerCase();
   }
 }
 
