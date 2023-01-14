@@ -38,8 +38,10 @@ const SearchPage: NextPage = () => {
   }, [data, error, domain]);
 
   useEffect(() => {
-    if (isAvailable && account) {
+    if (account) {
       setIsMenuVisible(true);
+    } else {
+      setIsMenuVisible(false);
     }
   }, [isAvailable, account]);
 
@@ -61,7 +63,6 @@ const SearchPage: NextPage = () => {
               isAvailable={isAvailable}
               domain={domain.concat(".stark")}
               isConnected={Boolean(account)}
-              onClick={() => setIsMenuVisible(true)}
             />
           )}
         </div>
