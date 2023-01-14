@@ -75,7 +75,7 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
             ? () => window.open(`https://github.com/${githubUsername}`)
             : () =>
                 startVerification(
-                  "https://github.com/login/oauth/authorize?client_id=bd72ec641d75c2608121"
+                  `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENTID}`
                 )
         }
       >
