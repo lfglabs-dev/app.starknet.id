@@ -5,18 +5,16 @@ import { minifyAddressOrDomain } from "../../utils/stringService";
 
 type DomainCardProps = {
   domain: string;
-  onClick: () => void;
   isAvailable?: boolean;
   isConnected?: boolean;
 };
 
 const DomainCard: FunctionComponent<DomainCardProps> = ({
   domain,
-  onClick,
   isAvailable,
   isConnected,
 }) => (
-  <div className={styles.card} onClick={onClick}>
+  <div className={styles.card}>
     <h2 className={styles.cardTitle}>{minifyAddressOrDomain(domain)}.stark</h2>
     {isAvailable === undefined ? (
       <ThreeDots
