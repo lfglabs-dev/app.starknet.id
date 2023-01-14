@@ -1,7 +1,8 @@
-import type { NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../lib/mongodb";
 import famousTribeMemberIDs from "../../../public/datas/famousTribeMemberIDs.json";
 export default async function handler(
+  req: NextApiRequest,
   res: NextApiResponse
 ) {
   const appHeaders = new Headers();
