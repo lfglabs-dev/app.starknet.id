@@ -7,7 +7,6 @@ import styles from "../../../styles/components/wallets.module.css";
 import styles2 from "../../../styles/Home.module.css";
 import { timeStampToDate } from "../../../utils/dateService";
 import Button from "../../UI/button";
-import { getYearlyPriceFromDomain } from "../../../utils/priceService";
 import { Identity } from "../../../types/backTypes";
 
 type RenewalModalProps = {
@@ -26,9 +25,6 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
   const [duration, setDuration] = useState<number>(1);
   const maxYearsToRegister = 25;
   const [price, setPrice] = useState<string>("0");
-  const [priceWithoutDiscount, setPriceWithoutDiscount] = useState<number>(
-    Math.round(getYearlyPriceFromDomain(identity?.domain ?? "") * 1000) / 1000
-  );
   const { contract: pricingContract } = usePricingContract();
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: pricingContract,
@@ -46,14 +42,6 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
       );
     }
   }, [priceData, priceError]);
-
-  useEffect(() => {
-    setPriceWithoutDiscount(
-      Math.round(
-        duration * getYearlyPriceFromDomain(identity?.domain ?? "") * 1000
-      ) / 1000
-    );
-  }, [duration, identity]);
 
   //  renew execute
   const renew_calls = [
@@ -123,11 +111,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
           </div>
           <div className={styles2.cardCenter}>
             <p className="text">
-              Price :
-              {duration >= 3 ? (
-                <span className="line-through text-soft-brown">{`${priceWithoutDiscount} ETH`}</span>
-              ) : null}
-              &nbsp;
+              Price :&nbsp;
               <span className="font-semibold text-brown">
                 {Math.round(Number(price) * 0.000000000000000001 * 10000) /
                   10000}
