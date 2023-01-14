@@ -63,7 +63,6 @@ const SearchPage: NextPage = () => {
               isAvailable={isAvailable}
               isConnected={Boolean(account)}
               domain={domain}
-              onClick={() => setIsMenuVisible(true)}
             />
           )}
         </div>
