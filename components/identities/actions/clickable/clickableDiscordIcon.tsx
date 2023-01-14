@@ -63,7 +63,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
             ? () => window.open(`https://discord.com/channels/@me/${DiscordId}`)
             : () =>
                 startVerification(
-                  "https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=https%3A%2F%2Fgoerli.app.starknet.id%2Fdiscord&response_type=code&scope=identify"
+                  `https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}%2Fdiscord&response_type=code&scope=identify`
                 )
         }
       >
