@@ -13,7 +13,6 @@ import { ethers } from "ethers";
 import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
 import { Call } from "starknet/types";
-import { getYearlyPriceFromDomain } from "../../utils/priceService";
 
 type RegisterProps = {
   domain: string;
@@ -30,9 +29,6 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
   const [price, setPrice] = useState<string>("0");
-  const [priceWithoutDiscount, setPriceWithoutDiscount] = useState<number>(
-    Math.round(getYearlyPriceFromDomain(domain) * 1000) / 1000
-  );
   const { contract } = usePricingContract();
   const encodedDomain = useEncoded(domain);
   const { data: priceData, error: priceError } = useStarknetCall({
@@ -59,12 +55,6 @@ const Register: FunctionComponent<RegisterProps> = ({
       );
     }
   }, [priceData, priceError]);
-
-  useEffect(() => {
-    setPriceWithoutDiscount(
-      Math.round(duration * getYearlyPriceFromDomain(domain) * 1000) / 1000
-    );
-  }, [duration, domain]);
 
   useEffect(() => {
     if (account) {
@@ -175,7 +165,9 @@ const Register: FunctionComponent<RegisterProps> = ({
               },
             ],
           });
-          provider = new ethers.providers.Web3Provider((window as any).ethereum);
+          provider = new ethers.providers.Web3Provider(
+            (window as any).ethereum
+          );
         }
       }
     } else {
@@ -203,7 +195,9 @@ const Register: FunctionComponent<RegisterProps> = ({
               },
             ],
           });
-          provider = new ethers.providers.Web3Provider((window as any).ethereum);
+          provider = new ethers.providers.Web3Provider(
+            (window as any).ethereum
+          );
         }
       }
     }
@@ -274,11 +268,7 @@ const Register: FunctionComponent<RegisterProps> = ({
         <SelectDomain tokenId={tokenId} changeTokenId={changeTokenId} />
         <div className={styles.cardCenter}>
           <p className="text">
-            Price :{" "}
-            {duration >= 3 ? (
-              <span className="line-through text-soft-brown">{`${priceWithoutDiscount} ETH`}</span>
-            ) : null}
-            &nbsp;
+            Price:&nbsp;
             <span className="font-semibold text-brown">
               {Math.round(Number(price) * 0.000000000000000001 * 10000) / 10000}{" "}
               ETH
