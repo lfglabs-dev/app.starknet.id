@@ -25,7 +25,7 @@ const FamousMembers: FunctionComponent<FamousMembersProps> = ({ hoverMember }) =
   const maxFamousTribeMembers = 18;
 
   useEffect(() => {
-    fetch('/api/tribe/get_famous_members').then(res => res.json()).then((res: Dictionary<any>) => {
+    fetch('/api/tribe/get_famous_members').then(res => res.json()).then((res: Dictionary<Array<Member>>) => {
       const members = res.cachedMembers as Array<Member>;
       for (let index = 0; index < members.length; index++) {
         const member = members[index];

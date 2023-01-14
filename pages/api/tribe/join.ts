@@ -6,7 +6,7 @@ import { stringToHex } from "../../../utils/felt";
 import { connectToDatabase } from "../../../lib/mongodb";
 import { pedersen } from "starknet/dist/utils/hash";
 import { sign } from "starknet/dist/utils/ellipticCurve";
-import { generateString, getDomainWithoutStark, minifyAddressOrDomain } from "../../../utils/stringService";
+import { getDomainWithoutStark } from "../../../utils/stringService";
 import domainStringToFelt from "../../../utils/domain_string_to_felt";
 
 type FullId = {

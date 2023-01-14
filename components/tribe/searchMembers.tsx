@@ -24,11 +24,11 @@ type SearchMembersProps = {
 
 const SearchMembers: FunctionComponent<SearchMembersProps> = ({ hoverMember }) => {
   const maxShownMembers = 12;
-  const [followers, setFollowers] = useState<Array<any>>([])
-  const [selectedUserList, setSelectedUserList] = useState<Array<any>>([])
+  const [followers, setFollowers] = useState<Array<Member>>([])
+  const [selectedUserList, setSelectedUserList] = useState<Array<Member>>([])
   const [totalUserLength, setTotalUserLength] = useState<number>(0)
   const [search, setSearch] = useState<string>('')
-  const [user, setUser] = useState<undefined | Dictionary<any>>(undefined)
+  const [user, setUser] = useState<undefined | Dictionary<Member>>(undefined)
   const [loading, setLoading] = useState<boolean>(false)
 
   function handleSearch(search: string) {
@@ -46,6 +46,11 @@ const SearchMembers: FunctionComponent<SearchMembersProps> = ({ hoverMember }) =
         setUser(res.user);
         if (res.followers && res.following && (res.followers.length || res.following.length)) {
           setFollowers(res.followers);
+          setTotalUserLength(followers.length);
+          // Remove all the user that exceed maxShownMembers
+          const followersCopy = [...followers];
+          followersCopy.length = Math.min(followers.length, maxShownMembers);
+          setSelectedUserList(followersCopy);
         }
         else {
           setFollowers([]);
@@ -54,14 +59,6 @@ const SearchMembers: FunctionComponent<SearchMembersProps> = ({ hoverMember }) =
       })
     }
   }, [search])
-
-  useEffect(() => {
-      setTotalUserLength(followers.length);
-      // Remove all the user that exceed maxShownMembers
-      const followersCopy = [...followers];
-      followersCopy.length = Math.min(followers.length, maxShownMembers);
-      setSelectedUserList(followersCopy);
-  }, [followers])
   
   return <div id='me-and-the-tribe'>
     <InputAction placeholder='@Twitter username'  className={'my-6 ' + styles2.center} maxTextLength={15} buttonName='show me' action={handleSearch} />

@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import Router from "next/router";
 
 export default async function handler(
   req: NextApiRequest,

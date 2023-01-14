@@ -5,7 +5,7 @@ import CloseIcon from "../iconsComponents/icons/closeIcon";
 type SideMenuProps = {
   title: string;
   onClose: () => void;
-  child: React.ReactElement<any, any>;
+  child: React.ReactNode;
 };
 
 const SideMenu: FunctionComponent<SideMenuProps> = ({ title, onClose, child }) => {
