@@ -38,8 +38,10 @@ const SearchPage: NextPage = () => {
   }, [data, error, domain]);
 
   useEffect(() => {
-    if (isAvailable && account) {
+    if (account) {
       setIsMenuVisible(true);
+    } else {
+      setIsMenuVisible(false);
     }
   }, [isAvailable, account]);
 
