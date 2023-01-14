@@ -1,0 +1,109 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.text {
+  font-family: "Montserrat-Regular";
+  font-size: 1.2rem;
+  color: var(--brown);
+  margin-left: 15px;
+}
+
+.stepsContainer {
+  position: relative;
+}
+
+.stepsContainer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--soft-brown);
+  transform: translateX(calc(6px - 50%));
+  border-radius: 2em;
+}
+
+.stepError {
+  margin-left: 20px;
+  margin-bottom: 10px;
+  color: white;
+  background-color: rgb(145, 24, 24);
+  padding: 5px 25px;
+  border-radius: 0.6em;
+  padding: 15px;
+}
+
+.stepError p {
+  margin: 0 0 10px 0;
+}
+
+.stepError a {
+  background-color: white;
+  color: rgb(145, 24, 24);
+  border-radius: 2em;
+  padding: 5px 20px;
+}
+
+.stepHelp {
+  margin-left: 20px;
+  color: white;
+  background-color: var(--soft-brown);
+  padding: 5px 25px;
+  border-radius: 0.6em;
+}
+
+.joinContainer {
+  background-color: var(--soft-brown);
+  width: var(100% - 50px);
+  height: 100%;
+  margin: 25px;
+  border-radius: 0.7em;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 0 100px 10px var(--brown);
+}
+
+.firstLeaf {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 220px;
+  overflow: hidden;
+  transform: rotate(90deg);
+  border-radius: 0.7em;
+}
+
+.secondLeaf {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 220px;
+  overflow: hidden;
+  transform: rotate(-90deg);
+  border-radius: 0.7em;
+}
+
+.thirdLeaf {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 220px;
+  overflow: hidden;
+  transform: rotate(-90deg);
+  border-radius: 0.7em;
+}
+
+.joinTitle {
+  font-family: "Montserrat-ExtraBold";
+  font-size: 1.5rem;
+  color: var(--brown);
+  text-transform: uppercase;
+  text-align: center;
+}

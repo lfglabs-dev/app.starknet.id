@@ -1,0 +1,4 @@
+.hexagon {
+  fill: var(--green);
+  transform: rotate(90deg);
+}

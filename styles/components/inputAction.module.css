@@ -1,0 +1,33 @@
+.container {
+  outline: var(--soft-brown) solid 2px;
+  padding: 8px 10px;
+  width: -moz-fit-content;
+  width: fit-content;
+  border-radius: 2em;
+  display: flex;
+  align-items: center;
+  max-width: calc(100% - 20px);
+}
+
+.button {
+  margin-left: 15px;
+  background-color: var(--green);
+  padding: 0 30px;
+  border-radius: 2em;
+  color: var(--beige);
+  font-family: 'Montserrat', sans-serif;
+  white-space: nowrap;
+}
+
+.input {
+  background-color: var(--beige);
+  border: none;
+  padding: 0 10px;
+  font-family: 'Montserrat', sans-serif;
+  color: var(--brown);
+  width: 100%;
+}
+
+.input:focus {
+  outline: none;
+}

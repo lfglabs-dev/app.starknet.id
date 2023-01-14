@@ -1,0 +1,29 @@
+.container {
+  outline: var(--soft-brown) solid 2px;
+  padding: 8px 10px;
+  width: -moz-fit-content;
+  width: fit-content;
+  border-radius: 2em;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.copyButton {
+  margin-left: 15px;
+  background-color: var(--green);
+  padding: 0 30px;
+  border-radius: 2em;
+  color: var(--beige);
+  font-family: 'Montserrat', sans-serif;
+}
+
+.copied {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(0, -50%);
+  right: 0;
+  background-color: var(--beige);
+  border-radius: 2em;
+}
