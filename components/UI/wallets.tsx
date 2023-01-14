@@ -5,6 +5,7 @@ import Button from "./button";
 import { FunctionComponent, useEffect } from "react";
 import { Modal } from "@mui/material";
 import WalletIcons from "./iconsComponents/icons/walletIcons";
+import CloseIcon from "./iconsComponents/icons/closeIcon";
 
 type WalletsProps = {
   closeWallet: () => void;
@@ -44,14 +45,7 @@ const Wallets: FunctionComponent<WalletsProps> = ({
             closeWallet();
           }}
         >
-          <svg viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
+          <CloseIcon color="black" width={'24'} />
         </button>
         <p className={styles.menu_title}>You need a Starknet wallet</p>
         {connectors.map((connector) => {
