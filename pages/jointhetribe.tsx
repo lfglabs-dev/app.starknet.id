@@ -4,7 +4,6 @@ import styles from '../styles/Home.module.css';
 import styles2 from '../styles/jointhetribe.module.css'
 import TextCopy from '../components/UI/textCopy';
 import HexagonIcon from '../components/UI/iconsComponents/icons/hexagonIcon';
-import famousTribeMembers from '../public/datas/famousTribeMembers.json';
 import SearchMembers from '../components/tribe/searchMembers';
 import Button from '../components/UI/button';
 import Claim from '../components/tribe/claim';
@@ -13,6 +12,7 @@ import MemberHoverMenu from '../components/tribe/memberHoverMenu';
 import { useAccount } from '@starknet-react/core';
 import { hexToFelt } from '../utils/felt';
 import ModalMessage from '../components/UI/modalMessage';
+import FamousMembers from '../components/tribe/famousMembers';
 
 interface Dictionary<T> {
   [Key: string]: T;
@@ -28,7 +28,6 @@ type Member = {
 }
 
 const JoinTheTribe: NextPage = () => {
-  const maxFamousTribeMembers = 18;
   const [menu, setMenu] = useState<ReactElement<any, any> | null>(null);
   const [twitterToken, setTwitterToken] = useState<string>('');
   const { address } = useAccount();
@@ -147,18 +146,7 @@ const JoinTheTribe: NextPage = () => {
               <TextCopy text={mainDomain ? mainDomain : 'yourname.stark'} />
             </div>
           </div>
-          <div className={styles2.tribeMembersContainer + ' ' + styles2.famous}>
-            {
-              famousTribeMembers.map((member, index) => 
-              <div key={'famousUser_' + index} className={styles2.avatarContainer}>
-                <img onMouseEnter={(e) => hoverMember(e, index, member)} width={200} height={200} alt={`@${member.screen_name}'s Twitter avatar`} src={member.profile_image_url as string} className={styles2.tribeMemberAvatar} />
-              </div>
-              )
-            }
-            {
-              [...Array(maxFamousTribeMembers - famousTribeMembers.length)].map((_, index) => <HexagonIcon width={200} className={styles2.famousTribeMember} key={'famousUserPlaceholder_' + index} />)
-            }
-          </div>
+          <FamousMembers hoverMember={hoverMember} />
           <div className={styles2.thirdLeaf}>
             <img alt='leaf' src='/leaves/leaf_3.png' />
           </div>

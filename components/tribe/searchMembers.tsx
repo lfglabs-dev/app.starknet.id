@@ -25,7 +25,6 @@ type SearchMembersProps = {
 const SearchMembers: FunctionComponent<SearchMembersProps> = ({ hoverMember }) => {
   const maxShownMembers = 12;
   const [followers, setFollowers] = useState<Array<any>>([])
-  const [following, setFollowing] = useState<Array<any>>([])
   const [selectedUserList, setSelectedUserList] = useState<Array<any>>([])
   const [totalUserLength, setTotalUserLength] = useState<number>(0)
   const [search, setSearch] = useState<string>('')
@@ -47,11 +46,9 @@ const SearchMembers: FunctionComponent<SearchMembersProps> = ({ hoverMember }) =
         setUser(res.user);
         if (res.followers && res.following && (res.followers.length || res.following.length)) {
           setFollowers(res.followers);
-          setFollowing(res.following);
         }
         else {
           setFollowers([]);
-          setFollowing([]);
           setTotalUserLength(0);
         }
       })
@@ -64,7 +61,7 @@ const SearchMembers: FunctionComponent<SearchMembersProps> = ({ hoverMember }) =
       const followersCopy = [...followers];
       followersCopy.length = Math.min(followers.length, maxShownMembers);
       setSelectedUserList(followersCopy);
-  }, [followers, following])
+  }, [followers])
   
   return <div id='me-and-the-tribe'>
     <InputAction placeholder='@Twitter username'  className={'my-6 ' + styles2.center} maxTextLength={15} buttonName='show me' action={handleSearch} />
@@ -75,7 +72,7 @@ const SearchMembers: FunctionComponent<SearchMembersProps> = ({ hoverMember }) =
       </div>
       :
       user ? <>
-      <p>Followers: {followers.length}</p>
+      <p>Tribe followers: {followers.length}</p>
       <div className={styles2.tribeMembersContainer}>
         {
           selectedUserList.map((follower:Member, index:number) =>
