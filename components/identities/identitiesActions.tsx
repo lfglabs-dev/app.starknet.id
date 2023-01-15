@@ -95,25 +95,23 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   return (
     <>
-      {process.env.NEXT_PUBLIC_IS_TESTNET === "true" && (
-        <>
-          <SocialMediaActions
-            domain={identity?.domain}
-            isOwner={isOwner}
-            tokenId={tokenId}
-          />
-          <Divider
-            light={true}
-            component="div"
-            style={{
-              width: "3rem",
-              height: "0.2rem",
-              marginBottom: "0.25rem",
-              marginTop: "0.25rem",
-            }}
-          ></Divider>
-        </>
-      )}
+      <>
+        <SocialMediaActions
+          domain={identity?.domain}
+          isOwner={isOwner}
+          tokenId={tokenId}
+        />
+        <Divider
+          light={true}
+          component="div"
+          style={{
+            width: "3rem",
+            height: "0.2rem",
+            marginBottom: "0.25rem",
+            marginTop: "0.25rem",
+          }}
+        ></Divider>
+      </>
       <div className="flex">
         {identity && !isOwner && isIdentityADomain && (
           <>

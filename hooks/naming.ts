@@ -1,12 +1,14 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import BN from "bn.js";
 import { BigNumberish } from "starknet/utils/number";
 import { useStarknetCall } from "@starknet-react/core";
 import { useNamingContract } from "./contracts";
 import { useState, useEffect } from "react";
-const basicAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-";
+
+export const basicAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-";
+export const bigAlphabet = "这来";
+export const totalAlphabet = basicAlphabet + bigAlphabet;
+
 const basicSizePlusOne = new BN(basicAlphabet.length + 1);
-const bigAlphabet = "这来";
 const basicAlphabetSize = new BN(basicAlphabet.length);
 const bigAlphabetSize = new BN(bigAlphabet.length);
 const bigAlphabetSizePlusOne = new BN(bigAlphabet.length + 1);
@@ -29,19 +31,19 @@ export function useDecoded(encoded: BN[]): string {
       if (code === basicAlphabet.length) {
         const nextSubdomain = subdomain.div(bigAlphabetSizePlusOne);
         if (nextSubdomain.isZero()) {
-          let code2 = subdomain.mod(bigAlphabetSizePlusOne).toNumber();
+          const code2 = subdomain.mod(bigAlphabetSizePlusOne).toNumber();
           subdomain = nextSubdomain;
           if (code2 === 0) decoded += basicAlphabet[0];
           else decoded += bigAlphabet[code2 - 1];
         } else {
-          let code2 = subdomain.mod(bigAlphabetSize).toNumber();
+          const code2 = subdomain.mod(bigAlphabetSize).toNumber();
           decoded += bigAlphabet[code2];
           subdomain = subdomain.div(bigAlphabetSize);
         }
       } else decoded += basicAlphabet[code];
     }
 
-    let [str, k] = extractStars(decoded);
+    const [str, k] = extractStars(decoded);
     if (k)
       decoded =
         str +
@@ -60,10 +62,10 @@ export function useEncoded(decoded: string): BN {
   let multiplier = new BN(1);
 
   if (decoded.endsWith(bigAlphabet[0] + basicAlphabet[1])) {
-    let [str, k] = extractStars(decoded.substring(0, decoded.length - 2));
+    const [str, k] = extractStars(decoded.substring(0, decoded.length - 2));
     decoded = str + bigAlphabet[bigAlphabet.length - 1].repeat(2 * (k + 1));
   } else {
-    let [str, k] = extractStars(decoded);
+    const [str, k] = extractStars(decoded);
     if (k)
       decoded =
         str + bigAlphabet[bigAlphabet.length - 1].repeat(1 + 2 * (k - 1));
@@ -90,7 +92,7 @@ export function useEncoded(decoded: string): BN {
       encoded = encoded.add(multiplier.mul(basicAlphabetSize));
       multiplier = multiplier.mul(basicSizePlusOne);
       // add encoded + multiplier * index
-      let newid =
+      const newid =
         (i === decoded.length - 1 ? 1 : 0) + bigAlphabet.indexOf(char);
       encoded = encoded.add(multiplier.mul(new BN(newid)));
       multiplier = multiplier.mul(bigAlphabetSize);
@@ -101,7 +103,7 @@ export function useEncoded(decoded: string): BN {
 }
 
 export function useEncodedSeveral(domains: string[]): string[] {
-  let encodedArray: string[] = [];
+  const encodedArray: string[] = [];
 
   domains.forEach((domain) => {
     encodedArray.push(useEncoded(domain).toString(10));
@@ -110,7 +112,7 @@ export function useEncodedSeveral(domains: string[]): string[] {
 }
 
 export function useDecodedSeveral(domains: BN[][]): string[] {
-  let encodedArray: string[] = [];
+  const encodedArray: string[] = [];
 
   domains.forEach((domain) => {
     encodedArray.push(useDecoded(domain));
@@ -134,14 +136,14 @@ export function useDomainFromAddress(address: BigNumberish): DomainData {
   if (!data || data?.["domain_len"] === 0) {
     return { domain: "", error: error ? error : "error" };
   } else {
-    let domain = useDecoded(data[0] as any);
+    const domain = useDecoded(data[0] as any);
     return { domain: domain as any, error };
   }
 }
 
 type AddrToDomain = {
   domain: string;
-  domain_expiry: Number;
+  domain_expiry: number;
 };
 
 export function useUpdatedDomainFromAddress(
@@ -156,7 +158,7 @@ export function useUpdatedDomainFromAddress(
     updateDomain(decimalAddr);
   }, [decimalAddr, address]);
 
-  const updateDomain = (decimalAddr: String) =>
+  const updateDomain = (decimalAddr: string) =>
     fetch(`/api/indexer/addr_to_domain?addr=${decimalAddr}`)
       .then((response) => response.json())
       .then((data: AddrToDomain) => {

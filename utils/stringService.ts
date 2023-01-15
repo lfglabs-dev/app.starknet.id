@@ -1,7 +1,3 @@
-export function isStarkDomain(domain: string): boolean {
-  return domain.endsWith(".stark");
-}
-
 export function minifyAddress(address: string): string {
   const firstPart = address.substring(0, 4);
   const secondPart = address.substring(address.length - 3, address.length);
@@ -38,9 +34,7 @@ export function isHexString(str: string): boolean {
   return /^[0123456789abcdefABCDEF]+$/.test(str.slice(2));
 }
 
-const characters = "abcdefghijklmnopqrstuvwxyz0123456789-这来";
-
-export function generateString(length: number): string {
+export function generateString(length: number, characters: string): string {
   let result = "";
   const charactersLength = characters.length;
   for (let i = 0; i < length; i++) {
@@ -52,4 +46,9 @@ export function generateString(length: number): string {
 
 export function isSubdomain(domain: string): boolean {
   return Boolean((domain.match(/\./g) || []).length > 1);
+}
+
+// eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
+export function isStarkDomain(domain: string): boolean {
+  return /^([a-z0-9-]){1,48}\.stark$/.test(domain);
 }

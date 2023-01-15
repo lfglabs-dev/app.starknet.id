@@ -9,16 +9,23 @@ import DomainCard from "../components/domains/domainCard";
 import DomainMenu from "../components/domains/domainMenu";
 import { useExpiryFromDomain } from "../hooks/naming";
 import { is1234Domain } from "../utils/stringService";
+import { useAccount } from "@starknet-react/core";
 
 const SearchPage: NextPage = () => {
   const router = useRouter();
   const [isMenuVisible, setIsMenuVisible] = useState<boolean>(false);
-  const [domain, setDomain] = useState((router.query.domain as string) ?? "");
-
+  const [domain, setDomain] = useState<string>("");
+  const { account } = useAccount();
   const [isAvailable, setIsAvailable] = useState<boolean | undefined>(
     undefined
   );
   const { expiry: data, error } = useExpiryFromDomain(domain);
+
+  useEffect(() => {
+    if (router?.query?.domain) {
+      setDomain(router.query.domain as string);
+    }
+  }, [router]);
 
   useEffect(() => {
     const currentTimeStamp = new Date().getTime() / 1000;
@@ -29,6 +36,14 @@ const SearchPage: NextPage = () => {
       setIsAvailable(Number(data?.["expiry"]) < currentTimeStamp);
     }
   }, [data, error, domain]);
+
+  useEffect(() => {
+    if (account) {
+      setIsMenuVisible(true);
+    } else {
+      setIsMenuVisible(false);
+    }
+  }, [isAvailable, account]);
 
   return (
     <div className={styles.screen}>
@@ -47,7 +62,7 @@ const SearchPage: NextPage = () => {
             <DomainCard
               isAvailable={isAvailable}
               domain={domain.concat(".stark")}
-              onClick={() => setIsMenuVisible(true)}
+              isConnected={Boolean(account)}
             />
           )}
         </div>
