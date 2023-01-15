@@ -15,7 +15,7 @@ const DomainCard: FunctionComponent<DomainCardProps> = ({
   isConnected,
 }) => (
   <div className={styles.card}>
-    <h2 className={styles.cardTitle}>{minifyDomain(domain)}.stark</h2>
+    <h2 className={styles.cardTitle}>{minifyDomain(domain)}</h2>
     {isAvailable === undefined ? (
       <ThreeDots
         height="25"
