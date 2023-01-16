@@ -5,10 +5,7 @@ import { QueryError } from "../../../../types/backTypes";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<
-    Array<{ club: string, count: number }>
-    | QueryError
-  >
+  res: NextApiResponse<Array<{ club: string; count: number }> | QueryError>
 ) {
   await NextCors(req, res, {
     methods: ["GET"],
@@ -23,98 +20,118 @@ export default async function handler(
   const { db } = await connectToDatabase();
   const domainCollection = db.collection("domains");
 
-  const dbOutput = (
-    await domainCollection
-      .aggregate([
-        {
-          $match: {
-            "_chain.valid_to": null,
-            creation_date: {
-              $gte: new Date(beginTime),
-            },
+  const dbOutput = await domainCollection
+    .aggregate([
+      {
+        $match: {
+          "_chain.valid_to": null,
+          creation_date: {
+            $gte: new Date(beginTime),
           },
         },
-        {
-          '$group': {
-            '_id': {
-              '$cond': [
-                {
-                  '$regexMatch': {
-                    'input': '$domain',
-                    'regex': /^.\.stark$/
-                  }
-                }, 'single_letter', {
-                  '$cond': [
-                    {
-                      '$regexMatch': {
-                        'input': '$domain',
-                        'regex': /^\d{2}\.stark$/
-                      }
-                    }, '99', {
-                      '$cond': [
-                        {
-                          '$regexMatch': {
-                            'input': '$domain',
-                            'regex': /^.{2}\.stark$/
-                          }
-                        }, 'two_letters', {
-                          '$cond': [
-                            {
-                              '$regexMatch': {
-                                'input': '$domain',
-                                'regex': /^\d{3}\.stark$/
-                              }
-                            }, '999', {
-                              '$cond': [
-                                {
-                                  '$regexMatch': {
-                                    'input': '$domain',
-                                    'regex': /^.{3}\.stark$/
-                                  }
-                                }, 'three_letters', {
-                                  '$cond': [
-                                    {
-                                      '$regexMatch': {
-                                        'input': '$domain',
-                                        'regex': /^\d{4}\.stark$/
-                                      }
-                                    }, '10k', 'none'
-                                  ]
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            'count': {
-              '$sum': 1
-            }
+      },
+      {
+        $group: {
+          _id: {
+            $cond: [
+              {
+                $regexMatch: {
+                  input: "$domain",
+                  regex: /^.\.stark$/,
+                },
+              },
+              "single_letter",
+              {
+                $cond: [
+                  {
+                    $regexMatch: {
+                      input: "$domain",
+                      regex: /^\d{2}\.stark$/,
+                    },
+                  },
+                  "99",
+                  {
+                    $cond: [
+                      {
+                        $regexMatch: {
+                          input: "$domain",
+                          regex: /^.{2}\.stark$/,
+                        },
+                      },
+                      "two_letters",
+                      {
+                        $cond: [
+                          {
+                            $regexMatch: {
+                              input: "$domain",
+                              regex: /^\d{3}\.stark$/,
+                            },
+                          },
+                          "999",
+                          {
+                            $cond: [
+                              {
+                                $regexMatch: {
+                                  input: "$domain",
+                                  regex: /^.{3}\.stark$/,
+                                },
+                              },
+                              "three_letters",
+                              {
+                                $cond: [
+                                  {
+                                    $regexMatch: {
+                                      input: "$domain",
+                                      regex: /^\d{4}\.stark$/,
+                                    },
+                                  },
+                                  "10k",
+                                  {
+                                    $cond: [
+                                      {
+                                        $regexMatch: {
+                                          input: "$domain",
+                                          regex: /^.{4}\.stark$/,
+                                        },
+                                      },
+                                      "four_letters",
+                                      "none",
+                                    ],
+                                  },
+                                ],
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          count: {
+            $sum: 1,
           },
         },
-        {
-          $project: {
-            _id: 0,
-            club: "$_id",
-            count: "$count",
-          },
+      },
+      {
+        $project: {
+          _id: 0,
+          club: "$_id",
+          count: "$count",
         },
-      ])
-      .toArray()
-  );
-
+      },
+    ])
+    .toArray();
 
   let _99;
   let _999;
+  let _10k;
   for (const doc of dbOutput) {
-    if (doc.club === "99")
-      _99 = doc.count;
-    else if (doc.club === "999")
-      _999 = doc.count;
+    if (doc.club === "99") _99 = doc.count;
+    else if (doc.club === "999") _999 = doc.count;
+    else if (doc.club === "10k") _10k = doc.count;
   }
 
   const output = [];
@@ -123,12 +140,17 @@ export default async function handler(
       output.push({
         club: doc.club,
         count: doc.count + _99,
-      })
+      });
     } else if (doc.club === "three_letters") {
       output.push({
         club: doc.club,
         count: doc.count + _999,
-      })
+      });
+    } else if (doc.club === "four_letters") {
+      output.push({
+        club: doc.club,
+        count: doc.count + _10k,
+      });
     } else {
       output.push({
         club: doc.club,
@@ -137,8 +159,5 @@ export default async function handler(
     }
   }
 
-  res
-    .setHeader("cache-control", "max-age=30")
-    .status(200)
-    .json(output);
+  res.setHeader("cache-control", "max-age=30").status(200).json(output);
 }
