@@ -103,7 +103,6 @@ export default async function handler(
                                               regex: /^\d{5}\.stark$/,
                                             },
                                           },
-                                          "10k",
                                           "none",
                                         ],
                                       },
