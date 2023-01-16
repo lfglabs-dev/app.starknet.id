@@ -95,17 +95,7 @@ export default async function handler(
                                         },
                                       },
                                       "four_letters",
-                                      {
-                                        $cond: [
-                                          {
-                                            $regexMatch: {
-                                              input: "$domain",
-                                              regex: /^\d{5}\.stark$/,
-                                            },
-                                          },
-                                          "none",
-                                        ],
-                                      },
+                                      "none",
                                     ],
                                   },
                                 ],
@@ -137,9 +127,11 @@ export default async function handler(
 
   let _99;
   let _999;
+  let _10k;
   for (const doc of dbOutput) {
     if (doc.club === "99") _99 = doc.count;
     else if (doc.club === "999") _999 = doc.count;
+    else if (doc.club === "10k") _10k = doc.count;
   }
 
   const output = [];
@@ -153,6 +145,11 @@ export default async function handler(
       output.push({
         club: doc.club,
         count: doc.count + _999,
+      });
+    } else if (doc.club === "four_letters") {
+      output.push({
+        club: doc.club,
+        count: doc.count + _10k,
       });
     } else {
       output.push({
