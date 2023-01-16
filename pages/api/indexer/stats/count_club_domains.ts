@@ -85,17 +85,28 @@ export default async function handler(
                                       regex: /^\d{4}\.stark$/,
                                     },
                                   },
-                                  "four_letters",
+                                  "10k",
                                   {
                                     $cond: [
                                       {
                                         $regexMatch: {
                                           input: "$domain",
-                                          regex: /^\d{5}\.stark$/,
+                                          regex: /^.{4}\.stark$/,
                                         },
                                       },
-                                      "10k",
-                                      "none",
+                                      "four_letters",
+                                      {
+                                        $cond: [
+                                          {
+                                            $regexMatch: {
+                                              input: "$domain",
+                                              regex: /^\d{5}\.stark$/,
+                                            },
+                                          },
+                                          "10k",
+                                          "none",
+                                        ],
+                                      },
                                     ],
                                   },
                                 ],
