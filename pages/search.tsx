@@ -8,7 +8,7 @@ import SearchBar from "../components/UI/searchBar";
 import DomainCard from "../components/domains/domainCard";
 import DomainMenu from "../components/domains/domainMenu";
 import { useExpiryFromDomain } from "../hooks/naming";
-import { is1234Domain } from "../utils/stringService";
+import { is1234Domain, isStarkDomain } from "../utils/stringService";
 import { useAccount } from "@starknet-react/core";
 
 const SearchPage: NextPage = () => {
@@ -22,7 +22,10 @@ const SearchPage: NextPage = () => {
   const { expiry: data, error } = useExpiryFromDomain(domain);
 
   useEffect(() => {
-    if (router?.query?.domain) {
+    if (
+      router?.query?.domain &&
+      isStarkDomain(router.query.domain.concat(".stark") as string)
+    ) {
       setDomain(router.query.domain as string);
     }
   }, [router]);
