@@ -8,7 +8,7 @@ import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
-import { isHexString } from "../../utils/stringService";
+import { isHexString, isStarkDomain } from "../../utils/stringService";
 import { ethers } from "ethers";
 import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
@@ -324,7 +324,8 @@ const Register: FunctionComponent<RegisterProps> = ({
                   !duration ||
                   duration < 1 ||
                   !targetAddress ||
-                  !tokenId
+                  !tokenId ||
+                  !isStarkDomain(domain.concat(".stark"))
                 }
               >
                 Register from L1
