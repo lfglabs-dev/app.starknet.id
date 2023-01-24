@@ -6,12 +6,14 @@ import { useStarknetIdContract } from "../../../../hooks/contracts";
 import { stringToHex } from "../../../../utils/felt";
 import DiscordIcon from "../../../UI/iconsComponents/icons/discordIcon";
 import styles from "../../../../styles/components/icons.module.css";
+import { minifyDomain } from "../../../../utils/stringService";
 
 type ClickableDiscordIconProps = {
   color: string;
   width: string;
   tokenId: string;
   isOwner: boolean;
+  domain: string;
 };
 
 const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
@@ -19,6 +21,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
   color,
   tokenId,
   isOwner,
+  domain,
 }) => {
   const router = useRouter();
   const { contract } = useStarknetIdContract();
@@ -45,29 +48,31 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
   }
 
   return isOwner ? (
-    <Tooltip title={"Start Discord verification"} arrow>
+    <Tooltip
+      title={
+        DiscordId
+          ? "Change your discord verified account"
+          : "Start Discord verification"
+      }
+      arrow
+    >
       <div
-        className={styles.clickableIcon}
+        className={DiscordId ? "cursor-pointer" : styles.clickableIcon}
         onClick={() =>
           startVerification(
             `https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}%2Fdiscord&response_type=code&scope=identify`
           )
         }
       >
-        <DiscordIcon width={width} color={color} />
+        <DiscordIcon width={width} color={DiscordId ? "#7289d9" : color} />
       </div>
     </Tooltip>
   ) : DiscordId ? (
-    <Tooltip
-      title="A discord account is linked to your identity, click to change it"
-      arrow
-    >
+    <Tooltip title={`Check ${minifyDomain(domain)} discord`} arrow>
       <div
         className="cursor-pointer"
         onClick={() =>
-          startVerification(
-            `https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}%2Fdiscord&response_type=code&scope=identify`
-          )
+          window.open(`https://discord.com/channels/@me/${DiscordId}`)
         }
       >
         <DiscordIcon width={width} color={"#7289d9"} />

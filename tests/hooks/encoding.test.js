@@ -1,6 +1,11 @@
 /* eslint-disable no-undef */
-import { BN } from "bn.js";
-import { totalAlphabet, useDecoded, useEncoded } from "../../hooks/naming";
+import BN, { BN } from "bn.js";
+import {
+  totalAlphabet,
+  useDecoded,
+  useEncoded,
+  useEncodedSeveral,
+} from "../../hooks/naming";
 import { generateString } from "../../utils/stringService";
 
 describe("Should test encoding/decoding hooks 2500 times", () => {
@@ -9,6 +14,20 @@ describe("Should test encoding/decoding hooks 2500 times", () => {
       const randomString = generateString(10, totalAlphabet);
       expect(useDecoded([useEncoded(randomString)])).toBe(
         randomString + ".stark"
+      );
+    }
+  });
+
+  it("Should test useEncodedSeveral with subdomain", () => {
+    for (let index = 0; index < 2500; index++) {
+      const randomString = generateString(10, totalAlphabet);
+      const randomString1 = generateString(10, totalAlphabet);
+      const encoded = useEncodedSeveral([randomString, randomString1]).map(
+        (element) => new BN(element)
+      );
+
+      expect(useDecoded(encoded)).toBe(
+        randomString + "." + randomString1 + ".stark"
       );
     }
   });
