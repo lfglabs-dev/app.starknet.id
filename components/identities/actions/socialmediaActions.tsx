@@ -22,7 +22,6 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
           color="#402D28"
           width="20"
           tokenId={tokenId}
-          domain={domain}
         />
       </div>
       <div className="m-1">
@@ -31,7 +30,6 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
           color="#402D28"
           width="20"
           tokenId={tokenId}
-          domain={domain}
         />
       </div>
       <div className="m-1">
@@ -40,7 +38,6 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
           color="#402D28"
           width="20"
           tokenId={tokenId}
-          domain={domain}
         />
       </div>
     </div>

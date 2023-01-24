@@ -14,7 +14,7 @@ describe("Should test encoding/decoding hooks 2500 times", () => {
   });
 });
 
-describe("Should test decoding/encoding hooks 2500 times", () => {
+describe("Should test decoding/encoding hooks", () => {
   it("Should test useDecoded and useEncoded hook with a number", () => {
     for (let index = 0; index < 2500; index++) {
       const decoded = useDecoded([new BN(index)]);
@@ -22,5 +22,10 @@ describe("Should test decoding/encoding hooks 2500 times", () => {
         useEncoded(decoded.substring(0, decoded.length - 6)).toString()
       ).toBe(index.toString());
     }
+  });
+
+  it("Should test useDecoded and useEncoded with a subdomain", () => {
+    const decoded = useDecoded([new BN(1499554868251), new BN(18925)]);
+    expect(decoded).toBe("fricoben.ben.stark");
   });
 });

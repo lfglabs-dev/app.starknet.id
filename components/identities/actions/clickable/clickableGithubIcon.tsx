@@ -6,14 +6,12 @@ import { useStarknetIdContract } from "../../../../hooks/contracts";
 import { stringToHex } from "../../../../utils/felt";
 import GithubIcon from "../../../UI/iconsComponents/icons/githubIcon";
 import styles from "../../../../styles/components/icons.module.css";
-import { minifyDomain } from "../../../../utils/stringService";
 
 type ClickableGithubIconProps = {
   color: string;
   width: string;
   tokenId: string;
   isOwner: boolean;
-  domain: string;
 };
 
 const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
@@ -21,7 +19,6 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
   color,
   tokenId,
   isOwner,
-  domain,
 }) => {
   const router = useRouter();
   const { contract } = useStarknetIdContract();
@@ -60,26 +57,16 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
   }
 
   return isOwner ? (
-    <Tooltip
-      title={
-        githubUsername
-          ? `Check ${minifyDomain(domain)} github`
-          : "Start github verification"
-      }
-      arrow
-    >
+    <Tooltip title={"Start github verification"} arrow>
       <div
-        className={githubUsername ? "cursor-pointer" : styles.clickableIcon}
-        onClick={
-          githubUsername
-            ? () => window.open(`https://github.com/${githubUsername}`)
-            : () =>
-                startVerification(
-                  `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENTID}`
-                )
+        className={styles.clickableIcon}
+        onClick={() =>
+          startVerification(
+            `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENTID}`
+          )
         }
       >
-        <GithubIcon width={width} color={githubUsername ? "black" : color} />
+        <GithubIcon width={width} color={color} />
       </div>
     </Tooltip>
   ) : githubUsername ? (
