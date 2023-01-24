@@ -62,20 +62,17 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
     <Tooltip
       title={
         twitterUsername
-          ? `Check ${minifyDomain(domain)} twitter`
+          ? "Change your twitter verified account"
           : "Start twitter verification"
       }
       arrow
     >
       <div
         className={twitterUsername ? "cursor-pointer" : styles.clickableIcon}
-        onClick={
-          twitterUsername
-            ? () => window.open(`https://twitter.com/${twitterUsername}`)
-            : () =>
-                startVerification(
-                  `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=Rkp6QlJxQzUzbTZtRVljY2paS0k6MTpjaQ&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}/twitter&scope=users.read%20tweet.read&state=state&code_challenge=challenge&code_challenge_method=plain`
-                )
+        onClick={() =>
+          startVerification(
+            `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=Rkp6QlJxQzUzbTZtRVljY2paS0k6MTpjaQ&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}/twitter&scope=users.read%20tweet.read&state=state&code_challenge=challenge&code_challenge_method=plain`
+          )
         }
       >
         <TwitterIcon
@@ -85,7 +82,7 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
       </div>
     </Tooltip>
   ) : twitterUsername ? (
-    <Tooltip title="Check twitter" arrow>
+    <Tooltip title={`Check ${minifyDomain(domain)} twitter`} arrow>
       <div
         className="cursor-pointer"
         onClick={() => window.open(`https://twitter.com/${twitterUsername}`)}

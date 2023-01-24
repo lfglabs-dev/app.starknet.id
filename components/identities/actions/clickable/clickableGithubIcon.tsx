@@ -63,27 +63,24 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
     <Tooltip
       title={
         githubUsername
-          ? `Check ${minifyDomain(domain)} github`
+          ? "Change your github verified account"
           : "Start github verification"
       }
       arrow
     >
       <div
         className={githubUsername ? "cursor-pointer" : styles.clickableIcon}
-        onClick={
-          githubUsername
-            ? () => window.open(`https://github.com/${githubUsername}`)
-            : () =>
-                startVerification(
-                  `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENTID}`
-                )
+        onClick={() =>
+          startVerification(
+            `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENTID}`
+          )
         }
       >
         <GithubIcon width={width} color={githubUsername ? "black" : color} />
       </div>
     </Tooltip>
   ) : githubUsername ? (
-    <Tooltip title="Check github" arrow>
+    <Tooltip title={`Check ${minifyDomain(domain)} github`} arrow>
       <div
         className="cursor-pointer"
         onClick={() => window.open(`https://github.com/${githubUsername}`)}
