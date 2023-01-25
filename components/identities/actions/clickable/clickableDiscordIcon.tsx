@@ -51,27 +51,24 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
     <Tooltip
       title={
         DiscordId
-          ? `Check ${minifyDomain(domain)} discord`
+          ? "Change your discord verified account"
           : "Start Discord verification"
       }
       arrow
     >
       <div
         className={DiscordId ? "cursor-pointer" : styles.clickableIcon}
-        onClick={
-          DiscordId
-            ? () => window.open(`https://discord.com/channels/@me/${DiscordId}`)
-            : () =>
-                startVerification(
-                  `https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}%2Fdiscord&response_type=code&scope=identify`
-                )
+        onClick={() =>
+          startVerification(
+            `https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}%2Fdiscord&response_type=code&scope=identify`
+          )
         }
       >
         <DiscordIcon width={width} color={DiscordId ? "#7289d9" : color} />
       </div>
     </Tooltip>
   ) : DiscordId ? (
-    <Tooltip title="Check Discord" arrow>
+    <Tooltip title={`Check ${minifyDomain(domain)} discord`} arrow>
       <div
         className="cursor-pointer"
         onClick={() =>
