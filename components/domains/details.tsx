@@ -1,6 +1,5 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import Link from "next/link";
 import {
   useAddressFromDomain,
   useExpiryFromDomain,
@@ -108,11 +107,14 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
         />
       )}
       {tokenId && (
-        <Link href={`/identities/${tokenId}`}>
-          <div className={styles.cardCenter}>
-            <p className="text">See owner identity</p>
-          </div>
-        </Link>
+        <div
+          onClick={() =>
+            window.open(`https://www.starknet.id/${domain.concat(".stark")}`)
+          }
+          className={styles.cardCenter}
+        >
+          <p className="text">See owner identity</p>
+        </div>
       )}
       {/* <div className="flex justify-center align-center mt-2">
         <div className="m-2">
