@@ -6,6 +6,7 @@ const P = new BN(
 );
 
 export function feltToString(felt) {
+  // eslint-disable-next-line no-undef
   const newStrB = Buffer.from(felt.toString(16), "hex");
   return newStrB.toString();
 }
@@ -14,6 +15,8 @@ export function stringToHex(str) {
   if (!str) {
     return;
   }
+
+  // eslint-disable-next-line no-undef
   return "0x" + new Buffer.from(str).toString("hex");
 }
 

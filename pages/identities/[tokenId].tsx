@@ -6,9 +6,8 @@ import Button from "../../components/UI/button";
 import { NextPage } from "next";
 import { ThreeDots } from "react-loader-spinner";
 import IdentityActions from "../../components/identities/identitiesActions";
-import Link from "next/link";
-import { getDomainWithoutStark, isSubdomain } from "../../utils/stringService";
 import { Identity } from "../../types/backTypes";
+import IdentityWarnings from "../../components/identities/identityWarnings";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -17,7 +16,6 @@ const TokenIdPage: NextPage = () => {
   const [isIdentityADomain, setIsIdentityADomain] = useState<
     boolean | undefined
   >();
-  const currentTimeStamp = new Date().getTime() / 1000;
 
   useEffect(() => {
     if (tokenId) {
@@ -79,23 +77,8 @@ const TokenIdPage: NextPage = () => {
               tokenId={tokenId}
               isIdentityADomain={isIdentityADomain}
             />
-            {Number(identity?.domain_expiry) < currentTimeStamp &&
-            !isSubdomain(identity?.domain ?? "") ? (
-              <strong className="mt-2 text-red-600 text-center">
-                (This domain has expired you can buy it on the&nbsp;
-                <span className="underline">
-                  <Link
-                    href={
-                      "/search?domain=" +
-                      getDomainWithoutStark(identity?.domain ?? "")
-                    }
-                  >
-                    domain page
-                  </Link>
-                </span>
-                )
-              </strong>
-            ) : null}
+
+            <IdentityWarnings identity={identity} />
             <div className="mt-5">
               <Button onClick={() => router.push("/")}>
                 Back to your identities

@@ -9,6 +9,7 @@ import {
   minifyAddress,
   minifyDomain,
   generateString,
+  hexToDecimal,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -78,6 +79,7 @@ describe("Should test isStarkDomain", () => {
 describe("Should test isHexString", () => {
   it("Should return false cause string is not an hex", () => {
     expect(isHexString("1232575.stark")).toBe(false);
+    expect(isHexString("1232575")).toBe(false);
   });
 
   it("Should return true cause string is hex", () => {
@@ -98,5 +100,23 @@ describe("Should test isSubdomain", () => {
   it("Should return false cause string is a subdomain", () => {
     expect(isSubdomain("1232575.ben.stark")).toBe(true);
     expect(isSubdomain("qsdqsdqsd.fricoben.stark")).toBe(true);
+  });
+});
+
+describe("Should test hexToDecimal function", () => {
+  it("Should return the right decimal address", () => {
+    expect(
+      hexToDecimal(
+        "0x072D4F3FA4661228ed0c9872007fc7e12a581E000FAd7b8f3e3e5bF9E6133207"
+      )
+    ).toEqual(
+      "3246245011749133880110396867610358293809804380010255939993086782333605065223"
+    );
+  });
+
+  it("Should return an error cause the string is not an hex number", () => {
+    expect(() => hexToDecimal("123321.ben.stark")).toThrow(
+      new Error("Invalid hex string")
+    );
   });
 });

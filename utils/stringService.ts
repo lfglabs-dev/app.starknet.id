@@ -1,8 +1,18 @@
+import BN from "bn.js";
+
 export function minifyAddress(address: string): string {
   const firstPart = address.substring(0, 4);
   const secondPart = address.substring(address.length - 3, address.length);
 
   return (firstPart + "..." + secondPart).toLowerCase();
+}
+
+export function hexToDecimal(hex: string): string {
+  if (!isHexString(hex)) {
+    throw new Error("Invalid hex string");
+  }
+
+  return new BN(hex.slice(2), 16).toString(10);
 }
 
 export function minifyDomain(
@@ -31,7 +41,11 @@ export function getDomainWithoutStark(str: string): string {
 
 export function isHexString(str: string): boolean {
   if (str === "") return true;
-  return /^[0123456789abcdefABCDEF]+$/.test(str.slice(2));
+  if (str.toLowerCase().startsWith("0x")) {
+    return /^[0123456789abcdefABCDEF]+$/.test(str.slice(2));
+  } else {
+    return false;
+  }
 }
 
 export function generateString(length: number, characters: string): string {

@@ -5,6 +5,7 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { Call } from "starknet/types";
 import { useEncoded, useIsValid } from "../../../hooks/naming";
 import styles from "../../../styles/components/wallets.module.css";
+import { hexToDecimal } from "../../../utils/stringService";
 import SelectDomain from "../../domains/selectDomains";
 import Button from "../../UI/button";
 
@@ -62,7 +63,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             Number(callDataEncodedDomain[0]) + 1,
             encodedSubdomain,
             ...callDataEncodedDomain.slice(1),
-            new BN((address as string)?.slice(2), 16).toString(10),
+            hexToDecimal(address ?? ""),
           ],
         },
       ]);
@@ -91,7 +92,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             Number(callDataEncodedDomain[0]) + 1,
             encodedSubdomain,
             ...callDataEncodedDomain.slice(1),
-            new BN((address as string)?.slice(2), 16).toString(10),
+            hexToDecimal(address ?? ""),
           ],
         },
       ]);

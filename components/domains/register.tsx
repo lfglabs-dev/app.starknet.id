@@ -8,7 +8,11 @@ import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded, useUpdatedDomainFromAddress } from "../../hooks/naming";
 import BN from "bn.js";
-import { isHexString, isStarkDomain } from "../../utils/stringService";
+import {
+  hexToDecimal,
+  isHexString,
+  isStarkDomain,
+} from "../../utils/stringService";
 import { ethers } from "ethers";
 import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
@@ -87,7 +91,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
             0,
-            new BN(targetAddress?.slice(2), 16).toString(10),
+            hexToDecimal(targetAddress ?? ""),
           ],
         },
       ]);
@@ -110,7 +114,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
             0,
-            new BN(targetAddress?.slice(2), 16).toString(10),
+            hexToDecimal(targetAddress ?? ""),
           ],
         },
         {
@@ -144,7 +148,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
             0,
-            new BN(targetAddress?.slice(2), 16).toString(10),
+            hexToDecimal(targetAddress ?? ""),
           ],
         },
       ]);
@@ -173,7 +177,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
             0,
-            new BN(targetAddress?.slice(2), 16).toString(10),
+            hexToDecimal(targetAddress ?? ""),
           ],
         },
         {
