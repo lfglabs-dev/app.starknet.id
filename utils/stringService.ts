@@ -63,6 +63,12 @@ export function isSubdomain(domain: string): boolean {
 }
 
 // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
-export function isStarkDomain(domain: string): boolean {
+export function isStarkRootDomain(domain: string): boolean {
   return /^([a-z0-9-]){1,48}\.stark$/.test(domain);
+}
+
+export function isStarkDomain(domain: string) {
+  return /^(?:[a-z0-9-]{1,48}(?:[a-z0-9-]{1,48}[a-z0-9-])?\.)*[a-z0-9-]{1,48}\.stark$/.test(
+    domain
+  );
 }

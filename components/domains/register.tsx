@@ -11,7 +11,7 @@ import BN from "bn.js";
 import {
   hexToDecimal,
   isHexString,
-  isStarkDomain,
+  isStarkRootDomain,
 } from "../../utils/stringService";
 import { ethers } from "ethers";
 import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
@@ -393,7 +393,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                   duration < 1 ||
                   !targetAddress ||
                   !tokenId ||
-                  !isStarkDomain(domain.concat(".stark"))
+                  !isStarkRootDomain(domain.concat(".stark"))
                 }
               >
                 Register from L1
