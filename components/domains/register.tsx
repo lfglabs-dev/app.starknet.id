@@ -6,9 +6,13 @@ import styles from "../../styles/Home.module.css";
 import { usePricingContract } from "../../hooks/contracts";
 import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
-import { useEncoded } from "../../hooks/naming";
+import { useEncoded, useUpdatedDomainFromAddress } from "../../hooks/naming";
 import BN from "bn.js";
-import { isHexString, isStarkDomain } from "../../utils/stringService";
+import {
+  hexToDecimal,
+  isHexString,
+  isStarkRootDomain,
+} from "../../utils/stringService";
 import { ethers } from "ethers";
 import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
@@ -36,10 +40,11 @@ const Register: FunctionComponent<RegisterProps> = ({
     method: "compute_buy_price",
     args: [encodedDomain, duration * 365],
   });
-  const { account } = useAccount();
+  const { account, address } = useAccount();
   const { execute } = useStarknetExecute({
     calls: callData as any,
   });
+  const hasMainDomain = Boolean(useUpdatedDomainFromAddress(address));
 
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
@@ -62,11 +67,12 @@ const Register: FunctionComponent<RegisterProps> = ({
     }
   }, [account]);
 
+  // Set mulitcalls
   useEffect(() => {
     if (!isAvailable) return;
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
 
-    if (tokenId != 0) {
+    if (tokenId != 0 && hasMainDomain) {
       setCallData([
         {
           contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
@@ -85,11 +91,39 @@ const Register: FunctionComponent<RegisterProps> = ({
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
             0,
-            new BN(targetAddress?.slice(2), 16).toString(10),
+            hexToDecimal(targetAddress ?? ""),
           ],
         },
       ]);
-    } else {
+    } else if (tokenId != 0 && !hasMainDomain) {
+      setCallData([
+        {
+          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
+          entrypoint: "approve",
+          calldata: [
+            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+            price,
+            0,
+          ],
+        },
+        {
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+          entrypoint: "buy",
+          calldata: [
+            new BN(tokenId).toString(10),
+            new BN(encodedDomain).toString(10),
+            new BN(duration * 365).toString(10),
+            0,
+            hexToDecimal(targetAddress ?? ""),
+          ],
+        },
+        {
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+          entrypoint: "set_address_to_domain",
+          calldata: [1, new BN(encodedDomain).toString(10)],
+        },
+      ]);
+    } else if (tokenId === 0 && hasMainDomain) {
       setCallData([
         {
           contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
@@ -114,8 +148,42 @@ const Register: FunctionComponent<RegisterProps> = ({
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
             0,
-            new BN(targetAddress?.slice(2), 16).toString(10),
+            hexToDecimal(targetAddress ?? ""),
           ],
+        },
+      ]);
+    } else if (tokenId === 0 && !hasMainDomain) {
+      setCallData([
+        {
+          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
+          entrypoint: "approve",
+          calldata: [
+            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+            price,
+            0,
+          ],
+        },
+        {
+          contractAddress: process.env
+            .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+          entrypoint: "mint",
+          calldata: [new BN(newTokenId).toString(10)],
+        },
+        {
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+          entrypoint: "buy",
+          calldata: [
+            new BN(newTokenId).toString(10),
+            new BN(encodedDomain).toString(10),
+            new BN(duration * 365).toString(10),
+            0,
+            hexToDecimal(targetAddress ?? ""),
+          ],
+        },
+        {
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+          entrypoint: "set_address_to_domain",
+          calldata: [1, new BN(encodedDomain).toString(10)],
         },
       ]);
     }
@@ -325,7 +393,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                   duration < 1 ||
                   !targetAddress ||
                   !tokenId ||
-                  !isStarkDomain(domain.concat(".stark"))
+                  !isStarkRootDomain(domain.concat(".stark"))
                 }
               >
                 Register from L1

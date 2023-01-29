@@ -2,7 +2,7 @@ import { Modal, TextField } from "@mui/material";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import BN from "bn.js";
 import React, { FunctionComponent, useState } from "react";
-import { isHexString } from "../../../utils/stringService";
+import { hexToDecimal, isHexString } from "../../../utils/stringService";
 import styles from "../../../styles/components/wallets.module.css";
 import { stringDecimalToHex } from "../../../utils/felt";
 import Button from "../../UI/button";
@@ -29,10 +29,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   const set_domain_to_address_calls = {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_domain_to_address",
-    calldata: [
-      ...callDataEncodedDomain,
-      new BN(targetAddress?.slice(2), 16).toString(10),
-    ],
+    calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress ?? "")],
   };
 
   const { execute: set_domain_to_address } = useStarknetExecute({

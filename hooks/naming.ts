@@ -3,6 +3,7 @@ import { BigNumberish } from "starknet/utils/number";
 import { useStarknetCall } from "@starknet-react/core";
 import { useNamingContract } from "./contracts";
 import { useState, useEffect } from "react";
+import { hexToDecimal } from "../utils/stringService";
 
 export const basicAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-";
 export const bigAlphabet = "这来";
@@ -154,7 +155,7 @@ export function useUpdatedDomainFromAddress(
 
   useEffect(() => {
     if (!address) return;
-    setDecimalAddr(new BN((address ?? "").slice(2), 16).toString(10));
+    setDecimalAddr(hexToDecimal(address ?? ""));
     updateDomain(decimalAddr);
   }, [decimalAddr, address]);
 
@@ -164,11 +165,6 @@ export function useUpdatedDomainFromAddress(
       .then((data: AddrToDomain) => {
         setDomain(data.domain);
       });
-
-  useEffect(() => {
-    const timer = setInterval(() => updateDomain(decimalAddr), 30e3);
-    return () => clearInterval(timer);
-  }, [decimalAddr]);
 
   return domain;
 }

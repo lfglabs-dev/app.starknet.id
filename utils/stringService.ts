@@ -1,8 +1,18 @@
+import BN from "bn.js";
+
 export function minifyAddress(address: string): string {
   const firstPart = address.substring(0, 4);
   const secondPart = address.substring(address.length - 3, address.length);
 
   return (firstPart + "..." + secondPart).toLowerCase();
+}
+
+export function hexToDecimal(hex: string): string {
+  if (!isHexString(hex)) {
+    throw new Error("Invalid hex string");
+  }
+
+  return new BN(hex.slice(2), 16).toString(10);
 }
 
 export function minifyDomain(
@@ -31,7 +41,7 @@ export function getDomainWithoutStark(str: string): string {
 
 export function isHexString(str: string): boolean {
   if (str === "") return true;
-  return /^[0123456789abcdefABCDEF]+$/.test(str.slice(2));
+  return /^0x[0123456789abcdefABCDEF]+$/.test(str);
 }
 
 export function generateString(length: number, characters: string): string {
@@ -49,6 +59,12 @@ export function isSubdomain(domain: string): boolean {
 }
 
 // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
-export function isStarkDomain(domain: string): boolean {
+export function isStarkRootDomain(domain: string): boolean {
   return /^([a-z0-9-]){1,48}\.stark$/.test(domain);
+}
+
+export function isStarkDomain(domain: string) {
+  return /^(?:[a-z0-9-]{1,48}(?:[a-z0-9-]{1,48}[a-z0-9-])?\.)*[a-z0-9-]{1,48}\.stark$/.test(
+    domain
+  );
 }

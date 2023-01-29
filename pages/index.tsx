@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
-import { hexToFelt } from "../utils/felt";
+import { hexToDecimal } from "../utils/stringService";
 
 const Home: NextPage = () => {
   const { address } = useAccount();
@@ -46,7 +46,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (address) {
       // Our Indexer
-      fetch(`/api/indexer/addr_to_full_ids?addr=${hexToFelt(address)}`)
+      fetch(`/api/indexer/addr_to_full_ids?addr=${hexToDecimal(address)}`)
         .then((response) => response.json())
         .then((data) => {
           setOwnedIdentities(data.full_ids);

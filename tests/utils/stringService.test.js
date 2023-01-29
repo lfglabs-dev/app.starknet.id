@@ -3,27 +3,29 @@ import { basicAlphabet } from "../../hooks/naming";
 import {
   is1234Domain,
   getDomainWithoutStark,
-  isStarkDomain,
+  isStarkRootDomain,
   isHexString,
   isSubdomain,
   minifyAddress,
   minifyDomain,
   generateString,
+  hexToDecimal,
+  isStarkDomain,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
   it("Should return false cause there are valid 1234 domains", () => {
-    expect(is1234Domain("1231")).toBe(true);
-    expect(is1234Domain("0231")).toBe(true);
-    expect(is1234Domain("1204")).toBe(true);
-    expect(is1234Domain("0430")).toBe(true);
+    expect(is1234Domain("1231")).toBeTrut;
+    expect(is1234Domain("0231")).toBeTrut;
+    expect(is1234Domain("1204")).toBeTrut;
+    expect(is1234Domain("0430")).toBeTrut;
   });
 
   it("Should return false cause there are invalid 1234 domains", () => {
-    expect(is1234Domain("1232575")).toBe(false);
-    expect(is1234Domain("231")).toBe(false);
-    expect(is1234Domain("12043")).toBe(false);
-    expect(is1234Domain("1234")).toBe(false);
+    expect(is1234Domain("1232575")).toBeFalsy();
+    expect(is1234Domain("231")).toBeFalsy();
+    expect(is1234Domain("12043")).toBeFalsy();
+    expect(is1234Domain("1234")).toBeFalsy();
   });
 });
 
@@ -55,29 +57,91 @@ describe("Should test getDomainWithoutStark", () => {
   });
 });
 
-describe("Should test isStarkDomain", () => {
+describe("Should test isStarkRootDomain", () => {
   it("Should return true cause string is a stark domain", () => {
     for (let index = 0; index < 2500; index++) {
       const randomString = generateString(10, basicAlphabet);
-      expect(isStarkDomain(randomString + ".stark")).toBe(true);
+      expect(isStarkRootDomain(randomString + ".stark")).toBeTruthy();
     }
   });
 
   it("Should return false cause string does not end with .stark", () => {
-    expect(isStarkDomain("test.star")).toBe(false);
+    expect(isStarkRootDomain("test.star")).toBeFalsy();
   });
 
   it("Should return false cause string contains a wrong character", () => {
-    expect(isStarkDomain("test)ben.stark")).toBe(false);
-    expect(isStarkDomain("test,ben.stark")).toBe(false);
-    expect(isStarkDomain("qsd12$)ben.stark")).toBe(false);
-    expect(isStarkDomain("_.stark")).toBe(false);
+    expect(isStarkRootDomain("test)ben.stark")).toBeFalsy();
+    expect(isStarkRootDomain("test,ben.stark")).toBeFalsy();
+    expect(isStarkRootDomain("qsd12$)ben.stark")).toBeFalsy();
+    expect(isStarkRootDomain("_.stark")).toBeFalsy();
+    expect(isStarkRootDomain("test.ben.stark")).toBeFalsy();
+    expect(isStarkRootDomain("..stark")).toBeFalsy();
+    expect(isStarkRootDomain("..starkq")).toBeFalsy();
+  });
+});
+
+describe("Should test isStarkDomain", () => {
+  it("Should return true cause string is a stark subdomain", () => {
+    for (let index = 0; index < 2500; index++) {
+      const randomString = generateString(10, basicAlphabet);
+      const randomString2 = generateString(10, basicAlphabet);
+      const randomString3 = generateString(10, basicAlphabet);
+      const randomString4 = generateString(10, basicAlphabet);
+
+      expect(
+        isStarkDomain(
+          randomString +
+            "." +
+            randomString2 +
+            "." +
+            randomString3 +
+            "." +
+            randomString4 +
+            ".stark"
+        )
+      ).toBeTruthy();
+    }
+  });
+
+  it("Should return true cause string is a stark subdomain", () => {
+    for (let index = 0; index < 500; index++) {
+      const randomString = generateString(10, basicAlphabet);
+
+      expect(isStarkDomain(randomString + ".stark")).toBeTruthy();
+    }
+  });
+
+  it("Should return false cause these are not stark domains", () => {
+    const randomString = generateString(10, basicAlphabet);
+    const randomString2 = generateString(10, basicAlphabet);
+
+    expect(
+      isStarkDomain(randomString + "." + randomString2 + ".starkqsd") &&
+        isStarkDomain(
+          randomString.concat("_") + "." + randomString2 + ".stark"
+        ) &&
+        isStarkDomain(randomString + "." + randomString2 + "..stark") &&
+        isStarkDomain(randomString + "." + randomString2 + "..stark") &&
+        isStarkDomain("." + randomString + ".." + randomString2 + ".stark") &&
+        isStarkDomain("." + randomString + "." + randomString2 + ".stark")
+    ).toBeFalsy();
   });
 });
 
 describe("Should test isHexString", () => {
   it("Should return false cause string is not an hex", () => {
-    expect(isHexString("1232575.stark")).toBe(false);
+    expect(isHexString("1232575.stark")).toBeFalsy();
+    expect(isHexString("1232575")).toBeFalsy();
+    expect(
+      isHexString(
+        "061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3"
+      )
+    ).toBeFalsy();
+    expect(
+      isHexString(
+        "0061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3"
+      )
+    ).toBeFalsy();
   });
 
   it("Should return true cause string is hex", () => {
@@ -85,18 +149,36 @@ describe("Should test isHexString", () => {
       isHexString(
         "0x061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3"
       )
-    ).toBe(true);
+    ).toBeTruthy();
   });
 });
 
 describe("Should test isSubdomain", () => {
   it("Should return false cause string is not a subdomain", () => {
-    expect(isSubdomain("1232575.stark")).toBe(false);
-    expect(isSubdomain("")).toBe(false);
+    expect(isSubdomain("1232575.stark")).toBeFalsy();
+    expect(isSubdomain("")).toBeFalsy();
   });
 
   it("Should return false cause string is a subdomain", () => {
-    expect(isSubdomain("1232575.ben.stark")).toBe(true);
-    expect(isSubdomain("qsdqsdqsd.fricoben.stark")).toBe(true);
+    expect(isSubdomain("1232575.ben.stark")).toBeTrut;
+    expect(isSubdomain("qsdqsdqsd.fricoben.stark")).toBeTrut;
+  });
+});
+
+describe("Should test hexToDecimal function", () => {
+  it("Should return the right decimal address", () => {
+    expect(
+      hexToDecimal(
+        "0x072D4F3FA4661228ed0c9872007fc7e12a581E000FAd7b8f3e3e5bF9E6133207"
+      )
+    ).toEqual(
+      "3246245011749133880110396867610358293809804380010255939993086782333605065223"
+    );
+  });
+
+  it("Should return an error cause the string is not an hex number", () => {
+    expect(() => hexToDecimal("123321.ben.stark")).toThrow(
+      new Error("Invalid hex string")
+    );
   });
 });

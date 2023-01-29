@@ -9,9 +9,9 @@ import { useEffect, useState } from "react";
 import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import styles from "../styles/whitelist.module.css";
-import { hexToFelt } from "../utils/felt";
 import { useDecodedSeveral } from "../hooks/naming";
 import BN from "bn.js";
+import { hexToDecimal } from "../utils/stringService";
 
 type WhitelistedDomain = {
   domain: string;
@@ -39,7 +39,7 @@ const Whitelist: NextPage = () => {
 
   useEffect(() => {
     if (account) {
-      fetch(`/api/whitelist/${hexToFelt(account.address)}`)
+      fetch(`/api/whitelist/${hexToDecimal(account.address)}`)
         .then((response) => response.json())
         .then((data) => {
           if (data.error) {
@@ -78,7 +78,7 @@ const Whitelist: NextPage = () => {
               whitelistedDomain.domain,
               new BN(whitelistedDomain.expiry).toString(10),
               new BN(newTokenId).toString(10),
-              new BN((account?.address as string).slice(2), 16).toString(10),
+              hexToDecimal(account?.address ?? ""),
               new BN(whitelistedDomain.signature[0]).toString(10),
               new BN(whitelistedDomain.signature[1]).toString(10),
             ],
