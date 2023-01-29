@@ -109,7 +109,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
       {tokenId && (
         <div
           onClick={() =>
-            window.open(`https://www.starknet.id/${domain.concat(".stark")}`)
+            window.open(`https://www.starknet.id/${domain}.stark"`)
           }
           className={styles.cardCenter}
         >

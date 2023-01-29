@@ -132,6 +132,16 @@ describe("Should test isHexString", () => {
   it("Should return false cause string is not an hex", () => {
     expect(isHexString("1232575.stark")).toBeFalsy();
     expect(isHexString("1232575")).toBeFalsy();
+    expect(
+      isHexString(
+        "061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3"
+      )
+    ).toBeFalsy();
+    expect(
+      isHexString(
+        "0061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3"
+      )
+    ).toBeFalsy();
   });
 
   it("Should return true cause string is hex", () => {
@@ -139,7 +149,7 @@ describe("Should test isHexString", () => {
       isHexString(
         "0x061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3"
       )
-    ).toBeTrut;
+    ).toBeTruthy();
   });
 });
 

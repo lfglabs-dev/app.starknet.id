@@ -41,11 +41,7 @@ export function getDomainWithoutStark(str: string): string {
 
 export function isHexString(str: string): boolean {
   if (str === "") return true;
-  if (str.toLowerCase().startsWith("0x")) {
-    return /^[0123456789abcdefABCDEF]+$/.test(str.slice(2));
-  } else {
-    return false;
-  }
+  return /^0x[0123456789abcdefABCDEF]+$/.test(str);
 }
 
 export function generateString(length: number, characters: string): string {
