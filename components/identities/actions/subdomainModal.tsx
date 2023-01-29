@@ -1,10 +1,11 @@
 import { Modal, TextField } from "@mui/material";
-import { useStarknetExecute } from "@starknet-react/core";
+import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import { BN } from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Call } from "starknet/types";
 import { useEncoded, useIsValid } from "../../../hooks/naming";
 import styles from "../../../styles/components/wallets.module.css";
+import { hexToDecimal } from "../../../utils/stringService";
 import SelectDomain from "../../domains/selectDomains";
 import Button from "../../UI/button";
 
@@ -26,6 +27,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   const encodedSubdomain: string = useEncoded(subdomain ?? "").toString(10);
   const isDomainValid = useIsValid(subdomain ?? "");
   const [callData, setCallData] = useState<Call[]>([]);
+  const { address } = useAccount();
 
   const { execute: transfer_domain } = useStarknetExecute({
     calls: callData as any,
@@ -54,6 +56,16 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             targetTokenId,
           ],
         },
+        {
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+          entrypoint: "set_domain_to_address",
+          calldata: [
+            Number(callDataEncodedDomain[0]) + 1,
+            encodedSubdomain,
+            ...callDataEncodedDomain.slice(1),
+            hexToDecimal(address ?? ""),
+          ],
+        },
       ]);
     } else {
       setCallData([
@@ -73,9 +85,19 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             newTokenId,
           ],
         },
+        {
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+          entrypoint: "set_domain_to_address",
+          calldata: [
+            Number(callDataEncodedDomain[0]) + 1,
+            encodedSubdomain,
+            ...callDataEncodedDomain.slice(1),
+            hexToDecimal(address ?? ""),
+          ],
+        },
       ]);
     }
-  }, [targetTokenId, encodedSubdomain, callDataEncodedDomain]);
+  }, [targetTokenId, encodedSubdomain, callDataEncodedDomain, address]);
 
   return (
     <Modal

@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useAccount } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { hexToFelt } from "../../utils/felt";
+import { hexToDecimal } from "../../utils/stringService";
 
 type SelectDomainProps = {
   tokenId: number;
@@ -28,7 +28,9 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
   useEffect(() => {
     if (account) {
       fetch(
-        `/api/indexer/addr_to_available_ids?addr=${hexToFelt(account.address)}`
+        `/api/indexer/addr_to_available_ids?addr=${hexToDecimal(
+          account.address
+        )}`
       )
         .then((response) => response.json())
         .then((data) => {
