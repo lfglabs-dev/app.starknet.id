@@ -7,6 +7,7 @@ type Calls = {
 type IconProps = {
   color: string;
   width: string;
+  style?:object;
 };
 
 type FullId = {

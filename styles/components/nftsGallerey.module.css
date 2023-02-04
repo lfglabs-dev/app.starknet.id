@@ -1,0 +1,25 @@
+.nftContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 150px);
+  grid-gap: 1rem;
+  justify-content: space-between;
+  margin-top: 2%;
+}
+
+.nftContainer .nftImageContainer {
+  position: relative;
+}
+
+.nftContainer img {
+  transition: 100ms linear;
+  cursor: pointer;
+}
+
+.nftContainer img:hover {
+  padding: 0.3rem;
+}
+
+.nftContainer::after {
+  content: "";
+  flex: auto;
+}

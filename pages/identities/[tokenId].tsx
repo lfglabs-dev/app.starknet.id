@@ -8,11 +8,16 @@ import { ThreeDots } from "react-loader-spinner";
 import IdentityActions from "../../components/identities/identitiesActions";
 import { Identity } from "../../types/backTypes";
 import IdentityWarnings from "../../components/identities/identityWarnings";
+import { url } from "inspector";
+import EditIcon from "../../components/UI/iconsComponents/icons/editIcon";
+import ModalMessage from "../../components/UI/modalMessage";
+import NftsGallery from "../../components/nfts/NftsGallery";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
   const tokenId: string = router.query.tokenId as string;
   const [identity, setIdentity] = useState<Identity>();
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [isIdentityADomain, setIsIdentityADomain] = useState<
     boolean | undefined
   >();
@@ -63,13 +68,30 @@ const TokenIdPage: NextPage = () => {
                 ? identity?.domain
                 : `Starknet ID : ${tokenId}`}
             </h1>
-            <div>
-              <img
-                src={`https://www.starknet.id/api/identicons/${tokenId}`}
-                height={200}
-                width={200}
-                alt="identicon"
-              />
+            <div className={styles2.hexagonContainer}>
+              <div className={styles2.hexagon + " " + styles2.hexagon1}>
+                <div className={styles2["hexagon-in1"]}>
+                  <div
+                    className={styles2["hexagon-in2"]}
+                    style={{
+                      backgroundImage: `url(https://www.starknet.id/api/identicons/${tokenId})`,
+                      // backgroundImage:
+                      //   "url(https://starkware.co/wp-content/uploads/2022/11/Token-post-image_media.png)",
+                    }}
+                  >
+                    <div
+                      className={styles2.editContainer}
+                      onClick={() => setModalOpen(true)}
+                    >
+                      {/* <img className={styles2.editIcon} src="/icons/edit.png" /> */}
+                      <div className={styles2.editIcon}>
+                        <EditIcon width="30" color="white" />
+                      </div>
+                      <span className={styles2.editText}>Edit</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <IdentityActions
@@ -84,6 +106,30 @@ const TokenIdPage: NextPage = () => {
                 Back to your identities
               </Button>
             </div>
+            <ModalMessage
+              open={modalOpen}
+              title={"Select your NFT"}
+              closeModal={() => setModalOpen(false)}
+              message={
+                <NftsGallery
+                  identities={[
+                    { id: "973639193985" },
+                    { id: "973639193985" },
+                    { id: "973639193985" },
+                    { id: "973639193985" },
+                    { id: "973639193985" },
+                    { id: "973639193985" },
+                    { id: "973639193985" },
+                    { id: "973639193985" },
+                    { id: "973639193985" },
+                    { id: "973639193985" },
+                    { id: "973639193985" },
+                    { id: "973639193985" },
+                  ]}
+                />
+              }
+              menuCustomStyle={{ width: "70%", maxWidth: "unset" }}
+            />
           </>
         )}
       </div>

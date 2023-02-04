@@ -1,6 +1,10 @@
 import React, { FunctionComponent } from "react";
 
-const verifiedIcon: FunctionComponent<IconProps> = ({ width, color }) => {
+const verifiedIcon: FunctionComponent<IconProps> = ({
+  width,
+  color,
+  style = {},
+}) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -10,6 +14,7 @@ const verifiedIcon: FunctionComponent<IconProps> = ({ width, color }) => {
       height={width}
       preserveAspectRatio="xMidYMid meet"
       version="1.0"
+      style={style}
     >
       <defs>
         <clipPath id="id1">

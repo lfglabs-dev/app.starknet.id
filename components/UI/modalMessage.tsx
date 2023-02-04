@@ -8,6 +8,7 @@ type ModalMessageProps = {
   message: ReactNode;
   closeModal: () => void;
   open: boolean;
+  menuCustomStyle: object;
 };
 
 const ModalMessage: FunctionComponent<ModalMessageProps> = ({
@@ -15,6 +16,7 @@ const ModalMessage: FunctionComponent<ModalMessageProps> = ({
   message,
   closeModal,
   open,
+  menuCustomStyle = {},
 }) => {
   return (
     <Modal
@@ -24,7 +26,7 @@ const ModalMessage: FunctionComponent<ModalMessageProps> = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <div className={styles.menu}>
+      <div className={styles.menu} style={menuCustomStyle}>
         <button className={styles.menu_close} onClick={closeModal}>
           <svg viewBox="0 0 24 24">
             <path
