@@ -62,17 +62,49 @@ const Register: FunctionComponent<RegisterProps> = ({
   }, [priceData, priceError]);
 
   useEffect(() => {
-    if (account) {
-      setTargetAddress(account.address);
+    if (address) {
+      setTargetAddress(address);
     }
-  }, [account]);
+  }, [address]);
 
   // Set mulitcalls
   useEffect(() => {
     if (!isAvailable) return;
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
 
-    if (tokenId != 0 && hasMainDomain) {
+    if (
+      tokenId != 0 &&
+      !hasMainDomain &&
+      hexToDecimal(address ?? "") === hexToDecimal(targetAddress ?? "")
+    ) {
+      setCallData([
+        {
+          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
+          entrypoint: "approve",
+          calldata: [
+            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+            price,
+            0,
+          ],
+        },
+        {
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+          entrypoint: "buy",
+          calldata: [
+            new BN(tokenId).toString(10),
+            new BN(encodedDomain).toString(10),
+            new BN(duration * 365).toString(10),
+            0,
+            hexToDecimal(targetAddress ?? ""),
+          ],
+        },
+        {
+          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+          entrypoint: "set_address_to_domain",
+          calldata: [1, new BN(encodedDomain).toString(10)],
+        },
+      ]);
+    } else if (tokenId != 0 && hasMainDomain) {
       setCallData([
         {
           contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
@@ -95,7 +127,11 @@ const Register: FunctionComponent<RegisterProps> = ({
           ],
         },
       ]);
-    } else if (tokenId != 0 && !hasMainDomain) {
+    } else if (
+      tokenId === 0 &&
+      !hasMainDomain &&
+      hexToDecimal(address ?? "") === hexToDecimal(targetAddress ?? "")
+    ) {
       setCallData([
         {
           contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
@@ -107,10 +143,16 @@ const Register: FunctionComponent<RegisterProps> = ({
           ],
         },
         {
+          contractAddress: process.env
+            .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+          entrypoint: "mint",
+          calldata: [new BN(newTokenId).toString(10)],
+        },
+        {
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "buy",
           calldata: [
-            new BN(tokenId).toString(10),
+            new BN(newTokenId).toString(10),
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
             0,
@@ -150,40 +192,6 @@ const Register: FunctionComponent<RegisterProps> = ({
             0,
             hexToDecimal(targetAddress ?? ""),
           ],
-        },
-      ]);
-    } else if (tokenId === 0 && !hasMainDomain) {
-      setCallData([
-        {
-          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-          entrypoint: "approve",
-          calldata: [
-            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-            price,
-            0,
-          ],
-        },
-        {
-          contractAddress: process.env
-            .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-          entrypoint: "mint",
-          calldata: [new BN(newTokenId).toString(10)],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy",
-          calldata: [
-            new BN(newTokenId).toString(10),
-            new BN(encodedDomain).toString(10),
-            new BN(duration * 365).toString(10),
-            0,
-            hexToDecimal(targetAddress ?? ""),
-          ],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "set_address_to_domain",
-          calldata: [1, new BN(encodedDomain).toString(10)],
         },
       ]);
     }
