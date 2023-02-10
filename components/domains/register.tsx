@@ -6,7 +6,7 @@ import styles from "../../styles/Home.module.css";
 import { usePricingContract } from "../../hooks/contracts";
 import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
-import { useEncoded, useUpdatedDomainFromAddress } from "../../hooks/naming";
+import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
 import {
   hexToDecimal,
@@ -17,6 +17,7 @@ import { ethers } from "ethers";
 import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
 import { Call } from "starknet/types";
+import { useDisplayName } from "../../hooks/displayName.tsx";
 
 type RegisterProps = {
   domain: string;
@@ -44,7 +45,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const { execute } = useStarknetExecute({
     calls: callData as any,
   });
-  const hasMainDomain = Boolean(useUpdatedDomainFromAddress(address));
+  const hasMainDomain = Boolean(useDisplayName(address ?? ""));
 
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()

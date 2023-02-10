@@ -44,7 +44,6 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
 
   useEffect(() => {
     if (githubId) {
-      console.log("githubId", githubId);
       fetch(`https://api.github.com/user/${githubId}`)
         .then((response) => response.json())
         // TO DO : Find how to import the github response type

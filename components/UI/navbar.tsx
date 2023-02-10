@@ -7,10 +7,10 @@ import Button from "./button";
 import { useConnectors, useAccount, useStarknet } from "@starknet-react/core";
 import Wallets from "./wallets";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useUpdatedDomainFromAddress } from "../../hooks/naming";
 import SelectNetwork from "./selectNetwork";
 import { minifyAddress, minifyDomain } from "../../utils/stringService";
 import ModalMessage from "./modalMessage";
+import { useDisplayName } from "../../hooks/displayName.tsx";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
@@ -21,7 +21,7 @@ const Navbar: FunctionComponent = () => {
 
   const { available, connect, disconnect } = useConnectors();
   const { library } = useStarknet();
-  const domain = useUpdatedDomainFromAddress(address);
+  const domain = useDisplayName(address ?? "");
   const green = "#19AA6E";
   const brown = "#402d28";
   const network =

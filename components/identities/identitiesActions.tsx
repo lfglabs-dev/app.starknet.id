@@ -5,7 +5,6 @@ import { FunctionComponent, useEffect, useState } from "react";
 import ClickableIcon from "../UI/iconsComponents/clickableIcon";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import { useEncodedSeveral } from "../../hooks/naming";
-import { BN } from "bn.js";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import ChangeAddressModal from "./actions/changeAddressModal";
 import { getDomainWithoutStark, hexToDecimal } from "../../utils/stringService";
