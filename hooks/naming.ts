@@ -155,10 +155,10 @@ export function useAddressFromDomain(domain: string): AddressData {
   return { address: data as any, error };
 }
 
-export function useIsValid(domain: string): boolean | string {
-  for (const char of domain)
-    if (!basicAlphabet.includes(char) && !bigAlphabet.includes(char))
-      return char;
+export function useIsValid(domain: string | undefined): boolean | string {
+  if (!domain) domain = "";
+
+  for (const char of domain) if (!basicAlphabet.includes(char)) return char;
   return true;
 }
 

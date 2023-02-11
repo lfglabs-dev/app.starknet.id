@@ -78,7 +78,7 @@ const Whitelist: NextPage = () => {
               whitelistedDomain.domain,
               new BN(whitelistedDomain.expiry).toString(10),
               new BN(newTokenId).toString(10),
-              hexToDecimal(account?.address ?? ""),
+              hexToDecimal(account?.address),
               new BN(whitelistedDomain.signature[0]).toString(10),
               new BN(whitelistedDomain.signature[1]).toString(10),
             ],

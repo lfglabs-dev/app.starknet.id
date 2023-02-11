@@ -16,7 +16,7 @@ import {
 import { ethers } from "ethers";
 import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
-import { Call } from "starknet/types";
+import { Call } from "starknet";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 
 type RegisterProps = {
@@ -45,7 +45,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const { execute } = useStarknetExecute({
     calls: callData as any,
   });
-  const hasMainDomain = Boolean(useDisplayName(address ?? ""));
+  const hasMainDomain = !useDisplayName(address).startsWith("0x");
 
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
@@ -73,10 +73,12 @@ const Register: FunctionComponent<RegisterProps> = ({
     if (!isAvailable) return;
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
 
+    console.log("targetAddress: ", targetAddress);
+
     if (
       tokenId != 0 &&
       !hasMainDomain &&
-      hexToDecimal(address ?? "") === hexToDecimal(targetAddress ?? "")
+      hexToDecimal(address) === hexToDecimal(targetAddress)
     ) {
       setCallData([
         {
@@ -96,7 +98,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
             0,
-            hexToDecimal(targetAddress ?? ""),
+            hexToDecimal(targetAddress),
           ],
         },
         {
@@ -105,7 +107,12 @@ const Register: FunctionComponent<RegisterProps> = ({
           calldata: [1, new BN(encodedDomain).toString(10)],
         },
       ]);
-    } else if (tokenId != 0 && hasMainDomain) {
+    } else if (
+      (tokenId != 0 && hasMainDomain) ||
+      (tokenId != 0 &&
+        !hasMainDomain &&
+        hexToDecimal(address) != hexToDecimal(targetAddress))
+    ) {
       setCallData([
         {
           contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
@@ -124,14 +131,14 @@ const Register: FunctionComponent<RegisterProps> = ({
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
             0,
-            hexToDecimal(targetAddress ?? ""),
+            hexToDecimal(targetAddress),
           ],
         },
       ]);
     } else if (
       tokenId === 0 &&
       !hasMainDomain &&
-      hexToDecimal(address ?? "") === hexToDecimal(targetAddress ?? "")
+      hexToDecimal(address) === hexToDecimal(targetAddress)
     ) {
       setCallData([
         {
@@ -157,7 +164,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
             0,
-            hexToDecimal(targetAddress ?? ""),
+            hexToDecimal(targetAddress),
           ],
         },
         {
@@ -166,7 +173,12 @@ const Register: FunctionComponent<RegisterProps> = ({
           calldata: [1, new BN(encodedDomain).toString(10)],
         },
       ]);
-    } else if (tokenId === 0 && hasMainDomain) {
+    } else if (
+      (tokenId === 0 && hasMainDomain) ||
+      (tokenId === 0 &&
+        !hasMainDomain &&
+        hexToDecimal(address) != hexToDecimal(targetAddress))
+    ) {
       setCallData([
         {
           contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
@@ -191,12 +203,21 @@ const Register: FunctionComponent<RegisterProps> = ({
             new BN(encodedDomain).toString(10),
             new BN(duration * 365).toString(10),
             0,
-            hexToDecimal(targetAddress ?? ""),
+            hexToDecimal(targetAddress),
           ],
         },
       ]);
     }
-  }, [tokenId, duration, targetAddress, isAvailable, price, domain]);
+  }, [
+    tokenId,
+    duration,
+    targetAddress,
+    isAvailable,
+    price,
+    domain,
+    hasMainDomain,
+    address,
+  ]);
 
   function changeAddress(value: string): void {
     isHexString(value) ? setTargetAddress(value) : null;

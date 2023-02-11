@@ -21,7 +21,7 @@ const Navbar: FunctionComponent = () => {
 
   const { available, connect, disconnect } = useConnectors();
   const { library } = useStarknet();
-  const domain = useDisplayName(address ?? "");
+  const domain = useDisplayName(address);
   const green = "#19AA6E";
   const brown = "#402d28";
   const network =
@@ -77,7 +77,7 @@ const Navbar: FunctionComponent = () => {
     const textToReturn = isConnected
       ? domain
         ? minifyDomain(domain)
-        : minifyAddress(address ?? "")
+        : minifyAddress(address)
       : "connect";
 
     return textToReturn;
@@ -125,9 +125,7 @@ const Navbar: FunctionComponent = () => {
                   {isConnected ? (
                     <div className="flex justify-center items-center">
                       <div>
-                        {domain
-                          ? minifyDomain(domain)
-                          : minifyAddress(address ?? "")}
+                        {domain ? minifyDomain(domain) : minifyAddress(address)}
                       </div>
                       <LogoutIcon className="ml-3" />
                     </div>
