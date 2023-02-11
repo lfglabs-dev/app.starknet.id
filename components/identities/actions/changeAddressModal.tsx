@@ -29,7 +29,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   const set_domain_to_address_calls = {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_domain_to_address",
-    calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress ?? "")],
+    calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress)],
   };
 
   const { execute: set_domain_to_address } = useStarknetExecute({

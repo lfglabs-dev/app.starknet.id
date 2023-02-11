@@ -7,10 +7,10 @@ import Button from "./button";
 import { useConnectors, useAccount, useStarknet } from "@starknet-react/core";
 import Wallets from "./wallets";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useUpdatedDomainFromAddress } from "../../hooks/naming";
 import SelectNetwork from "./selectNetwork";
 import { minifyAddress, minifyDomain } from "../../utils/stringService";
 import ModalMessage from "./modalMessage";
+import { useDisplayName } from "../../hooks/displayName.tsx";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
@@ -21,7 +21,7 @@ const Navbar: FunctionComponent = () => {
 
   const { available, connect, disconnect } = useConnectors();
   const { library } = useStarknet();
-  const domain = useUpdatedDomainFromAddress(address);
+  const domain = useDisplayName(address);
   const green = "#19AA6E";
   const brown = "#402d28";
   const network =
@@ -77,7 +77,7 @@ const Navbar: FunctionComponent = () => {
     const textToReturn = isConnected
       ? domain
         ? minifyDomain(domain)
-        : minifyAddress(address ?? "")
+        : minifyAddress(address)
       : "connect";
 
     return textToReturn;
@@ -100,10 +100,10 @@ const Navbar: FunctionComponent = () => {
           </div>
           <div>
             <ul className="hidden lg:flex uppercase items-center">
-              <Link href="/">
+              <Link href="/identities">
                 <li className={styles.menuItem}>Identities</li>
               </Link>
-              <Link href="/domains">
+              <Link href="/">
                 <li className={styles.menuItem}>Domains</li>
               </Link>
               <Link href="https://twitter.com/starknet_id">
@@ -125,9 +125,7 @@ const Navbar: FunctionComponent = () => {
                   {isConnected ? (
                     <div className="flex justify-center items-center">
                       <div>
-                        {domain
-                          ? minifyDomain(domain)
-                          : minifyAddress(address ?? "")}
+                        {domain ? minifyDomain(domain) : minifyAddress(address)}
                       </div>
                       <LogoutIcon className="ml-3" />
                     </div>
@@ -184,7 +182,7 @@ const Navbar: FunctionComponent = () => {
               </div>
               <div className="py-4 flex flex-col">
                 <ul className="uppercase text-babe-blue">
-                  <Link href="/">
+                  <Link href="/identities">
                     <li
                       onClick={() => setNav(false)}
                       className={styles.menuItemSmall}
@@ -192,7 +190,7 @@ const Navbar: FunctionComponent = () => {
                       Identities
                     </li>
                   </Link>
-                  <Link href="/domains">
+                  <Link href="/">
                     <li
                       onClick={() => setNav(false)}
                       className={styles.menuItemSmall}

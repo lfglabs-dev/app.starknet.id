@@ -5,7 +5,6 @@ import { FunctionComponent, useEffect, useState } from "react";
 import ClickableIcon from "../UI/iconsComponents/clickableIcon";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import { useEncodedSeveral } from "../../hooks/naming";
-import { BN } from "bn.js";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import ChangeAddressModal from "./actions/changeAddressModal";
 import { getDomainWithoutStark, hexToDecimal } from "../../utils/stringService";
@@ -35,7 +34,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const encodedDomains = useEncodedSeveral(
     getDomainWithoutStark(identity ? identity.domain : "").split(".") ?? []
   );
-  const isAccountTargetAddress = identity?.addr === hexToDecimal(address ?? "");
+  const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
   const [isOwner, setIsOwner] = useState<boolean>(false);
 
   // Add all subdomains to the parameters
@@ -53,7 +52,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const set_domain_to_address_calls = {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_domain_to_address",
-    calldata: [...callDataEncodedDomain, hexToDecimal(address ?? "")],
+    calldata: [...callDataEncodedDomain, hexToDecimal(address)],
   };
   const { execute: set_address_to_domain } = useStarknetExecute({
     calls: isAccountTargetAddress

@@ -80,7 +80,7 @@ const TokenIdPage: NextPage = () => {
 
             <IdentityWarnings identity={identity} />
             <div className="mt-5">
-              <Button onClick={() => router.push("/")}>
+              <Button onClick={() => router.push("/identities")}>
                 Back to your identities
               </Button>
             </div>

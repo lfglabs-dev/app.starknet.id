@@ -15,15 +15,12 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
   return (
     <>
       {Number(identity?.domain_expiry) < currentTimeStamp &&
-      !isSubdomain(identity?.domain ?? "") ? (
+      !isSubdomain(identity?.domain) ? (
         <strong className="mt-2 text-red-600 text-center">
           (This domain has expired you can buy it on the&nbsp;
           <span className="underline">
             <Link
-              href={
-                "/search?domain=" +
-                getDomainWithoutStark(identity?.domain ?? "")
-              }
+              href={"/search?domain=" + getDomainWithoutStark(identity?.domain)}
             >
               domain page
             </Link>

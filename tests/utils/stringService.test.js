@@ -160,8 +160,8 @@ describe("Should test isSubdomain", () => {
   });
 
   it("Should return false cause string is a subdomain", () => {
-    expect(isSubdomain("1232575.ben.stark")).toBeTrut;
-    expect(isSubdomain("qsdqsdqsd.fricoben.stark")).toBeTrut;
+    expect(isSubdomain("1232575.ben.stark")).toBeTruthy();
+    expect(isSubdomain("qsdqsdqsd.fricoben.stark")).toBeTruthy();
   });
 });
 

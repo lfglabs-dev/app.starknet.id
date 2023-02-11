@@ -1,14 +1,17 @@
 import BN from "bn.js";
 
-export function minifyAddress(address: string): string {
+export function minifyAddress(address: string | undefined): string {
+  if (!address) return "";
+
   const firstPart = address.substring(0, 4);
   const secondPart = address.substring(address.length - 3, address.length);
 
   return (firstPart + "..." + secondPart).toLowerCase();
 }
 
-export function hexToDecimal(hex: string): string {
-  if (!isHexString(hex)) {
+export function hexToDecimal(hex: string | undefined): string {
+  if (!hex) return "";
+  else if (!isHexString(hex)) {
     throw new Error("Invalid hex string");
   }
 
@@ -31,7 +34,9 @@ export function is1234Domain(domain: string): boolean {
   return /^\d{4}$/.test(domain) && parseInt(domain) < 1234;
 }
 
-export function getDomainWithoutStark(str: string): string {
+export function getDomainWithoutStark(str: string | undefined): string {
+  if (!str) return "";
+
   if (str.endsWith(".stark")) {
     return str.slice(0, str.length - 6);
   } else {
@@ -54,7 +59,9 @@ export function generateString(length: number, characters: string): string {
   return result;
 }
 
-export function isSubdomain(domain: string): boolean {
+export function isSubdomain(domain: string | undefined): boolean {
+  if (!domain) return false;
+
   return Boolean((domain.match(/\./g) || []).length > 1);
 }
 
