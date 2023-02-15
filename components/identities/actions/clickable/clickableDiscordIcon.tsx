@@ -3,7 +3,7 @@ import { useStarknetCall } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useStarknetIdContract } from "../../../../hooks/contracts";
-import { stringToHex } from "../../../../utils/felt";
+import { toHex } from "../../../../utils/feltService";
 import DiscordIcon from "../../../UI/iconsComponents/icons/discordIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
@@ -30,7 +30,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
     method: "get_verifier_data",
     args: [
       router.query.tokenId,
-      stringToHex("discord"),
+      toHex("discord"),
       process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
     ],
   });

@@ -1,4 +1,4 @@
-import BN from "bn.js";
+import { BN } from "bn.js";
 
 export function minifyAddress(address: string | undefined): string {
   if (!address) return "";
@@ -7,15 +7,6 @@ export function minifyAddress(address: string | undefined): string {
   const secondPart = address.substring(address.length - 3, address.length);
 
   return (firstPart + "..." + secondPart).toLowerCase();
-}
-
-export function hexToDecimal(hex: string | undefined): string {
-  if (!hex) return "";
-  else if (!isHexString(hex)) {
-    throw new Error("Invalid hex string");
-  }
-
-  return new BN(hex.slice(2), 16).toString(10);
 }
 
 export function minifyDomain(
@@ -74,4 +65,10 @@ export function isStarkDomain(domain: string) {
   return /^(?:[a-z0-9-]{1,48}(?:[a-z0-9-]{1,48}[a-z0-9-])?\.)*[a-z0-9-]{1,48}\.stark$/.test(
     domain
   );
+}
+
+export function numberToString(element: number | undefined): string {
+  if (!element) return "";
+
+  return new BN(element).toString(10);
 }
