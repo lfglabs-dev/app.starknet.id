@@ -1,11 +1,10 @@
 import { Modal, TextField } from "@mui/material";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
-import BN from "bn.js";
 import React, { FunctionComponent, useState } from "react";
-import { hexToDecimal, isHexString } from "../../../utils/stringService";
+import { isHexString } from "../../../utils/stringService";
 import styles from "../../../styles/components/wallets.module.css";
-import { stringDecimalToHex } from "../../../utils/felt";
 import Button from "../../UI/button";
+import { hexToDecimal, toHex } from "../../../utils/feltService";
 
 type ChangeAddressModalProps = {
   handleClose: () => void;
@@ -70,7 +69,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
           {currentTargetAddress && (
             <p className="break-all">
               <strong>Current Address :</strong>&nbsp;
-              <span>{"0x" + stringDecimalToHex(currentTargetAddress)}</span>
+              <span>{toHex(currentTargetAddress)}</span>
             </p>
           )}
           <div className="mt-5">

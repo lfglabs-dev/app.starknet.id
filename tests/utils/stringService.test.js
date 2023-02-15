@@ -9,16 +9,16 @@ import {
   minifyAddress,
   minifyDomain,
   generateString,
-  hexToDecimal,
   isStarkDomain,
+  numberToString,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
   it("Should return false cause there are valid 1234 domains", () => {
-    expect(is1234Domain("1231")).toBeTrut;
-    expect(is1234Domain("0231")).toBeTrut;
-    expect(is1234Domain("1204")).toBeTrut;
-    expect(is1234Domain("0430")).toBeTrut;
+    expect(is1234Domain("1231")).toBeTruthy();
+    expect(is1234Domain("0231")).toBeTruthy();
+    expect(is1234Domain("1204")).toBeTruthy();
+    expect(is1234Domain("0430")).toBeTruthy();
   });
 
   it("Should return false cause there are invalid 1234 domains", () => {
@@ -165,20 +165,19 @@ describe("Should test isSubdomain", () => {
   });
 });
 
-describe("Should test hexToDecimal function", () => {
-  it("Should return the right decimal address", () => {
-    expect(
-      hexToDecimal(
-        "0x072D4F3FA4661228ed0c9872007fc7e12a581E000FAd7b8f3e3e5bF9E6133207"
-      )
-    ).toEqual(
-      "3246245011749133880110396867610358293809804380010255939993086782333605065223"
-    );
+describe("numberToString", () => {
+  it("Should returns an empty string if the element is undefined", () => {
+    const result = numberToString(undefined);
+    expect(result).toEqual("");
   });
 
-  it("Should return an error cause the string is not an hex number", () => {
-    expect(() => hexToDecimal("123321.ben.stark")).toThrow(
-      new Error("Invalid hex string")
-    );
+  it("Should converts a number to its decimal string representation", () => {
+    const result = numberToString(123);
+    expect(result).toEqual("123");
+  });
+
+  it("Should converts a negative number to its decimal string representation", () => {
+    const result = numberToString(-456);
+    expect(result).toEqual("-456");
   });
 });

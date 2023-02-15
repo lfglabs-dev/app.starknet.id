@@ -12,7 +12,7 @@ import ErrorScreen from "../components/UI/screens/errorScreen";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { Screen } from "./discord";
-import { stringToHex } from "../utils/felt";
+import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
 
 type SignRequestData = {

@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { useAccount } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { hexToDecimal } from "../../utils/stringService";
+import { hexToDecimal } from "../../utils/feltService";
 
 type SelectDomainProps = {
   tokenId: number;
