@@ -68,7 +68,7 @@ export function isStarkDomain(domain: string) {
 }
 
 export function numberToString(element: number | undefined): string {
-  if (!element) return "";
+  if (element === undefined) return "";
 
   return new BN(element).toString(10);
 }

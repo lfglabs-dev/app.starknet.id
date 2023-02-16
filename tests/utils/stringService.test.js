@@ -168,7 +168,10 @@ describe("Should test isSubdomain", () => {
 describe("numberToString", () => {
   it("Should returns an empty string if the element is undefined", () => {
     const result = numberToString(undefined);
+    const result2 = numberToString(0);
+
     expect(result).toEqual("");
+    expect(result2).toEqual("0");
   });
 
   it("Should converts a number to its decimal string representation", () => {
