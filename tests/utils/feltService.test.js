@@ -1,4 +1,8 @@
-import { hexToDecimal, toHex, stringToHex } from "../../utils/feltService";
+import {
+  hexToDecimal,
+  decimalToHex,
+  stringToHex,
+} from "../../utils/feltService";
 
 describe("Should test hexToDecimal function", () => {
   it("Should return the right decimal address", () => {
@@ -22,10 +26,10 @@ describe("Should test hexToDecimal function", () => {
   });
 });
 
-describe("Should test toHex function", () => {
+describe("Should test decimalToHex function", () => {
   it("Should return the right hex address", () => {
     expect(
-      toHex(
+      decimalToHex(
         "3246245011749133880110396867610358293809804380010255939993086782333605065223"
       )
     ).toEqual(
@@ -34,11 +38,15 @@ describe("Should test toHex function", () => {
   });
 
   it("Should return an empty string if the element is undefined", () => {
-    expect(toHex(undefined)).toEqual("");
+    expect(decimalToHex(undefined)).toEqual("");
   });
 
   it("Should convert a number to its hex representation", () => {
-    expect(toHex(123)).toEqual("0x7b");
+    expect(decimalToHex(123)).toEqual("0x7b");
+  });
+
+  it("Should convert 0 to 0x0", () => {
+    expect(decimalToHex(0)).toEqual("0x0");
   });
 });
 

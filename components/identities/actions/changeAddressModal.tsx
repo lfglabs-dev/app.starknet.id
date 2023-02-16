@@ -4,7 +4,7 @@ import React, { FunctionComponent, useState } from "react";
 import { isHexString } from "../../../utils/stringService";
 import styles from "../../../styles/components/wallets.module.css";
 import Button from "../../UI/button";
-import { hexToDecimal, toHex } from "../../../utils/feltService";
+import { hexToDecimal, decimalToHex } from "../../../utils/feltService";
 
 type ChangeAddressModalProps = {
   handleClose: () => void;
@@ -69,7 +69,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
           {currentTargetAddress && (
             <p className="break-all">
               <strong>Current Address :</strong>&nbsp;
-              <span>{toHex(currentTargetAddress)}</span>
+              <span>{decimalToHex(currentTargetAddress)}</span>
             </p>
           )}
           <div className="mt-5">
