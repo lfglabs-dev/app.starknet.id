@@ -42,7 +42,7 @@ describe("Should test toHex function", () => {
   });
 });
 
-describe("stringToHex", () => {
+describe("Should test the stringToHex function", () => {
   it("Should return an empty string if the element is undefined", () => {
     expect(stringToHex(undefined)).toEqual("");
   });
