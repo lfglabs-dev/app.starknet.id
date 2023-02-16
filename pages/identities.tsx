@@ -13,7 +13,7 @@ import { useRouter } from "next/router";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
-import { hexToDecimal } from "../utils/stringService";
+import { hexToDecimal } from "../utils/feltService";
 
 const Identities: NextPage = () => {
   const { address } = useAccount();

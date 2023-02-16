@@ -3,7 +3,7 @@ import { useStarknetCall } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useStarknetIdContract } from "../../../../hooks/contracts";
-import { stringToHex } from "../../../../utils/felt";
+import { stringToHex } from "../../../../utils/feltService";
 import DiscordIcon from "../../../UI/iconsComponents/icons/discordIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
