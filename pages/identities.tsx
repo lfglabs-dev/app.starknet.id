@@ -14,7 +14,7 @@ import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { hexToDecimal } from "../utils/feltService";
-import IdentitiesSkeleton from "../components/UI/IdentitiesSkeleton";
+import IdentitiesSkeleton from "../components/UI/identitiesSkeleton";
 
 const Identities: NextPage = () => {
   const { address } = useAccount();
@@ -82,7 +82,7 @@ const Identities: NextPage = () => {
             <>
               <h1 className="title">Your Starknet identities</h1>
               <div className={styles.containerGallery}>
-                {loading ? <IdentitiesSkeleton /> : <IdentitiesGallery identities={ownedIdentities} />}
+                {!loading ? <IdentitiesSkeleton /> : <IdentitiesGallery identities={ownedIdentities} />}
                 <MintIdentity onClick={() => mint()} />
               </div>
             </>

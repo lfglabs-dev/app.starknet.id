@@ -9,7 +9,6 @@ const identitiesSkeleton: FunctionComponent = () => {
             <Skeleton variant="circular" width={150} height={150} />
             <Skeleton variant="circular" width={150} height={150} />
             <Skeleton variant="circular" width={150} height={150} />
-            <Skeleton variant="circular" width={150} height={150} />
         </div>
       )
 };
