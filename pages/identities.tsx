@@ -82,7 +82,7 @@ const Identities: NextPage = () => {
             <>
               <h1 className="title">Your Starknet identities</h1>
               <div className={styles.containerGallery}>
-                {!loading ? <IdentitiesSkeleton /> : <IdentitiesGallery identities={ownedIdentities} />}
+                {loading ? <IdentitiesSkeleton /> : <IdentitiesGallery identities={ownedIdentities} />}
                 <MintIdentity onClick={() => mint()} />
               </div>
             </>
