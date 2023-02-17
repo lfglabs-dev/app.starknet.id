@@ -14,3 +14,26 @@
   text-align: center;
   max-width: 100%;
 }
+
+.identitiesSkeleton {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.identitiesActionsSkeletonContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.identitiesActionsSkeletonButtons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  gap: 4px;
+}

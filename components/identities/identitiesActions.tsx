@@ -14,6 +14,7 @@ import RenewalModal from "./actions/renewalModal";
 import SocialMediaActions from "./actions/socialmediaActions";
 import { Identity } from "../../types/backTypes";
 import { hexToDecimal } from "../../utils/feltService";
+import IdentitiesActionsSkeleton from "../UI/identitiesActionsSkeleton";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -37,6 +38,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   );
   const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false)
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -80,16 +82,20 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     }
 
     if (address && tokenId) {
+    setLoading(true)
       // Our Indexer
       fetch(`/api/indexer/addr_to_full_ids?addr=${hexToDecimal(address)}`)
         .then((response) => response.json())
         .then((data) => {
           setIsOwner(checkIfOwner(data.full_ids));
+          setLoading(false)
         });
-    }
+      }
   }, [address, tokenId]);
 
   return (
+    <>
+    {loading ? <IdentitiesActionsSkeleton/> :
     <>
       <>
         <SocialMediaActions
@@ -224,6 +230,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         domain={identity?.domain}
       />
     </>
+    }
+</>
   );
 };
 
