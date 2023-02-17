@@ -95,7 +95,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   return (
     <>
-    {!loading ? <IdentitiesActionsSkeleton/> :
+    {loading ? <IdentitiesActionsSkeleton/> :
     <>
       <>
         <SocialMediaActions
