@@ -11,7 +11,7 @@ import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
-import { stringToHex } from "../utils/felt";
+import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
 
 export type Screen =

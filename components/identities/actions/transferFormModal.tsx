@@ -1,9 +1,10 @@
-import { Modal } from "@mui/material";
-import { useStarknetExecute } from "@starknet-react/core";
+import { Modal, TextField } from "@mui/material";
+import { useAccount, useStarknetExecute } from "@starknet-react/core";
+import { isHexString } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
 import styles from "../../../styles/components/wallets.module.css";
-import SelectDomain from "../../domains/selectDomains";
+import { hexToDecimal } from "../../../utils/feltService"; 
 import Button from "../../UI/button";
 
 type TransferFormModalProps = {
@@ -19,22 +20,35 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   callDataEncodedDomain,
   domain,
 }) => {
-  const [targetTokenId, setTargetTokenId] = useState<number>(0);
+  const [targetAddress, setTargetAddress] = useState<string>("");
   const router = useRouter();
+  const { address } = useAccount();
+  const { tokenId } = router.query
+  const numId = parseInt(tokenId as string)
 
-  //transfer_domain
-  const transfer_domain_calls = {
+  //set_domain_to_address execute
+  const transfer_identity_and_set_domain_multicall = [
+  {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "transfer_domain",
-    calldata: [...callDataEncodedDomain, targetTokenId],
-  };
+    entrypoint: "set_domain_to_address",
+    calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress ?? "")],
+  },
+  {
+    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+    entrypoint: "transferFrom",
+    calldata: [hexToDecimal(address ?? ""), hexToDecimal(targetAddress ?? ""), numId, 0]
+  }];
 
-  const { execute: transfer_domain } = useStarknetExecute({
-    calls: transfer_domain_calls,
+  const { execute: transfer_identity_and_set_domain } = useStarknetExecute({
+    calls: transfer_identity_and_set_domain_multicall,
   });
 
-  function changeTokenId(value: number): void {
-    setTargetTokenId(value);
+  function transferIdentityAndSetDomain(): void {
+    transfer_identity_and_set_domain();
+  }
+
+  function changeAddress(value: string): void {
+    isHexString(value) ? setTargetAddress(value) : null;
   }
 
   return (
@@ -57,21 +71,31 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
           </svg>
         </button>
         <h2 className={styles.menu_title}>
-          Move {domain} to a different identity
+          Move {domain} to a different address
         </h2>
+        {address && (
+          <p className="break-all mt-5">
+              <strong>Current Address :</strong>&nbsp;
+              <span>{address}</span>
+            </p>
+        )}
         <div className="mt-5 flex flex-col justify-center">
-          <p className="break-all">
-            <strong>Current Owner Identity number : </strong>
-            {router.asPath.replace("/identities/", "")}
-          </p>
-          <SelectDomain
-            defaultText="Choose a new starknet.id"
-            tokenId={targetTokenId}
-            changeTokenId={changeTokenId}
-          />
+          <div className="mt-5">
+            <TextField
+              helperText="You need to copy paste a wallet address or it won't work"
+              fullWidth
+              label="new target address"
+              id="outlined-basic"
+              value={targetAddress ?? address}
+              variant="outlined"
+              onChange={(e) => changeAddress(e.target.value)}
+              color="secondary"
+              required
+            />
+          </div>
           <div className="mt-5 flex justify-center">
-            <Button disabled={!targetTokenId} onClick={() => transfer_domain()}>
-              Change owner
+            <Button disabled={!targetAddress} onClick={() => transferIdentityAndSetDomain()}>
+              Send domain
             </Button>
           </div>
         </div>

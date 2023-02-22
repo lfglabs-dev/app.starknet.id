@@ -3,7 +3,7 @@ import { useStarknetCall } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useStarknetIdContract } from "../../../../hooks/contracts";
-import { stringToHex } from "../../../../utils/felt";
+import { stringToHex } from "../../../../utils/feltService";
 import GithubIcon from "../../../UI/iconsComponents/icons/githubIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
@@ -44,7 +44,6 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
 
   useEffect(() => {
     if (githubId) {
-      console.log("githubId", githubId);
       fetch(`https://api.github.com/user/${githubId}`)
         .then((response) => response.json())
         // TO DO : Find how to import the github response type

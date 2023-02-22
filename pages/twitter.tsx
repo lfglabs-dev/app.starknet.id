@@ -12,9 +12,8 @@ import ErrorScreen from "../components/UI/screens/errorScreen";
 import LoadingScreen from "../components/UI/screens/loadingScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { Screen } from "./discord";
-import { stringToHex } from "../utils/felt";
-import { toFelt } from "starknet/utils/number";
 import { NextPage } from "next";
+import { stringToHex } from "../utils/feltService";
 
 type SignRequestData = {
   status: Status;
@@ -53,7 +52,7 @@ const Twitter: NextPage = () => {
         tokenId,
         (signRequestData as SignRequestData).timestamp.toString(),
         stringToHex("twitter"),
-        toFelt((signRequestData as SignRequestData).user_id),
+        (signRequestData as SignRequestData).user_id.toString(),
         (signRequestData as SignRequestData).sign0,
         (signRequestData as SignRequestData).sign1,
       ],

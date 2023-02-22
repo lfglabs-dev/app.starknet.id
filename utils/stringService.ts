@@ -1,18 +1,12 @@
-import BN from "bn.js";
+import { BN } from "bn.js";
 
-export function minifyAddress(address: string): string {
+export function minifyAddress(address: string | undefined): string {
+  if (!address) return "";
+
   const firstPart = address.substring(0, 4);
   const secondPart = address.substring(address.length - 3, address.length);
 
   return (firstPart + "..." + secondPart).toLowerCase();
-}
-
-export function hexToDecimal(hex: string): string {
-  if (!isHexString(hex)) {
-    throw new Error("Invalid hex string");
-  }
-
-  return new BN(hex.slice(2), 16).toString(10);
 }
 
 export function minifyDomain(
@@ -31,7 +25,9 @@ export function is1234Domain(domain: string): boolean {
   return /^\d{4}$/.test(domain) && parseInt(domain) < 1234;
 }
 
-export function getDomainWithoutStark(str: string): string {
+export function getDomainWithoutStark(str: string | undefined): string {
+  if (!str) return "";
+
   if (str.endsWith(".stark")) {
     return str.slice(0, str.length - 6);
   } else {
@@ -54,7 +50,9 @@ export function generateString(length: number, characters: string): string {
   return result;
 }
 
-export function isSubdomain(domain: string): boolean {
+export function isSubdomain(domain: string | undefined): boolean {
+  if (!domain) return false;
+
   return Boolean((domain.match(/\./g) || []).length > 1);
 }
 
@@ -67,4 +65,10 @@ export function isStarkDomain(domain: string) {
   return /^(?:[a-z0-9-]{1,48}(?:[a-z0-9-]{1,48}[a-z0-9-])?\.)*[a-z0-9-]{1,48}\.stark$/.test(
     domain
   );
+}
+
+export function numberToString(element: number | undefined): string {
+  if (element === undefined) return "";
+
+  return new BN(element).toString(10);
 }

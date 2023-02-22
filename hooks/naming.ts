@@ -1,9 +1,6 @@
 import BN from "bn.js";
-import { BigNumberish } from "starknet/utils/number";
 import { useStarknetCall } from "@starknet-react/core";
 import { useNamingContract } from "./contracts";
-import { useState, useEffect } from "react";
-import { hexToDecimal } from "../utils/stringService";
 
 export const basicAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-";
 export const bigAlphabet = "这来";
@@ -121,12 +118,7 @@ export function useDecodedSeveral(domains: BN[][]): string[] {
   return encodedArray;
 }
 
-type DomainData = {
-  domain?: string;
-  error?: string;
-};
-
-export function useDomainFromAddress(address: BigNumberish): DomainData {
+export function useDomainFromAddress(address: string | BN | undefined): string {
   const { contract } = useNamingContract();
   const { data, error } = useStarknetCall({
     contract,
@@ -134,43 +126,17 @@ export function useDomainFromAddress(address: BigNumberish): DomainData {
     args: [address],
   });
 
-  if (!data || data?.["domain_len"] === 0) {
-    return { domain: "", error: error ? error : "error" };
+  if (!data || (data as BN[][])["domain_len"] === 0 || error) {
+    return error ? error : "";
   } else {
-    const domain = useDecoded(data[0] as any);
-    return { domain: domain as any, error };
+    const domain = useDecoded(data[0]);
+
+    return domain;
   }
 }
 
-type AddrToDomain = {
-  domain: string;
-  domain_expiry: number;
-};
-
-export function useUpdatedDomainFromAddress(
-  address: string | undefined
-): string {
-  const [domain, setDomain] = useState("");
-  const [decimalAddr, setDecimalAddr] = useState("0");
-
-  useEffect(() => {
-    if (!address) return;
-    setDecimalAddr(hexToDecimal(address ?? ""));
-    updateDomain(decimalAddr);
-  }, [decimalAddr, address]);
-
-  const updateDomain = (decimalAddr: string) =>
-    fetch(`/api/indexer/addr_to_domain?addr=${decimalAddr}`)
-      .then((response) => response.json())
-      .then((data: AddrToDomain) => {
-        setDomain(data.domain);
-      });
-
-  return domain;
-}
-
 type AddressData = {
-  address?: any;
+  address?: BN[][];
   error?: string;
 };
 
@@ -189,15 +155,15 @@ export function useAddressFromDomain(domain: string): AddressData {
   return { address: data as any, error };
 }
 
-export function useIsValid(domain: string): boolean | string {
-  for (const char of domain)
-    if (!basicAlphabet.includes(char) && !bigAlphabet.includes(char))
-      return char;
+export function useIsValid(domain: string | undefined): boolean | string {
+  if (!domain) domain = "";
+
+  for (const char of domain) if (!basicAlphabet.includes(char)) return char;
   return true;
 }
 
 type TokenIdData = {
-  tokenId?: any;
+  tokenId?: BN[][];
   error?: string;
 };
 
@@ -213,11 +179,11 @@ export function useTokenIdFromDomain(domain: string): TokenIdData {
     args: [encoded],
   });
 
-  return { tokenId: data as any, error };
+  return { tokenId: data, error };
 }
 
 type ExpiryData = {
-  expiry?: any;
+  expiry?: BN[][];
   error?: string;
 };
 

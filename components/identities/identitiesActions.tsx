@@ -5,15 +5,16 @@ import { FunctionComponent, useEffect, useState } from "react";
 import ClickableIcon from "../UI/iconsComponents/clickableIcon";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import { useEncodedSeveral } from "../../hooks/naming";
-import { BN } from "bn.js";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import ChangeAddressModal from "./actions/changeAddressModal";
-import { getDomainWithoutStark, hexToDecimal } from "../../utils/stringService";
+import { getDomainWithoutStark } from "../../utils/stringService";
 import TransferFormModal from "./actions/transferFormModal";
 import SubdomainModal from "./actions/subdomainModal";
 import RenewalModal from "./actions/renewalModal";
 import SocialMediaActions from "./actions/socialmediaActions";
 import { Identity } from "../../types/backTypes";
+import { hexToDecimal } from "../../utils/feltService";
+import IdentitiesActionsSkeleton from "../UI/identitiesActionsSkeleton";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -35,8 +36,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const encodedDomains = useEncodedSeveral(
     getDomainWithoutStark(identity ? identity.domain : "").split(".") ?? []
   );
-  const isAccountTargetAddress = identity?.addr === hexToDecimal(address ?? "");
+  const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false)
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -53,7 +55,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const set_domain_to_address_calls = {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_domain_to_address",
-    calldata: [...callDataEncodedDomain, hexToDecimal(address ?? "")],
+    calldata: [...callDataEncodedDomain, hexToDecimal(address)],
   };
   const { execute: set_address_to_domain } = useStarknetExecute({
     calls: isAccountTargetAddress
@@ -80,16 +82,20 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     }
 
     if (address && tokenId) {
+    setLoading(true)
       // Our Indexer
       fetch(`/api/indexer/addr_to_full_ids?addr=${hexToDecimal(address)}`)
         .then((response) => response.json())
         .then((data) => {
           setIsOwner(checkIfOwner(data.full_ids));
+          setLoading(false)
         });
-    }
+      }
   }, [address, tokenId]);
 
   return (
+    <>
+    {loading ? <IdentitiesActionsSkeleton/> :
     <>
       <>
         <SocialMediaActions
@@ -224,6 +230,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         domain={identity?.domain}
       />
     </>
+    }
+</>
   );
 };
 
