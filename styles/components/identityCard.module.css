@@ -1,0 +1,30 @@
+.domain {
+  height: 32px;
+  font-family: 'Quick Zap';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 32px;
+  color: #402D28;
+  flex: none;
+  order: 0;
+  flex-grow: 0;
+}
+
+.container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 28.0284px 0px;
+  isolation: isolate;
+  width: 100%;
+  align-self: center;
+
+  background: radial-gradient(55.2% 127.01% at 50% 50%, #EAE0D5 0%, #FFF9F0 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
+
+  border: 2px solid #BF9E7B;
+  box-shadow: 0px 2.62766px 35.0355px rgba(64, 45, 40, 0.15);
+  border-radius: 13.1383px;
+}

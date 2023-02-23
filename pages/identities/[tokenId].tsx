@@ -8,6 +8,8 @@ import { ThreeDots } from "react-loader-spinner";
 import IdentityActions from "../../components/identities/identitiesActions";
 import { Identity } from "../../types/backTypes";
 import IdentityWarnings from "../../components/identities/identityWarnings";
+import IdentityCard from "../../components/identities/identityCard";
+import IdentityMenu from "../../components/identities/identityMenu";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -58,32 +60,25 @@ const TokenIdPage: NextPage = () => {
           </div>
         ) : (
           <>
-            <h1 className="sm:text-5xl text-4xl my-5 break-all mx-3">
-              {isIdentityADomain
-                ? identity?.domain
-                : `Starknet ID : ${tokenId}`}
-            </h1>
-            <div>
-              <img
-                src={`https://www.starknet.id/api/identicons/${tokenId}`}
-                height={200}
-                width={200}
-                alt="identicon"
-              />
+            <div className="flex flex-col items-center lg:flex-row w-full p-4 justify-around">
+              <div className="w-11/12 lg:w-7/12">
+                <IdentityCard identity={identity} tokenId={tokenId} domain={
+                  isIdentityADomain
+                    ? identity?.domain
+                    : `Starknet ID : ${tokenId}`
+                } />
+              </div>
+              <div className="w-full lg:w-3/12">
+                <IdentityMenu tokenId={tokenId} isIdentityADomain={isIdentityADomain} identity={identity} />
+              </div>
             </div>
-
-            <IdentityActions
-              identity={identity}
-              tokenId={tokenId}
-              isIdentityADomain={isIdentityADomain}
-            />
-
             <IdentityWarnings identity={identity} />
-            <div className="mt-5">
+            {/*<div className="mt-5">
               <Button onClick={() => router.push("/identities")}>
                 Back to your identities
               </Button>
-            </div>
+            </div>*/}
+
           </>
         )}
       </div>
