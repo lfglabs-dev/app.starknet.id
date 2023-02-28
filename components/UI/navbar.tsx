@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useState, FunctionComponent, useEffect } from "react";
+import React, { useState, useEffect, FunctionComponent } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
@@ -8,7 +8,6 @@ import { useConnectors, useAccount, useStarknet } from "@starknet-react/core";
 import Wallets from "./wallets";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SelectNetwork from "./selectNetwork";
-import { minifyAddress, minifyDomain } from "../../utils/stringService";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 
@@ -21,7 +20,7 @@ const Navbar: FunctionComponent = () => {
 
   const { available, connect, disconnect } = useConnectors();
   const { library } = useStarknet();
-  const domain = useDisplayName(address);
+  const domainOrAddress = useDisplayName(address ?? "");
   const green = "#19AA6E";
   const brown = "#402d28";
   const network =
@@ -74,11 +73,7 @@ const Navbar: FunctionComponent = () => {
   }
 
   function topButtonText(): string | undefined {
-    const textToReturn = isConnected
-      ? domain
-        ? minifyDomain(domain)
-        : minifyAddress(address)
-      : "connect";
+    const textToReturn = isConnected ? domainOrAddress : "connect";
 
     return textToReturn;
   }
@@ -124,9 +119,7 @@ const Navbar: FunctionComponent = () => {
                 >
                   {isConnected ? (
                     <div className="flex justify-center items-center">
-                      <div>
-                        {domain ? minifyDomain(domain) : minifyAddress(address)}
-                      </div>
+                      <div>{domainOrAddress}</div>
                       <LogoutIcon className="ml-3" />
                     </div>
                   ) : (
