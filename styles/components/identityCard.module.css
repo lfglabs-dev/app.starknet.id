@@ -12,19 +12,64 @@
 }
 
 .container {
+  position: relative;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 28.0284px 0px;
-  isolation: isolate;
+  gap: 20px;
   width: 100%;
-  align-self: center;
+  height: 70%;
 
   background: radial-gradient(55.2% 127.01% at 50% 50%, #EAE0D5 0%, #FFF9F0 100%) /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */;
 
   border: 2px solid #BF9E7B;
   box-shadow: 0px 2.62766px 35.0355px rgba(64, 45, 40, 0.15);
   border-radius: 13.1383px;
+}
+
+.lg1 {
+/* Group 7 */
+
+
+position: absolute;
+width: 308.16px;
+height: 378.56px;
+left: 605px;
+top: 246.97px;
+
+
+/* Inside auto layout */
+
+flex: none;
+order: 3;
+flex-grow: 0;
+z-index: 1;
+}
+
+
+.lg2 {
+position: absolute;
+width: 397.34px;
+height: 446.38px;
+left: -150.89px;
+top: 252.49px;
+
+/* Inside auto layout */
+
+flex: none;
+order: 4;
+flex-grow: 0;
+z-index: 1;
+}
+
+
+
+
+@media screen and (max-width: 1024px) {
+  .container {
+    height: 100%;
+    margin-bottom: 30px;
+  }
 }

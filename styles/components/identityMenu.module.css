@@ -1,5 +1,4 @@
 .actionsContainer {
-  padding-top: 40px;
   width: 100%;
 }
 
@@ -35,6 +34,8 @@
   order: 0;
   align-self: stretch;
   flex-grow: 0;
+
+  cursor: pointer;
 }
 
 .clickableActionText {
