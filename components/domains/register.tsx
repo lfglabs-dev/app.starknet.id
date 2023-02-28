@@ -46,7 +46,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const { execute } = useStarknetExecute({
     calls: callData as any,
   });
-  const hasMainDomain = !useDisplayName(address).startsWith("0x");
+  const hasMainDomain = !useDisplayName(address ?? "").startsWith("0x");
 
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
