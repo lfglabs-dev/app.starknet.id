@@ -4,18 +4,14 @@ import styles from "../../styles/components/identitiesV1.module.css";
 
 
 const identitiesActionsSkeleton: FunctionComponent = () => {
-  return (
-        <div className={styles.identitiesActionsSkeletonContainer}>
-            <Skeleton variant="text" width={110} height={60} /> 
-            <div className={styles.identitiesActionsSkeletonButtons}>
-                <Skeleton variant="circular" width={60} height={60} />
-                <Skeleton variant="circular" width={60} height={60} />
-                <Skeleton variant="circular" width={60} height={60} />
-                <Skeleton variant="circular" width={60} height={60} />
-                <Skeleton variant="circular" width={60} height={60} />
-            </div>
+    return (
+        <div className={styles.identitiesActionsSkeletonButtons}>
+            <Skeleton variant="rounded" width={300} height={50} />
+            <Skeleton variant="rounded" width={300} height={50} />
+            <Skeleton variant="rounded" width={300} height={50} />
+            <Skeleton variant="rounded" width={300} height={50} />
         </div>
-      )
+    )
 };
 
 export default identitiesActionsSkeleton;

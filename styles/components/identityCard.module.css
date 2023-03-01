@@ -14,11 +14,13 @@
 .container {
   position: relative;
   box-sizing: border-box;
+  overflow-wrap: break-word;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 20px;
+  overflow: hidden;
   width: 100%;
   height: 70%;
 
@@ -30,46 +32,37 @@
 }
 
 .lg1 {
-/* Group 7 */
-
-
-position: absolute;
-width: 308.16px;
-height: 378.56px;
-left: 605px;
-top: 246.97px;
-
-
-/* Inside auto layout */
-
-flex: none;
-order: 3;
-flex-grow: 0;
-z-index: 1;
+    position: absolute;
+    width: (308.16 / 3)px;
+    height: (378.56 / 3)px;
+    right: -25px;
+    bottom: -140px;
 }
 
 
 .lg2 {
-position: absolute;
-width: 397.34px;
-height: 446.38px;
-left: -150.89px;
-top: 252.49px;
-
-/* Inside auto layout */
-
-flex: none;
-order: 4;
-flex-grow: 0;
-z-index: 1;
+    position: absolute;
+    width: (397.34 / 3)px;
+    height: (446.38 / 3)px;
+    left: -100px;
+    bottom: -160px;
 }
 
 
-
-
-@media screen and (max-width: 1024px) {
-  .container {
-    height: 100%;
-    margin-bottom: 30px;
-  }
+@media (max-width: 1024px) {
+    
+    .container {
+        height: 100%;
+    }
+    .lg1 {
+        height: 200px;
+        right: -60px;
+        bottom: -40px;
+    }
+    .lg2 {
+        width: 200px;
+        height: 250px;
+        left: -100px;
+        bottom: -70px;
+    }
 }

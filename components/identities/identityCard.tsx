@@ -1,6 +1,8 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/identityCard.module.css"
 import { Identity } from "../../types/backTypes";
+import { responsiveDomain } from "../../utils/stringService";
+import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import SocialMediaActions from "./actions/socialmediaActions";
 
 interface identityCardProps {
@@ -10,9 +12,21 @@ interface identityCardProps {
 }
 
 const IdentityCard: FunctionComponent<identityCardProps> = ({ tokenId, domain, identity }) => {
+
+    const responsivedDomain = responsiveDomain(domain as string)
+
     return (
         <div className={styles.container}>
-            <h1 className={styles.domain}>{domain}</h1>
+            <div className="m-2 flex flex-row items-center justify-between gap-5 my-2 flex-wrap">
+                <h1 className={styles.domain}>{responsivedDomain}</h1>
+                {identity && identity.is_owner_main &&
+                    <MainIcon
+                        width="40"
+                        firstColor="#19aa6e"
+                        secondColor="#19aa6e"
+                    />
+                }
+            </div>
             <div className="my-2">
                 <img
                     src={`https://www.starknet.id/api/identicons/${tokenId}`}
@@ -26,12 +40,8 @@ const IdentityCard: FunctionComponent<identityCardProps> = ({ tokenId, domain, i
                 isOwner={true}
                 tokenId={tokenId}
             />
-            <div className={styles.lg1}>
-                <img alt="leaf" src="/leaves/identityCardLeaves/PNG/lg1.png" />
-            </div>
-            <div className={styles.lg2}>
-                <img alt="leaf" src="/leaves/identityCardLeaves/PNG/lg2.png" />
-            </div>
+            <img alt="leaf" src="/leaves/identityCardLeaves/PNG/lg1.png" className={styles.lg1} />
+            <img alt="leaf" src="/leaves/identityCardLeaves/PNG/lg2.png" className={styles.lg2} />
         </div >
     )
 }
