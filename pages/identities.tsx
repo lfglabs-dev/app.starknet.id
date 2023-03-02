@@ -18,7 +18,7 @@ import IdentitiesSkeleton from "../components/UI/identitiesSkeleton";
 
 const Identities: NextPage = () => {
   const { address } = useAccount();
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
   const [rightTokenId, setRightTokenId] = useState<number | undefined>(
     undefined
@@ -48,12 +48,12 @@ const Identities: NextPage = () => {
   useEffect(() => {
     if (address) {
       // Our Indexer
-      setLoading(true)
+      setLoading(true);
       fetch(`/api/indexer/addr_to_full_ids?addr=${hexToDecimal(address)}`)
         .then((response) => response.json())
         .then((data) => {
           setOwnedIdentities(data.full_ids);
-          setLoading(false)
+          setLoading(false);
         });
 
       // // Aspect Indexer
@@ -82,7 +82,11 @@ const Identities: NextPage = () => {
             <>
               <h1 className="title">Your Starknet identities</h1>
               <div className={styles.containerGallery}>
-                {loading ? <IdentitiesSkeleton /> : <IdentitiesGallery identities={ownedIdentities} />}
+                {loading ? (
+                  <IdentitiesSkeleton />
+                ) : (
+                  <IdentitiesGallery identities={ownedIdentities} />
+                )}
                 <MintIdentity onClick={() => mint()} />
               </div>
             </>

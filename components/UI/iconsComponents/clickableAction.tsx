@@ -9,33 +9,30 @@ import AspectIcon from "./icons/aspectIcon";
 import MainIcon from "./icons/mainIcon";
 
 type ClickacbleActionProps = {
-    icon: string;
-    onClick?: () => void;
-    title?: string;
+  icon: string;
+  onClick?: () => void;
+  title?: string;
 };
 
 const ClickacbleAction: FunctionComponent<ClickacbleActionProps> = ({
-    icon,
-    onClick,
-    title,
+  icon,
+  onClick,
+  title,
 }) => {
-    return (
-        <div className={styles.clickableAction} onClick={onClick}>
-            {icon === "change" && <ChangeIcon width="40" color="#402D28" />}
-            {icon === "mintsquare" && (
-                <MintsquareIcon width="40" color="#402D28" />
-            )}
-            {icon === "main" && (
-                <MainIcon width="40" firstColor="#402d28" secondColor="#402d28" />
-            )}
-            {icon === "aspect" && <AspectIcon width="40" color="#402D28" />}
-            {icon === "transfer" && <TransferIcon width="40" color="#402D28" />}
-            {icon === "plus" && <PlusIcon width="40" color="#402D28" />}
-            {icon === "address" && <AddressIcon width="40" color="#402D28" />}
-            <h1 className={styles.clickableActionText}>{title}</h1>
-        </div>
-    )
-
+  return (
+    <div className={styles.clickableAction} onClick={onClick}>
+      {icon === "change" && <ChangeIcon width="40" color="#402D28" />}
+      {icon === "mintsquare" && <MintsquareIcon width="40" color="#402D28" />}
+      {icon === "main" && (
+        <MainIcon width="40" firstColor="#402d28" secondColor="#402d28" />
+      )}
+      {icon === "aspect" && <AspectIcon width="40" color="#402D28" />}
+      {icon === "transfer" && <TransferIcon width="40" color="#402D28" />}
+      {icon === "plus" && <PlusIcon width="40" color="#402D28" />}
+      {icon === "address" && <AddressIcon width="40" color="#402D28" />}
+      <h1 className={styles.clickableActionText}>{title}</h1>
+    </div>
+  );
 };
 
 export default ClickacbleAction;

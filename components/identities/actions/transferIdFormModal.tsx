@@ -81,4 +81,3 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
 };
 
 export default TransferFormModal;
-

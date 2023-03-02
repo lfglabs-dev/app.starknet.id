@@ -21,7 +21,8 @@ export default async function handler(
   } = req;
   const { db } = await connectToDatabase();
 
-  await db.collection("starknet_ids_data")
+  await db
+    .collection("starknet_ids_data")
     .findOne({ verifier, field, data, "_chain.valid_to": null })
     .then((doc) => {
       if (doc) {
@@ -36,5 +37,4 @@ export default async function handler(
           .json({ error: "no tokenid associated to this data was found" });
       }
     });
-
 }
