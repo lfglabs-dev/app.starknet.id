@@ -1,5 +1,5 @@
 .secondTitle {
-  font-family: "Montserrat-ExtraBold";
+  font-family: "QuickZap";
   font-size: 2rem;
   margin-top: 2rem;
   color: var(--soft-brown);
@@ -8,7 +8,7 @@
 }
 
 .title {
-  font-family: "Montserrat-ExtraBold";
+  font-family: "QuickZap";
   font-size: 4rem;
   color: var(--green);
   text-shadow: 2px 2px var(--soft-brown);

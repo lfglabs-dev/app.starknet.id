@@ -53,6 +53,9 @@
 }
 
 @media (max-width: 1024px) {
+  .domain {
+        font-size: 20px;
+    }
   .container {
     height: 100%;
   }
