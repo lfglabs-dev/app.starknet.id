@@ -4,7 +4,7 @@ import { isHexString } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
 import styles from "../../../styles/components/wallets.module.css";
-import { hexToDecimal } from "../../../utils/feltService"; 
+import { hexToDecimal } from "../../../utils/feltService";
 import Button from "../../UI/button";
 
 type TransferFormModalProps = {
@@ -23,21 +23,27 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   const [targetAddress, setTargetAddress] = useState<string>("");
   const router = useRouter();
   const { address } = useAccount();
-  const { tokenId } = router.query
-  const numId = parseInt(tokenId as string)
+  const { tokenId } = router.query;
+  const numId = parseInt(tokenId as string);
 
   //set_domain_to_address execute
   const transfer_identity_and_set_domain_multicall = [
-  {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "set_domain_to_address",
-    calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress ?? "")],
-  },
-  {
-    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-    entrypoint: "transferFrom",
-    calldata: [hexToDecimal(address ?? ""), hexToDecimal(targetAddress ?? ""), numId, 0]
-  }];
+    {
+      contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+      entrypoint: "set_domain_to_address",
+      calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress ?? "")],
+    },
+    {
+      contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+      entrypoint: "transferFrom",
+      calldata: [
+        hexToDecimal(address ?? ""),
+        hexToDecimal(targetAddress ?? ""),
+        numId,
+        0,
+      ],
+    },
+  ];
 
   const { execute: transfer_identity_and_set_domain } = useStarknetExecute({
     calls: transfer_identity_and_set_domain_multicall,
@@ -75,9 +81,9 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
         </h2>
         {address && (
           <p className="break-all mt-5">
-              <strong>Current Address :</strong>&nbsp;
-              <span>{address}</span>
-            </p>
+            <strong>Current Address :</strong>&nbsp;
+            <span>{address}</span>
+          </p>
         )}
         <div className="mt-5 flex flex-col justify-center">
           <div className="mt-5">
@@ -94,7 +100,10 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
             />
           </div>
           <div className="mt-5 flex justify-center">
-            <Button disabled={!targetAddress} onClick={() => transferIdentityAndSetDomain()}>
+            <Button
+              disabled={!targetAddress}
+              onClick={() => transferIdentityAndSetDomain()}
+            >
               Send domain
             </Button>
           </div>

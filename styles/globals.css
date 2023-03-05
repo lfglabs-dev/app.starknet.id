@@ -4,12 +4,16 @@
 
 @layer base {
   @font-face {
-    font-family: "Montserrat-ExtraBold";
-    src: url(../public/fonts/montserrat/Montserrat-ExtraBold.ttf);
+    font-family: "QuickZap";
+    src: url(../public/fonts/quickzap.ttf);
   }
   @font-face {
-    font-family: "Montserrat-Regular";
-    src: url(../public/fonts/montserrat/Montserrat-Regular.ttf);
+    font-family: "Poppins-Regular";
+    src: url(../public/fonts/poppins/Poppins-Regular.ttf);
+  }
+  @font-face {
+    font-family: "Poppins-Bold";
+    src: url(../public/fonts/poppins/Poppins-Bold.ttf);
   }
 }
 
@@ -25,8 +29,7 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "Poppins-Regular";
   background-color: var(--beige);
 }
 
@@ -36,13 +39,14 @@ a {
 }
 
 .title {
-  font-family: "Montserrat-ExtraBold";
+  font-family: "QuickZap";
   font-size: 2.5rem;
   color: var(--green);
   text-shadow: 1px 1px var(--soft-brown);
   text-transform: uppercase;
   text-align: center;
 }
+
 
 /* Scroll bar */
 
