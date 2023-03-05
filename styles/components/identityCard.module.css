@@ -36,11 +36,15 @@
   border-radius: 13.1383px;
 }
 
+.container:hover {
+  border-color: var(--green);
+}
+
 .lg1 {
   position: absolute;
   width: (308.16 / 3) px;
   height: (378.56 / 3) px;
-  right: -25px;
+  right: -50px;
   bottom: -140px;
 }
 
@@ -48,14 +52,14 @@
   position: absolute;
   width: (397.34 / 3) px;
   height: (446.38 / 3) px;
-  left: -100px;
+  left: -120px;
   bottom: -160px;
 }
 
 @media (max-width: 1024px) {
   .domain {
-        font-size: 20px;
-    }
+    font-size: 20px;
+  }
   .container {
     height: 100%;
   }
