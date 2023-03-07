@@ -1,5 +1,4 @@
 /* eslint-disable no-undef */
-import BN, { BN } from "bn.js";
 import {
   totalAlphabet,
   useDecoded,
@@ -23,7 +22,7 @@ describe("Should test encoding/decoding hooks 2500 times", () => {
       const randomString = generateString(10, totalAlphabet);
       const randomString1 = generateString(10, totalAlphabet);
       const encoded = useEncodedSeveral([randomString, randomString1]).map(
-        (element) => new BN(element)
+        (element) => BigInt(element)
       );
 
       expect(useDecoded(encoded)).toBe(
@@ -36,7 +35,7 @@ describe("Should test encoding/decoding hooks 2500 times", () => {
 describe("Should test decoding/encoding hooks", () => {
   it("Should test useDecoded and useEncoded hook with a number", () => {
     for (let index = 0; index < 2500; index++) {
-      const decoded = useDecoded([new BN(index)]);
+      const decoded = useDecoded([BigInt(index)]);
       expect(
         useEncoded(decoded.substring(0, decoded.length - 6)).toString()
       ).toBe(index.toString());
@@ -44,7 +43,7 @@ describe("Should test decoding/encoding hooks", () => {
   });
 
   it("Should test useDecoded and useEncoded with a subdomain", () => {
-    const decoded = useDecoded([new BN(1499554868251), new BN(18925)]);
+    const decoded = useDecoded([BigInt(1499554868251), BigInt(18925)]);
     expect(decoded).toBe("fricoben.ben.stark");
   });
 });

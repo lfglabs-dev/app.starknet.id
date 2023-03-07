@@ -40,7 +40,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: contract,
     method: "compute_buy_price",
-    args: [encodedDomain, duration * 365],
+    args: [encodedDomain.toString(), duration * 365],
   });
   const { account, address } = useAccount();
   const { execute } = useStarknetExecute({

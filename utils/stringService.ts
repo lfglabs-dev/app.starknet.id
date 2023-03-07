@@ -1,5 +1,3 @@
-import { BN } from "bn.js";
-
 export function minifyAddress(address: string | undefined): string {
   if (!address) return "";
 
@@ -84,5 +82,5 @@ export function isStarkDomain(domain: string) {
 export function numberToString(element: number | undefined): string {
   if (element === undefined) return "";
 
-  return new BN(element).toString(10);
+  return BigInt(element).toString(10);
 }
