@@ -1,6 +1,5 @@
 import { Modal, TextField } from "@mui/material";
 import { useStarknetCall, useStarknetExecute } from "@starknet-react/core";
-import BN from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/wallets.module.css";
@@ -35,11 +34,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
     else {
-      setPrice(
-        priceData?.["price"].low
-          .add(priceData?.["price"].high.mul(new BN(2).pow(new BN(128))))
-          .toString(10)
-      );
+      setPrice(priceData?.["price"].low.toString(10));
     }
   }, [priceData, priceError]);
 

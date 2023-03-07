@@ -1,4 +1,3 @@
-import BN from "bn.js";
 import { isHexString } from "./stringService";
 
 export function stringToHex(str: string): string {
@@ -11,7 +10,7 @@ export function stringToHex(str: string): string {
 export function decimalToHex(element: string | number | undefined): string {
   if (element === undefined) return "";
 
-  return "0x" + new BN(element).toString(16);
+  return "0x" + BigInt(element).toString(16);
 }
 
 export function hexToDecimal(hex: string | undefined): string {
@@ -20,5 +19,5 @@ export function hexToDecimal(hex: string | undefined): string {
     throw new Error("Invalid hex string");
   }
 
-  return new BN(hex.slice(2), 16).toString(10);
+  return BigInt(hex).toString(10);
 }

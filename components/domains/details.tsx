@@ -53,7 +53,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
       return;
     } else {
       if (expiryData) {
-        setExpiryDate(new Date(expiryData?.["expiry"].toNumber() * 1000));
+        setExpiryDate(new Date(Number(expiryData?.["expiry"]) * 1000));
       }
     }
   }, [expiryData, expiryError]);

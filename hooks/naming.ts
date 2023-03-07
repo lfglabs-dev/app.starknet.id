@@ -1,4 +1,3 @@
-import BN from "bn.js";
 import { useStarknetCall } from "@starknet-react/core";
 import { useNamingContract } from "./contracts";
 import { utils } from "starknetid.js";
@@ -34,7 +33,7 @@ export function useDecodedSeveral(domains: bigint[][]): string[] {
   return encodedArray;
 }
 
-export function useDomainFromAddress(address: string | BN | undefined): string {
+export function useDomainFromAddress(address: string | undefined): string {
   const { contract } = useNamingContract();
   const { data, error } = useStarknetCall({
     contract,
@@ -42,17 +41,17 @@ export function useDomainFromAddress(address: string | BN | undefined): string {
     args: [address],
   });
 
-  if (!data || (data as BN[][])["domain_len"] === 0 || error) {
+  if (!data || data["domain_len"] === 0 || error) {
     return error ? error : "";
   } else {
-    const domain = useDecoded(data[0]);
+    const domain = useDecoded(data["domain"] as bigint[]);
 
     return domain;
   }
 }
 
 type AddressData = {
-  address?: BN[][];
+  address?: bigint[][];
   error?: string;
 };
 
@@ -65,10 +64,10 @@ export function useAddressFromDomain(domain: string): AddressData {
   const { data, error } = useStarknetCall({
     contract,
     method: "domain_to_address",
-    args: [encoded],
+    args: [[encoded.toString()]],
   });
 
-  return { address: data as BN[][], error };
+  return { address: data as bigint[][], error };
 }
 
 export function useIsValid(domain: string | undefined): boolean | string {
@@ -79,7 +78,7 @@ export function useIsValid(domain: string | undefined): boolean | string {
 }
 
 type TokenIdData = {
-  tokenId?: BN[][];
+  tokenId?: bigint[][];
   error?: string;
 };
 
@@ -92,14 +91,14 @@ export function useTokenIdFromDomain(domain: string): TokenIdData {
   const { data, error } = useStarknetCall({
     contract,
     method: "domain_to_token_id",
-    args: [encoded],
+    args: [[encoded.toString()]],
   });
 
   return { tokenId: data, error };
 }
 
 type ExpiryData = {
-  expiry?: BN[][];
+  expiry?: bigint[][];
   error?: string;
 };
 
@@ -112,8 +111,8 @@ export function useExpiryFromDomain(domain: string): ExpiryData {
   const { data, error } = useStarknetCall({
     contract,
     method: "domain_to_expiry",
-    args: [encoded],
+    args: [[encoded.toString()]],
   });
 
-  return { expiry: data as BN[][], error };
+  return { expiry: data as bigint[][], error };
 }

@@ -7,7 +7,6 @@ import { usePricingContract } from "../../hooks/contracts";
 import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
-import BN from "bn.js";
 import {
   isHexString,
   isStarkRootDomain,
@@ -55,11 +54,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
     else {
-      setPrice(
-        priceData?.["price"].low
-          .add(priceData?.["price"].high.mul(new BN(2).pow(new BN(128))))
-          .toString(10)
-      );
+      setPrice(priceData?.["price"].low.toString(10));
     }
   }, [priceData, priceError]);
 
@@ -73,8 +68,6 @@ const Register: FunctionComponent<RegisterProps> = ({
   useEffect(() => {
     if (!isAvailable) return;
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-
-    console.log("targetAddress: ", targetAddress);
 
     if (
       tokenId != 0 &&
