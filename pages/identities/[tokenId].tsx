@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import styles from "../../styles/Home.module.css";
 import styles2 from "../../styles/components/identitiesV1.module.css";
 import { useRouter } from "next/router";
-import Button from "../../components/UI/button";
 import { NextPage } from "next";
 import { ThreeDots } from "react-loader-spinner";
-import IdentityActions from "../../components/identities/identitiesActions";
 import { Identity } from "../../types/backTypes";
 import IdentityWarnings from "../../components/identities/identityWarnings";
+import IdentityCard from "../../components/identities/identityCard";
+import IdentityActions from "../../components/identities/identitiesActions";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -16,6 +16,15 @@ const TokenIdPage: NextPage = () => {
   const [isIdentityADomain, setIsIdentityADomain] = useState<
     boolean | undefined
   >();
+  const [hideActions, setHideActions] = useState(false);
+
+  const hideActionsHandler = (state: boolean) => {
+    if (state == true) {
+      setHideActions(true);
+    } else {
+      setHideActions(false);
+    }
+  };
 
   useEffect(() => {
     if (tokenId) {
@@ -38,12 +47,6 @@ const TokenIdPage: NextPage = () => {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.firstLeaf}>
-        <img alt="leaf" src="/leaves/leaf_2.png" />
-      </div>
-      <div className={styles.secondLeaf}>
-        <img alt="leaf" src="/leaves/leaf_1.png" />
-      </div>
       <div className={styles2.containerIdentity}>
         {isIdentityADomain === undefined ? (
           <div className="h-full flex items-center justify-center">
@@ -58,32 +61,30 @@ const TokenIdPage: NextPage = () => {
           </div>
         ) : (
           <>
-            <h1 className="sm:text-5xl text-4xl my-5 break-all mx-3">
-              {isIdentityADomain
-                ? identity?.domain
-                : `Starknet ID : ${tokenId}`}
-            </h1>
-            <div>
-              <img
-                src={`https://www.starknet.id/api/identicons/${tokenId}`}
-                height={200}
-                width={200}
-                alt="identicon"
-              />
+            <div className="flex flex-col items-center lg:flex-row w-full p-4 lg:justify-center lg:gap-20 h-full">
+              <div className="w-10/12 mt-8 mb-10 lg:mt-0 lg:mb-0 md:8/12 lg:w-6/12 h-full flex justify-center items-center">
+                <IdentityCard
+                  identity={identity}
+                  tokenId={tokenId}
+                  domain={
+                    isIdentityADomain
+                      ? identity?.domain
+                      : `Starknet ID : ${tokenId}`
+                  }
+                />
+              </div>
+              {!hideActions && (
+                <div className="w-full lg:w-3/12 h-full flex justify-center items-center">
+                  <IdentityActions
+                    tokenId={tokenId}
+                    isIdentityADomain={isIdentityADomain}
+                    identity={identity}
+                    hideActionsHandler={hideActionsHandler}
+                  />
+                </div>
+              )}
             </div>
-
-            <IdentityActions
-              identity={identity}
-              tokenId={tokenId}
-              isIdentityADomain={isIdentityADomain}
-            />
-
             <IdentityWarnings identity={identity} />
-            <div className="mt-5">
-              <Button onClick={() => router.push("/identities")}>
-                Back to your identities
-              </Button>
-            </div>
           </>
         )}
       </div>

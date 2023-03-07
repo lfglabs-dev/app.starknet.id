@@ -1,0 +1,69 @@
+.actionsContainer {
+  width: 100%;
+}
+
+.clickableAction {
+  /* Frame 2 */
+  box-sizing: border-box;
+
+  /* Auto layout */
+  margin-top: 5px;
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 32px;
+  gap: 8px;
+
+  width: 100%;
+
+  background: radial-gradient(
+    382.53% 14823.28% at 46.39% 50%,
+    #fff9f0 0%,
+    #dccab8 100%
+  );
+  /* Secondary/700 */
+
+  border-width: 1px 6px 4px 1px;
+  border-style: solid;
+  border-color: #402d28;
+  /* Button */
+
+  box-shadow: 0px 6px 80px rgba(191, 158, 123, 0.07);
+  border-radius: 100px;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 0;
+  align-self: stretch;
+  flex-grow: 0;
+
+  cursor: pointer;
+}
+
+.clickableActionText {
+  /* Create a subdomain */
+
+  width: 157px;
+  height: 24px;
+
+  /* Button/16px */
+
+  font-family: "QuickZap";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 24px;
+  /* identical to box height, or 150% */
+
+  /* Secondary/700 */
+
+  color: #402d28;
+
+  /* Inside auto layout */
+
+  flex: none;
+  order: 1;
+  flex-grow: 0;
+}

@@ -27,7 +27,7 @@
 }
 
 .title {
-  font-family: "Montserrat-ExtraBold";
+  font-family: "QuickZap";
   font-size: 2.5rem;
   color: var(--green);
   text-shadow: 1px 1px var(--soft-brown);
@@ -36,7 +36,7 @@
 }
 
 .cardTitle {
-  font-family: "Montserrat-ExtraBold";
+  font-family: "QuickZap";
   font-size: 2rem;
   color: var(--green);
   text-transform: lowercase;

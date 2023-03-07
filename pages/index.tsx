@@ -7,11 +7,11 @@ import SearchBar from "../components/UI/searchBar";
 const Domain: NextPage = () => {
   return (
     <div className={styles.screen}>
-      <div className={styles.firstLeaf}>
-        <img alt="leaf" src="/leaves/leaf_2.png" />
+      <div className="firstLeavesGroup">
+        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup02.svg" />
       </div>
-      <div className={styles.secondLeaf}>
-        <img alt="leaf" src="/leaves/leaf_1.png" />
+      <div className="secondLeavesGroup">
+        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
       </div>
       <div className={styles2.containerSearch}>
         <div className={styles2.searchBarContainer}>

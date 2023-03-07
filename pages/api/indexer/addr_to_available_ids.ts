@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../lib/mongodb";
-import NextCors from 'nextjs-cors';
+import NextCors from "nextjs-cors";
 
 export default async function handler(
   req: NextApiRequest,
@@ -9,10 +9,10 @@ export default async function handler(
   }>
 ) {
   await NextCors(req, res, {
-    methods: ['GET'],
-    origin: '*',
+    methods: ["GET"],
+    origin: "*",
     optionsSuccessStatus: 200,
-});
+  });
   const {
     query: { addr },
   } = req;

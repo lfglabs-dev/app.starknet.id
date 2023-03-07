@@ -4,8 +4,8 @@ import NextCors from "nextjs-cors";
 import { QueryError } from "../../../types/backTypes";
 
 type IdentityNFT = {
-  contract: string,
-  inft_id: string,
+  contract: string;
+  inft_id: string;
 };
 
 export default async function handler(
@@ -29,8 +29,5 @@ export default async function handler(
       output.push({ contract: doc.contract, inft_id: doc.inft_id });
     });
 
-  res
-    .setHeader("cache-control", "max-age=30")
-    .status(200)
-    .json(output);
+  res.setHeader("cache-control", "max-age=30").status(200).json(output);
 }

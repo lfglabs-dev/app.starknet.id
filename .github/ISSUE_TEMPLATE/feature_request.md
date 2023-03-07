@@ -1,10 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
-labels: 'open for contribution, Type: feature'
-assignees: ''
-
+title: ""
+labels: "open for contribution, Type: feature"
+assignees: ""
 ---
 
 **Is your feature request related to a problem? Please describe.**

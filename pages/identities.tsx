@@ -18,7 +18,7 @@ import IdentitiesSkeleton from "../components/UI/identitiesSkeleton";
 
 const Identities: NextPage = () => {
   const { address } = useAccount();
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
   const [rightTokenId, setRightTokenId] = useState<number | undefined>(
     undefined
@@ -48,12 +48,12 @@ const Identities: NextPage = () => {
   useEffect(() => {
     if (address) {
       // Our Indexer
-      setLoading(true)
+      setLoading(true);
       fetch(`/api/indexer/addr_to_full_ids?addr=${hexToDecimal(address)}`)
         .then((response) => response.json())
         .then((data) => {
           setOwnedIdentities(data.full_ids);
-          setLoading(false)
+          setLoading(false);
         });
 
       // // Aspect Indexer
@@ -69,20 +69,23 @@ const Identities: NextPage = () => {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.firstLeaf}>
-        <img width="100%" alt="leaf" src="/leaves/leaf_2.png" />
+      <div className="firstLeavesGroup">
+        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup02.svg" />
       </div>
-      <div className={styles.secondLeaf}>
-        <img width="100%" alt="leaf" src="/leaves/leaf_1.png" />
+      <div className="secondLeavesGroup">
+        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
       </div>
-
       <div className={styles.container}>
         <>
           {!mintData?.transaction_hash ? (
             <>
               <h1 className="title">Your Starknet identities</h1>
               <div className={styles.containerGallery}>
-                {loading ? <IdentitiesSkeleton /> : <IdentitiesGallery identities={ownedIdentities} />}
+                {loading ? (
+                  <IdentitiesSkeleton />
+                ) : (
+                  <IdentitiesGallery identities={ownedIdentities} />
+                )}
                 <MintIdentity onClick={() => mint()} />
               </div>
             </>

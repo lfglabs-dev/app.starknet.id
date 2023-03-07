@@ -50,12 +50,6 @@ const SearchPage: NextPage = () => {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.firstLeaf}>
-        <img width="100%" alt="leaf" src="/leaves/leaf_2.png" />
-      </div>
-      <div className={styles.secondLeaf}>
-        <img width="100%" alt="leaf" src="/leaves/leaf_1.png" />
-      </div>
       <div className={styles2.container}>
         <div className="sm:w-2/3 w-4/5 mt-5">
           <SearchBar
