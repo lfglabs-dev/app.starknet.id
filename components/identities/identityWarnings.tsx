@@ -8,10 +8,12 @@ import Link from "next/link";
 
 type IdentityWarningsProps = {
   identity?: Identity;
+  isIdentityADomain: boolean;
 };
 
 const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
   identity,
+  isIdentityADomain,
 }) => {
   const { address } = useAccount();
   const currentTimeStamp = new Date().getTime() / 1000;
@@ -27,7 +29,7 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
     }
   }, [isDifferentAddress, isExpired, address]);
 
-  return (
+  return isIdentityADomain ? (
     <Snackbar
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       open={showWarning}
@@ -54,7 +56,7 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
         )}
       </Alert>
     </Snackbar>
-  );
+  ) : null;
 };
 
 export default IdentityWarnings;
