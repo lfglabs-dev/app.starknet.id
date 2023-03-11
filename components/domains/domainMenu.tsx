@@ -19,7 +19,7 @@ const DomainMenu: FunctionComponent<DomainMenuProps> = ({
   }
 
   return (
-    <div>
+    <div className="ml-5 mr-5 max-w-full min-w-fit-content">
       <DomainTabs changeTab={changeTab} tab={tab} />
       <div className="mt-5 flex justify-center">
         {tab == "one" && <Register isAvailable={isAvailable} domain={domain} />}
