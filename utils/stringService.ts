@@ -70,6 +70,11 @@ export function isSubdomain(domain: string | undefined): boolean {
   return Boolean((domain.match(/\./g) || []).length > 1);
 }
 
+export function isBraavosSubdomain(domain: string): boolean {
+  if (!domain) return false;
+
+  return /^([a-z0-9-]){1,48}\.braavos.stark$/.test(domain);
+}
 // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
 export function isStarkRootDomain(domain: string): boolean {
   return /^([a-z0-9-]){1,48}\.stark$/.test(domain);
@@ -79,6 +84,20 @@ export function isStarkDomain(domain: string) {
   return /^(?:[a-z0-9-]{1,48}(?:[a-z0-9-]{1,48}[a-z0-9-])?\.)*[a-z0-9-]{1,48}\.stark$/.test(
     domain
   );
+}
+
+export function getDomainKind(domain: string | undefined): DomainKind {
+  if (domain && isStarkDomain(domain)) {
+    if (isStarkRootDomain(domain)) {
+      return "root";
+    } else if (isBraavosSubdomain(domain)) {
+      return "braavos";
+    } else {
+      return "subdomain";
+    }
+  } else {
+    return "none";
+  }
 }
 
 export function numberToString(element: number | undefined): string {
