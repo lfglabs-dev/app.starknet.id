@@ -2,14 +2,13 @@ import React, { useEffect, useState } from "react";
 import type { NextPage } from "next";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/braavos.module.css";
-import Button from "../components/UI/button";
 import { useDomainFromAddress } from "../hooks/naming";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import { getDomainKind } from "../utils/stringService";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import BraavosShieldSkeleton from "../components/braavos/braavosShieldSkeleton";
 import BraavosShield from "../components/braavos/braavosShield";
-import Register from "../components/domains/register";
+import BraavosRegister from "../components/braavos/braavosRegister";
 
 const Braavos: NextPage = () => {
   const [domainKind, setDomainKind] = useState<DomainKind | undefined>();
@@ -32,17 +31,20 @@ const Braavos: NextPage = () => {
   const domain = useDomainFromAddress(address);
 
   useEffect(() => {
-    domain ? setDomainKind(getDomainKind(domain)) : setDomainKind(undefined);
+    domain && setDomainKind(getDomainKind(domain));
+  }, [domain]);
+
+  useEffect(() => {
+    if (!domain) {
+      const timer = setTimeout(() => {
+        setDomainKind("none");
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
   }, [domain]);
 
   return (
     <div className={homeStyles.screen}>
-      <div className="firstLeavesGroup">
-        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup02.svg" />
-      </div>
-      <div className="secondLeavesGroup">
-        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
-      </div>
       {connector && connector.id() === "braavos" ? (
         <section id="join" className={styles.section}>
           {domainKind === "braavos" &&
@@ -54,25 +56,20 @@ const Braavos: NextPage = () => {
                 mint={mint}
               />
             ) : (
-              <>
-                <h1 className="title">Get your Braavos shield !</h1>
-                <div className={styles.sbtContainer}>
-                  <Register isAvailable={true} domain={"fricoben.stark"} />
-                  <div className={styles.sbtImageContainer}>
-                    <img
-                      className={styles.sbtImage}
-                      src="/braavos/shield.png"
-                    />
-                    <h5 className="text-center text-lg font-quickZap">
-                      Braavos Soldier (level 1)
-                    </h5>
-                    <p className="text-center text-sm">
-                      Only for .braavos.stark owners
-                    </p>
-                  </div>
+              <div className={styles.discountContainer}>
+                <div className={styles.discountBuyImageContainer}>
+                  <img
+                    className={styles.discountBuyImage}
+                    src="/braavos/shield.png"
+                  />
                 </div>
-                <Button onClick={mint}>GET MY SHIELD</Button>
-              </>
+                <div className={styles.registerContainer}>
+                  <h1 className={styles.titleRegister}>
+                    Register a domain and get your braavos shield for only 1$
+                  </h1>
+                  <BraavosRegister expiryDuration={93} />
+                </div>
+              </div>
             ))}
           {domainKind === "root" && (
             // <BraavosShield
@@ -81,26 +78,23 @@ const Braavos: NextPage = () => {
             //   condition="Only for stark root domain owners"
             //   mint={mint}
             // />
-            <>
-              <h1 className="title">Get your Braavos shield !</h1>
-              <div className={styles.discountContainer}>
-                <div className={styles.registerContainer}>
-                  <Register isAvailable={true} domain={"fricoben.stark"} />
-                </div>
-                <div className={styles.sbtImageContainer}>
-                  <img className={styles.sbtImage} src="/braavos/shield.png" />
-                  <h5 className="text-center text-lg font-quickZap">
-                    Braavos Soldier (level 1)
-                  </h5>
-                  <p className="text-center text-sm">
-                    Only for .braavos.stark owners
-                  </p>
-                </div>
+            <div className={styles.discountContainer}>
+              <div className={styles.discountBuyImageContainer}>
+                <img
+                  className={styles.discountBuyImage}
+                  src="/braavos/shield.png"
+                />
               </div>
-            </>
+              <div className={styles.registerContainer}>
+                <h1 className={styles.titleRegister}>
+                  Register a domain and get your braavos shield for only 1$
+                </h1>
+                <BraavosRegister expiryDuration={93} />
+              </div>
+            </div>
           )}
           {domainKind === "none" && (
-            <ErrorScreen errorMessage="You need to own a .stark domain to get a shield. You can get a free .braavos.subdomain" />
+            <ErrorScreen errorMessage="You need to own a .stark domain to get a shield but don't worry you can get a free .braavos.stark subdomain in the Braavos app now !" />
           )}
           {!domainKind && <BraavosShieldSkeleton />}
         </section>

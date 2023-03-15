@@ -8,7 +8,7 @@ import SearchBar from "../components/UI/searchBar";
 import DomainCard from "../components/domains/domainCard";
 import DomainMenu from "../components/domains/domainMenu";
 import { useExpiryFromDomain } from "../hooks/naming";
-import { is1234Domain, isStarkRootDomain } from "../utils/stringService";
+import { isStarkRootDomain } from "../utils/stringService";
 import { useAccount } from "@starknet-react/core";
 
 const SearchPage: NextPage = () => {
@@ -16,9 +16,7 @@ const SearchPage: NextPage = () => {
   const [isMenuVisible, setIsMenuVisible] = useState<boolean>(false);
   const [domain, setDomain] = useState<string>("");
   const { account } = useAccount();
-  const [isAvailable, setIsAvailable] = useState<boolean | undefined>(
-    undefined
-  );
+  const [isAvailable, setIsAvailable] = useState<boolean | undefined>();
   const { expiry: data, error } = useExpiryFromDomain(domain);
 
   useEffect(() => {
@@ -33,7 +31,7 @@ const SearchPage: NextPage = () => {
   useEffect(() => {
     const currentTimeStamp = new Date().getTime() / 1000;
 
-    if (error || !data || is1234Domain(domain)) {
+    if (error || !data) {
       setIsAvailable(false);
     } else {
       setIsAvailable(Number(data?.["expiry"]) < currentTimeStamp);

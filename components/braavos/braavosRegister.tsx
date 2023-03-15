@@ -2,60 +2,54 @@ import React from "react";
 import { TextField } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import styles from "../../styles/Home.module.css";
-import { usePricingContract } from "../../hooks/contracts";
-import { useAccount, useStarknetCall } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
-import { useEncoded } from "../../hooks/naming";
-import BN from "bn.js";
-import { isHexString, numberToString } from "../../utils/stringService";
+import {
+  useEncoded,
+  useExpiryFromDomain,
+  useIsValid,
+} from "../../hooks/naming";
+import { numberToString } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
-import SelectDomain from "./selectDomains";
 import { Call } from "starknet";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 
 type RegisterProps = {
-  domain: string;
-  isAvailable?: boolean;
+  expiryDuration: number;
 };
 
-const Register: FunctionComponent<RegisterProps> = ({
-  domain,
-  isAvailable,
-}) => {
-  const maxYearsToRegister = 25;
+const Register: FunctionComponent<RegisterProps> = ({ expiryDuration }) => {
+  const [domain, setDomain] = useState<string>("");
   const [targetAddress, setTargetAddress] = useState<string>("");
-  const [duration, setDuration] = useState<number>(5);
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
-  const [price, setPrice] = useState<string>("0");
-  const { contract } = usePricingContract();
-  const encodedDomain = useEncoded(domain);
-  const { data: priceData, error: priceError } = useStarknetCall({
-    contract: contract,
-    method: "compute_buy_price",
-    args: [encodedDomain, duration * 365],
-  });
+  const price = "800000000000000";
+  const encodedDomain = useEncoded(domain ?? "");
+  const [isAvailable, setIsAvailable] = useState<boolean>();
+  const { expiry: data, error } = useExpiryFromDomain(domain);
+  const discountID = "27092002";
+
+  useEffect(() => {
+    if (!domain) return;
+
+    const currentTimeStamp = new Date().getTime() / 1000;
+
+    if (error || !data) {
+      setIsAvailable(false);
+    } else {
+      setIsAvailable(Number(data?.["expiry"]) < currentTimeStamp);
+    }
+  }, [data, error, domain]);
+
   const { account, address } = useAccount();
   const { execute } = useStarknetExecute({
     calls: callData as any,
   });
   const hasMainDomain = !useDisplayName(address ?? "").startsWith("0x");
-
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
-
-  useEffect(() => {
-    if (priceError || !priceData) setPrice("0");
-    else {
-      setPrice(
-        priceData?.["price"].low
-          .add(priceData?.["price"].high.mul(new BN(2).pow(new BN(128))))
-          .toString(10)
-      );
-    }
-  }, [priceData, priceError]);
+  const isDomainValid = useIsValid(domain);
 
   useEffect(() => {
     if (address) {
@@ -67,8 +61,6 @@ const Register: FunctionComponent<RegisterProps> = ({
   useEffect(() => {
     if (!isAvailable) return;
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-
-    console.log("targetAddress: ", targetAddress);
 
     if (
       tokenId != 0 &&
@@ -87,13 +79,14 @@ const Register: FunctionComponent<RegisterProps> = ({
         },
         {
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy",
+          entrypoint: "buy_discounted",
           calldata: [
             numberToString(tokenId),
             encodedDomain.toString(10),
-            numberToString(duration * 365),
+            numberToString(expiryDuration),
             0,
             hexToDecimal(targetAddress),
+            discountID,
           ],
         },
         {
@@ -120,13 +113,14 @@ const Register: FunctionComponent<RegisterProps> = ({
         },
         {
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy",
+          entrypoint: "buy_discounted",
           calldata: [
             numberToString(tokenId),
             encodedDomain.toString(10),
-            numberToString(duration * 365),
+            numberToString(expiryDuration),
             0,
             hexToDecimal(targetAddress),
+            discountID,
           ],
         },
       ]);
@@ -153,13 +147,14 @@ const Register: FunctionComponent<RegisterProps> = ({
         },
         {
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy",
+          entrypoint: "buy_discounted",
           calldata: [
             numberToString(newTokenId),
             encodedDomain.toString(10),
-            numberToString(duration * 365),
+            numberToString(expiryDuration),
             0,
             hexToDecimal(targetAddress),
+            discountID,
           ],
         },
         {
@@ -192,20 +187,21 @@ const Register: FunctionComponent<RegisterProps> = ({
         },
         {
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy",
+          entrypoint: "buy_discounted",
           calldata: [
             numberToString(newTokenId),
             encodedDomain.toString(10),
-            numberToString(duration * 365),
+            numberToString(expiryDuration),
             0,
             hexToDecimal(targetAddress),
+            discountID,
           ],
         },
       ]);
     }
   }, [
     tokenId,
-    duration,
+    expiryDuration,
     targetAddress,
     isAvailable,
     price,
@@ -214,89 +210,54 @@ const Register: FunctionComponent<RegisterProps> = ({
     address,
   ]);
 
-  function changeAddress(value: string): void {
-    isHexString(value) ? setTargetAddress(value) : null;
+  function changeDomain(value: string): void {
+    setDomain(value);
   }
 
-  function changeDuration(value: number): void {
-    setDuration(value);
-  }
+  return (
+    <div className="w-full">
+      <TextField
+        fullWidth
+        id="outlined-basic"
+        label={
+          isDomainValid != true
+            ? `"${isDomainValid}" is not a valid character`
+            : isAvailable === false
+            ? "This domain is not available"
+            : "Type your domain here"
+        }
+        placeholder="Domain"
+        variant="outlined"
+        onChange={(e) => changeDomain(e.target.value)}
+        color="secondary"
+        required
+        error={isDomainValid != true || isAvailable === false}
+      />
 
-  function changeTokenId(value: number): void {
-    setTokenId(Number(value));
-  }
-
-  if (isAvailable)
-    return (
-      <div className="w-full">
-        <div className="flex">
-          <div className="mr-1 z-[0] w-1/2">
-            <TextField
-              fullWidth
-              label="Target address"
-              id="outlined-basic"
-              value={targetAddress ?? "0x.."}
-              variant="outlined"
-              onChange={(e) => changeAddress(e.target.value)}
-              color="secondary"
-              required
-            />
-          </div>
-          <div className="mr-1 z-[0] w-1/2">
-            <TextField
-              fullWidth
-              className="ml-1 z-[0]"
-              id="outlined-basic"
-              label="years"
-              type="number"
-              placeholder="years"
-              variant="outlined"
-              onChange={(e) => changeDuration(Number(e.target.value))}
-              InputProps={{
-                inputProps: { min: 0, max: maxYearsToRegister },
-              }}
-              defaultValue={duration}
-              color="secondary"
-              required
-            />
-          </div>
-        </div>
-        <SelectDomain tokenId={tokenId} changeTokenId={changeTokenId} />
-        <div className={styles.cardCenter}>
-          <p className="text">
-            Price:&nbsp;
-            <span className="font-semibold text-brown">
-              {Math.round(Number(price) * 0.000000000000000001 * 10000) / 10000}{" "}
-              ETH
-            </span>
-          </p>
-        </div>
-        <div className="flex justify-center content-center w-full">
-          <div className="text-beige m-1 mt-5">
-            <Button
-              onClick={() =>
-                execute().then(() =>
-                  setDomainsMinting((prev) =>
-                    new Map(prev).set(encodedDomain.toString(), true)
-                  )
+      <div className="flex justify-center content-center w-full">
+        <div className="text-beige m-1 mt-5 mb-5">
+          <Button
+            onClick={() =>
+              execute().then(() =>
+                setDomainsMinting((prev) =>
+                  new Map(prev).set(encodedDomain.toString(), true)
                 )
-              }
-              disabled={
-                (domainsMinting.get(encodedDomain.toString()) as boolean) ||
-                !account ||
-                !duration ||
-                duration < 1 ||
-                !targetAddress
-              }
-            >
-              Register domain
-            </Button>
-          </div>
+              )
+            }
+            disabled={
+              (domainsMinting.get(encodedDomain.toString()) as boolean) ||
+              !account ||
+              Boolean(!domain) ||
+              typeof isDomainValid === "string" ||
+              !isAvailable
+            }
+          >
+            Register domain
+          </Button>
         </div>
       </div>
-    );
-
-  return <p>This domain is not available you can&rsquo;t register it</p>;
+    </div>
+  );
 };
 
 export default Register;
