@@ -7,14 +7,8 @@ import { usePricingContract } from "../../hooks/contracts";
 import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
-import {
-  isHexString,
-  isStarkRootDomain,
-  numberToString,
-} from "../../utils/stringService";
+import { isHexString, numberToString } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
-import { ethers } from "ethers";
-import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
 import SelectDomain from "./selectDomains";
 import { Call } from "starknet";
 import { useDisplayName } from "../../hooks/displayName.tsx";
@@ -225,106 +219,9 @@ const Register: FunctionComponent<RegisterProps> = ({
     setTokenId(Number(value));
   }
 
-  // register from L1
-  const [L1Signer, setL1Signer] = useState<
-    ethers.providers.JsonRpcSigner | undefined
-  >();
-
-  async function L1connect() {
-    let provider;
-    if (process.env.NEXT_PUBLIC_IS_TESTNET == "true") {
-      try {
-        await (window as any).ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x5" }],
-        });
-        provider = new ethers.providers.Web3Provider((window as any).ethereum);
-      } catch (switchError) {
-        if ((switchError as any).code === 4902) {
-          await (window as any).ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: "0x5",
-                rpcUrls: ["https://goerli.infura.io/v3/"],
-                chainName: "Goerli",
-                nativeCurrency: {
-                  name: "GoerliETH",
-                  symbol: "tETH",
-                  decimals: 18,
-                },
-                blockExplorerUrls: ["https://goerli.etherscan.io/"],
-              },
-            ],
-          });
-          provider = new ethers.providers.Web3Provider(
-            (window as any).ethereum
-          );
-        }
-      }
-    } else {
-      try {
-        await (window as any).ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x1" }],
-        });
-        provider = new ethers.providers.Web3Provider((window as any).ethereum);
-      } catch (switchError) {
-        if ((switchError as any).code === 4902) {
-          await (window as any).ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: "0x1",
-                rpcUrls: ["https://mainnet.infura.io/v3/"],
-                chainName: "Ethereum",
-                nativeCurrency: {
-                  name: "Ether",
-                  symbol: "ETH",
-                  decimals: 18,
-                },
-                blockExplorerUrls: ["https://etherscan.io/"],
-              },
-            ],
-          });
-          provider = new ethers.providers.Web3Provider(
-            (window as any).ethereum
-          );
-        }
-      }
-    }
-
-    await provider?.send("eth_requestAccounts", []);
-    const signer = provider?.getSigner();
-    setL1Signer(signer);
-  }
-
-  async function L1register() {
-    const L1buyingContract_rw = new ethers.Contract(
-      process.env.NEXT_PUBLIC_L1BUYING_CONTRACT as string,
-      L1buying_abi,
-      L1Signer
-    );
-
-    await L1buyingContract_rw.purchase(
-      encodedDomain.toString(),
-      tokenId,
-      duration * 365,
-      0,
-      targetAddress,
-      {
-        value: price,
-        gasLimit: 100000,
-      }
-    );
-    setDomainsMinting((prev) =>
-      new Map(prev).set(encodedDomain.toString(), true)
-    );
-  }
-
   if (isAvailable)
     return (
-      <div className="sm:w-full w-2/3">
+      <div className="w-full">
         <div className="flex">
           <div className="mr-1 z-[0] w-1/2">
             <TextField
@@ -387,42 +284,6 @@ const Register: FunctionComponent<RegisterProps> = ({
             >
               Register from L2
             </Button>
-          </div>
-          <div className="text-beige m-1 mt-5">
-            {!L1Signer && (
-              <Button
-                onClick={() => {
-                  L1connect();
-                }}
-                disabled={
-                  (domainsMinting.get(encodedDomain.toString()) as boolean) ||
-                  !account ||
-                  !duration ||
-                  duration < 1 ||
-                  !targetAddress
-                }
-              >
-                Connect to L1
-              </Button>
-            )}
-            {L1Signer && (
-              <Button
-                onClick={() => {
-                  L1register();
-                }}
-                disabled={
-                  (domainsMinting.get(encodedDomain.toString()) as boolean) ||
-                  !account ||
-                  !duration ||
-                  duration < 1 ||
-                  !targetAddress ||
-                  !tokenId ||
-                  !isStarkRootDomain(domain.concat(".stark"))
-                }
-              >
-                Register from L1
-              </Button>
-            )}
           </div>
         </div>
       </div>

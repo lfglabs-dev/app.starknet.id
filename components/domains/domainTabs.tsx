@@ -16,7 +16,7 @@ const DomainTabs: FunctionComponent<DomainTabsProps> = ({ changeTab, tab }) => {
   return (
     <Box
       sx={{
-        marginTop: "1rem",
+        marginTop: "0.5rem",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",

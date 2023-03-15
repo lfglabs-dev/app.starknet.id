@@ -67,9 +67,7 @@ const TokenIdPage: NextPage = () => {
                   identity={identity}
                   tokenId={tokenId}
                   domain={
-                    isIdentityADomain
-                      ? identity?.domain
-                      : `Starknet ID : ${tokenId}`
+                    isIdentityADomain ? identity?.domain : `SID: ${tokenId}`
                   }
                 />
               </div>
@@ -84,7 +82,10 @@ const TokenIdPage: NextPage = () => {
                 </div>
               )}
             </div>
-            <IdentityWarnings identity={identity} />
+            <IdentityWarnings
+              isIdentityADomain={isIdentityADomain}
+              identity={identity}
+            />
           </>
         )}
       </div>
