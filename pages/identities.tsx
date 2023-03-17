@@ -66,51 +66,49 @@ const Identities: NextPage = () => {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.wrapperScreen}>
-        <div className="firstLeavesGroup">
-          <img width="100%" alt="leaf" src="/leaves/new/leavesGroup02.svg" />
-        </div>
-        <div className="secondLeavesGroup">
-          <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
-        </div>
-        <div className={styles.container}>
-          <>
-            {!mintData?.transaction_hash ? (
-              <>
-                <h1 className="title">Your Starknet identities</h1>
-                <div className={styles.containerGallery}>
-                  {loading ? (
-                    <IdentitiesSkeleton />
-                  ) : (
-                    <IdentitiesGallery identities={ownedIdentities} />
-                  )}
-                  <MintIdentity onClick={() => mint()} />
-                </div>
-              </>
-            ) : (
-              <>
-                {data?.status &&
-                  !transactionError &&
-                  !data?.status.includes("ACCEPTED") &&
-                  data?.status !== "PENDING" && <LoadingScreen />}
-                {transactionError && (
-                  <ErrorScreen
-                    onClick={() => router.push("/identities")}
-                    buttonText="Retry to mint"
-                  />
+      <div className="firstLeavesGroup">
+        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup02.svg" />
+      </div>
+      <div className="secondLeavesGroup">
+        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
+      </div>
+      <div className={styles.container}>
+        <>
+          {!mintData?.transaction_hash ? (
+            <>
+              <h1 className="title">Your Starknet identities</h1>
+              <div className={styles.containerGallery}>
+                {loading ? (
+                  <IdentitiesSkeleton />
+                ) : (
+                  <IdentitiesGallery identities={ownedIdentities} />
                 )}
-                {data?.status === "ACCEPTED_ON_L2" ||
-                  (data?.status === "PENDING" && (
-                    <SuccessScreen
-                      onClick={() => router.push(`/identities`)}
-                      buttonText="See your new identity"
-                      successMessage="Congrats, your starknet identity is minted !"
-                    />
-                  ))}
-              </>
-            )}
-          </>
-        </div>
+                <MintIdentity onClick={() => mint()} />
+              </div>
+            </>
+          ) : (
+            <>
+              {data?.status &&
+                !transactionError &&
+                !data?.status.includes("ACCEPTED") &&
+                data?.status !== "PENDING" && <LoadingScreen />}
+              {transactionError && (
+                <ErrorScreen
+                  onClick={() => router.push("/identities")}
+                  buttonText="Retry to mint"
+                />
+              )}
+              {data?.status === "ACCEPTED_ON_L2" ||
+                (data?.status === "PENDING" && (
+                  <SuccessScreen
+                    onClick={() => router.push(`/identities`)}
+                    buttonText="See your new identity"
+                    successMessage="Congrats, your starknet identity is minted !"
+                  />
+                ))}
+            </>
+          )}
+        </>
       </div>
     </div>
   );
