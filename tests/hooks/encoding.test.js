@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import BN, { BN } from "bn.js";
+import BN from "bn.js";
 import {
   totalAlphabet,
   useDecoded,
