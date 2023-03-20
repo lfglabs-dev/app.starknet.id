@@ -159,36 +159,36 @@ const Discord: NextPage = () => {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.container}>
-        {screen === "verifyDiscord" &&
-          (!isConnected ? (
-            <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
-          ) : (
-            <>
-              <h1 className="sm:text-5xl text-5xl mt-4">
-                It&apos;s time to verify your discord on chain !
-              </h1>
-              <div className="mt-8">
-                <Button onClick={verifyDiscord}>Verify my Discord</Button>
-              </div>
-            </>
-          ))}
-        {screen === "loading" && <LoadingScreen />}
-        {errorScreen && (
-          <ErrorScreen
-            onClick={() => router.push(`/identities/${tokenId}`)}
-            buttonText="Retry to connect"
-          />
-        )}
-        {screen === "success" && (
-          <>
+      <div className={styles.wrapperScreen}>
+        <div className={styles.container}>
+          {screen === "verifyDiscord" &&
+            (!isConnected ? (
+              <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
+            ) : (
+              <>
+                <h1 className="sm:text-5xl text-5xl mt-4">
+                  It&apos;s time to verify your discord on chain !
+                </h1>
+                <div className="mt-8">
+                  <Button onClick={verifyDiscord}>Verify my Discord</Button>
+                </div>
+              </>
+            ))}
+          {screen === "loading" && <LoadingScreen />}
+          {errorScreen && (
+            <ErrorScreen
+              onClick={() => router.push(`/identities/${tokenId}`)}
+              buttonText="Retry to connect"
+            />
+          )}
+          {screen === "success" && (
             <SuccessScreen
               onClick={() => router.push(`/identities/${tokenId}`)}
               buttonText="Get back to your starknet identity"
               successMessage="Congrats, your discord is verified !"
             />
-          </>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

@@ -2,8 +2,16 @@
   height: 100vh;
   z-index: 0;
   position: relative;
-  padding-top: 14vh;
+  padding-top: 12vh;
   background-color: var(--beige);
+}
+
+.wrapperScreen {
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100% - 12vh);
+  justify-content: center;
 }
 
 .container {
