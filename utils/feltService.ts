@@ -22,3 +22,12 @@ export function hexToDecimal(hex: string | undefined): string {
 
   return new BN(hex.slice(2), 16).toString(10);
 }
+
+export function gweiToEth(gwei: string): number {
+  if (isNaN(Number(gwei))) {
+    return 0;
+  }
+  Math.round(Number(gwei) * 0.000000000000000001 * 10000) / 10000;
+
+  return Math.round(Number(gwei) * 0.000000000000000001 * 10000) / 10000;
+}
