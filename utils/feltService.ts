@@ -32,7 +32,7 @@ export function gweiToEth(gwei: string): string {
   const gweiBigInt = new Big(gwei);
   const scaleFactor = new Big(10 ** 18);
 
-  const ethBigInt = gweiBigInt.div(scaleFactor);
+  const ethBigInt = gweiBigInt.div(scaleFactor).round(5);
 
   return ethBigInt.toString();
 }
