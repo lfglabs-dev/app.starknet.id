@@ -20,9 +20,6 @@ const Identities: NextPage = () => {
   const { address } = useAccount();
   const [loading, setLoading] = useState<boolean>(false);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
-  const [rightTokenId, setRightTokenId] = useState<number | undefined>(
-    undefined
-  );
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
 
@@ -38,8 +35,8 @@ const Identities: NextPage = () => {
 
   function mint() {
     execute();
-    setRightTokenId(randomTokenId);
   }
+
   const { data, error: transactionError } = useTransactionReceipt({
     hash: mintData?.transaction_hash,
     watch: true,
@@ -104,7 +101,7 @@ const Identities: NextPage = () => {
               {data?.status === "ACCEPTED_ON_L2" ||
                 (data?.status === "PENDING" && (
                   <SuccessScreen
-                    onClick={() => router.push(`/identities/${rightTokenId}`)}
+                    onClick={() => router.push(`/identities`)}
                     buttonText="See your new identity"
                     successMessage="Congrats, your starknet identity is minted !"
                   />

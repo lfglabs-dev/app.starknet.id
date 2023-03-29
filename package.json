@@ -17,8 +17,8 @@
     "@nimiq/style": "^0.8.4",
     "@starknet-react/core": "^0.15.1",
     "@vercel/analytics": "^0.1.5",
+    "big.js": "^6.2.1",
     "bn.js": "^5.2.1",
-    "ethers": "^5.7.1",
     "mongodb": "^4.12.1",
     "next": "12.2.5",
     "nextjs-cors": "^2.1.2",
@@ -32,6 +32,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.5",
     "@babel/preset-env": "^7.20.2",
+    "@types/big.js": "^6.1.6",
     "@types/bn.js": "^5.1.0",
     "@types/node": "18.7.8",
     "@types/react": "18.0.17",

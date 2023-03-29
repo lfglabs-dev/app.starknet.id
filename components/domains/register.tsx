@@ -3,19 +3,13 @@ import { TextField } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import styles from "../../styles/Home.module.css";
-import { usePricingContract } from "../../hooks/contracts";
+import { useEtherContract, usePricingContract } from "../../hooks/contracts";
 import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
-import {
-  isHexString,
-  isStarkRootDomain,
-  numberToString,
-} from "../../utils/stringService";
-import { hexToDecimal } from "../../utils/feltService";
-import { ethers } from "ethers";
-import L1buying_abi from "../../abi/L1/L1Buying_abi.json";
+import { isHexString, numberToString } from "../../utils/stringService";
+import { gweiToEth, hexToDecimal } from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
 import { Call } from "starknet";
 import { useDisplayName } from "../../hooks/displayName.tsx";
@@ -31,11 +25,14 @@ const Register: FunctionComponent<RegisterProps> = ({
 }) => {
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
-  const [duration, setDuration] = useState<number>(5);
+  const [duration, setDuration] = useState<number>(3);
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
   const [price, setPrice] = useState<string>("0");
+  const [balance, setBalance] = useState<string>("0");
+  const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
+  const { contract: etherContract } = useEtherContract();
   const encodedDomain = useEncoded(domain);
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: contract,
@@ -43,11 +40,16 @@ const Register: FunctionComponent<RegisterProps> = ({
     args: [encodedDomain, duration * 365],
   });
   const { account, address } = useAccount();
+  const { data: userBalanceData, error: userBalanceDataError } =
+    useStarknetCall({
+      contract: etherContract,
+      method: "balanceOf",
+      args: [address],
+    });
   const { execute } = useStarknetExecute({
     calls: callData as any,
   });
   const hasMainDomain = !useDisplayName(address ?? "").startsWith("0x");
-
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
@@ -64,6 +66,29 @@ const Register: FunctionComponent<RegisterProps> = ({
   }, [priceData, priceError]);
 
   useEffect(() => {
+    if (userBalanceDataError || !userBalanceData) setBalance("0");
+    else {
+      setBalance(
+        userBalanceData?.["balance"].low
+          .add(
+            userBalanceData?.["balance"].high.mul(new BN(2).pow(new BN(128)))
+          )
+          .toString(10)
+      );
+    }
+  }, [userBalanceData, userBalanceDataError]);
+
+  useEffect(() => {
+    if (balance && price) {
+      if (gweiToEth(balance) > gweiToEth(price)) {
+        setInvalidBalance(false);
+      } else {
+        setInvalidBalance(true);
+      }
+    }
+  }, [balance, price]);
+
+  useEffect(() => {
     if (address) {
       setTargetAddress(address);
     }
@@ -73,8 +98,6 @@ const Register: FunctionComponent<RegisterProps> = ({
   useEffect(() => {
     if (!isAvailable) return;
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-
-    console.log("targetAddress: ", targetAddress);
 
     if (
       tokenId != 0 &&
@@ -232,106 +255,9 @@ const Register: FunctionComponent<RegisterProps> = ({
     setTokenId(Number(value));
   }
 
-  // register from L1
-  const [L1Signer, setL1Signer] = useState<
-    ethers.providers.JsonRpcSigner | undefined
-  >();
-
-  async function L1connect() {
-    let provider;
-    if (process.env.NEXT_PUBLIC_IS_TESTNET == "true") {
-      try {
-        await (window as any).ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x5" }],
-        });
-        provider = new ethers.providers.Web3Provider((window as any).ethereum);
-      } catch (switchError) {
-        if ((switchError as any).code === 4902) {
-          await (window as any).ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: "0x5",
-                rpcUrls: ["https://goerli.infura.io/v3/"],
-                chainName: "Goerli",
-                nativeCurrency: {
-                  name: "GoerliETH",
-                  symbol: "tETH",
-                  decimals: 18,
-                },
-                blockExplorerUrls: ["https://goerli.etherscan.io/"],
-              },
-            ],
-          });
-          provider = new ethers.providers.Web3Provider(
-            (window as any).ethereum
-          );
-        }
-      }
-    } else {
-      try {
-        await (window as any).ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: "0x1" }],
-        });
-        provider = new ethers.providers.Web3Provider((window as any).ethereum);
-      } catch (switchError) {
-        if ((switchError as any).code === 4902) {
-          await (window as any).ethereum.request({
-            method: "wallet_addEthereumChain",
-            params: [
-              {
-                chainId: "0x1",
-                rpcUrls: ["https://mainnet.infura.io/v3/"],
-                chainName: "Ethereum",
-                nativeCurrency: {
-                  name: "Ether",
-                  symbol: "ETH",
-                  decimals: 18,
-                },
-                blockExplorerUrls: ["https://etherscan.io/"],
-              },
-            ],
-          });
-          provider = new ethers.providers.Web3Provider(
-            (window as any).ethereum
-          );
-        }
-      }
-    }
-
-    await provider?.send("eth_requestAccounts", []);
-    const signer = provider?.getSigner();
-    setL1Signer(signer);
-  }
-
-  async function L1register() {
-    const L1buyingContract_rw = new ethers.Contract(
-      process.env.NEXT_PUBLIC_L1BUYING_CONTRACT as string,
-      L1buying_abi,
-      L1Signer
-    );
-
-    await L1buyingContract_rw.purchase(
-      encodedDomain.toString(),
-      tokenId,
-      duration * 365,
-      0,
-      targetAddress,
-      {
-        value: price,
-        gasLimit: 100000,
-      }
-    );
-    setDomainsMinting((prev) =>
-      new Map(prev).set(encodedDomain.toString(), true)
-    );
-  }
-
   if (isAvailable)
     return (
-      <div className="sm:w-full w-2/3">
+      <div className="w-full">
         <div className="flex">
           <div className="mr-1 z-[0] w-1/2">
             <TextField
@@ -369,12 +295,11 @@ const Register: FunctionComponent<RegisterProps> = ({
           <p className="text">
             Price:&nbsp;
             <span className="font-semibold text-brown">
-              {Math.round(Number(price) * 0.000000000000000001 * 10000) / 10000}{" "}
-              ETH
+              {gweiToEth(price)}&nbsp;ETH
             </span>
           </p>
         </div>
-        <div className="flex justify-center content-center w-full">
+        <div className="w-full">
           <div className="text-beige m-1 mt-5">
             <Button
               onClick={() =>
@@ -389,47 +314,14 @@ const Register: FunctionComponent<RegisterProps> = ({
                 !account ||
                 !duration ||
                 duration < 1 ||
-                !targetAddress
+                !targetAddress ||
+                invalidBalance
               }
             >
-              Register from L2
+              {invalidBalance
+                ? "You don't have enough eth"
+                : "Register from L2"}
             </Button>
-          </div>
-          <div className="text-beige m-1 mt-5">
-            {!L1Signer && (
-              <Button
-                onClick={() => {
-                  L1connect();
-                }}
-                disabled={
-                  (domainsMinting.get(encodedDomain.toString()) as boolean) ||
-                  !account ||
-                  !duration ||
-                  duration < 1 ||
-                  !targetAddress
-                }
-              >
-                Connect to L1
-              </Button>
-            )}
-            {L1Signer && (
-              <Button
-                onClick={() => {
-                  L1register();
-                }}
-                disabled={
-                  (domainsMinting.get(encodedDomain.toString()) as boolean) ||
-                  !account ||
-                  !duration ||
-                  duration < 1 ||
-                  !targetAddress ||
-                  !tokenId ||
-                  !isStarkRootDomain(domain.concat(".stark"))
-                }
-              >
-                Register from L1
-              </Button>
-            )}
           </div>
         </div>
       </div>
