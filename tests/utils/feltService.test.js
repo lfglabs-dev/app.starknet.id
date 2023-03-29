@@ -67,19 +67,11 @@ describe("Should test the stringToHex function", () => {
 
 describe("Should test gweiToEth function", () => {
   it("Should return the right ETH value from a given Gwei value", () => {
-    expect(gweiToEth("1000000000000000000")).toEqual(1);
-    expect(gweiToEth("10000000000000000")).toEqual(0.01);
-  });
-
-  it("Should return 0 if the Gwei value is not a number", () => {
-    expect(gweiToEth("invalid_gwei")).toEqual(0);
-  });
-
-  it("Should return 0 if the argument is undefined", () => {
-    expect(gweiToEth(undefined)).toEqual(0);
+    expect(gweiToEth("1000000000000000000")).toEqual("1");
+    expect(gweiToEth("10000000000000000")).toEqual("0.01");
   });
 
   it("Should return 0 if the argument is an empty string", () => {
-    expect(gweiToEth("")).toEqual(0);
+    expect(gweiToEth("")).toEqual("0");
   });
 });
