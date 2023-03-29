@@ -2,6 +2,7 @@ import {
   hexToDecimal,
   decimalToHex,
   stringToHex,
+  gweiToEth,
 } from "../../utils/feltService";
 
 describe("Should test hexToDecimal function", () => {
@@ -61,5 +62,16 @@ describe("Should test the stringToHex function", () => {
 
   it("Should convert a string to its hex representation", () => {
     expect(stringToHex("hello")).toEqual("0x68656c6c6f");
+  });
+});
+
+describe("Should test gweiToEth function", () => {
+  it("Should return the right ETH value from a given Gwei value", () => {
+    expect(gweiToEth("1000000000000000000")).toEqual("1");
+    expect(gweiToEth("10000000000000000")).toEqual("0.01");
+  });
+
+  it("Should return 0 if the argument is an empty string", () => {
+    expect(gweiToEth("")).toEqual("0");
   });
 });

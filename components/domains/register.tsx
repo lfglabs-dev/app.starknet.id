@@ -3,13 +3,13 @@ import { TextField } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import styles from "../../styles/Home.module.css";
-import { usePricingContract } from "../../hooks/contracts";
+import { useEtherContract, usePricingContract } from "../../hooks/contracts";
 import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
 import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
 import { isHexString, numberToString } from "../../utils/stringService";
-import { hexToDecimal } from "../../utils/feltService";
+import { gweiToEth, hexToDecimal } from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
 import { Call } from "starknet";
 import { useDisplayName } from "../../hooks/displayName.tsx";
@@ -25,11 +25,14 @@ const Register: FunctionComponent<RegisterProps> = ({
 }) => {
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
-  const [duration, setDuration] = useState<number>(5);
+  const [duration, setDuration] = useState<number>(3);
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
   const [price, setPrice] = useState<string>("0");
+  const [balance, setBalance] = useState<string>("0");
+  const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
+  const { contract: etherContract } = useEtherContract();
   const encodedDomain = useEncoded(domain);
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: contract,
@@ -37,11 +40,16 @@ const Register: FunctionComponent<RegisterProps> = ({
     args: [encodedDomain, duration * 365],
   });
   const { account, address } = useAccount();
+  const { data: userBalanceData, error: userBalanceDataError } =
+    useStarknetCall({
+      contract: etherContract,
+      method: "balanceOf",
+      args: [address],
+    });
   const { execute } = useStarknetExecute({
     calls: callData as any,
   });
   const hasMainDomain = !useDisplayName(address ?? "").startsWith("0x");
-
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
@@ -58,6 +66,29 @@ const Register: FunctionComponent<RegisterProps> = ({
   }, [priceData, priceError]);
 
   useEffect(() => {
+    if (userBalanceDataError || !userBalanceData) setBalance("0");
+    else {
+      setBalance(
+        userBalanceData?.["balance"].low
+          .add(
+            userBalanceData?.["balance"].high.mul(new BN(2).pow(new BN(128)))
+          )
+          .toString(10)
+      );
+    }
+  }, [userBalanceData, userBalanceDataError]);
+
+  useEffect(() => {
+    if (balance && price) {
+      if (gweiToEth(balance) > gweiToEth(price)) {
+        setInvalidBalance(false);
+      } else {
+        setInvalidBalance(true);
+      }
+    }
+  }, [balance, price]);
+
+  useEffect(() => {
     if (address) {
       setTargetAddress(address);
     }
@@ -67,8 +98,6 @@ const Register: FunctionComponent<RegisterProps> = ({
   useEffect(() => {
     if (!isAvailable) return;
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-
-    console.log("targetAddress: ", targetAddress);
 
     if (
       tokenId != 0 &&
@@ -266,12 +295,11 @@ const Register: FunctionComponent<RegisterProps> = ({
           <p className="text">
             Price:&nbsp;
             <span className="font-semibold text-brown">
-              {Math.round(Number(price) * 0.000000000000000001 * 10000) / 10000}{" "}
-              ETH
+              {gweiToEth(price)}&nbsp;ETH
             </span>
           </p>
         </div>
-        <div className="flex justify-center content-center w-full">
+        <div className="w-full">
           <div className="text-beige m-1 mt-5">
             <Button
               onClick={() =>
@@ -286,10 +314,13 @@ const Register: FunctionComponent<RegisterProps> = ({
                 !account ||
                 !duration ||
                 duration < 1 ||
-                !targetAddress
+                !targetAddress ||
+                invalidBalance
               }
             >
-              Register domain
+              {invalidBalance
+                ? "You don't have enough eth"
+                : "Register from L2"}
             </Button>
           </div>
         </div>
