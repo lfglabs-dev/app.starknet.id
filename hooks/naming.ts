@@ -127,7 +127,7 @@ export function useDomainFromAddress(address: string | BN | undefined): string {
   });
 
   if (!data || (data as BN[][])["domain_len"] === 0 || error) {
-    return error ? error : "";
+    return "";
   } else {
     const domain = useDecoded(data[0]);
 
