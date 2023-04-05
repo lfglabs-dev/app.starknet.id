@@ -12,7 +12,6 @@ import {
 import { numberToString } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
 import { Call } from "starknet";
-import { useDisplayName } from "../../hooks/displayName.tsx";
 
 type RegisterProps = {
   expiryDuration: number;
@@ -23,7 +22,6 @@ const Register: FunctionComponent<RegisterProps> = ({ expiryDuration }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
-  const price = "800000000000000";
   const encodedDomain = useEncoded(domain ?? "");
   const [isAvailable, setIsAvailable] = useState<boolean>();
   const { expiry: data, error } = useExpiryFromDomain(domain);
@@ -45,7 +43,6 @@ const Register: FunctionComponent<RegisterProps> = ({ expiryDuration }) => {
   const { execute } = useStarknetExecute({
     calls: callData as any,
   });
-  const hasMainDomain = !useDisplayName(address ?? "").startsWith("0x");
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
@@ -57,158 +54,48 @@ const Register: FunctionComponent<RegisterProps> = ({ expiryDuration }) => {
     }
   }, [address]);
 
-  // Set mulitcalls
+  // Set mulitcall
   useEffect(() => {
     if (!isAvailable) return;
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
+    const price = "800000000000000";
 
-    if (
-      tokenId != 0 &&
-      !hasMainDomain &&
-      hexToDecimal(address) === hexToDecimal(targetAddress)
-    ) {
-      setCallData([
-        {
-          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-          entrypoint: "approve",
-          calldata: [
-            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-            price,
-            0,
-          ],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy_discounted",
-          calldata: [
-            numberToString(tokenId),
-            encodedDomain.toString(10),
-            numberToString(expiryDuration),
-            0,
-            hexToDecimal(targetAddress),
-            discountID,
-          ],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "set_address_to_domain",
-          calldata: [1, encodedDomain.toString(10)],
-        },
-      ]);
-    } else if (
-      (tokenId != 0 && hasMainDomain) ||
-      (tokenId != 0 &&
-        !hasMainDomain &&
-        hexToDecimal(address) != hexToDecimal(targetAddress))
-    ) {
-      setCallData([
-        {
-          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-          entrypoint: "approve",
-          calldata: [
-            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-            price,
-            0,
-          ],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy_discounted",
-          calldata: [
-            numberToString(tokenId),
-            encodedDomain.toString(10),
-            numberToString(expiryDuration),
-            0,
-            hexToDecimal(targetAddress),
-            discountID,
-          ],
-        },
-      ]);
-    } else if (
-      tokenId === 0 &&
-      !hasMainDomain &&
-      hexToDecimal(address) === hexToDecimal(targetAddress)
-    ) {
-      setCallData([
-        {
-          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-          entrypoint: "approve",
-          calldata: [
-            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-            price,
-            0,
-          ],
-        },
-        {
-          contractAddress: process.env
-            .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-          entrypoint: "mint",
-          calldata: [numberToString(newTokenId)],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy_discounted",
-          calldata: [
-            numberToString(newTokenId),
-            encodedDomain.toString(10),
-            numberToString(expiryDuration),
-            0,
-            hexToDecimal(targetAddress),
-            discountID,
-          ],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "set_address_to_domain",
-          calldata: [1, encodedDomain.toString(10)],
-        },
-      ]);
-    } else if (
-      (tokenId === 0 && hasMainDomain) ||
-      (tokenId === 0 &&
-        !hasMainDomain &&
-        hexToDecimal(address) != hexToDecimal(targetAddress))
-    ) {
-      setCallData([
-        {
-          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-          entrypoint: "approve",
-          calldata: [
-            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-            price,
-            0,
-          ],
-        },
-        {
-          contractAddress: process.env
-            .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-          entrypoint: "mint",
-          calldata: [numberToString(newTokenId)],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy_discounted",
-          calldata: [
-            numberToString(newTokenId),
-            encodedDomain.toString(10),
-            numberToString(expiryDuration),
-            0,
-            hexToDecimal(targetAddress),
-            discountID,
-          ],
-        },
-      ]);
-    }
-  }, [
-    tokenId,
-    expiryDuration,
-    targetAddress,
-    isAvailable,
-    price,
-    domain,
-    hasMainDomain,
-    address,
-  ]);
+    setCallData([
+      {
+        contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
+        entrypoint: "approve",
+        calldata: [process.env.NEXT_PUBLIC_NAMING_CONTRACT as string, price, 0],
+      },
+      {
+        contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+        entrypoint: "mint",
+        calldata: [numberToString(newTokenId)],
+      },
+      {
+        contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+        entrypoint: "buy_discounted",
+        calldata: [
+          numberToString(newTokenId),
+          encodedDomain.toString(10),
+          numberToString(expiryDuration),
+          0,
+          hexToDecimal(targetAddress),
+          discountID,
+        ],
+      },
+      {
+        contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+        entrypoint: "set_address_to_domain",
+        calldata: [1, encodedDomain.toString(10)],
+      },
+      {
+        contractAddress: process.env
+          .NEXT_PUBLIC_BRAAVOS_SHIELD_CONTRACT as string,
+        entrypoint: "mint",
+        calldata: [1],
+      },
+    ]);
+  }, [tokenId, expiryDuration, targetAddress, isAvailable, domain, address]);
 
   function changeDomain(value: string): void {
     setDomain(value);
@@ -222,6 +109,8 @@ const Register: FunctionComponent<RegisterProps> = ({ expiryDuration }) => {
         label={
           isDomainValid != true
             ? `"${isDomainValid}" is not a valid character`
+            : domain && domain?.length < 5
+            ? "This Discount available for 5 or more characters"
             : isAvailable === false
             ? "This domain is not available"
             : "Type your domain here"
@@ -231,7 +120,11 @@ const Register: FunctionComponent<RegisterProps> = ({ expiryDuration }) => {
         onChange={(e) => changeDomain(e.target.value)}
         color="secondary"
         required
-        error={isDomainValid != true || isAvailable === false}
+        error={
+          isDomainValid != true ||
+          isAvailable === false ||
+          Boolean(domain && domain?.length < 5)
+        }
       />
 
       <div className="flex justify-center content-center w-full">
@@ -247,9 +140,9 @@ const Register: FunctionComponent<RegisterProps> = ({ expiryDuration }) => {
             disabled={
               (domainsMinting.get(encodedDomain.toString()) as boolean) ||
               !account ||
-              Boolean(!domain) ||
               typeof isDomainValid === "string" ||
-              !isAvailable
+              !isAvailable ||
+              Boolean(domain?.length < 5)
             }
           >
             Register domain

@@ -25,7 +25,9 @@ const BraavosShield: FunctionComponent<BraavosShieldProps> = ({
           <p className="text-center text-sm">{condition}</p>
         </div>
       </div>
-      <Button onClick={mint}>GET MY SHIELD</Button>
+      <div className="max-w-sm">
+        <Button onClick={mint}>GET MY SHIELD</Button>
+      </div>
     </>
   );
 };
