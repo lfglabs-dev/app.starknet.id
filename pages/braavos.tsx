@@ -55,12 +55,13 @@ const Braavos: NextPage = () => {
     <div className={homeStyles.screen}>
       {connector && connector.id() === "braavos" ? (
         <section id="join" className={styles.section}>
-          {domainKind === "braavos" &&
-            (!mintDataLevel1?.transaction_hash ? (
+          {domainKind === "braavos" || domainKind === "subdomain" ? (
+            !mintDataLevel1?.transaction_hash ? (
               <BraavosShield
+                title="Mint your Bronze Shield Now"
                 imgSrc="/braavos/shieldLevel1.png"
-                desc="Braavos Soldier (level 1)"
-                condition="Only for .braavos.stark owners"
+                desc="Bronze Shield of Braavos (Level 1)"
+                condition="Only for Stark subdomain wallet (example: john.braavos.stark)"
                 mint={() => mint(0)}
               />
             ) : (
@@ -78,12 +79,14 @@ const Braavos: NextPage = () => {
                   <BraavosRegister expiryDuration={93} />
                 </div>
               </div>
-            ))}
+            )
+          ) : null}
           {domainKind === "root" && (
             <BraavosShield
+              title="Mint your Silver Shield Now"
               imgSrc="/braavos/shieldLevel2.png"
-              desc="Braavos Officer (level 2)"
-              condition="Only for stark root domain owners"
+              desc="Silver Shield of Braavos (level 2)"
+              condition="Only for stark root domain wallet (example: john.stark)"
               mint={() => mint(1)}
             />
           )}
@@ -99,7 +102,7 @@ const Braavos: NextPage = () => {
             errorMessage={
               connector
                 ? "You can get a Braavos Shield only with a Braavos wallet"
-                : "Please connect your Braavos wallet"
+                : "Please connect your Braavos wallet linked with a stark domain"
             }
           />
         </section>
