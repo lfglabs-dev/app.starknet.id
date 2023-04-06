@@ -58,7 +58,7 @@ const Braavos: NextPage = () => {
           {domainKind === "braavos" &&
             (!mintDataLevel1?.transaction_hash ? (
               <BraavosShield
-                imgSrc="/braavos/shield.png"
+                imgSrc="/braavos/shieldLevel1.png"
                 desc="Braavos Soldier (level 1)"
                 condition="Only for .braavos.stark owners"
                 mint={() => mint(0)}

@@ -13,11 +13,13 @@ import { numberToString } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
 import { Call } from "starknet";
 
-type RegisterProps = {
+type BraavosRegisterProps = {
   expiryDuration: number;
 };
 
-const Register: FunctionComponent<RegisterProps> = ({ expiryDuration }) => {
+const BraavosRegister: FunctionComponent<BraavosRegisterProps> = ({
+  expiryDuration,
+}) => {
   const [domain, setDomain] = useState<string>("");
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [tokenId, setTokenId] = useState<number>(0);
@@ -153,4 +155,4 @@ const Register: FunctionComponent<RegisterProps> = ({ expiryDuration }) => {
   );
 };
 
-export default Register;
+export default BraavosRegister;
