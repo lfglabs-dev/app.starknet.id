@@ -11,6 +11,8 @@ import {
   generateString,
   isStarkDomain,
   numberToString,
+  isBraavosSubdomain,
+  getDomainKind,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -182,5 +184,49 @@ describe("numberToString", () => {
   it("Should converts a negative number to its decimal string representation", () => {
     const result = numberToString(-456);
     expect(result).toEqual("-456");
+  });
+});
+
+describe("isBraavosSubdomain", () => {
+  it("returns true for valid Braavos subdomains", () => {
+    expect(isBraavosSubdomain("ben.braavos.stark")).toBe(true);
+    expect(isBraavosSubdomain("john.braavos.stark")).toBe(true);
+    expect(isBraavosSubdomain("jeremy.braavos.stark")).toBe(true);
+    expect(isBraavosSubdomain("johnny.braavos.stark")).toBe(true);
+  });
+
+  it("returns false for invalid Braavos subdomains", () => {
+    expect(isBraavosSubdomain("arya.braavoos.stark")).toBe(false);
+    expect(isBraavosSubdomain("braavos.stark")).toBe(false);
+    expect(isBraavosSubdomain("winterf.ell.braavos.stark")).toBe(false);
+    expect(isBraavosSubdomain("johén.braavos.stark")).toBe(false);
+    expect(isBraavosSubdomain(undefined)).toBe(false);
+  });
+});
+
+describe("getDomainKind", () => {
+  it("returns 'root' for valid root stark root domains", () => {
+    expect(getDomainKind("stark.stark")).toBe("root");
+    expect(getDomainKind("starkqqsdqsd.stark")).toBe("root");
+    expect(getDomainKind("benqsd.stark")).toBe("root");
+  });
+
+  it("returns 'braavos' for valid Braavos subdomains", () => {
+    expect(getDomainKind("ben.braavos.stark")).toBe("braavos");
+    expect(getDomainKind("john.braavos.stark")).toBe("braavos");
+    expect(getDomainKind("jeremy.braavos.stark")).toBe("braavos");
+    expect(getDomainKind("johnny.braavos.stark")).toBe("braavos");
+  });
+
+  it("returns 'subdomain' for any other valid domain", () => {
+    expect(getDomainKind("winterfell.stark.stark")).toBe("subdomain");
+    expect(getDomainKind("north.everai.stark")).toBe("subdomain");
+  });
+
+  it("returns 'none' for invalid domains", () => {
+    expect(getDomainKind("invalid$.go.stark")).toBe("none");
+    expect(getDomainKind("invalid")).toBe("none");
+    expect(getDomainKind("allélafrance.stark")).toBe("none");
+    expect(getDomainKind(undefined)).toBe("none");
   });
 });

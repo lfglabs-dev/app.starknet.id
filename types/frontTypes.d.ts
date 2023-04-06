@@ -14,9 +14,10 @@ type FullId = {
   domain: string;
 };
 
-type Status = "success" | "error";
-
 type ErrorRequestData = {
   status: Status;
   error: string;
 };
+
+type Status = "success" | "error";
+type DomainKind = "braavos" | "root" | "subdomain" | "none";
