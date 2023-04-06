@@ -6,6 +6,7 @@ type BraavosShieldProps = {
   imgSrc: string;
   desc: string;
   condition: string;
+  title?: string;
   mint: () => void;
 };
 
@@ -14,10 +15,11 @@ const BraavosShield: FunctionComponent<BraavosShieldProps> = ({
   desc,
   condition,
   mint,
+  title,
 }) => {
   return (
     <>
-      <h1 className="title">Get your Braavos shield !</h1>
+      <h1 className="title">{title ?? "Get your Braavos shield !"}</h1>
       <div className={styles.sbtContainer}>
         <div className={styles.sbtImageContainer}>
           <img className={styles.sbtImage} src={imgSrc} />
