@@ -42,7 +42,7 @@ const BraavosRegister: FunctionComponent<BraavosRegisterProps> = ({
   }, [data, error, domain]);
 
   const { account, address } = useAccount();
-  const { execute } = useStarknetExecute({
+  const { execute, data: mintDataLevel2 } = useStarknetExecute({
     calls: callData as any,
   });
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
@@ -55,6 +55,14 @@ const BraavosRegister: FunctionComponent<BraavosRegisterProps> = ({
       setTargetAddress(address);
     }
   }, [address]);
+
+  useEffect(() => {
+    if (mintDataLevel2?.transaction_hash) {
+      window.open(
+        `https://twitter.com/intent/tweet?text=Just%20minted%20a%20Silver%20Shield%20of%20Braavos%20with%20my%20domain%20${domain}%20%F0%9F%9B%A1%EF%B8%8F%0A%0AGo%20mint%20yours%20for%20free%20on%20app.starknet.id%2Fbraavos%20if%20you%20already%20have%20a%20stark%20domain%20or%20subdomain%20!%0A%0ABe%20quick%2C%20it%20might%20not%20last%20forever%20%F0%9F%91%80`
+      );
+    }
+  }, [mintDataLevel2]);
 
   // Set mulitcall
   useEffect(() => {
