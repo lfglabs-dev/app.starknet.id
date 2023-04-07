@@ -15,10 +15,12 @@ import { Call } from "starknet";
 
 type BraavosRegisterProps = {
   expiryDuration: number;
+  showTwitterCta: () => void;
 };
 
 const BraavosRegister: FunctionComponent<BraavosRegisterProps> = ({
   expiryDuration,
+  showTwitterCta,
 }) => {
   const [domain, setDomain] = useState<string>("");
   const [targetAddress, setTargetAddress] = useState<string>("");
@@ -55,14 +57,6 @@ const BraavosRegister: FunctionComponent<BraavosRegisterProps> = ({
       setTargetAddress(address);
     }
   }, [address]);
-
-  useEffect(() => {
-    if (mintDataLevel2?.transaction_hash) {
-      window.open(
-        `https://twitter.com/intent/tweet?text=Just%20minted%20a%20Silver%20Shield%20of%20Braavos%20with%20my%20domain%20${domain}%20%F0%9F%9B%A1%EF%B8%8F%0A%0AGo%20mint%20yours%20for%20free%20on%20app.starknet.id%2Fbraavos%20if%20you%20already%20have%20a%20stark%20domain%20or%20subdomain%20!%0A%0ABe%20quick%2C%20it%20might%20not%20last%20forever%20%F0%9F%91%80`
-      );
-    }
-  }, [mintDataLevel2]);
 
   // Set mulitcall
   useEffect(() => {
@@ -141,11 +135,12 @@ const BraavosRegister: FunctionComponent<BraavosRegisterProps> = ({
         <div className="text-beige m-1 mt-5 mb-5">
           <Button
             onClick={() =>
-              execute().then(() =>
+              execute().then(() => {
                 setDomainsMinting((prev) =>
                   new Map(prev).set(encodedDomain.toString(), true)
-                )
-              )
+                );
+                showTwitterCta();
+              })
             }
             disabled={
               (domainsMinting.get(encodedDomain.toString()) as boolean) ||
