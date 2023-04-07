@@ -9,11 +9,13 @@ import ErrorScreen from "../components/UI/screens/errorScreen";
 import BraavosShieldSkeleton from "../components/braavos/braavosShieldSkeleton";
 import BraavosShield from "../components/braavos/braavosShield";
 import BraavosRegister from "../components/braavos/braavosRegister";
+import TwitterCta from "../components/braavos/twitterCta";
 
 const Braavos: NextPage = () => {
   const [domainKind, setDomainKind] = useState<DomainKind | undefined>();
   const { address, connector } = useAccount();
   const domain = useDomainFromAddress(address);
+  const [twitterCta, setTwitterCta] = useState(false);
 
   // Shield Minting
   const callDataLevel1 = {
@@ -55,14 +57,6 @@ const Braavos: NextPage = () => {
     }
   }, [domain, address]);
 
-  useEffect(() => {
-    if (mintDataLevel2?.transaction_hash) {
-      window.open(
-        `https://twitter.com/intent/tweet?text=Just%20minted%20a%20Silver%20Shield%20of%20Braavos%20with%20my%20domain%20${domain}%20%F0%9F%9B%A1%EF%B8%8F%0A%0AGo%20mint%20yours%20for%20free%20on%20app.starknet.id%2Fbraavos%20if%20you%20already%20have%20a%20stark%20domain%20or%20subdomain%20!%0A%0ABe%20quick%2C%20it%20might%20not%20last%20forever%20%F0%9F%91%80`
-      );
-    }
-  }, [mintDataLevel2]);
-
   return (
     <div className={homeStyles.screen}>
       {connector && connector.id() === "braavos" ? (
@@ -76,6 +70,8 @@ const Braavos: NextPage = () => {
                 condition="Only for Stark subdomain wallet (example: john.braavos.stark)"
                 mint={() => mint(0)}
               />
+            ) : twitterCta ? (
+              <TwitterCta domain={domain} />
             ) : (
               <div className={styles.discountContainer}>
                 <div className={styles.discountBuyImageContainer}>
@@ -88,20 +84,26 @@ const Braavos: NextPage = () => {
                   <h1 className={styles.titleRegister}>
                     Register a domain and get your braavos shield for only 1$
                   </h1>
-                  <BraavosRegister expiryDuration={93} />
+                  <BraavosRegister
+                    expiryDuration={93}
+                    showTwitterCta={() => setTwitterCta(true)}
+                  />
                 </div>
               </div>
             )
           ) : null}
-          {domainKind === "root" && (
-            <BraavosShield
-              title="Mint your Silver Shield Now"
-              imgSrc="/braavos/shieldLevel2.png"
-              desc="Silver Shield of Braavos (level 2)"
-              condition="Only for stark root domain wallet (example: john.stark)"
-              mint={() => mint(1)}
-            />
-          )}
+          {domainKind === "root" &&
+            (mintDataLevel2?.transaction_hash ? (
+              <TwitterCta domain={domain} />
+            ) : (
+              <BraavosShield
+                title="Mint your Silver Shield Now"
+                imgSrc="/braavos/shieldLevel2.png"
+                desc="Silver Shield of Braavos (level 2)"
+                condition="Only for stark root domain wallet (example: john.stark)"
+                mint={() => mint(1)}
+              />
+            ))}
           {domainKind === "none" && (
             <ErrorScreen errorMessage="You need to own a .stark domain to get a shield but don't worry you can get a free .braavos.stark subdomain in the Braavos app now !" />
           )}

@@ -10,10 +10,12 @@ export function minifyAddress(address: string | undefined): string {
 }
 
 export function shortenDomain(
-  domain: string,
+  domain?: string,
   characterToBreak?: number
 ): string {
-  if (domain.length > (characterToBreak ?? 18)) {
+  if (!domain) return "";
+
+  if (domain.length > (characterToBreak ?? 22)) {
     const firstPart = domain.substring(0, 4);
     const secondPart = domain.substring(domain.length - 3, domain.length);
 

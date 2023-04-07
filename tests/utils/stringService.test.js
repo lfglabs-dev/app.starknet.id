@@ -13,6 +13,7 @@ import {
   numberToString,
   isBraavosSubdomain,
   getDomainKind,
+  shortenDomain,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -228,5 +229,35 @@ describe("getDomainKind", () => {
     expect(getDomainKind("invalid")).toBe("none");
     expect(getDomainKind("allélafrance.stark")).toBe("none");
     expect(getDomainKind(undefined)).toBe("none");
+  });
+});
+
+describe("Should test shortenDomain function", () => {
+  it("Should return the same domain if the length is less than the default characterToBreak", () => {
+    expect(shortenDomain("example.com")).toEqual("example.com");
+  });
+
+  it("Should return the shortened domain if the length is greater than the default characterToBreak", () => {
+    expect(shortenDomain("averylongdomainnametoshorten.com")).toEqual(
+      "aver...com"
+    );
+  });
+
+  it("Should return the same domain if the length is less than the custom characterToBreak", () => {
+    expect(shortenDomain("example.com", 15)).toEqual("example.com");
+  });
+
+  it("Should return the shortened domain if the length is greater than the custom characterToBreak", () => {
+    expect(shortenDomain("averylongdomainnametoshorten.com", 15)).toEqual(
+      "aver...com"
+    );
+  });
+
+  it("Should return an empty string if the domain is undefined", () => {
+    expect(shortenDomain(undefined)).toEqual("");
+  });
+
+  it("Should return an empty string if the domain is an empty string", () => {
+    expect(shortenDomain("")).toEqual("");
   });
 });
