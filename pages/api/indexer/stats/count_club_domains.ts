@@ -19,6 +19,34 @@ export default async function handler(
   const beginTime = parseInt(since as string) * 1000;
   const { db } = await connectToDatabase();
   const domainCollection = db.collection("domains");
+  const subdomainCollection = db.collection("subdomains");
+
+  const subdomainOutput = await subdomainCollection
+    .aggregate([
+      {
+        $match: {
+          "_chain.valid_to": null,
+          creation_date: {
+            $gte: new Date(beginTime),
+          },
+          project: "braavos",
+        },
+      },
+      {
+        $group: {
+          _id: "$project",
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          club: "$_id",
+          count: "$count",
+        },
+      },
+    ])
+    .toArray();
 
   const dbOutput = await domainCollection
     .aggregate([
@@ -95,7 +123,29 @@ export default async function handler(
                                         },
                                       },
                                       "four_letters",
-                                      "none",
+                                      {
+                                        $cond: [
+                                          {
+                                            $regexMatch: {
+                                              input: "$domain",
+                                              regex: /^.*\.vip\.stark$/,
+                                            },
+                                          },
+                                          "og",
+                                          {
+                                            $cond: [
+                                              {
+                                                $regexMatch: {
+                                                  input: "$domain",
+                                                  regex: /^.*\.everai\.stark$/,
+                                                },
+                                              },
+                                              "everai",
+                                              "none",
+                                            ],
+                                          },
+                                        ],
+                                      },
                                     ],
                                   },
                                 ],
@@ -124,6 +174,8 @@ export default async function handler(
       },
     ])
     .toArray();
+
+  console.log("dbOutput", dbOutput);
 
   let _99;
   let _999;
@@ -157,6 +209,13 @@ export default async function handler(
         count: doc.count,
       });
     }
+  }
+
+  for (const doc of subdomainOutput) {
+    output.push({
+      club: doc.club,
+      count: doc.count,
+    });
   }
 
   res.setHeader("cache-control", "max-age=30").status(200).json(output);
