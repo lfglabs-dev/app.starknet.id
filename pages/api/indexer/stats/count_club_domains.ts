@@ -175,8 +175,6 @@ export default async function handler(
     ])
     .toArray();
 
-  console.log("dbOutput", dbOutput);
-
   let _99;
   let _999;
   let _10k;
