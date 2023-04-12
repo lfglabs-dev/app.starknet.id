@@ -30,7 +30,7 @@ export function useDisplayName(address: string): string {
   //   : "none";
 
   // With our own hook
-  const domain = useDomainFromAddress(address);
+  const { domain } = useDomainFromAddress(address);
   const toDisplay = domain
     ? minifyDomain(domain)
     : address

@@ -15,24 +15,32 @@ export function useDecoded(encoded: BN[]): string {
   return utils.decodeDomain(convertEncoded);
 }
 
-export function useDomainFromAddress(address: string | BN | undefined): string {
+type DomainData = {
+  domain?: string;
+  error?: string;
+};
+
+export function useDomainFromAddress(
+  address: string | BN | undefined
+): DomainData {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [domain, setDomain] = useState<string>("");
+  const [error, setError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     if (!address) return;
     const fetchStarkName = async () => {
       const domain = await starknetIdNavigator
         ?.getStarkName(address.toString())
-        .catch(() => {
-          return "";
+        .catch((err) => {
+          setError(err);
         });
-      setDomain(domain ?? "");
+      setDomain(domain as string);
     };
     fetchStarkName();
   }, [starknetIdNavigator, address]);
 
-  return domain;
+  return { domain, error };
 }
 
 type AddressData = {
