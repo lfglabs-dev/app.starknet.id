@@ -1,6 +1,8 @@
 import BN from "bn.js";
 import { useStarknetCall } from "@starknet-react/core";
 import { useNamingContract } from "./contracts";
+import { useEffect, useState } from "react";
+import { useStarknetIdJs } from "./useStarknetIdJs";
 
 export const basicAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-";
 export const bigAlphabet = "这来";
@@ -119,20 +121,23 @@ export function useDecodedSeveral(domains: BN[][]): string[] {
 }
 
 export function useDomainFromAddress(address: string | BN | undefined): string {
-  const { contract } = useNamingContract();
-  const { data, error } = useStarknetCall({
-    contract,
-    method: "address_to_domain",
-    args: [address],
-  });
+  const { starknetIdNavigator } = useStarknetIdJs();
+  const [domain, setDomain] = useState<string>("");
 
-  if (!data || (data as BN[][])["domain_len"] === 0 || error) {
-    return "";
-  } else {
-    const domain = useDecoded(data[0]);
+  useEffect(() => {
+    if (!address) return;
+    const fetchStarkName = async () => {
+      const domain = await starknetIdNavigator
+        ?.getStarkName(address.toString())
+        .catch(() => {
+          return "";
+        });
+      setDomain(domain ?? "");
+    };
+    fetchStarkName();
+  }, [starknetIdNavigator, address]);
 
-    return domain;
-  }
+  return domain;
 }
 
 type AddressData = {
