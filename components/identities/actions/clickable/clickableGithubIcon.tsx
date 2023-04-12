@@ -1,11 +1,16 @@
 import { Tooltip } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, {
+  FunctionComponent,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import GithubIcon from "../../../UI/iconsComponents/icons/githubIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
-import { useStarknetIdJs } from "../../../../hooks/useStarknetIdJs";
+import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 
 type ClickableGithubIconProps = {
   width: string;
@@ -23,7 +28,7 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
   const router = useRouter();
   const [githubId, setGithubId] = useState<string | undefined>();
   const [githubUsername, setGithubUsername] = useState<string | undefined>();
-  const { starknetIdNavigator } = useStarknetIdJs();
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
 
   useEffect(() => {
     starknetIdNavigator

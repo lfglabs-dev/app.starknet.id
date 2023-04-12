@@ -1,11 +1,16 @@
 import { Tooltip } from "@mui/material";
 import { useRouter } from "next/router";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, {
+  FunctionComponent,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import TwitterIcon from "../../../UI/iconsComponents/icons/twitterIcon";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
-import { useStarknetIdJs } from "../../../../hooks/useStarknetIdJs";
+import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 
 type ClickableTwitterIconProps = {
   width: string;
@@ -23,7 +28,7 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
   const router = useRouter();
   const [twitterId, setTwitterId] = useState<string | undefined>();
   const [twitterUsername, setTwitterUsername] = useState<string | undefined>();
-  const { starknetIdNavigator } = useStarknetIdJs();
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
 
   useEffect(() => {
     starknetIdNavigator

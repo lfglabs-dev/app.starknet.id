@@ -1,6 +1,5 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-// import { useEncodedSeveral } from "../../hooks/naming";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import ChangeAddressModal from "./actions/changeAddressModal";
 import { getDomainWithoutStark } from "../../utils/stringService";

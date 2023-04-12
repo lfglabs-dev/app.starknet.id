@@ -1,9 +1,9 @@
 import BN from "bn.js";
 import { useStarknetCall } from "@starknet-react/core";
 import { useNamingContract } from "./contracts";
-import { useEffect, useState } from "react";
-import { useStarknetIdJs } from "./useStarknetIdJs";
+import { useContext, useEffect, useState } from "react";
 import { utils } from "starknetid.js";
+import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
 
 export const basicAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-";
 export const bigAlphabet = "这来";
@@ -16,7 +16,7 @@ export function useDecoded(encoded: BN[]): string {
 }
 
 export function useDomainFromAddress(address: string | BN | undefined): string {
-  const { starknetIdNavigator } = useStarknetIdJs();
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [domain, setDomain] = useState<string>("");
 
   useEffect(() => {
@@ -41,7 +41,7 @@ type AddressData = {
 };
 
 export function useAddressFromDomain(domain: string): AddressData {
-  const { starknetIdNavigator } = useStarknetIdJs();
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [address, setAddress] = useState<string | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
 
@@ -74,7 +74,7 @@ type TokenIdData = {
 };
 
 export function useTokenIdFromDomain(domain: string): TokenIdData {
-  const { starknetIdNavigator } = useStarknetIdJs();
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [tokenId, setTokenId] = useState<number | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
 

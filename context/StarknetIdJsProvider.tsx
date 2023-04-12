@@ -1,4 +1,4 @@
-import { createContext, useMemo } from "react";
+import { ReactNode, createContext, useMemo } from "react";
 import { Provider } from "starknet";
 import { StarknetIdNavigator } from "starknetid.js";
 
@@ -10,7 +10,7 @@ export const StarknetIdJsContext = createContext<StarknetIdJsConfig>({
   starknetIdNavigator: null,
 });
 
-export const StarknetIdJsProvider = ({ children }: { children: any }) => {
+export const StarknetIdJsProvider = ({ children }: { children: ReactNode }) => {
   const starknetIdNavigator = useMemo(() => {
     return new StarknetIdNavigator(
       new Provider({
