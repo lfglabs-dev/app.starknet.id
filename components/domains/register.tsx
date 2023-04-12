@@ -6,7 +6,7 @@ import styles from "../../styles/Home.module.css";
 import { useEtherContract, usePricingContract } from "../../hooks/contracts";
 import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
-import { useEncoded } from "../../hooks/naming";
+import { utils } from "starknetid.js";
 import BN from "bn.js";
 import { isHexString, numberToString } from "../../utils/stringService";
 import { gweiToEth, hexToDecimal } from "../../utils/feltService";
@@ -33,7 +33,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
   const { contract: etherContract } = useEtherContract();
-  const encodedDomain = useEncoded(domain);
+  const encodedDomain = new BN(utils.encode(domain).toString()); // todo use bigint
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: contract,
     method: "compute_buy_price",
