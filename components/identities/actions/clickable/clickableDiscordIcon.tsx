@@ -1,13 +1,11 @@
 import { Tooltip } from "@mui/material";
-import { useStarknetCall } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { useStarknetIdContract } from "../../../../hooks/contracts";
-import { stringToHex } from "../../../../utils/feltService";
 import DiscordIcon from "../../../UI/iconsComponents/icons/discordIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
+import { useStarknetIdJs } from "../../../../hooks/useStarknetIdJs";
 
 type ClickableDiscordIconProps = {
   width: string;
@@ -23,23 +21,25 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
   domain,
 }) => {
   const router = useRouter();
-  const { contract } = useStarknetIdContract();
-  const { data, error } = useStarknetCall({
-    contract: contract,
-    method: "get_verifier_data",
-    args: [
-      router.query.tokenId,
-      stringToHex("discord"),
-      process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
-    ],
-  });
   const [discordId, setDiscordId] = useState<string | undefined>();
+  const { starknetIdNavigator } = useStarknetIdJs();
 
   useEffect(() => {
-    if (error || !data || Number(data) === 0) return;
-
-    setDiscordId(data["data"].toString(10));
-  }, [data, error]);
+    starknetIdNavigator
+      ?.getVerifierData(
+        parseInt(tokenId),
+        "discord",
+        process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string
+      )
+      .then((response) => {
+        if (response.toString(10) !== "0") {
+          setDiscordId(response.toString(10));
+        }
+      })
+      .catch(() => {
+        return;
+      });
+  }, []);
 
   function startVerification(link: string): void {
     sessionStorage.setItem("tokenId", tokenId);
