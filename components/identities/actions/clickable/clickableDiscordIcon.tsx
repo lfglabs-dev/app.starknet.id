@@ -26,11 +26,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
 
   useEffect(() => {
     starknetIdNavigator
-      ?.getVerifierData(
-        parseInt(tokenId),
-        "discord",
-        process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string
-      )
+      ?.getVerifierData(parseInt(tokenId), "discord")
       .then((response) => {
         if (response.toString(10) !== "0") {
           setDiscordId(response.toString(10));
@@ -39,7 +35,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
       .catch(() => {
         return;
       });
-  }, []);
+  }, [starknetIdNavigator]);
 
   function startVerification(link: string): void {
     sessionStorage.setItem("tokenId", tokenId);

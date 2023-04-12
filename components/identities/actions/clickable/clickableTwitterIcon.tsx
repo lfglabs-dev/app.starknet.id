@@ -27,11 +27,7 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
 
   useEffect(() => {
     starknetIdNavigator
-      ?.getVerifierData(
-        parseInt(tokenId),
-        "twitter",
-        process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string
-      )
+      ?.getVerifierData(parseInt(tokenId), "twitter")
       .then((response) => {
         if (response.toString(10) !== "0") {
           setTwitterId(response.toString(10));

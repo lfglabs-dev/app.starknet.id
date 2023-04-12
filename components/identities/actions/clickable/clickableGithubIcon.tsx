@@ -27,11 +27,7 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
 
   useEffect(() => {
     starknetIdNavigator
-      ?.getVerifierData(
-        parseInt(tokenId),
-        "github",
-        process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string
-      )
+      ?.getVerifierData(parseInt(tokenId), "github")
       .then((response) => {
         if (response.toString(10) !== "0") {
           setGithubId(response.toString(10));
