@@ -32,7 +32,7 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
 
   useEffect(() => {
     starknetIdNavigator
-      ?.getVerifierData(parseInt(tokenId), "twitter")
+      ?.getVerifierData(tokenId, "twitter")
       .then((response) => {
         if (response.toString(10) !== "0") {
           setTwitterId(response.toString(10));

@@ -31,7 +31,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
 
   useEffect(() => {
     starknetIdNavigator
-      ?.getVerifierData(parseInt(tokenId), "discord")
+      ?.getVerifierData(tokenId, "discord")
       .then((response) => {
         if (response.toString(10) !== "0") {
           setDiscordId(response.toString(10));
