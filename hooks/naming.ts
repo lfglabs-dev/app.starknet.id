@@ -4,10 +4,7 @@ import { useNamingContract } from "./contracts";
 import { useContext, useEffect, useState } from "react";
 import { utils } from "starknetid.js";
 import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
-
-export const basicAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-";
-export const bigAlphabet = "这来";
-export const totalAlphabet = basicAlphabet + bigAlphabet;
+import { basicAlphabet } from "../utils/constants";
 
 // TODO: remove and use utils.decodeDomain when dapp uses starknet.js v5
 export function useDecoded(encoded: BN[]): string {
