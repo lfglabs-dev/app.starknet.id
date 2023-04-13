@@ -6,13 +6,12 @@ import {
   useStarknetCall,
   useStarknetExecute,
 } from "@starknet-react/core";
-import { getDomainWithoutStark } from "../../utils/stringService";
-import { useEncoded } from "../../hooks/naming";
 import { useEtherContract } from "../../hooks/contracts";
 import Button from "../../components/UI/button";
 import { BN } from "bn.js";
 import BraavosConfirmation from "./braavosConfirmation";
 import Link from "next/link";
+import { utils } from "starknetid.js";
 
 type BraavosRenewalProps = {
   domain: string;
@@ -34,10 +33,7 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
     {
       contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
       entrypoint: "renew",
-      calldata: [
-        useEncoded(getDomainWithoutStark(domain)).toString(10),
-        3 * 365,
-      ],
+      calldata: [utils.encodeDomain(domain).toString(), 3 * 365],
     },
     {
       contractAddress: process.env

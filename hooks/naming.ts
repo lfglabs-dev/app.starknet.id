@@ -16,7 +16,7 @@ export function useDecoded(encoded: BN[]): string {
 }
 
 type DomainData = {
-  domain?: string;
+  domain: string;
   error?: string;
 };
 
