@@ -22,7 +22,7 @@ export function useDomainFromAddress(
 ): DomainData {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [domain, setDomain] = useState<string>("");
-  const [error, setError] = useState<string | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
     if (!address) return;
@@ -47,8 +47,8 @@ type AddressData = {
 
 export function useAddressFromDomain(domain: string): AddressData {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
-  const [address, setAddress] = useState<string | undefined>(undefined);
-  const [error, setError] = useState<string | undefined>(undefined);
+  const [address, setAddress] = useState<string | undefined>();
+  const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
     if (!domain) return;
@@ -80,8 +80,8 @@ type TokenIdData = {
 
 export function useTokenIdFromDomain(domain: string): TokenIdData {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
-  const [tokenId, setTokenId] = useState<number | undefined>(undefined);
-  const [error, setError] = useState<string | undefined>(undefined);
+  const [tokenId, setTokenId] = useState<number | undefined>();
+  const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
     if (!domain) return;
