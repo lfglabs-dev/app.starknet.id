@@ -23,6 +23,6 @@ export async function connectToDatabase() {
   } else {
     client = await new MongoClient(uri as string).connect();
   }
-  db = (client as MongoClient).db("starknet_id");
+  db = (client as MongoClient).db(process.env.NEXT_PUBLIC_MONGODB_DBNAME);
   return { client, db };
 }
