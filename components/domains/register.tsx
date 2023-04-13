@@ -33,7 +33,9 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
   const { contract: etherContract } = useEtherContract();
-  const encodedDomain = new BN(utils.encode(domain).toString()); // todo use bigint
+  const encodedDomain = utils
+    .encodeDomain(domain)
+    .map((element) => new BN(element.toString()))[0];
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: contract,
     method: "compute_buy_price",

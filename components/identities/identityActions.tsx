@@ -2,7 +2,6 @@ import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import ChangeAddressModal from "./actions/changeAddressModal";
-import { getDomainWithoutStark } from "../../utils/stringService";
 import TransferFormModal from "./actions/transferFormModal";
 import SubdomainModal from "./actions/subdomainModal";
 import RenewalModal from "./actions/renewalModal";
@@ -33,9 +32,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isSubdomainFormOpen, setIsSubdomainFormOpen] =
     useState<boolean>(false);
   const { address } = useAccount();
-  const encodedDomains = utils.encodeSeveral(
-    getDomainWithoutStark(identity ? identity.domain : "").split(".") ?? []
-  );
+  const encodedDomains = utils.encodeDomain(identity?.domain);
   const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -45,7 +42,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
   encodedDomains.forEach((domain: string | number) => {
-    callDataEncodedDomain.push(domain);
+    callDataEncodedDomain.push(domain.toString(10));
   });
 
   //Set as main domain execute
