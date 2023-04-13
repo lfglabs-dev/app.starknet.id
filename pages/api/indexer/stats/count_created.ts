@@ -21,85 +21,84 @@ export default async function handler(
     (endTime - beginTime) / parseInt(segments as string)
   );
 
-  if (deltaTime > 3600000) {
-    if (deltaTime > 3600) {
-      const { db } = await connectToDatabase();
-      const domainCollection = db.collection("domains");
+  if (deltaTime > 3600 * 1000) {
+    const { db } = await connectToDatabase();
+    const domainCollection = db.collection("domains");
 
-      const output = (
-        await domainCollection
-          .aggregate([
-            {
-              $match: {
-                "_chain.valid_to": null,
-                creation_date: {
-                  $gte: new Date(beginTime),
-                  $lte: new Date(endTime),
-                },
+    const output = (
+      await domainCollection
+        .aggregate([
+          {
+            $match: {
+              "_chain.valid_to": null,
+              creation_date: {
+                $gte: new Date(beginTime),
+                $lte: new Date(endTime),
               },
             },
-            {
-              $group: {
-                _id: {
-                  $floor: {
-                    $divide: [
-                      {
-                        $sum: [
-                          {
-                            $subtract: [
-                              {
-                                $subtract: [
-                                  "$creation_date",
-                                  new Date(beginTime),
-                                ],
-                              },
-                              {
-                                $mod: [
-                                  {
-                                    $subtract: [
-                                      "$creation_date",
-                                      new Date(beginTime),
-                                    ],
-                                  },
-                                  deltaTime,
-                                ],
-                              },
-                            ],
-                          },
-                          beginTime,
-                        ],
-                      },
-                      1000,
-                    ],
-                  },
-                },
-                count: {
-                  $sum: 1,
+          },
+          {
+            $group: {
+              _id: {
+                $floor: {
+                  $divide: [
+                    {
+                      $sum: [
+                        {
+                          $subtract: [
+                            {
+                              $subtract: [
+                                "$creation_date",
+                                new Date(beginTime),
+                              ],
+                            },
+                            {
+                              $mod: [
+                                {
+                                  $subtract: [
+                                    "$creation_date",
+                                    new Date(beginTime),
+                                  ],
+                                },
+                                deltaTime,
+                              ],
+                            },
+                          ],
+                        },
+                        beginTime,
+                      ],
+                    },
+                    1000,
+                  ],
                 },
               },
-            },
-            {
-              $project: {
-                _id: 0,
-                from: "$_id",
-                count: "$count",
+              count: {
+                $sum: 1,
               },
             },
-          ])
-          .toArray()
-      ).map((doc) => {
-        return { from: doc.from as number, count: doc.count as number };
-      });
+          },
+          {
+            $project: {
+              _id: 0,
+              from: "$_id",
+              count: "$count",
+            },
+          },
+        ])
+        .toArray()
+    ).map((doc) => {
+      return { from: doc.from as number, count: doc.count as number };
+    });
 
-      res
-        .setHeader("cache-control", "max-age=30")
-        .status(200)
-        .json(output as any);
-    } else {
-      res
-        .setHeader("cache-control", "max-age=30")
-        .status(200)
-        .json({ error: "delta must be greater than 3600 seconds" });
-    }
+    res
+      .setHeader("cache-control", "max-age=30")
+      .status(200)
+      .json(output as any);
+  } else {
+    res
+      .setHeader("cache-control", "max-age=30")
+      .status(200)
+      .json({ error: "delta must be greater than 3600 seconds" });
   }
+
 }

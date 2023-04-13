@@ -21,29 +21,54 @@ export default async function handler(
   const {
     query: { addr },
   } = req;
-  const full_ids: Array<FullId> = [];
   const { db } = await connectToDatabase();
-  const documents = db
-    .collection("starknet_ids")
-    .find({ owner: addr, "_chain.valid_to": null });
-  const domains = db.collection("domains");
-  for (const doc of await documents.toArray()) {
-    const tokenId: string = doc.token_id;
-    await domains
-      .findOne({
-        token_id: tokenId,
+
+  const pipeline = [
+    {
+      $match: {
+        owner: addr,
         "_chain.valid_to": null,
-      })
-      .then((domainDoc) => {
-        if (domainDoc) {
-          full_ids.push({ id: tokenId, domain: domainDoc.domain });
-        } else {
-          full_ids.push({ id: tokenId });
-        }
-      });
-  }
-  res
-    .setHeader("cache-control", "max-age=30")
-    .status(200)
-    .json({ full_ids: full_ids });
+      },
+    },
+    {
+      $lookup: {
+        from: "domains",
+        let: { token_id: "$token_id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$token_id", "$$token_id"] },
+                  { $eq: ["$_chain.valid_to", null] },
+                ],
+              },
+            },
+          },
+        ],
+        as: "domainData",
+      },
+    },
+    {
+      $unwind: {
+        path: "$domainData",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        id: "$token_id",
+        domain: "$domainData.domain",
+      },
+    },
+  ];
+
+  const documents = await db.collection("starknet_ids").aggregate(pipeline).toArray();
+  const full_ids: FullId[] = documents.map(doc => ({
+    id: doc.id,
+    domain: doc.domain,
+  }));
+
+  res.setHeader("cache-control", "max-age=30").status(200).json({ full_ids: full_ids });
 }
