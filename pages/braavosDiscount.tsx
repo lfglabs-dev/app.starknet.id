@@ -5,8 +5,8 @@ import styles from "../styles/braavos.module.css";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import BraavosRegister from "../components/braavos/braavosRegister";
 import { useAccount } from "@starknet-react/core";
-import TwitterCta from "../components/braavos/twitterCta";
 import { useDomainFromAddress } from "../hooks/naming";
+import BraavosRenewal from "../components/braavos/braavosRenewal";
 
 const BraavosDiscount: NextPage = () => {
   const { connector, address } = useAccount();
@@ -18,7 +18,7 @@ const BraavosDiscount: NextPage = () => {
       {connector && connector.id() === "braavos" ? (
         <section id="join" className={styles.section}>
           {twitterCta ? (
-            <TwitterCta domain={domain} />
+            <BraavosRenewal domain={domain} />
           ) : (
             <div className={styles.discountContainer}>
               <div className={styles.discountBuyImageContainer}>
