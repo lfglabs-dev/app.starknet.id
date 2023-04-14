@@ -239,7 +239,7 @@ const Braavos: NextPage = () => {
                       title="Mint your Gold Shield Now"
                       imgSrc="/braavos/shieldLevel3.png"
                       desc="Gold Shield of Braavos (level 3)"
-                      condition="Only for stark root domain owner with +2 years in expiry"
+                      condition="Only for stark root domain owner with +3 years in expiry"
                       mint={() => mint(2)}
                     />
                   )
