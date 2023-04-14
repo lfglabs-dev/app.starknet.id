@@ -18,7 +18,9 @@ const Braavos: NextPage = () => {
   const { address, connector } = useAccount();
   const domain = useDomainFromAddress(address);
   const [expiryDate, setExpiryDate] = useState<Date | undefined>();
+  const [ownedShields, setOwnedShields] = useState([]);
   const router = useRouter();
+
   // Shield Minting
   const callDataLevel3 = {
     contractAddress: process.env.NEXT_PUBLIC_BRAAVOS_SHIELD_CONTRACT as string,
@@ -49,6 +51,19 @@ const Braavos: NextPage = () => {
     if (!address) {
       setDomainKind(undefined);
     }
+
+    // Aspect Indexer
+    fetch(
+      `https://api${
+        process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "-testnet" : ""
+      }.aspect.co/api/v0/assets?contract_address=${
+        process.env.NEXT_PUBLIC_BRAAVOS_SHIELD_CONTRACT as string
+      }&owner_address=${address}&sort_by=minted_at&order_by=desc`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setOwnedShields(data.assets);
+      });
   }, [domain, address]);
 
   const { expiry: expiryData, error: expiryError } = useExpiryFromDomain(
@@ -64,6 +79,13 @@ const Braavos: NextPage = () => {
       }
     }
   }, [expiryData, expiryError]);
+
+  // A function to check if of the object contained in ownedShields has the property name that is equal to "Gold Shield of Braavos - Level 3"
+  function checkIfShieldIsOwned() {
+    return ownedShields.some(
+      (shield) => (shield as any).name === "Gold Shield of Braavos - Level 3"
+    );
+  }
 
   return (
     <div className={homeStyles.screen}>
@@ -93,17 +115,25 @@ const Braavos: NextPage = () => {
                     </ul>
                   </p>
                 }
-                title={`Congrats, you just renewed ${domain} for 3 years !`}
+                title={`Congrats, you just minted your gold shield with ${domain} !`}
                 imageSrc={"/braavos/shieldLevel3.png"}
               />
             ) : expiryDate > new Date(2026, 3, 1) ? (
-              <BraavosShield
-                title="Mint your Gold Shield Now"
-                imgSrc="/braavos/shieldLevel3.png"
-                desc="Gold Shield of Braavos (level 3)"
-                condition="Only for stark root domain owner with +2 years in expiry"
-                mint={() => mint()}
-              />
+              ownedShields.length > 0 && checkIfShieldIsOwned() ? (
+                <ErrorScreen
+                  errorMessage="You already minted your gold shield, check your gallery to see it :)"
+                  buttonText="Go back to your identities"
+                  onClick={() => router.push("/identities")}
+                />
+              ) : (
+                <BraavosShield
+                  title="Mint your Gold Shield Now"
+                  imgSrc="/braavos/shieldLevel3.png"
+                  desc="Gold Shield of Braavos (level 3)"
+                  condition="Only for stark root domain owner with +2 years in expiry"
+                  mint={() => mint()}
+                />
+              )
             ) : (
               <BraavosRenewal domain={domain} />
             )

@@ -17,6 +17,7 @@ import BraavosRenewal from "../components/braavos/braavosRenewal";
 import BraavosConfirmation from "../components/braavos/braavosConfirmation";
 import { useBraavosNftContract } from "../hooks/contracts";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const Braavos: NextPage = () => {
   const [domainKind, setDomainKind] = useState<DomainKind | undefined>();
@@ -25,6 +26,8 @@ const Braavos: NextPage = () => {
   const [showGoldPage, setShowGoldPage] = useState(false);
   const [expiryDate, setExpiryDate] = useState<Date | undefined>();
   const [isEligible, setIsEligible] = useState<boolean>(false);
+  const [ownedShields, setOwnedShields] = useState([]);
+  const router = useRouter();
 
   // Shield Minting
   const callDataLevel1 = {
@@ -80,6 +83,19 @@ const Braavos: NextPage = () => {
     if (!address) {
       setDomainKind(undefined);
     }
+
+    // Aspect Indexer
+    fetch(
+      `https://api${
+        process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "-testnet" : ""
+      }.aspect.co/api/v0/assets?contract_address=${
+        process.env.NEXT_PUBLIC_BRAAVOS_SHIELD_CONTRACT as string
+      }&owner_address=${address}&sort_by=minted_at&order_by=desc`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setOwnedShields(data.assets);
+      });
   }, [domain, address]);
 
   const { expiry: expiryData, error: expiryError } = useExpiryFromDomain(
@@ -116,6 +132,12 @@ const Braavos: NextPage = () => {
       setIsEligible(true);
     }
   }, [isEligibleData, isEligibleDataError]);
+
+  function checkIfShieldIsOwned() {
+    return ownedShields.some(
+      (shield) => (shield as any).name === "Gold Shield of Braavos - Level 3"
+    );
+  }
 
   return (
     <div className={homeStyles.screen}>
@@ -203,8 +225,14 @@ const Braavos: NextPage = () => {
                           </ul>
                         </p>
                       }
-                      title={`Congrats, you just renewed ${domain} for 3 years !`}
+                      title={`Congrats, you just minted your gold shield with ${domain} !`}
                       imageSrc={"/braavos/shieldLevel3.png"}
+                    />
+                  ) : ownedShields.length > 0 && checkIfShieldIsOwned() ? (
+                    <ErrorScreen
+                      errorMessage="You already minted your gold shield, check your gallery to see it :)"
+                      buttonText="Go back to your identities"
+                      onClick={() => router.push("/identities")}
                     />
                   ) : (
                     <BraavosShield

@@ -136,7 +136,7 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
           </ul>
         </p>
       }
-      title={`Congrats, you just renewed ${domain} for 3 years !`}
+      title={`Congrats, you just minted your gold shield with ${domain} !`}
       imageSrc={"/braavos/shieldLevel3.png"}
     />
   );
