@@ -130,7 +130,7 @@ const Braavos: NextPage = () => {
                   title="Mint your Gold Shield Now"
                   imgSrc="/braavos/shieldLevel3.png"
                   desc="Gold Shield of Braavos (level 3)"
-                  condition="Only for stark root domain owner with +2 years in expiry"
+                  condition="Only for stark root domain owner with +3 years in expiry"
                   mint={() => mint()}
                 />
               )
@@ -139,7 +139,7 @@ const Braavos: NextPage = () => {
             )
           ) : (
             <ErrorScreen
-              errorMessage="You need a stark root domain registered for 2 years or plus of expiry to get mint your Braavos Gold Shield"
+              errorMessage="You need a stark root domain registered for 3 years or plus of expiry to get mint your Braavos Gold Shield"
               buttonText="Get a root domain"
               onClick={() => router.push("/")}
             />

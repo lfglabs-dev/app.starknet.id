@@ -104,9 +104,12 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
           <p className="mb-5 text-justify">
             Gold Shield of Braavos (level 3) is only given to the long term
             supporter of Starknet ID ! Renew your Stark name for 3 years but pay
-            for only 2 years and receive automatically the Gold Shield of
-            Braavos. This offer is only available until April 20th, 12:00 p.m.
-            UTC.
+            for only 3 years{" "}
+            <strong>
+              (0.018 ETH instead of 0.027 ETH for +5 letters domains only)
+            </strong>{" "}
+            and receive automatically the Gold Shield of Braavos. This offer is
+            only available until April 20th, 12:00 p.m. UTC.
           </p>
           <Button disabled={invalidBalance} onClick={renew}>
             {invalidBalance
@@ -124,10 +127,11 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
           completed:{" "}
           <ul className="list-disc list-outside">
             <li className="ml-5">
-              Check your NFT gallery to see the Goden Shied of Braavos
+              Check your NFT gallery to see the Golden Shied of Braavos after 2
+              minutes
             </li>
             <li className="ml-5">
-              Check the new expiry date of your domain 3 minutes after on&nbsp;
+              Check the new expiry date of your domain after 5 minutes on&nbsp;
               <Link href="/identities" className="underline">
                 the identities page
               </Link>{" "}
