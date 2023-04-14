@@ -104,7 +104,7 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
           <p className="mb-5 text-justify">
             Gold Shield of Braavos (level 3) is only given to the long term
             supporter of Starknet ID ! Renew your Stark name for 3 years but pay
-            for only 3 years{" "}
+            for only 2 years{" "}
             <strong>
               (0.018 ETH instead of 0.027 ETH for +5 letters domains only)
             </strong>{" "}
