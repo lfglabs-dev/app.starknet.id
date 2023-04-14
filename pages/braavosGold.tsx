@@ -8,9 +8,10 @@ import { getDomainKind, getDomainWithoutStark } from "../utils/stringService";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import BraavosShieldSkeleton from "../components/braavos/braavosShieldSkeleton";
 import BraavosShield from "../components/braavos/braavosShield";
-import TwitterCta from "../components/braavos/twitterCta";
 import { useRouter } from "next/router";
 import BraavosRenewal from "../components/braavos/braavosRenewal";
+import BraavosConfirmation from "../components/braavos/braavosConfirmation";
+import Link from "next/link";
 
 const Braavos: NextPage = () => {
   const [domainKind, setDomainKind] = useState<DomainKind | undefined>();
@@ -72,10 +73,30 @@ const Braavos: NextPage = () => {
             <BraavosShieldSkeleton />
           ) : domainKind === "root" ? (
             mintDataLevel3?.transaction_hash ? (
-              <TwitterCta
-                twitterLink={`https://twitter.com/intent/tweet?text=Just%20minted%20a%20Gold%20Shield%20of%20Braavos%20with%20my%20domain%20${domain}%20%F0%9F%9B%A1%EF%B8%8F%0A%0AGo%20mint%20yours%20on%20app.starknet.id%2Fbraavos%20!%0A%0ABe%20quick%2C%20it%20might%20not%20last%20forever%20%F0%9F%91%80`}
+              <BraavosConfirmation
+                confirmationText={
+                  <p className="mb-5 text-justify">
+                    Thanks, the transaction is on going. Once the transaction
+                    will be completed:{" "}
+                    <ul className="list-disc list-outside">
+                      <li className="ml-5">
+                        Check your NFT gallery to see the Goden Shied of Braavos
+                      </li>
+                      <li className="ml-5">
+                        Check the new expiry date of your domain on&nbsp; on{" "}
+                        <Link href="/identities" className="underline">
+                          the identities page
+                        </Link>{" "}
+                        click on &quot;Renew your Identity&quot; to see the
+                        expiry date
+                      </li>
+                    </ul>
+                  </p>
+                }
+                title={`Congrats, you just renewed ${domain} for 3 years !`}
+                imageSrc={"/braavos/shieldLevel3.png"}
               />
-            ) : expiryDate > new Date(2025, 3, 1) ? (
+            ) : expiryDate > new Date(2026, 3, 1) ? (
               <BraavosShield
                 title="Mint your Gold Shield Now"
                 imgSrc="/braavos/shieldLevel3.png"
