@@ -128,7 +128,6 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
             </li>
             <li className="ml-5">
               Check the new expiry date of your domain 3 minutes after on&nbsp;
-              on{" "}
               <Link href="/identities" className="underline">
                 the identities page
               </Link>{" "}
