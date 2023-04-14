@@ -127,7 +127,7 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
               Check your NFT gallery to see the Goden Shied of Braavos
             </li>
             <li className="ml-5">
-              Check the new expiry date of your domain on&nbsp; on{" "}
+              Check the new expiry date of your domain 3 minutes after on&nbsp;
               <Link href="/identities" className="underline">
                 the identities page
               </Link>{" "}
