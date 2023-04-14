@@ -96,18 +96,22 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
       </div>
       <div className={styles.registerContainer}>
         <h1 className={styles.titleRegister}>
-          Renew your domain and Mint your Gold Shield Now !
+          Renew you domain with a -33% discount to receive the Gold Shield of
+          Braavos Now !
         </h1>
 
         <div className="max-w-md">
           <p className="mb-5 text-justify">
             Gold Shield of Braavos (level 3) is only given to the long term
-            supporter of the Starknet ID Community, that&apos;s the reason why
-            if you renew your domain today to be part of the Starknet community
-            for at least 2 years (cost 0.018 ETH).
+            supporter of Starknet ID ! Renew your Stark name for 3 years but pay
+            for only 2 years and receive automatically the Gold Shield of
+            Braavos. This offer is only available until April 20th, 12:00 p.m.
+            UTC.
           </p>
           <Button disabled={invalidBalance} onClick={renew}>
-            {invalidBalance ? "You don't have enough eth" : `Renew ${domain}`}
+            {invalidBalance
+              ? "You don't have enough eth"
+              : `Renew ${domain} now !`}
           </Button>
         </div>
       </div>
