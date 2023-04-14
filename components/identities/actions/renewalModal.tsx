@@ -28,7 +28,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
   const { contract: pricingContract } = usePricingContract();
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: pricingContract,
-    method: "compute_buy_price",
+    method: "compute_renew_price",
     args: [callDataEncodedDomain[1], duration * 365],
   });
 
