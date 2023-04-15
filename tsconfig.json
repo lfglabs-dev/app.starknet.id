@@ -14,8 +14,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "ignoreDeprecations": "5.0"
+    "suppressImplicitAnyIndexErrors": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "jest.config.js"],
   "exclude": ["node_modules"]
