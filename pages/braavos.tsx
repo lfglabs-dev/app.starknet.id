@@ -133,7 +133,7 @@ const Braavos: NextPage = () => {
             <>
               {domainKind === "braavos" || domainKind === "subdomain" ? (
                 !mintDataLevel1?.transaction_hash ? (
-                  checkBronzeShield() ? (
+                  !checkBronzeShield() ? (
                     <BraavosShield
                       title="Mint your Bronze Shield Now"
                       imgSrc="/braavos/shieldLevel1.png"
@@ -229,7 +229,7 @@ const Braavos: NextPage = () => {
                   )
                 ) : mintDataLevel2?.transaction_hash ? (
                   <BraavosRenewal domain={domain} />
-                ) : checkSilverShield() ? (
+                ) : !checkSilverShield() ? (
                   <BraavosShield
                     title="Mint your Silver Shield Now"
                     imgSrc="/braavos/shieldLevel2.png"
