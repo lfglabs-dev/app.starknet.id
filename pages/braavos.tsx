@@ -52,7 +52,6 @@ const Braavos: NextPage = () => {
   });
 
   function mint(level: number) {
-    level == 0 ? executeLevel1() : executeLevel2();
     if (level == 0) {
       executeLevel1();
     } else if (level == 1) {
