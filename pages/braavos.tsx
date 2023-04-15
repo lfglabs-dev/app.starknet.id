@@ -3,11 +3,7 @@ import type { NextPage } from "next";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/braavos.module.css";
 import { useDomainFromAddress, useExpiryFromDomain } from "../hooks/naming";
-import {
-  useAccount,
-  useStarknetCall,
-  useStarknetExecute,
-} from "@starknet-react/core";
+import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import { getDomainKind, getDomainWithoutStark } from "../utils/stringService";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import BraavosShieldSkeleton from "../components/braavos/braavosShieldSkeleton";
@@ -15,7 +11,6 @@ import BraavosShield from "../components/braavos/braavosShield";
 import BraavosRegister from "../components/braavos/braavosRegister";
 import BraavosRenewal from "../components/braavos/braavosRenewal";
 import BraavosConfirmation from "../components/braavos/braavosConfirmation";
-import { useBraavosNftContract } from "../hooks/contracts";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -25,7 +20,6 @@ const Braavos: NextPage = () => {
   const domain = useDomainFromAddress(address);
   const [showGoldPage, setShowGoldPage] = useState(false);
   const [expiryDate, setExpiryDate] = useState<Date | undefined>();
-  const [isEligible, setIsEligible] = useState<boolean>(false);
   const [ownedShields, setOwnedShields] = useState([]);
   const router = useRouter();
 
@@ -112,30 +106,21 @@ const Braavos: NextPage = () => {
     }
   }, [expiryData, expiryError]);
 
-  const { contract: braavosNftContract } = useBraavosNftContract();
-  const { data: isEligibleData, error: isEligibleDataError } = useStarknetCall({
-    contract: braavosNftContract,
-    method: "is_eligible_for_level",
-    args: [
-      [domain],
-      domainKind === "root"
-        ? expiryDate && expiryDate > new Date(2026, 3, 1)
-          ? 2
-          : 1
-        : 0,
-    ],
-  });
-
-  useEffect(() => {
-    if (isEligibleDataError || !isEligibleData) setIsEligible(false);
-    else {
-      setIsEligible(true);
-    }
-  }, [isEligibleData, isEligibleDataError]);
-
-  function checkIfShieldIsOwned() {
+  function checkGoldShield(): boolean {
     return ownedShields.some(
       (shield) => (shield as any).name === "Gold Shield of Braavos - Level 3"
+    );
+  }
+
+  function checkSilverShield() {
+    return ownedShields.some(
+      (shield) => (shield as any).name === "Silver Shield of Braavos - Level 2"
+    );
+  }
+
+  function checkBronzeShield() {
+    return ownedShields.some(
+      (shield) => (shield as any).name === "Bronze Shield of Braavos - Level 1"
     );
   }
 
@@ -149,7 +134,7 @@ const Braavos: NextPage = () => {
             <>
               {domainKind === "braavos" || domainKind === "subdomain" ? (
                 !mintDataLevel1?.transaction_hash ? (
-                  isEligible ? (
+                  checkBronzeShield() ? (
                     <BraavosShield
                       title="Mint your Bronze Shield Now"
                       imgSrc="/braavos/shieldLevel1.png"
@@ -201,7 +186,7 @@ const Braavos: NextPage = () => {
                 )
               ) : null}
               {domainKind === "root" ? (
-                expiryDate > new Date(2026, 3, 1) ? (
+                expiryDate > new Date(2026, 1, 1) ? (
                   mintDataLevel3?.transaction_hash ? (
                     <BraavosConfirmation
                       confirmationText={
@@ -228,7 +213,7 @@ const Braavos: NextPage = () => {
                       title={`Congrats, you just minted your gold shield with ${domain} !`}
                       imageSrc={"/braavos/shieldLevel3.png"}
                     />
-                  ) : ownedShields.length > 0 && checkIfShieldIsOwned() ? (
+                  ) : ownedShields.length > 0 && checkGoldShield() ? (
                     <ErrorScreen
                       errorMessage="You already minted your gold shield, check your gallery to see it :)"
                       buttonText="Go back to your identities"
@@ -245,7 +230,7 @@ const Braavos: NextPage = () => {
                   )
                 ) : mintDataLevel2?.transaction_hash ? (
                   <BraavosRenewal domain={domain} />
-                ) : isEligible ? (
+                ) : checkSilverShield() ? (
                   <BraavosShield
                     title="Mint your Silver Shield Now"
                     imgSrc="/braavos/shieldLevel2.png"
