@@ -186,7 +186,7 @@ const Braavos: NextPage = () => {
                 )
               ) : null}
               {domainKind === "root" ? (
-                expiryDate > new Date(2026, 3, 1) ? (
+                expiryDate > new Date(2026, 1, 1) ? (
                   mintDataLevel3?.transaction_hash ? (
                     <BraavosConfirmation
                       confirmationText={

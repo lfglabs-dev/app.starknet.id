@@ -118,7 +118,7 @@ const Braavos: NextPage = () => {
                 title={`Congrats, you just minted your gold shield with ${domain} !`}
                 imageSrc={"/braavos/shieldLevel3.png"}
               />
-            ) : expiryDate > new Date(2026, 3, 1) ? (
+            ) : expiryDate > new Date(2026, 1, 1) ? (
               ownedShields.length > 0 && checkIfShieldIsOwned() ? (
                 <ErrorScreen
                   errorMessage="You already minted your gold shield, check your gallery to see it :)"
