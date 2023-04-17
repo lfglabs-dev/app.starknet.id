@@ -38,7 +38,7 @@
 }
 
 .menu_title {
-  color: var(--brown);
+  color: var(--secondary);
   font-family: "QuickZap";
   font-size: 21px;
   font-weight: bold;

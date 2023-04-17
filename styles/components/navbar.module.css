@@ -5,7 +5,7 @@
   text-transform: uppercase;
   cursor: pointer;
   font-weight: 600;
-  color: var(--brown);
+  color: var(--secondary);
 }
 
 .menuItem {

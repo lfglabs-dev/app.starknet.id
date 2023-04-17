@@ -1,53 +1,49 @@
 .actionsContainer {
   width: 100%;
 }
-
-.clickableAction {
+.clickableActionPrimary,
+.clickableActionSecondary {
   /* Frame 2 */
   box-sizing: border-box;
 
   /* Auto layout */
-  margin-top: 5px;
+  margin-top: 15px;
   margin-bottom: 5px;
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-start;
   padding: 8px 32px;
   gap: 8px;
-
-  width: 100%;
-
+  width: 358px;
   background: radial-gradient(
     382.53% 14823.28% at 46.39% 50%,
     #fff9f0 0%,
     #dccab8 100%
   );
-  /* Secondary/700 */
 
+  /* Secondary/700 */
   border-width: 1px 6px 4px 1px;
   border-style: solid;
-  border-color: #402d28;
-  /* Button */
+  border-color: var(--secondary);
 
+  /* Button */
   box-shadow: 0px 6px 80px rgba(191, 158, 123, 0.07);
-  border-radius: 100px;
+  border-radius: 20px;
 
   /* Inside auto layout */
-
   flex: none;
   order: 0;
   align-self: stretch;
   flex-grow: 0;
-
   cursor: pointer;
 }
 
-.clickableActionText {
-  /* Create a subdomain */
+.clickableActionPrimary {
+  border-color: var(--primary);
+}
 
-  width: 157px;
-  height: 24px;
-
+.clickableActionTitle {
   /* Button/16px */
 
   font-family: "QuickZap";
@@ -55,10 +51,10 @@
   font-weight: 400;
   font-size: 15px;
   line-height: 24px;
+  text-align: left;
   /* identical to box height, or 150% */
 
   /* Secondary/700 */
-
   color: #402d28;
 
   /* Inside auto layout */
@@ -66,4 +62,32 @@
   flex: none;
   order: 1;
   flex-grow: 0;
+}
+
+.clickableActionDescription {
+  font-size: 12px;
+  text-align: left;
+}
+
+.viewMore {
+  font-family: "QuickZap";
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.clickableIconPrimary,
+.clickableIconSecondary {
+  background-color: var(--primary300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25%;
+  width: 45px;
+  height: 45px;
+}
+
+.clickableIconSecondary {
+  background-color: var(--secondary300);
 }

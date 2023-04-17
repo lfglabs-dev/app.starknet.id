@@ -7,7 +7,7 @@ import { ThreeDots } from "react-loader-spinner";
 import { Identity } from "../../types/backTypes";
 import IdentityWarnings from "../../components/identities/identityWarnings";
 import IdentityCard from "../../components/identities/identityCard";
-import IdentityActions from "../../components/identities/identitiesActions";
+import IdentityActions from "../../components/identities/identityActions";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();

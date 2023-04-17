@@ -1,10 +1,10 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { Identity } from "../../types/backTypes";
 import { getDomainWithoutStark, isSubdomain } from "../../utils/stringService";
-import { Alert, Snackbar } from "@mui/material";
 import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";
 import Link from "next/link";
+import Notification from "../UI/notification";
 
 type IdentityWarningsProps = {
   identity?: Identity;
@@ -21,41 +21,28 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
     Number(identity?.domain_expiry) < currentTimeStamp &&
     !isSubdomain(identity?.domain);
   const isDifferentAddress = identity?.addr != hexToDecimal(address);
-  const [showWarning, setShowWarning] = useState(false);
-
-  useEffect(() => {
-    if ((isExpired || isDifferentAddress) && address) {
-      setShowWarning(true);
-    }
-  }, [isDifferentAddress, isExpired, address]);
 
   return isIdentityADomain ? (
-    <Snackbar
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      open={showWarning}
-    >
-      <Alert severity="error" onClose={() => setShowWarning(false)}>
-        {isExpired && (
-          <>
-            This domain has expired you can buy it on the&nbsp;
-            <span className="underline">
-              <Link
-                href={
-                  "/search?domain=" + getDomainWithoutStark(identity?.domain)
-                }
-              >
-                domain page
-              </Link>
-            </span>
-          </>
-        )}
-        {isDifferentAddress && (
-          <>
-            &nbsp;Be careful this domain is not linked to your current address.
-          </>
-        )}
-      </Alert>
-    </Snackbar>
+    <>
+      <Notification visible={isExpired && Boolean(address)} severity="error">
+        <>
+          This domain has expired you can buy it on the&nbsp;
+          <span className="underline">
+            <Link
+              href={"/search?domain=" + getDomainWithoutStark(identity?.domain)}
+            >
+              domain page
+            </Link>
+          </span>
+        </>
+      </Notification>
+      <Notification
+        visible={isDifferentAddress && Boolean(address)}
+        severity="error"
+      >
+        <>&nbsp;Be careful this domain is not linked to your current address.</>
+      </Notification>
+    </>
   ) : null;
 };
 
