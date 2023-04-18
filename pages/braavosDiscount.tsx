@@ -24,7 +24,7 @@ const BraavosDiscount: NextPage = () => {
               <div className={styles.discountBuyImageContainer}>
                 <img
                   className={styles.discountBuyImage}
-                  src="/braavos/shieldLevel2.png"
+                  src="/braavos/shieldlevel2.webp"
                 />
               </div>
               <div className={styles.registerContainer}>
