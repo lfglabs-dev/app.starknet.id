@@ -136,7 +136,7 @@ const Braavos: NextPage = () => {
                   !checkBronzeShield() ? (
                     <BraavosShield
                       title="Mint your Bronze Shield Now"
-                      imgSrc="/braavos/shieldLevel1.png"
+                      imgSrc="/braavos/shieldlevel1.webp"
                       desc="Bronze Shield of Braavos (Level 1)"
                       condition="Only for Stark subdomain wallet (example: john.braavos.stark)"
                       mint={() => mint(0)}
@@ -146,7 +146,7 @@ const Braavos: NextPage = () => {
                       <div className={styles.discountBuyImageContainer}>
                         <img
                           className={styles.discountBuyImage}
-                          src="/braavos/shieldLevel2.png"
+                          src="/braavos/shieldlevel2.webp"
                         />
                       </div>
                       <div className={styles.registerContainer}>
@@ -168,7 +168,7 @@ const Braavos: NextPage = () => {
                     <div className={styles.discountBuyImageContainer}>
                       <img
                         className={styles.discountBuyImage}
-                        src="/braavos/shieldLevel2.png"
+                        src="/braavos/shieldlevel2.webp"
                       />
                     </div>
                     <div className={styles.registerContainer}>
@@ -210,7 +210,7 @@ const Braavos: NextPage = () => {
                         </p>
                       }
                       title={`Congrats, you just minted your gold shield with ${domain} !`}
-                      imageSrc={"/braavos/shieldLevel3.png"}
+                      imageSrc={"/braavos/shieldlevel3.webp"}
                     />
                   ) : ownedShields.length > 0 && checkGoldShield() ? (
                     <ErrorScreen
@@ -221,7 +221,7 @@ const Braavos: NextPage = () => {
                   ) : (
                     <BraavosShield
                       title="Mint your Gold Shield Now"
-                      imgSrc="/braavos/shieldLevel3.png"
+                      imgSrc="/braavos/shieldlevel3.webp"
                       desc="Gold Shield of Braavos (level 3)"
                       condition="Only for stark root domain owner with +3 years in expiry"
                       mint={() => mint(2)}
@@ -232,7 +232,7 @@ const Braavos: NextPage = () => {
                 ) : !checkSilverShield() ? (
                   <BraavosShield
                     title="Mint your Silver Shield Now"
-                    imgSrc="/braavos/shieldLevel2.png"
+                    imgSrc="/braavos/shieldlevel2.webp"
                     desc="Silver Shield of Braavos (level 2)"
                     condition="Only for stark root domain wallet (example: john.stark)"
                     mint={() => mint(1)}
