@@ -99,3 +99,10 @@
 .clickableIconSecondary {
   background-color: var(--secondary300);
 }
+
+@media (max-width: 1024px) {
+  .clickableActionPrimary,
+  .clickableActionSecondary {
+    width: 100%;
+  }
+}

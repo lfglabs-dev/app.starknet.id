@@ -40,7 +40,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <div className="mt-10 flex items-center lg:justify-between justify-center gap-5 my-2 flex-wrap lg:flex-row ">
+        <div className="lg:mt-10 flex items-center lg:justify-between justify-center gap-5 my-2 flex-wrap lg:flex-row ">
           <div className="my-2">
             <img
               src={`https://www.starknet.id/api/identicons/${tokenId}`}
@@ -64,7 +64,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
             </div>
             {identity?.addr ? (
               <>
-                <div className="flex flex-row mt-6">
+                <div className="flex flex-row lg:mt-6 mt-2">
                   <StarknetIcon width="32px" color="" />
                   <h2 className="ml-3 text-xl">
                     {minifyAddress(decimalToHex(identity?.addr))}
@@ -85,7 +85,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
               </>
             ) : null}
 
-            <div className="mt-5 flex lg:justify-start justify-center lg:items-start items-center">
+            <div className=" lg:mt-6 mt-2 flex lg:justify-start justify-center lg:items-start items-center">
               <SocialMediaActions
                 domain={identity?.domain}
                 isOwner={true}
