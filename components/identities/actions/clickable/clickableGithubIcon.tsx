@@ -7,9 +7,9 @@ import { stringToHex } from "../../../../utils/feltService";
 import GithubIcon from "../../../UI/iconsComponents/icons/githubIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
+import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 
 type ClickableGithubIconProps = {
-  color: string;
   width: string;
   tokenId: string;
   isOwner: boolean;
@@ -18,7 +18,6 @@ type ClickableGithubIconProps = {
 
 const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
   width,
-  color,
   tokenId,
   isOwner,
   domain,
@@ -68,23 +67,28 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
       arrow
     >
       <div
-        className={githubUsername ? "cursor-pointer" : styles.clickableIcon}
+        className={styles.clickableIconGithub}
         onClick={() =>
           startVerification(
             `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENTID}`
           )
         }
       >
-        <GithubIcon width={width} color={githubUsername ? "black" : color} />
+        {githubUsername ? (
+          <div className={styles.verifiedIcon}>
+            <VerifiedIcon width={width} color={"green"} />
+          </div>
+        ) : null}
+        <GithubIcon width={width} color={"white"} />
       </div>
     </Tooltip>
   ) : githubUsername ? (
     <Tooltip title={`Check ${minifyDomain(domain)} github`} arrow>
       <div
-        className="cursor-pointer"
+        className={styles.clickableIconGithub}
         onClick={() => window.open(`https://github.com/${githubUsername}`)}
       >
-        <GithubIcon width={width} color="black" />
+        <GithubIcon width={width} color="white" />
       </div>
     </Tooltip>
   ) : null;

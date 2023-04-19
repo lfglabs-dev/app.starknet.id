@@ -18,9 +18,11 @@
 }
 
 :root {
-  --green: #19aa6e;
-  --brown: #402d28;
-  --soft-brown: #bf9e7b;
+  --primary: #19aa6e;
+  --primary300: #dcf2e9;
+  --secondary: #402d28;
+  --secondary300: #eae0d5;
+  --tertiary: #bf9e7b;
   --beige: #fff9f0;
   --nimiq-ease: cubic-bezier(0.25, 0, 0, 1);
 }
@@ -41,8 +43,8 @@ a {
 .title {
   font-family: "QuickZap";
   font-size: 2.5rem;
-  color: var(--green);
-  text-shadow: 1px 1px var(--soft-brown);
+  color: var(--primary);
+  text-shadow: 1px 1px var(--tertiary);
   text-transform: uppercase;
   text-align: center;
 }
@@ -94,7 +96,7 @@ a {
     color-scheme: dark;
   }
   body {
-    color: var(--brown);
+    color: var(--secondary);
     background: var(--beige);
   }
 }
