@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@argent/starknet-react-webwallet-connector": "^6.0.3",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@mui/icons-material": "^5.8.4",
