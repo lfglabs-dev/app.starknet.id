@@ -7,6 +7,7 @@ import { stringToHex } from "../../../../utils/feltService";
 import GithubIcon from "../../../UI/iconsComponents/icons/githubIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
+import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 
 type ClickableGithubIconProps = {
   width: string;
@@ -73,6 +74,11 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
           )
         }
       >
+        {githubUsername ? (
+          <div className={styles.verifiedIcon}>
+            <VerifiedIcon width={width} color={"green"} />
+          </div>
+        ) : null}
         <GithubIcon width={width} color={"white"} />
       </div>
     </Tooltip>

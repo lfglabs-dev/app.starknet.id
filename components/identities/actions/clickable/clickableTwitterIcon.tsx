@@ -5,6 +5,7 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { useStarknetIdContract } from "../../../../hooks/contracts";
 import { stringToHex } from "../../../../utils/feltService";
 import TwitterIcon from "../../../UI/iconsComponents/icons/twitterIcon";
+import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
 
@@ -73,6 +74,11 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
           )
         }
       >
+        {twitterUsername ? (
+          <div className={styles.verifiedIcon}>
+            <VerifiedIcon width={width} color={"green"} />
+          </div>
+        ) : null}
         <TwitterIcon width={width} color={"white"} />
       </div>
     </Tooltip>
