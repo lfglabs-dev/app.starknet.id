@@ -19,8 +19,7 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
       <div className="m-1">
         <ClickableTwitterIcon
           isOwner={isOwner}
-          color="#55ACEE"
-          width="25"
+          width="15"
           tokenId={tokenId}
           domain={domain}
         />
@@ -28,8 +27,7 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
       <div className="m-1">
         <ClickableDiscordIcon
           isOwner={isOwner}
-          color="#5865F2"
-          width="28"
+          width="15"
           tokenId={tokenId}
           domain={domain}
         />
@@ -37,8 +35,7 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
       <div className="m-1">
         <ClickableGithubIcon
           isOwner={isOwner}
-          color="#402D28"
-          width="25"
+          width="15"
           tokenId={tokenId}
           domain={domain}
         />

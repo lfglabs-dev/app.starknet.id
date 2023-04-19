@@ -163,7 +163,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   <>
                     <ClickableAction
                       title="MOVE YOUR IDENTITY"
-                      description="Move your identity to another address"
+                      description="Move your identity to another wallet"
                       icon="transfer"
                       onClick={() => setIsTransferFormOpen(true)}
                     />

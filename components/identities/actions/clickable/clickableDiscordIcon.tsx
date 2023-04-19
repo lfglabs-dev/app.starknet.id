@@ -9,7 +9,6 @@ import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
 
 type ClickableDiscordIconProps = {
-  color: string;
   width: string;
   tokenId: string;
   isOwner: boolean;
@@ -18,7 +17,6 @@ type ClickableDiscordIconProps = {
 
 const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
   width,
-  color,
   tokenId,
   isOwner,
   domain,
@@ -57,25 +55,25 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
       arrow
     >
       <div
-        className={DiscordId ? "cursor-pointer" : styles.clickableIcon}
+        className={styles.clickableIconDiscord}
         onClick={() =>
           startVerification(
             `https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}%2Fdiscord&response_type=code&scope=identify`
           )
         }
       >
-        <DiscordIcon width={width} color={DiscordId ? "#7289d9" : color} />
+        <DiscordIcon width={width} color={"white"} />
       </div>
     </Tooltip>
   ) : DiscordId ? (
     <Tooltip title={`Check ${minifyDomain(domain)} discord`} arrow>
       <div
-        className="cursor-pointer"
+        className={styles.clickableIconDiscord}
         onClick={() =>
           window.open(`https://discord.com/channels/@me/${DiscordId}`)
         }
       >
-        <DiscordIcon width={width} color={"#7289d9"} />
+        <DiscordIcon width={width} color={"white"} />
       </div>
     </Tooltip>
   ) : null;

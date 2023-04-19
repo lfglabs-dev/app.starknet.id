@@ -3,6 +3,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  max-width: 90%;
 }
 
 .container {
@@ -14,7 +15,7 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  width: 700px;
+  width: 650px;
   height: 350px;
   box-shadow: 0px 6px 80px rgba(64, 45, 40, 0.15);
   background: radial-gradient(
@@ -42,27 +43,37 @@
   flex-grow: 0;
 }
 
+.detouredLogo {
+  position: absolute;
+  right: 175px;
+  top: 13px;
+}
+
+.detouredTextLogo {
+  position: absolute;
+  right: 30px;
+  top: 30px;
+}
+
 .lg1 {
   position: absolute;
-  width: (308.16 / 3) px;
-  height: (378.56 / 3) px;
-  right: -50px;
-  bottom: -140px;
+  right: -130px;
+  bottom: -190px;
+  transform: rotate(-40deg);
 }
 
 .lg2 {
   position: absolute;
-  width: (397.34 / 3) px;
-  height: (446.38 / 3) px;
-  left: -120px;
-  bottom: -160px;
+  left: -230px;
+  top: -150px;
+  transform: rotate(80deg);
 }
 
 .cardCode {
   /* Placement */
   background-color: var(--beige);
   height: 83px;
-  width: 700px;
+  width: 650px;
   border-width: 0px 6px 4px 1px;
   border-style: solid;
   border-color: var(--tertiary);
@@ -87,23 +98,27 @@
   .domain {
     font-size: 20px;
   }
-  .container {
-    height: 100%;
-  }
   .lg1 {
-    height: 200px;
-    right: -60px;
-    bottom: -40px;
+    visibility: hidden;
   }
   .lg2 {
-    width: 200px;
-    height: 250px;
-    left: -100px;
-    bottom: -70px;
+    visibility: hidden;
   }
-  .wrapper {
-    margin-top: 0;
-    margin-bottom: 0;
+  .container {
     max-width: 80%;
+    height: auto;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+  .cardCode {
+    width: 0px;
+    height: 0px;
+    visibility: hidden;
+  }
+
+  .detouredTextLogo,
+  .detouredLogo {
+    visibility: hidden;
   }
 }

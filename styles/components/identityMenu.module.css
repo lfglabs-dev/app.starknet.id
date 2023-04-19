@@ -1,5 +1,7 @@
 .actionsContainer {
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .clickableActionPrimary,
 .clickableActionSecondary {
@@ -41,6 +43,12 @@
 
 .clickableActionPrimary {
   border-color: var(--primary);
+}
+
+.clickableActionSecondary:active,
+.clickableActionPrimary:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px var(--secondary300);
 }
 
 .clickableActionTitle {

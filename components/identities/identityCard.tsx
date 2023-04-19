@@ -40,7 +40,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <div className="m-2 flex items-center lg:justify-between justify-center gap-5 my-2 flex-wrap lg:flex-row ">
+        <div className="mt-10 flex items-center lg:justify-between justify-center gap-5 my-2 flex-wrap lg:flex-row ">
           <div className="my-2">
             <img
               src={`https://www.starknet.id/api/identicons/${tokenId}`}
@@ -92,13 +92,33 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 tokenId={tokenId}
               />
             </div>
+            <img
+              alt="leaf"
+              src="/leaves/new/leavesGroup01.svg"
+              className={styles.lg1}
+            />
+            <img
+              alt="leaf"
+              src="/leaves/new/leavesGroup02.svg"
+              className={styles.lg2}
+            />
+            <img
+              alt="logo"
+              src="/visuals/detouredLogo.svg"
+              className={styles.detouredLogo}
+            />
+            <img
+              alt="logo"
+              src="/visuals/detouredTextLogo.svg"
+              className={styles.detouredTextLogo}
+            />
           </div>
         </div>
       </div>
       <div className={styles.cardCode}>
         <p>{convertNumberToFixedLengthString(tokenId)}</p>
         <svg
-          width="340"
+          width="300"
           height="6"
           viewBox="0 0 380 6"
           fill="none"

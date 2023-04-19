@@ -62,25 +62,21 @@ const TokenIdPage: NextPage = () => {
             </div>
           ) : (
             <>
-              <div className="flex flex-col items-center lg:flex-row w-full p-4 lg:justify-center lg:gap-20 h-full">
-                <div className="w-10/12 mt-8 mb-10 lg:mt-0 lg:mb-0 md:8/12 lg:w-6/12 h-full flex justify-center items-center">
-                  <IdentityCard
-                    identity={identity}
-                    tokenId={tokenId}
-                    domain={
-                      isIdentityADomain ? identity?.domain : `SID: ${tokenId}`
-                    }
-                  />
-                </div>
+              <div className={styles2.identityBox}>
+                <IdentityCard
+                  identity={identity}
+                  tokenId={tokenId}
+                  domain={
+                    isIdentityADomain ? identity?.domain : `SID: ${tokenId}`
+                  }
+                />
                 {!hideActions && (
-                  <div className="w-full lg:w-3/12 h-full flex justify-center items-center">
-                    <IdentityActions
-                      tokenId={tokenId}
-                      isIdentityADomain={isIdentityADomain}
-                      identity={identity}
-                      hideActionsHandler={hideActionsHandler}
-                    />
-                  </div>
+                  <IdentityActions
+                    tokenId={tokenId}
+                    isIdentityADomain={isIdentityADomain}
+                    identity={identity}
+                    hideActionsHandler={hideActionsHandler}
+                  />
                 )}
               </div>
               <IdentityWarnings
