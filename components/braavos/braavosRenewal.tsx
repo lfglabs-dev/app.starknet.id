@@ -91,7 +91,7 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
       <div className={styles.discountBuyImageContainer}>
         <img
           className={styles.discountBuyImage}
-          src="/braavos/shieldLevel3.png"
+          src="/braavos/shieldlevel3.webp"
         />
       </div>
       <div className={styles.registerContainer}>
@@ -141,7 +141,7 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
         </p>
       }
       title={`Congrats, you just minted your gold shield with ${domain} !`}
-      imageSrc={"/braavos/shieldLevel3.png"}
+      imageSrc={"/braavos/shieldlevel3.webp"}
     />
   );
 };

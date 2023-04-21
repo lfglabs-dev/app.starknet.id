@@ -21,6 +21,29 @@
   padding: 0.1rem;
 }
 
+.clickableIconDiscord,
+.clickableIconGithub,
+.clickableIconTwitter {
+  background-color: #55acee;
+  border-radius: 25%;
+  padding: 0.5rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.verifiedIcon {
+  position: absolute;
+  top: -0.3rem;
+  right: -0.3rem;
+}
+
+.clickableIconGithub {
+  background-color: #24292e;
+}
+
+.clickableIconDiscord {
+  background-color: #7289d9;
+}
 .button_icon {
   width: 24px;
   margin-right: 12px;

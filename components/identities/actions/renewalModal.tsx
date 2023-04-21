@@ -5,7 +5,6 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/wallets.module.css";
 import styles2 from "../../../styles/Home.module.css";
-import { timeStampToDate } from "../../../utils/dateService";
 import Button from "../../UI/button";
 import { Identity } from "../../../types/backTypes";
 
@@ -89,7 +88,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
           {identity?.domain_expiry && (
             <p className="break-all">
               <strong>Expiry date :</strong>&nbsp;
-              <span>{timeStampToDate(identity?.domain_expiry)}</span>
+              <span>{new Date(identity?.domain_expiry).toDateString()}</span>
             </p>
           )}
           <div className="mt-5">

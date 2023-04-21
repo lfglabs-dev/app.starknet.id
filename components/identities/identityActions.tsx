@@ -10,7 +10,7 @@ import RenewalModal from "./actions/renewalModal";
 import { Identity } from "../../types/backTypes";
 import { hexToDecimal } from "../../utils/feltService";
 import IdentitiesActionsSkeleton from "../UI/identitiesActionsSkeleton";
-import ClickacbleAction from "../UI/iconsComponents/clickableAction";
+import ClickableAction from "../UI/iconsComponents/clickableAction";
 import styles from "../../styles/components/identityMenu.module.css";
 
 type IdentityActionsProps = {
@@ -38,6 +38,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  //UseState viewMoreClicked
+  const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -108,72 +110,85 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           <div className="flex flex-col items-center justify-center">
             {identity && !isOwner && isIdentityADomain && (
               <>
-                <div className="m-2">
-                  <ClickacbleAction
-                    title="View on Mintsquare"
-                    icon="mintsquare"
-                    onClick={() =>
-                      window.open(
-                        `https://mintsquare.io/asset/starknet/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
-                      )
-                    }
-                  />
-                </div>
-                <div className="m-2">
-                  <ClickacbleAction
-                    title="View on Aspect"
-                    icon="aspect"
-                    onClick={() =>
-                      window.open(
-                        `https://aspect.co/asset/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
-                      )
-                    }
-                  />
-                </div>
+                <ClickableAction
+                  title="View on Mintsquare"
+                  icon="mintsquare"
+                  description="Check this identity on Mintsquare"
+                  onClick={() =>
+                    window.open(
+                      `https://mintsquare.io/asset/starknet/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
+                    )
+                  }
+                />
+
+                <ClickableAction
+                  title="View on Aspect"
+                  icon="aspect"
+                  description="Check this identity on Aspect"
+                  onClick={() =>
+                    window.open(
+                      `https://aspect.co/asset/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
+                    )
+                  }
+                />
               </>
             )}
             {identity && isOwner && (
-              <>
+              <div className="flex flex-col items-center justify-center">
                 {callDataEncodedDomain[0] === 1 ? (
-                  <div className="m-2">
-                    <ClickacbleAction
-                      title="RENEW YOUR IDENTITY"
-                      icon="change"
-                      onClick={() => setIsRenewFormOpen(true)}
-                    />
-                  </div>
+                  <ClickableAction
+                    title="RENEW YOUR IDENTITY"
+                    style="primary"
+                    description="Expires on December 7"
+                    icon="change"
+                    onClick={() => setIsRenewFormOpen(true)}
+                  />
                 ) : null}
-                <div className="m-2">
-                  <ClickacbleAction
-                    title="CHANGE THE TARGET"
-                    icon="address"
-                    onClick={() => setIsAddressFormOpen(true)}
-                  />
-                </div>
-                <div className="m-2">
-                  <ClickacbleAction
-                    title="MOVE YOUR IDENTITY"
-                    icon="transfer"
-                    onClick={() => setIsTransferFormOpen(true)}
-                  />
-                </div>
-                <div className="m-2">
-                  <ClickacbleAction
-                    title="CREATE A SUBDOMAIN"
-                    icon="plus"
-                    onClick={() => setIsSubdomainFormOpen(true)}
-                  />
-                </div>
                 {!identity.is_owner_main && (
-                  <div className="m-2">
-                    <ClickacbleAction
-                      title="Set as main domain"
-                      icon="main"
-                      onClick={() => setAddressToDomain()}
-                    />
-                  </div>
+                  <ClickableAction
+                    title="Set as main domain"
+                    description="Set this domain as your main domain"
+                    icon="main"
+                    onClick={() => setAddressToDomain()}
+                  />
                 )}
-              </>
+                <ClickableAction
+                  title="CHANGE THE TARGET"
+                  description="Change the current target address"
+                  icon="address"
+                  onClick={() => setIsAddressFormOpen(true)}
+                />
+
+                {viewMoreClicked ? (
+                  <>
+                    <ClickableAction
+                      title="MOVE YOUR IDENTITY"
+                      description="Move your identity to another wallet"
+                      icon="transfer"
+                      onClick={() => setIsTransferFormOpen(true)}
+                    />
+                    <ClickableAction
+                      title="CREATE A SUBDOMAIN"
+                      description="Create a new subdomain"
+                      icon="plus"
+                      onClick={() => setIsSubdomainFormOpen(true)}
+                    />
+                    <p
+                      onClick={() => setViewMoreClicked(false)}
+                      className={styles.viewMore}
+                    >
+                      View less
+                    </p>
+                  </>
+                ) : (
+                  <p
+                    onClick={() => setViewMoreClicked(true)}
+                    className={styles.viewMore}
+                  >
+                    View more
+                  </p>
+                )}
+              </div>
             )}
           </div>
 

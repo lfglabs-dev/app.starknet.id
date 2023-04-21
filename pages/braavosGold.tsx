@@ -116,7 +116,7 @@ const Braavos: NextPage = () => {
                   </p>
                 }
                 title={`Congrats, you just minted your gold shield with ${domain} !`}
-                imageSrc={"/braavos/shieldLevel3.png"}
+                imageSrc={"/braavos/shieldlevel3.webp"}
               />
             ) : expiryDate > new Date(2026, 1, 1) ? (
               ownedShields.length > 0 && checkIfShieldIsOwned() ? (
@@ -128,7 +128,7 @@ const Braavos: NextPage = () => {
               ) : (
                 <BraavosShield
                   title="Mint your Gold Shield Now"
-                  imgSrc="/braavos/shieldLevel3.png"
+                  imgSrc="/braavos/shieldlevel3.webp"
                   desc="Gold Shield of Braavos (level 3)"
                   condition="Only for stark root domain owner with +3 years in expiry"
                   mint={() => mint()}

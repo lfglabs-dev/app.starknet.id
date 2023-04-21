@@ -141,7 +141,19 @@ export default async function handler(
                                                 },
                                               },
                                               "everai",
-                                              "none",
+                                              {
+                                                $cond: [
+                                                  {
+                                                    $regexMatch: {
+                                                      input: "$domain",
+                                                      regex:
+                                                        /^.*\.onsheet\.stark$/,
+                                                    },
+                                                  },
+                                                  "onsheet",
+                                                  "none",
+                                                ],
+                                              },
                                             ],
                                           },
                                         ],
