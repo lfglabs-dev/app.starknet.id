@@ -17,7 +17,7 @@ import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/UI/identitiesSkeleton";
 
 const Identities: NextPage = () => {
-  const { address } = useAccount();
+  const { account } = useAccount();
   const [loading, setLoading] = useState<boolean>(false);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
@@ -43,26 +43,28 @@ const Identities: NextPage = () => {
   });
 
   useEffect(() => {
-    if (address) {
+    if (account) {
       // Our Indexer
       setLoading(true);
-      fetch(`/api/indexer/addr_to_full_ids?addr=${hexToDecimal(address)}`)
+      fetch(
+        `/api/indexer/addr_to_full_ids?addr=${hexToDecimal(account?.address)}`
+      )
         .then((response) => response.json())
         .then((data) => {
           setOwnedIdentities(data.full_ids);
           setLoading(false);
         });
-
-      // // Aspect Indexer
-      // fetch(
-      //   `https://api-testnet.aspect.co/api/v0/assets?contract_address=${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string}&owner_address=${account.address}&sort_by=minted_at&order_by=desc`
-      // )
-      //   .then((response) => response.json())
-      //   .then((data) => {
-      //     setOwnedIdentities(data.assets);
-      //   });
     }
-  }, [address]);
+
+    // // Aspect Indexer
+    // fetch(
+    //   `https://api-testnet.aspect.co/api/v0/assets?contract_address=${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string}&owner_address=${account.address}&sort_by=minted_at&order_by=desc`
+    // )
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     setOwnedIdentities(data.assets);
+    //   });
+  }, [account]);
 
   return (
     <div className={styles.screen}>
