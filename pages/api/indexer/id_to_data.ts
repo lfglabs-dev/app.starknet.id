@@ -45,8 +45,7 @@ export default async function handler(
     .collection("starknet_ids")
     .findOne({ token_id: id, "_chain.valid_to": null })
     .then((doc: any) => {
-      if (doc)
-        owner = doc.owner;
+      if (doc) owner = doc.owner;
     });
 
   if (!domain || !owner) {

@@ -12,6 +12,7 @@ import { hexToDecimal } from "../../utils/feltService";
 import IdentitiesActionsSkeleton from "../UI/identitiesActionsSkeleton";
 import ClickableAction from "../UI/iconsComponents/clickableAction";
 import styles from "../../styles/components/identityMenu.module.css";
+import { timestampToReadableDate } from "../../utils/dateService";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -139,7 +140,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   <ClickableAction
                     title="RENEW YOUR IDENTITY"
                     style="primary"
-                    description="Expires on December 7"
+                    description={`Expires on ${timestampToReadableDate(
+                      identity?.domain_expiry ?? 0
+                    )}`}
                     icon="change"
                     onClick={() => setIsRenewFormOpen(true)}
                   />
