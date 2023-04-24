@@ -12,6 +12,7 @@ type IconProps = {
 type FullId = {
   id: string;
   domain: string;
+  domain_expiry: number | null;
 };
 
 type ErrorRequestData = {

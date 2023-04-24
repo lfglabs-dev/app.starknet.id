@@ -3,6 +3,13 @@
   margin: 1rem;
   height: 160px;
   margin-bottom: 3rem;
+  position: relative;
+}
+
+.expiryWarning {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 .containerIdentity {

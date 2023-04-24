@@ -7,6 +7,7 @@ import styles from "../../../styles/components/wallets.module.css";
 import styles2 from "../../../styles/Home.module.css";
 import Button from "../../UI/button";
 import { Identity } from "../../../types/backTypes";
+import { timestampToReadableDate } from "../../../utils/dateService";
 
 type RenewalModalProps = {
   handleClose: () => void;
@@ -88,7 +89,9 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
           {identity?.domain_expiry && (
             <p className="break-all">
               <strong>Expiry date :</strong>&nbsp;
-              <span>{new Date(identity?.domain_expiry).toDateString()}</span>
+              <span>
+                {timestampToReadableDate(identity?.domain_expiry ?? 0)}
+              </span>
             </p>
           )}
           <div className="mt-5">
