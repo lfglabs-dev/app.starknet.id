@@ -137,7 +137,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
               <div className="flex flex-col items-center justify-center">
                 {callDataEncodedDomain[0] === 1 ? (
                   <ClickableAction
-                    title="RENEW YOUR IDENTITY"
+                    title="RENEW YOUR DOMAIN"
                     style="primary"
                     description="Expires on December 7"
                     icon="change"
