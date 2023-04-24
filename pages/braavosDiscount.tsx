@@ -1,56 +1,23 @@
-import React, { useState } from "react";
+import React from "react";
 import type { NextPage } from "next";
-import homeStyles from "../styles/Home.module.css";
-import styles from "../styles/braavos.module.css";
-import ErrorScreen from "../components/UI/screens/errorScreen";
-import BraavosRegister from "../components/braavos/braavosRegister";
-import { useAccount } from "@starknet-react/core";
-import { useDomainFromAddress } from "../hooks/naming";
-import BraavosRenewal from "../components/braavos/braavosRenewal";
+import styles from "../styles/Home.module.css";
+import Button from "../components/UI/button";
+import { useRouter } from "next/router";
 
 const BraavosDiscount: NextPage = () => {
-  const { connector, address } = useAccount();
-  const [twitterCta, setTwitterCta] = useState(false);
-  const domain = useDomainFromAddress(address);
+  const router = useRouter();
 
   return (
-    <div className={homeStyles.screen}>
-      {connector && connector.id() === "braavos" ? (
-        <section id="join" className={styles.section}>
-          {twitterCta ? (
-            <BraavosRenewal domain={domain} />
-          ) : (
-            <div className={styles.discountContainer}>
-              <div className={styles.discountBuyImageContainer}>
-                <img
-                  className={styles.discountBuyImage}
-                  src="/braavos/shieldlevel2.webp"
-                />
-              </div>
-              <div className={styles.registerContainer}>
-                <h1 className={styles.titleRegister}>
-                  Register a domain and get your braavos shield for only 1$
-                </h1>
-                <BraavosRegister
-                  expiryDuration={93}
-                  showTwitterCta={() => setTwitterCta(true)}
-                />
-              </div>
-            </div>
-          )}
-        </section>
-      ) : (
-        <section className={styles.section}>
-          <ErrorScreen
-            imgSrc="/braavos/braavosLogo.svg"
-            errorMessage={
-              connector
-                ? "You can get a Braavos Shield only with a Braavos wallet"
-                : "Please connect your Braavos wallet linked with a stark domain"
-            }
-          />
-        </section>
-      )}
+    <div className={styles.screen}>
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center flex flex-col justify-center items-center">
+          <h1 className="title">The shield campaign has ended</h1>
+          <img width={500} src="/braavos/shields.webp" />
+          <div className="max-w-lg">
+            <Button onClick={() => router.push("/")}>Back to the app</Button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
