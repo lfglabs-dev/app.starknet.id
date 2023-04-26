@@ -96,15 +96,15 @@ const Identities: NextPage = () => {
                 data?.status !== "PENDING" && <LoadingScreen />}
               {transactionError && (
                 <ErrorScreen
-                  onClick={() => router.push("/identities")}
+                  onClick={() => router.reload()}
                   buttonText="Retry to mint"
                 />
               )}
               {data?.status === "ACCEPTED_ON_L2" ||
                 (data?.status === "PENDING" && (
                   <SuccessScreen
-                    onClick={() => router.push(`/identities`)}
-                    buttonText="See your new identity"
+                    onClick={() => router.push(`/`)}
+                    buttonText="Get a domain to your identity"
                     successMessage="Congrats, your starknet identity is minted !"
                   />
                 ))}
