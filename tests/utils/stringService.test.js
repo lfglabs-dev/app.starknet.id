@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import { basicAlphabet } from "../../hooks/naming";
+import { basicAlphabet } from "../../utils/constants";
 import {
   is1234Domain,
   getDomainWithoutStark,
@@ -15,6 +15,7 @@ import {
   getDomainKind,
   shortenDomain,
 } from "../../utils/stringService";
+
 
 describe("Should test is1234Domain", () => {
   it("Should return false cause there are valid 1234 domains", () => {

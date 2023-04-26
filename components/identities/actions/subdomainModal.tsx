@@ -2,12 +2,13 @@ import { Modal, TextField } from "@mui/material";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Call } from "starknet";
-import { useEncoded, useIsValid } from "../../../hooks/naming";
+import { useIsValid } from "../../../hooks/naming";
 import styles from "../../../styles/components/wallets.module.css";
 import { hexToDecimal } from "../../../utils/feltService";
 import { numberToString } from "../../../utils/stringService";
 import SelectDomain from "../../domains/selectDomains";
 import Button from "../../UI/button";
+import { utils } from "starknetid.js";
 
 type SubdomainModalProps = {
   handleClose: () => void;
@@ -24,7 +25,9 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
 }) => {
   const [targetTokenId, setTargetTokenId] = useState<number>(0);
   const [subdomain, setSubdomain] = useState<string>();
-  const encodedSubdomain: string = useEncoded(subdomain ?? "").toString(10);
+  const encodedSubdomain: string = utils
+    .encodeDomain(subdomain)[0]
+    .toString(10);
   const isDomainValid = useIsValid(subdomain);
   const [callData, setCallData] = useState<Call[]>([]);
   const { address } = useAccount();

@@ -4,14 +4,11 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { useAccount } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
-import {
-  useEncoded,
-  useExpiryFromDomain,
-  useIsValid,
-} from "../../hooks/naming";
+import { useExpiryFromDomain, useIsValid } from "../../hooks/naming";
 import { numberToString } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
 import { Call } from "starknet";
+import { utils } from "starknetid.js";
 
 type BraavosRegisterProps = {
   expiryDuration: number;
@@ -26,7 +23,7 @@ const BraavosRegister: FunctionComponent<BraavosRegisterProps> = ({
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
-  const encodedDomain = useEncoded(domain ?? "");
+  const encodedDomain = utils.encodeDomain(domain)[0];
   const [isAvailable, setIsAvailable] = useState<boolean>();
   const { expiry: data, error } = useExpiryFromDomain(domain);
   const discountID = "27092002";

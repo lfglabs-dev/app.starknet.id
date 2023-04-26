@@ -1,13 +1,16 @@
 import { Tooltip } from "@mui/material";
-import { useStarknetCall } from "@starknet-react/core";
 import { useRouter } from "next/router";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import { useStarknetIdContract } from "../../../../hooks/contracts";
-import { stringToHex } from "../../../../utils/feltService";
+import React, {
+  FunctionComponent,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import TwitterIcon from "../../../UI/iconsComponents/icons/twitterIcon";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
+import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 
 type ClickableTwitterIconProps = {
   width: string;
@@ -23,23 +26,22 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
   domain,
 }) => {
   const router = useRouter();
-  const { contract } = useStarknetIdContract();
-  const { data, error } = useStarknetCall({
-    contract: contract,
-    method: "get_verifier_data",
-    args: [
-      router.query.tokenId,
-      stringToHex("twitter"),
-      process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
-    ],
-  });
   const [twitterId, setTwitterId] = useState<string | undefined>();
   const [twitterUsername, setTwitterUsername] = useState<string | undefined>();
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
 
   useEffect(() => {
-    if (error || !data || Number(data) === 0) return;
-    setTwitterId(data["data"].toString(10));
-  }, [data, error]);
+    starknetIdNavigator
+      ?.getVerifierData(tokenId, "twitter")
+      .then((response) => {
+        if (response.toString(10) !== "0") {
+          setTwitterId(response.toString(10));
+        }
+      })
+      .catch(() => {
+        return;
+      });
+  }, []);
 
   function startVerification(link: string): void {
     sessionStorage.setItem("tokenId", tokenId);
