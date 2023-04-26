@@ -41,7 +41,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     method: "compute_buy_price",
     args: [encodedDomain, duration * 365],
   });
-  const { account, address } = useAccount();
+  const { account, address, connector } = useAccount();
   const { data: userBalanceData, error: userBalanceDataError } =
     useStarknetCall({
       contract: etherContract,
@@ -317,10 +317,10 @@ const Register: FunctionComponent<RegisterProps> = ({
                 !duration ||
                 duration < 1 ||
                 !targetAddress ||
-                invalidBalance
+                (connector?.id() != "argentWebWallet" && invalidBalance)
               }
             >
-              {invalidBalance
+              {connector?.id() != "argentWebWallet" && invalidBalance
                 ? "You don't have enough eth"
                 : "Register from L2"}
             </Button>

@@ -10,14 +10,15 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import SelectNetwork from "./selectNetwork";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
+import { Tooltip } from "@mui/material";
+import ArgentIcon from "./iconsComponents/icons/argentIcon";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
   const [hasWallet, setHasWallet] = useState<boolean>(true);
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-
   const { available, connect, disconnect } = useConnectors();
   const { library } = useStarknet();
   const domainOrAddress = useDisplayName(address ?? "");
@@ -25,7 +26,6 @@ const Navbar: FunctionComponent = () => {
   const brown = "#402d28";
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
-
   function disconnectByClick(): void {
     disconnect();
     setIsConnected(false);
@@ -101,12 +101,25 @@ const Navbar: FunctionComponent = () => {
               <Link href="/">
                 <li className={styles.menuItem}>Domains</li>
               </Link>
-              <Link href="https://twitter.com/starknet_id">
-                <li className="ml-10 mr-5 text-sm uppercase cursor-pointer">
-                  <FaTwitter color={green} size={"30px"} />
-                </li>
-              </Link>
+
               <SelectNetwork network={network} />
+
+              {connector?.id() === "argentWebWallet" && (
+                <Tooltip title="Check your argent web wallet" arrow>
+                  <div
+                    onClick={() =>
+                      window.open(
+                        network === "mainnet"
+                          ? "https://web.argent.xyz/dashboard"
+                          : "https://web.hydrogen.argent47.net/dashboard"
+                      )
+                    }
+                    className={styles.webWalletLink}
+                  >
+                    <ArgentIcon width={"24px"} color="#f36a3d" />
+                  </div>
+                </Tooltip>
+              )}
               <div className="text-beige mr-5">
                 <Button
                   onClick={
