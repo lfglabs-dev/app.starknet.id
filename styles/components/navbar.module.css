@@ -32,7 +32,7 @@
 .webWalletLink {
   display: flex;
   align-items: center;
-  background: var(--secondary300);
+  background: rgba(249, 208, 132, 0.615);
   letter-spacing: 0.094em;
   border: none;
   padding: 0 1rem;
