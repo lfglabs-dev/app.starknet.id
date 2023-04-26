@@ -41,7 +41,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
-  encodedDomains.forEach((domain: string | number) => {
+  encodedDomains.forEach((domain) => {
     callDataEncodedDomain.push(domain.toString(10));
   });
 
