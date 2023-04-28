@@ -15,38 +15,20 @@ export default async function handler(
     const { body: { addresses } } = req;
     const { db } = await connectToDatabase();
     const aggregationResult = await db
-        .collection("starknet_ids")
+        .collection("domains")
         .aggregate([
             {
                 $match: {
-                    owner: { $in: addresses },
+                    addr: { $in: addresses },
                     "_chain.valid_to": null,
-                },
-            },
-            {
-                $lookup: {
-                    from: "domains",
-                    localField: "token_id",
-                    foreignField: "token_id",
-                    as: "domain_info",
-                },
-            },
-            {
-                $unwind: {
-                    path: "$domain_info",
-                    preserveNullAndEmptyArrays: true,
-                },
-            },
-            {
-                $match: {
-                    "domain_info._chain.valid_to": { $eq: null },
+                    $expr: { $eq: ["$addr", "$rev_addr"] },
                 },
             },
             {
                 $project: {
                     _id: 0,
-                    domain: "$domain_info.domain",
-                    address: "$owner",
+                    domain: 1,
+                    address: "$addr",
                 },
             },
         ])
