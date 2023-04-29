@@ -14,7 +14,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   const connectors = [
     new InjectedConnector({ options: { id: "argentX" } }),
     new InjectedConnector({ options: { id: "braavos" } }),
-    new WebWalletConnector({ url: "https://web.hydrogen.argent47.net" }),
+    new WebWalletConnector({
+      url: process.env.NEXT_PUBLIC_IS_TESTNET
+        ? "https://web.hydrogen.argent47.net"
+        : "https://web.argent.xyz",
+    }),
   ];
 
   return (
