@@ -22,7 +22,6 @@ export default async function handler(
   );
 
   if (deltaTime > 3600 * 1000) {
-
     const { db } = await connectToDatabase();
     const domainCollection = db.collection("domains_renewals");
 
@@ -48,10 +47,7 @@ export default async function handler(
                         {
                           $subtract: [
                             {
-                              $subtract: [
-                                "$renewal_date",
-                                new Date(beginTime),
-                              ],
+                              $subtract: ["$renewal_date", new Date(beginTime)],
                             },
                             {
                               $mod: [
@@ -101,5 +97,4 @@ export default async function handler(
       .status(200)
       .json({ error: "delta must be greater than 3600 seconds" });
   }
-
 }

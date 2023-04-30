@@ -17,7 +17,9 @@ export default async function handler(
   const addr = req.query.addr as string;
   const domainsList: string[] = [];
   const { db } = await connectToDatabase();
-  const documents = db.collection("subdomains").find({ addr: addr, "_chain.valid_to": null });
+  const documents = db
+    .collection("subdomains")
+    .find({ addr: addr, "_chain.valid_to": null });
   for (const doc of await documents.toArray()) {
     domainsList.push(doc.domain);
   }
