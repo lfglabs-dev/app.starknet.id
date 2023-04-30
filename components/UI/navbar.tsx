@@ -153,7 +153,7 @@ const Navbar: FunctionComponent = () => {
                 <div className="">
                   <Link href="/">
                     <img
-                      src="/visuals/StarknetIdLongLogo.png"
+                      src="/visuals/starknetIdLongLogo.webp"
                       alt="Starknet.id Logo"
                       width={250}
                       height={100}
