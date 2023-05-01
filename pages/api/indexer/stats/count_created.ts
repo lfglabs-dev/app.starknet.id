@@ -100,5 +100,4 @@ export default async function handler(
       .status(200)
       .json({ error: "delta must be greater than 3600 seconds" });
   }
-
 }
