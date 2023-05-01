@@ -4,9 +4,7 @@ import NextCors from "nextjs-cors";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<{
-    domains: string[];
-  }>
+  res: NextApiResponse<ExternalDomains>
 ) {
   await NextCors(req, res, {
     methods: ["GET"],

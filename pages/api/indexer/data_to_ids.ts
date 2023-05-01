@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../lib/mongodb";
 import NextCors from "nextjs-cors";
-import { QueryError } from "../../../types/backTypes";
 
 type Data = {
   starknet_id: string;
