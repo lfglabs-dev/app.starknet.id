@@ -98,6 +98,9 @@ const Navbar: FunctionComponent = () => {
               <Link href="/identities">
                 <li className={styles.menuItem}>Identities</li>
               </Link>
+              <Link href="/external_domains">
+                <li className={styles.menuItem}>External Domains</li>
+              </Link>
               <Link href="/">
                 <li className={styles.menuItem}>Domains</li>
               </Link>
@@ -113,8 +116,8 @@ const Navbar: FunctionComponent = () => {
                     isConnected
                       ? () => disconnectByClick()
                       : available.length === 1
-                      ? () => connect(available[0])
-                      : () => setHasWallet(true)
+                        ? () => connect(available[0])
+                        : () => setHasWallet(true)
                   }
                 >
                   {isConnected ? (
@@ -181,6 +184,14 @@ const Navbar: FunctionComponent = () => {
                       className={styles.menuItemSmall}
                     >
                       Identities
+                    </li>
+                  </Link>
+                  <Link href="/external_domains">
+                    <li
+                      onClick={() => setNav(false)}
+                      className={styles.menuItemSmall}
+                    >
+                      External Domains
                     </li>
                   </Link>
                   <Link href="/">
