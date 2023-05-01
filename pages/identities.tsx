@@ -64,7 +64,7 @@ const Identities: NextPage = () => {
     //   .then((data) => {
     //     setOwnedIdentities(data.assets);
     //   });
-  }, [account]);
+  }, [account, router.asPath]);
 
   return (
     <div className={styles.screen}>
