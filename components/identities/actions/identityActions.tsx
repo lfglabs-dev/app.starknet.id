@@ -1,16 +1,15 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
-import ChangeAddressModal from "./actions/changeAddressModal";
-import TransferFormModal from "./actions/transferFormModal";
-import SubdomainModal from "./actions/subdomainModal";
-import RenewalModal from "./actions/renewalModal";
-import { Identity } from "../../types/backTypes";
-import { hexToDecimal } from "../../utils/feltService";
-import IdentitiesActionsSkeleton from "../UI/identitiesActionsSkeleton";
-import ClickableAction from "../UI/iconsComponents/clickableAction";
-import styles from "../../styles/components/identityMenu.module.css";
-import { timestampToReadableDate } from "../../utils/dateService";
+import ChangeAddressModal from "./changeAddressModal";
+import TransferFormModal from "./transferFormModal";
+import SubdomainModal from "./subdomainModal";
+import RenewalModal from "./renewalModal";
+import { hexToDecimal } from "../../../utils/feltService";
+import IdentitiesActionsSkeleton from "./identitiesActionsSkeleton";
+import ClickableAction from "../../UI/iconsComponents/clickableAction";
+import styles from "../../../styles/components/identityMenu.module.css";
+import { timestampToReadableDate } from "../../../utils/dateService";
 import { utils } from "starknetid.js";
 
 type IdentityActionsProps = {

@@ -45,7 +45,7 @@ type AddressData = {
   error?: string;
 };
 
-export function useAddressFromDomain(domain: string): AddressData {
+export function useAddressFromDomain(domain: string | undefined): AddressData {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [address, setAddress] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();

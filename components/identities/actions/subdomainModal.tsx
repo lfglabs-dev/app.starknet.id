@@ -1,7 +1,6 @@
 import { Modal, TextField } from "@mui/material";
-import { useAccount, useStarknetExecute } from "@starknet-react/core";
+import { Call, useAccount, useStarknetExecute } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { Call } from "starknet";
 import { useIsValid } from "../../../hooks/naming";
 import styles from "../../../styles/components/wallets.module.css";
 import { hexToDecimal } from "../../../utils/feltService";
@@ -33,7 +32,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   const { address } = useAccount();
 
   const { execute: transfer_domain } = useStarknetExecute({
-    calls: callData as any,
+    calls: callData,
   });
 
   function changeTokenId(value: number): void {
