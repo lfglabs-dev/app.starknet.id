@@ -1,6 +1,6 @@
 import React from "react";
-import styles from "../../styles/Home.module.css";
-import styles2 from "../../styles/components/identitiesV1.module.css";
+import homeStyles from "../../styles/Home.module.css";
+import styles from "../../styles/components/identitiesV1.module.css";
 import { useRouter } from "next/router";
 import { NextPage } from "next";
 import ExternalDomainCard from "../../components/domains/externalDomainCard";
@@ -16,10 +16,10 @@ const ExternalDomain: NextPage = () => {
   const { address: targetAddress } = useAddressFromDomain(domain);
 
   return (
-    <div className={styles.screen}>
-      <div className={styles.wrapperScreen}>
-        <div className={styles2.containerIdentity}>
-          <div className={styles2.identityBox}>
+    <div className={homeStyles.screen}>
+      <div className={homeStyles.wrapperScreen}>
+        <div className={styles.containerIdentity}>
+          <div className={styles.identityBox}>
             <ExternalDomainCard
               domain={domain}
               isMainDomain={mainDomain === domain}

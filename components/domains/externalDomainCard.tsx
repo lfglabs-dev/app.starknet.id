@@ -51,7 +51,7 @@ const ExternalDomainCard: FunctionComponent<ExternalDomainCardProps> = ({
               alt="identicon"
             />
           </div>
-          <div>
+          <div className="flex flex-col justify-center items-center">
             <div className="flex flex-row items-center justify-center">
               <h1 className={styles.domain}>{responsiveDomain}</h1>
               {isMainDomain && (
