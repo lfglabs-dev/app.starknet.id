@@ -63,7 +63,7 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
     <Tooltip
       title={
         githubUsername
-          ? "Change your github verified account"
+          ? `Change your github account from ${githubUsername} to another one`
           : "Start github verification"
       }
       arrow
