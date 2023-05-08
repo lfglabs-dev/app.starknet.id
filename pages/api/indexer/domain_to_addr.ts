@@ -3,7 +3,7 @@ import { connectToDatabase } from "../../../lib/mongodb";
 import NextCors from "nextjs-cors";
 import { utils } from "starknetid.js";
 
-type DomainToAddrData = { addr: string; domain_expiry?: number };
+type DomainToAddrData = { addr: string; domain_expiry: number | null };
 
 export default async function handler(
   req: NextApiRequest,
@@ -34,7 +34,9 @@ export default async function handler(
           .setHeader("cache-control", "max-age=60")
           .status(200)
           .json(
-            domainDoc ? { addr: domainDoc.addr } : { error: "no address found" }
+            domainDoc
+              ? { addr: domainDoc.addr, domain_expiry: null }
+              : { error: "no address found" }
           );
       });
   } else {
