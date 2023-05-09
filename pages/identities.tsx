@@ -14,14 +14,12 @@ import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { hexToDecimal } from "../utils/feltService";
-import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
+import IdentitiesSkeleton from "../components/UI/identitiesSkeleton";
 
 const Identities: NextPage = () => {
   const { account } = useAccount();
   const [loading, setLoading] = useState<boolean>(false);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
-  const [externalDomains, setExternalDomains] = useState<string[]>([]);
-
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
 
@@ -49,21 +47,11 @@ const Identities: NextPage = () => {
       // Our Indexer
       setLoading(true);
       fetch(
-        `/api/indexer/addr_to_full_ids?addr=${hexToDecimal(account.address)}`
+        `/api/indexer/addr_to_full_ids?addr=${hexToDecimal(account?.address)}`
       )
         .then((response) => response.json())
         .then((data) => {
           setOwnedIdentities(data.full_ids);
-        });
-
-      fetch(
-        `/api/indexer/addr_to_external_domains?addr=${hexToDecimal(
-          account.address
-        )}`
-      )
-        .then((response) => response.json())
-        .then((data: ExternalDomains) => {
-          setExternalDomains(data.domains);
           setLoading(false);
         });
     }
@@ -76,7 +64,7 @@ const Identities: NextPage = () => {
     //   .then((data) => {
     //     setOwnedIdentities(data.assets);
     //   });
-  }, [account, router.asPath]);
+  }, [account]);
 
   return (
     <div className={styles.screen}>
@@ -95,10 +83,7 @@ const Identities: NextPage = () => {
                 {loading ? (
                   <IdentitiesSkeleton />
                 ) : (
-                  <IdentitiesGallery
-                    identities={ownedIdentities}
-                    externalDomains={externalDomains}
-                  />
+                  <IdentitiesGallery identities={ownedIdentities} />
                 )}
                 <MintIdentity onClick={() => mint()} />
               </div>
@@ -111,15 +96,15 @@ const Identities: NextPage = () => {
                 data?.status !== "PENDING" && <LoadingScreen />}
               {transactionError && (
                 <ErrorScreen
-                  onClick={() => router.reload()}
+                  onClick={() => router.push("/identities")}
                   buttonText="Retry to mint"
                 />
               )}
               {data?.status === "ACCEPTED_ON_L2" ||
                 (data?.status === "PENDING" && (
                   <SuccessScreen
-                    onClick={() => router.push(`/`)}
-                    buttonText="Get a domain to your identity"
+                    onClick={() => router.push(`/identities`)}
+                    buttonText="See your new identity"
                     successMessage="Congrats, your starknet identity is minted !"
                   />
                 ))}

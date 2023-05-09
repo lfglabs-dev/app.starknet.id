@@ -4,13 +4,14 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import styles from "../../styles/Home.module.css";
 import { useEtherContract, usePricingContract } from "../../hooks/contracts";
-import { Call, useAccount, useStarknetCall } from "@starknet-react/core";
+import { useAccount, useStarknetCall } from "@starknet-react/core";
 import { useStarknetExecute } from "@starknet-react/core";
-import { utils } from "starknetid.js";
+import { useEncoded } from "../../hooks/naming";
 import BN from "bn.js";
 import { isHexString, numberToString } from "../../utils/stringService";
 import { gweiToEth, hexToDecimal } from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
+import { Call } from "starknet";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 
 type RegisterProps = {
@@ -32,9 +33,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
   const { contract: etherContract } = useEtherContract();
-  const encodedDomain = utils
-    .encodeDomain(domain)
-    .map((element) => new BN(element.toString()))[0];
+  const encodedDomain = useEncoded(domain);
   const { data: priceData, error: priceError } = useStarknetCall({
     contract: contract,
     method: "compute_buy_price",
@@ -48,7 +47,7 @@ const Register: FunctionComponent<RegisterProps> = ({
       args: [address],
     });
   const { execute } = useStarknetExecute({
-    calls: callData,
+    calls: callData as any,
   });
   const hasMainDomain = !useDisplayName(address ?? "").startsWith("0x");
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(

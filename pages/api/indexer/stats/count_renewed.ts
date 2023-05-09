@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../../lib/mongodb";
 import NextCors from "nextjs-cors";
+import { QueryError } from "../../../../types/backTypes";
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,6 +22,7 @@ export default async function handler(
   );
 
   if (deltaTime > 3600 * 1000) {
+
     const { db } = await connectToDatabase();
     const domainCollection = db.collection("domains_renewals");
 
@@ -46,7 +48,10 @@ export default async function handler(
                         {
                           $subtract: [
                             {
-                              $subtract: ["$renewal_date", new Date(beginTime)],
+                              $subtract: [
+                                "$renewal_date",
+                                new Date(beginTime),
+                              ],
                             },
                             {
                               $mod: [
@@ -96,4 +101,5 @@ export default async function handler(
       .status(200)
       .json({ error: "delta must be greater than 3600 seconds" });
   }
+
 }

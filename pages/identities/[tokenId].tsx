@@ -4,9 +4,10 @@ import styles2 from "../../styles/components/identitiesV1.module.css";
 import { useRouter } from "next/router";
 import { NextPage } from "next";
 import { ThreeDots } from "react-loader-spinner";
+import { Identity } from "../../types/backTypes";
 import IdentityWarnings from "../../components/identities/identityWarnings";
 import IdentityCard from "../../components/identities/identityCard";
-import IdentityActions from "../../components/identities/actions/identityActions";
+import IdentityActions from "../../components/identities/identityActions";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();

@@ -1,16 +1,13 @@
 import { Tooltip } from "@mui/material";
+import { useStarknetCall } from "@starknet-react/core";
 import { useRouter } from "next/router";
-import React, {
-  FunctionComponent,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
+import { useStarknetIdContract } from "../../../../hooks/contracts";
+import { stringToHex } from "../../../../utils/feltService";
 import GithubIcon from "../../../UI/iconsComponents/icons/githubIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
-import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 
 type ClickableGithubIconProps = {
   width: string;
@@ -26,22 +23,23 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
   domain,
 }) => {
   const router = useRouter();
+  const { contract } = useStarknetIdContract();
+  const { data, error } = useStarknetCall({
+    contract: contract,
+    method: "get_verifier_data",
+    args: [
+      router.query.tokenId,
+      stringToHex("github"),
+      process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
+    ],
+  });
   const [githubId, setGithubId] = useState<string | undefined>();
   const [githubUsername, setGithubUsername] = useState<string | undefined>();
-  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
 
   useEffect(() => {
-    starknetIdNavigator
-      ?.getVerifierData(tokenId, "github")
-      .then((response) => {
-        if (response.toString(10) !== "0") {
-          setGithubId(response.toString(10));
-        }
-      })
-      .catch(() => {
-        return;
-      });
-  }, []);
+    if (error || !data || Number(data) === 0) return;
+    setGithubId(data["data"].toString(10));
+  }, [data, error]);
 
   useEffect(() => {
     if (githubId) {
@@ -63,7 +61,7 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
     <Tooltip
       title={
         githubUsername
-          ? `Change your github account from ${githubUsername} to another one`
+          ? "Change your github verified account"
           : "Start github verification"
       }
       arrow
