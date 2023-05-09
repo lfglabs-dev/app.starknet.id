@@ -20,8 +20,7 @@ export default async function handler(
   const { db } = await connectToDatabase();
   if (
     typeof domain === "string" &&
-    // todo: add utils function for Xplorer subdomains
-    (utils.isBraavosSubdomain(domain) || domain.endsWith(".Xplorer.stark"))
+    (utils.isBraavosSubdomain(domain) || utils.isXplorerSubdomain(domain))
   ) {
     await db
       .collection("subdomains")
