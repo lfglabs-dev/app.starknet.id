@@ -1,6 +1,6 @@
 import { Skeleton } from "@mui/material";
 import React, { FunctionComponent } from "react";
-import styles from "../../../styles/components/identitiesV1.module.css";
+import styles from "../../styles/components/identitiesV1.module.css";
 
 const identitiesActionsSkeleton: FunctionComponent = () => {
   return (

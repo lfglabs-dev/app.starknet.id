@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useState } from "react";
 import styles from "../../styles/components/identityCard.module.css";
+import { Identity } from "../../types/backTypes";
 import {
   convertNumberToFixedLengthString,
   minifyAddress,

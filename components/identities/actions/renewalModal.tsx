@@ -6,6 +6,7 @@ import { usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/wallets.module.css";
 import styles2 from "../../../styles/Home.module.css";
 import Button from "../../UI/button";
+import { Identity } from "../../../types/backTypes";
 import { timestampToReadableDate } from "../../../utils/dateService";
 
 type RenewalModalProps = {

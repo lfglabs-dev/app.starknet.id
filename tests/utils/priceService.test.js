@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import { totalAlphabet } from "../../utils/constants";
+import { totalAlphabet } from "../../hooks/naming";
 import { PRICES, getYearlyPriceFromDomain } from "../../utils/priceService";
 import { generateString } from "../../utils/stringService";
 

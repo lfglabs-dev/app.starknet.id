@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from "react";
+import { Identity } from "../../types/backTypes";
 import { getDomainWithoutStark, isSubdomain } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";

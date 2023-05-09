@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../../lib/mongodb";
 import NextCors from "nextjs-cors";
+import { QueryError } from "../../../../types/backTypes";
 
 export default async function handler(
   req: NextApiRequest,
@@ -99,4 +100,5 @@ export default async function handler(
       .status(200)
       .json({ error: "delta must be greater than 3600 seconds" });
   }
+
 }
