@@ -7,6 +7,7 @@ import {
 } from "../../hooks/naming";
 import { ThreeDots } from "react-loader-spinner";
 import styles from "../../styles/Home.module.css";
+import { minifyAddress } from "../../utils/stringService";
 
 type DetailsProps = {
   domain: string;
@@ -33,7 +34,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
       return;
     } else {
       if (domainData) {
-        setOwnerAddress(domainData?.["address"].toString(16) as string);
+        setOwnerAddress(domainData);
       }
     }
   }, [domainData, domainError]);
@@ -43,7 +44,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
       return;
     } else {
       if (tokenIdData) {
-        setTokenId(tokenIdData?.["owner"]);
+        setTokenId(tokenIdData);
       }
     }
   }, [tokenIdData, tokenIdError]);
@@ -78,14 +79,9 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
         <p>
           <strong>Points to :</strong>&nbsp;
           <span>
-            {"0x" +
-              ownerAddress[0] +
-              ownerAddress[1] +
-              ownerAddress[2] +
-              "..." +
-              ownerAddress[ownerAddress.length - 3] +
-              ownerAddress[ownerAddress.length - 2] +
-              ownerAddress[ownerAddress.length - 1]}
+            {ownerAddress === "0x0"
+              ? ownerAddress
+              : minifyAddress(ownerAddress)}
           </span>
         </p>
       )}

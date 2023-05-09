@@ -1,18 +1,16 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import { useEncodedSeveral } from "../../hooks/naming";
 import { useAccount, useStarknetExecute } from "@starknet-react/core";
-import ChangeAddressModal from "./actions/changeAddressModal";
-import { getDomainWithoutStark } from "../../utils/stringService";
-import TransferFormModal from "./actions/transferFormModal";
-import SubdomainModal from "./actions/subdomainModal";
-import RenewalModal from "./actions/renewalModal";
-import { Identity } from "../../types/backTypes";
-import { hexToDecimal } from "../../utils/feltService";
-import IdentitiesActionsSkeleton from "../UI/identitiesActionsSkeleton";
-import ClickableAction from "../UI/iconsComponents/clickableAction";
-import styles from "../../styles/components/identityMenu.module.css";
-import { timestampToReadableDate } from "../../utils/dateService";
+import ChangeAddressModal from "./changeAddressModal";
+import TransferFormModal from "./transferFormModal";
+import SubdomainModal from "./subdomainModal";
+import RenewalModal from "./renewalModal";
+import { hexToDecimal } from "../../../utils/feltService";
+import IdentitiesActionsSkeleton from "./identitiesActionsSkeleton";
+import ClickableAction from "../../UI/iconsComponents/clickableAction";
+import styles from "../../../styles/components/identityMenu.module.css";
+import { timestampToReadableDate } from "../../../utils/dateService";
+import { utils } from "starknetid.js";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -33,9 +31,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isSubdomainFormOpen, setIsSubdomainFormOpen] =
     useState<boolean>(false);
   const { address } = useAccount();
-  const encodedDomains = useEncodedSeveral(
-    getDomainWithoutStark(identity ? identity.domain : "").split(".") ?? []
-  );
+  const encodedDomains = utils.encodeDomain(identity?.domain);
   const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -45,7 +41,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
   encodedDomains.forEach((domain) => {
-    callDataEncodedDomain.push(domain);
+    callDataEncodedDomain.push(domain.toString(10));
   });
 
   //Set as main domain execute

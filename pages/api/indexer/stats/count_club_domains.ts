@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../../lib/mongodb";
 import NextCors from "nextjs-cors";
-import { QueryError } from "../../../../types/backTypes";
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,13 +28,30 @@ export default async function handler(
           creation_date: {
             $gte: new Date(beginTime),
           },
-          project: "braavos",
         },
       },
       {
         $group: {
-          _id: "$project",
-          count: { $sum: 1 },
+          _id: {
+            $cond: [
+              {
+                $eq: ["$project", "braavos"],
+              },
+              "braavos",
+              {
+                $cond: [
+                  {
+                    $eq: ["$project", "xplorer"],
+                  },
+                  "xplorer",
+                  "none",
+                ],
+              },
+            ],
+          },
+          count: {
+            $sum: 1,
+          },
         },
       },
       {

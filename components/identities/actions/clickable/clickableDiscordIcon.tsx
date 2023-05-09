@@ -1,13 +1,16 @@
 import { Tooltip } from "@mui/material";
-import { useStarknetCall } from "@starknet-react/core";
 import { useRouter } from "next/router";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import { useStarknetIdContract } from "../../../../hooks/contracts";
-import { stringToHex } from "../../../../utils/feltService";
+import React, {
+  FunctionComponent,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import DiscordIcon from "../../../UI/iconsComponents/icons/discordIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
+import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 
 type ClickableDiscordIconProps = {
   width: string;
@@ -23,23 +26,21 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
   domain,
 }) => {
   const router = useRouter();
-  const { contract } = useStarknetIdContract();
-  const { data, error } = useStarknetCall({
-    contract: contract,
-    method: "get_verifier_data",
-    args: [
-      router.query.tokenId,
-      stringToHex("discord"),
-      process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
-    ],
-  });
   const [discordId, setDiscordId] = useState<string | undefined>();
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
 
   useEffect(() => {
-    if (error || !data || Number(data) === 0) return;
-
-    setDiscordId(data["data"].toString(10));
-  }, [data, error]);
+    starknetIdNavigator
+      ?.getVerifierData(tokenId, "discord")
+      .then((response) => {
+        if (response.toString(10) !== "0") {
+          setDiscordId(response.toString(10));
+        }
+      })
+      .catch(() => {
+        return;
+      });
+  }, [starknetIdNavigator]);
 
   function startVerification(link: string): void {
     sessionStorage.setItem("tokenId", tokenId);
@@ -50,7 +51,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
     <Tooltip
       title={
         discordId
-          ? "Change your discord verified account"
+          ? `Change your discord account from the account ${discordId} to another one`
           : "Start Discord verification"
       }
       arrow
