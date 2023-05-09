@@ -10,6 +10,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  // Wallet Connectors
   const connectors = [
     new InjectedConnector({ options: { id: "argentX" } }),
     new InjectedConnector({ options: { id: "braavos" } }),
