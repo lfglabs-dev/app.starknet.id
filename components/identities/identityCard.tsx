@@ -25,7 +25,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   domain,
   identity,
 }) => {
-  const responsiveDomain = shortenDomain(domain as string);
+  const responsiveDomain = shortenDomain(domain as string, 25);
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
