@@ -10,12 +10,9 @@ import React, {
 import GithubIcon from "../../../UI/iconsComponents/icons/githubIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
-import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 import "@anima-protocol/personhood-sdk-react/style.css";
 import { Personhood } from "@anima-protocol/personhood-sdk-react";
-import { useStarknet } from "@starknet-react/core";
-import { Provider, ProviderInterface } from "starknet";
 
 type ClickableGithubIconProps = {
   width: string;
@@ -73,24 +70,29 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
   //   }
   // }, [synapseId]);
 
-  function startVerification(link: string): void {
-    sessionStorage.setItem("tokenId", tokenId);
-    router.push(link);
-  }
+  // function startVerification(link: string): void {
+  //   sessionStorage.setItem("tokenId", tokenId);
+  //   router.push(link);
+  // }
 
   const sign = useCallback(
-    (payload: string | object) => provider.account.signMessage(payload),
+    (payload: string | object) => {
+      console.log("payload", payload);
+      console.log("signMessage", provider.account.signMessage(payload));
+      return provider.account.signMessage(payload);
+    },
     [provider]
   );
 
   const shared = useCallback((e: { info: string }) => {
-    console.log("shared", e.info);
+    console.log("shared e: ", e);
+    console.log("shared: ", e.info);
   }, []);
 
   return isOwner ? (
     address && provider ? (
       <Personhood
-        sessionId="01234567-8901-2345-6789-012345678901"
+        sessionId={process.env.NEXT_PUBLIC_ANIMA_SESSION_ID as string}
         onFinish={shared}
         signCallback={sign}
         walletAddress={address}
