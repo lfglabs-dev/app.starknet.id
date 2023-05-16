@@ -13,12 +13,12 @@ import { useDisplayName } from "../../hooks/displayName.tsx";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
-  const [hasWallet, setHasWallet] = useState<boolean>(false);
-  const { address, status } = useAccount();
+  const [hasWallet, setHasWallet] = useState<boolean>(true);
+  const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
 
-  const { available, connect, disconnect } = useConnectors();
+  const { available, connect, disconnect, refresh } = useConnectors();
   const { library } = useStarknet();
   const domainOrAddress = useDisplayName(address ?? "");
   const green = "#19AA6E";
@@ -26,14 +26,16 @@ const Navbar: FunctionComponent = () => {
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
 
-  console.log("address: ", address);
-  console.log("status: ", status);
-
   function disconnectByClick(): void {
     disconnect();
     setIsConnected(false);
     setIsWrongNetwork(false);
   }
+
+  useEffect(() => {
+    const interval = setInterval(refresh, 5000);
+    return () => clearInterval(interval);
+  }, [refresh]);
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
