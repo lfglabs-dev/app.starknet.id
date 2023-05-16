@@ -5,20 +5,20 @@ import Navbar from "../components/UI/navbar";
 import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
-import { InjectedConnector, StarknetConfig } from "@starknet-react/core";
+import { InjectedConnector, StarknetProvider } from "@starknet-react/core";
 import { Analytics } from "@vercel/analytics/react";
 import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  // Wallet Connectors
-  const connectors = [
-    new InjectedConnector({ options: { id: "argentX" } }),
-    new InjectedConnector({ options: { id: "braavos" } }),
-  ];
+// Wallet Connectors
+const connectors = [
+  new InjectedConnector({ options: { id: "argentX" } }),
+  new InjectedConnector({ options: { id: "braavos" } }),
+];
 
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <StarknetConfig connectors={connectors} autoConnect>
+      <StarknetProvider connectors={connectors} autoConnect>
         <StarknetIdJsProvider>
           <ThemeProvider theme={theme}>
             <Head>
@@ -33,7 +33,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           </ThemeProvider>
           <Analytics />
         </StarknetIdJsProvider>
-      </StarknetConfig>
+      </StarknetProvider>
     </>
   );
 }
