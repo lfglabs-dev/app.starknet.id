@@ -14,7 +14,7 @@ import { useDisplayName } from "../../hooks/displayName.tsx";
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
   const [hasWallet, setHasWallet] = useState<boolean>(true);
-  const { address } = useAccount();
+  const { address, status } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
 
