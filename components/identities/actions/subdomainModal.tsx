@@ -1,5 +1,5 @@
 import { Modal, TextField } from "@mui/material";
-import { Call, useAccount, useStarknetExecute } from "@starknet-react/core";
+import { Call, useAccount, useContractWrite } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useIsValid } from "../../../hooks/naming";
 import styles from "../../../styles/components/wallets.module.css";
@@ -31,7 +31,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   const [callData, setCallData] = useState<Call[]>([]);
   const { address } = useAccount();
 
-  const { execute: transfer_domain } = useStarknetExecute({
+  const { writeAsync: transfer_domain } = useContractWrite({
     calls: callData,
   });
 

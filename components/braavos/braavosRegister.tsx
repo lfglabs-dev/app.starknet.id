@@ -3,7 +3,7 @@ import { TextField } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { Call, useAccount } from "@starknet-react/core";
-import { useStarknetExecute } from "@starknet-react/core";
+import { useContractWrite } from "@starknet-react/core";
 import { useExpiryFromDomain, useIsValid } from "../../hooks/naming";
 import { numberToString } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
@@ -40,7 +40,7 @@ const BraavosRegister: FunctionComponent<BraavosRegisterProps> = ({
   }, [data, error, domain]);
 
   const { account, address } = useAccount();
-  const { execute } = useStarknetExecute({
+  const { writeAsync: execute } = useContractWrite({
     calls: callData,
   });
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(

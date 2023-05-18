@@ -3,8 +3,10 @@ import styles from "../../styles/braavos.module.css";
 import { gweiToEth } from "../../utils/feltService";
 import {
   useAccount,
-  useStarknetCall,
-  useStarknetExecute,
+  // useStarknetCall,
+  // useStarknetExecute,
+  useContractWrite,
+  useContractRead,
 } from "@starknet-react/core";
 import { useEtherContract } from "../../hooks/contracts";
 import Button from "../UI/button";
@@ -12,6 +14,7 @@ import { BN } from "bn.js";
 import BraavosConfirmation from "./braavosConfirmation";
 import Link from "next/link";
 import { utils } from "starknetid.js";
+import { Abi } from "starknet";
 
 type BraavosRenewalProps = {
   domain: string;
@@ -43,7 +46,7 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
     },
   ];
 
-  const { execute: executeRenew, data: renewData } = useStarknetExecute({
+  const { writeAsync: executeRenew, data: renewData } = useContractWrite({
     calls: callDataRenew,
   });
 
@@ -63,9 +66,10 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
 
   const { contract: etherContract } = useEtherContract();
   const { data: userBalanceData, error: userBalanceDataError } =
-    useStarknetCall({
-      contract: etherContract,
-      method: "balanceOf",
+    useContractRead({
+      address: etherContract?.address as string,
+      abi: etherContract?.abi as Abi,
+      functionName: "balanceOf",
       args: [address],
     });
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import { useAccount, useStarknetExecute } from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
@@ -55,7 +55,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     entrypoint: "set_domain_to_address",
     calldata: [...callDataEncodedDomain, hexToDecimal(address)],
   };
-  const { execute: set_address_to_domain } = useStarknetExecute({
+  const { writeAsync: set_address_to_domain } = useContractWrite({
     calls: isAccountTargetAddress
       ? set_address_to_domain_calls
       : [set_domain_to_address_calls, set_address_to_domain_calls],
