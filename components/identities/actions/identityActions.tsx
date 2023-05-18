@@ -172,6 +172,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       icon="plus"
                       onClick={() => setIsSubdomainFormOpen(true)}
                     />
+                    <ClickableAction
+                      title="ENABLE AUTOMATIC RENEWAL"
+                      description="Ensure your domain is renewed automatically"
+                      icon="change"
+                      onClick={() => setIsTransferFormOpen(true)}
+                    />
                     <p
                       onClick={() => setViewMoreClicked(false)}
                       className={styles.viewMore}
