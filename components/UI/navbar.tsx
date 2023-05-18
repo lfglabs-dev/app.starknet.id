@@ -13,7 +13,7 @@ import { useDisplayName } from "../../hooks/displayName.tsx";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
-  const [hasWallet, setHasWallet] = useState<boolean>(true);
+  const [hasWallet, setHasWallet] = useState<boolean>(false);
   const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
@@ -30,6 +30,7 @@ const Navbar: FunctionComponent = () => {
     disconnect();
     setIsConnected(false);
     setIsWrongNetwork(false);
+    setHasWallet(false);
   }
 
   useEffect(() => {
@@ -59,21 +60,25 @@ const Navbar: FunctionComponent = () => {
     } else {
       setIsWrongNetwork(false);
     }
-  }, [library, network, isConnected]);
+  }, [library, network, isConnected, address]);
 
   function handleNav(): void {
     setNav(!nav);
   }
 
   function onTopButtonClick(): void {
-    if (available.length > 0) {
-      if (available.length === 1) {
-        connect(available[0]);
+    if (!isConnected) {
+      if (available.length > 0) {
+        if (available.length === 1) {
+          connect(available[0]);
+        } else {
+          setHasWallet(true);
+        }
       } else {
         setHasWallet(true);
       }
     } else {
-      setHasWallet(true);
+      disconnectByClick();
     }
   }
 
@@ -236,10 +241,12 @@ const Navbar: FunctionComponent = () => {
           </div>
         }
       />
-      <Wallets
-        closeWallet={() => setHasWallet(false)}
-        hasWallet={Boolean(hasWallet && !isWrongNetwork)}
-      />
+      {hasWallet ? (
+        <Wallets
+          closeWallet={() => setHasWallet(false)}
+          hasWallet={Boolean(hasWallet && !isWrongNetwork)}
+        />
+      ) : null}
     </>
   );
 };
