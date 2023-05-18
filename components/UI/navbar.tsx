@@ -34,13 +34,15 @@ const Navbar: FunctionComponent = () => {
   }
 
   useEffect(() => {
-    const interval = setInterval(refresh, 5000);
-    return () => clearInterval(interval);
-  }, [refresh]);
-
-  useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
   }, [address]);
+
+  useEffect(() => {
+    if (!isConnected) {
+      const interval = setInterval(refresh, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [refresh]);
 
   useEffect(() => {
     if (!isConnected) return;
@@ -60,7 +62,7 @@ const Navbar: FunctionComponent = () => {
     } else {
       setIsWrongNetwork(false);
     }
-  }, [library, network, isConnected, address]);
+  }, [library, network, isConnected]);
 
   function handleNav(): void {
     setNav(!nav);
@@ -241,12 +243,10 @@ const Navbar: FunctionComponent = () => {
           </div>
         }
       />
-      {hasWallet ? (
-        <Wallets
-          closeWallet={() => setHasWallet(false)}
-          hasWallet={Boolean(hasWallet && !isWrongNetwork)}
-        />
-      ) : null}
+      <Wallets
+        closeWallet={() => setHasWallet(false)}
+        hasWallet={Boolean(hasWallet && !isWrongNetwork)}
+      />
     </>
   );
 };

@@ -3,8 +3,6 @@ import styles from "../../styles/braavos.module.css";
 import { gweiToEth } from "../../utils/feltService";
 import {
   useAccount,
-  // useStarknetCall,
-  // useStarknetExecute,
   useContractWrite,
   useContractRead,
 } from "@starknet-react/core";
