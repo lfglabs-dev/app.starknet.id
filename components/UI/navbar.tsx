@@ -34,6 +34,10 @@ const Navbar: FunctionComponent = () => {
   }
 
   useEffect(() => {
+    if (!localStorage.getItem("lastUsedConnector")) setHasWallet(true);
+  }, []);
+
+  useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
   }, [address]);
 
