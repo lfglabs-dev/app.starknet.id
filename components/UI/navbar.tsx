@@ -18,7 +18,7 @@ const Navbar: FunctionComponent = () => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
 
-  const { available, connect, disconnect, refresh } = useConnectors();
+  const { available, connect, disconnect } = useConnectors();
   const { library } = useStarknet();
   const domainOrAddress = useDisplayName(address ?? "");
   const green = "#19AA6E";
@@ -36,13 +36,6 @@ const Navbar: FunctionComponent = () => {
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
   }, [address]);
-
-  useEffect(() => {
-    if (!isConnected) {
-      const interval = setInterval(refresh, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [refresh]);
 
   useEffect(() => {
     if (!isConnected) return;
