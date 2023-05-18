@@ -11,6 +11,7 @@ import ClickableAction from "../../UI/iconsComponents/clickableAction";
 import styles from "../../../styles/components/identityMenu.module.css";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { utils } from "starknetid.js";
+import AutomaticRenewalModal from "./automaticRenewalModal";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -37,6 +38,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   //UseState viewMoreClicked
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
+  const [isAutomaticRenewalOpen, setIsAutomaticRenewalOpen] =
+    useState<boolean>(false);
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -173,10 +176,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       onClick={() => setIsSubdomainFormOpen(true)}
                     />
                     <ClickableAction
-                      title="ENABLE AUTOMATIC RENEWAL"
-                      description="Ensure your domain is renewed automatically"
+                      title="ENABLE AUTO RENEWAL"
+                      description="Don't lose your domain!"
                       icon="change"
-                      onClick={() => setIsTransferFormOpen(true)}
+                      onClick={() => setIsAutomaticRenewalOpen(true)}
                     />
                     <p
                       onClick={() => setViewMoreClicked(false)}
@@ -221,6 +224,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             isModalOpen={isSubdomainFormOpen}
             callDataEncodedDomain={callDataEncodedDomain}
             domain={identity?.domain}
+          />
+          <AutomaticRenewalModal
+            handleClose={() => setIsAutomaticRenewalOpen(false)}
+            isModalOpen={isAutomaticRenewalOpen}
+            callDataEncodedDomain={callDataEncodedDomain}
+            identity={identity}
+            isEnabled={false}
           />
         </>
       )}
