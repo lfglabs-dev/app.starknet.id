@@ -34,6 +34,8 @@ const Navbar: FunctionComponent = () => {
   }
 
   useEffect(() => {
+    // to handle autoconnect starknet-react adds connector id in local storage
+    // if there is no value stored, we show the wallet modal
     if (!localStorage.getItem("lastUsedConnector")) setHasWallet(true);
   }, []);
 
