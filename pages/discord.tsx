@@ -99,7 +99,7 @@ const Discord: NextPage = () => {
     };
 
     fetch(
-      `https://${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
+      `${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
       requestOptions
     )
       .then((response) => response.json())
