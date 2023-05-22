@@ -83,7 +83,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     if (address && tokenId) {
       setLoading(true);
       // Our Indexer
-      fetch(`/api/indexer/addr_to_full_ids?addr=${hexToDecimal(address)}`)
+      fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_to_full_ids?addr=${hexToDecimal(address)}`)
         .then((response) => response.json())
         .then((data) => {
           setIsOwner(checkIfOwner(data.full_ids));

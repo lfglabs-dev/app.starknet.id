@@ -49,7 +49,7 @@ const Identities: NextPage = () => {
       // Our Indexer
       setLoading(true);
       fetch(
-        `/api/indexer/addr_to_full_ids?addr=${hexToDecimal(account.address)}`
+        `${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_to_full_ids?addr=${hexToDecimal(account.address)}`
       )
         .then((response) => response.json())
         .then((data) => {
@@ -57,7 +57,7 @@ const Identities: NextPage = () => {
         });
 
       fetch(
-        `/api/indexer/addr_to_external_domains?addr=${hexToDecimal(
+        `${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_to_external_domains?addr=${hexToDecimal(
           account.address
         )}`
       )
