@@ -13,7 +13,7 @@ import { useDisplayName } from "../../hooks/displayName.tsx";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
-  const [hasWallet, setHasWallet] = useState<boolean>(true);
+  const [hasWallet, setHasWallet] = useState<boolean>(false);
   const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
@@ -30,7 +30,14 @@ const Navbar: FunctionComponent = () => {
     disconnect();
     setIsConnected(false);
     setIsWrongNetwork(false);
+    setHasWallet(false);
   }
+
+  useEffect(() => {
+    // to handle autoconnect starknet-react adds connector id in local storage
+    // if there is no value stored, we show the wallet modal
+    if (!localStorage.getItem("lastUsedConnector")) setHasWallet(true);
+  }, []);
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
@@ -61,14 +68,18 @@ const Navbar: FunctionComponent = () => {
   }
 
   function onTopButtonClick(): void {
-    if (available.length > 0) {
-      if (available.length === 1) {
-        connect(available[0]);
+    if (!isConnected) {
+      if (available.length > 0) {
+        if (available.length === 1) {
+          connect(available[0]);
+        } else {
+          setHasWallet(true);
+        }
       } else {
         setHasWallet(true);
       }
     } else {
-      setHasWallet(true);
+      disconnectByClick();
     }
   }
 

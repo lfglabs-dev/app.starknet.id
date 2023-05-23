@@ -1,5 +1,5 @@
 import { Modal } from "@mui/material";
-import { useStarknetExecute } from "@starknet-react/core";
+import { useContractWrite } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
 import styles from "../../../styles/components/wallets.module.css";
@@ -29,7 +29,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     calldata: [...callDataEncodedDomain, targetTokenId],
   };
 
-  const { execute: transfer_domain } = useStarknetExecute({
+  const { writeAsync: transfer_domain } = useContractWrite({
     calls: transfer_domain_calls,
   });
 

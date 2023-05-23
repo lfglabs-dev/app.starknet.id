@@ -3,8 +3,8 @@ import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 import {
   useAccount,
-  useStarknetExecute,
-  useTransactionReceipt,
+  useContractWrite,
+  useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
@@ -31,7 +31,7 @@ const Identities: NextPage = () => {
     entrypoint: "mint",
     calldata: [randomTokenId],
   };
-  const { execute, data: mintData } = useStarknetExecute({
+  const { writeAsync: execute, data: mintData } = useContractWrite({
     calls: callData,
   });
 
@@ -39,7 +39,7 @@ const Identities: NextPage = () => {
     execute();
   }
 
-  const { data, error: transactionError } = useTransactionReceipt({
+  const { data, error: transactionError } = useWaitForTransaction({
     hash: mintData?.transaction_hash,
     watch: true,
   });
