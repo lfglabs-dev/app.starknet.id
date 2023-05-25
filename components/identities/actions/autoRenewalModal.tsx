@@ -1,5 +1,5 @@
 import { Modal, TextField } from "@mui/material";
-import { useStarknetCall, useStarknetExecute } from "@starknet-react/core";
+import { useContractRead, useContractWrite } from "@starknet-react/core";
 import BN from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { usePricingContract } from "../../../hooks/contracts";
@@ -7,8 +7,9 @@ import styles from "../../../styles/components/wallets.module.css";
 import styles2 from "../../../styles/Home.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
+import { Abi } from "starknet";
 
-type AutomaticRenewalModalProps = {
+type AutoRenewalModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
   callDataEncodedDomain: (number | string)[];
@@ -16,7 +17,7 @@ type AutomaticRenewalModalProps = {
   isEnabled?: boolean;
 };
 
-const AutomaticRenewalModal: FunctionComponent<AutomaticRenewalModalProps> = ({
+const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   handleClose,
   isModalOpen,
   callDataEncodedDomain,
@@ -25,9 +26,10 @@ const AutomaticRenewalModal: FunctionComponent<AutomaticRenewalModalProps> = ({
 }) => {
   const [price, setPrice] = useState<string>("0");
   const { contract: pricingContract } = usePricingContract();
-  const { data: priceData, error: priceError } = useStarknetCall({
-    contract: pricingContract,
-    method: "compute_renew_price",
+  const { data: priceData, error: priceError } = useContractRead({
+    address: pricingContract?.address as string,
+    abi: pricingContract?.abi as Abi,
+    functionName: "compute_renew_price",
     args: [callDataEncodedDomain[1], 365],
   });
 
@@ -46,16 +48,20 @@ const AutomaticRenewalModal: FunctionComponent<AutomaticRenewalModalProps> = ({
     {
       contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
       entrypoint: "approve",
-      calldata: [process.env.NEXT_PUBLIC_NAMING_CONTRACT as string, price, 0],
+      calldata: [
+        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+        isEnabled ? 0 : price,
+        0,
+      ],
     },
     {
-      contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-      entrypoint: "renew",
-      calldata: [callDataEncodedDomain[1], 365],
+      contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+      entrypoint: "toggle_renewals",
+      calldata: [callDataEncodedDomain[1]],
     },
   ];
 
-  const { execute: enableAutoRenewal } = useStarknetExecute({
+  const { writeAsync: enableAutoRenewal } = useContractWrite({
     calls: renew_calls,
   });
 
@@ -83,7 +89,8 @@ const AutomaticRenewalModal: FunctionComponent<AutomaticRenewalModalProps> = ({
         </p>
         <p className="break-all mt-5">
           To avoid loosing your domain, you can enable auto renewals so your
-          domain is renewed one month before it ends.
+          domain is renewed automatically. Auto renewals happen one month before
+          you're expiry date is reached.
         </p>
         <div className="mt-5 flex flex-col justify-center">
           {identity?.domain_expiry && (
@@ -91,6 +98,16 @@ const AutomaticRenewalModal: FunctionComponent<AutomaticRenewalModalProps> = ({
               <strong>Expiry date :</strong>&nbsp;
               <span>
                 {timestampToReadableDate(identity?.domain_expiry ?? 0)}
+              </span>
+            </p>
+          )}
+          {identity?.domain_expiry && (
+            <p className="break-all">
+              <strong>Auto renewal date :</strong>&nbsp;
+              <span>
+                {timestampToReadableDate(
+                  identity?.domain_expiry - 2592000 ?? 0
+                )}
               </span>
             </p>
           )}
@@ -119,4 +136,4 @@ const AutomaticRenewalModal: FunctionComponent<AutomaticRenewalModalProps> = ({
   );
 };
 
-export default AutomaticRenewalModal;
+export default AutoRenewalModal;

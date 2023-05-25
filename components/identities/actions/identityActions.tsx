@@ -1,6 +1,10 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+} from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
@@ -11,7 +15,9 @@ import ClickableAction from "../../UI/iconsComponents/clickableAction";
 import styles from "../../../styles/components/identityMenu.module.css";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { utils } from "starknetid.js";
-import AutomaticRenewalModal from "./automaticRenewalModal";
+import AutoRenewalModal from "./autoRenewalModal";
+import { useRenewalContract } from "../../../hooks/contracts";
+import { Abi } from "starknet";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -38,8 +44,11 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [loading, setLoading] = useState<boolean>(false);
   //UseState viewMoreClicked
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
-  const [isAutomaticRenewalOpen, setIsAutomaticRenewalOpen] =
+  // AutoRenewals
+  const [isAutoRenewalOpen, setIsAutoRenewalOpen] = useState<boolean>(false);
+  const [hasAutoRenewalEnabled, setHasAutoRenewalEnabled] =
     useState<boolean>(false);
+  const { contract: renewalContract } = useRenewalContract();
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -64,6 +73,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       : [set_domain_to_address_calls, set_address_to_domain_calls],
   });
 
+  const { data: renewData, error: renewError } = useContractRead({
+    address: renewalContract?.address as string,
+    abi: renewalContract?.abi as Abi,
+    functionName: "is_renewing",
+    args: [
+      callDataEncodedDomain[0] === 1 ? encodedDomains[0].toString(10) : 0,
+      identity?.addr,
+    ],
+  });
+
   function setAddressToDomain(): void {
     set_address_to_domain();
   }
@@ -86,7 +105,11 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     if (address && tokenId) {
       setLoading(true);
       // Our Indexer
-      fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_to_full_ids?addr=${hexToDecimal(address)}`)
+      fetch(
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
+        }/addr_to_full_ids?addr=${hexToDecimal(address)}`
+      )
         .then((response) => response.json())
         .then((data) => {
           setIsOwner(checkIfOwner(data.full_ids));
@@ -94,6 +117,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         });
     }
   }, [address, tokenId]);
+
+  useEffect(() => {
+    if (renewError || !renewData) setHasAutoRenewalEnabled(false);
+    else {
+      if (Number(renewData?.["res"])) setHasAutoRenewalEnabled(true);
+    }
+  }, [tokenId, renewData, renewError]);
 
   if (!isIdentityADomain) {
     hideActionsHandler(true);
@@ -175,12 +205,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       icon="plus"
                       onClick={() => setIsSubdomainFormOpen(true)}
                     />
-                    <ClickableAction
-                      title="ENABLE AUTO RENEWAL"
-                      description="Don't lose your domain!"
-                      icon="change"
-                      onClick={() => setIsAutomaticRenewalOpen(true)}
-                    />
+                    {callDataEncodedDomain[0] === 1 ? (
+                      <ClickableAction
+                        title={`${
+                          hasAutoRenewalEnabled ? "DISABLE" : "ENABLE"
+                        } AUTO RENEWAL`}
+                        description="Don't lose your domain!"
+                        icon="change"
+                        onClick={() => setIsAutoRenewalOpen(true)}
+                      />
+                    ) : null}
                     <p
                       onClick={() => setViewMoreClicked(false)}
                       className={styles.viewMore}
@@ -225,12 +259,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             callDataEncodedDomain={callDataEncodedDomain}
             domain={identity?.domain}
           />
-          <AutomaticRenewalModal
-            handleClose={() => setIsAutomaticRenewalOpen(false)}
-            isModalOpen={isAutomaticRenewalOpen}
+          <AutoRenewalModal
+            handleClose={() => setIsAutoRenewalOpen(false)}
+            isModalOpen={isAutoRenewalOpen}
             callDataEncodedDomain={callDataEncodedDomain}
             identity={identity}
-            isEnabled={false}
+            isEnabled={hasAutoRenewalEnabled}
           />
         </>
       )}
