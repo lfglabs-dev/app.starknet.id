@@ -90,7 +90,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         <p className="break-all mt-5">
           To avoid loosing your domain, you can enable auto renewals so your
           domain is renewed automatically. Auto renewals happen one month before
-          you're expiry date is reached.
+          your expiry date is reached.
         </p>
         <div className="mt-5 flex flex-col justify-center">
           {identity?.domain_expiry && (
