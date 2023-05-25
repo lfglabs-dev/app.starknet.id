@@ -1,0 +1,237 @@
+[
+    {
+        "data": [
+            {
+                "name": "implementation",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "Upgraded",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "previousAdmin",
+                "type": "felt"
+            },
+            {
+                "name": "newAdmin",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "AdminChanged",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "domain",
+                "type": "felt"
+            },
+            {
+                "name": "renewer",
+                "type": "felt"
+            },
+            {
+                "name": "value",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "toggled_renewal",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "domain",
+                "type": "felt"
+            },
+            {
+                "name": "renewer",
+                "type": "felt"
+            },
+            {
+                "name": "days",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "domain_renewed",
+        "type": "event"
+    },
+    {
+        "data": [
+            {
+                "name": "caller",
+                "type": "felt"
+            },
+            {
+                "name": "upgrade_id",
+                "type": "felt"
+            },
+            {
+                "name": "implementation_hash",
+                "type": "felt"
+            },
+            {
+                "name": "vote",
+                "type": "felt"
+            }
+        ],
+        "keys": [],
+        "name": "voted",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "name": "admin",
+                "type": "felt"
+            },
+            {
+                "name": "naming_address",
+                "type": "felt"
+            },
+            {
+                "name": "pricing_address",
+                "type": "felt"
+            },
+            {
+                "name": "erc20_address",
+                "type": "felt"
+            }
+        ],
+        "name": "initializer",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "domain",
+                "type": "felt"
+            },
+            {
+                "name": "renewer",
+                "type": "felt"
+            }
+        ],
+        "name": "is_renewing",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "user",
+                "type": "felt"
+            },
+            {
+                "name": "upgrade_id",
+                "type": "felt"
+            },
+            {
+                "name": "implementation_hash",
+                "type": "felt"
+            }
+        ],
+        "name": "has_voted_upgrade",
+        "outputs": [
+            {
+                "name": "res",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "domain",
+                "type": "felt"
+            }
+        ],
+        "name": "toggle_renewals",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "root_domain",
+                "type": "felt"
+            },
+            {
+                "name": "renewer",
+                "type": "felt"
+            }
+        ],
+        "name": "renew",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "domain_len",
+                "type": "felt"
+            },
+            {
+                "name": "domain",
+                "type": "felt*"
+            },
+            {
+                "name": "renewer_len",
+                "type": "felt"
+            },
+            {
+                "name": "renewer",
+                "type": "felt*"
+            }
+        ],
+        "name": "batch_renew",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "upgrade_id",
+                "type": "felt"
+            },
+            {
+                "name": "implementation_hash",
+                "type": "felt"
+            }
+        ],
+        "name": "vote_upgrade",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "upgrade_id",
+                "type": "felt"
+            },
+            {
+                "name": "implementation_hash",
+                "type": "felt"
+            }
+        ],
+        "name": "upgrade",
+        "outputs": [],
+        "type": "function"
+    }
+]
