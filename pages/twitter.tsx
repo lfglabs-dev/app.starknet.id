@@ -70,7 +70,6 @@ const Twitter: NextPage = () => {
       setIsConnected(false);
     } else {
       setIsConnected(true);
-      setScreen("verifyTwitter");
     }
   }, [account]);
 
@@ -92,10 +91,7 @@ const Twitter: NextPage = () => {
       }),
     };
 
-    fetch(
-      `${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
-      requestOptions
-    )
+    fetch(`${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`, requestOptions)
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
   }, [code, tokenId]);
@@ -138,7 +134,7 @@ const Twitter: NextPage = () => {
   }, [twitterVerificationData, transactionData, transactionError]);
 
   //Screen management
-  const [screen, setScreen] = useState<Screen | undefined>();
+  const [screen, setScreen] = useState<Screen>("verifyTwitter");
 
   // Error Management
   useEffect(() => {

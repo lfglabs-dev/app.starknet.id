@@ -83,7 +83,6 @@ const Discord: NextPage = () => {
       setIsConnected(false);
     } else {
       setIsConnected(true);
-      setScreen("verifyDiscord");
     }
   }, [account]);
 
@@ -99,10 +98,7 @@ const Discord: NextPage = () => {
       }),
     };
 
-    fetch(
-      `${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
-      requestOptions
-    )
+    fetch(`${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         setSignRequestData(data);
@@ -147,7 +143,7 @@ const Discord: NextPage = () => {
   }, [discordVerificationData, transactionData, transactionError]);
 
   //Screen management
-  const [screen, setScreen] = useState<Screen | undefined>(undefined);
+  const [screen, setScreen] = useState<Screen>("verifyDiscord");
 
   // Error Management
   useEffect(() => {

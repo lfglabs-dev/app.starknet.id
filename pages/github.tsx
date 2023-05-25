@@ -68,7 +68,6 @@ const Github: NextPage = () => {
       setIsConnected(false);
     } else {
       setIsConnected(true);
-      setScreen("verifyGithub");
     }
   }, [account]);
 
@@ -90,10 +89,7 @@ const Github: NextPage = () => {
       }),
     };
 
-    fetch(
-      `${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
-      requestOptions
-    )
+    fetch(`${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`, requestOptions)
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
   }, [code, tokenId]);
@@ -136,7 +132,7 @@ const Github: NextPage = () => {
   }, [githubVerificationData, transactionData, transactionError]);
 
   //Screen management
-  const [screen, setScreen] = useState<Screen | undefined>();
+  const [screen, setScreen] = useState<Screen>("verifyGithub");
 
   // Error Management
   useEffect(() => {
