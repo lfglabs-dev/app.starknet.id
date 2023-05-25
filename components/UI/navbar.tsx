@@ -4,12 +4,19 @@ import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import Button from "./button";
-import { useConnectors, useAccount, useStarknet } from "@starknet-react/core";
+import {
+  useConnectors,
+  useAccount,
+  useStarknet,
+  useTransactionManager,
+  useTransactions,
+} from "@starknet-react/core";
 import Wallets from "./wallets";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SelectNetwork from "./selectNetwork";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
+import { CircularProgress } from "@mui/material";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
@@ -17,7 +24,6 @@ const Navbar: FunctionComponent = () => {
   const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-
   const { available, connect, disconnect } = useConnectors();
   const { library } = useStarknet();
   const domainOrAddress = useDisplayName(address ?? "");
@@ -26,12 +32,7 @@ const Navbar: FunctionComponent = () => {
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
 
-  function disconnectByClick(): void {
-    disconnect();
-    setIsConnected(false);
-    setIsWrongNetwork(false);
-    setHasWallet(false);
-  }
+  const [txLoading, setTxLoading] = useState<number>(0);
 
   useEffect(() => {
     // to handle autoconnect starknet-react adds connector id in local storage
@@ -63,6 +64,13 @@ const Navbar: FunctionComponent = () => {
     }
   }, [library, network, isConnected]);
 
+  function disconnectByClick(): void {
+    disconnect();
+    setIsConnected(false);
+    setIsWrongNetwork(false);
+    setHasWallet(false);
+  }
+
   function handleNav(): void {
     setNav(!nav);
   }
@@ -88,6 +96,18 @@ const Navbar: FunctionComponent = () => {
 
     return textToReturn;
   }
+  const { hashes } = useTransactionManager();
+  const transactions = useTransactions({ hashes });
+
+  useEffect(() => {
+    if (transactions) {
+      // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
+      setTxLoading(
+        transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")
+          .length
+      );
+    }
+  }, [transactions]);
 
   return (
     <>
@@ -129,10 +149,24 @@ const Navbar: FunctionComponent = () => {
                   }
                 >
                   {isConnected ? (
-                    <div className="flex justify-center items-center">
-                      <div>{domainOrAddress}</div>
-                      <LogoutIcon className="ml-3" />
-                    </div>
+                    <>
+                      {txLoading > 0 ? (
+                        <div className="flex justify-center items-center">
+                          <p className="mr-3">{txLoading} on hold</p>
+                          <CircularProgress
+                            sx={{
+                              color: "white",
+                            }}
+                            size={25}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex justify-center items-center">
+                          <p className="mr-3">{domainOrAddress}</p>
+                          <LogoutIcon />
+                        </div>
+                      )}
+                    </>
                   ) : (
                     "connect"
                   )}

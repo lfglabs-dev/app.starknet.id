@@ -1,9 +1,3 @@
-type Calls = {
-  contractAddress: string;
-  entrypoint: string;
-  calldata: (string | number | BN | any[] | undefined)[];
-};
-
 type IconProps = {
   color: string;
   width: string;
@@ -22,3 +16,5 @@ type ErrorRequestData = {
 
 type Status = "success" | "error";
 type DomainKind = "braavos" | "root" | "subdomain" | "none";
+type Context = { children: ReactNode };
+type ScreenState = "mint" | "loading" | "success" | "error";
