@@ -28,7 +28,7 @@ const TokenIdPage: NextPage = () => {
   useEffect(() => {
     if (tokenId) {
       const refreshData = () =>
-        fetch(`/api/indexer/id_to_data?id=${tokenId}`)
+        fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/id_to_data?id=${tokenId}`)
           .then((response) => response.json())
           .then((data: Identity) => {
             if (data.error) {

@@ -1,5 +1,5 @@
 import { Modal, TextField } from "@mui/material";
-import { useAccount, useStarknetExecute } from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
 import styles from "../../../styles/components/wallets.module.css";
@@ -45,7 +45,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     },
   ];
 
-  const { execute: transfer_identity_and_set_domain } = useStarknetExecute({
+  const { writeAsync: transfer_identity_and_set_domain } = useContractWrite({
     calls: transfer_identity_and_set_domain_multicall,
   });
 

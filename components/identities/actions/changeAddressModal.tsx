@@ -1,5 +1,5 @@
 import { Modal, TextField } from "@mui/material";
-import { useAccount, useStarknetExecute } from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import React, { FunctionComponent, useState } from "react";
 import { isHexString } from "../../../utils/stringService";
 import styles from "../../../styles/components/wallets.module.css";
@@ -31,7 +31,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
     calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress)],
   };
 
-  const { execute: set_domain_to_address } = useStarknetExecute({
+  const { writeAsync: set_domain_to_address } = useContractWrite({
     calls: set_domain_to_address_calls,
   });
 

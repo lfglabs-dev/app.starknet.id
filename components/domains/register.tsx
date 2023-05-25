@@ -4,14 +4,19 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import styles from "../../styles/Home.module.css";
 import { useEtherContract, usePricingContract } from "../../hooks/contracts";
-import { Call, useAccount, useStarknetCall } from "@starknet-react/core";
-import { useStarknetExecute } from "@starknet-react/core";
+import {
+  Call,
+  useAccount,
+  useContractRead,
+  useContractWrite,
+} from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import BN from "bn.js";
 import { isHexString, numberToString } from "../../utils/stringService";
 import { gweiToEth, hexToDecimal } from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
 import { useDisplayName } from "../../hooks/displayName.tsx";
+import { Abi } from "starknet";
 
 type RegisterProps = {
   domain: string;
@@ -35,19 +40,21 @@ const Register: FunctionComponent<RegisterProps> = ({
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => new BN(element.toString()))[0];
-  const { data: priceData, error: priceError } = useStarknetCall({
-    contract: contract,
-    method: "compute_buy_price",
+  const { data: priceData, error: priceError } = useContractRead({
+    address: contract?.address as string,
+    abi: contract?.abi as Abi,
+    functionName: "compute_buy_price",
     args: [encodedDomain, duration * 365],
   });
   const { account, address } = useAccount();
   const { data: userBalanceData, error: userBalanceDataError } =
-    useStarknetCall({
-      contract: etherContract,
-      method: "balanceOf",
+    useContractRead({
+      address: etherContract?.address as string,
+      abi: etherContract?.abi as Abi,
+      functionName: "balanceOf",
       args: [address],
     });
-  const { execute } = useStarknetExecute({
+  const { writeAsync: execute } = useContractWrite({
     calls: callData,
   });
   const hasMainDomain = !useDisplayName(address ?? "").startsWith("0x");
