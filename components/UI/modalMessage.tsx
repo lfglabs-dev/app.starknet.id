@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "../../styles/components/wallets.module.css";
+import styles from "../../styles/components/modalMessage.module.css";
 import { FunctionComponent, ReactNode } from "react";
 import { Modal } from "@mui/material";
 
