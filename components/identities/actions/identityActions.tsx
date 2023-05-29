@@ -167,8 +167,18 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
               <div className="flex flex-col items-center justify-center">
                 {callDataEncodedDomain[0] === 1 ? (
                   <ClickableAction
-                    title="RENEW YOUR DOMAIN"
+                    title={`${
+                      hasAutoRenewalEnabled ? "DISABLE" : "ENABLE"
+                    } AUTO RENEWAL`}
                     style="primary"
+                    description="Don't lose your domain!"
+                    icon="change"
+                    onClick={() => setIsAutoRenewalOpen(true)}
+                  />
+                ) : null}
+                {callDataEncodedDomain[0] === 1 ? (
+                  <ClickableAction
+                    title="RENEW YOUR DOMAIN"
                     description={`Expires on ${timestampToReadableDate(
                       identity?.domain_expiry ?? 0
                     )}`}
@@ -205,16 +215,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       icon="plus"
                       onClick={() => setIsSubdomainFormOpen(true)}
                     />
-                    {callDataEncodedDomain[0] === 1 ? (
-                      <ClickableAction
-                        title={`${
-                          hasAutoRenewalEnabled ? "DISABLE" : "ENABLE"
-                        } AUTO RENEWAL`}
-                        description="Don't lose your domain!"
-                        icon="change"
-                        onClick={() => setIsAutoRenewalOpen(true)}
-                      />
-                    ) : null}
                     <p
                       onClick={() => setViewMoreClicked(false)}
                       className={styles.viewMore}

@@ -4,7 +4,6 @@ import BN from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/wallets.module.css";
-import styles2 from "../../../styles/Home.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi } from "starknet";
@@ -88,9 +87,8 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
           {isEnabled ? "Disable" : "Enable"} auto renewal for {identity?.domain}
         </p>
         <p className="break-all mt-5">
-          To avoid loosing your domain, you can enable auto renewals so your
-          domain is renewed automatically. Auto renewals happen one month before
-          your expiry date is reached.
+          Avoid losing your domain and renew it automatically each year one
+          month before it expires! (You can disable this option when you want.)
         </p>
         <div className="mt-5 flex flex-col justify-center">
           {identity?.domain_expiry && (
@@ -111,16 +109,13 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
               </span>
             </p>
           )}
-          <div className={styles2.cardCenter}>
-            <p className="text">
-              Price :&nbsp;
-              <span className="font-semibold text-brown">
-                {Math.round(Number(price) * 0.000000000000000001 * 10000) /
-                  10000}
-                &nbsp; ETH
-              </span>
-            </p>
-          </div>
+          <p className="break-all">
+            <strong>Price :</strong>&nbsp;
+            <span>
+              {Math.round(Number(price) * 0.000000000000000001 * 10000) / 10000}{" "}
+              ETH/year
+            </span>
+          </p>
           <div className="mt-5 flex justify-center">
             <Button
               onClick={() => {
