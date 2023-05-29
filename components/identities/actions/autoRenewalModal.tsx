@@ -93,7 +93,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         <div className="mt-5 flex flex-col justify-center">
           {identity?.domain_expiry && (
             <p className="break-all">
-              <strong>Expiry date :</strong>&nbsp;
+              <span className="strong">Expiry date :</span>&nbsp;
               <span>
                 {timestampToReadableDate(identity?.domain_expiry ?? 0)}
               </span>
@@ -101,7 +101,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
           )}
           {identity?.domain_expiry && (
             <p className="break-all">
-              <strong>Auto renewal date :</strong>&nbsp;
+              <span className="strong">Auto renewal date :</span>&nbsp;
               <span>
                 {timestampToReadableDate(
                   identity?.domain_expiry - 2592000 ?? 0
@@ -110,7 +110,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
             </p>
           )}
           <p className="break-all">
-            <strong>Price :</strong>&nbsp;
+            <span className="strong">Price :</span>&nbsp;
             <span>
               {Math.round(Number(price) * 0.000000000000000001 * 10000) / 10000}{" "}
               ETH/year
