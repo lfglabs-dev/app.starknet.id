@@ -1,0 +1,41 @@
+.container {
+  outline: var(--tertiary) solid 2px;
+  padding: 8px 10px;
+  width: -moz-fit-content;
+  width: fit-content;
+  border-radius: 2em;
+  display: flex;
+  align-items: center;
+  max-width: calc(100% - 20px);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.button {
+  margin-left: 15px;
+  background-color: var(--primary);
+  padding: 0 30px;
+  border-radius: 2em;
+  color: var(--background);
+  white-space: nowrap;
+}
+
+.input {
+  background-color: var(--background);
+  border: none;
+  padding: 0 10px;
+  color: var(--brown);
+  width: 100%;
+}
+
+.centeredContainer {
+  display: flex;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.input:focus {
+  outline: none;
+}

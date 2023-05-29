@@ -3,7 +3,7 @@
   z-index: 0;
   position: relative;
   padding-top: 12vh;
-  background-color: var(--beige);
+  background-color: var(--background);
 }
 
 .wrapperScreen {
@@ -62,7 +62,7 @@
   border-radius: 10px;
   transition: color 0.15s ease, border-color 0.15s ease;
   width: 100%;
-  background-color: var(--beige);
+  background-color: var(--background);
   display: flex;
   justify-content: space-between;
   align-items: center;

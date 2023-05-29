@@ -1,6 +1,6 @@
 .menu {
   position: absolute;
-  background-color: var(--beige);
+  background-color: var(--background);
   align-self: center;
   left: 50%;
   top: 50%;
