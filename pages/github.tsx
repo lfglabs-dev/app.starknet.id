@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
 import {
   useAccount,
-  useStarknetExecute,
-  useTransactionReceipt,
+  useContractWrite,
+  useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
@@ -90,7 +90,7 @@ const Github: NextPage = () => {
     };
 
     fetch(
-      `https://${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
+      `${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
       requestOptions
     )
       .then((response) => response.json())
@@ -100,12 +100,12 @@ const Github: NextPage = () => {
   //Contract
   const {
     data: githubVerificationData,
-    execute,
+    writeAsync: execute,
     error: githubVerificationError,
-  } = useStarknetExecute({ calls });
+  } = useContractWrite({ calls });
 
   const { data: transactionData, error: transactionError } =
-    useTransactionReceipt({
+    useWaitForTransaction({
       hash: githubVerificationData?.transaction_hash,
       watch: true,
     });

@@ -1,12 +1,13 @@
 import { Modal, TextField } from "@mui/material";
-import { useStarknetCall, useStarknetExecute } from "@starknet-react/core";
+import { useContractRead, useContractWrite } from "@starknet-react/core";
 import BN from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { usePricingContract } from "../../../hooks/contracts";
-import styles from "../../../styles/components/wallets.module.css";
+import styles from "../../../styles/components/modalMessage.module.css";
 import styles2 from "../../../styles/Home.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
+import { Abi } from "starknet";
 
 type RenewalModalProps = {
   handleClose: () => void;
@@ -25,9 +26,10 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
   const maxYearsToRegister = 25;
   const [price, setPrice] = useState<string>("0");
   const { contract: pricingContract } = usePricingContract();
-  const { data: priceData, error: priceError } = useStarknetCall({
-    contract: pricingContract,
-    method: "compute_renew_price",
+  const { data: priceData, error: priceError } = useContractRead({
+    address: pricingContract?.address as string,
+    abi: pricingContract?.abi as Abi,
+    functionName: "compute_renew_price",
     args: [callDataEncodedDomain[1], duration * 365],
   });
 
@@ -56,7 +58,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
     },
   ];
 
-  const { execute: renew } = useStarknetExecute({
+  const { writeAsync: renew } = useContractWrite({
     calls: renew_calls,
   });
 

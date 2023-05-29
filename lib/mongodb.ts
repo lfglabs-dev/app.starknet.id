@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Db, MongoClient } from "mongodb";
 
-const uri = process.env.NEXT_PUBLIC_MONGODB_LINK;
+const uri = process.env.MONGODB_LINK;
 
 let client: MongoClient | undefined = undefined;
 let db: Db | undefined = undefined;
@@ -23,6 +23,6 @@ export async function connectToDatabase() {
   } else {
     client = await new MongoClient(uri as string).connect();
   }
-  db = (client as MongoClient).db(process.env.NEXT_PUBLIC_MONGODB_DBNAME);
+  db = (client as MongoClient).db(process.env.MONGODB_DBNAME);
   return { client, db };
 }

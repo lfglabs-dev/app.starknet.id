@@ -79,7 +79,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                 height={150}
                 src={"https://www.starknet.id/api/identicons/0"}
                 alt="avatar"
-                onClick={() => router.push(`/externaldomain/${domain}`)}
+                onClick={() => router.push(`/externaldomains/${domain}`)}
               />
             )}
             <p className="font-bold">{minifyDomain(domain)}</p>

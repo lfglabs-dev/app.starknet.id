@@ -8,7 +8,7 @@ export default async function handler(
   const {
     query: { id },
   } = req;
-  const client = new Client(process.env.NEXT_PUBLIC_TWITTER_TOKEN as string);
+  const client = new Client(process.env.TWITTER_TOKEN as string);
   const response = await client.users.findUsersById({ ids: [id as string] });
   res
     .setHeader("cache-control", "max-age=86400")

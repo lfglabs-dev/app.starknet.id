@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
 import {
   useAccount,
-  useStarknetExecute,
-  useTransactionReceipt,
+  useContractWrite,
+  useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
@@ -99,7 +99,7 @@ const Discord: NextPage = () => {
     };
 
     fetch(
-      `https://${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
+      `${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
       requestOptions
     )
       .then((response) => response.json())
@@ -111,12 +111,12 @@ const Discord: NextPage = () => {
   //Contract
   const {
     data: discordVerificationData,
-    execute,
+    writeAsync: execute,
     error: discordVerificationError,
-  } = useStarknetExecute({ calls });
+  } = useContractWrite({ calls });
 
   const { data: transactionData, error: transactionError } =
-    useTransactionReceipt({
+    useWaitForTransaction({
       hash: discordVerificationData?.transaction_hash,
       watch: true,
     });
