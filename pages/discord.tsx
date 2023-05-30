@@ -98,10 +98,7 @@ const Discord: NextPage = () => {
       }),
     };
 
-    fetch(
-      `${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
-      requestOptions
-    )
+    fetch(`${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         setSignRequestData(data);
@@ -170,7 +167,9 @@ const Discord: NextPage = () => {
                   It&apos;s time to verify your discord on chain !
                 </h1>
                 <div className="mt-8">
-                  <Button onClick={verifyDiscord}>Verify my Discord</Button>
+                  <Button disabled={Boolean(!calls)} onClick={verifyDiscord}>
+                    Verify my Discord
+                  </Button>
                 </div>
               </>
             ))}

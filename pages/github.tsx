@@ -89,10 +89,7 @@ const Github: NextPage = () => {
       }),
     };
 
-    fetch(
-      `${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
-      requestOptions
-    )
+    fetch(`${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`, requestOptions)
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
   }, [code, tokenId]);
@@ -159,7 +156,9 @@ const Github: NextPage = () => {
                   It&apos;s time to verify your github on chain !
                 </h1>
                 <div className="mt-8">
-                  <Button onClick={verifyGithub}>Verify my github</Button>
+                  <Button disabled={Boolean(!calls)} onClick={verifyGithub}>
+                    Verify my github
+                  </Button>
                 </div>
               </>
             ))}
