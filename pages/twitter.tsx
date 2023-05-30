@@ -43,7 +43,8 @@ const Twitter: NextPage = () => {
   }, [tokenId]);
 
   useEffect(() => {
-    if (!signRequestData || signRequestData.status === "error") return;
+    if (!signRequestData) return;
+    if (signRequestData.status === "error") setScreen("error");
 
     setCalls({
       contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
@@ -91,10 +92,7 @@ const Twitter: NextPage = () => {
       }),
     };
 
-    fetch(
-      `${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
-      requestOptions
-    )
+    fetch(`${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`, requestOptions)
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
   }, [code, tokenId]);
@@ -161,7 +159,9 @@ const Twitter: NextPage = () => {
                   It&apos;s time to verify your twitter on chain !
                 </h1>
                 <div className="mt-8">
-                  <Button onClick={verifyTwitter}>Verify my Twitter</Button>
+                  <Button disabled={Boolean(!calls)} onClick={verifyTwitter}>
+                    Verify my Twitter
+                  </Button>
                 </div>
               </>
             ))}
