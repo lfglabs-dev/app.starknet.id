@@ -52,7 +52,8 @@ const Discord: NextPage = () => {
   }, [tokenId]);
 
   useEffect(() => {
-    if (!signRequestData || signRequestData.status === "error") return;
+    if (!signRequestData) return;
+    if (signRequestData.status === "error") setScreen("error");
 
     setCalls({
       contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
