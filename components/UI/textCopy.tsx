@@ -7,7 +7,6 @@ type TextCopyProps = {
 
 const TextCopy: FunctionComponent<TextCopyProps> = ({ text }) => {
   const [copied, setCopied] = useState<boolean>(false);
-  console.log(styles);
   const copy = () => {
     navigator.clipboard.writeText(text);
     setCopied(true);

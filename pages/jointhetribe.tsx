@@ -24,16 +24,16 @@ const JoinTheTribe: NextPage = () => {
       </section>
 
       <div className={styles.firstLeaf}>
-        <img alt="leaf" src="/leaves/new/leaf_02.svg" />
+        <img alt="leaf" src="/leaves/new/leaf02.svg" />
       </div>
       <div className={styles.secondLeaf}>
-        <img alt="leaf" src="/leaves/new/leaf_03.svg" />
+        <img alt="leaf" src="/leaves/new/leaf03.svg" />
       </div>
       <div className={styles.thirdLeaf}>
-        <img alt="leaf" src="/leaves/new/leaf_02.svg" />
+        <img alt="leaf" src="/leaves/new/leaf02.svg" />
       </div>
       <div className={styles.fourthLeaf}>
-        <img alt="leaf" src="/leaves/new/leaf_03.svg" />
+        <img alt="leaf" src="/leaves/new/leaf03.svg" />
       </div>
       <section id="join" className={styles.section2}>
         <h1 className="title">Get your tribe NFT !</h1>
@@ -45,7 +45,7 @@ const JoinTheTribe: NextPage = () => {
         </div>
         <div className={styles.sbtContainer}>
           <div className={styles.sbtImageContainer}>
-            <img className={styles.sbtImage} src="/tribe/tribeSoldier.webp" />
+            <img className={styles.sbtImage} src="/tribe/tribeLevel1.webp" />
             <h5 className="text-center text-lg font-quickZap">
               Hunter NFT (level 1)
             </h5>
@@ -55,7 +55,7 @@ const JoinTheTribe: NextPage = () => {
           </div>
 
           <div className={styles.sbtImageContainer}>
-            <img className={styles.sbtImage} src="/tribe/tribeOfficer.webp" />
+            <img className={styles.sbtImage} src="/tribe/tribeLevel2.webp" />
             <h5 className="text-center text-lg font-quickZap">
               Trapper NFT (level 2)
             </h5>
@@ -64,7 +64,7 @@ const JoinTheTribe: NextPage = () => {
             </p>
           </div>
           <div className={styles.sbtImageContainer}>
-            <img className={styles.sbtImage} src="/tribe/tribeChef.webp" />
+            <img className={styles.sbtImage} src="/tribe/tribeLevel3.webp" />
             <h5 className="text-center text-lg font-quickZap">
               Chef NFT (level 3)
             </h5>

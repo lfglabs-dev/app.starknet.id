@@ -205,14 +205,14 @@ const Navbar: FunctionComponent = () => {
                       Domains
                     </li>
                   </Link>
-                  <Link href="/jointhetribe">
+                  {/* <Link href="/jointhetribe">
                     <li
                       onClick={() => setNav(false)}
                       className={styles.menuItemSmall}
                     >
                       Tribe
                     </li>
-                  </Link>
+                  </Link> */}
                 </ul>
               </div>
             </div>
