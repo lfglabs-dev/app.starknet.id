@@ -1,19 +1,20 @@
-import React, { FunctionComponent, useEffect } from "react";
-import { useState } from "react";
+import React, { FunctionComponent } from "react";
 import styles from "../../styles/jointhetribe.module.css";
 import Member from "./member";
 import MembersSkeleton from "./membersSkeleton";
+import famousTribeMembers from "../../public/tribe/famousTribeMembers.json";
 
 const FamousMembers: FunctionComponent = () => {
-  const [famousTribeMembers, setFamousTribeMembers] = useState<Member[]>([]);
+  // Twitter call
+  // const [famousTribeMembers, setFamousTribeMembers] = useState<Member[]>([]);
 
-  useEffect(() => {
-    fetch("/api/twitter/get_famous_members")
-      .then((res) => res.json())
-      .then((res: Member[]) => {
-        setFamousTribeMembers(res);
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch("/api/twitter/get_famous_members")
+  //     .then((res) => res.json())
+  //     .then((res: Member[]) => {
+  //       setFamousTribeMembers(res);
+  //     });
+  // }, []);
 
   return (
     <div className={styles.tribeMembersContainer + " " + styles.famous}>

@@ -5,7 +5,6 @@ import famousTribeMemberIDs from "../../../public/tribe/famousTribeMemberIDs.jso
 async function fetchTwitterData(): Promise<Member[] | Error> {
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${process.env.TWITTER_TOKEN}`);
-  myHeaders.append("Cookie", "guest_id=v1%3A167644972887810006");
 
   const requestOptions: RequestInit = {
     method: "GET",
