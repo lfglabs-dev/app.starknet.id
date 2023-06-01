@@ -22,3 +22,19 @@ type ErrorRequestData = {
 
 type Status = "success" | "error";
 type DomainKind = "braavos" | "root" | "subdomain" | "none";
+
+type PublicMetrics = {
+  followers_count: number;
+  following_count: number;
+  tweet_count: number;
+  listed_count: number;
+};
+
+type Member = {
+  id: string;
+  name: string;
+  username: string;
+  profile_image_url: string;
+  description: string;
+  public_metrics: PublicMetrics;
+};

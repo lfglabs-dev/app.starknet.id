@@ -7,7 +7,7 @@
   position: relative;
   height: 3rem;
   line-height: 2.5rem;
-  color: var(--beige);
+  color: var(--background);
   font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
@@ -68,7 +68,7 @@
 
 /* green */
 .nq-button {
-  color: var(--beige);
+  color: var(--background);
   background: var(--primary);
 }
 
