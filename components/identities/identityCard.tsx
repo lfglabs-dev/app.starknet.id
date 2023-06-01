@@ -42,7 +42,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
         <div className="lg:mt-10 flex items-center lg:justify-between justify-center gap-5 my-2 flex-wrap lg:flex-row ">
           <div className="my-2">
             <img
-              src={`https://www.starknet.id/api/identicons/${tokenId}`}
+              src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`}
               height={170}
               width={170}
               alt="identicon"
