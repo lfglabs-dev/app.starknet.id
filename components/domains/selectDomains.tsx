@@ -76,7 +76,7 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
               <ListItemIcon>
                 <img
                   width={"25px"}
-                  src={`https://www.starknet.id/api/identicons/${tokenId}`}
+                  src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`}
                   alt="starknet.id avatar"
                 />
               </ListItemIcon>

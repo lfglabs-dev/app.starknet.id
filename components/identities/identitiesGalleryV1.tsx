@@ -41,7 +41,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
             <img
               width={150}
               height={150}
-              src={`https://www.starknet.id/api/identicons/${identity.id}`}
+              src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${identity.id}`}
               alt="avatar"
               onClick={() => router.push(`/identities/${identity.id}`)}
             />
@@ -77,7 +77,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
               <img
                 width={150}
                 height={150}
-                src={"https://www.starknet.id/api/identicons/0"}
+                src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/0`}
                 alt="avatar"
                 onClick={() => router.push(`/externaldomains/${domain}`)}
               />
