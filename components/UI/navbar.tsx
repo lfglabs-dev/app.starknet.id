@@ -31,8 +31,9 @@ const Navbar: FunctionComponent = () => {
   const brown = "#402d28";
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
-
   const [txLoading, setTxLoading] = useState<number>(0);
+  const { hashes } = useTransactionManager();
+  const transactions = useTransactions({ hashes, watch: true });
 
   useEffect(() => {
     // to handle autoconnect starknet-react adds connector id in local storage
@@ -63,6 +64,17 @@ const Navbar: FunctionComponent = () => {
       setIsWrongNetwork(false);
     }
   }, [library, network, isConnected]);
+
+  useEffect(() => {
+    if (transactions) {
+      console.log("transactions", transactions as any);
+      // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
+      setTxLoading(
+        transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")
+          .length
+      );
+    }
+  }, [transactions]);
 
   function disconnectByClick(): void {
     disconnect();
@@ -96,18 +108,6 @@ const Navbar: FunctionComponent = () => {
 
     return textToReturn;
   }
-  const { hashes } = useTransactionManager();
-  const transactions = useTransactions({ hashes });
-
-  useEffect(() => {
-    if (transactions) {
-      // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
-      setTxLoading(
-        transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")
-          .length
-      );
-    }
-  }, [transactions]);
 
   return (
     <>

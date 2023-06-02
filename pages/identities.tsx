@@ -54,7 +54,6 @@ const Identities: NextPage = () => {
       transactionData?.status === "ACCEPTED_ON_L1"
     ) {
       setScreen("success");
-      removeTransaction({ hash: mintData?.transaction_hash ?? "" });
     }
   }, [isError, transactionData]);
 

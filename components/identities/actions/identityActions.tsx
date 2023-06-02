@@ -1,6 +1,10 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import {
+  useAccount,
+  useContractWrite,
+  useTransactionManager,
+} from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
@@ -35,7 +39,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  //UseState viewMoreClicked
+  const { addTransaction } = useTransactionManager();
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
 
   // Add all subdomains to the parameters
@@ -55,13 +59,15 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     entrypoint: "set_domain_to_address",
     calldata: [...callDataEncodedDomain, hexToDecimal(address)],
   };
-  const { writeAsync: set_address_to_domain } = useContractWrite({
-    calls: isAccountTargetAddress
-      ? set_address_to_domain_calls
-      : [set_domain_to_address_calls, set_address_to_domain_calls],
-  });
+  const { writeAsync: set_address_to_domain, data: mainDomainData } =
+    useContractWrite({
+      calls: isAccountTargetAddress
+        ? set_address_to_domain_calls
+        : [set_domain_to_address_calls, set_address_to_domain_calls],
+    });
 
   function setAddressToDomain(): void {
+    addTransaction({ hash: mainDomainData?.transaction_hash ?? "" });
     set_address_to_domain();
   }
 
@@ -83,7 +89,11 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     if (address && tokenId) {
       setLoading(true);
       // Our Indexer
-      fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_to_full_ids?addr=${hexToDecimal(address)}`)
+      fetch(
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
+        }/addr_to_full_ids?addr=${hexToDecimal(address)}`
+      )
         .then((response) => response.json())
         .then((data) => {
           setIsOwner(checkIfOwner(data.full_ids));
