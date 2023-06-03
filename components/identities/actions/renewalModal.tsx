@@ -1,5 +1,9 @@
 import { Modal, TextField } from "@mui/material";
-import { useContractRead, useContractWrite } from "@starknet-react/core";
+import {
+  useContractRead,
+  useContractWrite,
+  useTransactionManager,
+} from "@starknet-react/core";
 import BN from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { usePricingContract } from "../../../hooks/contracts";
@@ -32,17 +36,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
     functionName: "compute_renew_price",
     args: [callDataEncodedDomain[1], duration * 365],
   });
-
-  useEffect(() => {
-    if (priceError || !priceData) setPrice("0");
-    else {
-      setPrice(
-        priceData?.["price"].low
-          .add(priceData?.["price"].high.mul(new BN(2).pow(new BN(128))))
-          .toString(10)
-      );
-    }
-  }, [priceData, priceError]);
+  const { addTransaction } = useTransactionManager();
 
   //  renew execute
   const renew_calls = [
@@ -58,9 +52,26 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
     },
   ];
 
-  const { writeAsync: renew } = useContractWrite({
+  const { writeAsync: renew, data: renewData } = useContractWrite({
     calls: renew_calls,
   });
+
+  useEffect(() => {
+    if (priceError || !priceData) setPrice("0");
+    else {
+      setPrice(
+        priceData?.["price"].low
+          .add(priceData?.["price"].high.mul(new BN(2).pow(new BN(128))))
+          .toString(10)
+      );
+    }
+  }, [priceData, priceError]);
+
+  useEffect(() => {
+    if (!renewData?.transaction_hash) return;
+    addTransaction({ hash: renewData?.transaction_hash ?? "" });
+    handleClose();
+  }, [renewData]);
 
   function changeDuration(value: number): void {
     setDuration(value);

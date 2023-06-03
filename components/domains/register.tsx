@@ -9,6 +9,7 @@ import {
   useAccount,
   useContractRead,
   useContractWrite,
+  useTransactionManager,
 } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import BN from "bn.js";
@@ -54,13 +55,14 @@ const Register: FunctionComponent<RegisterProps> = ({
       functionName: "balanceOf",
       args: [address],
     });
-  const { writeAsync: execute } = useContractWrite({
+  const { writeAsync: execute, data: registerData } = useContractWrite({
     calls: callData,
   });
   const hasMainDomain = !useDisplayName(address ?? "").startsWith("0x");
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
+  const { addTransaction } = useTransactionManager();
 
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
@@ -250,6 +252,11 @@ const Register: FunctionComponent<RegisterProps> = ({
     hasMainDomain,
     address,
   ]);
+
+  useEffect(() => {
+    if (!registerData?.transaction_hash) return;
+    addTransaction({ hash: registerData?.transaction_hash ?? "" });
+  }, [registerData]);
 
   function changeAddress(value: string): void {
     isHexString(value) ? setTargetAddress(value) : null;

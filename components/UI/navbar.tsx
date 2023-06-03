@@ -35,6 +35,16 @@ const Navbar: FunctionComponent = () => {
   const { hashes } = useTransactionManager();
   const transactions = useTransactions({ hashes, watch: true });
 
+  // TODO: Check for starknet react fix and delete that code
+  useEffect(() => {
+    const interval = setInterval(() => {
+      for (const tx of transactions) {
+        tx.refetch();
+      }
+    }, 3_000);
+    return () => clearInterval(interval);
+  }, [transactions?.length]);
+
   useEffect(() => {
     // to handle autoconnect starknet-react adds connector id in local storage
     // if there is no value stored, we show the wallet modal
@@ -67,7 +77,7 @@ const Navbar: FunctionComponent = () => {
 
   useEffect(() => {
     if (transactions) {
-      console.log("transactions", transactions as any);
+      console.log("transactions", transactions);
       // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
       setTxLoading(
         transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")

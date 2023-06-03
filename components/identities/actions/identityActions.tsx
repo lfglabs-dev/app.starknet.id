@@ -67,7 +67,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     });
 
   function setAddressToDomain(): void {
-    addTransaction({ hash: mainDomainData?.transaction_hash ?? "" });
     set_address_to_domain();
   }
 
@@ -101,6 +100,11 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         });
     }
   }, [address, tokenId]);
+
+  useEffect(() => {
+    if (!mainDomainData?.transaction_hash) return;
+    addTransaction({ hash: mainDomainData?.transaction_hash ?? "" });
+  }, [mainDomainData]);
 
   if (!isIdentityADomain) {
     hideActionsHandler(true);
