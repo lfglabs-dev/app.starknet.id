@@ -29,14 +29,18 @@ const TokenIdPage: NextPage = () => {
     if (tokenId) {
       const refreshData = () =>
         fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/id_to_data?id=${tokenId}`)
-          .then((response) => response.json())
-          .then((data: Identity) => {
-            if (data.error) {
-              setIsIdentityADomain(false);
-              return;
+          .then(async (response) => {
+            if (!response.ok) {
+              throw new Error(await response.text());
             }
+            return response.json();
+          })
+          .then((data: Identity) => {
             setIdentity(data);
             setIsIdentityADomain(true);
+          })
+          .catch((_) => {
+            setIsIdentityADomain(false);
           });
       refreshData();
       const timer = setInterval(() => refreshData(), 30e3);

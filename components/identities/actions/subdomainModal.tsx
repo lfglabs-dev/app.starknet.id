@@ -7,7 +7,7 @@ import {
 } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useIsValid } from "../../../hooks/naming";
-import styles from "../../../styles/components/wallets.module.css";
+import styles from "../../../styles/components/modalMessage.module.css";
 import { hexToDecimal } from "../../../utils/feltService";
 import { numberToString } from "../../../utils/stringService";
 import SelectDomain from "../../domains/selectDomains";

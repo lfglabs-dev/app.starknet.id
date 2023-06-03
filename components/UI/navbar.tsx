@@ -142,6 +142,9 @@ const Navbar: FunctionComponent = () => {
               <Link href="/">
                 <li className={styles.menuItem}>Domains</li>
               </Link>
+              {/* <Link href="/jointhetribe">
+                <li className={styles.menuItem}>Join the tribe</li>
+              </Link> */}
               <Link href="https://twitter.com/starknet_id">
                 <li className="ml-10 mr-5 text-sm uppercase cursor-pointer">
                   <FaTwitter color={green} size={"30px"} />
@@ -246,6 +249,14 @@ const Navbar: FunctionComponent = () => {
                       Domains
                     </li>
                   </Link>
+                  {/* <Link href="/jointhetribe">
+                    <li
+                      onClick={() => setNav(false)}
+                      className={styles.menuItemSmall}
+                    >
+                      Tribe
+                    </li>
+                  </Link> */}
                 </ul>
               </div>
             </div>

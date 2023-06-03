@@ -110,7 +110,9 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
           {tokenId && (
             <div
               onClick={() =>
-                window.open(`https://www.starknet.id/${domain}.stark`)
+                window.open(
+                  `${process.env.NEXT_PUBLIC_STARKNET_ID}/${domain}.stark`
+                )
               }
               className={styles.cardCenter}
             >

@@ -5,8 +5,8 @@ import {
   useTransactionManager,
 } from "@starknet-react/core";
 import { useRouter } from "next/router";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import styles from "../../../styles/components/wallets.module.css";
+import React, { FunctionComponent, useState, useEffect } from "react";
+import styles from "../../../styles/components/modalMessage.module.css";
 import { hexToDecimal } from "../../../utils/feltService";
 import { isHexString } from "../../../utils/stringService";
 import Button from "../../UI/button";
