@@ -19,7 +19,6 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
   externalDomains = [],
 }) => {
   const router = useRouter();
-
   return (
     // Our Indexer
     <>
@@ -46,7 +45,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
               onClick={() => router.push(`/identities/${identity.id}`)}
             />
             {identity.domain ? (
-              <p className="font-bold">{minifyDomain(identity.domain)}</p>
+              <p className="font-bold mt-2">{minifyDomain(identity.domain)}</p>
             ) : null}
           </div>
         );
@@ -82,7 +81,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                 onClick={() => router.push(`/externaldomains/${domain}`)}
               />
             )}
-            <p className="font-bold">{minifyDomain(domain)}</p>
+            <p className="font-bold mt-2">{minifyDomain(domain)}</p>
           </div>
         );
       })}
