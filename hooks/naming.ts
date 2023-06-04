@@ -1,10 +1,11 @@
 import BN from "bn.js";
-import { useStarknetCall } from "@starknet-react/core";
+import { useContractRead } from "@starknet-react/core";
 import { useNamingContract } from "./contracts";
 import { useContext, useEffect, useState } from "react";
 import { utils } from "starknetid.js";
 import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
 import { basicAlphabet } from "../utils/constants";
+import { Abi } from "starknet";
 
 // TODO: remove and use utils.decodeDomain when dapp uses starknet.js v5
 export function useDecoded(encoded: BN[]): string {
@@ -45,7 +46,7 @@ type AddressData = {
   error?: string;
 };
 
-export function useAddressFromDomain(domain: string): AddressData {
+export function useAddressFromDomain(domain: string | undefined): AddressData {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [address, setAddress] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
@@ -110,11 +111,12 @@ export function useExpiryFromDomain(domain: string): ExpiryData {
     ? utils.encodeDomain(domain).map((elem) => new BN(elem.toString())) // remove when dapp uses starknet.js v5
     : [];
 
-  const { data, error } = useStarknetCall({
-    contract,
-    method: "domain_to_expiry",
+  const { data, error } = useContractRead({
+    address: contract?.address as string,
+    abi: contract?.abi as Abi,
+    functionName: "domain_to_expiry",
     args: [encoded],
   });
 
-  return { expiry: data as any, error };
+  return { expiry: data as any, error: error as string };
 }

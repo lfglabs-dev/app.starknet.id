@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../lib/mongodb";
 import NextCors from "nextjs-cors";
-import { QueryError } from "../../../types/backTypes";
 
 type TokenURI = {
   name: string;
@@ -48,7 +47,7 @@ export default async function handler(
       .json({
         name: "Starknet ID: " + id,
         description: "This token represents an identity on StarkNet.",
-        image: "https://starknet.id/api/identicons/" + id,
+        image: `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/` + id,
       });
     return;
   }
@@ -80,7 +79,7 @@ export default async function handler(
     .json({
       name: document.domain,
       description: "This token represents an identity on StarkNet.",
-      image: "https://starknet.id/api/identicons/" + id,
+      image: `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/` + id,
       expiry: document.expiry,
       attributes: [
         {

@@ -111,3 +111,11 @@ export function numberToString(element: number | undefined): string {
 export function convertNumberToFixedLengthString(number: string): string {
   return number.padStart(12, "0");
 }
+
+export function changeTwitterProfilePic(url: string): string {
+  return url?.replace("_normal", "");
+}
+
+export function cleanUsername(username: string): string {
+  return username.startsWith("@") ? username.substring(1) : username;
+}

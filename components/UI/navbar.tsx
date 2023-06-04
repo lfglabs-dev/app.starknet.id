@@ -4,7 +4,13 @@ import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import Button from "./button";
-import { useConnectors, useAccount, useStarknet } from "@starknet-react/core";
+import {
+  useConnectors,
+  useAccount,
+  useStarknet,
+  useTransactionManager,
+  useTransactions,
+} from "@starknet-react/core";
 import Wallets from "./wallets";
 import LogoutIcon from "@mui/icons-material/Logout";
 import SelectNetwork from "./selectNetwork";
@@ -12,6 +18,7 @@ import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Tooltip } from "@mui/material";
 import ArgentIcon from "./iconsComponents/icons/argentIcon";
+import { CircularProgress } from "@mui/material";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
@@ -26,11 +33,25 @@ const Navbar: FunctionComponent = () => {
   const brown = "#402d28";
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
-  function disconnectByClick(): void {
-    disconnect();
-    setIsConnected(false);
-    setIsWrongNetwork(false);
-  }
+  const [txLoading, setTxLoading] = useState<number>(0);
+  const { hashes } = useTransactionManager();
+  const transactions = useTransactions({ hashes, watch: true });
+
+  // TODO: Check for starknet react fix and delete that code
+  useEffect(() => {
+    const interval = setInterval(() => {
+      for (const tx of transactions) {
+        tx.refetch();
+      }
+    }, 3_000);
+    return () => clearInterval(interval);
+  }, [transactions?.length]);
+
+  useEffect(() => {
+    // to handle autoconnect starknet-react adds connector id in local storage
+    // if there is no value stored, we show the wallet modal
+    if (!localStorage.getItem("lastUsedConnector")) setHasWallet(true);
+  }, []);
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
@@ -56,19 +77,40 @@ const Navbar: FunctionComponent = () => {
     }
   }, [library, network, isConnected]);
 
+  useEffect(() => {
+    if (transactions) {
+      // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
+      setTxLoading(
+        transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")
+          .length
+      );
+    }
+  }, [transactions]);
+
+  function disconnectByClick(): void {
+    disconnect();
+    setIsConnected(false);
+    setIsWrongNetwork(false);
+    setHasWallet(false);
+  }
+
   function handleNav(): void {
     setNav(!nav);
   }
 
   function onTopButtonClick(): void {
-    if (available.length > 0) {
-      if (available.length === 1) {
-        connect(available[0]);
+    if (!isConnected) {
+      if (available.length > 0) {
+        if (available.length === 1) {
+          connect(available[0]);
+        } else {
+          setHasWallet(true);
+        }
       } else {
         setHasWallet(true);
       }
     } else {
-      setHasWallet(true);
+      disconnectByClick();
     }
   }
 
@@ -101,7 +143,9 @@ const Navbar: FunctionComponent = () => {
               <Link href="/">
                 <li className={styles.menuItem}>Domains</li>
               </Link>
-
+              {/* <Link href="/jointhetribe">
+                <li className={styles.menuItem}>Join the tribe</li>
+              </Link> */}
               <SelectNetwork network={network} />
 
               {connector?.id() === "argentWebWallet" && (
@@ -131,10 +175,24 @@ const Navbar: FunctionComponent = () => {
                   }
                 >
                   {isConnected ? (
-                    <div className="flex justify-center items-center">
-                      <div>{domainOrAddress}</div>
-                      <LogoutIcon className="ml-3" />
-                    </div>
+                    <>
+                      {txLoading > 0 ? (
+                        <div className="flex justify-center items-center">
+                          <p className="mr-3">{txLoading} on hold</p>
+                          <CircularProgress
+                            sx={{
+                              color: "white",
+                            }}
+                            size={25}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex justify-center items-center">
+                          <p className="mr-3">{domainOrAddress}</p>
+                          <LogoutIcon />
+                        </div>
+                      )}
+                    </>
                   ) : (
                     "connect"
                   )}
@@ -166,7 +224,7 @@ const Navbar: FunctionComponent = () => {
                 <div className="">
                   <Link href="/">
                     <img
-                      src="/visuals/StarknetIdLongLogo.png"
+                      src="/visuals/starknetIdLongLogo.webp"
                       alt="Starknet.id Logo"
                       width={250}
                       height={100}
@@ -204,6 +262,14 @@ const Navbar: FunctionComponent = () => {
                       Domains
                     </li>
                   </Link>
+                  {/* <Link href="/jointhetribe">
+                    <li
+                      onClick={() => setNav(false)}
+                      className={styles.menuItemSmall}
+                    >
+                      Tribe
+                    </li>
+                  </Link> */}
                 </ul>
               </div>
             </div>

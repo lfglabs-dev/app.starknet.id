@@ -63,7 +63,7 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
     <Tooltip
       title={
         twitterUsername
-          ? "Change your twitter verified account"
+          ? `Change your twitter account from ${twitterUsername} to another one`
           : "Start twitter verification"
       }
       arrow

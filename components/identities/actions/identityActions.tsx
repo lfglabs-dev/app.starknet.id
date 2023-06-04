@@ -1,16 +1,19 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import { useAccount, useStarknetExecute } from "@starknet-react/core";
-import ChangeAddressModal from "./actions/changeAddressModal";
-import TransferFormModal from "./actions/transferFormModal";
-import SubdomainModal from "./actions/subdomainModal";
-import RenewalModal from "./actions/renewalModal";
-import { Identity } from "../../types/backTypes";
-import { hexToDecimal } from "../../utils/feltService";
-import IdentitiesActionsSkeleton from "../UI/identitiesActionsSkeleton";
-import ClickableAction from "../UI/iconsComponents/clickableAction";
-import styles from "../../styles/components/identityMenu.module.css";
-import { timestampToReadableDate } from "../../utils/dateService";
+import {
+  useAccount,
+  useContractWrite,
+  useTransactionManager,
+} from "@starknet-react/core";
+import ChangeAddressModal from "./changeAddressModal";
+import TransferFormModal from "./transferFormModal";
+import SubdomainModal from "./subdomainModal";
+import RenewalModal from "./renewalModal";
+import { hexToDecimal } from "../../../utils/feltService";
+import IdentitiesActionsSkeleton from "./identitiesActionsSkeleton";
+import ClickableAction from "../../UI/iconsComponents/clickableAction";
+import styles from "../../../styles/components/identityMenu.module.css";
+import { timestampToReadableDate } from "../../../utils/dateService";
 import { utils } from "starknetid.js";
 
 type IdentityActionsProps = {
@@ -36,7 +39,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  //UseState viewMoreClicked
+  const { addTransaction } = useTransactionManager();
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
 
   // Add all subdomains to the parameters
@@ -56,11 +59,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     entrypoint: "set_domain_to_address",
     calldata: [...callDataEncodedDomain, hexToDecimal(address)],
   };
-  const { execute: set_address_to_domain } = useStarknetExecute({
-    calls: isAccountTargetAddress
-      ? set_address_to_domain_calls
-      : [set_domain_to_address_calls, set_address_to_domain_calls],
-  });
+  const { writeAsync: set_address_to_domain, data: mainDomainData } =
+    useContractWrite({
+      calls: isAccountTargetAddress
+        ? set_address_to_domain_calls
+        : [set_domain_to_address_calls, set_address_to_domain_calls],
+    });
 
   function setAddressToDomain(): void {
     set_address_to_domain();
@@ -84,7 +88,11 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     if (address && tokenId) {
       setLoading(true);
       // Our Indexer
-      fetch(`/api/indexer/addr_to_full_ids?addr=${hexToDecimal(address)}`)
+      fetch(
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
+        }/addr_to_full_ids?addr=${hexToDecimal(address)}`
+      )
         .then((response) => response.json())
         .then((data) => {
           setIsOwner(checkIfOwner(data.full_ids));
@@ -92,6 +100,11 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         });
     }
   }, [address, tokenId]);
+
+  useEffect(() => {
+    if (!mainDomainData?.transaction_hash) return;
+    addTransaction({ hash: mainDomainData?.transaction_hash ?? "" });
+  }, [mainDomainData]);
 
   if (!isIdentityADomain) {
     hideActionsHandler(true);

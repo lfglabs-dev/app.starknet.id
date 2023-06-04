@@ -3,8 +3,9 @@ import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 import {
   useAccount,
-  useStarknetExecute,
-  useTransactionReceipt,
+  useContractWrite,
+  useTransactionManager,
+  useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
@@ -14,14 +15,17 @@ import LoadingScreen from "../components/UI/screens/loadingScreen";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { hexToDecimal } from "../utils/feltService";
-import IdentitiesSkeleton from "../components/UI/identitiesSkeleton";
+import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
 
 const Identities: NextPage = () => {
   const { account } = useAccount();
   const [loading, setLoading] = useState<boolean>(false);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
+  const [externalDomains, setExternalDomains] = useState<string[]>([]);
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
+  const { addTransaction } = useTransactionManager();
+  const [screen, setScreen] = useState<ScreenState>("mint");
 
   //Mint
   const callData = {
@@ -29,29 +33,52 @@ const Identities: NextPage = () => {
     entrypoint: "mint",
     calldata: [randomTokenId],
   };
-  const { execute, data: mintData } = useStarknetExecute({
+  const { writeAsync: execute, data: mintData } = useContractWrite({
     calls: callData,
   });
 
-  function mint() {
-    execute();
-  }
-
-  const { data, error: transactionError } = useTransactionReceipt({
+  const { data: transactionData, isError } = useWaitForTransaction({
     hash: mintData?.transaction_hash,
     watch: true,
   });
+
+  useEffect(() => {
+    if (isError) {
+      setScreen("error");
+    } else if (transactionData?.status === "RECEIVED") {
+      addTransaction({ hash: mintData?.transaction_hash ?? "" });
+      setScreen("loading");
+    } else if (
+      transactionData?.status === "PENDING" ||
+      transactionData?.status === "ACCEPTED_ON_L2" ||
+      transactionData?.status === "ACCEPTED_ON_L1"
+    ) {
+      setScreen("success");
+    }
+  }, [isError, transactionData]);
 
   useEffect(() => {
     if (account) {
       // Our Indexer
       setLoading(true);
       fetch(
-        `/api/indexer/addr_to_full_ids?addr=${hexToDecimal(account?.address)}`
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
+        }/addr_to_full_ids?addr=${hexToDecimal(account.address)}`
       )
         .then((response) => response.json())
         .then((data) => {
           setOwnedIdentities(data.full_ids);
+        });
+
+      fetch(
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
+        }/addr_to_external_domains?addr=${hexToDecimal(account.address)}`
+      )
+        .then((response) => response.json())
+        .then((data: ExternalDomains) => {
+          setExternalDomains(data.domains);
           setLoading(false);
         });
     }
@@ -64,7 +91,11 @@ const Identities: NextPage = () => {
     //   .then((data) => {
     //     setOwnedIdentities(data.assets);
     //   });
-  }, [account]);
+  }, [account, router.asPath]);
+
+  function mint() {
+    execute();
+  }
 
   return (
     <div className={styles.screen}>
@@ -74,43 +105,44 @@ const Identities: NextPage = () => {
       <div className="secondLeavesGroup">
         <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
       </div>
-      <div className={styles.container}>
-        <>
-          {!mintData?.transaction_hash ? (
-            <>
-              <h1 className="title">Your Starknet identities</h1>
-              <div className={styles.containerGallery}>
-                {loading ? (
-                  <IdentitiesSkeleton />
-                ) : (
-                  <IdentitiesGallery identities={ownedIdentities} />
-                )}
-                <MintIdentity onClick={() => mint()} />
-              </div>
-            </>
-          ) : (
-            <>
-              {data?.status &&
-                !transactionError &&
-                !data?.status.includes("ACCEPTED") &&
-                data?.status !== "PENDING" && <LoadingScreen />}
-              {transactionError && (
-                <ErrorScreen
-                  onClick={() => router.reload()}
-                  buttonText="Retry to mint"
+      <div
+        className={
+          screen === "mint" ? styles.container : styles.containerScreen
+        }
+      >
+        {screen === "mint" ? (
+          <>
+            <h1 className="title">Your Starknet identities</h1>
+            <div className={styles.containerGallery}>
+              {loading ? (
+                <IdentitiesSkeleton />
+              ) : (
+                <IdentitiesGallery
+                  identities={ownedIdentities}
+                  externalDomains={externalDomains}
                 />
               )}
-              {data?.status === "ACCEPTED_ON_L2" ||
-                (data?.status === "PENDING" && (
-                  <SuccessScreen
-                    onClick={() => router.push(`/`)}
-                    buttonText="Get a domain to your identity"
-                    successMessage="Congrats, your starknet identity is minted !"
-                  />
-                ))}
-            </>
-          )}
-        </>
+              <MintIdentity onClick={() => mint()} />
+            </div>
+          </>
+        ) : (
+          <>
+            {screen === "loading" && <LoadingScreen />}
+            {screen === "error" && (
+              <ErrorScreen
+                onClick={() => router.reload()}
+                buttonText="Retry to mint"
+              />
+            )}
+            {screen == "success" && (
+              <SuccessScreen
+                onClick={() => router.push(`/`)}
+                buttonText="Get a domain to your identity"
+                successMessage="Congrats, your starknet identity is minted !"
+              />
+            )}
+          </>
+        )}
       </div>
     </div>
   );

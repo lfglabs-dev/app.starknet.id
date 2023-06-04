@@ -2,12 +2,11 @@ import React from "react";
 import { TextField } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useAccount } from "@starknet-react/core";
-import { useStarknetExecute } from "@starknet-react/core";
+import { Call, useAccount } from "@starknet-react/core";
+import { useContractWrite } from "@starknet-react/core";
 import { useExpiryFromDomain, useIsValid } from "../../hooks/naming";
 import { numberToString } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
-import { Call } from "starknet";
 import { utils } from "starknetid.js";
 
 type BraavosRegisterProps = {
@@ -41,8 +40,8 @@ const BraavosRegister: FunctionComponent<BraavosRegisterProps> = ({
   }, [data, error, domain]);
 
   const { account, address } = useAccount();
-  const { execute, data: mintDataLevel2 } = useStarknetExecute({
-    calls: callData as any,
+  const { writeAsync: execute } = useContractWrite({
+    calls: callData,
   });
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()

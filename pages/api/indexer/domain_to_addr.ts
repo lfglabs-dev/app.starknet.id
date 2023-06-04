@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { connectToDatabase } from "../../../lib/mongodb";
 import NextCors from "nextjs-cors";
-import { QueryError } from "../../../types/backTypes";
+import { utils } from "starknetid.js";
 
-type DomainToAddrData = { addr: string; domain_expiry: number };
+type DomainToAddrData = { addr: string; domain_expiry: number | null };
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,20 +18,42 @@ export default async function handler(
     query: { domain },
   } = req;
   const { db } = await connectToDatabase();
-  await db
-    .collection("domains")
-    .findOne({
-      domain: domain,
-      "_chain.valid_to": null,
-    })
-    .then((domainDoc) => {
-      res
-        .setHeader("cache-control", "max-age=60")
-        .status(200)
-        .json(
-          domainDoc
-            ? { addr: domainDoc.addr, domain_expiry: domainDoc.expiry }
-            : { error: "no address found" }
-        );
-    });
+  if (
+    typeof domain === "string" &&
+    (utils.isBraavosSubdomain(domain) || utils.isXplorerSubdomain(domain))
+  ) {
+    await db
+      .collection("subdomains")
+      .findOne({
+        domain: domain,
+        "_chain.valid_to": null,
+      })
+      .then((domainDoc) => {
+        res
+          .setHeader("cache-control", "max-age=60")
+          .status(200)
+          .json(
+            domainDoc
+              ? { addr: domainDoc.addr, domain_expiry: null }
+              : { error: "no address found" }
+          );
+      });
+  } else {
+    await db
+      .collection("domains")
+      .findOne({
+        domain: domain,
+        "_chain.valid_to": null,
+      })
+      .then((domainDoc) => {
+        res
+          .setHeader("cache-control", "max-age=60")
+          .status(200)
+          .json(
+            domainDoc
+              ? { addr: domainDoc.addr, domain_expiry: domainDoc.expiry }
+              : { error: "no address found" }
+          );
+      });
+  }
 }

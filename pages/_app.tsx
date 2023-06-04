@@ -10,20 +10,20 @@ import { WebWalletConnector } from "@argent/starknet-react-webwallet-connector";
 import { Analytics } from "@vercel/analytics/react";
 import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 
-function MyApp({ Component, pageProps }: AppProps) {
-  const connectors = [
-    new InjectedConnector({ options: { id: "argentX" } }),
-    new InjectedConnector({ options: { id: "braavos" } }),
-    new WebWalletConnector({
-      url: process.env.NEXT_PUBLIC_IS_TESTNET
-        ? "https://web.hydrogen.argent47.net"
-        : "https://web.argent.xyz",
-    }),
-  ];
+const connectors = [
+  new InjectedConnector({ options: { id: "argentX" } }),
+  new InjectedConnector({ options: { id: "braavos" } }),
+  new WebWalletConnector({
+    url: process.env.NEXT_PUBLIC_IS_TESTNET
+      ? "https://web.hydrogen.argent47.net"
+      : "https://web.argent.xyz",
+  }),
+];
 
+function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <StarknetConfig connectors={connectors}>
+      <StarknetConfig connectors={connectors as any} autoConnect>
         <StarknetIdJsProvider>
           <ThemeProvider theme={theme}>
             <Head>

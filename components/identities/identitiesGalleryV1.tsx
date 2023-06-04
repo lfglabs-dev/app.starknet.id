@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
-import { minifyDomain } from "../../utils/stringService";
+import { getDomainKind, minifyDomain } from "../../utils/stringService";
 import ErrorIcon from "@mui/icons-material/Error";
 import { Tooltip } from "@mui/material";
 import {
@@ -11,10 +11,12 @@ import {
 
 type IdentitiesGalleryV1Props = {
   identities: FullId[];
+  externalDomains?: string[];
 };
 
 const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
   identities,
+  externalDomains = [],
 }) => {
   const router = useRouter();
 
@@ -39,13 +41,48 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
             <img
               width={150}
               height={150}
-              src={`https://www.starknet.id/api/identicons/${identity.id}`}
+              src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${identity.id}`}
               alt="avatar"
               onClick={() => router.push(`/identities/${identity.id}`)}
             />
             {identity.domain ? (
               <p className="font-bold">{minifyDomain(identity.domain)}</p>
             ) : null}
+          </div>
+        );
+      })}
+      {externalDomains.map((domain, index) => {
+        const domainKind = getDomainKind(domain);
+
+        return (
+          <div key={index} className={styles.imageGallery}>
+            <div className={styles.expiryWarning}>
+              <Tooltip
+                title="This is domain is an external domain and is not an identity, you won't see it on your wallet."
+                arrow
+              >
+                <ErrorIcon color="error" />
+              </Tooltip>
+            </div>
+            {domainKind === "braavos" ? (
+              <img
+                width={150}
+                height={150}
+                src={"/braavos/braavosLogo.svg"}
+                className="p-3"
+                alt="avatar"
+                onClick={() => router.push(`/externaldomains/${domain}`)}
+              />
+            ) : (
+              <img
+                width={150}
+                height={150}
+                src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/0`}
+                alt="avatar"
+                onClick={() => router.push(`/externaldomains/${domain}`)}
+              />
+            )}
+            <p className="font-bold">{minifyDomain(domain)}</p>
           </div>
         );
       })}

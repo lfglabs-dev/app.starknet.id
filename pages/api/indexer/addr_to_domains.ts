@@ -35,6 +35,12 @@ export default async function handler(
         }
       });
   }
+  const subdomainsDocuments = db
+    .collection("subdomains")
+    .find({ addr: addr, "_chain.valid_to": null });
+  for (const doc of await subdomainsDocuments.toArray()) {
+    _domains.push(doc.domain);
+  }
   res
     .setHeader("cache-control", "max-age=30")
     .status(200)
