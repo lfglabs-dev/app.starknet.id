@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
 import {
+  Call,
   useAccount,
   useContractWrite,
   useWaitForTransaction,
@@ -34,7 +35,7 @@ const Twitter: NextPage = () => {
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
-  const [calls, setCalls] = useState<Calls | undefined>();
+  const [calls, setCalls] = useState<Call | undefined>();
 
   useEffect(() => {
     if (!tokenId) {
@@ -70,7 +71,6 @@ const Twitter: NextPage = () => {
       setIsConnected(false);
     } else {
       setIsConnected(true);
-      setScreen("verifyTwitter");
     }
   }, [account]);
 
@@ -135,7 +135,7 @@ const Twitter: NextPage = () => {
   }, [twitterVerificationData, transactionData, transactionError]);
 
   //Screen management
-  const [screen, setScreen] = useState<Screen | undefined>();
+  const [screen, setScreen] = useState<Screen>("verifyTwitter");
 
   // Error Management
   useEffect(() => {
