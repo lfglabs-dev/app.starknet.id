@@ -77,7 +77,6 @@ const Navbar: FunctionComponent = () => {
 
   useEffect(() => {
     if (transactions) {
-      console.log("transactions", transactions);
       // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
       setTxLoading(
         transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")

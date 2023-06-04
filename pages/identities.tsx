@@ -24,7 +24,7 @@ const Identities: NextPage = () => {
   const [externalDomains, setExternalDomains] = useState<string[]>([]);
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
-  const { addTransaction, removeTransaction } = useTransactionManager();
+  const { addTransaction } = useTransactionManager();
   const [screen, setScreen] = useState<ScreenState>("mint");
 
   //Mint
