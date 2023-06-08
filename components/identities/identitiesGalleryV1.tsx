@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, ReactNode } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
 import { getDomainKind, minifyDomain } from "../../utils/stringService";
@@ -8,6 +8,7 @@ import {
   isIdentityExpiringSoon,
   timestampToReadableDate,
 } from "../../utils/dateService";
+import ArgentIcon from "../UI/iconsComponents/icons/argentIcon";
 
 type IdentitiesGalleryV1Props = {
   identities: FullId[];
@@ -53,6 +54,33 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
       {externalDomains.map((domain, index) => {
         const domainKind = getDomainKind(domain);
 
+        function getIdentityImage(domainKind: DomainKind): ReactNode {
+          switch (domainKind) {
+            case "braavos":
+              return (
+                <img
+                  width={150}
+                  height={150}
+                  src={"/braavos/braavosLogo.svg"}
+                  alt="avatar"
+                  onClick={() => router.push(`/externaldomains/${domain}`)}
+                />
+              );
+            case "xplorer":
+              return <ArgentIcon width={"150px"} color="#f36a3d" />;
+            default:
+              return (
+                <img
+                  width={150}
+                  height={150}
+                  src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/0`}
+                  alt="avatar"
+                  onClick={() => router.push(`/externaldomains/${domain}`)}
+                />
+              );
+          }
+        }
+
         return (
           <div key={index} className={styles.imageGallery}>
             <div className={styles.expiryWarning}>
@@ -63,24 +91,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                 <ErrorIcon color="error" />
               </Tooltip>
             </div>
-            {domainKind === "braavos" ? (
-              <img
-                width={150}
-                height={150}
-                src={"/braavos/braavosLogo.svg"}
-                className="p-3"
-                alt="avatar"
-                onClick={() => router.push(`/externaldomains/${domain}`)}
-              />
-            ) : (
-              <img
-                width={150}
-                height={150}
-                src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/0`}
-                alt="avatar"
-                onClick={() => router.push(`/externaldomains/${domain}`)}
-              />
-            )}
+            {getIdentityImage(domainKind)}
             <p className="font-bold mt-2">{minifyDomain(domain)}</p>
           </div>
         );

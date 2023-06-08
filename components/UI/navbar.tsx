@@ -150,18 +150,19 @@ const Navbar: FunctionComponent = () => {
 
               {connector?.id() === "argentWebWallet" && (
                 <Tooltip title="Check your argent web wallet" arrow>
-                  <div
-                    onClick={() =>
-                      window.open(
-                        network === "mainnet"
-                          ? "https://web.argent.xyz/dashboard"
-                          : "https://web.hydrogen.argent47.net/dashboard"
-                      )
+                  <a
+                    target="_blank"
+                    href={
+                      network === "mainnet"
+                        ? "https://web.argent.xyz"
+                        : "https://web.hydrogen.argent47.net"
                     }
-                    className={styles.webWalletLink}
+                    rel="noopener noreferrer"
                   >
-                    <ArgentIcon width={"24px"} color="#f36a3d" />
-                  </div>
+                    <div className={styles.webWalletLink}>
+                      <ArgentIcon width={"24px"} color="#f36a3d" />
+                    </div>
+                  </a>
                 </Tooltip>
               )}
               <div className="text-beige mr-5">
