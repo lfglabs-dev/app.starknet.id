@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
 import {
+  Call,
   useAccount,
   useContractWrite,
   useWaitForTransaction,
@@ -43,7 +44,7 @@ const Discord: NextPage = () => {
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
-  const [calls, setCalls] = useState<Calls | undefined>();
+  const [calls, setCalls] = useState<Call | undefined>();
 
   useEffect(() => {
     if (!tokenId) {
@@ -83,7 +84,6 @@ const Discord: NextPage = () => {
       setIsConnected(false);
     } else {
       setIsConnected(true);
-      setScreen("verifyDiscord");
     }
   }, [account]);
 
@@ -144,7 +144,7 @@ const Discord: NextPage = () => {
   }, [discordVerificationData, transactionData, transactionError]);
 
   //Screen management
-  const [screen, setScreen] = useState<Screen | undefined>(undefined);
+  const [screen, setScreen] = useState<Screen>("verifyDiscord");
 
   // Error Management
   useEffect(() => {
