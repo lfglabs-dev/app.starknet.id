@@ -50,7 +50,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       calldata: [
         process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
         isEnabled ? 0 : "340282366920938463463374607431768211455",
-        "340282366920938463463374607431768211455",
+        isEnabled ? 0 : "340282366920938463463374607431768211455",
       ],
     },
     {
