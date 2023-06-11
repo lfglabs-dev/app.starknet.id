@@ -4,6 +4,7 @@ import {
   useAccount,
   useContractRead,
   useContractWrite,
+  useTransactionManager,
 } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
@@ -42,7 +43,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  //UseState viewMoreClicked
+  const { addTransaction } = useTransactionManager();
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
   // AutoRenewals
   const [isAutoRenewalOpen, setIsAutoRenewalOpen] = useState<boolean>(false);
@@ -67,11 +68,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     entrypoint: "set_domain_to_address",
     calldata: [...callDataEncodedDomain, hexToDecimal(address)],
   };
-  const { writeAsync: set_address_to_domain } = useContractWrite({
-    calls: isAccountTargetAddress
-      ? set_address_to_domain_calls
-      : [set_domain_to_address_calls, set_address_to_domain_calls],
-  });
+  const { writeAsync: set_address_to_domain, data: mainDomainData } =
+    useContractWrite({
+      calls: isAccountTargetAddress
+        ? set_address_to_domain_calls
+        : [set_domain_to_address_calls, set_address_to_domain_calls],
+    });
 
   const { data: renewData, error: renewError } = useContractRead({
     address: renewalContract?.address as string,

@@ -2,7 +2,7 @@ import { Modal } from "@mui/material";
 import { useContractWrite } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import React, { FunctionComponent, useState } from "react";
-import styles from "../../../styles/components/wallets.module.css";
+import styles from "../../../styles/components/modalMessage.module.css";
 import SelectDomain from "../../domains/selectDomains";
 import Button from "../../UI/button";
 

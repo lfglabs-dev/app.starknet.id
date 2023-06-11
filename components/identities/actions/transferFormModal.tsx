@@ -1,8 +1,12 @@
 import { Modal, TextField } from "@mui/material";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import {
+  useAccount,
+  useContractWrite,
+  useTransactionManager,
+} from "@starknet-react/core";
 import { useRouter } from "next/router";
-import React, { FunctionComponent, useState } from "react";
-import styles from "../../../styles/components/wallets.module.css";
+import React, { FunctionComponent, useState, useEffect } from "react";
+import styles from "../../../styles/components/modalMessage.module.css";
 import { hexToDecimal } from "../../../utils/feltService";
 import { isHexString } from "../../../utils/stringService";
 import Button from "../../UI/button";
@@ -25,6 +29,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   const { address } = useAccount();
   const { tokenId } = router.query;
   const numId = parseInt(tokenId as string);
+  const { addTransaction } = useTransactionManager();
 
   //set_domain_to_address execute
   const transfer_identity_and_set_domain_multicall = [
@@ -45,9 +50,16 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     },
   ];
 
-  const { writeAsync: transfer_identity_and_set_domain } = useContractWrite({
-    calls: transfer_identity_and_set_domain_multicall,
-  });
+  const { writeAsync: transfer_identity_and_set_domain, data: transferData } =
+    useContractWrite({
+      calls: transfer_identity_and_set_domain_multicall,
+    });
+
+  useEffect(() => {
+    if (!transferData?.transaction_hash) return;
+    addTransaction({ hash: transferData?.transaction_hash ?? "" });
+    handleClose();
+  }, [transferData]);
 
   function transferIdentityAndSetDomain(): void {
     transfer_identity_and_set_domain();

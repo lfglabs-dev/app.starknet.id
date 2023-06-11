@@ -1,8 +1,13 @@
 import { Modal, TextField } from "@mui/material";
-import { Call, useAccount, useContractWrite } from "@starknet-react/core";
+import {
+  Call,
+  useAccount,
+  useContractWrite,
+  useTransactionManager,
+} from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useIsValid } from "../../../hooks/naming";
-import styles from "../../../styles/components/wallets.module.css";
+import styles from "../../../styles/components/modalMessage.module.css";
 import { hexToDecimal } from "../../../utils/feltService";
 import { numberToString } from "../../../utils/stringService";
 import SelectDomain from "../../domains/selectDomains";
@@ -30,10 +35,11 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   const isDomainValid = useIsValid(subdomain);
   const [callData, setCallData] = useState<Call[]>([]);
   const { address } = useAccount();
-
-  const { writeAsync: transfer_domain } = useContractWrite({
-    calls: callData,
-  });
+  const { addTransaction } = useTransactionManager();
+  const { writeAsync: transfer_domain, data: transferDomainData } =
+    useContractWrite({
+      calls: callData,
+    });
 
   function changeTokenId(value: number): void {
     setTargetTokenId(value);
@@ -100,6 +106,12 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       ]);
     }
   }, [targetTokenId, encodedSubdomain, callDataEncodedDomain, address]);
+
+  useEffect(() => {
+    if (!transferDomainData?.transaction_hash) return;
+    addTransaction({ hash: transferDomainData?.transaction_hash ?? "" });
+    handleClose();
+  }, [transferDomainData]);
 
   return (
     <Modal
