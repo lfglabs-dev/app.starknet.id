@@ -78,7 +78,7 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
       >
         {githubUsername ? (
           <div className={styles.verifiedIcon}>
-            <VerifiedIcon width={width} color={"green"} />
+            <VerifiedIcon width={"18"} color={"green"} />
           </div>
         ) : null}
         <GithubIcon width={width} color={"white"} />
