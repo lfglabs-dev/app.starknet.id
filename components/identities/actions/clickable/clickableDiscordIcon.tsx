@@ -69,7 +69,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
             <VerifiedIcon width={width} color={"green"} />
           </div>
         ) : null}
-        <DiscordIcon width={width} color={"white"} />
+        <DiscordIcon width={"18"} color={"white"} />
       </div>
     </Tooltip>
   ) : discordId ? (
