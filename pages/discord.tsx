@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
 import {
+  Call,
   useAccount,
-  useStarknetExecute,
-  useTransactionReceipt,
+  useContractWrite,
+  useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
@@ -43,7 +44,7 @@ const Discord: NextPage = () => {
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
-  const [calls, setCalls] = useState<Calls | undefined>();
+  const [calls, setCalls] = useState<Call | undefined>();
 
   useEffect(() => {
     if (!tokenId) {
@@ -52,7 +53,8 @@ const Discord: NextPage = () => {
   }, [tokenId]);
 
   useEffect(() => {
-    if (!signRequestData || signRequestData.status === "error") return;
+    if (!signRequestData) return;
+    if (signRequestData.status === "error") setScreen("error");
 
     setCalls({
       contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
@@ -82,7 +84,6 @@ const Discord: NextPage = () => {
       setIsConnected(false);
     } else {
       setIsConnected(true);
-      setScreen("verifyDiscord");
     }
   }, [account]);
 
@@ -98,10 +99,7 @@ const Discord: NextPage = () => {
       }),
     };
 
-    fetch(
-      `https://${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
-      requestOptions
-    )
+    fetch(`${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         setSignRequestData(data);
@@ -111,12 +109,12 @@ const Discord: NextPage = () => {
   //Contract
   const {
     data: discordVerificationData,
-    execute,
+    writeAsync: execute,
     error: discordVerificationError,
-  } = useStarknetExecute({ calls });
+  } = useContractWrite({ calls });
 
   const { data: transactionData, error: transactionError } =
-    useTransactionReceipt({
+    useWaitForTransaction({
       hash: discordVerificationData?.transaction_hash,
       watch: true,
     });
@@ -146,7 +144,7 @@ const Discord: NextPage = () => {
   }, [discordVerificationData, transactionData, transactionError]);
 
   //Screen management
-  const [screen, setScreen] = useState<Screen | undefined>(undefined);
+  const [screen, setScreen] = useState<Screen>("verifyDiscord");
 
   // Error Management
   useEffect(() => {
@@ -170,7 +168,9 @@ const Discord: NextPage = () => {
                   It&apos;s time to verify your discord on chain !
                 </h1>
                 <div className="mt-8">
-                  <Button onClick={verifyDiscord}>Verify my Discord</Button>
+                  <Button disabled={Boolean(!calls)} onClick={verifyDiscord}>
+                    Verify my Discord
+                  </Button>
                 </div>
               </>
             ))}

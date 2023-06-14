@@ -44,7 +44,7 @@ const ExternalDomainCard: FunctionComponent<ExternalDomainCardProps> = ({
               src={
                 domainKind === "braavos"
                   ? "/braavos/braavosLogo.svg"
-                  : "https://www.starknet.id/api/identicons/0"
+                  : `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/0`
               }
               height={150}
               width={150}

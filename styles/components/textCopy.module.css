@@ -1,0 +1,30 @@
+.container {
+  outline: var(--tertiary) solid 2px;
+  padding: 8px 10px;
+  margin: 0.5rem;
+  width: -moz-fit-content;
+  width: fit-content;
+  border-radius: 2em;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.copyButton {
+  margin-left: 15px;
+  background-color: var(--primary);
+  padding: 0 30px;
+  border-radius: 2em;
+  color: var(--background);
+}
+
+.copied {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(0, -50%);
+  right: 0;
+  background-color: var(--background);
+  border-radius: 2em;
+  text-align: center;
+}

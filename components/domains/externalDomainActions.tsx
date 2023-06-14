@@ -1,6 +1,6 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import { useAccount, useStarknetExecute } from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import styles from "../../styles/components/identityMenu.module.css";
 import { utils } from "starknetid.js";
 import ClickableAction from "../UI/iconsComponents/clickableAction";
@@ -38,7 +38,7 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
     entrypoint: "set_address_to_domain",
     calldata: callDataEncodedDomain,
   };
-  const { execute: set_address_to_domain } = useStarknetExecute({
+  const { writeAsync: set_address_to_domain } = useContractWrite({
     calls: set_address_to_domain_calls,
   });
 
