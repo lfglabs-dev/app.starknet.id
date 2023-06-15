@@ -2,22 +2,20 @@ import React, { useState } from "react";
 import styles from "../../styles/components/walletMessage.module.css";
 import { FunctionComponent } from "react";
 import { Modal, Tooltip } from "@mui/material";
-import {
-  useAccount,
-  useTransactionManager,
-  useTransactions,
-} from "@starknet-react/core";
+import { UseTransactionResult, useAccount } from "@starknet-react/core";
 import { ContentCopy } from "@mui/icons-material";
 import CopiedIcon from "./iconsComponents/icons/copiedIcon";
 import ClickableAction from "./iconsComponents/clickableAction";
 import Link from "next/link";
 import { CommonTransactionReceiptResponse } from "starknet";
+import CloseIcon from "./iconsComponents/icons/closeIcon";
 
 type ModalWalletProps = {
   closeModal: () => void;
   open: boolean;
   domain: string;
   disconnectByClick: () => void;
+  transactions: UseTransactionResult[];
 };
 
 const ModalWallet: FunctionComponent<ModalWalletProps> = ({
@@ -25,13 +23,12 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
   open,
   domain,
   disconnectByClick,
+  transactions,
 }) => {
   const { address } = useAccount();
-  const { hashes } = useTransactionManager();
-  const transactions = useTransactions({ hashes, watch: true });
   const [copied, setCopied] = useState(false);
   const network =
-    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet." : "";
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
 
   const copyToClipboard = () => {
     if (!address) return;
@@ -52,14 +49,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
     >
       <div className={styles.menu}>
         <button className={styles.menu_close} onClick={closeModal}>
-          <svg viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
+          <CloseIcon />
         </button>
         <div className={styles.menu_title}>
           <div className={styles.menu_title}>
@@ -89,6 +79,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
             onClick={disconnectByClick}
             icon="disconnect"
             title="Disconnect"
+            width="auto"
           />
         </div>
         <div className={styles.menu_txs}>
@@ -102,8 +93,11 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
                     key={tx.data?.transaction_hash}
                   >
                     <Link
-                      href={`https://${network}starkscan.co/tx/${tx.data?.transaction_hash}`}
-                      className="cursor-pointer hover:underline"
+                      href={`https://${
+                        network === "testnet" ? "testnet." : ""
+                      }starkscan.co/tx/${tx.data?.transaction_hash}`}
+                      className={styles.tx_hash}
+                      target="_blank"
                     >
                       {tx.data?.transaction_hash?.slice(0, 20) + "..."}
                     </Link>

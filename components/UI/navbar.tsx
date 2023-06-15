@@ -305,6 +305,7 @@ const Navbar: FunctionComponent = () => {
         open={showWallet}
         closeModal={() => setShowWallet(false)}
         disconnectByClick={disconnectByClick}
+        transactions={transactions}
       />
       <Wallets
         closeWallet={() => setHasWallet(false)}

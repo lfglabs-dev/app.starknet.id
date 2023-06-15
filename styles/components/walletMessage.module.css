@@ -52,19 +52,25 @@
 
 .menu_title p {
   color: var(--brown);
-  font-family: "QuickZap";
+  font-family: "Poppins-Bold";
   font-size: 21px;
   font-weight: bold;
   text-align: center;
   margin: 0 10px;
 }
+
 .tx_title {
   color: var(--brown);
-  font-family: "QuickZap";
+  font-family: "Poppins-Bold";
   font-size: 21px;
   font-weight: bold;
   text-align: left;
   margin: 20px 0;
+}
+
+.tx_hash {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .tx_empty {
