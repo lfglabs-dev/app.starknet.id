@@ -15,6 +15,7 @@ type ClickableActionProps = {
   title?: string;
   description?: string;
   style?: "primary" | "secondary";
+  width?: "fixed" | "auto";
 };
 
 const ClickableAction: FunctionComponent<ClickableActionProps> = ({
@@ -23,15 +24,17 @@ const ClickableAction: FunctionComponent<ClickableActionProps> = ({
   title,
   description,
   style = "secondary",
+  width = "fixed",
 }) => {
   const color = style === "secondary" ? "#402D28" : "#19aa6e";
   return (
     <div
-      className={
+      className={`${
         style === "secondary"
           ? styles.clickableActionSecondary
           : styles.clickableActionPrimary
       }
+        ${width === "auto" ? styles.clickableActionAutoWidth : ""}`}
       onClick={onClick}
     >
       <div

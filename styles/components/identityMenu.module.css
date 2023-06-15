@@ -41,6 +41,10 @@
   cursor: pointer;
 }
 
+.clickableActionAutoWidth {
+  width: auto;
+}
+
 .clickableActionPrimary {
   border-color: var(--primary);
 }
