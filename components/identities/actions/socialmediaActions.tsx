@@ -16,40 +16,42 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
   domain = "",
 }) => {
   return (
-    <div className="flex flex-row gap-1">
-      <div className="m-1">
-        <ClickableTwitterIcon
-          isOwner={isOwner}
-          width="15"
-          tokenId={tokenId}
-          domain={domain}
-        />
+    <>
+      <div className="flex flex-row gap-1">
+        <div className="m-1">
+          <ClickableTwitterIcon
+            isOwner={isOwner}
+            width="15"
+            tokenId={tokenId}
+            domain={domain}
+          />
+        </div>
+        <div className="m-1">
+          <ClickableDiscordIcon
+            isOwner={isOwner}
+            width="15"
+            tokenId={tokenId}
+            domain={domain}
+          />
+        </div>
+        <div className="m-1">
+          <ClickableGithubIcon
+            isOwner={isOwner}
+            width="15"
+            tokenId={tokenId}
+            domain={domain}
+          />
+        </div>
+        <div className="m-1">
+          <ClickablePersonhoodIcon
+            isOwner={isOwner}
+            width="15"
+            tokenId={tokenId}
+            domain={domain}
+          />
+        </div>
       </div>
-      <div className="m-1">
-        <ClickableDiscordIcon
-          isOwner={isOwner}
-          width="15"
-          tokenId={tokenId}
-          domain={domain}
-        />
-      </div>
-      <div className="m-1">
-        <ClickableGithubIcon
-          isOwner={isOwner}
-          width="15"
-          tokenId={tokenId}
-          domain={domain}
-        />
-      </div>
-      <div className="m-1">
-        <ClickablePersonhoodIcon
-          isOwner={isOwner}
-          width="15"
-          tokenId={tokenId}
-          domain={domain}
-        />
-      </div>
-    </div>
+    </>
   );
 };
 
