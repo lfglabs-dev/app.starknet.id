@@ -7,6 +7,7 @@ import PlusIcon from "./icons/plusIcon";
 import AddressIcon from "./icons/addressIcon";
 import AspectIcon from "./icons/aspectIcon";
 import MainIcon from "./icons/mainIcon";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 type ClickableActionProps = {
   icon: string;
@@ -49,6 +50,7 @@ const ClickableAction: FunctionComponent<ClickableActionProps> = ({
         {icon === "transfer" && <TransferIcon width="25" color={color} />}
         {icon === "plus" && <PlusIcon width="25" color={color} />}
         {icon === "address" && <AddressIcon width="25" color={color} />}
+        {icon === "disconnect" && <LogoutIcon width="25" />}
       </div>
 
       <div className="ml-2">

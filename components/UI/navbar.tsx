@@ -17,6 +17,7 @@ import SelectNetwork from "./selectNetwork";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { CircularProgress } from "@mui/material";
+import ModalWallet from "./modalWallet";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
@@ -34,6 +35,7 @@ const Navbar: FunctionComponent = () => {
   const [txLoading, setTxLoading] = useState<number>(0);
   const { hashes } = useTransactionManager();
   const transactions = useTransactions({ hashes, watch: true });
+  const [showWallet, setShowWallet] = useState<boolean>(false);
 
   // TODO: Check for starknet react fix and delete that code
   useEffect(() => {
@@ -90,6 +92,7 @@ const Navbar: FunctionComponent = () => {
     setIsConnected(false);
     setIsWrongNetwork(false);
     setHasWallet(false);
+    setShowWallet(false);
   }
 
   function handleNav(): void {
@@ -108,7 +111,8 @@ const Navbar: FunctionComponent = () => {
         setHasWallet(true);
       }
     } else {
-      disconnectByClick();
+      // disconnectByClick();
+      setShowWallet(true);
     }
   }
 
@@ -154,7 +158,7 @@ const Navbar: FunctionComponent = () => {
                 <Button
                   onClick={
                     isConnected
-                      ? () => disconnectByClick()
+                      ? () => setShowWallet(true)
                       : available.length === 1
                       ? () => connect(available[0])
                       : () => setHasWallet(true)
@@ -295,6 +299,12 @@ const Navbar: FunctionComponent = () => {
             </div>
           </div>
         }
+      />
+      <ModalWallet
+        domain={domainOrAddress}
+        open={showWallet}
+        closeModal={() => setShowWallet(false)}
+        disconnectByClick={disconnectByClick}
       />
       <Wallets
         closeWallet={() => setHasWallet(false)}
