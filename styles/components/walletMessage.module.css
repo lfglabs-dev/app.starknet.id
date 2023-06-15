@@ -42,6 +42,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 
 .menu_title div:first-child {
@@ -80,6 +81,8 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 10px 0;
 }
 
 @media (max-width: 1024px) {
