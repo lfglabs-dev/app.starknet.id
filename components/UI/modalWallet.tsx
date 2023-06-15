@@ -24,6 +24,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
   disconnectByClick,
   transactions,
 }) => {
+  console.log("transactions: ", transactions);
   const { address } = useAccount();
   const [copied, setCopied] = useState(false);
   const network =
