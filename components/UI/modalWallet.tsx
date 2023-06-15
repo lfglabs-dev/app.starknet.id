@@ -97,6 +97,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
                       }starkscan.co/tx/${tx.data?.transaction_hash}`}
                       className={styles.tx_hash}
                       target="_blank"
+                      rel="noreferrer"
                     >
                       {tx.data?.transaction_hash?.slice(0, 20) + "..."}
                     </a>
