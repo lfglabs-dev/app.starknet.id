@@ -15,6 +15,13 @@ import ClickableAction from "../../UI/iconsComponents/clickableAction";
 import styles from "../../../styles/components/identityMenu.module.css";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { utils } from "starknetid.js";
+import theme from "../../../styles/theme";
+import AspectIcon from "../../UI/iconsComponents/icons/aspectIcon";
+import MainIcon from "../../UI/iconsComponents/icons/mainIcon";
+import AddressIcon from "../../UI/iconsComponents/icons/addressIcon";
+import ChangeIcon from "../../UI/iconsComponents/icons/changeIcon";
+import TransferIcon from "../../UI/iconsComponents/icons/transferIcon";
+import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -122,19 +129,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             {identity && !isOwner && isIdentityADomain && (
               <>
                 <ClickableAction
-                  title="View on Mintsquare"
-                  icon="mintsquare"
-                  description="Check this identity on Mintsquare"
-                  onClick={() =>
-                    window.open(
-                      `https://mintsquare.io/asset/starknet/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
-                    )
-                  }
-                />
-
-                <ClickableAction
                   title="View on Aspect"
-                  icon="aspect"
+                  icon={
+                    <AspectIcon
+                      width="25"
+                      color={theme.palette.secondary.main}
+                    />
+                  }
                   description="Check this identity on Aspect"
                   onClick={() =>
                     window.open(
@@ -153,7 +154,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     description={`Expires on ${timestampToReadableDate(
                       identity?.domain_expiry ?? 0
                     )}`}
-                    icon="change"
+                    icon={
+                      <ChangeIcon
+                        width="25"
+                        color={theme.palette.primary.main}
+                      />
+                    }
                     onClick={() => setIsRenewFormOpen(true)}
                   />
                 ) : null}
@@ -161,14 +167,25 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   <ClickableAction
                     title="Set as main domain"
                     description="Set this domain as your main domain"
-                    icon="main"
+                    icon={
+                      <MainIcon
+                        width="25"
+                        firstColor={theme.palette.secondary.main}
+                        secondColor={theme.palette.secondary.main}
+                      />
+                    }
                     onClick={() => setAddressToDomain()}
                   />
                 )}
                 <ClickableAction
                   title="CHANGE THE TARGET"
                   description="Change the current target address"
-                  icon="address"
+                  icon={
+                    <AddressIcon
+                      width="25"
+                      color={theme.palette.secondary.main}
+                    />
+                  }
                   onClick={() => setIsAddressFormOpen(true)}
                 />
 
@@ -177,13 +194,23 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     <ClickableAction
                       title="MOVE YOUR IDENTITY"
                       description="Move your identity to another wallet"
-                      icon="transfer"
+                      icon={
+                        <TransferIcon
+                          width="25"
+                          color={theme.palette.secondary.main}
+                        />
+                      }
                       onClick={() => setIsTransferFormOpen(true)}
                     />
                     <ClickableAction
                       title="CREATE A SUBDOMAIN"
                       description="Create a new subdomain"
-                      icon="plus"
+                      icon={
+                        <PlusIcon
+                          width="25"
+                          color={theme.palette.secondary.main}
+                        />
+                      }
                       onClick={() => setIsSubdomainFormOpen(true)}
                     />
                     <p

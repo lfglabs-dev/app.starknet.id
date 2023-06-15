@@ -41,7 +41,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
 }
 
@@ -51,18 +51,16 @@
 }
 
 .menu_title p {
-  color: var(--brown);
   font-family: "Poppins-Bold";
-  font-size: 21px;
+  font-size: 19px;
   font-weight: bold;
   text-align: center;
-  margin: 0 10px;
 }
 
 .tx_title {
   color: var(--brown);
   font-family: "Poppins-Bold";
-  font-size: 21px;
+  font-size: 19px;
   font-weight: bold;
   text-align: left;
   margin: 20px 0;
@@ -75,7 +73,7 @@
 
 .tx_empty {
   color: var(--brown);
-  text-align: center;
+  text-align: left;
 }
 
 .menu_txs {

@@ -10,6 +10,7 @@ import TwitterIcon from "../../../UI/iconsComponents/icons/twitterIcon";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
+import theme from "../../../../styles/theme";
 
 type ClickableTwitterIconProps = {
   width: string;
@@ -67,7 +68,7 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
       >
         {twitterId ? (
           <div className={styles.verifiedIcon}>
-            <VerifiedIcon width={"18"} color={"green"} />
+            <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
           </div>
         ) : null}
         <TwitterIcon width={width} color={"white"} />

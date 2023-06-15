@@ -1,16 +1,8 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, ReactNode } from "react";
 import styles from "../../../styles/components/identityMenu.module.css";
-import ChangeIcon from "./icons/changeIcon";
-import MintsquareIcon from "./icons/mintsquareIcon";
-import TransferIcon from "./icons/transferIcon";
-import PlusIcon from "./icons/plusIcon";
-import AddressIcon from "./icons/addressIcon";
-import AspectIcon from "./icons/aspectIcon";
-import MainIcon from "./icons/mainIcon";
-import LogoutIcon from "@mui/icons-material/Logout";
 
 type ClickableActionProps = {
-  icon: string;
+  icon: ReactNode;
   onClick?: () => void;
   title?: string;
   description?: string;
@@ -26,7 +18,6 @@ const ClickableAction: FunctionComponent<ClickableActionProps> = ({
   style = "secondary",
   width = "fixed",
 }) => {
-  const color = style === "secondary" ? "#402D28" : "#19aa6e";
   return (
     <div
       className={`${
@@ -44,16 +35,7 @@ const ClickableAction: FunctionComponent<ClickableActionProps> = ({
             : styles.clickableIconPrimary
         }
       >
-        {icon === "change" && <ChangeIcon width="25" color={color} />}
-        {icon === "mintsquare" && <MintsquareIcon width="25" color={color} />}
-        {icon === "main" && (
-          <MainIcon width="25" firstColor={color} secondColor={color} />
-        )}
-        {icon === "aspect" && <AspectIcon width="25" color={color} />}
-        {icon === "transfer" && <TransferIcon width="25" color={color} />}
-        {icon === "plus" && <PlusIcon width="25" color={color} />}
-        {icon === "address" && <AddressIcon width="25" color={color} />}
-        {icon === "disconnect" && <LogoutIcon width="25" />}
+        {icon}
       </div>
 
       <div className="ml-2">

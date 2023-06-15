@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import styles from "../../styles/components/walletMessage.module.css";
 import { FunctionComponent } from "react";
-import { Modal, Tooltip } from "@mui/material";
+import { Modal } from "@mui/material";
 import { UseTransactionResult, useAccount } from "@starknet-react/core";
 import { ContentCopy } from "@mui/icons-material";
 import CopiedIcon from "./iconsComponents/icons/copiedIcon";
 import ClickableAction from "./iconsComponents/clickableAction";
 import { CommonTransactionReceiptResponse } from "starknet";
 import CloseIcon from "./iconsComponents/icons/closeIcon";
+import ArgentIcon from "./iconsComponents/icons/argentIcon";
+import theme from "../../styles/theme";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 type ModalWalletProps = {
   closeModal: () => void;
@@ -24,11 +27,10 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
   disconnectByClick,
   transactions,
 }) => {
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
   const [copied, setCopied] = useState(false);
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
-
   const copyToClipboard = () => {
     if (!address) return;
     setCopied(true);
@@ -52,32 +54,36 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
         </button>
         <div className={styles.menu_title}>
           <div className={styles.menu_title}>
-            <img
-              width={"40px"}
-              src="/visuals/StarknetIdLogo.svg"
-              alt="starknet.id avatar"
-            />
-            <p>My Wallet</p>
-          </div>
+            {connector && connector.id() === "braavos" ? (
+              <img
+                width={"25px"}
+                src="/braavos/braavosLogo.svg"
+                alt="braavos logo"
+              />
+            ) : (
+              <ArgentIcon color={"#f36a3d"} width={"25px"} />
+            )}
 
-          <div className="flex flex-row">
-            <p className={styles.menu_name}>{domain}</p>
-            <div className="cursor-pointer">
-              {!copied ? (
-                <Tooltip title="Copy" arrow>
-                  <ContentCopy onClick={() => copyToClipboard()} />
-                </Tooltip>
-              ) : (
-                <CopiedIcon color="green" width="25" />
-              )}
-            </div>
+            <p className="ml-2">Connected with &nbsp;{domain}&nbsp;</p>
           </div>
         </div>
-        <div className="flex flex-row divide-y mt-3 mb-5">
+        <div className="flex flex-row justify-around flex-wrap mb-3">
           <ClickableAction
             onClick={disconnectByClick}
-            icon="disconnect"
+            icon={<LogoutIcon width="25" />}
             title="Disconnect"
+            width="auto"
+          />
+          <ClickableAction
+            onClick={copyToClipboard}
+            icon={
+              copied ? (
+                <CopiedIcon width="25" color={theme.palette.primary.main} />
+              ) : (
+                <ContentCopy width="25" />
+              )
+            }
+            title="Copy Address"
             width="auto"
           />
         </div>
@@ -107,12 +113,24 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
                     >
                       {/* TODO: transaction_hash currently does not have the same location depending on the wallet used to make the tx */}
                       {tx.data?.transaction_hash
-                        ? tx.data?.transaction_hash?.slice(0, 20) + "..."
+                        ? tx.data?.transaction_hash?.slice(0, 6) +
+                          "..." +
+                          tx.data?.transaction_hash?.slice(
+                            tx.data?.transaction_hash.length - 6,
+                            tx.data?.transaction_hash.length
+                          )
                         : (tx.data as any)?.transaction
                         ? (tx.data as any)?.transaction?.transaction_hash.slice(
                             0,
-                            20
-                          ) + "..."
+                            6
+                          ) +
+                          "..." +
+                          (tx.data as any)?.transaction?.transaction_hash.slice(
+                            (tx.data as any)?.transaction?.transaction_hash
+                              .length - 6,
+                            (tx.data as any)?.transaction?.transaction_hash
+                              .length
+                          )
                         : null}
                     </a>
                     <div>
