@@ -6,7 +6,6 @@ import { UseTransactionResult, useAccount } from "@starknet-react/core";
 import { ContentCopy } from "@mui/icons-material";
 import CopiedIcon from "./iconsComponents/icons/copiedIcon";
 import ClickableAction from "./iconsComponents/clickableAction";
-import Link from "next/link";
 import { CommonTransactionReceiptResponse } from "starknet";
 import CloseIcon from "./iconsComponents/icons/closeIcon";
 
@@ -92,7 +91,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
                     className={styles.menu_tx}
                     key={tx.data?.transaction_hash}
                   >
-                    <Link
+                    <a
                       href={`https://${
                         network === "testnet" ? "testnet." : ""
                       }starkscan.co/tx/${tx.data?.transaction_hash}`}
@@ -100,7 +99,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
                       target="_blank"
                     >
                       {tx.data?.transaction_hash?.slice(0, 20) + "..."}
-                    </Link>
+                    </a>
                     <div>
                       {tx.data &&
                         (tx.data as CommonTransactionReceiptResponse).status}
