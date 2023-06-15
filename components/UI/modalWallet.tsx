@@ -24,7 +24,6 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
   disconnectByClick,
   transactions,
 }) => {
-  console.log("transactions: ", transactions);
   const { address } = useAccount();
   const [copied, setCopied] = useState(false);
   const network =
@@ -95,15 +94,30 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
                     <a
                       href={`https://${
                         network === "testnet" ? "testnet." : ""
-                      }starkscan.co/tx/${tx.data?.transaction_hash}`}
+                      }starkscan.co/tx/${
+                        tx.data?.transaction_hash
+                          ? tx.data?.transaction_hash
+                          : (tx.data as any)?.transaction
+                          ? (tx.data as any)?.transaction?.transaction_hash
+                          : null
+                      }`}
                       className={styles.tx_hash}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {tx.data?.transaction_hash?.slice(0, 20) + "..."}
+                      {/* TODO: transaction_hash currently does not have the same location depending on the wallet used to make the tx */}
+                      {tx.data?.transaction_hash
+                        ? tx.data?.transaction_hash?.slice(0, 20) + "..."
+                        : (tx.data as any)?.transaction
+                        ? (tx.data as any)?.transaction?.transaction_hash.slice(
+                            0,
+                            20
+                          ) + "..."
+                        : null}
                     </a>
                     <div>
-                      {tx.data &&
+                      {tx.status === "success" &&
+                        tx.data &&
                         (tx.data as CommonTransactionReceiptResponse).status}
                     </div>
                   </div>
