@@ -7,6 +7,7 @@ import { ThreeDots } from "react-loader-spinner";
 import IdentityWarnings from "../../components/identities/identityWarnings";
 import IdentityCard from "../../components/identities/identityCard";
 import IdentityActions from "../../components/identities/actions/identityActions";
+import theme from "../../styles/theme";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -39,7 +40,7 @@ const TokenIdPage: NextPage = () => {
             setIdentity(data);
             setIsIdentityADomain(true);
           })
-          .catch((_) => {
+          .catch(() => {
             setIsIdentityADomain(false);
           });
       refreshData();
@@ -58,7 +59,7 @@ const TokenIdPage: NextPage = () => {
                 height="25"
                 width="80"
                 radius="9"
-                color="#19AA6E"
+                color={theme.palette.primary.main}
                 ariaLabel="three-dots-loading"
                 visible={true}
               />
