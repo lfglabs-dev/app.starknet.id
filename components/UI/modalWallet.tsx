@@ -100,38 +100,17 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
                     <a
                       href={`https://${
                         network === "testnet" ? "testnet." : ""
-                      }starkscan.co/tx/${
-                        tx.data?.transaction_hash
-                          ? tx.data?.transaction_hash
-                          : (tx.data as any)?.transaction
-                          ? (tx.data as any)?.transaction?.transaction_hash
-                          : null
-                      }`}
+                      }starkscan.co/tx/${tx.data?.transaction_hash}`}
                       className={styles.tx_hash}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {/* TODO: transaction_hash currently does not have the same location depending on the wallet used to make the tx */}
-                      {tx.data?.transaction_hash
-                        ? tx.data?.transaction_hash?.slice(0, 6) +
-                          "..." +
-                          tx.data?.transaction_hash?.slice(
-                            tx.data?.transaction_hash.length - 6,
-                            tx.data?.transaction_hash.length
-                          )
-                        : (tx.data as any)?.transaction
-                        ? (tx.data as any)?.transaction?.transaction_hash.slice(
-                            0,
-                            6
-                          ) +
-                          "..." +
-                          (tx.data as any)?.transaction?.transaction_hash.slice(
-                            (tx.data as any)?.transaction?.transaction_hash
-                              .length - 6,
-                            (tx.data as any)?.transaction?.transaction_hash
-                              .length
-                          )
-                        : null}
+                      {tx.data?.transaction_hash?.slice(0, 6) +
+                        "..." +
+                        tx.data?.transaction_hash?.slice(
+                          tx.data?.transaction_hash.length - 6,
+                          tx.data?.transaction_hash.length
+                        )}
                     </a>
                     <div>
                       {tx.status === "success" &&
