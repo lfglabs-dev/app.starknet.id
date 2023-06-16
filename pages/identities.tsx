@@ -5,15 +5,11 @@ import {
   useAccount,
   useContractWrite,
   useTransactionManager,
-  useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
 import MintIdentity from "../components/identities/mintIdentity";
 import { useRouter } from "next/router";
-import LoadingScreen from "../components/UI/screens/loadingScreen";
-import ErrorScreen from "../components/UI/screens/errorScreen";
-import SuccessScreen from "../components/UI/screens/successScreen";
 import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
 
@@ -25,7 +21,6 @@ const Identities: NextPage = () => {
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
   const { addTransaction } = useTransactionManager();
-  const [screen, setScreen] = useState<ScreenState>("mint");
 
   //Mint
   const callData = {
@@ -36,26 +31,6 @@ const Identities: NextPage = () => {
   const { writeAsync: execute, data: mintData } = useContractWrite({
     calls: callData,
   });
-
-  const { data: transactionData, isError } = useWaitForTransaction({
-    hash: mintData?.transaction_hash,
-    watch: true,
-  });
-
-  useEffect(() => {
-    if (isError) {
-      setScreen("error");
-    } else if (transactionData?.status === "RECEIVED") {
-      addTransaction({ hash: mintData?.transaction_hash ?? "" });
-      setScreen("loading");
-    } else if (
-      transactionData?.status === "PENDING" ||
-      transactionData?.status === "ACCEPTED_ON_L2" ||
-      transactionData?.status === "ACCEPTED_ON_L1"
-    ) {
-      setScreen("success");
-    }
-  }, [isError, transactionData]);
 
   useEffect(() => {
     if (account) {
@@ -93,6 +68,11 @@ const Identities: NextPage = () => {
     //   });
   }, [account, router.asPath]);
 
+  useEffect(() => {
+    if (!mintData?.transaction_hash) return;
+    addTransaction({ hash: mintData?.transaction_hash });
+  }, [mintData]);
+
   function mint() {
     execute();
   }
@@ -105,44 +85,19 @@ const Identities: NextPage = () => {
       <div className="secondLeavesGroup">
         <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
       </div>
-      <div
-        className={
-          screen === "mint" ? styles.container : styles.containerScreen
-        }
-      >
-        {screen === "mint" ? (
-          <>
-            <h1 className="title">Your Starknet identities</h1>
-            <div className={styles.containerGallery}>
-              {loading ? (
-                <IdentitiesSkeleton />
-              ) : (
-                <IdentitiesGallery
-                  identities={ownedIdentities}
-                  externalDomains={externalDomains}
-                />
-              )}
-              <MintIdentity onClick={() => mint()} />
-            </div>
-          </>
-        ) : (
-          <>
-            {screen === "loading" && <LoadingScreen />}
-            {screen === "error" && (
-              <ErrorScreen
-                onClick={() => router.reload()}
-                buttonText="Retry to mint"
-              />
-            )}
-            {screen == "success" && (
-              <SuccessScreen
-                onClick={() => router.push(`/`)}
-                buttonText="Get a domain to your identity"
-                successMessage="Congrats, your starknet identity is minted !"
-              />
-            )}
-          </>
-        )}
+      <div className={styles.container}>
+        <h1 className="title">Your Starknet identities</h1>
+        <div className={styles.containerGallery}>
+          {loading ? (
+            <IdentitiesSkeleton />
+          ) : (
+            <IdentitiesGallery
+              identities={ownedIdentities}
+              externalDomains={externalDomains}
+            />
+          )}
+          <MintIdentity onClick={() => mint()} />
+        </div>
       </div>
     </div>
   );
