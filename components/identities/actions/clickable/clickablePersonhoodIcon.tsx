@@ -11,6 +11,11 @@ import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 import "@anima-protocol/personhood-sdk-react/style.css";
 import { Personhood } from "@anima-protocol/personhood-sdk-react";
 import AnimaIcon from "../../../UI/iconsComponents/icons/animaIcon";
+import {
+  useAccount,
+  useSignTypedData,
+  useStarknet,
+} from "@starknet-react/core";
 
 type ClickableGithubIconProps = {
   width: string;
@@ -25,11 +30,16 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
   isOwner,
   domain,
 }) => {
+  const { account } = useAccount();
+  const { library } = useStarknet();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [provider, setProvider] = useState<any>();
   const [address, setAddress] = useState<string | undefined>();
   const [sessionId, setSessionId] = useState<string | undefined>();
   const [isVerified, setIsVerified] = useState<boolean>(false);
+
+  const [payload, setPayload] = useState<any>({});
+  const { data, signTypedData } = useSignTypedData(payload);
 
   useEffect(() => {
     starknetIdNavigator
@@ -41,6 +51,7 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
           setIsVerified(true);
         } else {
           initAnimaSession();
+          // setSessionId("bebb9556-b3a2-4248-8c6d-081c55b1ea4a");
         }
       })
       .catch(() => {
@@ -59,7 +70,8 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
   const sign = useCallback(
     (payload: string | object) => {
       console.log("payload", payload);
-      return provider.account.signMessage(payload);
+      // return provider.account.signMessage(payload);
+      return account?.signMessage(payload as any);
     },
     [provider]
   );
