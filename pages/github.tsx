@@ -45,7 +45,10 @@ const Github: NextPage = () => {
 
   useEffect(() => {
     if (!signRequestData) return;
-    if (signRequestData.status === "error") setScreen("error");
+    if (signRequestData.status === "error") {
+      setScreen("error");
+      return;
+    }
 
     setCalls({
       contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
@@ -167,7 +170,7 @@ const Github: NextPage = () => {
           {errorScreen && (
             <ErrorScreen
               onClick={() => router.push(`/identities/${tokenId}`)}
-              buttonText="Retry to connect"
+              buttonText="Retry to verify"
             />
           )}
           {screen === "success" && (
