@@ -126,7 +126,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
           <div className={styles2.cardCenter}>
             <p className="text">
               Price :&nbsp;
-              <span className="font-semibold text-brown">
+              <span className="font-semibold text-secondary">
                 {Math.round(Number(price) * 0.000000000000000001 * 10000) /
                   10000}
                 &nbsp; ETH

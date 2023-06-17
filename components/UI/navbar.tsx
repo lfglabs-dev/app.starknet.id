@@ -12,11 +12,12 @@ import {
   useTransactions,
 } from "@starknet-react/core";
 import Wallets from "./wallets";
-import LogoutIcon from "@mui/icons-material/Logout";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SelectNetwork from "./selectNetwork";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { CircularProgress } from "@mui/material";
+import ModalWallet from "./modalWallet";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
@@ -34,6 +35,7 @@ const Navbar: FunctionComponent = () => {
   const [txLoading, setTxLoading] = useState<number>(0);
   const { hashes } = useTransactionManager();
   const transactions = useTransactions({ hashes, watch: true });
+  const [showWallet, setShowWallet] = useState<boolean>(false);
 
   // TODO: Check for starknet react fix and delete that code
   useEffect(() => {
@@ -90,6 +92,7 @@ const Navbar: FunctionComponent = () => {
     setIsConnected(false);
     setIsWrongNetwork(false);
     setHasWallet(false);
+    setShowWallet(false);
   }
 
   function handleNav(): void {
@@ -108,7 +111,8 @@ const Navbar: FunctionComponent = () => {
         setHasWallet(true);
       }
     } else {
-      disconnectByClick();
+      // disconnectByClick();
+      setShowWallet(true);
     }
   }
 
@@ -150,11 +154,11 @@ const Navbar: FunctionComponent = () => {
                 </li>
               </Link>
               <SelectNetwork network={network} />
-              <div className="text-beige mr-5">
+              <div className="text-background mr-5">
                 <Button
                   onClick={
                     isConnected
-                      ? () => disconnectByClick()
+                      ? () => setShowWallet(true)
                       : available.length === 1
                       ? () => connect(available[0])
                       : () => setHasWallet(true)
@@ -175,7 +179,7 @@ const Navbar: FunctionComponent = () => {
                       ) : (
                         <div className="flex justify-center items-center">
                           <p className="mr-3">{domainOrAddress}</p>
-                          <LogoutIcon />
+                          <AccountCircleIcon />
                         </div>
                       )}
                     </>
@@ -225,7 +229,7 @@ const Navbar: FunctionComponent = () => {
                   <AiOutlineClose color={brown} />
                 </div>
               </div>
-              <div className="border-b border-soft-brown-300 my-4">
+              <div className="border-b border-tertiary-300 my-4">
                 <p className="w-[85%] lg:w-[90%] py-4 text-babe-blue">
                   Own your on-chain identity
                 </p>
@@ -270,7 +274,7 @@ const Navbar: FunctionComponent = () => {
                     <FaTwitter size={20} color={green} />
                   </Link>
                 </div>
-                <div className="text-beige">
+                <div className="text-background">
                   <Button onClick={onTopButtonClick}>{topButtonText()}</Button>
                 </div>
               </div>
@@ -295,6 +299,13 @@ const Navbar: FunctionComponent = () => {
             </div>
           </div>
         }
+      />
+      <ModalWallet
+        domain={domainOrAddress}
+        open={showWallet}
+        closeModal={() => setShowWallet(false)}
+        disconnectByClick={disconnectByClick}
+        transactions={transactions}
       />
       <Wallets
         closeWallet={() => setHasWallet(false)}

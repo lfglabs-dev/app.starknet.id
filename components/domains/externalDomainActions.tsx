@@ -4,6 +4,8 @@ import { useAccount, useContractWrite } from "@starknet-react/core";
 import styles from "../../styles/components/identityMenu.module.css";
 import { utils } from "starknetid.js";
 import ClickableAction from "../UI/iconsComponents/clickableAction";
+import MainIcon from "../UI/iconsComponents/icons/mainIcon";
+import theme from "../../styles/theme";
 
 type ExternalDomainActionsProps = {
   domain: string;
@@ -54,7 +56,13 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
             <ClickableAction
               title="Set as main domain"
               description="Set this domain as your main domain"
-              icon="main"
+              icon={
+                <MainIcon
+                  width="25"
+                  firstColor={theme.palette.secondary.main}
+                  secondColor={theme.palette.secondary.main}
+                />
+              }
               onClick={() => setAddressToDomain()}
             />
           </div>
