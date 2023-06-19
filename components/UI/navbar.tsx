@@ -124,7 +124,7 @@ const Navbar: FunctionComponent = () => {
 
   return (
     <>
-      <div className={"fixed w-full z-[1] bg-beige"}>
+      <div className={"fixed w-full z-[1] bg-background"}>
         <div className={styles.navbarContainer}>
           <div className="ml-4">
             <Link href="/" className="cursor-pointer">
@@ -205,7 +205,7 @@ const Navbar: FunctionComponent = () => {
           <div
             className={
               nav
-                ? "fixed left-0 top-0 w-[75%] sm:w-[60%] lg:w-[45%] h-screen bg-beige p-10 ease-in duration-500 flex justify-between flex-col"
+                ? "fixed left-0 top-0 w-[75%] sm:w-[60%] lg:w-[45%] h-screen bg-background p-10 ease-in duration-500 flex justify-between flex-col"
                 : "fixed left-[-100%] top-0 p-10 ease-in h-screen flex justify-between flex-col"
             }
           >
@@ -230,12 +230,12 @@ const Navbar: FunctionComponent = () => {
                 </div>
               </div>
               <div className="border-b border-tertiary-300 my-4">
-                <p className="w-[85%] lg:w-[90%] py-4 text-babe-blue">
+                <p className="w-[85%] lg:w-[90%] py-4">
                   Own your on-chain identity
                 </p>
               </div>
               <div className="py-4 flex flex-col">
-                <ul className="uppercase text-babe-blue">
+                <ul className="uppercase">
                   <Link href="/identities">
                     <li
                       onClick={() => setNav(false)}
