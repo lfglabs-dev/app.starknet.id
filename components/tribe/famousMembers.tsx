@@ -18,10 +18,10 @@ const FamousMembers: FunctionComponent = () => {
 
   return (
     <div className={styles.tribeMembersContainer + " " + styles.famous}>
-      {famousTribeMembers.length === 0 ? (
+      {famousTribeMembers?.data?.length === 0 ? (
         <MembersSkeleton />
       ) : (
-        famousTribeMembers?.map((member, index) => (
+        famousTribeMembers?.data.map((member, index) => (
           <div key={"famousUser_" + index}>
             <Member member={member} />
           </div>

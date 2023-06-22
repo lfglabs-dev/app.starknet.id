@@ -9,7 +9,7 @@ async function fetchTwitterData() {
       ","
     )}&user.fields=profile_image_url,description,public_metrics`,
     headers: {
-      Authorization: `Bearer ${process.env.TWITTER__TOKEN}}`,
+      Authorization: `Bearer ${process.env.TWITTER__TOKEN}`,
     },
   };
 
@@ -25,7 +25,7 @@ async function fetchTwitterData() {
 async function handler() {
   const twitterData = await fetchTwitterData();
   fs.writeFileSync(
-    "output.json",
+    "./public/tribe/famousTribeMembers.json",
     JSON.stringify(twitterData, null, 2),
     (err) => {
       if (err) throw err;

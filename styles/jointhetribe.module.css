@@ -73,8 +73,7 @@
 .sbtContainer,
 .centeredContainer {
   display: flex;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+  margin-top: 0.5rem;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
@@ -194,7 +193,7 @@
 
 .sbtImageContainer {
   max-width: 300px;
-  margin: 1rem;
+  margin-top: 1rem;
 }
 
 .sbtImage {
