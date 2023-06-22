@@ -19,6 +19,13 @@ import { utils } from "starknetid.js";
 import AutoRenewalModal from "./autoRenewalModal";
 import { useRenewalContract } from "../../../hooks/contracts";
 import { Abi } from "starknet";
+import theme from "../../../styles/theme";
+import AspectIcon from "../../UI/iconsComponents/icons/aspectIcon";
+import MainIcon from "../../UI/iconsComponents/icons/mainIcon";
+import AddressIcon from "../../UI/iconsComponents/icons/addressIcon";
+import ChangeIcon from "../../UI/iconsComponents/icons/changeIcon";
+import TransferIcon from "../../UI/iconsComponents/icons/transferIcon";
+import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -47,7 +54,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
   // AutoRenewals
   const [isAutoRenewalOpen, setIsAutoRenewalOpen] = useState<boolean>(false);
-  const [hasAutoRenewalEnabled, setHasAutoRenewalEnabled] =
+  const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const { contract: renewalContract } = useRenewalContract();
 
@@ -121,11 +128,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   }, [address, tokenId]);
 
   useEffect(() => {
-    if (renewError || !renewData) setHasAutoRenewalEnabled(false);
+    if (renewError || !renewData) setIsAutoRenewalEnabled(false);
     else {
-      if (Number(renewData?.["res"])) setHasAutoRenewalEnabled(true);
+      if (Number(renewData?.["res"])) setIsAutoRenewalEnabled(true);
     }
   }, [tokenId, renewData, renewError]);
+
+  useEffect(() => {
+    if (!mainDomainData?.transaction_hash) return;
+    addTransaction({ hash: mainDomainData?.transaction_hash ?? "" });
+  }, [mainDomainData]);
 
   if (!isIdentityADomain) {
     hideActionsHandler(true);
@@ -143,19 +155,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             {identity && !isOwner && isIdentityADomain && (
               <>
                 <ClickableAction
-                  title="View on Mintsquare"
-                  icon="mintsquare"
-                  description="Check this identity on Mintsquare"
-                  onClick={() =>
-                    window.open(
-                      `https://mintsquare.io/asset/starknet/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
-                    )
-                  }
-                />
-
-                <ClickableAction
                   title="View on Aspect"
-                  icon="aspect"
+                  icon={
+                    <AspectIcon
+                      width="25"
+                      color={theme.palette.secondary.main}
+                    />
+                  }
                   description="Check this identity on Aspect"
                   onClick={() =>
                     window.open(
@@ -167,14 +173,17 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             )}
             {identity && isOwner && (
               <div className="flex flex-col items-center justify-center">
-                {callDataEncodedDomain[0] === 1 ? (
+                {callDataEncodedDomain[0] === 1 && !isAutoRenewalEnabled ? (
                   <ClickableAction
-                    title={`${
-                      hasAutoRenewalEnabled ? "DISABLE" : "ENABLE"
-                    } AUTO RENEWAL`}
+                    title="ENABLE AUTO RENEWAL"
                     style="primary"
-                    description="Don't lose your domain!"
-                    icon="change"
+                    description="Don't loose your domain!"
+                    icon={
+                      <ChangeIcon
+                        width="25"
+                        color={theme.palette.primary.main}
+                      />
+                    }
                     onClick={() => setIsAutoRenewalOpen(true)}
                   />
                 ) : null}
@@ -184,7 +193,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     description={`Expires on ${timestampToReadableDate(
                       identity?.domain_expiry ?? 0
                     )}`}
-                    icon="change"
+                    icon={
+                      <ChangeIcon
+                        width="25"
+                        color={theme.palette.secondary.main}
+                      />
+                    }
                     onClick={() => setIsRenewFormOpen(true)}
                   />
                 ) : null}
@@ -192,14 +206,25 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   <ClickableAction
                     title="Set as main domain"
                     description="Set this domain as your main domain"
-                    icon="main"
+                    icon={
+                      <MainIcon
+                        width="25"
+                        firstColor={theme.palette.secondary.main}
+                        secondColor={theme.palette.secondary.main}
+                      />
+                    }
                     onClick={() => setAddressToDomain()}
                   />
                 )}
                 <ClickableAction
                   title="CHANGE THE TARGET"
                   description="Change the current target address"
-                  icon="address"
+                  icon={
+                    <AddressIcon
+                      width="25"
+                      color={theme.palette.secondary.main}
+                    />
+                  }
                   onClick={() => setIsAddressFormOpen(true)}
                 />
 
@@ -208,15 +233,40 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     <ClickableAction
                       title="MOVE YOUR IDENTITY"
                       description="Move your identity to another wallet"
-                      icon="transfer"
+                      icon={
+                        <TransferIcon
+                          width="25"
+                          color={theme.palette.secondary.main}
+                        />
+                      }
                       onClick={() => setIsTransferFormOpen(true)}
                     />
                     <ClickableAction
                       title="CREATE A SUBDOMAIN"
                       description="Create a new subdomain"
-                      icon="plus"
+                      icon={
+                        <PlusIcon
+                          width="25"
+                          color={theme.palette.secondary.main}
+                        />
+                      }
                       onClick={() => setIsSubdomainFormOpen(true)}
                     />
+                    {callDataEncodedDomain[0] === 1 && isAutoRenewalEnabled ? (
+                      <ClickableAction
+                        title="DISABLED AUTO RENEWAL"
+                        style="primary"
+                        description="You'll loose your if you don't renew it"
+                        icon={
+                          <ChangeIcon
+                            width="25"
+                            color={theme.palette.primary.main}
+                          />
+                        }
+                        onClick={() => setIsAutoRenewalOpen(true)}
+                      />
+                    ) : null}
+
                     <p
                       onClick={() => setViewMoreClicked(false)}
                       className={styles.viewMore}
@@ -266,7 +316,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             isModalOpen={isAutoRenewalOpen}
             callDataEncodedDomain={callDataEncodedDomain}
             identity={identity}
-            isEnabled={hasAutoRenewalEnabled}
+            isEnabled={isAutoRenewalEnabled}
           />
         </>
       )}

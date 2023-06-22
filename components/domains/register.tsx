@@ -372,7 +372,9 @@ const Register: FunctionComponent<RegisterProps> = ({
               <p className="ml-2">Enable auto-renewal</p>
             </div>
           </div>
-          <div className="text-beige m-1 mt-3">
+        </div>
+        <div className="w-full">
+          <div className="text-background m-1 mt-5">
             <Button
               onClick={() =>
                 execute().then(() =>

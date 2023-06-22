@@ -11,6 +11,7 @@ import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
+import theme from "../../../../styles/theme";
 
 type ClickableGithubIconProps = {
   width: string;
@@ -78,7 +79,7 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
       >
         {githubUsername ? (
           <div className={styles.verifiedIcon}>
-            <VerifiedIcon width={width} color={"green"} />
+            <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
           </div>
         ) : null}
         <GithubIcon width={width} color={"white"} />

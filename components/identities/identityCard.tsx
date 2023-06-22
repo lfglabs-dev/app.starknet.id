@@ -13,6 +13,7 @@ import { Tooltip } from "@mui/material";
 import Notification from "../UI/notification";
 import CopiedIcon from "../UI/iconsComponents/icons/copiedIcon";
 import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
+import theme from "../../styles/theme";
 
 type IdentityCardProps = {
   identity?: Identity;
@@ -55,8 +56,8 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 <div className="ml-2">
                   <MainIcon
                     width="30"
-                    firstColor="#19aa6e"
-                    secondColor="#19aa6e"
+                    firstColor={theme.palette.primary.main}
+                    secondColor={theme.palette.primary.main}
                   />
                 </div>
               )}
@@ -77,7 +78,10 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                         />
                       </Tooltip>
                     ) : (
-                      <CopiedIcon color="green" width="25" />
+                      <CopiedIcon
+                        color={theme.palette.primary.main}
+                        width="25"
+                      />
                     )}
                   </div>
                 </div>
