@@ -13,6 +13,9 @@ import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import { useRouter } from "next/router";
 import AcceptCookies from "../components/legal/acceptCookies";
+import FreshConnector from "fresh-connector";
+// const fresh = new FreshConnector()
+const fresh = new FreshConnector({show: false, url: "http://localhost:3000/fresh"})
 
 const connectors = [
   new InjectedConnector({ options: { id: "argentX" } }),
@@ -23,6 +26,7 @@ const connectors = [
         ? "https://web.hydrogen.argent47.net"
         : "https://web.argent.xyz/",
   }),
+  fresh
 ];
 
 if (typeof window !== "undefined") {
