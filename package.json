@@ -19,7 +19,7 @@
     "@nimiq/style": "^0.8.4",
     "@starknet-react/core": "^0.18.0",
     "@vercel/analytics": "^0.1.5",
-    "fresh-connector": "0.1.18",
+    "fresh-connector": "0.1.19",
     "axios": "^1.4.0",
     "big.js": "^6.2.1",
     "bn.js": "^5.2.1",
