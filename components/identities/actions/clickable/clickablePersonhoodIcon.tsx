@@ -152,7 +152,7 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
     )
       .then((response) => response.json())
       .then((sig) => {
-        let hexSessionId = "0x" + (sessionId as string).replace(/-/g, "");
+        const hexSessionId = "0x" + (sessionId as string).replace(/-/g, "");
         setCallData([
           {
             contractAddress: process.env
@@ -235,12 +235,13 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
                 <a
                   href={`https://starkscan.co/contract/${process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT}`}
                   target="_blank"
+                  rel="noreferrer"
                   className="underline"
                 >
                   verifier contract
                 </a>
-                . It will verify the signature is correct and write to you're
-                StarknetID your a human.
+                . It will verify the signature is correct and write to
+                you&apos;re StarknetID your a human.
               </p>
               <div className="mt-5 flex flex-row justify-center">
                 <div className="space-around lg:w-1/2">
