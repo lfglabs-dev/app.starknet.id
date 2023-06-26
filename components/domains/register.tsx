@@ -309,13 +309,13 @@ const Register: FunctionComponent<RegisterProps> = ({
         <div className={styles.cardCenter}>
           <p className="text">
             Price:&nbsp;
-            <span className="font-semibold text-brown">
+            <span className="font-semibold text-secondary">
               {gweiToEth(price)}&nbsp;ETH
             </span>
           </p>
         </div>
         <div className="w-full">
-          <div className="text-beige m-1 mt-5">
+          <div className="text-background m-1 mt-5">
             <Button
               onClick={() =>
                 execute().then(() =>

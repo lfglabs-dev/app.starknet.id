@@ -128,7 +128,7 @@ const BraavosRegister: FunctionComponent<BraavosRegisterProps> = ({
       />
 
       <div className="flex justify-center content-center w-full">
-        <div className="text-beige m-1 mt-5 mb-5">
+        <div className="text-background m-1 mt-5 mb-5">
           <Button
             onClick={() =>
               execute().then(() => {

@@ -10,6 +10,7 @@ import TwitterIcon from "../../../UI/iconsComponents/icons/twitterIcon";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
+import theme from "../../../../styles/theme";
 
 type ClickableTwitterIconProps = {
   width: string;
@@ -61,13 +62,13 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
         className={styles.clickableIconTwitter}
         onClick={() =>
           startVerification(
-            `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=Rkp6QlJxQzUzbTZtRVljY2paS0k6MTpjaQ&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}/twitter&scope=users.read%20tweet.read&state=state&code_challenge=challenge&code_challenge_method=plain`
+            `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${process.env.NEXT_PUBLIC_TWITTER_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}/twitter&scope=users.read%20tweet.read&state=state&code_challenge=challenge&code_challenge_method=plain`
           )
         }
       >
         {twitterId ? (
           <div className={styles.verifiedIcon}>
-            <VerifiedIcon width={"18"} color={"green"} />
+            <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
           </div>
         ) : null}
         <TwitterIcon width={width} color={"white"} />

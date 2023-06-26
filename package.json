@@ -16,7 +16,7 @@
     "@mui/icons-material": "^5.8.4",
     "@mui/material": "^5.10.1",
     "@nimiq/style": "^0.8.4",
-    "@starknet-react/core": "^0.17.4",
+    "@starknet-react/core": "^0.18.0",
     "@vercel/analytics": "^0.1.5",
     "axios": "^1.4.0",
     "big.js": "^6.2.1",
