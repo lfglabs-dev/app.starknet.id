@@ -89,6 +89,7 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
       "Api-Key",
       process.env.NEXT_PUBLIC_ANIMA_API_KEY as string
     );
+    myHeaders.append("Content-Type", "application/json");
     const requestOptions = {
       method: "POST",
       headers: myHeaders,
