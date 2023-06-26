@@ -15,10 +15,13 @@ import {
   StarknetSignature,
 } from "@anima-protocol/personhood-sdk-react";
 import AnimaIcon from "../../../UI/iconsComponents/icons/animaIcon";
-import { Call, useAccount } from "@starknet-react/core";
-import { typedData } from "starknet";
+import { Call, useAccount, useTransactionManager } from "@starknet-react/core";
+import { shortString, typedData } from "starknet";
 import { useContractWrite } from "@starknet-react/core";
 import { hexToDecimal } from "../../../../utils/feltService";
+import { minifyDomain } from "../../../../utils/stringService";
+import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
+import theme from "../../../../styles/theme";
 
 type ClickableGithubIconProps = {
   width: string;
@@ -38,56 +41,49 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
   const [sessionId, setSessionId] = useState<string | undefined>();
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [callData, setCallData] = useState<Call[]>([]);
-  const { writeAsync: execute } = useContractWrite({
+  const { addTransaction } = useTransactionManager();
+  const { writeAsync: execute, data: verifierData } = useContractWrite({
     calls: callData,
   });
 
-  console.log("sessionId", sessionId);
-
   useEffect(() => {
     starknetIdNavigator
-      ?.getVerifierData(tokenId, "personhood")
+      ?.getVerifierData(
+        parseInt(tokenId),
+        "proof_of_personhood",
+        process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT
+      )
       .then((response) => {
-        console.log(
-          "fetched synapseId from contract",
-          response,
-          response.toString(10)
-        );
         if (response.toString(10) !== "0") {
           setIsVerified(true);
-          setCallData([]);
         }
       })
       .catch(() => {
         return;
       });
-  }, []);
+  }, [starknetIdNavigator]);
 
   useEffect(() => {
-    if (callData && callData.length > 0 && !isVerified) {
-      execute()
-        .then(() => {
-          // handleClose();
-          // todo: handle ongoing tx
-        })
-        .catch((error) => {
-          setCallData([]);
-        })
-        .finally(() => {
-          setCallData([]);
-          setIsVerified(true);
-        });
+    if (!verifierData?.transaction_hash) return;
+    addTransaction({ hash: verifierData?.transaction_hash });
+  }, [verifierData]);
+
+  useEffect(() => {
+    if (callData && callData.length > 0 && !isVerified && isLoading) {
+      executeVerification();
     }
-  }, [callData]);
+  }, [isLoading, callData]);
 
   const startVerification = () => {
-    initAnimaSession();
-    setIsOpen(true);
+    if (!isVerified) {
+      initAnimaSession();
+      setIsOpen(true);
+    }
   };
 
   const initAnimaSession = () => {
-    console.log("Initializing new anima session");
     const myHeaders = new Headers();
     myHeaders.append(
       "Api-Key",
@@ -101,7 +97,12 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
     fetch("https://api.pop.anima.io/v1/personhood/init", requestOptions)
       .then((response) => response.json())
       .then((result) => setSessionId(result.session_id))
-      .catch((error) => console.log("error", error));
+      .catch((error) =>
+        console.log(
+          "An error occured while initializing a new Anima session",
+          error
+        )
+      );
   };
 
   const sign = useCallback(
@@ -115,10 +116,23 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
 
   const onFinish = useCallback(
     (e: { info: any; state: any }) => {
+      setIsLoading(true);
       getSignature();
     },
     [sessionId]
   );
+
+  const executeVerification = () => {
+    execute()
+      .catch((err) => {
+        console.log("An error occurred while executing transaction", err);
+      })
+      .finally(() => {
+        setCallData([]);
+        setIsVerified(true);
+        setIsLoading(false);
+      });
+  };
 
   const getSignature = () => {
     const myHeaders = new Headers();
@@ -138,12 +152,7 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
     )
       .then((response) => response.json())
       .then((sig) => {
-        console.log("sessionId", sessionId);
         let hexSessionId = "0x" + (sessionId as string).replace(/-/g, "");
-        console.log("hexSessionId", hexSessionId);
-        let test_dec = hexToDecimal(hexSessionId);
-        console.log("test_dec", test_dec);
-        console.log("result sig", sig);
         setCallData([
           {
             contractAddress: process.env
@@ -152,7 +161,7 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
             calldata: [
               tokenId,
               Date.now(),
-              "2507652182239851557039540383923588823803457380",
+              shortString.encodeShortString("proof_of_personhood"),
               hexToDecimal(hexSessionId),
               sig.r,
               sig.s,
@@ -160,7 +169,9 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
           },
         ]);
       })
-      .catch((error) => console.log("error", error));
+      .catch((error) =>
+        console.log("An error occured while fetching signture", error)
+      );
   };
 
   const handleClose = () => {
@@ -168,18 +179,29 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
   };
 
   return isOwner ? (
-    address && account && !isVerified ? (
+    address && account ? (
       <>
-        {!isOpen ? (
-          <Tooltip title={`Start proof of personhood verification`} arrow>
-            <div
-              className={styles.clickableIconAnima}
-              onClick={startVerification}
-            >
-              <AnimaIcon width={width} color={"white"} />
-            </div>
-          </Tooltip>
-        ) : (
+        <Tooltip
+          title={
+            isVerified
+              ? `You're verified !`
+              : `Start proof of personhood verification`
+          }
+          arrow
+        >
+          <div
+            className={styles.clickableIconAnima}
+            onClick={startVerification}
+          >
+            {isVerified ? (
+              <div className={styles.verifiedIcon}>
+                <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
+              </div>
+            ) : null}
+            <AnimaIcon width={width} color={"white"} />
+          </div>
+        </Tooltip>
+        {isOpen && (
           <Modal
             disableAutoFocus
             disableEnforceFocus
@@ -238,9 +260,9 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
       </>
     ) : null
   ) : isVerified ? (
-    <Tooltip title={`You're a human verified!`} arrow>
+    <Tooltip title={`${minifyDomain(domain)} is verified`} arrow>
       <div className={styles.clickableIconAnima}>
-        <AnimaIcon width={width} color={"white"} />
+        <AnimaIcon width={width} color="white" />
       </div>
     </Tooltip>
   ) : null;
