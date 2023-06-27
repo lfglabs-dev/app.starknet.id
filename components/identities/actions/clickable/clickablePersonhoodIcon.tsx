@@ -218,7 +218,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
                 any Starknet app that you are human and you’ll get all the
                 benefit associated with it ! This process will only verify you
                 humanity and not your identity. Starknet ID or Anima don’t store
-                any data.
+                any biometric data.
               </p>
               <div className="mt-5 flex flex-row justify-center">
                 <div className="space-around lg:w-1/2">
