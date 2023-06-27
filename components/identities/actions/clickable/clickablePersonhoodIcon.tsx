@@ -120,6 +120,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
         setCallData([]);
         setIsVerified(true);
         setIsLoading(false);
+        setIsOpen(false);
       });
   };
 
