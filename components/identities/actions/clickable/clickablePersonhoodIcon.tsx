@@ -103,25 +103,18 @@ const ClickablePersonhoodIcon: FunctionComponent<
     [account]
   );
 
-  const onFinish = useCallback(
-    (e: { info: any; state: any }) => {
-      setIsLoading(true);
-      getSignature();
-    },
-    [sessionId]
-  );
+  const onFinish = useCallback(() => {
+    setIsLoading(true);
+    getSignature();
+  }, [sessionId]);
 
   const executeVerification = () => {
-    execute()
-      .catch((err) => {
-        console.log("An error occurred while executing transaction", err);
-      })
-      .finally(() => {
-        setCallData([]);
-        setIsVerified(true);
-        setIsLoading(false);
-        setIsOpen(false);
-      });
+    execute().finally(() => {
+      setCallData([]);
+      setIsVerified(true);
+      setIsLoading(false);
+      setIsOpen(false);
+    });
   };
 
   const getSignature = () => {
