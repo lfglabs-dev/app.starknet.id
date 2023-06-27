@@ -180,11 +180,11 @@ const ClickablePersonhoodIcon: FunctionComponent<
           <Modal
             disableAutoFocus
             disableEnforceFocus
-            disablePortal={true}
             open={isOpen}
             onClose={handleClose}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
+            sx={{ zIndex: 900 }}
           >
             <div className={modalStyles.menu}>
               <button className={modalStyles.menu_close} onClick={handleClose}>
