@@ -160,7 +160,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
         <Tooltip
           title={
             isVerified
-              ? `You're verified !`
+              ? `Your proof of personhood (the fact that you are not a robot) is verified !`
               : `Start proof of personhood verification`
           }
           arrow
