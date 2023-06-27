@@ -46,7 +46,10 @@ const JoinTheTribe: NextPage = () => {
         </div>
         <div className={styles.sbtContainer}>
           <div className={styles.sbtImageContainer}>
-            <img className={styles.sbtImage} src="/tribe/tribeShield.webp" />
+            <img
+              className={styles.sbtImage}
+              src="https://starknet.quest/starknetid/shield.webp"
+            />
             {/* <h5 className="text-center text-lg font-quickZap">
               Hunter NFT (level 1)
             </h5>
