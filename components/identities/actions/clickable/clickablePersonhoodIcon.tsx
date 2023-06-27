@@ -23,19 +23,16 @@ import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import theme from "../../../../styles/theme";
 
-type ClickableGithubIconProps = {
+type ClickablePersonhoodIconProps = {
   width: string;
   tokenId: string;
   isOwner: boolean;
   domain: string;
 };
 
-const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
-  width,
-  tokenId,
-  isOwner,
-  domain,
-}) => {
+const ClickablePersonhoodIcon: FunctionComponent<
+  ClickablePersonhoodIconProps
+> = ({ width, tokenId, isOwner, domain }) => {
   const { account, address } = useAccount();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [sessionId, setSessionId] = useState<string | undefined>();

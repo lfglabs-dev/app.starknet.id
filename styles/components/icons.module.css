@@ -23,11 +23,18 @@
 
 .clickableIconDiscord,
 .clickableIconGithub,
-.clickableIconTwitter, 
-.clickableIconAnima {
+.clickableIconTwitter {
   background-color: #55acee;
   border-radius: 25%;
   padding: 0.5rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.clickableIconAnima {
+  background-color: #55acee;
+  border-radius: 25%;
+  padding: 0.2rem;
   cursor: pointer;
   position: relative;
 }
