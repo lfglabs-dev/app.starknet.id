@@ -84,20 +84,11 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
   };
 
   const initAnimaSession = () => {
-    const myHeaders = new Headers();
-    myHeaders.append(
-      "Api-Key",
-      process.env.NEXT_PUBLIC_ANIMA_API_KEY as string
-    );
-    myHeaders.append("Content-Type", "application/json");
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-    };
-
-    fetch("https://api.pop.anima.io/v1/personhood/init", requestOptions)
+    fetch("/api/anima/init_session")
       .then((response) => response.json())
-      .then((result) => setSessionId(result.session_id))
+      .then((result) => {
+        if (result && result.session_id) setSessionId(result.session_id);
+      })
       .catch((error) =>
         console.log(
           "An error occured while initializing a new Anima session",
@@ -136,21 +127,7 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
   };
 
   const getSignature = () => {
-    const myHeaders = new Headers();
-    myHeaders.append(
-      "Api-Key",
-      process.env.NEXT_PUBLIC_ANIMA_API_KEY as string
-    );
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: JSON.stringify({ session_id: sessionId as string }),
-    };
-
-    fetch(
-      "https://api.pop.anima.io/v1/personhood/sign/starknet",
-      requestOptions
-    )
+    fetch(`/api/anima/get_signature?sessionId=${sessionId}`)
       .then((response) => response.json())
       .then((sig) => {
         const hexSessionId = "0x" + (sessionId as string).replace(/-/g, "");
@@ -227,22 +204,23 @@ const ClickablePersonhoodIcon: FunctionComponent<ClickableGithubIconProps> = ({
                 Start your proof of personhood verification
               </h2>
               <p className="mt-5 text-justify">
-                We use Anima.io to prove humanity and uniqueness. Anima is
-                privacy preserving, it does not collect any private data.
-              </p>
-              <p className="mt-3 text-justify">
-                Once you have completed the liveliness challenge, the signature
-                generated will be sent to a{" "}
+                Prove your humanity on your Starknet ID ! We use{" "}
                 <a
-                  href={`https://starkscan.co/contract/${process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT}`}
+                  href="https://anima.io/"
                   target="_blank"
                   rel="noreferrer"
                   className="underline"
                 >
-                  verifier contract
-                </a>
-                . It will verify the signature is correct and write to
-                you&apos;re StarknetID your a human.
+                  Anima
+                </a>{" "}
+                to verify that you are a human and not a bot.
+              </p>
+              <p className="mt-3 text-justify">
+                Once this verification is completed you’ll be able to show to
+                any Starknet app that you are human and you’ll get all the
+                benefit associated with it ! This process will only verify you
+                humanity and not your identity. Starknet ID or Anima don’t store
+                any data.
               </p>
               <div className="mt-5 flex flex-row justify-center">
                 <div className="space-around lg:w-1/2">
