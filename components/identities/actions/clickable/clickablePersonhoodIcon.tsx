@@ -202,7 +202,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
                 Start your proof of personhood verification
               </h2>
               <p className="mt-5 text-justify">
-                Prove your humanity on your Starknet ID ! We use{" "}
+                Verify your humanity on your Starknet ID ! We use{" "}
                 <a
                   href="https://anima.io/"
                   target="_blank"
@@ -211,14 +211,12 @@ const ClickablePersonhoodIcon: FunctionComponent<
                 >
                   Anima
                 </a>{" "}
-                to verify that you are a human and not a bot.
+                to prove that you are a human and not a robot.
               </p>
               <p className="mt-3 text-justify">
-                Once this verification is completed you’ll be able to show to
-                any Starknet app that you are human and you’ll get all the
-                benefit associated with it ! This process will only verify you
-                humanity and not your identity. Starknet ID or Anima don’t store
-                any data.
+                This process is not mandatory, it&apos;ll only verify your
+                humanity and not your identity (no documents needed). Starknet
+                ID and Anima don&apos;t store any biometric data.
               </p>
               <div className="mt-5 flex flex-row justify-center">
                 <div className="space-around lg:w-1/2">
