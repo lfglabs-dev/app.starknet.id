@@ -21,7 +21,7 @@ export default async function handler(
   fetch("https://api.pop.anima.io/v1/personhood/init", requestOptions)
     .then((response) => response.json())
     .then((result) => {
-      res.setHeader("cache-control", "max-age=30").status(200).json(result);
+      res.status(200).json(result);
     })
     .catch((error) => {
       console.log(
