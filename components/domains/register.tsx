@@ -18,6 +18,7 @@ import { gweiToEth, hexToDecimal } from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi } from "starknet";
+import { posthog } from "posthog-js";
 
 type RegisterProps = {
   domain: string;
@@ -255,6 +256,7 @@ const Register: FunctionComponent<RegisterProps> = ({
 
   useEffect(() => {
     if (!registerData?.transaction_hash) return;
+    posthog?.capture("register");
     addTransaction({ hash: registerData?.transaction_hash ?? "" });
   }, [registerData]);
 

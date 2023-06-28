@@ -11,6 +11,7 @@ import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 import theme from "../../../../styles/theme";
+import { posthog } from "posthog-js";
 
 type ClickableTwitterIconProps = {
   width: string;
@@ -45,6 +46,7 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
   }, [tokenId, domain]);
 
   function startVerification(link: string): void {
+    posthog?.capture("twitterVerificationStart");
     sessionStorage.setItem("tokenId", tokenId);
     router.push(link);
   }

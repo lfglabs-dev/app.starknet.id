@@ -12,6 +12,7 @@ import MintIdentity from "../components/identities/mintIdentity";
 import { useRouter } from "next/router";
 import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
+import { posthog } from "posthog-js";
 
 const Identities: NextPage = () => {
   const { account } = useAccount();
@@ -70,6 +71,7 @@ const Identities: NextPage = () => {
 
   useEffect(() => {
     if (!mintData?.transaction_hash) return;
+    posthog?.capture("mint");
     addTransaction({ hash: mintData?.transaction_hash });
   }, [mintData]);
 

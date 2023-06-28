@@ -10,6 +10,7 @@ import styles from "../../../styles/components/modalMessage.module.css";
 import { hexToDecimal } from "../../../utils/feltService";
 import { isHexString } from "../../../utils/stringService";
 import Button from "../../UI/button";
+import { posthog } from "posthog-js";
 
 type TransferFormModalProps = {
   handleClose: () => void;
@@ -57,6 +58,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
 
   useEffect(() => {
     if (!transferData?.transaction_hash) return;
+    posthog?.capture("transfer");
     addTransaction({ hash: transferData?.transaction_hash ?? "" });
     handleClose();
   }, [transferData]);

@@ -4,6 +4,7 @@ import {
   Call,
   useAccount,
   useContractWrite,
+  useTransactionManager,
   useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect } from "react";
@@ -14,6 +15,7 @@ import LoadingScreen from "../components/UI/screens/loadingScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
+import { posthog } from "posthog-js";
 
 export type Screen =
   | "verifyDiscord"
@@ -41,6 +43,7 @@ const Discord: NextPage = () => {
   const [signRequestData, setSignRequestData] = useState<
     SignRequestData | ErrorRequestData
   >();
+  const { addTransaction } = useTransactionManager();
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
@@ -135,6 +138,10 @@ const Discord: NextPage = () => {
         transactionData?.status !== "PENDING"
       ) {
         setScreen("loading");
+        posthog?.capture("discordVerificationTx");
+        addTransaction({
+          hash: discordVerificationData?.transaction_hash ?? "",
+        });
       } else if (transactionError) {
         setScreen("error");
       } else if (

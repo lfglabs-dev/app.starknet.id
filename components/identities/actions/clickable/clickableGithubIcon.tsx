@@ -12,6 +12,7 @@ import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 import theme from "../../../../styles/theme";
+import { posthog } from "posthog-js";
 
 type ClickableGithubIconProps = {
   width: string;
@@ -56,6 +57,7 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
   }, [githubId]);
 
   function startVerification(link: string): void {
+    posthog?.capture("githubVerificationStart");
     sessionStorage.setItem("tokenId", tokenId);
     router.push(link);
   }

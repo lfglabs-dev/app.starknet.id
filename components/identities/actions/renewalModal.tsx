@@ -12,6 +12,7 @@ import styles2 from "../../../styles/Home.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi } from "starknet";
+import { posthog } from "posthog-js";
 
 type RenewalModalProps = {
   handleClose: () => void;
@@ -69,6 +70,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
 
   useEffect(() => {
     if (!renewData?.transaction_hash) return;
+    posthog?.capture("renew");
     addTransaction({ hash: renewData?.transaction_hash ?? "" });
     handleClose();
   }, [renewData]);
