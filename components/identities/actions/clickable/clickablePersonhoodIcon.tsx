@@ -1,4 +1,4 @@
-import { Modal, Tooltip } from "@mui/material";
+import { Modal, Tooltip, CircularProgress } from "@mui/material";
 import React, {
   FunctionComponent,
   useCallback,
@@ -213,14 +213,30 @@ const ClickablePersonhoodIcon: FunctionComponent<
               </p>
               <div className="mt-5 flex flex-row justify-center">
                 <div className="space-around lg:w-1/2">
-                  <Personhood
-                    sessionId={sessionId as string}
-                    onFinish={onFinish}
-                    signCallback={sign}
-                    walletAddress={address}
-                    starknetChainId={account.chainId}
-                    chainType="STARKNET"
-                  />
+                  {sessionId ? (
+                    <Personhood
+                      sessionId={sessionId as string}
+                      onFinish={onFinish}
+                      signCallback={sign}
+                      walletAddress={address}
+                      starknetChainId={account.chainId}
+                      chainType="STARKNET"
+                    />
+                  ) : (
+                    <div className="pop-bg-primary-500 pop-p-4 pop-w-full pop-min-w-[210px] pop-whitespace-normal pop-text-white pop-rounded-xl">
+                      <div className="pop-flex pop-flex-row pop-items-center pop-justify-between">
+                        <p className="ml-10">Loading</p>
+                        <div className="flex justify-center items-center">
+                          <CircularProgress
+                            sx={{
+                              color: "white",
+                            }}
+                            size={25}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
