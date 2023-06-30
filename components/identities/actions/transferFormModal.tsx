@@ -1,4 +1,4 @@
-import { Modal, TextField } from "@mui/material";
+import { InputAdornment, Modal, TextField } from "@mui/material";
 import {
   useAccount,
   useContractWrite,
@@ -13,7 +13,7 @@ import React, {
 } from "react";
 import styles from "../../../styles/components/modalMessage.module.css";
 import { hexToDecimal } from "../../../utils/feltService";
-import { isHexString } from "../../../utils/stringService";
+import { isHexString, minifyAddress } from "../../../utils/stringService";
 import Button from "../../UI/button";
 import { utils } from "starknetid.js";
 import { StarknetIdJsContext } from "../../../context/StarknetIdJsProvider";
@@ -119,24 +119,26 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
             <span>{address}</span>
           </p>
         )}
-        {targetAddress && utils.isStarkDomain(addressInput) && (
-          <p className="break-all mt-5">
-            <strong>Target Address :</strong>&nbsp;
-            <span>{targetAddress}</span>
-          </p>
-        )}
         <div className="mt-5 flex flex-col justify-center">
           <div className="mt-5">
             <TextField
-              helperText="You need to copy paste a wallet address or .stark domain or it won't work"
+              label="To Address / SNS *"
+              id="outlined-end-adornment"
               fullWidth
-              label="new target address or .stark domain"
-              id="outlined-basic"
               value={addressInput}
               variant="outlined"
               onChange={(e) => changeAddress(e.target.value)}
               color="secondary"
               required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {targetAddress && utils.isStarkDomain(addressInput)
+                      ? "(" + minifyAddress(targetAddress) + ")"
+                      : ""}
+                  </InputAdornment>
+                ),
+              }}
             />
           </div>
           <div className="mt-5 flex justify-center">
