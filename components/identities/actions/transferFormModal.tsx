@@ -122,7 +122,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
         <div className="mt-5 flex flex-col justify-center">
           <div className="mt-5">
             <TextField
-              label="To Address / SNS *"
+              label="To Address / SNS"
               id="outlined-end-adornment"
               fullWidth
               value={addressInput}
