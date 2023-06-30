@@ -32,7 +32,6 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
     if (typeof isDomainValid === "boolean") {
       onChangeTypedValue?.(typedValue);
       router.push(`/search?domain=${typedValue}`);
-      posthog?.capture("Searched for a domain");
     }
   }
 
