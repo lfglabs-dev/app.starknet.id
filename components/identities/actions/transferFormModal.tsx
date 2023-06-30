@@ -78,6 +78,8 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
         if (!res || res === "0x0") setTargetAddress("");
         else setTargetAddress(res);
       });
+    } else {
+      setTargetAddress("");
     }
   }, [addressInput]);
 
