@@ -31,6 +31,14 @@
   position: relative;
 }
 
+.clickableIconAnima {
+  background-color: #55acee;
+  border-radius: 25%;
+  padding: 0.2rem;
+  cursor: pointer;
+  position: relative;
+}
+
 .verifiedIcon {
   position: absolute;
   top: -0.3rem;
@@ -47,4 +55,8 @@
 .button_icon {
   width: 24px;
   margin-right: 12px;
+}
+
+.clickableIconAnima {
+  background-color: #E5E5E5;
 }

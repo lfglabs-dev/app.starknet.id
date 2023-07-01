@@ -18,7 +18,9 @@ const JoinTheTribe: NextPage = () => {
         <h1 className="title">Join the tribe</h1>
         <div className={styles.centeredContainer}>
           <p className="mr-5">Wear the stark signal</p>
-          <TextCopy text={mainDomain ? mainDomain.domain : "yourname.stark"} />
+          <TextCopy
+            text={mainDomain.domain ? mainDomain.domain : "yourname.stark"}
+          />
         </div>
         <FamousMembers />
       </section>
@@ -39,42 +41,27 @@ const JoinTheTribe: NextPage = () => {
         <h1 className="title">Get your tribe NFT !</h1>
         <div className={styles.centeredContainer}>
           <p className="text-center">
-            Join the tribe to mint a special NFT depending on your domain !
-            <br></br>
+            Join the tribe to mint your free tribe shield NFT !
           </p>
         </div>
         <div className={styles.sbtContainer}>
           <div className={styles.sbtImageContainer}>
-            <img className={styles.sbtImage} src="/tribe/tribeLevel1.webp" />
-            <h5 className="text-center text-lg font-quickZap">
+            <img
+              className={styles.sbtImage}
+              src="https://starknet.quest/starknetid/shield.webp"
+            />
+            {/* <h5 className="text-center text-lg font-quickZap">
               Hunter NFT (level 1)
             </h5>
-            <p className="text-center text-sm">
-              Only for subdomain tribe members
-            </p>
-          </div>
-
-          <div className={styles.sbtImageContainer}>
-            <img className={styles.sbtImage} src="/tribe/tribeLevel2.webp" />
-            <h5 className="text-center text-lg font-quickZap">
-              Trapper NFT (level 2)
-            </h5>
-            <p className="text-center text-sm">
-              Only for root domain tribe members
-            </p>
-          </div>
-          <div className={styles.sbtImageContainer}>
-            <img className={styles.sbtImage} src="/tribe/tribeLevel3.webp" />
-            <h5 className="text-center text-lg font-quickZap">
-              Chef NFT (level 3)
-            </h5>
-            <p className="text-center text-sm">
-              Only for long term tribe members (domain registered for +3 years)
-            </p>
+            <p className="text-center text-sm">Only for tribe members</p> */}
           </div>
         </div>
         <div className="mw-1/2">
-          <Button onClick={() => window.open("https://starknet.quest")}>
+          <Button
+            onClick={() =>
+              window.open(`${process.env.NEXT_PUBLIC_STARKNET_QUEST}/quest/7`)
+            }
+          >
             JOIN THE TRIBE NOW
           </Button>
         </div>

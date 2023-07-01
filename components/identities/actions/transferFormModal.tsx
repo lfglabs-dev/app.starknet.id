@@ -1,15 +1,22 @@
-import { Modal, TextField } from "@mui/material";
+import { InputAdornment, Modal, TextField } from "@mui/material";
 import {
   useAccount,
   useContractWrite,
   useTransactionManager,
 } from "@starknet-react/core";
 import { useRouter } from "next/router";
-import React, { FunctionComponent, useState, useEffect } from "react";
+import React, {
+  FunctionComponent,
+  useState,
+  useEffect,
+  useContext,
+} from "react";
 import styles from "../../../styles/components/modalMessage.module.css";
 import { hexToDecimal } from "../../../utils/feltService";
-import { isHexString } from "../../../utils/stringService";
+import { isHexString, minifyAddress } from "../../../utils/stringService";
 import Button from "../../UI/button";
+import { utils } from "starknetid.js";
+import { StarknetIdJsContext } from "../../../context/StarknetIdJsProvider";
 
 type TransferFormModalProps = {
   handleClose: () => void;
@@ -30,6 +37,8 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   const { tokenId } = router.query;
   const numId = parseInt(tokenId as string);
   const { addTransaction } = useTransactionManager();
+  const [addressInput, setAddressInput] = useState<string>("");
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
 
   //set_domain_to_address execute
   const transfer_identity_and_set_domain_multicall = [
@@ -61,12 +70,25 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     handleClose();
   }, [transferData]);
 
+  useEffect(() => {
+    if (isHexString(addressInput)) {
+      setTargetAddress(addressInput);
+    } else if (utils.isStarkDomain(addressInput)) {
+      starknetIdNavigator?.getAddressFromStarkName(addressInput).then((res) => {
+        if (!res || res === "0x0") setTargetAddress("");
+        else setTargetAddress(res);
+      });
+    } else {
+      setTargetAddress("");
+    }
+  }, [addressInput]);
+
   function transferIdentityAndSetDomain(): void {
     transfer_identity_and_set_domain();
   }
 
   function changeAddress(value: string): void {
-    isHexString(value) ? setTargetAddress(value) : null;
+    setAddressInput(value);
   }
 
   return (
@@ -100,15 +122,23 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
         <div className="mt-5 flex flex-col justify-center">
           <div className="mt-5">
             <TextField
-              helperText="You need to copy paste a wallet address or it won't work"
+              label="To Address / SNS"
+              id="outlined-end-adornment"
               fullWidth
-              label="new target address"
-              id="outlined-basic"
-              value={targetAddress ?? address}
+              value={addressInput}
               variant="outlined"
               onChange={(e) => changeAddress(e.target.value)}
               color="secondary"
               required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {targetAddress && utils.isStarkDomain(addressInput)
+                      ? "(" + minifyAddress(targetAddress) + ")"
+                      : ""}
+                  </InputAdornment>
+                ),
+              }}
             />
           </div>
           <div className="mt-5 flex justify-center">
