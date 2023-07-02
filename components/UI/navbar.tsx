@@ -148,12 +148,9 @@ const Navbar: FunctionComponent = () => {
               {/* <Link href="/jointhetribe">
                 <li className={styles.menuItem}>Join the tribe</li>
               </Link> */}
-              <Link href="https://twitter.com/starknet_id">
-                <li className="ml-10 mr-5 text-sm uppercase cursor-pointer">
-                  <FaTwitter color={green} size={"30px"} />
-                </li>
-              </Link>
-              <SelectNetwork network={network} />
+              <div className="ml-10">
+                <SelectNetwork network={network} />
+              </div>
               <div className="text-background mr-5">
                 <Button
                   onClick={
