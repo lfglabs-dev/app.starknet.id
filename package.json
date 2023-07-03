@@ -1,5 +1,5 @@
 {
-  "name": "starknet-id-website",
+  "name": "starknet-id-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -22,6 +22,7 @@
     "big.js": "^6.2.1",
     "bn.js": "^5.2.1",
     "eslint-config-next": "^13.4.7",
+    "lottie-react": "^2.4.0",
     "mongodb": "^4.12.1",
     "next": "^13.4.7",
     "nextjs-cors": "^2.1.2",
