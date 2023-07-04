@@ -4,6 +4,7 @@ import {
   Call,
   useAccount,
   useContractWrite,
+  useTransactionManager,
   useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect } from "react";
@@ -15,6 +16,7 @@ import SuccessScreen from "../components/UI/screens/successScreen";
 import { Screen } from "./discord";
 import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
+import { posthog } from "posthog-js";
 
 type SignRequestData = {
   status: Status;
@@ -32,6 +34,7 @@ const Github: NextPage = () => {
   const [signRequestData, setSignRequestData] = useState<
     SignRequestData | ErrorRequestData
   >();
+  const { addTransaction } = useTransactionManager();
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
@@ -124,6 +127,10 @@ const Github: NextPage = () => {
         transactionData?.status !== "PENDING"
       ) {
         setScreen("loading");
+        posthog?.capture("githubVerificationTx");
+        addTransaction({
+          hash: githubVerificationData?.transaction_hash ?? "",
+        });
       } else if (transactionError) {
         setScreen("error");
       } else if (

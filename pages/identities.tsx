@@ -12,6 +12,7 @@ import MintIdentity from "../components/identities/mintIdentity";
 import { useRouter } from "next/router";
 import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
+import { posthog } from "posthog-js";
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
 
 const Identities: NextPage = () => {
@@ -72,6 +73,7 @@ const Identities: NextPage = () => {
 
   useEffect(() => {
     if (!mintData?.transaction_hash) return;
+    posthog?.capture("mint");
     addTransaction({ hash: mintData?.transaction_hash });
     setIsTxModalOpen(true);
   }, [mintData]);

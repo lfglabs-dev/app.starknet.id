@@ -22,6 +22,7 @@ import { hexToDecimal } from "../../../../utils/feltService";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import theme from "../../../../styles/theme";
+import { posthog } from "posthog-js";
 
 type ClickablePersonhoodIconProps = {
   width: string;
@@ -75,6 +76,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
 
   const startVerification = () => {
     if (!isVerified) {
+      posthog?.capture("popVerificationStart");
       initAnimaSession();
       setIsOpen(true);
     }
@@ -114,6 +116,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
       setIsVerified(true);
       setIsLoading(false);
       setIsOpen(false);
+      posthog?.capture("popVerificationTx");
     });
   };
 

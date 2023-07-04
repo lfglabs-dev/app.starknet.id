@@ -4,6 +4,7 @@ import {
   Call,
   useAccount,
   useContractWrite,
+  useTransactionManager,
   useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect } from "react";
@@ -15,6 +16,7 @@ import SuccessScreen from "../components/UI/screens/successScreen";
 import { Screen } from "./discord";
 import { NextPage } from "next";
 import { stringToHex } from "../utils/feltService";
+import { posthog } from "posthog-js";
 
 type SignRequestData = {
   status: Status;
@@ -32,6 +34,7 @@ const Twitter: NextPage = () => {
   const [signRequestData, setSignRequestData] = useState<
     SignRequestData | ErrorRequestData
   >();
+  const { addTransaction } = useTransactionManager();
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
@@ -126,6 +129,10 @@ const Twitter: NextPage = () => {
         transactionData?.status !== "PENDING"
       ) {
         setScreen("loading");
+        posthog?.capture("twitterVerificationTx");
+        addTransaction({
+          hash: twitterVerificationData?.transaction_hash ?? "",
+        });
       } else if (transactionError) {
         setScreen("error");
       } else if (

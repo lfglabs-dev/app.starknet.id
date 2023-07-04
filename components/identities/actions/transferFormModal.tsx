@@ -15,8 +15,10 @@ import styles from "../../../styles/components/modalMessage.module.css";
 import { hexToDecimal } from "../../../utils/feltService";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
 import Button from "../../UI/button";
+import { posthog } from "posthog-js";
 import { utils } from "starknetid.js";
 import { StarknetIdJsContext } from "../../../context/StarknetIdJsProvider";
+import ConfirmationTx from "../../UI/confirmationTx";
 
 type TransferFormModalProps = {
   handleClose: () => void;
@@ -39,6 +41,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   const { addTransaction } = useTransactionManager();
   const [addressInput, setAddressInput] = useState<string>("");
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
+  const [isTxSent, setIsTxSent] = useState(false);
 
   //set_domain_to_address execute
   const transfer_identity_and_set_domain_multicall = [
@@ -66,8 +69,9 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
 
   useEffect(() => {
     if (!transferData?.transaction_hash) return;
+    posthog?.capture("transfer");
     addTransaction({ hash: transferData?.transaction_hash ?? "" });
-    handleClose();
+    setIsTxSent(true);
   }, [transferData]);
 
   useEffect(() => {
@@ -99,58 +103,65 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <div className={styles.menu}>
-        <button className={styles.menu_close} onClick={handleClose}>
-          <svg viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
-        </button>
-        <h2 className={styles.menu_title}>
-          Move {domain} to a different address
-        </h2>
-        {address && (
-          <p className="break-all mt-5">
-            <strong>Current Address :</strong>&nbsp;
-            <span>{address}</span>
-          </p>
-        )}
-        <div className="mt-5 flex flex-col justify-center">
-          <div className="mt-5">
-            <TextField
-              label="To Address / SNS"
-              id="outlined-end-adornment"
-              fullWidth
-              value={addressInput}
-              variant="outlined"
-              onChange={(e) => changeAddress(e.target.value)}
-              color="secondary"
-              required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {targetAddress && utils.isStarkDomain(addressInput)
-                      ? "(" + minifyAddress(targetAddress) + ")"
-                      : ""}
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
-          <div className="mt-5 flex justify-center">
-            <Button
-              disabled={!targetAddress}
-              onClick={() => transferIdentityAndSetDomain()}
-            >
-              Send domain
-            </Button>
+      {isTxSent ? (
+        <ConfirmationTx
+          closeModal={handleClose}
+          txHash={transferData?.transaction_hash}
+        />
+      ) : (
+        <div className={styles.menu}>
+          <button className={styles.menu_close} onClick={handleClose}>
+            <svg viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+          <h2 className={styles.menu_title}>
+            Move {domain} to a different address
+          </h2>
+          {address && (
+            <p className="break-all mt-5">
+              <strong>Current Address :</strong>&nbsp;
+              <span>{address}</span>
+            </p>
+          )}
+          <div className="mt-5 flex flex-col justify-center">
+            <div className="mt-5">
+              <TextField
+                label="To Address / SNS"
+                id="outlined-end-adornment"
+                fullWidth
+                value={addressInput}
+                variant="outlined"
+                onChange={(e) => changeAddress(e.target.value)}
+                color="secondary"
+                required
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {targetAddress && utils.isStarkDomain(addressInput)
+                        ? "(" + minifyAddress(targetAddress) + ")"
+                        : ""}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
+            <div className="mt-5 flex justify-center">
+              <Button
+                disabled={!targetAddress}
+                onClick={() => transferIdentityAndSetDomain()}
+              >
+                Send domain
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </Modal>
   );
 };

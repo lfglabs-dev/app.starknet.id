@@ -22,6 +22,8 @@ import AddressIcon from "../../UI/iconsComponents/icons/addressIcon";
 import ChangeIcon from "../../UI/iconsComponents/icons/changeIcon";
 import TransferIcon from "../../UI/iconsComponents/icons/transferIcon";
 import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
+import { posthog } from "posthog-js";
+import TxConfirmationModal from "../../UI/txConfirmationModal";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -47,6 +49,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { addTransaction } = useTransactionManager();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
 
   // Add all subdomains to the parameters
@@ -110,7 +113,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   useEffect(() => {
     if (!mainDomainData?.transaction_hash) return;
+    posthog?.capture("setAsMainDomain");
     addTransaction({ hash: mainDomainData?.transaction_hash ?? "" });
+    setIsTxModalOpen(true);
   }, [mainDomainData]);
 
   if (!isIdentityADomain) {
@@ -222,7 +227,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   </>
                 ) : (
                   <p
-                    onClick={() => setViewMoreClicked(true)}
+                    onClick={() => {
+                      posthog?.capture("clickViewMore");
+                      setViewMoreClicked(true);
+                    }}
                     className={styles.viewMore}
                   >
                     View more
@@ -256,6 +264,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             isModalOpen={isSubdomainFormOpen}
             callDataEncodedDomain={callDataEncodedDomain}
             domain={identity?.domain}
+          />
+          <TxConfirmationModal
+            txHash={mainDomainData?.transaction_hash}
+            isTxModalOpen={isTxModalOpen}
+            closeModal={() => setIsTxModalOpen(false)}
+            title="Your Transaction is on it's way !"
           />
         </>
       )}
