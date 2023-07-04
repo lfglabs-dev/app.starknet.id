@@ -101,13 +101,16 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
         <p className={styles.menu_title}>Renew {identity?.domain}</p>
         <div className="mt-5 flex flex-col justify-center">
           {identity?.domain_expiry && (
-            <p className="break-all">
-              <strong>Expiry date :</strong>&nbsp;
-              <span>
+            <p>
+              The Expiry Data of {identity?.domain} is{" "}
+              <strong>
                 {timestampToReadableDate(identity?.domain_expiry ?? 0)}
-              </span>
+              </strong>
+              . If you don&apos;t renew your domain before the expiry date
+              someone else will be able to take it from you.
             </p>
           )}
+
           <div className="mt-5">
             <TextField
               fullWidth
