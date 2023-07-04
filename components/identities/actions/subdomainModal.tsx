@@ -14,6 +14,7 @@ import SelectDomain from "../../domains/selectDomains";
 import Button from "../../UI/button";
 import { utils } from "starknetid.js";
 import { posthog } from "posthog-js";
+import ConfirmationTx from "../../UI/confirmationTx";
 
 type SubdomainModalProps = {
   handleClose: () => void;
@@ -41,6 +42,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
     useContractWrite({
       calls: callData,
     });
+  const [isTxSent, setIsTxSent] = useState(false);
 
   function changeTokenId(value: number): void {
     setTargetTokenId(value);
@@ -112,7 +114,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
     if (!transferDomainData?.transaction_hash) return;
     posthog?.capture("changeAddress");
     addTransaction({ hash: transferDomainData?.transaction_hash ?? "" });
-    handleClose();
+    setIsTxSent(true);
   }, [transferDomainData]);
 
   return (
@@ -123,47 +125,57 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <div className={styles.menu}>
-        <button className={styles.menu_close} onClick={handleClose}>
-          <svg viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
-        </button>
-        <h2 className={styles.menu_title}>Create a subdomain of {domain}</h2>
-        <div className="mt-5 flex flex-col justify-center">
-          <TextField
-            fullWidth
-            id="outlined-basic"
-            label={
-              isDomainValid != true
-                ? `"${isDomainValid}" is not a valid character`
-                : "Subdomain"
-            }
-            placeholder="Subdomain"
-            variant="outlined"
-            onChange={(e) => changeSubdomain(e.target.value)}
-            color="secondary"
-            required
-            error={isDomainValid != true}
-          />
-          <SelectDomain tokenId={targetTokenId} changeTokenId={changeTokenId} />
-          <div className="mt-5 flex justify-center">
-            <Button
-              disabled={
-                Boolean(!subdomain) || typeof isDomainValid === "string"
+      {isTxSent ? (
+        <ConfirmationTx
+          closeModal={handleClose}
+          txHash={transferDomainData?.transaction_hash}
+        />
+      ) : (
+        <div className={styles.menu}>
+          <button className={styles.menu_close} onClick={handleClose}>
+            <svg viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+          <h2 className={styles.menu_title}>Create a subdomain of {domain}</h2>
+          <div className="mt-5 flex flex-col justify-center">
+            <TextField
+              fullWidth
+              id="outlined-basic"
+              label={
+                isDomainValid != true
+                  ? `"${isDomainValid}" is not a valid character`
+                  : "Subdomain"
               }
-              onClick={() => transfer_domain()}
-            >
-              Create subdomain
-            </Button>
+              placeholder="Subdomain"
+              variant="outlined"
+              onChange={(e) => changeSubdomain(e.target.value)}
+              color="secondary"
+              required
+              error={isDomainValid != true}
+            />
+            <SelectDomain
+              tokenId={targetTokenId}
+              changeTokenId={changeTokenId}
+            />
+            <div className="mt-5 flex justify-center">
+              <Button
+                disabled={
+                  Boolean(!subdomain) || typeof isDomainValid === "string"
+                }
+                onClick={() => transfer_domain()}
+              >
+                Create subdomain
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </Modal>
   );
 };

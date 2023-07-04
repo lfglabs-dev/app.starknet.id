@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import Navbar from "../components/UI/navbar";
@@ -11,7 +11,7 @@ import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import { useRouter } from "next/router";
-import Notification from "../components/UI/notification";
+import AcceptCookies from "../components/legal/acceptCookies";
 
 // Wallet Connectors
 const connectors = [
@@ -31,7 +31,6 @@ if (typeof window !== "undefined") {
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const [cookiesAccepted, setCookiesAccepted] = useState(true);
 
   useEffect(() => {
     // Track page views
@@ -41,11 +40,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     return () => {
       router.events.off("routeChangeComplete", handleRouteChange);
     };
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    setCookiesAccepted(localStorage.getItem("cookiesAccepted") === "true");
   }, []);
 
   return (
@@ -61,35 +55,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               />
             </Head>
             <Navbar />
-            <Notification visible={!cookiesAccepted} severity="info">
-              <div className="flex flex-wrap sm:gap-20 gap-5">
-                <p>
-                  We use cookies to ensure you get the best experience on our
-                  website
-                </p>{" "}
-                <div className="flex">
-                  <>
-                    <a
-                      className="hover:underline"
-                      href="https://www.starknet.id/pdfs/PrivacyPolicy.pdf"
-                      target="blank"
-                    >
-                      Privacy Policy
-                    </a>
-                  </>
-
-                  <strong
-                    className="ml-3 mr-1 cursor-pointer"
-                    onClick={() => {
-                      setCookiesAccepted(true);
-                      localStorage.setItem("cookiesAccepted", "true");
-                    }}
-                  >
-                    OK
-                  </strong>
-                </div>
-              </div>
-            </Notification>
+            <AcceptCookies message="We'd love to count you on our traffic stats to ensure you get the best experience on our website !" />
             <PostHogProvider client={posthog}>
               <Component {...pageProps} />
             </PostHogProvider>
