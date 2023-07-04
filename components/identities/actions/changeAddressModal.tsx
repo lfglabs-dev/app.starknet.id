@@ -5,7 +5,7 @@ import {
   useTransactionManager,
 } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { isHexString } from "../../../utils/stringService";
+import { isHexString, minifyAddress } from "../../../utils/stringService";
 import styles from "../../../styles/components/modalMessage.module.css";
 import Button from "../../UI/button";
 import { hexToDecimal, decimalToHex } from "../../../utils/feltService";
@@ -90,9 +90,13 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
             </p>
             <div className="mt-5 flex flex-col justify-center">
               {currentTargetAddress && (
-                <p className="break-all">
-                  <strong>Current Address :</strong>&nbsp;
-                  <span>{decimalToHex(currentTargetAddress)}</span>
+                <p>
+                  A stark domain resolves to a Starknet address, the current
+                  target address of {domain} is{" "}
+                  <strong>
+                    {minifyAddress(decimalToHex(currentTargetAddress))}
+                  </strong>
+                  . You can change it by using this form.
                 </p>
               )}
               <div className="mt-5">

@@ -143,6 +143,11 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             </svg>
           </button>
           <h2 className={styles.menu_title}>Create a subdomain of {domain}</h2>
+          <p className="mt-5">
+            As you own {domain} you can create a subdomain of it using this
+            form. This subdomain won&apos;t have any expiry date but the owner
+            of the parent domain will always be able to redeem it.
+          </p>
           <div className="mt-5 flex flex-col justify-center">
             <TextField
               fullWidth
