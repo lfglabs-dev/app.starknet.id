@@ -11,12 +11,11 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
-import LoadingScreen from "../components/UI/screens/loadingScreen";
-import SuccessScreen from "../components/UI/screens/successScreen";
 import { Screen } from "./discord";
 import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
 import { posthog } from "posthog-js";
+import TxConfirmationModal from "../components/UI/txConfirmationModal";
 
 type SignRequestData = {
   status: Status;
@@ -39,6 +38,7 @@ const Github: NextPage = () => {
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Call | undefined>();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   useEffect(() => {
     if (!tokenId) {
@@ -126,18 +126,13 @@ const Github: NextPage = () => {
         !transactionData?.status.includes("ACCEPTED") &&
         transactionData?.status !== "PENDING"
       ) {
-        setScreen("loading");
+        setIsTxModalOpen(true);
         posthog?.capture("githubVerificationTx");
         addTransaction({
           hash: githubVerificationData?.transaction_hash ?? "",
         });
       } else if (transactionError) {
         setScreen("error");
-      } else if (
-        transactionData?.status === "ACCEPTED_ON_L2" ||
-        transactionData?.status === "PENDING"
-      ) {
-        setScreen("success");
       }
     }
   }, [githubVerificationData, transactionData, transactionError]);
@@ -173,20 +168,21 @@ const Github: NextPage = () => {
                 </div>
               </>
             ))}
-          {screen === "loading" && <LoadingScreen />}
           {errorScreen && (
             <ErrorScreen
               onClick={() => router.push(`/identities/${tokenId}`)}
               buttonText="Retry to verify"
             />
           )}
-          {screen === "success" && (
-            <SuccessScreen
-              onClick={() => router.push(`/identities/${tokenId}`)}
-              buttonText="Get back to your starknet identity"
-              successMessage="Congrats, your github is verified !"
-            />
-          )}
+          <TxConfirmationModal
+            txHash={githubVerificationData?.transaction_hash}
+            isTxModalOpen={isTxModalOpen}
+            closeModal={() => {
+              setIsTxModalOpen(false);
+              router.push(`/identities/${tokenId}`);
+            }}
+            title="Your transaction is on it's way !"
+          />
         </div>
       </div>
     </div>
