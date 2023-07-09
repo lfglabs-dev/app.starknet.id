@@ -140,7 +140,7 @@ const Navbar: FunctionComponent = () => {
           <div>
             <ul className="hidden lg:flex uppercase items-center">
               <Link href="/identities">
-                <li className={styles.menuItem}>Identities</li>
+                <li className={styles.menuItem}>My Identities</li>
               </Link>
               <Link href="/">
                 <li className={styles.menuItem}>Domains</li>
@@ -238,7 +238,7 @@ const Navbar: FunctionComponent = () => {
                       onClick={() => setNav(false)}
                       className={styles.menuItemSmall}
                     >
-                      Identities
+                      My Identities
                     </li>
                   </Link>
                   <Link href="/">

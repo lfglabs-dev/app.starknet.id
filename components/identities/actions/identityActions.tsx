@@ -183,8 +183,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   />
                 )}
                 <ClickableAction
-                  title="CHANGE THE TARGET"
-                  description="Change the current target address"
+                  title="CHANGE DOMAIN TARGET"
+                  description="Change target address"
                   icon={
                     <AddressIcon
                       width="25"
@@ -197,7 +197,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 {viewMoreClicked ? (
                   <>
                     <ClickableAction
-                      title="MOVE YOUR IDENTITY"
+                      title="MOVE YOUR IDENTITY NFT"
                       description="Move your identity to another wallet"
                       icon={
                         <TransferIcon

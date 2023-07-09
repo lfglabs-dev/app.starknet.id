@@ -121,36 +121,33 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
             </svg>
           </button>
           <h2 className={styles.menu_title}>
-            Move {domain} to a different address
+            Transfer your identity NFT to a different wallet
           </h2>
-          {address && (
-            <p className="break-all mt-5">
-              <strong>Current Address :</strong>&nbsp;
-              <span>{address}</span>
-            </p>
-          )}
+          <p className="mt-5">
+            An Identity is an NFT that everyone can mint for free that permits
+            to link different types of data to it (Social Media, stark domain
+            ...). This form enables you to send this identity to another wallet.
+          </p>
           <div className="mt-5 flex flex-col justify-center">
-            <div className="mt-5">
-              <TextField
-                label="To Address / SNS"
-                id="outlined-end-adornment"
-                fullWidth
-                value={addressInput}
-                variant="outlined"
-                onChange={(e) => changeAddress(e.target.value)}
-                color="secondary"
-                required
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {targetAddress && utils.isStarkDomain(addressInput)
-                        ? "(" + minifyAddress(targetAddress) + ")"
-                        : ""}
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </div>
+            <TextField
+              label="To Address / SNS"
+              id="outlined-end-adornment"
+              fullWidth
+              value={addressInput}
+              variant="outlined"
+              onChange={(e) => changeAddress(e.target.value)}
+              color="secondary"
+              required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    {targetAddress && utils.isStarkDomain(addressInput)
+                      ? "(" + minifyAddress(targetAddress) + ")"
+                      : ""}
+                  </InputAdornment>
+                ),
+              }}
+            />
             <div className="mt-5 flex justify-center">
               <Button
                 disabled={!targetAddress}
