@@ -4,17 +4,18 @@ import { InputAdornment, TextField } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { FunctionComponent, KeyboardEvent, useState } from "react";
 import { useIsValid } from "../../hooks/naming";
+import { usePostHog } from "posthog-js/react";
 
 type SearchBarProps = {
   onChangeTypedValue?: (typedValue: string) => void;
 };
-
 const SearchBar: FunctionComponent<SearchBarProps> = ({
   onChangeTypedValue,
 }) => {
   const router = useRouter();
   const [typedValue, setTypedValue] = useState<string>("");
   const isDomainValid = useIsValid(typedValue);
+  const posthog = usePostHog();
 
   function handleChange(value: string) {
     setTypedValue(value.toLowerCase());
@@ -51,7 +52,9 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
       InputProps={{
         endAdornment: (
           <InputAdornment
-            onClick={() => search(typedValue)}
+            onClick={() => {
+              if (typedValue) search(typedValue);
+            }}
             className="cursor-pointer"
             position="end"
           >

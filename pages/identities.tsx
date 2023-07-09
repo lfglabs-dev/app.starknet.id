@@ -12,6 +12,8 @@ import MintIdentity from "../components/identities/mintIdentity";
 import { useRouter } from "next/router";
 import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
+import { posthog } from "posthog-js";
+import TxConfirmationModal from "../components/UI/txConfirmationModal";
 
 const Identities: NextPage = () => {
   const { account } = useAccount();
@@ -20,6 +22,7 @@ const Identities: NextPage = () => {
   const [externalDomains, setExternalDomains] = useState<string[]>([]);
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const { addTransaction } = useTransactionManager();
 
   //Mint
@@ -70,7 +73,9 @@ const Identities: NextPage = () => {
 
   useEffect(() => {
     if (!mintData?.transaction_hash) return;
+    posthog?.capture("mint");
     addTransaction({ hash: mintData?.transaction_hash });
+    setIsTxModalOpen(true);
   }, [mintData]);
 
   function mint() {
@@ -99,6 +104,12 @@ const Identities: NextPage = () => {
           <MintIdentity onClick={() => mint()} />
         </div>
       </div>
+      <TxConfirmationModal
+        txHash={mintData?.transaction_hash}
+        isTxModalOpen={isTxModalOpen}
+        closeModal={() => setIsTxModalOpen(false)}
+        title="Your identity NFT is on it's way !"
+      />
     </div>
   );
 };

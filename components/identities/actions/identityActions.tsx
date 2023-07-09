@@ -26,6 +26,8 @@ import AddressIcon from "../../UI/iconsComponents/icons/addressIcon";
 import ChangeIcon from "../../UI/iconsComponents/icons/changeIcon";
 import TransferIcon from "../../UI/iconsComponents/icons/transferIcon";
 import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
+import { posthog } from "posthog-js";
+import TxConfirmationModal from "../../UI/txConfirmationModal";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -51,6 +53,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const { addTransaction } = useTransactionManager();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
   // AutoRenewals
   const [isAutoRenewalOpen, setIsAutoRenewalOpen] = useState<boolean>(false);
@@ -136,7 +139,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   useEffect(() => {
     if (!mainDomainData?.transaction_hash) return;
+    posthog?.capture("setAsMainDomain");
     addTransaction({ hash: mainDomainData?.transaction_hash ?? "" });
+    setIsTxModalOpen(true);
   }, [mainDomainData]);
 
   if (!isIdentityADomain) {
@@ -217,8 +222,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   />
                 )}
                 <ClickableAction
-                  title="CHANGE THE TARGET"
-                  description="Change the current target address"
+                  title="CHANGE DOMAIN TARGET"
+                  description="Change target address"
                   icon={
                     <AddressIcon
                       width="25"
@@ -231,7 +236,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 {viewMoreClicked ? (
                   <>
                     <ClickableAction
-                      title="MOVE YOUR IDENTITY"
+                      title="MOVE YOUR IDENTITY NFT"
                       description="Move your identity to another wallet"
                       icon={
                         <TransferIcon
@@ -276,7 +281,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   </>
                 ) : (
                   <p
-                    onClick={() => setViewMoreClicked(true)}
+                    onClick={() => {
+                      posthog?.capture("clickViewMore");
+                      setViewMoreClicked(true);
+                    }}
                     className={styles.viewMore}
                   >
                     View more
@@ -317,6 +325,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             callDataEncodedDomain={callDataEncodedDomain}
             identity={identity}
             isEnabled={isAutoRenewalEnabled}
+          />
+          <TxConfirmationModal
+            txHash={mainDomainData?.transaction_hash}
+            isTxModalOpen={isTxModalOpen}
+            closeModal={() => setIsTxModalOpen(false)}
+            title="Your Transaction is on it's way !"
           />
         </>
       )}
