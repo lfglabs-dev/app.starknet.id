@@ -66,7 +66,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     new Map()
   );
   const { addTransaction } = useTransactionManager();
-  const [sponsor, setSponsor] = useState<BN[]>([]);
+  const [sponsor, setSponsor] = useState<string>("0");
 
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
@@ -112,21 +112,13 @@ const Register: FunctionComponent<RegisterProps> = ({
     const referralData = localStorage.getItem("referralData");
     if (referralData) {
       const data = JSON.parse(referralData);
-      if (
-        data.sponsor &&
-        data?.expiry >= new Date().getTime() &&
-        utils.isStarkDomain(data.sponsor)
-      ) {
-        setSponsor(
-          utils
-            .encodeDomain(data.sponsor)
-            .map((element) => new BN(element.toString()))
-        );
+      if (data.sponsor && data?.expiry >= new Date().getTime()) {
+        setSponsor(data.sponsor);
       } else {
-        setSponsor([]);
+        setSponsor("0");
       }
     } else {
-      setSponsor([]);
+      setSponsor("0");
     }
   }, [domain]);
 
