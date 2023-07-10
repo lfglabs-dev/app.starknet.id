@@ -117,14 +117,6 @@ const Register: FunctionComponent<RegisterProps> = ({
         data?.expiry >= new Date().getTime() &&
         utils.isStarkDomain(data.sponsor)
       ) {
-        // console.log(
-        //   "test",
-        //   utils
-        //     .encodeDomain(data.sponsor)
-        //     .map((element) => new BN(element.toString()))[0]
-        //     .toString(10)
-        // );
-        console.log("sponsor", data);
         setSponsor(
           utils
             .encodeDomain(data.sponsor)
