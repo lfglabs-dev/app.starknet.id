@@ -19,7 +19,7 @@ const AcceptCookies: FunctionComponent<AcceptCookiesProps> = ({ message }) => {
   useEffect(() => {
     if (sponsor) {
       const referralData = {
-        sponsor: sponsor, // the sponsor .stark
+        sponsor: sponsor, // the sponsor address
         expiry: new Date().getTime() + 7 * 24 * 60 * 60 * 1000, // the current date of expiration + 1 week
       };
 
