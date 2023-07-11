@@ -4,21 +4,21 @@ import {
   Call,
   useAccount,
   useContractWrite,
+  useTransactionManager,
   useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
-import LoadingScreen from "../components/UI/screens/loadingScreen";
 import SuccessScreen from "../components/UI/screens/successScreen";
 import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
+import { posthog } from "posthog-js";
+import TxConfirmationModal from "../components/UI/txConfirmationModal";
 
 export type Screen =
   | "verifyDiscord"
-  | "loading"
-  | "success"
   | "error"
   | "verifyTwitter"
   | "verifyGithub";
@@ -41,10 +41,12 @@ const Discord: NextPage = () => {
   const [signRequestData, setSignRequestData] = useState<
     SignRequestData | ErrorRequestData
   >();
+  const { addTransaction } = useTransactionManager();
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Call | undefined>();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   useEffect(() => {
     if (!tokenId) {
@@ -54,7 +56,10 @@ const Discord: NextPage = () => {
 
   useEffect(() => {
     if (!signRequestData) return;
-    if (signRequestData.status === "error") setScreen("error");
+    if (signRequestData.status === "error") {
+      setScreen("error");
+      return;
+    }
 
     setCalls({
       contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
@@ -131,14 +136,13 @@ const Discord: NextPage = () => {
         !transactionData?.status.includes("ACCEPTED") &&
         transactionData?.status !== "PENDING"
       ) {
-        setScreen("loading");
+        setIsTxModalOpen(true);
+        posthog?.capture("discordVerificationTx");
+        addTransaction({
+          hash: discordVerificationData?.transaction_hash ?? "",
+        });
       } else if (transactionError) {
         setScreen("error");
-      } else if (
-        transactionData?.status === "ACCEPTED_ON_L2" ||
-        transactionData?.status === "PENDING"
-      ) {
-        setScreen("success");
       }
     }
   }, [discordVerificationData, transactionData, transactionError]);
@@ -161,7 +165,11 @@ const Discord: NextPage = () => {
         <div className={styles.container}>
           {screen === "verifyDiscord" &&
             (!isConnected ? (
-              <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
+              <SuccessScreen
+                onClick={() => router.push(`/identities/${tokenId}`)}
+                buttonText="Get back to your starknet identity"
+                successMessage="Congrats, your discord is verified !"
+              />
             ) : (
               <>
                 <h1 className="sm:text-5xl text-5xl mt-4">
@@ -174,22 +182,23 @@ const Discord: NextPage = () => {
                 </div>
               </>
             ))}
-          {screen === "loading" && <LoadingScreen />}
           {errorScreen && (
             <ErrorScreen
               onClick={() => router.push(`/identities/${tokenId}`)}
-              buttonText="Retry to connect"
-            />
-          )}
-          {screen === "success" && (
-            <SuccessScreen
-              onClick={() => router.push(`/identities/${tokenId}`)}
-              buttonText="Get back to your starknet identity"
-              successMessage="Congrats, your discord is verified !"
+              buttonText="Retry to verify"
             />
           )}
         </div>
       </div>
+      <TxConfirmationModal
+        txHash={discordVerificationData?.transaction_hash}
+        isTxModalOpen={isTxModalOpen}
+        closeModal={() => {
+          setIsTxModalOpen(false);
+          router.push(`/identities/${tokenId}`);
+        }}
+        title="Your transaction is on it's way !"
+      />
     </div>
   );
 };

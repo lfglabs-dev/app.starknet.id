@@ -18,6 +18,8 @@ import { gweiToEth, hexToDecimal } from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi } from "starknet";
+import { posthog } from "posthog-js";
+import TxConfirmationModal from "../UI/txConfirmationModal";
 
 type RegisterProps = {
   domain: string;
@@ -38,6 +40,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
   const { contract: etherContract } = useEtherContract();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => new BN(element.toString()))[0];
@@ -255,7 +258,9 @@ const Register: FunctionComponent<RegisterProps> = ({
 
   useEffect(() => {
     if (!registerData?.transaction_hash) return;
+    posthog?.capture("register");
     addTransaction({ hash: registerData?.transaction_hash ?? "" });
+    setIsTxModalOpen(true);
   }, [registerData]);
 
   function changeAddress(value: string): void {
@@ -309,13 +314,13 @@ const Register: FunctionComponent<RegisterProps> = ({
         <div className={styles.cardCenter}>
           <p className="text">
             Price:&nbsp;
-            <span className="font-semibold text-brown">
+            <span className="font-semibold text-secondary">
               {gweiToEth(price)}&nbsp;ETH
             </span>
           </p>
         </div>
         <div className="w-full">
-          <div className="text-beige m-1 mt-5">
+          <div className="text-background m-1 mt-5">
             <Button
               onClick={() =>
                 execute().then(() =>
@@ -339,6 +344,12 @@ const Register: FunctionComponent<RegisterProps> = ({
             </Button>
           </div>
         </div>
+        <TxConfirmationModal
+          txHash={registerData?.transaction_hash}
+          isTxModalOpen={isTxModalOpen}
+          closeModal={() => setIsTxModalOpen(false)}
+          title="Your domain is on it's way !"
+        />
       </div>
     );
 

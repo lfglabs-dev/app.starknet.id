@@ -12,13 +12,14 @@ import {
   useTransactions,
 } from "@starknet-react/core";
 import Wallets from "./wallets";
-import LogoutIcon from "@mui/icons-material/Logout";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SelectNetwork from "./selectNetwork";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Tooltip } from "@mui/material";
 import ArgentIcon from "./iconsComponents/icons/argentIcon";
 import { CircularProgress } from "@mui/material";
+import ModalWallet from "./modalWallet";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
@@ -36,6 +37,7 @@ const Navbar: FunctionComponent = () => {
   const [txLoading, setTxLoading] = useState<number>(0);
   const { hashes } = useTransactionManager();
   const transactions = useTransactions({ hashes, watch: true });
+  const [showWallet, setShowWallet] = useState<boolean>(false);
 
   // TODO: Check for starknet react fix and delete that code
   useEffect(() => {
@@ -92,6 +94,7 @@ const Navbar: FunctionComponent = () => {
     setIsConnected(false);
     setIsWrongNetwork(false);
     setHasWallet(false);
+    setShowWallet(false);
   }
 
   function handleNav(): void {
@@ -110,7 +113,8 @@ const Navbar: FunctionComponent = () => {
         setHasWallet(true);
       }
     } else {
-      disconnectByClick();
+      // disconnectByClick();
+      setShowWallet(true);
     }
   }
 
@@ -122,7 +126,7 @@ const Navbar: FunctionComponent = () => {
 
   return (
     <>
-      <div className={"fixed w-full z-[1] bg-beige"}>
+      <div className={"fixed w-full z-[1] bg-background"}>
         <div className={styles.navbarContainer}>
           <div className="ml-4">
             <Link href="/" className="cursor-pointer">
@@ -138,7 +142,7 @@ const Navbar: FunctionComponent = () => {
           <div>
             <ul className="hidden lg:flex uppercase items-center">
               <Link href="/identities">
-                <li className={styles.menuItem}>Identities</li>
+                <li className={styles.menuItem}>My Identities</li>
               </Link>
               <Link href="/">
                 <li className={styles.menuItem}>Domains</li>
@@ -169,7 +173,7 @@ const Navbar: FunctionComponent = () => {
                 <Button
                   onClick={
                     isConnected
-                      ? () => disconnectByClick()
+                      ? () => setShowWallet(true)
                       : available.length === 1
                       ? () => connect(available[0])
                       : () => setHasWallet(true)
@@ -190,7 +194,7 @@ const Navbar: FunctionComponent = () => {
                       ) : (
                         <div className="flex justify-center items-center">
                           <p className="mr-3">{domainOrAddress}</p>
-                          <LogoutIcon />
+                          <AccountCircleIcon />
                         </div>
                       )}
                     </>
@@ -216,7 +220,7 @@ const Navbar: FunctionComponent = () => {
           <div
             className={
               nav
-                ? "fixed left-0 top-0 w-[75%] sm:w-[60%] lg:w-[45%] h-screen bg-beige p-10 ease-in duration-500 flex justify-between flex-col"
+                ? "fixed left-0 top-0 w-[75%] sm:w-[60%] lg:w-[45%] h-screen bg-background p-10 ease-in duration-500 flex justify-between flex-col"
                 : "fixed left-[-100%] top-0 p-10 ease-in h-screen flex justify-between flex-col"
             }
           >
@@ -240,19 +244,19 @@ const Navbar: FunctionComponent = () => {
                   <AiOutlineClose color={brown} />
                 </div>
               </div>
-              <div className="border-b border-soft-brown-300 my-4">
-                <p className="w-[85%] lg:w-[90%] py-4 text-babe-blue">
+              <div className="border-b border-tertiary-300 my-4">
+                <p className="w-[85%] lg:w-[90%] py-4">
                   Own your on-chain identity
                 </p>
               </div>
               <div className="py-4 flex flex-col">
-                <ul className="uppercase text-babe-blue">
+                <ul className="uppercase">
                   <Link href="/identities">
                     <li
                       onClick={() => setNav(false)}
                       className={styles.menuItemSmall}
                     >
-                      Identities
+                      My Identities
                     </li>
                   </Link>
                   <Link href="/">
@@ -285,7 +289,7 @@ const Navbar: FunctionComponent = () => {
                     <FaTwitter size={20} color={green} />
                   </Link>
                 </div>
-                <div className="text-beige">
+                <div className="text-background">
                   <Button onClick={onTopButtonClick}>{topButtonText()}</Button>
                 </div>
               </div>
@@ -310,6 +314,13 @@ const Navbar: FunctionComponent = () => {
             </div>
           </div>
         }
+      />
+      <ModalWallet
+        domain={domainOrAddress}
+        open={showWallet}
+        closeModal={() => setShowWallet(false)}
+        disconnectByClick={disconnectByClick}
+        transactions={transactions}
       />
       <Wallets
         closeWallet={() => setHasWallet(false)}

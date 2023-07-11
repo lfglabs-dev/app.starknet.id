@@ -12,6 +12,7 @@ import styles2 from "../../../styles/Home.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi } from "starknet";
+import { posthog } from "posthog-js";
 
 type RenewalModalProps = {
   handleClose: () => void;
@@ -69,6 +70,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
 
   useEffect(() => {
     if (!renewData?.transaction_hash) return;
+    posthog?.capture("renew");
     addTransaction({ hash: renewData?.transaction_hash ?? "" });
     handleClose();
   }, [renewData]);
@@ -99,13 +101,16 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
         <p className={styles.menu_title}>Renew {identity?.domain}</p>
         <div className="mt-5 flex flex-col justify-center">
           {identity?.domain_expiry && (
-            <p className="break-all">
-              <strong>Expiry date :</strong>&nbsp;
-              <span>
+            <p>
+              The Expiry Data of {identity?.domain} is{" "}
+              <strong>
                 {timestampToReadableDate(identity?.domain_expiry ?? 0)}
-              </span>
+              </strong>
+              . If you don&apos;t renew your domain before the expiry date
+              someone else will be able to take it from you.
             </p>
           )}
+
           <div className="mt-5">
             <TextField
               fullWidth
@@ -126,7 +131,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
           <div className={styles2.cardCenter}>
             <p className="text">
               Price :&nbsp;
-              <span className="font-semibold text-brown">
+              <span className="font-semibold text-secondary">
                 {Math.round(Number(price) * 0.000000000000000001 * 10000) /
                   10000}
                 &nbsp; ETH

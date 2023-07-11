@@ -1,5 +1,6 @@
 import React, { FunctionComponent, useState } from "react";
 import { MutatingDots } from "react-loader-spinner";
+import theme from "../../../styles/theme";
 
 const LoadingScreen: FunctionComponent = () => {
   const [loadingMessageNumber, setLoadingMessageNumber] = useState<number>(0);
@@ -25,7 +26,7 @@ const LoadingScreen: FunctionComponent = () => {
         <MutatingDots
           height="100"
           width="100"
-          color="#19AA6E"
+          color={theme.palette.primary.main}
           secondaryColor="#BF9E7B"
           ariaLabel="loading"
         />
