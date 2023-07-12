@@ -12,6 +12,7 @@ import {
   isStarkDomain,
   numberToString,
   isBraavosSubdomain,
+  isXplorerSubdomain,
   getDomainKind,
   shortenDomain,
   changeTwitterProfilePic,
@@ -204,6 +205,23 @@ describe("isBraavosSubdomain", () => {
     expect(isBraavosSubdomain("winterf.ell.braavos.stark")).toBe(false);
     expect(isBraavosSubdomain("johén.braavos.stark")).toBe(false);
     expect(isBraavosSubdomain(undefined)).toBe(false);
+  });
+});
+
+describe("isXplorerSubdomain", () => {
+  it("returns true for valid Xplorer subdomains", () => {
+    expect(isXplorerSubdomain("ben.xplorer.stark")).toBe(true);
+    expect(isXplorerSubdomain("john.xplorer.stark")).toBe(true);
+    expect(isXplorerSubdomain("jeremy.xplorer.stark")).toBe(true);
+    expect(isXplorerSubdomain("johnny.xplorer.stark")).toBe(true);
+  });
+
+  it("returns false for invalid Xplorer subdomains", () => {
+    expect(isXplorerSubdomain("arya.braavoos.stark")).toBe(false);
+    expect(isXplorerSubdomain("xplorer.stark")).toBe(false);
+    expect(isXplorerSubdomain("winterf.ell.xplorer.stark")).toBe(false);
+    expect(isXplorerSubdomain("johén.xplorer.stark")).toBe(false);
+    expect(isXplorerSubdomain(undefined)).toBe(false);
   });
 });
 

@@ -16,13 +16,15 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SelectNetwork from "./selectNetwork";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
+import { Tooltip } from "@mui/material";
+import ArgentIcon from "./iconsComponents/icons/argentIcon";
 import { CircularProgress } from "@mui/material";
 import ModalWallet from "./modalWallet";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
-  const [hasWallet, setHasWallet] = useState<boolean>(false);
-  const { address } = useAccount();
+  const [hasWallet, setHasWallet] = useState<boolean>(true);
+  const { address, connector } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const { available, connect, disconnect } = useConnectors();
@@ -148,10 +150,26 @@ const Navbar: FunctionComponent = () => {
               {/* <Link href="/jointhetribe">
                 <li className={styles.menuItem}>Join the tribe</li>
               </Link> */}
-              <div className="ml-10">
-                <SelectNetwork network={network} />
-              </div>
-              <div className="text-background mr-5">
+              <SelectNetwork network={network} />
+
+              {connector?.id() === "argentWebWallet" && (
+                <Tooltip title="Check your argent web wallet" arrow>
+                  <a
+                    target="_blank"
+                    href={
+                      network === "mainnet"
+                        ? "https://web.argent.xyz"
+                        : "https://web.hydrogen.argent47.net"
+                    }
+                    rel="noopener noreferrer"
+                  >
+                    <div className={styles.webWalletLink}>
+                      <ArgentIcon width={"24px"} color="#f36a3d" />
+                    </div>
+                  </a>
+                </Tooltip>
+              )}
+              <div className="text-beige mr-5">
                 <Button
                   onClick={
                     isConnected
