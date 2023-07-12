@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import Notification from "../UI/notification";
 import { useRouter } from "next/router";
+import { isHexString } from "../../utils/stringService";
 
 type AcceptCookiesProps = {
   message: string;
@@ -17,7 +18,7 @@ const AcceptCookies: FunctionComponent<AcceptCookiesProps> = ({ message }) => {
   }, []);
 
   useEffect(() => {
-    if (sponsor) {
+    if (sponsor && isHexString(sponsor)) {
       const referralData = {
         sponsor: sponsor, // the sponsor address
         expiry: new Date().getTime() + 7 * 24 * 60 * 60 * 1000, // the current date of expiration + 1 week
