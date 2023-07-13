@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@anima-protocol/personhood-sdk-react": "^0.4.4",
+    "@argent/starknet-react-webwallet-connector": "^6.4.1",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@mui/icons-material": "^5.8.4",

@@ -6,6 +6,7 @@ import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
 import { InjectedConnector, StarknetConfig } from "@starknet-react/core";
+import { WebWalletConnector } from "@argent/starknet-react-webwallet-connector";
 import { Analytics } from "@vercel/analytics/react";
 import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
@@ -13,10 +14,15 @@ import posthog from "posthog-js";
 import { useRouter } from "next/router";
 import AcceptCookies from "../components/legal/acceptCookies";
 
-// Wallet Connectors
 const connectors = [
   new InjectedConnector({ options: { id: "argentX" } }),
   new InjectedConnector({ options: { id: "braavos" } }),
+  new WebWalletConnector({
+    url:
+      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+        ? "https://web.hydrogen.argent47.net"
+        : "https://web.argent.xyz/",
+  }),
 ];
 
 if (typeof window !== "undefined") {
@@ -44,7 +50,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <>
-      <StarknetConfig connectors={connectors} autoConnect>
+      <StarknetConfig connectors={connectors as any} autoConnect>
         <StarknetIdJsProvider>
           <ThemeProvider theme={theme}>
             <Head>
