@@ -66,6 +66,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     new Map()
   );
   const { addTransaction } = useTransactionManager();
+  const [sponsor, setSponsor] = useState<string>("0");
 
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
@@ -107,6 +108,20 @@ const Register: FunctionComponent<RegisterProps> = ({
     }
   }, [address]);
 
+  useEffect(() => {
+    const referralData = localStorage.getItem("referralData");
+    if (referralData) {
+      const data = JSON.parse(referralData);
+      if (data.sponsor && data?.expiry >= new Date().getTime()) {
+        setSponsor(data.sponsor);
+      } else {
+        setSponsor("0");
+      }
+    } else {
+      setSponsor("0");
+    }
+  }, [domain]);
+
   // Set mulitcalls
   useEffect(() => {
     if (!isAvailable) return;
@@ -136,6 +151,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
+            sponsor,
           ],
         },
         {
@@ -169,6 +185,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
+            sponsor,
           ],
         },
       ]);
@@ -202,6 +219,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
+            sponsor,
           ],
         },
         {
@@ -241,6 +259,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
+            sponsor,
           ],
         },
       ]);
@@ -254,6 +273,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     domain,
     hasMainDomain,
     address,
+    sponsor,
   ]);
 
   useEffect(() => {
