@@ -20,12 +20,12 @@ const connectors = [
   new InjectedConnector({ options: { id: "braavos" } }),
   new FreshConnector(),
   // new FreshConnector({show: false, url: "http://localhost:3000/fresh"}),
-  // new WebWalletConnector({
-  //   url:
-  //     process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-  //       ? "https://web.hydrogen.argent47.net"
-  //       : "https://web.argent.xyz/",
-  // })
+  new WebWalletConnector({
+    url:
+      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+        ? "https://web.hydrogen.argent47.net"
+        : "https://web.argent.xyz/",
+  })
 ];
 
 if (typeof window !== "undefined") {
