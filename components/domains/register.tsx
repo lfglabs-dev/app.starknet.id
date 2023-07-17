@@ -151,7 +151,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
-            sponsor,
+            0
           ],
         },
         {
@@ -185,7 +185,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
-            sponsor,
+            0
           ],
         },
       ]);
@@ -219,7 +219,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
-            sponsor,
+            0
           ],
         },
         {
@@ -259,7 +259,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
-            sponsor,
+            0
           ],
         },
       ]);

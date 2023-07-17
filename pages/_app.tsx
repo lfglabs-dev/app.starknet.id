@@ -14,19 +14,18 @@ import posthog from "posthog-js";
 import { useRouter } from "next/router";
 import AcceptCookies from "../components/legal/acceptCookies";
 import FreshConnector from "fresh-connector";
-// const fresh = new FreshConnector()
-const fresh = new FreshConnector({show: false, url: "http://localhost:3000/fresh"})
 
 const connectors = [
   new InjectedConnector({ options: { id: "argentX" } }),
   new InjectedConnector({ options: { id: "braavos" } }),
-  new WebWalletConnector({
-    url:
-      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-        ? "https://web.hydrogen.argent47.net"
-        : "https://web.argent.xyz/",
-  }),
-  fresh
+  new FreshConnector(),
+  // new FreshConnector({show: false, url: "http://localhost:3000/fresh"}),
+  // new WebWalletConnector({
+  //   url:
+  //     process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+  //       ? "https://web.hydrogen.argent47.net"
+  //       : "https://web.argent.xyz/",
+  // })
 ];
 
 if (typeof window !== "undefined") {
