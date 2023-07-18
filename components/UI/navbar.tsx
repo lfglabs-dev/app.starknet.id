@@ -9,7 +9,6 @@ import {
   useAccount,
   useProvider,
   useTransactionManager,
-  useTransactions,
 } from "@starknet-react/core";
 import Wallets from "./wallets";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -36,22 +35,8 @@ const Navbar: FunctionComponent = () => {
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   const [txLoading, setTxLoading] = useState<number>(0);
-  // Commented out because of starknet-react bug
-  // const { hashes } = useTransactionManager();
-  // const transactions = useTransactions({ hashes, watch: true });
+  const { hashes } = useTransactionManager();
   const [showWallet, setShowWallet] = useState<boolean>(false);
-
-  // console.log("hashes", hashes);
-
-  // TODO: Check for starknet react fix and delete that code
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     for (const tx of transactions) {
-  //       tx.refetch();
-  //     }
-  //   }, 3_000);
-  //   return () => clearInterval(interval);
-  // }, [transactions?.length]);
 
   useEffect(() => {
     // to handle autoconnect starknet-react adds connector id in local storage
@@ -75,17 +60,6 @@ const Navbar: FunctionComponent = () => {
       setIsWrongNetwork(isWrongNetwork);
     });
   }, [provider, network, isConnected]);
-
-  // useEffect(() => {
-  //   if (transactions) {
-  //     console.log("transactions", transactions);
-  //     // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
-  //     setTxLoading(
-  //       transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")
-  //         .length
-  //     );
-  //   }
-  // }, [transactions]);
 
   function disconnectByClick(): void {
     disconnect();
@@ -179,7 +153,7 @@ const Navbar: FunctionComponent = () => {
                 >
                   {isConnected ? (
                     <>
-                      {/* {txLoading > 0 ? (
+                      {txLoading > 0 ? (
                         <div className="flex justify-center items-center">
                           <p className="mr-3">{txLoading} on hold</p>
                           <CircularProgress
@@ -189,12 +163,12 @@ const Navbar: FunctionComponent = () => {
                             size={25}
                           />
                         </div>
-                      ) : ( */}
-                      <div className="flex justify-center items-center">
-                        <p className="mr-3">{domainOrAddress}</p>
-                        <AccountCircleIcon />
-                      </div>
-                      {/* )} */}
+                      ) : (
+                        <div className="flex justify-center items-center">
+                          <p className="mr-3">{domainOrAddress}</p>
+                          <AccountCircleIcon />
+                        </div>
+                      )}
                     </>
                   ) : (
                     "connect"
@@ -318,7 +292,8 @@ const Navbar: FunctionComponent = () => {
         open={showWallet}
         closeModal={() => setShowWallet(false)}
         disconnectByClick={disconnectByClick}
-        // transactions={transactions}
+        hashes={hashes}
+        setTxLoading={setTxLoading}
       />
       <Wallets
         closeWallet={() => setHasWallet(false)}
