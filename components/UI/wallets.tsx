@@ -61,9 +61,9 @@ const Wallets: FunctionComponent<WalletsProps> = ({
                 <Button onClick={() => connectWallet(connector)}>
                   <div className="flex justify-center items-center">
                     <WalletIcons id={connector.id} />
-                    {connector.name === "Argent Web Wallet"
-                      ? "Login with Email"
-                      : `Connect ${connector.name}`}
+                    {connector.id === "braavos" || connector.id === "argentX"
+                      ? `Connect ${connector.name}`
+                      : "Login with Email"}
                   </div>
                 </Button>
               </div>
