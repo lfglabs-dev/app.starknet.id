@@ -7,7 +7,7 @@ import Button from "./button";
 import {
   useConnectors,
   useAccount,
-  useStarknet,
+  useProvider,
   useTransactionManager,
   useTransactions,
 } from "@starknet-react/core";
@@ -20,6 +20,7 @@ import { Tooltip } from "@mui/material";
 import ArgentIcon from "./iconsComponents/icons/argentIcon";
 import { CircularProgress } from "@mui/material";
 import ModalWallet from "./modalWallet";
+import { constants } from "starknet";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
@@ -28,26 +29,28 @@ const Navbar: FunctionComponent = () => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const { available, connect, disconnect } = useConnectors();
-  const { library } = useStarknet();
+  const { provider } = useProvider();
   const domainOrAddress = useDisplayName(address ?? "");
   const green = "#19AA6E";
   const brown = "#402d28";
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   const [txLoading, setTxLoading] = useState<number>(0);
-  const { hashes } = useTransactionManager();
-  const transactions = useTransactions({ hashes, watch: true });
+  // const { hashes } = useTransactionManager();
+  // const transactions = useTransactions({ hashes, watch: true });
   const [showWallet, setShowWallet] = useState<boolean>(false);
 
+  // console.log("hashes", hashes);
+
   // TODO: Check for starknet react fix and delete that code
-  useEffect(() => {
-    const interval = setInterval(() => {
-      for (const tx of transactions) {
-        tx.refetch();
-      }
-    }, 3_000);
-    return () => clearInterval(interval);
-  }, [transactions?.length]);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     for (const tx of transactions) {
+  //       tx.refetch();
+  //     }
+  //   }, 3_000);
+  //   return () => clearInterval(interval);
+  // }, [transactions?.length]);
 
   useEffect(() => {
     // to handle autoconnect starknet-react adds connector id in local storage
@@ -62,32 +65,26 @@ const Navbar: FunctionComponent = () => {
   useEffect(() => {
     if (!isConnected) return;
 
-    const STARKNET_NETWORK = {
-      mainnet: "0x534e5f4d41494e",
-      testnet: "0x534e5f474f45524c49",
-    };
+    provider.getChainId().then((chainId) => {
+      const isWrongNetwork =
+        (chainId === constants.StarknetChainId.SN_GOERLI &&
+          network === "mainnet") ||
+        (chainId === constants.StarknetChainId.SN_MAIN &&
+          network === "testnet");
+      setIsWrongNetwork(isWrongNetwork);
+    });
+  }, [provider, network, isConnected]);
 
-    if (library.chainId === STARKNET_NETWORK.testnet && network === "mainnet") {
-      setIsWrongNetwork(true);
-    } else if (
-      library.chainId === STARKNET_NETWORK.mainnet &&
-      network === "testnet"
-    ) {
-      setIsWrongNetwork(true);
-    } else {
-      setIsWrongNetwork(false);
-    }
-  }, [library, network, isConnected]);
-
-  useEffect(() => {
-    if (transactions) {
-      // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
-      setTxLoading(
-        transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")
-          .length
-      );
-    }
-  }, [transactions]);
+  // useEffect(() => {
+  //   if (transactions) {
+  //     console.log("transactions", transactions);
+  //     // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
+  //     setTxLoading(
+  //       transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")
+  //         .length
+  //     );
+  //   }
+  // }, [transactions]);
 
   function disconnectByClick(): void {
     disconnect();
@@ -152,7 +149,7 @@ const Navbar: FunctionComponent = () => {
               </Link> */}
               <SelectNetwork network={network} />
 
-              {connector?.id() === "argentWebWallet" && (
+              {connector?.id === "argentWebWallet" && (
                 <Tooltip title="Check your argent web wallet" arrow>
                   <a
                     target="_blank"
@@ -181,7 +178,7 @@ const Navbar: FunctionComponent = () => {
                 >
                   {isConnected ? (
                     <>
-                      {txLoading > 0 ? (
+                      {/* {txLoading > 0 ? (
                         <div className="flex justify-center items-center">
                           <p className="mr-3">{txLoading} on hold</p>
                           <CircularProgress
@@ -191,12 +188,12 @@ const Navbar: FunctionComponent = () => {
                             size={25}
                           />
                         </div>
-                      ) : (
-                        <div className="flex justify-center items-center">
-                          <p className="mr-3">{domainOrAddress}</p>
-                          <AccountCircleIcon />
-                        </div>
-                      )}
+                      ) : ( */}
+                      <div className="flex justify-center items-center">
+                        <p className="mr-3">{domainOrAddress}</p>
+                        <AccountCircleIcon />
+                      </div>
+                      {/* )} */}
                     </>
                   ) : (
                     "connect"
@@ -315,13 +312,13 @@ const Navbar: FunctionComponent = () => {
           </div>
         }
       />
-      <ModalWallet
+      {/* <ModalWallet
         domain={domainOrAddress}
         open={showWallet}
         closeModal={() => setShowWallet(false)}
         disconnectByClick={disconnectByClick}
         transactions={transactions}
-      />
+      /> */}
       <Wallets
         closeWallet={() => setHasWallet(false)}
         hasWallet={Boolean(hasWallet && !isWrongNetwork)}

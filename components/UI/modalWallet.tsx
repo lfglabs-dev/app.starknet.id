@@ -54,7 +54,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
         </button>
         <div className={styles.menu_title}>
           <div className={styles.menu_title}>
-            {connector && connector.id() === "braavos" ? (
+            {connector && connector.id === "braavos" ? (
               <img
                 width={"25px"}
                 src="/braavos/braavosLogo.svg"

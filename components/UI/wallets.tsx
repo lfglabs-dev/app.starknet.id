@@ -57,13 +57,13 @@ const Wallets: FunctionComponent<WalletsProps> = ({
         {connectors.map((connector) => {
           if (connector.available()) {
             return (
-              <div className="mt-5 flex justify-center" key={connector.id()}>
+              <div className="mt-5 flex justify-center" key={connector.id}>
                 <Button onClick={() => connectWallet(connector)}>
                   <div className="flex justify-center items-center">
-                    <WalletIcons id={connector.id()} />
-                    {connector.name() === "Argent Web Wallet"
+                    <WalletIcons id={connector.id} />
+                    {connector.name === "Argent Web Wallet"
                       ? "Login with Email"
-                      : `Connect ${connector.name()}`}
+                      : `Connect ${connector.name}`}
                   </div>
                 </Button>
               </div>
