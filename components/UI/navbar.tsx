@@ -206,7 +206,7 @@ const Navbar: FunctionComponent = () => {
               </div>
             </ul>
             <div onClick={handleNav} className="lg:hidden">
-              <AiOutlineMenu color={brown} className="mr-3" />
+              <AiOutlineMenu color={brown} size={25} className="mr-3" />
             </div>
           </div>
         </div>
