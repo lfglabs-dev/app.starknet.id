@@ -41,3 +41,9 @@
   margin-right: 0.5rem;
   cursor: pointer;
 }
+
+@media (max-width: 768px) {
+  .navbarContainer {
+    height: 80px;
+  }
+}

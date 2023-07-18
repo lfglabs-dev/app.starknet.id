@@ -36,6 +36,7 @@ export function minifyDomain(
     return domain.toLowerCase();
   }
 }
+// 15 lettres sur mobile
 
 export function is1234Domain(domain: string): boolean {
   return /^\d{4}$/.test(domain) && parseInt(domain) < 1234;
