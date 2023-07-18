@@ -36,6 +36,7 @@ const Navbar: FunctionComponent = () => {
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   const [txLoading, setTxLoading] = useState<number>(0);
+  // Commented out because of starknet-react bug
   // const { hashes } = useTransactionManager();
   // const transactions = useTransactions({ hashes, watch: true });
   const [showWallet, setShowWallet] = useState<boolean>(false);
@@ -312,13 +313,13 @@ const Navbar: FunctionComponent = () => {
           </div>
         }
       />
-      {/* <ModalWallet
+      <ModalWallet
         domain={domainOrAddress}
         open={showWallet}
         closeModal={() => setShowWallet(false)}
         disconnectByClick={disconnectByClick}
-        transactions={transactions}
-      /> */}
+        // transactions={transactions}
+      />
       <Wallets
         closeWallet={() => setHasWallet(false)}
         hasWallet={Boolean(hasWallet && !isWrongNetwork)}

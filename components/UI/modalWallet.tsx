@@ -17,7 +17,7 @@ type ModalWalletProps = {
   open: boolean;
   domain: string;
   disconnectByClick: () => void;
-  transactions: UseTransactionResult[];
+  transactions?: UseTransactionResult[];
 };
 
 const ModalWallet: FunctionComponent<ModalWalletProps> = ({
@@ -90,7 +90,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
         <div className={styles.menu_txs}>
           <div className={styles.tx_title}>My transactions</div>
           <div>
-            {transactions && transactions.length > 0 ? (
+            {/* {transactions && transactions.length > 0 ? (
               transactions.map((tx) => {
                 return (
                   <div
@@ -120,9 +120,9 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
                   </div>
                 );
               })
-            ) : (
-              <p className={styles.tx_empty}>No ongoing transactions</p>
-            )}
+            ) : (*/}
+            <p className={styles.tx_empty}>No ongoing transactions</p>
+            {/* )} */}
           </div>
         </div>
       </div>
