@@ -10,7 +10,7 @@ type AcceptCookiesProps = {
 const AcceptCookies: FunctionComponent<AcceptCookiesProps> = ({ message }) => {
   const [cookiesAccepted, setCookiesAccepted] = useState(true);
   const router = useRouter();
-  const sponsor = router.query.referee as string;
+  const sponsor = router.query.sponsor as string;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
