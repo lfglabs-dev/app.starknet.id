@@ -61,7 +61,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const { writeAsync: execute, data: registerData } = useContractWrite({
     calls: callData,
   });
-  const hasMainDomain = !useDisplayName(address ?? "").startsWith("0x");
+  const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
