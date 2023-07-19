@@ -27,7 +27,7 @@ const Navbar: FunctionComponent = () => {
   const { address, connector } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const { available, connect, disconnect } = useConnectors();
+  const { available, connect, disconnect, refresh } = useConnectors();
   const { provider } = useProvider();
   const isMobile = useMediaQuery("(max-width:425px)");
   const domainOrAddress = useDisplayName(address ?? "", isMobile);
@@ -43,16 +43,6 @@ const Navbar: FunctionComponent = () => {
   useEffect(() => {
     refresh();
   }, [address]);
-
-  // TODO: Check for starknet react fix and delete that code
-  useEffect(() => {
-    const interval = setInterval(() => {
-      for (const tx of transactions) {
-        tx.refetch();
-      }
-    }, 3_000);
-    return () => clearInterval(interval);
-  }, [transactions?.length]);
 
   useEffect(() => {
     // to handle autoconnect starknet-react adds connector id in local storage

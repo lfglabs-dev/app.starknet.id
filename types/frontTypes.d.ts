@@ -1,7 +1,6 @@
 type IconProps = {
   color: string;
   width: string;
-  onClick?: () => void;
 };
 
 type FullId = {
