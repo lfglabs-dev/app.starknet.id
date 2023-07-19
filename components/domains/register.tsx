@@ -5,7 +5,6 @@ import Button from "../UI/button";
 import styles from "../../styles/Home.module.css";
 import { useEtherContract, usePricingContract } from "../../hooks/contracts";
 import {
-  Call,
   useAccount,
   useContractRead,
   useContractWrite,
@@ -17,7 +16,7 @@ import { isHexString, numberToString } from "../../utils/stringService";
 import { gweiToEth, hexToDecimal } from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
 import { useDisplayName } from "../../hooks/displayName.tsx";
-import { Abi } from "starknet";
+import { Abi, Call } from "starknet";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 
@@ -71,11 +70,8 @@ const Register: FunctionComponent<RegisterProps> = ({
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
     else {
-      setPrice(
-        priceData?.["price"].low
-          .add(priceData?.["price"].high.mul(new BN(2).pow(new BN(128))))
-          .toString(10)
-      );
+      const high = priceData?.["price"].high << BigInt(128);
+      setPrice((priceData?.["price"].low + high).toString(10));
     }
   }, [priceData, priceError]);
 
@@ -355,10 +351,10 @@ const Register: FunctionComponent<RegisterProps> = ({
                 !duration ||
                 duration < 1 ||
                 !targetAddress ||
-                (connector?.id() != "argentWebWallet" && invalidBalance)
+                (connector?.id != "argentWebWallet" && invalidBalance)
               }
             >
-              {connector?.id() != "argentWebWallet" && invalidBalance
+              {connector?.id != "argentWebWallet" && invalidBalance
                 ? "You don't have enough eth"
                 : "Register from L2"}
             </Button>

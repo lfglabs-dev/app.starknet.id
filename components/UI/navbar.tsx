@@ -7,9 +7,8 @@ import Button from "./button";
 import {
   useConnectors,
   useAccount,
-  useStarknet,
+  useProvider,
   useTransactionManager,
-  useTransactions,
 } from "@starknet-react/core";
 import Wallets from "./wallets";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -20,6 +19,7 @@ import { Tooltip, useMediaQuery } from "@mui/material";
 import ArgentIcon from "./iconsComponents/icons/argentIcon";
 import { CircularProgress } from "@mui/material";
 import ModalWallet from "./modalWallet";
+import { constants } from "starknet";
 
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
@@ -27,8 +27,8 @@ const Navbar: FunctionComponent = () => {
   const { address, connector } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const { available, connect, disconnect, refresh } = useConnectors();
-  const { library } = useStarknet();
+  const { available, connect, disconnect } = useConnectors();
+  const { provider } = useProvider();
   const isMobile = useMediaQuery("(max-width:425px)");
   const domainOrAddress = useDisplayName(address ?? "", isMobile);
   const green = "#19AA6E";
@@ -37,7 +37,6 @@ const Navbar: FunctionComponent = () => {
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   const [txLoading, setTxLoading] = useState<number>(0);
   const { hashes } = useTransactionManager();
-  const transactions = useTransactions({ hashes, watch: true });
   const [showWallet, setShowWallet] = useState<boolean>(false);
 
   // Refresh available connectors when the user disconnect otherwise only Argent Web Wallet shows up
@@ -68,32 +67,15 @@ const Navbar: FunctionComponent = () => {
   useEffect(() => {
     if (!isConnected) return;
 
-    const STARKNET_NETWORK = {
-      mainnet: "0x534e5f4d41494e",
-      testnet: "0x534e5f474f45524c49",
-    };
-
-    if (library.chainId === STARKNET_NETWORK.testnet && network === "mainnet") {
-      setIsWrongNetwork(true);
-    } else if (
-      library.chainId === STARKNET_NETWORK.mainnet &&
-      network === "testnet"
-    ) {
-      setIsWrongNetwork(true);
-    } else {
-      setIsWrongNetwork(false);
-    }
-  }, [library, network, isConnected]);
-
-  useEffect(() => {
-    if (transactions) {
-      // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
-      setTxLoading(
-        transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")
-          .length
-      );
-    }
-  }, [transactions]);
+    provider.getChainId().then((chainId) => {
+      const isWrongNetwork =
+        (chainId === constants.StarknetChainId.SN_GOERLI &&
+          network === "mainnet") ||
+        (chainId === constants.StarknetChainId.SN_MAIN &&
+          network === "testnet");
+      setIsWrongNetwork(isWrongNetwork);
+    });
+  }, [provider, network, isConnected]);
 
   function disconnectByClick(): void {
     disconnect();
@@ -158,7 +140,7 @@ const Navbar: FunctionComponent = () => {
               </Link> */}
               <SelectNetwork network={network} />
 
-              {connector?.id() === "argentWebWallet" && (
+              {connector?.id === "argentWebWallet" && (
                 <Tooltip title="Check your argent web wallet" arrow>
                   <a
                     target="_blank"
@@ -326,7 +308,8 @@ const Navbar: FunctionComponent = () => {
         open={showWallet}
         closeModal={() => setShowWallet(false)}
         disconnectByClick={disconnectByClick}
-        transactions={transactions}
+        hashes={hashes}
+        setTxLoading={setTxLoading}
       />
       <Wallets
         closeWallet={() => setHasWallet(false)}

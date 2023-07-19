@@ -15,8 +15,8 @@ import {
   StarknetSignature,
 } from "@anima-protocol/personhood-sdk-react";
 import AnimaIcon from "../../../UI/iconsComponents/icons/animaIcon";
-import { Call, useAccount, useTransactionManager } from "@starknet-react/core";
-import { shortString, typedData } from "starknet";
+import { useAccount, useTransactionManager } from "@starknet-react/core";
+import { Call, constants, shortString, typedData } from "starknet";
 import { useContractWrite } from "@starknet-react/core";
 import { hexToDecimal } from "../../../../utils/feltService";
 import { minifyDomain } from "../../../../utils/stringService";
@@ -45,6 +45,8 @@ const ClickablePersonhoodIcon: FunctionComponent<
   const { writeAsync: execute, data: verifierData } = useContractWrite({
     calls: callData,
   });
+  const network =
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
 
   useEffect(() => {
     starknetIdNavigator
@@ -222,7 +224,11 @@ const ClickablePersonhoodIcon: FunctionComponent<
                       onFinish={onFinish}
                       signCallback={sign}
                       walletAddress={address}
-                      starknetChainId={account.chainId}
+                      starknetChainId={
+                        network === "testnet"
+                          ? constants.StarknetChainId.SN_GOERLI
+                          : constants.StarknetChainId.SN_MAIN
+                      }
                       chainType="STARKNET"
                     />
                   ) : (

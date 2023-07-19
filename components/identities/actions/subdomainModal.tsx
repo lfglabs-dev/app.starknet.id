@@ -1,6 +1,5 @@
 import { Modal, TextField } from "@mui/material";
 import {
-  Call,
   useAccount,
   useContractWrite,
   useTransactionManager,
@@ -15,6 +14,7 @@ import Button from "../../UI/button";
 import { utils } from "starknetid.js";
 import { posthog } from "posthog-js";
 import ConfirmationTx from "../../UI/confirmationTx";
+import { Call } from "starknet";
 
 type SubdomainModalProps = {
   handleClose: () => void;

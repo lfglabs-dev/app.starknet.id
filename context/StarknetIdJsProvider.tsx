@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { createContext, useMemo } from "react";
-import { Provider } from "starknet";
+import { Provider, constants } from "starknet";
 import { StarknetIdNavigator } from "starknetid.js";
 
 type StarknetIdJsConfig = {
@@ -20,10 +20,13 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
         sequencer: {
           network:
             process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-              ? "goerli-alpha"
-              : "mainnet-alpha",
+              ? constants.NetworkName.SN_GOERLI
+              : constants.NetworkName.SN_MAIN,
         },
-      })
+      }),
+      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+        ? constants.StarknetChainId.SN_GOERLI
+        : constants.StarknetChainId.SN_MAIN
     );
   }, []);
 
