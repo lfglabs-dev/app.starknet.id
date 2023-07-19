@@ -60,11 +60,8 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
     else {
-      setPrice(
-        priceData?.["price"].low
-          .add(priceData?.["price"].high.mul(new BN(2).pow(new BN(128))))
-          .toString(10)
-      );
+      const high = priceData?.["price"].high << BigInt(128);
+      setPrice((priceData?.["price"].low + high).toString(10));
     }
   }, [priceData, priceError]);
 
