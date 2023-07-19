@@ -15,7 +15,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SelectNetwork from "./selectNetwork";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
-import { Tooltip } from "@mui/material";
+import { Tooltip, useMediaQuery } from "@mui/material";
 import ArgentIcon from "./iconsComponents/icons/argentIcon";
 import { CircularProgress } from "@mui/material";
 import ModalWallet from "./modalWallet";
@@ -29,7 +29,8 @@ const Navbar: FunctionComponent = () => {
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const { available, connect, disconnect } = useConnectors();
   const { provider } = useProvider();
-  const domainOrAddress = useDisplayName(address ?? "");
+  const isMobile = useMediaQuery("(max-width:425px)");
+  const domainOrAddress = useDisplayName(address ?? "", isMobile);
   const green = "#19AA6E";
   const brown = "#402d28";
   const network =
@@ -213,7 +214,7 @@ const Navbar: FunctionComponent = () => {
                   onClick={handleNav}
                   className="rounded-full cursor-pointer"
                 >
-                  <AiOutlineClose color={brown} />
+                  <AiOutlineClose color={brown} size={isMobile ? 25 : 20} />
                 </div>
               </div>
               <div className="border-b border-tertiary-300 my-4">
