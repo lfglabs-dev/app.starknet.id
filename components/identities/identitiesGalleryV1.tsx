@@ -67,7 +67,11 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                 />
               );
             case "xplorer":
-              return <ArgentIcon width={"150px"} color="#f36a3d" />;
+              return (
+                <div onClick={() => router.push(`/externaldomains/${domain}`)}>
+                  <ArgentIcon width={"150px"} color="#f36a3d" />
+                </div>
+              );
             default:
               return (
                 <img

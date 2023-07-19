@@ -27,7 +27,7 @@ const Navbar: FunctionComponent = () => {
   const { address, connector } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const { available, connect, disconnect } = useConnectors();
+  const { available, connect, disconnect, refresh } = useConnectors();
   const { provider } = useProvider();
   const isMobile = useMediaQuery("(max-width:425px)");
   const domainOrAddress = useDisplayName(address ?? "", isMobile);
@@ -38,6 +38,11 @@ const Navbar: FunctionComponent = () => {
   const [txLoading, setTxLoading] = useState<number>(0);
   const { hashes } = useTransactionManager();
   const [showWallet, setShowWallet] = useState<boolean>(false);
+
+  // Refresh available connectors when the user disconnect otherwise only Argent Web Wallet shows up
+  useEffect(() => {
+    refresh();
+  }, [address]);
 
   useEffect(() => {
     // to handle autoconnect starknet-react adds connector id in local storage

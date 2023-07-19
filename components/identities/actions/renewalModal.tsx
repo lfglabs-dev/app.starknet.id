@@ -13,6 +13,7 @@ import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi } from "starknet";
 import { posthog } from "posthog-js";
+import ConfirmationTx from "../../UI/confirmationTx";
 
 type RenewalModalProps = {
   handleClose: () => void;
@@ -38,6 +39,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
     args: [callDataEncodedDomain[1], duration * 365],
   });
   const { addTransaction } = useTransactionManager();
+  const [isTxSent, setIsTxSent] = useState(false);
 
   //  renew execute
   const renew_calls = [
@@ -69,7 +71,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
     if (!renewData?.transaction_hash) return;
     posthog?.capture("renew");
     addTransaction({ hash: renewData?.transaction_hash ?? "" });
-    handleClose();
+    setIsTxSent(true);
   }, [renewData]);
 
   function changeDuration(value: number): void {
@@ -84,67 +86,74 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
-      <div className={styles.menu}>
-        <button className={styles.menu_close} onClick={handleClose}>
-          <svg viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M6 18L18 6M6 6l12 12"
-            ></path>
-          </svg>
-        </button>
-        <p className={styles.menu_title}>Renew {identity?.domain}</p>
-        <div className="mt-5 flex flex-col justify-center">
-          {identity?.domain_expiry && (
-            <p>
-              The Expiry Data of {identity?.domain} is{" "}
-              <strong>
-                {timestampToReadableDate(identity?.domain_expiry ?? 0)}
-              </strong>
-              . If you don&apos;t renew your domain before the expiry date
-              someone else will be able to take it from you.
-            </p>
-          )}
+      {isTxSent ? (
+        <ConfirmationTx
+          closeModal={handleClose}
+          txHash={renewData?.transaction_hash}
+        />
+      ) : (
+        <div className={styles.menu}>
+          <button className={styles.menu_close} onClick={handleClose}>
+            <svg viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+          <p className={styles.menu_title}>Renew {identity?.domain}</p>
+          <div className="mt-5 flex flex-col justify-center">
+            {identity?.domain_expiry && (
+              <p>
+                The Expiry Data of {identity?.domain} is{" "}
+                <strong>
+                  {timestampToReadableDate(identity?.domain_expiry ?? 0)}
+                </strong>
+                . If you don&apos;t renew your domain before the expiry date
+                someone else will be able to take it from you.
+              </p>
+            )}
 
-          <div className="mt-5">
-            <TextField
-              fullWidth
-              id="outlined-basic"
-              label="years"
-              type="number"
-              placeholder="years"
-              variant="outlined"
-              onChange={(e) => changeDuration(Number(e.target.value))}
-              InputProps={{
-                inputProps: { min: 0, max: maxYearsToRegister },
-              }}
-              defaultValue={duration}
-              color="secondary"
-              required
-            />
-          </div>
-          <div className={styles2.cardCenter}>
-            <p className="text">
-              Price :&nbsp;
-              <span className="font-semibold text-secondary">
-                {Math.round(Number(price) * 0.000000000000000001 * 10000) /
-                  10000}
-                &nbsp; ETH
-              </span>
-            </p>
-          </div>
-          <div className="mt-5 flex justify-center">
-            <Button
-              disabled={!duration || !price || duration < 1}
-              onClick={() => renew()}
-            >
-              Renew domain
-            </Button>
+            <div className="mt-5">
+              <TextField
+                fullWidth
+                id="outlined-basic"
+                label="years"
+                type="number"
+                placeholder="years"
+                variant="outlined"
+                onChange={(e) => changeDuration(Number(e.target.value))}
+                InputProps={{
+                  inputProps: { min: 0, max: maxYearsToRegister },
+                }}
+                defaultValue={duration}
+                color="secondary"
+                required
+              />
+            </div>
+            <div className={styles2.cardCenter}>
+              <p className="text">
+                Price :&nbsp;
+                <span className="font-semibold text-secondary">
+                  {Math.round(Number(price) * 0.000000000000000001 * 10000) /
+                    10000}
+                  &nbsp; ETH
+                </span>
+              </p>
+            </div>
+            <div className="mt-5 flex justify-center">
+              <Button
+                disabled={!duration || !price || duration < 1}
+                onClick={() => renew()}
+              >
+                Renew domain
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </Modal>
   );
 };
