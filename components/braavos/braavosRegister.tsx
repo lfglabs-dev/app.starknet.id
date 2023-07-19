@@ -2,12 +2,13 @@ import React from "react";
 import { TextField } from "@mui/material";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { Call, useAccount } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
 import { useContractWrite } from "@starknet-react/core";
 import { useExpiryFromDomain, useIsValid } from "../../hooks/naming";
 import { numberToString } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
 import { utils } from "starknetid.js";
+import { Call } from "starknet";
 
 type BraavosRegisterProps = {
   expiryDuration: number;
