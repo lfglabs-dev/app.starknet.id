@@ -12,6 +12,7 @@ import Notification from "../UI/notification";
 import CopiedIcon from "../UI/iconsComponents/icons/copiedIcon";
 import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
 import theme from "../../styles/theme";
+import ArgentIcon from "../UI/iconsComponents/icons/argentIcon";
 
 type ExternalDomainCardProps = {
   domain: string;
@@ -41,16 +42,16 @@ const ExternalDomainCard: FunctionComponent<ExternalDomainCardProps> = ({
       <div className={styles.container}>
         <div className="flex items-center justify-center gap-5 my-2 flex-wrap lg:flex-row ">
           <div className="my-2">
-            <img
-              src={
-                domainKind === "braavos"
-                  ? "/braavos/braavosLogo.svg"
-                  : `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/0`
-              }
-              height={150}
-              width={150}
-              alt="identicon"
-            />
+            {domainKind === "braavos" ? (
+              <img
+                src={"/braavos/braavosLogo.svg"}
+                height={150}
+                width={150}
+                alt="Braavos logo"
+              />
+            ) : (
+              <ArgentIcon width="150px" color="#f36a3d" />
+            )}
           </div>
           <div className="flex flex-col justify-center items-center">
             <div className="flex flex-row items-center justify-center">
