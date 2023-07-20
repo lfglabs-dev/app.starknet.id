@@ -78,13 +78,8 @@ const Register: FunctionComponent<RegisterProps> = ({
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("0");
     else {
-      setBalance(
-        userBalanceData?.["balance"].low
-          .add(
-            userBalanceData?.["balance"].high.mul(new BN(2).pow(new BN(128)))
-          )
-          .toString(10)
-      );
+      const high = userBalanceData?.["balance"].high << BigInt(128);
+      setBalance((userBalanceData?.["balance"].low + high).toString(10));
     }
   }, [userBalanceData, userBalanceDataError]);
 
