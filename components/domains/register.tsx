@@ -11,7 +11,6 @@ import {
   useTransactionManager,
 } from "@starknet-react/core";
 import { utils } from "starknetid.js";
-import BN from "bn.js";
 import { isHexString, numberToString } from "../../utils/stringService";
 import { gweiToEth, hexToDecimal } from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
@@ -42,7 +41,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
-    .map((element) => new BN(element.toString()))[0];
+    .map((element) => element.toString())[0];
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
     abi: contract?.abi as Abi,
@@ -78,13 +77,8 @@ const Register: FunctionComponent<RegisterProps> = ({
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("0");
     else {
-      setBalance(
-        userBalanceData?.["balance"].low
-          .add(
-            userBalanceData?.["balance"].high.mul(new BN(2).pow(new BN(128)))
-          )
-          .toString(10)
-      );
+      const high = userBalanceData?.["balance"].high << BigInt(128);
+      setBalance((userBalanceData?.["balance"].low + high).toString(10));
     }
   }, [userBalanceData, userBalanceDataError]);
 
@@ -143,7 +137,7 @@ const Register: FunctionComponent<RegisterProps> = ({
           entrypoint: "buy",
           calldata: [
             numberToString(tokenId),
-            encodedDomain.toString(10),
+            encodedDomain,
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
@@ -153,7 +147,7 @@ const Register: FunctionComponent<RegisterProps> = ({
         {
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "set_address_to_domain",
-          calldata: [1, encodedDomain.toString(10)],
+          calldata: [1, encodedDomain],
         },
       ]);
     } else if (
@@ -177,7 +171,7 @@ const Register: FunctionComponent<RegisterProps> = ({
           entrypoint: "buy",
           calldata: [
             numberToString(tokenId),
-            encodedDomain.toString(10),
+            encodedDomain,
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
@@ -211,7 +205,7 @@ const Register: FunctionComponent<RegisterProps> = ({
           entrypoint: "buy",
           calldata: [
             numberToString(newTokenId),
-            encodedDomain.toString(10),
+            encodedDomain,
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
@@ -221,7 +215,7 @@ const Register: FunctionComponent<RegisterProps> = ({
         {
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "set_address_to_domain",
-          calldata: [1, encodedDomain.toString(10)],
+          calldata: [1, encodedDomain],
         },
       ]);
     } else if (
@@ -251,7 +245,7 @@ const Register: FunctionComponent<RegisterProps> = ({
           entrypoint: "buy",
           calldata: [
             numberToString(newTokenId),
-            encodedDomain.toString(10),
+            encodedDomain,
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
@@ -346,7 +340,7 @@ const Register: FunctionComponent<RegisterProps> = ({
                 )
               }
               disabled={
-                (domainsMinting.get(encodedDomain.toString()) as boolean) ||
+                (domainsMinting.get(encodedDomain) as boolean) ||
                 !account ||
                 !duration ||
                 duration < 1 ||

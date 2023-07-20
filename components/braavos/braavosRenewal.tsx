@@ -8,7 +8,6 @@ import {
 } from "@starknet-react/core";
 import { useEtherContract } from "../../hooks/contracts";
 import Button from "../UI/button";
-import { BN } from "bn.js";
 import BraavosConfirmation from "./braavosConfirmation";
 import Link from "next/link";
 import { utils } from "starknetid.js";
