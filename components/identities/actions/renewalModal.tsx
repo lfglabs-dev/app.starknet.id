@@ -4,7 +4,6 @@ import {
   useContractWrite,
   useTransactionManager,
 } from "@starknet-react/core";
-import BN from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/modalMessage.module.css";
