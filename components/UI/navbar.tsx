@@ -49,10 +49,7 @@ const Navbar: FunctionComponent = () => {
   // Refresh available connectors when user is not connected otherwise only Argent Web Wallet shows up
   useEffect(() => {
     if (!address) {
-      const timeout = setTimeout(() => {
-        refresh();
-      }, 1000);
-      return () => clearTimeout(timeout);
+      refresh();
     }
   });
 
@@ -89,10 +86,13 @@ const Navbar: FunctionComponent = () => {
       }
     }
 
-    if (!address) {
-      console.log("address is null");
-      tryAutoConnect(connectors);
-    }
+    const timeout = setTimeout(() => {
+      if (!address) {
+        console.log("address is null");
+        tryAutoConnect(connectors);
+      }
+    }, 1000);
+    return () => clearTimeout(timeout);
   }, []);
 
   useEffect(() => {
