@@ -76,11 +76,11 @@ const Navbar: FunctionComponent = () => {
       }
 
       try {
-        if (!(await lastConnectedConnector.ready())) {
-          console.log("not authorized anymore");
-          // Not authorized anymore.
-          return;
-        }
+        // if (!(await lastConnectedConnector.ready())) {
+        //   console.log("not authorized anymore");
+        //   // Not authorized anymore.
+        //   return;
+        // }
 
         await connect(lastConnectedConnector);
       } catch {
