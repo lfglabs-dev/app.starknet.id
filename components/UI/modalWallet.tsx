@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../styles/components/walletMessage.module.css";
 import { FunctionComponent } from "react";
 import { Modal } from "@mui/material";
-import { UseTransactionResult, useAccount } from "@starknet-react/core";
+import { useAccount, useTransactions } from "@starknet-react/core";
 import { ContentCopy } from "@mui/icons-material";
 import CopiedIcon from "./iconsComponents/icons/copiedIcon";
 import ClickableAction from "./iconsComponents/clickableAction";
@@ -17,7 +17,8 @@ type ModalWalletProps = {
   open: boolean;
   domain: string;
   disconnectByClick: () => void;
-  transactions: UseTransactionResult[];
+  hashes: string[];
+  setTxLoading: (txLoading: number) => void;
 };
 
 const ModalWallet: FunctionComponent<ModalWalletProps> = ({
@@ -25,12 +26,35 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
   open,
   domain,
   disconnectByClick,
-  transactions,
+  hashes,
+  setTxLoading,
 }) => {
   const { address, connector } = useAccount();
   const [copied, setCopied] = useState(false);
+  const transactions = useTransactions({ hashes, watch: true });
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
+
+  // TODO: Check for starknet react fix and delete that code
+  useEffect(() => {
+    const interval = setInterval(() => {
+      for (const tx of transactions) {
+        tx.refetch();
+      }
+    }, 3_000);
+    return () => clearInterval(interval);
+  }, [transactions?.length]);
+
+  useEffect(() => {
+    if (transactions) {
+      // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
+      setTxLoading(
+        transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")
+          .length
+      );
+    }
+  }, [transactions]);
+
   const copyToClipboard = () => {
     if (!address) return;
     setCopied(true);
@@ -54,7 +78,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
         </button>
         <div className={styles.menu_title}>
           <div className={styles.menu_title}>
-            {connector && connector.id() === "braavos" ? (
+            {connector && connector.id === "braavos" ? (
               <img
                 width={"25px"}
                 src="/braavos/braavosLogo.svg"

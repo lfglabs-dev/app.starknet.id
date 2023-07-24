@@ -5,19 +5,17 @@ import Button from "../UI/button";
 import styles from "../../styles/Home.module.css";
 import { useEtherContract, usePricingContract } from "../../hooks/contracts";
 import {
-  Call,
   useAccount,
   useContractRead,
   useContractWrite,
   useTransactionManager,
 } from "@starknet-react/core";
 import { utils } from "starknetid.js";
-import BN from "bn.js";
 import { isHexString, numberToString } from "../../utils/stringService";
 import { gweiToEth, hexToDecimal } from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
 import { useDisplayName } from "../../hooks/displayName.tsx";
-import { Abi } from "starknet";
+import { Abi, Call } from "starknet";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 
@@ -43,7 +41,7 @@ const Register: FunctionComponent<RegisterProps> = ({
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
-    .map((element) => new BN(element.toString()))[0];
+    .map((element) => element.toString())[0];
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
     abi: contract?.abi as Abi,
@@ -61,33 +59,26 @@ const Register: FunctionComponent<RegisterProps> = ({
   const { writeAsync: execute, data: registerData } = useContractWrite({
     calls: callData,
   });
-  const hasMainDomain = !useDisplayName(address ?? "").startsWith("0x");
+  const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
   const { addTransaction } = useTransactionManager();
+  const [sponsor, setSponsor] = useState<string>("0");
 
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
     else {
-      setPrice(
-        priceData?.["price"].low
-          .add(priceData?.["price"].high.mul(new BN(2).pow(new BN(128))))
-          .toString(10)
-      );
+      const high = priceData?.["price"].high << BigInt(128);
+      setPrice((priceData?.["price"].low + high).toString(10));
     }
   }, [priceData, priceError]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("0");
     else {
-      setBalance(
-        userBalanceData?.["balance"].low
-          .add(
-            userBalanceData?.["balance"].high.mul(new BN(2).pow(new BN(128)))
-          )
-          .toString(10)
-      );
+      const high = userBalanceData?.["balance"].high << BigInt(128);
+      setBalance((userBalanceData?.["balance"].low + high).toString(10));
     }
   }, [userBalanceData, userBalanceDataError]);
 
@@ -106,6 +97,20 @@ const Register: FunctionComponent<RegisterProps> = ({
       setTargetAddress(address);
     }
   }, [address]);
+
+  useEffect(() => {
+    const referralData = localStorage.getItem("referralData");
+    if (referralData) {
+      const data = JSON.parse(referralData);
+      if (data.sponsor && data?.expiry >= new Date().getTime()) {
+        setSponsor(data.sponsor);
+      } else {
+        setSponsor("0");
+      }
+    } else {
+      setSponsor("0");
+    }
+  }, [domain]);
 
   // Set mulitcalls
   useEffect(() => {
@@ -132,16 +137,17 @@ const Register: FunctionComponent<RegisterProps> = ({
           entrypoint: "buy",
           calldata: [
             numberToString(tokenId),
-            encodedDomain.toString(10),
+            encodedDomain,
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
+            sponsor,
           ],
         },
         {
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "set_address_to_domain",
-          calldata: [1, encodedDomain.toString(10)],
+          calldata: [1, encodedDomain],
         },
       ]);
     } else if (
@@ -165,10 +171,11 @@ const Register: FunctionComponent<RegisterProps> = ({
           entrypoint: "buy",
           calldata: [
             numberToString(tokenId),
-            encodedDomain.toString(10),
+            encodedDomain,
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
+            sponsor,
           ],
         },
       ]);
@@ -198,16 +205,17 @@ const Register: FunctionComponent<RegisterProps> = ({
           entrypoint: "buy",
           calldata: [
             numberToString(newTokenId),
-            encodedDomain.toString(10),
+            encodedDomain,
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
+            sponsor,
           ],
         },
         {
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "set_address_to_domain",
-          calldata: [1, encodedDomain.toString(10)],
+          calldata: [1, encodedDomain],
         },
       ]);
     } else if (
@@ -237,10 +245,11 @@ const Register: FunctionComponent<RegisterProps> = ({
           entrypoint: "buy",
           calldata: [
             numberToString(newTokenId),
-            encodedDomain.toString(10),
+            encodedDomain,
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
+            sponsor,
           ],
         },
       ]);
@@ -254,6 +263,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     domain,
     hasMainDomain,
     address,
+    sponsor,
   ]);
 
   useEffect(() => {
@@ -330,15 +340,15 @@ const Register: FunctionComponent<RegisterProps> = ({
                 )
               }
               disabled={
-                (domainsMinting.get(encodedDomain.toString()) as boolean) ||
+                (domainsMinting.get(encodedDomain) as boolean) ||
                 !account ||
                 !duration ||
                 duration < 1 ||
                 !targetAddress ||
-                (connector?.id() != "argentWebWallet" && invalidBalance)
+                (connector?.id != "argentWebWallet" && invalidBalance)
               }
             >
-              {connector?.id() != "argentWebWallet" && invalidBalance
+              {connector?.id != "argentWebWallet" && invalidBalance
                 ? "You don't have enough eth"
                 : "Register from L2"}
             </Button>

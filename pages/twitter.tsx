@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
 import {
-  Call,
   useAccount,
   useContractWrite,
   useTransactionManager,
@@ -16,6 +15,7 @@ import { NextPage } from "next";
 import { stringToHex } from "../utils/feltService";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
+import { Call } from "starknet";
 
 type SignRequestData = {
   status: Status;
