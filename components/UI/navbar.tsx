@@ -1,5 +1,10 @@
 import Link from "next/link";
-import React, { useState, useEffect, FunctionComponent } from "react";
+import React, {
+  useState,
+  useEffect,
+  FunctionComponent,
+  useLayoutEffect,
+} from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
@@ -9,6 +14,7 @@ import {
   useAccount,
   useProvider,
   useTransactionManager,
+  Connector,
 } from "@starknet-react/core";
 import Wallets from "./wallets";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -27,7 +33,8 @@ const Navbar: FunctionComponent = () => {
   const { address, connector } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const { available, connect, disconnect, refresh } = useConnectors();
+  const { available, connect, disconnect, refresh, connectors } =
+    useConnectors();
   const { provider } = useProvider();
   const isMobile = useMediaQuery("(max-width:425px)");
   const domainOrAddress = useDisplayName(address ?? "", isMobile);
@@ -49,10 +56,39 @@ const Navbar: FunctionComponent = () => {
     }
   });
 
-  useEffect(() => {
-    // to handle autoconnect starknet-react adds connector id in local storage
-    // if there is no value stored, we show the wallet modal
-    if (!localStorage.getItem("lastUsedConnector")) setHasWallet(true);
+  useLayoutEffect(() => {
+    async function tryAutoConnect(connectors: Connector[]) {
+      // to handle autoconnect starknet-react adds connector id in local storage
+      // if there is no value stored, we show the wallet modal
+      const lastConnectedConnectorId =
+        localStorage.getItem("lastUsedConnector");
+      if (lastConnectedConnectorId === null) {
+        setHasWallet(true);
+        return;
+      }
+
+      const lastConnectedConnector = connectors.find(
+        (connector) => connector.id === lastConnectedConnectorId
+      );
+      if (lastConnectedConnector === undefined) {
+        return;
+      }
+
+      try {
+        if (!(await lastConnectedConnector.ready())) {
+          // Not authorized anymore.
+          return;
+        }
+
+        await connect(lastConnectedConnector);
+      } catch {
+        // no-op
+      }
+    }
+
+    if (!address) {
+      tryAutoConnect(connectors);
+    }
   }, []);
 
   useEffect(() => {
