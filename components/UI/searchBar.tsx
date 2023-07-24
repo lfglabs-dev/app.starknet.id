@@ -15,7 +15,6 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   const router = useRouter();
   const [typedValue, setTypedValue] = useState<string>("");
   const isDomainValid = useIsValid(typedValue);
-  const posthog = usePostHog();
 
   function handleChange(value: string) {
     setTypedValue(value.toLowerCase());

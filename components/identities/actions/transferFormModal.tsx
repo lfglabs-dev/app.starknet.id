@@ -24,14 +24,12 @@ type TransferFormModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
   callDataEncodedDomain: (number | string)[];
-  domain?: string;
 };
 
 const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   handleClose,
   isModalOpen,
   callDataEncodedDomain,
-  domain,
 }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const router = useRouter();

@@ -8,7 +8,7 @@ type WalletIconsProps = {
 };
 
 const WalletIcons: FunctionComponent<WalletIconsProps> = ({ id }) => {
-  if (id.includes("argent"))
+  if (id === "argentX")
     return (
       <div className="mr-3">
         <ArgentIcon width="24px" color="white" />
