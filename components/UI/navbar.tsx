@@ -39,10 +39,15 @@ const Navbar: FunctionComponent = () => {
   const { hashes } = useTransactionManager();
   const [showWallet, setShowWallet] = useState<boolean>(false);
 
-  // Refresh available connectors when the user disconnect otherwise only Argent Web Wallet shows up
+  // Refresh available connectors when user is not connected otherwise only Argent Web Wallet shows up
   useEffect(() => {
-    refresh();
-  }, [address]);
+    if (!address) {
+      const timeout = setTimeout(() => {
+        refresh();
+      }, 1000);
+      return () => clearTimeout(timeout);
+    }
+  });
 
   useEffect(() => {
     // to handle autoconnect starknet-react adds connector id in local storage
