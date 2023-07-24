@@ -257,7 +257,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             handleClose={() => setIsTransferFormOpen(false)}
             isModalOpen={isTransferFormOpen}
             callDataEncodedDomain={callDataEncodedDomain}
-            domain={identity?.domain}
           />
           <SubdomainModal
             handleClose={() => setIsSubdomainFormOpen(false)}
