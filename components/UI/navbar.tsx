@@ -63,7 +63,6 @@ const Navbar: FunctionComponent = () => {
       const lastConnectedConnectorId =
         localStorage.getItem("lastUsedConnector");
       if (lastConnectedConnectorId === null) {
-        setHasWallet(true);
         return;
       }
 
