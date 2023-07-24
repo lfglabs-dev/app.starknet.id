@@ -141,7 +141,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
-            sponsor,
+            // sponsor,
           ],
         },
         {
@@ -175,7 +175,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
-            sponsor,
+            // sponsor,
           ],
         },
       ]);
@@ -209,7 +209,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
-            sponsor,
+            // sponsor,
           ],
         },
         {
@@ -249,7 +249,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             numberToString(duration * 365),
             0,
             hexToDecimal(targetAddress),
-            sponsor,
+            // sponsor,
           ],
         },
       ]);
@@ -263,7 +263,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     domain,
     hasMainDomain,
     address,
-    sponsor,
+    // sponsor,
   ]);
 
   useEffect(() => {
