@@ -66,29 +66,24 @@ const Navbar: FunctionComponent = () => {
       const lastConnectedConnector = connectors.find(
         (connector) => connector.id === lastConnectedConnectorId
       );
-      console.log("lastConnectedConnector", lastConnectedConnector);
-      console.log("lastConnectedConnectorId", lastConnectedConnectorId);
       if (lastConnectedConnector === undefined) {
         return;
       }
 
       try {
-        // if (!(await lastConnectedConnector.ready())) {
-        //   console.log("not authorized anymore");
-        //   // Not authorized anymore.
-        //   return;
-        // }
+        if (!(await lastConnectedConnector.ready())) {
+          // Not authorized anymore.
+          return;
+        }
 
         await connect(lastConnectedConnector);
       } catch {
         // no-op
-        console.log("catch");
       }
     }
 
     const timeout = setTimeout(() => {
       if (!address) {
-        console.log("address is null");
         tryAutoConnect(connectors);
       }
     }, 1000);
