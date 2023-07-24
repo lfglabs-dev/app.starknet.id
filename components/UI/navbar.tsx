@@ -69,6 +69,8 @@ const Navbar: FunctionComponent = () => {
       const lastConnectedConnector = connectors.find(
         (connector) => connector.id === lastConnectedConnectorId
       );
+      console.log("lastConnectedConnector", lastConnectedConnector);
+      console.log("lastConnectedConnectorId", lastConnectedConnectorId);
       if (lastConnectedConnector === undefined) {
         return;
       }
