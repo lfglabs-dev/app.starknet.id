@@ -77,6 +77,7 @@ const Navbar: FunctionComponent = () => {
 
       try {
         if (!(await lastConnectedConnector.ready())) {
+          console.log("not authorized anymore");
           // Not authorized anymore.
           return;
         }
@@ -84,10 +85,12 @@ const Navbar: FunctionComponent = () => {
         await connect(lastConnectedConnector);
       } catch {
         // no-op
+        console.log("catch");
       }
     }
 
     if (!address) {
+      console.log("address is null");
       tryAutoConnect(connectors);
     }
   }, []);
