@@ -134,7 +134,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
             entrypoint: "write_confirmation",
             calldata: [
               tokenId,
-              Date.now() / 1000,
+              Math.floor(Date.now() / 1000),
               shortString.encodeShortString("proof_of_personhood"),
               hexToDecimal(hexSessionId),
               sig.r,
