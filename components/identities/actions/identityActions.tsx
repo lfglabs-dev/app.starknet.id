@@ -3,7 +3,6 @@ import { FunctionComponent, useEffect, useState } from "react";
 import {
   useAccount,
   useContractWrite,
-  useContractRead,
   useTransactionManager,
 } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
@@ -17,8 +16,6 @@ import styles from "../../../styles/components/identityMenu.module.css";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { utils } from "starknetid.js";
 import AutoRenewalModal from "./autoRenewalModal";
-import { useRenewalContract } from "../../../hooks/contracts";
-import { Abi } from "starknet";
 import theme from "../../../styles/theme";
 import AspectIcon from "../../UI/iconsComponents/icons/aspectIcon";
 import MainIcon from "../../UI/iconsComponents/icons/mainIcon";
@@ -59,8 +56,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isAutoRenewalOpen, setIsAutoRenewalOpen] = useState<boolean>(false);
   const [hasAutoRenewalEnabled, setHasAutoRenewalEnabled] =
     useState<boolean>(false);
-  const { contract: renewalContract } = useRenewalContract();
-  // console.log("renewal Contract", renewalContract);
+  const [limitPrice, setLimitPrice] = useState<string>("0");
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -85,16 +81,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         ? set_address_to_domain_calls
         : [set_domain_to_address_calls, set_address_to_domain_calls],
     });
-
-  const { data: renewData, error: renewError } = useContractRead({
-    address: renewalContract?.address as string,
-    abi: renewalContract?.abi as Abi,
-    functionName: "is_renewing",
-    args: [
-      callDataEncodedDomain[0] === 1 ? encodedDomains[0].toString(10) : 0,
-      identity?.addr,
-    ],
-  });
 
   function setAddressToDomain(): void {
     set_address_to_domain();
@@ -132,11 +118,24 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   }, [address, tokenId]);
 
   useEffect(() => {
-    if (renewError || !renewData) setHasAutoRenewalEnabled(false);
-    else {
-      if (Number(renewData?.["res"])) setHasAutoRenewalEnabled(true);
-    }
-  }, [tokenId, renewData, renewError]);
+    if (!address || !identity?.domain) return;
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_RENEWAL_INDEXER
+      }/get_renewal_data?address=${hexToDecimal(address)}&domain=${
+        identity.domain
+      }`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.error && data.auto_renewal_enabled) {
+          setHasAutoRenewalEnabled(true);
+          setLimitPrice(data.limit_price);
+        } else {
+          setHasAutoRenewalEnabled(false);
+        }
+      });
+  }, [address, tokenId]);
 
   useEffect(() => {
     if (!mainDomainData?.transaction_hash) return;
@@ -318,6 +317,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             callDataEncodedDomain={callDataEncodedDomain}
             identity={identity}
             isEnabled={hasAutoRenewalEnabled}
+            domain={identity?.domain}
+            limitPrice={limitPrice}
           />
         </>
       )}

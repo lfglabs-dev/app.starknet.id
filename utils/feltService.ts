@@ -1,6 +1,7 @@
 import BN from "bn.js";
 import { isHexString } from "./stringService";
 import Big from "big.js";
+import { UINT_128_MAX } from "./constants";
 
 export function stringToHex(str: string): string {
   if (!str) return "";
@@ -35,4 +36,12 @@ export function gweiToEth(gwei: string): string {
   const ethBigInt = gweiBigInt.div(scaleFactor).round(5);
 
   return ethBigInt.toString();
+}
+
+export function toUint256(n: string): { low: string; high: string } {
+  const b = BigInt(n);
+  return {
+    low: (b & UINT_128_MAX).toString(),
+    high: (b >> BigInt(128)).toString(),
+  };
 }
