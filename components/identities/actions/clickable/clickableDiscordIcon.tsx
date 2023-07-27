@@ -11,6 +11,8 @@ import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
+import theme from "../../../../styles/theme";
+import { posthog } from "posthog-js";
 
 type ClickableDiscordIconProps = {
   width: string;
@@ -43,6 +45,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
   }, [starknetIdNavigator]);
 
   function startVerification(link: string): void {
+    posthog?.capture("discordVerificationStart");
     sessionStorage.setItem("tokenId", tokenId);
     router.push(link);
   }
@@ -66,10 +69,10 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
       >
         {discordId ? (
           <div className={styles.verifiedIcon}>
-            <VerifiedIcon width={width} color={"green"} />
+            <VerifiedIcon width={width} color={theme.palette.primary.main} />
           </div>
         ) : null}
-        <DiscordIcon width={width} color={"white"} />
+        <DiscordIcon width={"18"} color={"white"} />
       </div>
     </Tooltip>
   ) : discordId ? (

@@ -4,26 +4,26 @@ import styles from "../styles/Home.module.css";
 import {
   useAccount,
   useContractWrite,
-  useWaitForTransaction,
+  useTransactionManager,
 } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
 import MintIdentity from "../components/identities/mintIdentity";
 import { useRouter } from "next/router";
-import LoadingScreen from "../components/UI/screens/loadingScreen";
-import ErrorScreen from "../components/UI/screens/errorScreen";
-import SuccessScreen from "../components/UI/screens/successScreen";
 import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
+import { posthog } from "posthog-js";
+import TxConfirmationModal from "../components/UI/txConfirmationModal";
 
 const Identities: NextPage = () => {
   const { account } = useAccount();
   const [loading, setLoading] = useState<boolean>(false);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
   const [externalDomains, setExternalDomains] = useState<string[]>([]);
-
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+  const { addTransaction } = useTransactionManager();
 
   //Mint
   const callData = {
@@ -35,21 +35,14 @@ const Identities: NextPage = () => {
     calls: callData,
   });
 
-  function mint() {
-    execute();
-  }
-
-  const { data, error: transactionError } = useWaitForTransaction({
-    hash: mintData?.transaction_hash,
-    watch: true,
-  });
-
   useEffect(() => {
     if (account) {
       // Our Indexer
       setLoading(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_to_full_ids?addr=${hexToDecimal(account.address)}`
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
+        }/addr_to_full_ids?addr=${hexToDecimal(account.address)}`
       )
         .then((response) => response.json())
         .then((data) => {
@@ -57,9 +50,9 @@ const Identities: NextPage = () => {
         });
 
       fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_to_external_domains?addr=${hexToDecimal(
-          account.address
-        )}`
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
+        }/addr_to_external_domains?addr=${hexToDecimal(account.address)}`
       )
         .then((response) => response.json())
         .then((data: ExternalDomains) => {
@@ -78,6 +71,17 @@ const Identities: NextPage = () => {
     //   });
   }, [account, router.asPath]);
 
+  useEffect(() => {
+    if (!mintData?.transaction_hash) return;
+    posthog?.capture("mint");
+    addTransaction({ hash: mintData?.transaction_hash });
+    setIsTxModalOpen(true);
+  }, [mintData]);
+
+  function mint() {
+    execute();
+  }
+
   return (
     <div className={styles.screen}>
       <div className="firstLeavesGroup">
@@ -87,46 +91,25 @@ const Identities: NextPage = () => {
         <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
       </div>
       <div className={styles.container}>
-        <>
-          {!mintData?.transaction_hash ? (
-            <>
-              <h1 className="title">Your Starknet identities</h1>
-              <div className={styles.containerGallery}>
-                {loading ? (
-                  <IdentitiesSkeleton />
-                ) : (
-                  <IdentitiesGallery
-                    identities={ownedIdentities}
-                    externalDomains={externalDomains}
-                  />
-                )}
-                <MintIdentity onClick={() => mint()} />
-              </div>
-            </>
+        <h1 className="title">Your Starknet identities</h1>
+        <div className={styles.containerGallery}>
+          {loading ? (
+            <IdentitiesSkeleton />
           ) : (
-            <>
-              {data?.status &&
-                !transactionError &&
-                !data?.status.includes("ACCEPTED") &&
-                data?.status !== "PENDING" && <LoadingScreen />}
-              {transactionError && (
-                <ErrorScreen
-                  onClick={() => router.reload()}
-                  buttonText="Retry to mint"
-                />
-              )}
-              {data?.status === "ACCEPTED_ON_L2" ||
-                (data?.status === "PENDING" && (
-                  <SuccessScreen
-                    onClick={() => router.push(`/`)}
-                    buttonText="Get a domain to your identity"
-                    successMessage="Congrats, your starknet identity is minted !"
-                  />
-                ))}
-            </>
+            <IdentitiesGallery
+              identities={ownedIdentities}
+              externalDomains={externalDomains}
+            />
           )}
-        </>
+          <MintIdentity onClick={() => mint()} />
+        </div>
       </div>
+      <TxConfirmationModal
+        txHash={mintData?.transaction_hash}
+        isTxModalOpen={isTxModalOpen}
+        closeModal={() => setIsTxModalOpen(false)}
+        title="Your identity NFT is on it's way !"
+      />
     </div>
   );
 };

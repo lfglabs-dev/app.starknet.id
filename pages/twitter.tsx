@@ -3,17 +3,19 @@ import styles from "../styles/Home.module.css";
 import {
   useAccount,
   useContractWrite,
+  useTransactionManager,
   useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
-import LoadingScreen from "../components/UI/screens/loadingScreen";
-import SuccessScreen from "../components/UI/screens/successScreen";
 import { Screen } from "./discord";
 import { NextPage } from "next";
 import { stringToHex } from "../utils/feltService";
+import { posthog } from "posthog-js";
+import TxConfirmationModal from "../components/UI/txConfirmationModal";
+import { Call } from "starknet";
 
 type SignRequestData = {
   status: Status;
@@ -31,10 +33,12 @@ const Twitter: NextPage = () => {
   const [signRequestData, setSignRequestData] = useState<
     SignRequestData | ErrorRequestData
   >();
+  const { addTransaction } = useTransactionManager();
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
-  const [calls, setCalls] = useState<Calls | undefined>();
+  const [calls, setCalls] = useState<Call | undefined>();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   useEffect(() => {
     if (!tokenId) {
@@ -43,7 +47,11 @@ const Twitter: NextPage = () => {
   }, [tokenId]);
 
   useEffect(() => {
-    if (!signRequestData || signRequestData.status === "error") return;
+    if (!signRequestData) return;
+    if (signRequestData.status === "error") {
+      setScreen("error");
+      return;
+    }
 
     setCalls({
       contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
@@ -69,7 +77,6 @@ const Twitter: NextPage = () => {
       setIsConnected(false);
     } else {
       setIsConnected(true);
-      setScreen("verifyTwitter");
     }
   }, [account]);
 
@@ -91,10 +98,7 @@ const Twitter: NextPage = () => {
       }),
     };
 
-    fetch(
-      `${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`,
-      requestOptions
-    )
+    fetch(`${process.env.NEXT_PUBLIC_VERIFIER_LINK}/sign`, requestOptions)
       .then((response) => response.json())
       .then((data) => setSignRequestData(data));
   }, [code, tokenId]);
@@ -124,20 +128,19 @@ const Twitter: NextPage = () => {
         !transactionData?.status.includes("ACCEPTED") &&
         transactionData?.status !== "PENDING"
       ) {
-        setScreen("loading");
+        setIsTxModalOpen(true);
+        posthog?.capture("twitterVerificationTx");
+        addTransaction({
+          hash: twitterVerificationData?.transaction_hash ?? "",
+        });
       } else if (transactionError) {
         setScreen("error");
-      } else if (
-        transactionData?.status === "ACCEPTED_ON_L2" ||
-        transactionData?.status === "PENDING"
-      ) {
-        setScreen("success");
       }
     }
   }, [twitterVerificationData, transactionData, transactionError]);
 
   //Screen management
-  const [screen, setScreen] = useState<Screen | undefined>();
+  const [screen, setScreen] = useState<Screen>("verifyTwitter");
 
   // Error Management
   useEffect(() => {
@@ -161,26 +164,27 @@ const Twitter: NextPage = () => {
                   It&apos;s time to verify your twitter on chain !
                 </h1>
                 <div className="mt-8">
-                  <Button onClick={verifyTwitter}>Verify my Twitter</Button>
+                  <Button disabled={Boolean(!calls)} onClick={verifyTwitter}>
+                    Verify my Twitter
+                  </Button>
                 </div>
               </>
             ))}
-          {screen === "loading" && <LoadingScreen />}
           {errorScreen && (
             <ErrorScreen
               onClick={() => router.push(`/identities/${tokenId}`)}
-              buttonText="Retry to connect"
+              buttonText="Retry to verify"
             />
           )}
-          {screen === "success" && (
-            <>
-              <SuccessScreen
-                onClick={() => router.push(`/identities/${tokenId}`)}
-                buttonText="Get back to your starknet identity"
-                successMessage="Congrats, your twitter is verified !"
-              />
-            </>
-          )}
+          <TxConfirmationModal
+            txHash={twitterVerificationData?.transaction_hash}
+            isTxModalOpen={isTxModalOpen}
+            closeModal={() => {
+              setIsTxModalOpen(false);
+              router.push(`/identities/${tokenId}`);
+            }}
+            title="Your transaction is on it's way !"
+          />
         </div>
       </div>
     </div>

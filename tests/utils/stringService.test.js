@@ -12,10 +12,12 @@ import {
   isStarkDomain,
   numberToString,
   isBraavosSubdomain,
+  isXplorerSubdomain,
   getDomainKind,
   shortenDomain,
+  changeTwitterProfilePic,
+  cleanUsername,
 } from "../../utils/stringService";
-
 
 describe("Should test is1234Domain", () => {
   it("Should return false cause there are valid 1234 domains", () => {
@@ -206,6 +208,23 @@ describe("isBraavosSubdomain", () => {
   });
 });
 
+describe("isXplorerSubdomain", () => {
+  it("returns true for valid Xplorer subdomains", () => {
+    expect(isXplorerSubdomain("ben.xplorer.stark")).toBe(true);
+    expect(isXplorerSubdomain("john.xplorer.stark")).toBe(true);
+    expect(isXplorerSubdomain("jeremy.xplorer.stark")).toBe(true);
+    expect(isXplorerSubdomain("johnny.xplorer.stark")).toBe(true);
+  });
+
+  it("returns false for invalid Xplorer subdomains", () => {
+    expect(isXplorerSubdomain("arya.braavoos.stark")).toBe(false);
+    expect(isXplorerSubdomain("xplorer.stark")).toBe(false);
+    expect(isXplorerSubdomain("winterf.ell.xplorer.stark")).toBe(false);
+    expect(isXplorerSubdomain("johén.xplorer.stark")).toBe(false);
+    expect(isXplorerSubdomain(undefined)).toBe(false);
+  });
+});
+
 describe("getDomainKind", () => {
   it("returns 'root' for valid root stark root domains", () => {
     expect(getDomainKind("stark.stark")).toBe("root");
@@ -260,5 +279,41 @@ describe("Should test shortenDomain function", () => {
 
   it("Should return an empty string if the domain is an empty string", () => {
     expect(shortenDomain("")).toEqual("");
+  });
+});
+
+describe("cleanUsername function", () => {
+  it("should remove @ symbol if it exists in the username", () => {
+    const username = "@john";
+    const expectedOutput = "john";
+    const result = cleanUsername(username);
+    expect(result).toEqual(expectedOutput);
+  });
+
+  it("should return the same username if @ symbol does not exist", () => {
+    const username = "jane";
+    const expectedOutput = "jane";
+    const result = cleanUsername(username);
+    expect(result).toEqual(expectedOutput);
+  });
+});
+
+describe("changeTwitterProfilePic function", () => {
+  it("should remove '_normal' from the profile picture URL", () => {
+    const url =
+      "https://pbs.twimg.com/profile_images/1234567890/abcdef_normal.jpg";
+    const expectedOutput =
+      "https://pbs.twimg.com/profile_images/1234567890/abcdef.jpg";
+    const result = changeTwitterProfilePic(url);
+    expect(result).toEqual(expectedOutput);
+  });
+
+  it("should return null if url parameter is null or undefined", () => {
+    const url1 = null;
+    const url2 = undefined;
+    const result1 = changeTwitterProfilePic(url1);
+    const result2 = changeTwitterProfilePic(url2);
+    expect(result1).toBe(undefined);
+    expect(result2).toBe(undefined);
   });
 });

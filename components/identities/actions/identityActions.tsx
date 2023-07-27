@@ -2,8 +2,9 @@ import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import {
   useAccount,
-  useContractRead,
   useContractWrite,
+  useContractRead,
+  useTransactionManager,
 } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
@@ -18,6 +19,15 @@ import { utils } from "starknetid.js";
 import AutoRenewalModal from "./autoRenewalModal";
 import { useRenewalContract } from "../../../hooks/contracts";
 import { Abi } from "starknet";
+import theme from "../../../styles/theme";
+import AspectIcon from "../../UI/iconsComponents/icons/aspectIcon";
+import MainIcon from "../../UI/iconsComponents/icons/mainIcon";
+import AddressIcon from "../../UI/iconsComponents/icons/addressIcon";
+import ChangeIcon from "../../UI/iconsComponents/icons/changeIcon";
+import TransferIcon from "../../UI/iconsComponents/icons/transferIcon";
+import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
+import { posthog } from "posthog-js";
+import TxConfirmationModal from "../../UI/txConfirmationModal";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -42,7 +52,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  //UseState viewMoreClicked
+  const { addTransaction } = useTransactionManager();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
   // AutoRenewals
   const [isAutoRenewalOpen, setIsAutoRenewalOpen] = useState<boolean>(false);
@@ -67,11 +78,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     entrypoint: "set_domain_to_address",
     calldata: [...callDataEncodedDomain, hexToDecimal(address)],
   };
-  const { writeAsync: set_address_to_domain } = useContractWrite({
-    calls: isAccountTargetAddress
-      ? set_address_to_domain_calls
-      : [set_domain_to_address_calls, set_address_to_domain_calls],
-  });
+  const { writeAsync: set_address_to_domain, data: mainDomainData } =
+    useContractWrite({
+      calls: isAccountTargetAddress
+        ? set_address_to_domain_calls
+        : [set_domain_to_address_calls, set_address_to_domain_calls],
+    });
 
   const { data: renewData, error: renewError } = useContractRead({
     address: renewalContract?.address as string,
@@ -125,6 +137,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     }
   }, [tokenId, renewData, renewError]);
 
+  useEffect(() => {
+    if (!mainDomainData?.transaction_hash) return;
+    posthog?.capture("setAsMainDomain");
+    addTransaction({ hash: mainDomainData?.transaction_hash ?? "" });
+    setIsTxModalOpen(true);
+  }, [mainDomainData]);
+
   if (!isIdentityADomain) {
     hideActionsHandler(true);
   } else {
@@ -141,19 +160,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             {identity && !isOwner && isIdentityADomain && (
               <>
                 <ClickableAction
-                  title="View on Mintsquare"
-                  icon="mintsquare"
-                  description="Check this identity on Mintsquare"
-                  onClick={() =>
-                    window.open(
-                      `https://mintsquare.io/asset/starknet/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
-                    )
-                  }
-                />
-
-                <ClickableAction
                   title="View on Aspect"
-                  icon="aspect"
+                  icon={
+                    <AspectIcon
+                      width="25"
+                      color={theme.palette.secondary.main}
+                    />
+                  }
                   description="Check this identity on Aspect"
                   onClick={() =>
                     window.open(
@@ -182,7 +195,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     description={`Expires on ${timestampToReadableDate(
                       identity?.domain_expiry ?? 0
                     )}`}
-                    icon="change"
+                    icon={
+                      <ChangeIcon
+                        width="25"
+                        color={theme.palette.primary.main}
+                      />
+                    }
                     onClick={() => setIsRenewFormOpen(true)}
                   />
                 ) : null}
@@ -190,29 +208,50 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   <ClickableAction
                     title="Set as main domain"
                     description="Set this domain as your main domain"
-                    icon="main"
+                    icon={
+                      <MainIcon
+                        width="25"
+                        firstColor={theme.palette.secondary.main}
+                        secondColor={theme.palette.secondary.main}
+                      />
+                    }
                     onClick={() => setAddressToDomain()}
                   />
                 )}
                 <ClickableAction
-                  title="CHANGE THE TARGET"
-                  description="Change the current target address"
-                  icon="address"
+                  title="CHANGE DOMAIN TARGET"
+                  description="Change target address"
+                  icon={
+                    <AddressIcon
+                      width="25"
+                      color={theme.palette.secondary.main}
+                    />
+                  }
                   onClick={() => setIsAddressFormOpen(true)}
                 />
 
                 {viewMoreClicked ? (
                   <>
                     <ClickableAction
-                      title="MOVE YOUR IDENTITY"
+                      title="MOVE YOUR IDENTITY NFT"
                       description="Move your identity to another wallet"
-                      icon="transfer"
+                      icon={
+                        <TransferIcon
+                          width="25"
+                          color={theme.palette.secondary.main}
+                        />
+                      }
                       onClick={() => setIsTransferFormOpen(true)}
                     />
                     <ClickableAction
                       title="CREATE A SUBDOMAIN"
                       description="Create a new subdomain"
-                      icon="plus"
+                      icon={
+                        <PlusIcon
+                          width="25"
+                          color={theme.palette.secondary.main}
+                        />
+                      }
                       onClick={() => setIsSubdomainFormOpen(true)}
                     />
                     <p
@@ -224,7 +263,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   </>
                 ) : (
                   <p
-                    onClick={() => setViewMoreClicked(true)}
+                    onClick={() => {
+                      posthog?.capture("clickViewMore");
+                      setViewMoreClicked(true);
+                    }}
                     className={styles.viewMore}
                   >
                     View more
@@ -251,7 +293,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             handleClose={() => setIsTransferFormOpen(false)}
             isModalOpen={isTransferFormOpen}
             callDataEncodedDomain={callDataEncodedDomain}
-            domain={identity?.domain}
           />
           <SubdomainModal
             handleClose={() => setIsSubdomainFormOpen(false)}
@@ -259,12 +300,11 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             callDataEncodedDomain={callDataEncodedDomain}
             domain={identity?.domain}
           />
-          <AutoRenewalModal
-            handleClose={() => setIsAutoRenewalOpen(false)}
-            isModalOpen={isAutoRenewalOpen}
-            callDataEncodedDomain={callDataEncodedDomain}
-            identity={identity}
-            isEnabled={hasAutoRenewalEnabled}
+          <TxConfirmationModal
+            txHash={mainDomainData?.transaction_hash}
+            isTxModalOpen={isTxModalOpen}
+            closeModal={() => setIsTxModalOpen(false)}
+            title="Your Transaction is on it's way !"
           />
         </>
       )}

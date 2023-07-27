@@ -28,3 +28,22 @@
   padding-right: 0.5rem;
   height: 12vh;
 }
+
+.webWalletLink {
+  display: flex;
+  align-items: center;
+  background: rgba(249, 208, 132, 0.615);
+  letter-spacing: 0.094em;
+  border: none;
+  padding: 0 1rem;
+  border-radius: 500px;
+  height: 3rem;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .navbarContainer {
+    height: 80px;
+  }
+}

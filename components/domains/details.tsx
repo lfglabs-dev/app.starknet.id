@@ -8,6 +8,7 @@ import {
 import { ThreeDots } from "react-loader-spinner";
 import styles from "../../styles/Home.module.css";
 import { minifyAddress } from "../../utils/stringService";
+import theme from "../../styles/theme";
 
 type DetailsProps = {
   domain: string;
@@ -17,7 +18,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
   const [ownerAddress, setOwnerAddress] = useState<string | undefined>(
     undefined
   );
-  const [tokenId, setTokenId] = useState<number | undefined>(undefined);
+  const [tokenId, setTokenId] = useState<number>(0);
   const [expiryDate, setExpiryDate] = useState<Date | undefined>(undefined);
 
   const { address: domainData, error: domainError } =
@@ -45,6 +46,8 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
     } else {
       if (tokenIdData) {
         setTokenId(tokenIdData);
+      } else {
+        setTokenId(0);
       }
     }
   }, [tokenIdData, tokenIdError]);
@@ -54,7 +57,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
       return;
     } else {
       if (expiryData) {
-        setExpiryDate(new Date(expiryData?.["expiry"].toNumber() * 1000));
+        setExpiryDate(new Date(Number(expiryData?.["expiry"]) * 1000));
       }
     }
   }, [expiryData, expiryError]);
@@ -75,52 +78,50 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
 
   return (
     <div className="w-full break-all">
-      {ownerAddress && (
-        <p>
-          <strong>Points to :</strong>&nbsp;
-          <span>
-            {ownerAddress === "0x0"
-              ? ownerAddress
-              : minifyAddress(ownerAddress)}
-          </span>
-        </p>
-      )}
-      {expiryDate && (
-        <p>
-          <strong>Expiration date :</strong>&nbsp;
-          <span>{expiryDate.toDateString()}</span>
-        </p>
-      )}
-      {(!ownerAddress || !tokenId || !expiryDate) && (
+      {!ownerAddress || !expiryDate ? (
         <ThreeDots
           wrapperClass="flex justify-center"
           height="25"
           width="80"
           radius="9"
-          color="#19AA6E"
+          color={theme.palette.primary.main}
           ariaLabel="three-dots-loading"
           visible={true}
         />
+      ) : !tokenId ? (
+        <p>This domain is not registered</p>
+      ) : (
+        <>
+          {ownerAddress && (
+            <p>
+              <strong>Points to :</strong>&nbsp;
+              <span>
+                {ownerAddress === "0x0"
+                  ? ownerAddress
+                  : minifyAddress(ownerAddress)}
+              </span>
+            </p>
+          )}
+          {expiryDate && (
+            <p>
+              <strong>Expiration date :</strong>&nbsp;
+              <span>{expiryDate.toDateString()}</span>
+            </p>
+          )}
+          {tokenId && (
+            <div
+              onClick={() =>
+                window.open(
+                  `${process.env.NEXT_PUBLIC_STARKNET_ID}/${domain}.stark`
+                )
+              }
+              className={styles.cardCenter}
+            >
+              <p className="text">See owner identity</p>
+            </div>
+          )}
+        </>
       )}
-      {tokenId && (
-        <div
-          onClick={() => window.open(`https://www.starknet.id/${domain}.stark`)}
-          className={styles.cardCenter}
-        >
-          <p className="text">See owner identity</p>
-        </div>
-      )}
-      {/* <div className="flex justify-center align-center mt-2">
-        <div className="m-2">
-          <DiscordIcon color="#19aa6e" width={"25"} />
-        </div>
-        <div className="m-2">
-          <TwitterIcon color="#19aa6e" width={"25"} />
-        </div>
-        <div className="m-2">
-          <GithubIcon color="#19aa6e" width={"25"} />
-        </div>
-      </div> */}
     </div>
   );
 };

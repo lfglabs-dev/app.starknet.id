@@ -47,7 +47,7 @@ export default async function handler(
       .json({
         name: "Starknet ID: " + id,
         description: "This token represents an identity on StarkNet.",
-        image: "https://starknet.id/api/identicons/" + id,
+        image: `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/` + id,
       });
     return;
   }
@@ -79,7 +79,7 @@ export default async function handler(
     .json({
       name: document.domain,
       description: "This token represents an identity on StarkNet.",
-      image: "https://starknet.id/api/identicons/" + id,
+      image: `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/` + id,
       expiry: document.expiry,
       attributes: [
         {

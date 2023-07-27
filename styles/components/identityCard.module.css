@@ -71,7 +71,7 @@
 
 .cardCode {
   /* Placement */
-  background-color: var(--beige);
+  background-color: var(--background);
   height: 83px;
   width: 650px;
   border-width: 0px 6px 4px 1px;

@@ -8,7 +8,6 @@ import {
 } from "@starknet-react/core";
 import { useEtherContract } from "../../hooks/contracts";
 import Button from "../UI/button";
-import { BN } from "bn.js";
 import BraavosConfirmation from "./braavosConfirmation";
 import Link from "next/link";
 import { utils } from "starknetid.js";
@@ -74,13 +73,8 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("0");
     else {
-      setBalance(
-        userBalanceData?.["balance"].low
-          .add(
-            userBalanceData?.["balance"].high.mul(new BN(2).pow(new BN(128)))
-          )
-          .toString(10)
-      );
+      const high = userBalanceData?.["balance"].high << BigInt(128);
+      setBalance((userBalanceData?.["balance"].low + high).toString(10));
     }
   }, [userBalanceData, userBalanceDataError]);
 

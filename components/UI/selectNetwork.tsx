@@ -26,7 +26,7 @@ const SelectNetwork: FunctionComponent<SelectNetworkProps> = ({ network }) => {
   }
 
   return (
-    <div className="mr-5">
+    <div className="mr-5 ml-5">
       <FormControl fullWidth>
         <Select
           value={network}

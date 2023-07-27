@@ -3,7 +3,7 @@ import { useDomainFromAddress } from "./naming";
 // import { Provider } from "starknet";
 // import { useStarkName } from "@starknet-react/core";
 
-export function useDisplayName(address: string): string {
+export function useDisplayName(address: string, isMobile: boolean): string {
   // // With starknet.js
   // const provider = new Provider({
   //   sequencer: {
@@ -32,7 +32,7 @@ export function useDisplayName(address: string): string {
   // With our own hook
   const { domain } = useDomainFromAddress(address);
   const toDisplay = domain
-    ? minifyDomain(domain)
+    ? minifyDomain(domain, isMobile ? 15 : 18)
     : address
     ? minifyAddress(address)
     : "none";
