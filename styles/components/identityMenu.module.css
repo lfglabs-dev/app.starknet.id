@@ -77,7 +77,7 @@
 }
 
 .clickableActionDescription {
-  font-size: 12px;
+  font-size: 11px;
   text-align: left;
 }
 
@@ -96,8 +96,8 @@
   align-items: center;
   justify-content: center;
   border-radius: 25%;
-  width: 45px;
-  height: 45px;
+  width: 35px;
+  height: 35px;
 }
 
 .clickableIconSecondary {

@@ -54,7 +54,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
   // AutoRenewals
   const [isAutoRenewalOpen, setIsAutoRenewalOpen] = useState<boolean>(false);
-  const [hasAutoRenewalEnabled, setHasAutoRenewalEnabled] =
+  const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const [limitPrice, setLimitPrice] = useState<string>("0");
 
@@ -129,10 +129,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       .then((response) => response.json())
       .then((data) => {
         if (!data.error && data.auto_renewal_enabled) {
-          setHasAutoRenewalEnabled(true);
+          setIsAutoRenewalEnabled(true);
           setLimitPrice(data.limit_price);
         } else {
-          setHasAutoRenewalEnabled(false);
+          setIsAutoRenewalEnabled(false);
         }
       });
   }, [address, tokenId]);
@@ -178,11 +178,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             )}
             {identity && isOwner && (
               <div className="flex flex-col items-center justify-center">
-                {callDataEncodedDomain[0] === 1 ? (
+                {callDataEncodedDomain[0] === 1 && !isAutoRenewalEnabled ? (
                   <ClickableAction
-                    title={`${
-                      hasAutoRenewalEnabled ? "DISABLE" : "ENABLE"
-                    } AUTO RENEWAL`}
+                    title="ENABLE AUTO RENEWAL"
                     style="primary"
                     description="Don't lose your domain!"
                     icon={
@@ -203,7 +201,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     icon={
                       <ChangeIcon
                         width="25"
-                        color={theme.palette.primary.main}
+                        color={theme.palette.secondary.main}
                       />
                     }
                     onClick={() => setIsRenewFormOpen(true)}
@@ -259,6 +257,21 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       }
                       onClick={() => setIsSubdomainFormOpen(true)}
                     />
+                    {callDataEncodedDomain[0] === 1 && isAutoRenewalEnabled ? (
+                      <ClickableAction
+                        title="DISABLED AUTO RENEWAL"
+                        style="primary"
+                        description="You'll loose your if you don't renew it"
+                        icon={
+                          <ChangeIcon
+                            width="25"
+                            color={theme.palette.primary.main}
+                          />
+                        }
+                        onClick={() => setIsAutoRenewalOpen(true)}
+                      />
+                    ) : null}
+
                     <p
                       onClick={() => setViewMoreClicked(false)}
                       className={styles.viewMore}
@@ -316,7 +329,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             isModalOpen={isAutoRenewalOpen}
             callDataEncodedDomain={callDataEncodedDomain}
             identity={identity}
-            isEnabled={hasAutoRenewalEnabled}
+            isEnabled={isAutoRenewalEnabled}
             domain={identity?.domain}
             limitPrice={limitPrice}
           />
