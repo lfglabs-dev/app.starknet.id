@@ -1,6 +1,5 @@
-import { Modal, TextField } from "@mui/material";
+import { Modal } from "@mui/material";
 import { useContractRead, useContractWrite } from "@starknet-react/core";
-import BN from "bn.js";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/wallets.module.css";
@@ -35,11 +34,8 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
     else {
-      setPrice(
-        priceData?.["price"].low
-          .add(priceData?.["price"].high.mul(new BN(2).pow(new BN(128))))
-          .toString(10)
-      );
+      const high = priceData?.["price"].high << BigInt(128);
+      setPrice((priceData?.["price"].low + high).toString(10));
     }
   }, [priceData, priceError]);
 
@@ -49,14 +45,18 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       entrypoint: "approve",
       calldata: [
         process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-        isEnabled ? 0 : price,
-        0,
+        2 ^ (128 - 1),
+        2 ^ (128 - 1),
       ],
     },
     {
       contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
       entrypoint: "toggle_renewals",
-      calldata: [callDataEncodedDomain[1]],
+      calldata: [
+        callDataEncodedDomain[1],
+        Number(priceData?.["price"].low),
+        Number(priceData?.["price"].high as string),
+      ],
     },
   ];
 

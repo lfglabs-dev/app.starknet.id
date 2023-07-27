@@ -60,6 +60,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [hasAutoRenewalEnabled, setHasAutoRenewalEnabled] =
     useState<boolean>(false);
   const { contract: renewalContract } = useRenewalContract();
+  // console.log("renewal Contract", renewalContract);
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -185,7 +186,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     } AUTO RENEWAL`}
                     style="primary"
                     description="Don't lose your domain!"
-                    icon="change"
+                    icon={
+                      <ChangeIcon
+                        width="25"
+                        color={theme.palette.primary.main}
+                      />
+                    }
                     onClick={() => setIsAutoRenewalOpen(true)}
                   />
                 ) : null}
@@ -305,6 +311,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             isTxModalOpen={isTxModalOpen}
             closeModal={() => setIsTxModalOpen(false)}
             title="Your Transaction is on it's way !"
+          />
+          <AutoRenewalModal
+            handleClose={() => setIsAutoRenewalOpen(false)}
+            isModalOpen={isAutoRenewalOpen}
+            callDataEncodedDomain={callDataEncodedDomain}
+            identity={identity}
+            isEnabled={hasAutoRenewalEnabled}
           />
         </>
       )}
