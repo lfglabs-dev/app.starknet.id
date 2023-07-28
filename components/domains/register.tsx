@@ -404,6 +404,8 @@ const Register: FunctionComponent<RegisterProps> = ({
                 !duration ||
                 duration < 1 ||
                 !targetAddress ||
+                invalidBalance ||
+                !termsCheckBox ||
                 (connector?.id != "argentWebWallet" && invalidBalance)
               }
             >
