@@ -110,6 +110,20 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
             title="Copy Address"
             width="auto"
           />
+          <ClickableAction
+            onClick={() =>
+              window.open(
+                network === "mainnet"
+                  ? "https://web.argent.xyz"
+                  : "https://web.hydrogen.argent47.net",
+                "_blank",
+                "noopener noreferrer"
+              )
+            }
+            icon={<ArgentIcon color={"#f36a3d"} width={"25px"} />}
+            title="Web wallet Dashboard"
+            width="auto"
+          />
         </div>
         <div className={styles.menu_txs}>
           <div className={styles.tx_title}>My transactions</div>
