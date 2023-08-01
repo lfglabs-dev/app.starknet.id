@@ -21,8 +21,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SelectNetwork from "./selectNetwork";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
-import { Tooltip, useMediaQuery } from "@mui/material";
-import ArgentIcon from "./iconsComponents/icons/argentIcon";
+import { useMediaQuery } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 import ModalWallet from "./modalWallet";
 import { constants } from "starknet";
@@ -30,7 +29,7 @@ import { constants } from "starknet";
 const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
   const [hasWallet, setHasWallet] = useState<boolean>(true);
-  const { address, connector } = useAccount();
+  const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const { available, connect, disconnect, refresh, connectors } =
@@ -169,24 +168,6 @@ const Navbar: FunctionComponent = () => {
                 <li className={styles.menuItem}>Join the tribe</li>
               </Link> */}
               <SelectNetwork network={network} />
-
-              {connector?.id === "argentWebWallet" && (
-                <Tooltip title="Check your argent web wallet" arrow>
-                  <a
-                    target="_blank"
-                    href={
-                      network === "mainnet"
-                        ? "https://web.argent.xyz"
-                        : "https://web.hydrogen.argent47.net"
-                    }
-                    rel="noopener noreferrer"
-                  >
-                    <div className={styles.webWalletLink}>
-                      <ArgentIcon width={"24px"} color="#f36a3d" />
-                    </div>
-                  </a>
-                </Tooltip>
-              )}
               <div className="text-beige mr-5">
                 <Button
                   onClick={

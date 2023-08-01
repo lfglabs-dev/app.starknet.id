@@ -33,7 +33,7 @@ const BraavosRenewal: FunctionComponent<BraavosRenewalProps> = ({ domain }) => {
     {
       contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
       entrypoint: "renew",
-      calldata: [utils.encodeDomain(domain).toString(), 3 * 365],
+      calldata: [utils.encodeDomain(domain).toString(), 3 * 365, 0],
     },
     {
       contractAddress: process.env

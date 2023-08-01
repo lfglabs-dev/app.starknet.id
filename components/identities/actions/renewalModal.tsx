@@ -50,7 +50,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
     {
       contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
       entrypoint: "renew",
-      calldata: [callDataEncodedDomain[1], duration * 365],
+      calldata: [callDataEncodedDomain[1], duration * 365, 0],
     },
   ];
 
@@ -77,22 +77,27 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
     setDuration(value);
   }
 
+  function closeModal(): void {
+    handleClose();
+    setIsTxSent(false);
+  }
+
   return (
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={handleClose}
+      onClose={closeModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       {isTxSent ? (
         <ConfirmationTx
-          closeModal={handleClose}
+          closeModal={closeModal}
           txHash={renewData?.transaction_hash}
         />
       ) : (
         <div className={styles.menu}>
-          <button className={styles.menu_close} onClick={handleClose}>
+          <button className={styles.menu_close} onClick={closeModal}>
             <svg viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"

@@ -34,6 +34,8 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
   const transactions = useTransactions({ hashes, watch: true });
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
+  // Argent web wallet is detectable only like this
+  const isWebWallet = (connector as any)?._wallet?.id === "argentWebWallet";
 
   // TODO: Check for starknet react fix and delete that code
   useEffect(() => {
@@ -110,6 +112,22 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
             title="Copy Address"
             width="auto"
           />
+          {isWebWallet && (
+            <ClickableAction
+              onClick={() =>
+                window.open(
+                  network === "mainnet"
+                    ? "https://web.argent.xyz"
+                    : "https://web.hydrogen.argent47.net",
+                  "_blank",
+                  "noopener noreferrer"
+                )
+              }
+              icon={<ArgentIcon color={"#f36a3d"} width={"25px"} />}
+              title="Web wallet Dashboard"
+              width="auto"
+            />
+          )}
         </div>
         <div className={styles.menu_txs}>
           <div className={styles.tx_title}>My transactions</div>
