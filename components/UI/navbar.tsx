@@ -46,13 +46,6 @@ const Navbar: FunctionComponent = () => {
   const { hashes } = useTransactionManager();
   const [showWallet, setShowWallet] = useState<boolean>(false);
 
-  // Refresh available connectors when user is not connected otherwise only Argent Web Wallet shows up
-  useEffect(() => {
-    if (!address) {
-      refresh();
-    }
-  });
-
   useLayoutEffect(() => {
     async function tryAutoConnect(connectors: Connector[]) {
       // to handle autoconnect starknet-react adds connector id in local storage
@@ -121,6 +114,7 @@ const Navbar: FunctionComponent = () => {
 
   function onTopButtonClick(): void {
     if (!isConnected) {
+      refresh();
       if (available.length > 0) {
         if (available.length === 1) {
           connect(available[0]);
@@ -140,6 +134,12 @@ const Navbar: FunctionComponent = () => {
     const textToReturn = isConnected ? domainOrAddress : "connect";
 
     return textToReturn;
+  }
+
+  // Refresh available connectors before showing wallet modal
+  function refreshAndShowWallet(): void {
+    refresh();
+    setHasWallet(true);
   }
 
   return (
@@ -192,9 +192,7 @@ const Navbar: FunctionComponent = () => {
                   onClick={
                     isConnected
                       ? () => setShowWallet(true)
-                      : available.length === 1
-                      ? () => connect(available[0])
-                      : () => setHasWallet(true)
+                      : () => refreshAndShowWallet()
                   }
                 >
                   {isConnected ? (
