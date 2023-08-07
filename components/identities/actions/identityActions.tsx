@@ -259,7 +259,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     />
                     {callDataEncodedDomain[0] === 1 && isAutoRenewalEnabled ? (
                       <ClickableAction
-                        title="DISABLED AUTO RENEWAL"
+                        title="DISABLE AUTO RENEWAL"
                         style="primary"
                         description="You'll loose your if you don't renew it"
                         icon={
