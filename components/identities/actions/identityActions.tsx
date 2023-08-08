@@ -128,6 +128,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     )
       .then((response) => response.json())
       .then((data) => {
+        console.log("data fetched", data);
         if (!data.error && data.auto_renewal_enabled) {
           setIsAutoRenewalEnabled(true);
           setLimitPrice(data.limit_price);
@@ -259,7 +260,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     />
                     {callDataEncodedDomain[0] === 1 && isAutoRenewalEnabled ? (
                       <ClickableAction
-                        title="DISABLED AUTO RENEWAL"
+                        title="DISABLE AUTO RENEWAL"
                         style="primary"
                         description="You'll loose your if you don't renew it"
                         icon={

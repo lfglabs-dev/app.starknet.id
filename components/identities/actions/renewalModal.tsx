@@ -13,6 +13,7 @@ import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi } from "starknet";
 import { posthog } from "posthog-js";
 import ConfirmationTx from "../../UI/confirmationTx";
+import { utils } from "starknetid.js";
 
 type RenewalModalProps = {
   handleClose: () => void;
