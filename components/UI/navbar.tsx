@@ -18,7 +18,6 @@ import {
 } from "@starknet-react/core";
 import Wallets from "./wallets";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import SelectNetwork from "./selectNetwork";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { useMediaQuery } from "@mui/material";
@@ -167,8 +166,7 @@ const Navbar: FunctionComponent = () => {
               {/* <Link href="/jointhetribe">
                 <li className={styles.menuItem}>Join the tribe</li>
               </Link> */}
-              <SelectNetwork network={network} />
-              <div className="text-beige mr-5">
+              <div className="text-beige mx-5">
                 <Button
                   onClick={
                     isConnected
