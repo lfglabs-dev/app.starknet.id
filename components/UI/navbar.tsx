@@ -24,8 +24,10 @@ import { useMediaQuery } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 import ModalWallet from "./modalWallet";
 import { constants } from "starknet";
+import { useTheme } from "@mui/material/styles";
 
 const Navbar: FunctionComponent = () => {
+  const theme = useTheme();
   const [nav, setNav] = useState<boolean>(false);
   const [hasWallet, setHasWallet] = useState<boolean>(true);
   const { address } = useAccount();
@@ -36,8 +38,6 @@ const Navbar: FunctionComponent = () => {
   const { provider } = useProvider();
   const isMobile = useMediaQuery("(max-width:425px)");
   const domainOrAddress = useDisplayName(address ?? "", isMobile);
-  const brown = "#402d28";
-  const background = "#F5F5F5";
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   const [txLoading, setTxLoading] = useState<number>(0);
@@ -200,7 +200,11 @@ const Navbar: FunctionComponent = () => {
               </div>
             </ul>
             <div onClick={handleNav} className="lg:hidden">
-              <AiOutlineMenu color={brown} size={25} className="mr-3" />
+              <AiOutlineMenu
+                color={theme.palette.secondary.main}
+                size={25}
+                className="mr-3"
+              />
             </div>
           </div>
         </div>
@@ -238,7 +242,7 @@ const Navbar: FunctionComponent = () => {
                   className="rounded-lg cursor-pointer bg-secondary p-1"
                 >
                   <AiOutlineClose
-                    color={background}
+                    color={theme.palette.background.default}
                     size={isMobile ? 25 : 20}
                   />
                 </div>
@@ -273,7 +277,7 @@ const Navbar: FunctionComponent = () => {
               </div>
               <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
                 <Link href="https://twitter.com/Starknet_id">
-                  <FaTwitter size={28} color={brown} />
+                  <FaTwitter size={28} color={theme.palette.secondary.main} />
                 </Link>
               </div>
             </div>
