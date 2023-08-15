@@ -36,8 +36,8 @@ const Navbar: FunctionComponent = () => {
   const { provider } = useProvider();
   const isMobile = useMediaQuery("(max-width:425px)");
   const domainOrAddress = useDisplayName(address ?? "", isMobile);
-  const green = "#19AA6E";
   const brown = "#402d28";
+  const background = "#F5F5F5";
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   const [txLoading, setTxLoading] = useState<number>(0);
@@ -129,7 +129,7 @@ const Navbar: FunctionComponent = () => {
   }
 
   function topButtonText(): string | undefined {
-    const textToReturn = isConnected ? domainOrAddress : "connect";
+    const textToReturn = isConnected ? domainOrAddress : "connect wallet";
 
     return textToReturn;
   }
@@ -215,78 +215,66 @@ const Navbar: FunctionComponent = () => {
           <div
             className={
               nav
-                ? "fixed left-0 top-0 w-[75%] sm:w-[60%] lg:w-[45%] h-screen bg-background p-10 ease-in duration-500 flex justify-between flex-col"
+                ? "fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-background px-5 ease-in duration-500 flex justify-between flex-col"
                 : "fixed left-[-100%] top-0 p-10 ease-in h-screen flex justify-between flex-col"
             }
           >
-            <div>
+            <div className="h-full flex flex-col">
               <div className="flex w-full items-center justify-between">
-                <div className="">
-                  <Link href="/">
+                <div>
+                  <Link href="/" className="cursor-pointer">
                     <img
-                      src="/visuals/starknetIdLongLogo.webp"
+                      className="cursor-pointer"
+                      src="/visuals/StarknetIdLogo.svg"
                       alt="Starknet.id Logo"
-                      width={250}
-                      height={100}
+                      width={90}
+                      height={90}
                     />
                   </Link>
                 </div>
 
                 <div
                   onClick={handleNav}
-                  className="rounded-full cursor-pointer"
+                  className="rounded-lg cursor-pointer bg-secondary p-1"
                 >
-                  <AiOutlineClose color={brown} size={isMobile ? 25 : 20} />
+                  <AiOutlineClose
+                    color={background}
+                    size={isMobile ? 25 : 20}
+                  />
                 </div>
               </div>
-              <div className="border-b border-tertiary-300 my-4">
-                <p className="w-[85%] lg:w-[90%] py-4">
-                  Own your on-chain identity
-                </p>
-              </div>
-              <div className="py-4 flex flex-col">
-                <ul className="uppercase">
-                  <Link href="/identities">
-                    <li
-                      onClick={() => setNav(false)}
-                      className={styles.menuItemSmall}
-                    >
-                      My Identities
-                    </li>
-                  </Link>
-                  <Link href="/">
-                    <li
-                      onClick={() => setNav(false)}
-                      className={styles.menuItemSmall}
-                    >
-                      Domains
-                    </li>
-                  </Link>
-                  {/* <Link href="/jointhetribe">
-                    <li
-                      onClick={() => setNav(false)}
-                      className={styles.menuItemSmall}
-                    >
-                      Tribe
-                    </li>
-                  </Link> */}
-                </ul>
+              <div className="py-4 my-auto text-center font-extrabold">
+                <div>
+                  <ul className="uppercase">
+                    <Link href="/identities">
+                      <li
+                        onClick={() => setNav(false)}
+                        className={styles.menuItemSmall}
+                      >
+                        My Identities
+                      </li>
+                    </Link>
+                    <Link href="/">
+                      <li
+                        onClick={() => setNav(false)}
+                        className={styles.menuItemSmall}
+                      >
+                        Domains
+                      </li>
+                    </Link>
+                  </ul>
+                </div>
               </div>
             </div>
 
-            <div>
-              <p className="uppercase tracking-widest white">
-                Claim your starknet identity
-              </p>
-              <div className="flex items-center my-4 w-full sm:w-[80%]">
-                <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300">
-                  <Link href="https://twitter.com/Starknet_id">
-                    <FaTwitter size={20} color={green} />
-                  </Link>
-                </div>
-                <div className="text-background">
-                  <Button onClick={onTopButtonClick}>{topButtonText()}</Button>
-                </div>
+            <div className="flex flex-col items-center my-4 w-full">
+              <div className="text-background">
+                <Button onClick={onTopButtonClick}>{topButtonText()}</Button>
+              </div>
+              <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
+                <Link href="https://twitter.com/Starknet_id">
+                  <FaTwitter size={28} color={brown} />
+                </Link>
               </div>
             </div>
           </div>
