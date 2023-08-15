@@ -6,7 +6,7 @@ import React, {
   useLayoutEffect,
 } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
-import { FaTwitter } from "react-icons/fa";
+import { FaDiscord, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import Button from "./button";
 import {
@@ -275,10 +275,17 @@ const Navbar: FunctionComponent = () => {
               <div className="text-background">
                 <Button onClick={onTopButtonClick}>{topButtonText()}</Button>
               </div>
-              <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
-                <Link href="https://twitter.com/Starknet_id">
-                  <FaTwitter size={28} color={theme.palette.secondary.main} />
-                </Link>
+              <div className="flex">
+                <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
+                  <Link href="https://twitter.com/Starknet_id">
+                    <FaTwitter size={28} color={theme.palette.secondary.main} />
+                  </Link>
+                </div>
+                <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
+                  <Link href="https://discord.com/invite/8uS2Mgcsza">
+                    <FaDiscord size={28} color={theme.palette.secondary.main} />
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
