@@ -34,3 +34,9 @@ type Member = {
   description: string;
   public_metrics: PublicMetrics;
 };
+
+type SearchResult = {
+  name: string;
+  error: boolean;
+  message: string;
+};
