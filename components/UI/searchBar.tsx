@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { TextField, styled } from "@mui/material";
 import { FunctionComponent, useState } from "react";
 import { useIsValid } from "../../hooks/naming";
-import { usePostHog } from "posthog-js/react";
 import styles from "../../styles/search.module.css";
 import SearchResult from "./searchResult";
 import { useNamingContract } from "../../hooks/contracts";

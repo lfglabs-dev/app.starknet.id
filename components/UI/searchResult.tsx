@@ -49,7 +49,11 @@ const SearchResult: FunctionComponent<SearchResultProps> = ({
       {showHistory &&
         searchResults?.map((result: SearchResult) => {
           return (
-            <div className={styles.result} onClick={() => search(result.name)}>
+            <div
+              key={result.lastAccessed}
+              className={styles.result}
+              onClick={() => search(result.name)}
+            >
               <div>{result.name}.stark</div>
               <SearchBadge error={result.error} message={result.message} />
             </div>
