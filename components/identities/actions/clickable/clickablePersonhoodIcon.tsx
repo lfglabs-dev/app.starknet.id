@@ -261,6 +261,9 @@ const ClickablePersonhoodIcon: FunctionComponent<
     <Tooltip title={`${minifyDomain(domain)} is verified`} arrow>
       <div className={styles.clickableIconAnima}>
         <AnimaIcon width={width} color="white" />
+        <div className={styles.verifiedIcon}>
+          <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
+        </div>
       </div>
     </Tooltip>
   ) : null;

@@ -17,39 +17,31 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
 }) => {
   return (
     <>
-      <div className="flex flex-row gap-1">
-        <div className="m-1">
-          <ClickableTwitterIcon
-            isOwner={isOwner}
-            width="15"
-            tokenId={tokenId}
-            domain={domain}
-          />
-        </div>
-        <div className="m-1">
-          <ClickableDiscordIcon
-            isOwner={isOwner}
-            width="15"
-            tokenId={tokenId}
-            domain={domain}
-          />
-        </div>
-        <div className="m-1">
-          <ClickableGithubIcon
-            isOwner={isOwner}
-            width="15"
-            tokenId={tokenId}
-            domain={domain}
-          />
-        </div>
-        <div className="m-1">
-          <ClickablePersonhoodIcon
-            isOwner={isOwner}
-            width="25"
-            tokenId={tokenId}
-            domain={domain}
-          />
-        </div>
+      <div className="flex flex-row gap-3">
+        <ClickableTwitterIcon
+          isOwner={isOwner}
+          width="15"
+          tokenId={tokenId}
+          domain={domain}
+        />
+        <ClickableDiscordIcon
+          isOwner={isOwner}
+          width="15"
+          tokenId={tokenId}
+          domain={domain}
+        />
+        <ClickableGithubIcon
+          isOwner={isOwner}
+          width="15"
+          tokenId={tokenId}
+          domain={domain}
+        />
+        <ClickablePersonhoodIcon
+          isOwner={isOwner}
+          width="25"
+          tokenId={tokenId}
+          domain={domain}
+        />
       </div>
     </>
   );

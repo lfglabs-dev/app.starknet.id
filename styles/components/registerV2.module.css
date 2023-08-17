@@ -1,0 +1,150 @@
+.container {
+  display: flex;
+  width: 1084px;
+  max-width: 100%;
+  background-color: white;
+  justify-content: space-between;
+  margin-bottom: 100px;
+  border-radius: 1rem;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  margin-bottom: 3rem;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+}
+
+.card {
+  display: flex;
+  width: 694px;
+  padding: 32px 0px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 48px;
+  flex-shrink: 0;
+  z-index: 1;
+  background-color: #fff;
+}
+
+.legend {
+  color: #6d696a;
+  /* Body/small/medium */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+}
+
+.domain {
+  color: #454545;
+  /* Title/H3 */
+  font-family: "QuickZap";
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px; /* 106.667% */
+}
+
+.form {
+  display: flex;
+  padding: 0px 48px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 48px;
+  align-self: stretch;
+}
+
+.summary {
+  display: flex;
+  padding: 24px 48px 0px 48px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  align-self: stretch;
+  border-top: 1px solid var(--content-400, #cdcccc);
+}
+
+.pricesSummary {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+  align-self: stretch;
+}
+
+.totalDue {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  flex: 1 0 0;
+}
+
+.totalDueTitle {
+  /* Body/normal/bold */
+  font-family: "Poppins-Bold";
+  font-size: 20px;
+  line-height: 24px; /* 120% */
+  letter-spacing: 0.2px;
+}
+
+.priceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.image {
+  height: 1200px;
+  position: absolute;
+  left: 40%;
+  z-index: -1;
+  border-radius: 0rem 1rem 1rem 0rem;
+}
+
+.currencySwitcher {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  border-radius: 51px;
+  background: var(--tertiary-300, #f5f0eb);
+  cursor: pointer;
+}
+
+.activeSwitch {
+  display: flex;
+  padding: 8px 20px;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: 52px;
+  background: var(--tertiary-600, #ccb297);
+  /* Small Shadow */
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+}
+
+.inactiveSwitch {
+  display: flex;
+  padding: 8px 20px;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: 52px;
+}
+
+@media (max-width: 1084px) {
+  .image {
+    visibility: hidden;
+  }
+
+  .container {
+    max-width: 90%;
+    margin: 1rem;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .pricesSummary {
+    flex-direction: column-reverse;
+    gap: 1.5rem;
+  }
+}

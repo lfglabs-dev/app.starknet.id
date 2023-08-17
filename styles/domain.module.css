@@ -1,13 +1,18 @@
-.searchBarContainer {
-  width: fit-content;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
-}
-
-.containerSearch {
+.container {
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
+  gap: 18px;
+}
+
+.searchBarContainer {
+  display: flex;
+  margin-left: 1.25rem;
+  margin-right: 1.25rem;
+  margin-top: 1.25rem;
+  justify-content: center;
+  width: 34rem;
 }

@@ -94,7 +94,24 @@
   color: var(--secondary300);
 }
 
+.identityCardSkeleton {
+  width: 650px;
+  height: 433px;
+}
+
+.identitiesActionsSkeletonButtons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+}
+
 @media (max-width: 1024px) {
+  .identityCardSkeleton {
+    width: 300px;
+    height: 300px;
+  }
   .domain {
     font-size: 20px;
   }

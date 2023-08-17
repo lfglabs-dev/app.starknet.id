@@ -1,0 +1,25 @@
+.textfield {
+  border-radius: 7.983px;
+  font-family: "Poppins-Regular";
+}
+
+.textfieldNumber {
+  text-align: center;
+  border-radius: 7.983px;
+  font-family: "Poppins-Regular";
+}
+
+.errorLegend,
+.legend {
+  color: #6d696a;
+  /* Body/small/medium */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+  align-self: start;
+}
+
+.errorLegend {
+  color: red;
+}
