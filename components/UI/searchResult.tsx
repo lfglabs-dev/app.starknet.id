@@ -3,7 +3,7 @@ import styles from "../../styles/search.module.css";
 import SearchBadge from "./searchBadge";
 
 type SearchResultProps = {
-  search: (domain: string) => void;
+  search: (result: SearchResult) => void;
   currentResult: SearchResult | null | undefined;
   history: SearchResult[];
   showHistory: boolean;
@@ -35,10 +35,7 @@ const SearchResult: FunctionComponent<SearchResultProps> = ({
   return (
     <div className={styles.results}>
       {currentResult && currentResult.name !== "" ? (
-        <div
-          className={styles.result}
-          onClick={() => search(currentResult.name)}
-        >
+        <div className={styles.result} onClick={() => search(currentResult)}>
           <div>{currentResult.name}.stark</div>
           <SearchBadge
             error={currentResult.error}
@@ -52,7 +49,7 @@ const SearchResult: FunctionComponent<SearchResultProps> = ({
             <div
               key={result.lastAccessed}
               className={styles.result}
-              onClick={() => search(result.name)}
+              onClick={() => search(result)}
             >
               <div>{result.name}.stark</div>
               <SearchBadge error={result.error} message={result.message} />

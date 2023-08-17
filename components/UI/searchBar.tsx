@@ -1,7 +1,7 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { TextField, styled } from "@mui/material";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useState, KeyboardEvent } from "react";
 import { useIsValid } from "../../hooks/naming";
 import styles from "../../styles/search.module.css";
 import SearchResult from "./searchResult";
@@ -66,10 +66,12 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   showHistory,
 }) => {
   const router = useRouter();
+  const resultsRef = useRef<HTMLDivElement>(null);
   const [typedValue, setTypedValue] = useState<string>("");
   const isDomainValid = useIsValid(typedValue);
   const [currentResult, setCurrentResult] = useState<SearchResult | null>();
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [showResults, setShowResults] = useState<boolean>(false);
   const { provider } = useContext(StarknetIdJsContext);
   const contract = new Contract(
     naming_abi as Abi,
@@ -87,10 +89,28 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
     );
     Promise.all(resultPromises).then((fullResults) => {
       fullResults.sort(
-        (a: SearchResult, b: SearchResult) => b.lastAccessed - a.lastAccessed
+        (firstResult: SearchResult, secondResult: SearchResult) =>
+          secondResult.lastAccessed - firstResult.lastAccessed
       );
       setSearchResults(fullResults);
     });
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        resultsRef.current &&
+        !resultsRef.current.contains(event.target as Node)
+      ) {
+        setShowResults(false);
+      } else {
+        setShowResults(true);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   function handleChange(value: string) {
@@ -139,13 +159,13 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
     }
   }
 
-  function search(typedValue: string) {
+  function search(result: SearchResult) {
     if (typeof isDomainValid === "boolean") {
-      onChangeTypedValue?.(typedValue);
-      saveSearch(currentResult as SearchResult);
+      onChangeTypedValue?.(result.name);
+      saveSearch(result as SearchResult);
       setCurrentResult(null);
       setTypedValue("");
-      router.push(`/search?domain=${typedValue}`);
+      router.push(`/search?domain=${result.name}`);
     }
   }
 
@@ -177,8 +197,15 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
     });
   }
 
+  function onEnter(ev: KeyboardEvent<HTMLDivElement>) {
+    if (ev.key === "Enter") {
+      search(currentResult as SearchResult);
+      ev.preventDefault();
+    }
+  }
+
   return (
-    <div className={styles.searchContainer}>
+    <div className={styles.searchContainer} ref={resultsRef}>
       <CustomTextField
         fullWidth
         id="outlined-basic"
@@ -187,8 +214,9 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         onChange={(e) => handleChange(e.target.value)}
         value={typedValue}
         error={isDomainValid != true}
+        onKeyDown={(ev) => onEnter(ev)}
       />
-      {typedValue.length > 0 || searchResults.length > 0 ? (
+      {showResults && (typedValue.length > 0 || searchResults.length > 0) ? (
         <SearchResult
           currentResult={currentResult}
           history={searchResults}
