@@ -160,7 +160,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   }
 
   function search(result: SearchResult) {
-    if (typeof isDomainValid === "boolean") {
+    if (typeof isDomainValid === "boolean" && result?.name.length > 0) {
       onChangeTypedValue?.(result.name);
       saveSearch(result as SearchResult);
       setCurrentResult(null);
