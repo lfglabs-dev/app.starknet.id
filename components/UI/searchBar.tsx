@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import { TextField, styled } from "@mui/material";
 import { FunctionComponent, useState } from "react";
@@ -57,56 +57,119 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
 
 type SearchBarProps = {
   onChangeTypedValue?: (typedValue: string) => void;
+  showHistory: boolean;
 };
 
 const SearchBar: FunctionComponent<SearchBarProps> = ({
   onChangeTypedValue,
+  showHistory,
 }) => {
   const router = useRouter();
   const [typedValue, setTypedValue] = useState<string>("");
   const isDomainValid = useIsValid(typedValue);
-  const [currentResult, setCurrentResult] = useState<SearchResult>();
+  const [currentResult, setCurrentResult] = useState<SearchResult | null>();
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const { contract } = useNamingContract();
+
+  useEffect(() => {
+    if (!contract) return;
+    const existingResults =
+      JSON.parse(localStorage.getItem("search-history") as string) || [];
+    const firstResults = existingResults.slice(0, 5);
+    const resultPromises = firstResults.map(
+      (result: { name: string; lastAccessed: number }) =>
+        getStatus(result.name, result.lastAccessed)
+    );
+    Promise.all(resultPromises).then((fullResults) => {
+      fullResults.sort(
+        (a: SearchResult, b: SearchResult) => b.lastAccessed - a.lastAccessed
+      );
+      setSearchResults(fullResults);
+    });
+  }, [contract]);
 
   function handleChange(value: string) {
     setTypedValue(value.toLowerCase());
-    const isDomainValid = useIsValid(value);
+    getStatus(value).then((result) => {
+      setCurrentResult(result);
+    });
+  }
+
+  async function getStatus(
+    name: string,
+    lastAccessed?: number
+  ): Promise<SearchResult> {
+    const isDomainValid = useIsValid(name);
     if (isDomainValid !== true) {
-      setCurrentResult({
-        name: value,
+      return {
+        name,
         error: true,
         message: isDomainValid + " is not a valid caracter",
-      });
+        lastAccessed: lastAccessed ?? Date.now(),
+      };
     } else {
       const currentTimeStamp = new Date().getTime() / 1000;
-      const encoded = value
-        ? utils.encodeDomain(value).map((elem) => elem.toString())
+      const encoded = name
+        ? utils.encodeDomain(name).map((elem) => elem.toString())
         : [];
-      contract &&
-        contract.call("domain_to_expiry", [encoded]).then((res) => {
+      return new Promise((resolve) => {
+        contract?.call("domain_to_expiry", [encoded]).then((res) => {
           if (Number(res?.["expiry"]) < currentTimeStamp) {
-            setCurrentResult({
-              name: value,
+            resolve({
+              name,
               error: false,
               message: "Available",
+              lastAccessed: lastAccessed ?? Date.now(),
             });
           } else {
-            setCurrentResult({
-              name: value,
+            resolve({
+              name,
               error: true,
               message: "Unavailable",
+              lastAccessed: lastAccessed ?? Date.now(),
             });
           }
         });
+      });
     }
   }
 
   function search(typedValue: string) {
     if (typeof isDomainValid === "boolean") {
       onChangeTypedValue?.(typedValue);
+      saveSearch(currentResult as SearchResult);
+      setCurrentResult(null);
       setTypedValue("");
       router.push(`/search?domain=${typedValue}`);
     }
+  }
+
+  function saveSearch(newResult: SearchResult) {
+    setSearchResults((prevResults) => {
+      const updatedResults = [...(prevResults || [])]; // Clone the previous results
+      const existingResult = updatedResults.find(
+        (result) => result.name === newResult.name
+      );
+
+      if (existingResult) {
+        existingResult.lastAccessed = Date.now();
+      } else {
+        newResult.lastAccessed = Date.now();
+        updatedResults.unshift(newResult);
+      }
+
+      updatedResults.sort((a, b) => b.lastAccessed - a.lastAccessed);
+      const localStorageResults = updatedResults.map((result) => ({
+        name: result.name,
+        lastAccessed: result.lastAccessed,
+      }));
+      localStorage.setItem(
+        "search-history",
+        JSON.stringify(localStorageResults)
+      );
+
+      return updatedResults;
+    });
   }
 
   return (
@@ -120,8 +183,13 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         value={typedValue}
         error={isDomainValid != true}
       />
-      {currentResult && typedValue.length > 0 ? (
-        <SearchResult results={currentResult} search={search} />
+      {typedValue.length > 0 || searchResults.length > 0 ? (
+        <SearchResult
+          currentResult={currentResult}
+          history={searchResults}
+          search={search}
+          showHistory={showHistory}
+        />
       ) : null}
     </div>
   );

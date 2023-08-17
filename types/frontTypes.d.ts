@@ -39,4 +39,5 @@ type SearchResult = {
   name: string;
   error: boolean;
   message: string;
+  lastAccessed: number;
 };

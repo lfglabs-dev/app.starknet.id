@@ -26,7 +26,7 @@ const Domain: NextPage = () => {
             </div>
             <h1 className="title">Choose your .stark domain</h1>
             <div className="min-w-content mt-5 flex justify-center align-center">
-              <SearchBar />
+              <SearchBar showHistory={true} />
             </div>
           </div>
         </div>
