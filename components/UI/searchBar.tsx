@@ -1,12 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/router";
 import { TextField, styled } from "@mui/material";
 import { FunctionComponent, useState } from "react";
 import { useIsValid } from "../../hooks/naming";
 import styles from "../../styles/search.module.css";
 import SearchResult from "./searchResult";
-import { useNamingContract } from "../../hooks/contracts";
 import { utils } from "starknetid.js";
+import { Abi, Contract, Provider } from "starknet";
+import naming_abi from "../../abi/starknet/naming_abi.json";
+import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
@@ -68,10 +70,14 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   const isDomainValid = useIsValid(typedValue);
   const [currentResult, setCurrentResult] = useState<SearchResult | null>();
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const { contract } = useNamingContract();
+  const { provider } = useContext(StarknetIdJsContext);
+  const contract = new Contract(
+    naming_abi as Abi,
+    process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+    provider as Provider
+  );
 
   useEffect(() => {
-    if (!contract) return;
     const existingResults =
       JSON.parse(localStorage.getItem("search-history") as string) || [];
     const firstResults = existingResults.slice(0, 5);
@@ -85,7 +91,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
       );
       setSearchResults(fullResults);
     });
-  }, [contract]);
+  }, []);
 
   function handleChange(value: string) {
     setTypedValue(value.toLowerCase());
