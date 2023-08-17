@@ -217,16 +217,14 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         onKeyDown={(ev) => onEnter(ev)}
         autoComplete="off"
       />
-      <div className={styles.wrapperSearchResults}>
-        {showResults && (typedValue.length > 0 || searchResults.length > 0) ? (
-          <SearchResult
-            currentResult={currentResult}
-            history={searchResults}
-            search={search}
-            showHistory={showHistory}
-          />
-        ) : null}
-      </div>
+      {showResults && (typedValue.length > 0 || searchResults.length > 0) ? (
+        <SearchResult
+          currentResult={currentResult}
+          history={searchResults}
+          search={search}
+          showHistory={showHistory}
+        />
+      ) : null}
     </div>
   );
 };
