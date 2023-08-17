@@ -215,6 +215,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         value={typedValue}
         error={isDomainValid != true}
         onKeyDown={(ev) => onEnter(ev)}
+        autoComplete="off"
       />
       {showResults && (typedValue.length > 0 || searchResults.length > 0) ? (
         <SearchResult
