@@ -14,6 +14,10 @@
   width: 100%;
 }
 
+.wrapperSearchResults {
+  height: 250px;
+}
+
 .results {
   display: flex;
   flex-direction: column;
