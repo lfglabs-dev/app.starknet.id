@@ -1,4 +1,5 @@
 import { BN } from "bn.js";
+import { basicAlphabet } from "./constants";
 
 export function minifyAddress(address: string | undefined): string {
   if (!address) return "";
@@ -142,4 +143,11 @@ export function cleanUsername(username: string): string {
 export function isValidEmail(email: string): boolean {
   if (email.includes("..")) return false; // Ensure no consecutive dots
   return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email);
+}
+
+export function isValidDomain(domain: string | undefined): boolean | string {
+  if (!domain) domain = "";
+
+  for (const char of domain) if (!basicAlphabet.includes(char)) return char;
+  return true;
 }

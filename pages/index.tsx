@@ -23,7 +23,7 @@ const Domain: NextPage = () => {
           </div>
 
           <div className={styles.searchBarContainer}>
-            <SearchBar />
+            <SearchBar showHistory />
           </div>
         </div>
       </div>

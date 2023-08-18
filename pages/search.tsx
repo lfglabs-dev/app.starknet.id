@@ -75,6 +75,7 @@ const SearchPage: NextPage = () => {
         <div className="sm:w-2/3 w-4/5 mt-5 mb-5">
           <SearchBar
             onChangeTypedValue={(typeValue: string) => setDomain(typeValue)}
+            showHistory={false}
           />
         </div>
         {isAvailable ? (
