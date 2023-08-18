@@ -6,3 +6,70 @@
   text-align: center;
   position: relative;
 }
+
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.results {
+  display: flex;
+  flex-direction: column;
+  width: 548px;
+  align-items: flex-start;
+  border-radius: 16px;
+  background: #FFF;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  width: 100%;
+}
+
+.result {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  color: #454545;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px;
+  justify-content: space-between;
+  width: 100%;
+  cursor: pointer;
+  padding: 12px 24px;
+}
+
+.result:hover {
+  background: #F8F7F7;
+}
+
+.results .result:not(:last-child) {
+  border-bottom: 1px solid #CDCCCC;
+}
+
+.badge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 8px;
+  gap: 8px;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+
+  text-align: center;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.success {
+  background: var(--primary300, #DCF2E9);
+  color: var(--primary, #19AA6E);
+}
+
+.error {
+  color: #D32F2F;
+  background: #F6D5D5;
+}
