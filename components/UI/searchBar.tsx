@@ -1,26 +1,32 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  FunctionComponent,
+  useState,
+  KeyboardEvent,
+} from "react";
 import { useRouter } from "next/router";
 import { TextField, styled } from "@mui/material";
-import { FunctionComponent, useState, KeyboardEvent } from "react";
-import { useIsValid } from "../../hooks/naming";
 import styles from "../../styles/search.module.css";
 import SearchResult from "./searchResult";
 import { utils } from "starknetid.js";
 import { Abi, Contract, Provider } from "starknet";
 import naming_abi from "../../abi/starknet/naming_abi.json";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
+import { isValidDomain } from "../../utils/stringService";
+import { useIsValid } from "../../hooks/naming";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
     padding: "10px 35px",
     caretColor: "#454545",
-    cursor: "pointer",
     "& fieldset": {
       border: "1px solid #CDCCCC",
       borderRadius: "20px",
       boxShadow: "0px 2px 30px 0px rgba(0, 0, 0, 0.06)",
       backgroundColor: "#FFFFFF",
-      cursor: "pointer",
     },
     "& .MuiInputBase-input": {
       color: "#454545",
@@ -31,7 +37,6 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
       letterSpacing: "0.24px",
       textAlign: "center",
       zIndex: "1",
-      cursor: "pointer",
     },
     "&:hover fieldset": {
       border: "1px solid #CDCCCC",
@@ -54,6 +59,21 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
       borderColor: theme.palette.primary.main,
     },
   },
+  [theme.breakpoints.down("sm")]: {
+    "& .MuiOutlinedInput-root": {
+      padding: "0 30px",
+      "& .MuiInputBase-input": {
+        fontSize: "22px",
+        lineHeight: "22px",
+        letterSpacing: "0.2px",
+      },
+      "& ::placeholder": {
+        fontSize: "16px",
+        lineHeight: "20px",
+        letterSpacing: "0.2px",
+      },
+    },
+  },
 }));
 
 type SearchBarProps = {
@@ -68,16 +88,19 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   const router = useRouter();
   const resultsRef = useRef<HTMLDivElement>(null);
   const [typedValue, setTypedValue] = useState<string>("");
-  const isDomainValid = useIsValid(typedValue);
+  const isValid = useIsValid(typedValue);
   const [currentResult, setCurrentResult] = useState<SearchResult | null>();
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [showResults, setShowResults] = useState<boolean>(false);
   const { provider } = useContext(StarknetIdJsContext);
-  const contract = new Contract(
-    naming_abi as Abi,
-    process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    provider as Provider
-  );
+
+  const contract = useMemo(() => {
+    return new Contract(
+      naming_abi as Abi,
+      process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+      provider as Provider
+    );
+  }, [provider]);
 
   useEffect(() => {
     const existingResults =
@@ -124,12 +147,12 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
     name: string,
     lastAccessed?: number
   ): Promise<SearchResult> {
-    const isDomainValid = useIsValid(name);
-    if (isDomainValid !== true) {
+    const valid = isValidDomain(name);
+    if (valid !== true) {
       return {
         name,
         error: true,
-        message: isDomainValid + " is not a valid caracter",
+        message: valid + " is not a valid caracter",
         lastAccessed: lastAccessed ?? Date.now(),
       };
     } else {
@@ -160,7 +183,10 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   }
 
   function search(result: SearchResult) {
-    if (typeof isDomainValid === "boolean" && result?.name.length > 0) {
+    if (
+      typeof isValidDomain(result.name) === "boolean" &&
+      result?.name.length > 0
+    ) {
       onChangeTypedValue?.(result.name);
       saveSearch(result as SearchResult);
       setCurrentResult(null);
@@ -213,7 +239,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         variant="outlined"
         onChange={(e) => handleChange(e.target.value)}
         value={typedValue}
-        error={isDomainValid != true}
+        error={isValid != true}
         onKeyDown={(ev) => onEnter(ev)}
         autoComplete="off"
       />

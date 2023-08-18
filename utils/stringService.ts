@@ -1,4 +1,5 @@
 import { BN } from "bn.js";
+import { basicAlphabet } from "./constants";
 
 export function minifyAddress(address: string | undefined): string {
   if (!address) return "";
@@ -127,4 +128,11 @@ export function changeTwitterProfilePic(url: string): string {
 
 export function cleanUsername(username: string): string {
   return username.startsWith("@") ? username.substring(1) : username;
+}
+
+export function isValidDomain(domain: string | undefined): boolean | string {
+  if (!domain) domain = "";
+
+  for (const char of domain) if (!basicAlphabet.includes(char)) return char;
+  return true;
 }

@@ -30,7 +30,7 @@ const SearchResult: FunctionComponent<SearchResultProps> = ({
         ? filtered.slice(0, 4)
         : filtered
     );
-  }, [currentResult]);
+  }, [currentResult, history]);
 
   return (
     <div className={styles.results}>
