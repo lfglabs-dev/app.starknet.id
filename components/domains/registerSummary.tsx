@@ -13,6 +13,7 @@ type RegisterSummaryProps = {
   ethRegistrationPrice: string;
   renewalBox: boolean;
   salesTaxRate: number;
+  isUsResident: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -20,6 +21,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   ethRegistrationPrice,
   renewalBox,
   salesTaxRate,
+  isUsResident,
 }) => {
   const [isEthPriceDisplayed, setIsEthPriceDisplayed] = useState<boolean>(true);
   const [ethUsdPrice, setEthUsdPrice] = useState<number>(0);
@@ -63,16 +65,31 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
             .concat(" ETH ")
             .concat(recurrence)}
         </p>
-        <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
+        {isUsResident ? (
+          <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
+        ) : null}
       </div>
     );
   }
 
-  function displayUsdPrice(): string {
+  function displayUsdPrice(): ReactNode {
     const salesTaxAmount = salesTaxRate * usdRegistrationPrice;
-    return numberToFixedString(usdRegistrationPrice + salesTaxAmount)
-      .concat(" $ ")
-      .concat(recurrence);
+    const salesTaxInfo = salesTaxAmount
+      ? ` (+ ${numberToFixedString(Number(salesTaxAmount))}$ for US sales tax)`
+      : "";
+
+    return (
+      <div className="flex items-center justify-center">
+        <p className="text-gray-800 text-xl not-italic font-bold leading-6">
+          {numberToFixedString(usdRegistrationPrice)
+            .concat(" $ ")
+            .concat(recurrence)}
+        </p>
+        {isUsResident ? (
+          <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
+        ) : null}
+      </div>
+    );
   }
 
   return (
@@ -83,9 +100,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           <p className={styles.legend}>
             for {duration} {duration === 1 ? "year" : "years"}
           </p>
-          <p className="text-gray-800 text-xl not-italic font-bold leading-6">
-            {isEthPriceDisplayed ? displayEthPrice() : displayUsdPrice()}
-          </p>
+          {isEthPriceDisplayed ? displayEthPrice() : displayUsdPrice()}
         </div>
       </div>
       <CurrencySwitcher

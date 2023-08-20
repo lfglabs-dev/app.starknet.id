@@ -12,8 +12,10 @@ import { ContentCopy } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 import Notification from "../UI/notification";
 import CopiedIcon from "../UI/iconsComponents/icons/copiedIcon";
+import CalendarIcon from "../UI/iconsComponents/icons/calendarIcon";
 import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
 import theme from "../../styles/theme";
+import { timestampToReadableDate } from "../../utils/dateService";
 
 type IdentityCardProps = {
   identity: Identity;
@@ -44,14 +46,25 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <div className="lg:mt-10 flex items-center lg:justify-between justify-center gap-5 my-2 flex-wrap lg:flex-row ">
+        <div className="lg:mt-10 flex items-center lg:justify-between justify-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row ">
           <div className="my-2">
             <img
               src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`}
               height={170}
               width={170}
               alt="identicon"
+              className="mt-1 mb-3"
             />
+            {identity.domain_expiry ? (
+              <Tooltip title="Expiry date of this domain" arrow>
+                <div className={styles.expiryContainer}>
+                  <CalendarIcon width="16" color={theme.palette.primary.main} />
+                  <p className={styles.expiryText}>
+                    {timestampToReadableDate(identity.domain_expiry)}
+                  </p>
+                </div>
+              </Tooltip>
+            ) : null}
           </div>
           <div>
             <div className="flex flex-row items-center justify-center">
@@ -94,7 +107,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
 
             <div className=" lg:mt-6 mt-2 flex lg:justify-start justify-center lg:items-start items-center">
               <SocialMediaActions
-                domain={identity.domain}
+                identity={identity}
                 isOwner={isOwner}
                 tokenId={tokenId}
               />

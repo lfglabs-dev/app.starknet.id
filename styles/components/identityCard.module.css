@@ -107,6 +107,30 @@
   gap: 1.5rem;
 }
 
+.expiryContainer {
+  display: inline-flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  background: var(--primary-300, #dcf2e9);
+
+  /* Small Shadow */
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+}
+
+.expiryText {
+  color: var(--primary-700, #19aa6e);
+  text-align: center;
+
+  /* Body/micro/medium */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 133.333% */
+}
+
 @media (max-width: 1024px) {
   .identityCardSkeleton {
     width: 300px;

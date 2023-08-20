@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import InfoIcon from "../UI/iconsComponents/icons/infoIcon";
 import textFieldStyles from "../../styles/components/textField.module.css";
-import TextField from "../UI/textField";
+import SelectState from "./selectState";
 
 type UsFormProps = {
   isUsResident: boolean;
@@ -16,15 +16,15 @@ type UsFormProps = {
     event: React.ChangeEvent<HTMLInputElement>,
     value: string
   ) => void;
-  usPostalCode: string;
-  onUsPostalCodeChange: (value: string) => void;
+  usState: string;
+  changeUsState: (value: string) => void;
 };
 
 const UsForm: FunctionComponent<UsFormProps> = ({
   isUsResident,
   onUsResidentChange,
-  usPostalCode = "",
-  onUsPostalCodeChange,
+  usState,
+  changeUsState,
 }) => {
   return (
     <FormControl className="flex gap-4 w-full">
@@ -61,15 +61,18 @@ const UsForm: FunctionComponent<UsFormProps> = ({
           />
         </RadioGroup>
       </div>
-      {isUsResident ? (
+      {/* {isUsResident ? (
         <TextField
           label="The state code that you live in"
-          value={usPostalCode}
-          onChange={(e) => onUsPostalCodeChange(e.target.value)}
+          value={usState}
+          onChange={(e) => onUsStateChange(e.target.value)}
           color="secondary"
           placeholder="CA for California, NY for New York, etc."
           required
         />
+      ) : null} */}
+      {isUsResident ? (
+        <SelectState usState={usState} changeUsState={changeUsState} />
       ) : null}
     </FormControl>
   );

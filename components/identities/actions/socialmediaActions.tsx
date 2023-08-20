@@ -7,13 +7,13 @@ import ClickablePersonhoodIcon from "./clickable/clickablePersonhoodIcon";
 type SocialMediaActionsProps = {
   tokenId: string;
   isOwner: boolean;
-  domain?: string;
+  identity: Identity;
 };
 
 const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
   tokenId,
   isOwner,
-  domain = "",
+  identity,
 }) => {
   return (
     <>
@@ -22,25 +22,28 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
           isOwner={isOwner}
           width="15"
           tokenId={tokenId}
-          domain={domain}
+          twitterId={identity.old_twitter}
+          domain={identity.domain}
         />
         <ClickableDiscordIcon
           isOwner={isOwner}
           width="15"
           tokenId={tokenId}
-          domain={domain}
+          discordId={identity.old_discord}
+          domain={identity.domain}
         />
         <ClickableGithubIcon
           isOwner={isOwner}
           width="15"
           tokenId={tokenId}
-          domain={domain}
+          githubId={identity.old_github}
+          domain={identity.domain}
         />
         <ClickablePersonhoodIcon
           isOwner={isOwner}
           width="25"
           tokenId={tokenId}
-          domain={domain}
+          domain={identity.domain}
         />
       </div>
     </>

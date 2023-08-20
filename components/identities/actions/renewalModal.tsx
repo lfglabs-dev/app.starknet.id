@@ -7,7 +7,7 @@ import {
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/modalMessage.module.css";
-import styles2 from "../../../styles/Home.module.css";
+import homeStyles from "../../../styles/Home.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi } from "starknet";
@@ -137,7 +137,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
                 required
               />
             </div>
-            <div className={styles2.cardCenter}>
+            <div className={homeStyles.cardCenter}>
               <p className="text">
                 Price :&nbsp;
                 <span className="font-semibold text-secondary">

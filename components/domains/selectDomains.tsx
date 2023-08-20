@@ -57,6 +57,9 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
         value={tokenId}
         defaultValue={ownedIdentities[0]}
         onChange={(e) => changeTokenId(Number(e.target.value))}
+        style={{
+          borderRadius: "8.983px",
+        }}
         sx={{
           "& .MuiSelect-select": {
             display: "flex",

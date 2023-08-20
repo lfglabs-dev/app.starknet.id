@@ -1,11 +1,12 @@
 .container {
   display: flex;
-  justify-content: flex-start;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  text-align: center;
-  gap: 18px;
+  flex-direction: row;
+  align-items: center;
+  gap: 3rem;
+  position: relative;
+  flex-wrap: wrap-reverse;
+  height: 85vh;
 }
 
 .searchBarContainer {
@@ -15,4 +16,15 @@
   margin-top: 1.25rem;
   justify-content: center;
   width: 34rem;
+}
+
+.illustration {
+  width: 400px;
+}
+
+@media (max-width: 1024px) {
+  .illustration {
+    display: none;
+    width: 200px;
+  }
 }

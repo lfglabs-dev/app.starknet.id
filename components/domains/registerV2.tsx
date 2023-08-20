@@ -29,6 +29,7 @@ import RegisterCheckboxes from "./registerCheckboxes";
 import NumberTextField from "../UI/numberTextField";
 import RegisterSummary from "./registerSummary";
 import salesTax from "sales-tax";
+import Wallets from "../UI/wallets";
 
 type RegisterV2Props = {
   domain: string;
@@ -40,7 +41,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(false);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
-  const [usPostalCode, setUsPostalCode] = useState<string>("");
+  const [usState, setUsState] = useState<string>("DE");
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [duration, setDuration] = useState<number>(1);
   const [tokenId, setTokenId] = useState<number>(0);
@@ -56,6 +57,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     .map((element) => element.toString())[0];
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -76,7 +78,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     {
       contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
       entrypoint: "toggle_renewals",
-      calldata: [encodedDomain.toString()],
+      calldata: [encodedDomain.toString(), price, 0],
     },
   ];
   const { account, address } = useAccount();
@@ -322,11 +324,12 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
 
   useEffect(() => {
     if (isUsResident) {
-      salesTax.getSalesTax("US", usPostalCode).then((tax) => {
+      salesTax.getSalesTax("US", usState).then((tax) => {
         setSalesTaxRate(tax.rate);
+        console.log(tax.rate);
       });
     }
-  }, [isUsResident, usPostalCode]);
+  }, [isUsResident, usState]);
 
   return (
     <div className={styles.container}>
@@ -349,8 +352,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
             <UsForm
               isUsResident={isUsResident}
               onUsResidentChange={() => setIsUsResident(!isUsResident)}
-              usPostalCode={usPostalCode}
-              onUsPostalCodeChange={(value) => setUsPostalCode(value)}
+              usState={usState}
+              changeUsState={(value) => setUsState(value)}
             />
             <TextField
               helperText="The Starknet address the domain will resolve to."
@@ -381,6 +384,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
             duration={duration}
             renewalBox={renewalBox}
             salesTaxRate={salesTaxRate}
+            isUsResident={isUsResident}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
@@ -389,33 +393,39 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
             termsBox={termsBox}
             renewalBox={renewalBox}
           />
-          <Button
-            onClick={() =>
-              execute().then(() =>
-                setDomainsMinting((prev) =>
-                  new Map(prev).set(encodedDomain.toString(), true)
+          {address ? (
+            <Button
+              onClick={() =>
+                execute().then(() =>
+                  setDomainsMinting((prev) =>
+                    new Map(prev).set(encodedDomain.toString(), true)
+                  )
                 )
-              )
-            }
-            disabled={
-              (domainsMinting.get(encodedDomain) as boolean) ||
-              !account ||
-              !duration ||
-              duration < 1 ||
-              !targetAddress ||
-              invalidBalance ||
-              !termsBox ||
-              (isUsResident && !usPostalCode)
-            }
-          >
-            {!termsBox
-              ? "Please accept terms and policies"
-              : isUsResident && !usPostalCode
-              ? "We need your US postal Code"
-              : invalidBalance
-              ? "You don't have enough eth"
-              : "Register my domain"}
-          </Button>
+              }
+              disabled={
+                (domainsMinting.get(encodedDomain) as boolean) ||
+                !account ||
+                !duration ||
+                duration < 1 ||
+                !targetAddress ||
+                invalidBalance ||
+                !termsBox ||
+                (isUsResident && !usState)
+              }
+            >
+              {!termsBox
+                ? "Please accept terms and policies"
+                : isUsResident && !usState
+                ? "We need your US postal Code"
+                : invalidBalance
+                ? "You don't have enough eth"
+                : "Register my domain"}
+            </Button>
+          ) : (
+            <Button onClick={() => setWalletModalOpen(true)}>
+              Connect wallet
+            </Button>
+          )}
         </div>
       </div>
       <img className={styles.image} src="/visuals/desk4-7.webp" />
@@ -424,6 +434,10 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
         isTxModalOpen={isTxModalOpen}
         closeModal={() => setIsTxModalOpen(false)}
         title="Your domain is on it's way !"
+      />
+      <Wallets
+        closeWallet={() => setWalletModalOpen(false)}
+        hasWallet={walletModalOpen}
       />
     </div>
   );

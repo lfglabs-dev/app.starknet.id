@@ -28,7 +28,7 @@ type ClickablePersonhoodIconProps = {
   width: string;
   tokenId: string;
   isOwner: boolean;
-  domain: string;
+  domain?: string;
 };
 
 const ClickablePersonhoodIcon: FunctionComponent<
@@ -57,6 +57,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
       )
       .then((response) => {
         if (response.toString(10) !== "0") {
+          console.log("response", response.toString(10));
           setIsVerified(true);
         }
       })
@@ -258,7 +259,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
       </>
     ) : null
   ) : isVerified ? (
-    <Tooltip title={`${minifyDomain(domain)} is verified`} arrow>
+    <Tooltip title={`${minifyDomain(domain ?? "")} is a human`} arrow>
       <div className={styles.clickableIconAnima}>
         <AnimaIcon width={width} color="white" />
         <div className={styles.verifiedIcon}>

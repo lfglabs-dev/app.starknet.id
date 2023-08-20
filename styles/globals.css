@@ -42,16 +42,14 @@ a {
 
 .title {
   font-family: "QuickZap";
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: var(--secondary);
   text-shadow: 1px 1px var(--tertiary);
   text-transform: uppercase;
-  text-align: center;
 }
 
 .description {
   color: var(--content-600, #8c8989);
-  text-align: center;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;

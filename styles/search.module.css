@@ -12,17 +12,21 @@
   flex-direction: column;
   gap: 12px;
   width: 100%;
+  position: relative;
 }
 
 .results {
+  top: 100px;
+  position: absolute;
   display: flex;
   flex-direction: column;
   width: 548px;
   align-items: flex-start;
   border-radius: 16px;
-  background: #FFF;
+  background: #fff;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   width: 100%;
+  z-index: 100;
 }
 
 .result {
@@ -41,11 +45,11 @@
 }
 
 .result:hover {
-  background: #F8F7F7;
+  background: #f8f7f7;
 }
 
 .results .result:not(:last-child) {
-  border-bottom: 1px solid #CDCCCC;
+  border-bottom: 1px solid #cdcccc;
 }
 
 .badge {
@@ -65,11 +69,17 @@
 }
 
 .success {
-  background: var(--primary300, #DCF2E9);
-  color: var(--primary, #19AA6E);
+  background: var(--primary300, #dcf2e9);
+  color: var(--primary, #19aa6e);
 }
 
 .error {
-  color: #D32F2F;
-  background: #F6D5D5;
+  color: #d32f2f;
+  background: #f6d5d5;
+}
+
+@media (max-width: 1024px) {
+  .results {
+    top: 70px;
+  }
 }

@@ -41,3 +41,8 @@ type SearchResult = {
   message: string;
   lastAccessed: number;
 };
+
+type UsState = {
+  name: string;
+  abbreviation: string;
+};
