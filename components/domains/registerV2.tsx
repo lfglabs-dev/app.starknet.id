@@ -23,7 +23,7 @@ import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
-import UsForm from "./usForm";
+// import UsForm from "./usForm";
 import { Divider } from "@mui/material";
 import RegisterCheckboxes from "./registerCheckboxes";
 import NumberTextField from "../UI/numberTextField";
@@ -349,12 +349,12 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
               error={emailError}
               errorMessage={"Please enter a valid email address"}
             />
-            <UsForm
+            {/* <UsForm
               isUsResident={isUsResident}
               onUsResidentChange={() => setIsUsResident(!isUsResident)}
               usState={usState}
               changeUsState={(value) => setUsState(value)}
-            />
+            /> */}
             <TextField
               helperText="The Starknet address the domain will resolve to."
               label="Target address"
