@@ -51,24 +51,33 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     }
   }, [ethRegistrationPrice, isEthPriceDisplayed]);
 
-  function displayEthPrice(): ReactNode {
-    const salesTaxAmount =
-      salesTaxRate * Number(gweiToEth(ethRegistrationPrice));
-    const salesTaxInfo = salesTaxAmount
-      ? ` (+ ${salesTaxAmount} ETH for US sales tax)`
-      : "";
-
+  function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
     return (
       <div className="flex items-center justify-center">
-        <p className="text-gray-800 text-xl not-italic font-bold leading-6">
-          {String(Number(gweiToEth(ethRegistrationPrice)))
-            .concat(" ETH ")
-            .concat(recurrence)}
+        <p className="text-gray-800 text-xl not-italic font-bold leading-6 whitespace-nowrap">
+          {priceToPay}
         </p>
         {isUsResident ? (
           <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
         ) : null}
       </div>
+    );
+  }
+
+  function displayEthPrice(): ReactNode {
+    const salesTaxAmount =
+      salesTaxRate * Number(gweiToEth(ethRegistrationPrice)) * ethUsdPrice;
+    const salesTaxInfo = salesTaxAmount
+      ? ` (+ ${numberToFixedString(
+          salesTaxAmount
+        )}$ worth of ETH for US sales tax)`
+      : "";
+
+    return displayPrice(
+      String(Number(gweiToEth(ethRegistrationPrice)))
+        .concat(" ETH ")
+        .concat(recurrence),
+      salesTaxInfo
     );
   }
 
@@ -78,17 +87,11 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       ? ` (+ ${numberToFixedString(Number(salesTaxAmount))}$ for US sales tax)`
       : "";
 
-    return (
-      <div className="flex items-center justify-center">
-        <p className="text-gray-800 text-xl not-italic font-bold leading-6">
-          {numberToFixedString(usdRegistrationPrice)
-            .concat(" $ ")
-            .concat(recurrence)}
-        </p>
-        {isUsResident ? (
-          <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
-        ) : null}
-      </div>
+    return displayPrice(
+      numberToFixedString(usdRegistrationPrice)
+        .concat(" $ ")
+        .concat(recurrence),
+      salesTaxInfo
     );
   }
 

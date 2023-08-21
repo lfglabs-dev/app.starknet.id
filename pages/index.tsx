@@ -10,7 +10,7 @@ const Domain: NextPage = () => {
       <div className={homeStyles.wrapperScreen}>
         <div className={styles.container}>
           <div className="max-w-xl flex flex-col items-start justify-start gap-5 mx-5 mb-5">
-            <div className="flex flex-col justify-start items-start">
+            <div className="flex flex-col justify-start items-start text-center sm:text-start">
               <h1 className="title">Choose your Stark Domain</h1>
               <p className="description">
                 Your unified profile across the starknet ecosystem, one name for

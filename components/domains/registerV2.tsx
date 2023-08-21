@@ -13,7 +13,6 @@ import {
   getDomainWithStark,
   isHexString,
   isValidEmail,
-  numberToString,
 } from "../../utils/stringService";
 import { gweiToEth, hexToDecimal } from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
@@ -30,6 +29,7 @@ import NumberTextField from "../UI/numberTextField";
 import RegisterSummary from "./registerSummary";
 import salesTax from "sales-tax";
 import Wallets from "../UI/wallets";
+import registerCalls from "../../utils/registerCalls";
 
 type RegisterV2Props = {
   domain: string;
@@ -58,6 +58,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
+  const [sponsor, setSponsor] = useState<string>("0");
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -65,22 +66,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     functionName: "compute_buy_price",
     args: [encodedDomain, duration * 365],
   });
-  const renew_calls = [
-    {
-      contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-      entrypoint: "approve",
-      calldata: [
-        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-        "340282366920938463463374607431768211455",
-        "340282366920938463463374607431768211455",
-      ],
-    },
-    {
-      contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      entrypoint: "toggle_renewals",
-      calldata: [encodedDomain.toString(), price, 0],
-    },
-  ];
+
   const { account, address } = useAccount();
   const { data: userBalanceData, error: userBalanceDataError } =
     useContractRead({
@@ -90,14 +76,15 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
       args: [address],
     });
   const { writeAsync: execute, data: registerData } = useContractWrite({
-    calls: renewalBox ? callData.concat(renew_calls) : callData,
+    calls: renewalBox
+      ? callData.concat(registerCalls.renewal(encodedDomain, price))
+      : callData,
   });
   const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
   const { addTransaction } = useTransactionManager();
-  const [sponsor, setSponsor] = useState<string>("0");
 
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
@@ -155,32 +142,15 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
       hexToDecimal(address) === hexToDecimal(targetAddress)
     ) {
       setCallData([
-        {
-          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-          entrypoint: "approve",
-          calldata: [
-            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-            price,
-            0,
-          ],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy",
-          calldata: [
-            numberToString(tokenId),
-            encodedDomain,
-            numberToString(duration * 365),
-            0,
-            hexToDecimal(targetAddress),
-            sponsor,
-          ],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "set_address_to_domain",
-          calldata: [1, encodedDomain],
-        },
+        registerCalls.approve(price),
+        registerCalls.buy(
+          encodedDomain,
+          tokenId,
+          targetAddress,
+          sponsor,
+          duration
+        ),
+        registerCalls.addressToDomain(encodedDomain),
       ]);
     } else if (
       (tokenId != 0 && hasMainDomain) ||
@@ -189,27 +159,14 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
         hexToDecimal(address) != hexToDecimal(targetAddress))
     ) {
       setCallData([
-        {
-          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-          entrypoint: "approve",
-          calldata: [
-            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-            price,
-            0,
-          ],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy",
-          calldata: [
-            numberToString(tokenId),
-            encodedDomain,
-            numberToString(duration * 365),
-            0,
-            hexToDecimal(targetAddress),
-            sponsor,
-          ],
-        },
+        registerCalls.approve(price),
+        registerCalls.buy(
+          encodedDomain,
+          tokenId,
+          targetAddress,
+          sponsor,
+          duration
+        ),
       ]);
     } else if (
       tokenId === 0 &&
@@ -217,38 +174,16 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
       hexToDecimal(address) === hexToDecimal(targetAddress)
     ) {
       setCallData([
-        {
-          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-          entrypoint: "approve",
-          calldata: [
-            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-            price,
-            0,
-          ],
-        },
-        {
-          contractAddress: process.env
-            .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-          entrypoint: "mint",
-          calldata: [numberToString(newTokenId)],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy",
-          calldata: [
-            numberToString(newTokenId),
-            encodedDomain,
-            numberToString(duration * 365),
-            0,
-            hexToDecimal(targetAddress),
-            sponsor,
-          ],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "set_address_to_domain",
-          calldata: [1, encodedDomain],
-        },
+        registerCalls.approve(price),
+        registerCalls.mint(newTokenId),
+        registerCalls.buy(
+          encodedDomain,
+          newTokenId,
+          targetAddress,
+          sponsor,
+          duration
+        ),
+        registerCalls.addressToDomain(encodedDomain),
       ]);
     } else if (
       (tokenId === 0 && hasMainDomain) ||
@@ -257,33 +192,15 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
         hexToDecimal(address) != hexToDecimal(targetAddress))
     ) {
       setCallData([
-        {
-          contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-          entrypoint: "approve",
-          calldata: [
-            process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-            price,
-            0,
-          ],
-        },
-        {
-          contractAddress: process.env
-            .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-          entrypoint: "mint",
-          calldata: [numberToString(newTokenId)],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "buy",
-          calldata: [
-            numberToString(newTokenId),
-            encodedDomain,
-            numberToString(duration * 365),
-            0,
-            hexToDecimal(targetAddress),
-            sponsor,
-          ],
-        },
+        registerCalls.approve(price),
+        registerCalls.mint(newTokenId),
+        registerCalls.buy(
+          encodedDomain,
+          newTokenId,
+          targetAddress,
+          sponsor,
+          duration
+        ),
       ]);
     }
   }, [
@@ -414,9 +331,9 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
               }
             >
               {!termsBox
-                ? "Please accept terms and policies"
+                ? "Please accept terms & polcies"
                 : isUsResident && !usState
-                ? "We need your US postal Code"
+                ? "We need your US State"
                 : invalidBalance
                 ? "You don't have enough eth"
                 : "Register my domain"}

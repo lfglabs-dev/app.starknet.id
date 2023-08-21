@@ -95,6 +95,7 @@
 
 .image {
   height: 1200px;
+  width: auto;
   position: absolute;
   left: 40%;
   z-index: -1;
