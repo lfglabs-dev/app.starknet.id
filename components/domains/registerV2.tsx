@@ -331,7 +331,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
               }
             >
               {!termsBox
-                ? "Please accept terms & polcies"
+                ? "Please accept terms & policies"
                 : isUsResident && !usState
                 ? "We need your US State"
                 : invalidBalance

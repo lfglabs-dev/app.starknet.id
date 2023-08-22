@@ -25,7 +25,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 }) => {
   const [isEthPriceDisplayed, setIsEthPriceDisplayed] = useState<boolean>(true);
   const [ethUsdPrice, setEthUsdPrice] = useState<number>(0);
-  const [usdRegistrationPrice, SetUsdRegistrationPrice] = useState<number>(0);
+  const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<number>(0);
   const recurrence = renewalBox && duration === 1 ? "/year" : "";
 
   useEffect(() => {
@@ -35,7 +35,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       .then((res) => res.json())
       .then((data) => {
         setEthUsdPrice(data?.ethereum?.usd);
-      });
+      })
+      .catch((err) => console.log("Coingecko API Error:", err));
   }, []);
 
   useEffect(() => {
@@ -47,16 +48,16 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     }
 
     if (!isEthPriceDisplayed) {
-      SetUsdRegistrationPrice(computeUsdPrice());
+      setUsdRegistrationPrice(computeUsdPrice());
     }
   }, [ethRegistrationPrice, isEthPriceDisplayed]);
 
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
     return (
       <div className="flex items-center justify-center">
-        <p className="text-gray-800 text-xl not-italic font-bold leading-6 whitespace-nowrap">
+        <span className="text-gray-800 text-xl not-italic font-bold leading-6 whitespace-nowrap">
           {priceToPay}
-        </p>
+        </span>
         {isUsResident ? (
           <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
         ) : null}
