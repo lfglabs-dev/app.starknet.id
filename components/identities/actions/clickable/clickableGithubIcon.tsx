@@ -1,16 +1,10 @@
 import { Tooltip } from "@mui/material";
 import { useRouter } from "next/router";
-import React, {
-  FunctionComponent,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import GithubIcon from "../../../UI/iconsComponents/icons/githubIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
-import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 import theme from "../../../../styles/theme";
 import { posthog } from "posthog-js";
 
@@ -18,32 +12,19 @@ type ClickableGithubIconProps = {
   width: string;
   tokenId: string;
   isOwner: boolean;
-  domain: string;
+  githubId?: string;
+  domain?: string;
 };
 
 const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
   width,
   tokenId,
   isOwner,
+  githubId,
   domain,
 }) => {
   const router = useRouter();
-  const [githubId, setGithubId] = useState<string | undefined>();
   const [githubUsername, setGithubUsername] = useState<string | undefined>();
-  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
-
-  useEffect(() => {
-    starknetIdNavigator
-      ?.getVerifierData(tokenId, "github")
-      .then((response) => {
-        if (response.toString(10) !== "0") {
-          setGithubId(response.toString(10));
-        }
-      })
-      .catch(() => {
-        return;
-      });
-  }, []);
 
   useEffect(() => {
     if (githubId) {
@@ -88,11 +69,14 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
       </div>
     </Tooltip>
   ) : githubUsername ? (
-    <Tooltip title={`Check ${minifyDomain(domain)} github`} arrow>
+    <Tooltip title={`Check ${minifyDomain(domain ?? "")} github`} arrow>
       <div
         className={styles.clickableIconGithub}
         onClick={() => window.open(`https://github.com/${githubUsername}`)}
       >
+        <div className={styles.verifiedIcon}>
+          <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
+        </div>
         <GithubIcon width={width} color="white" />
       </div>
     </Tooltip>

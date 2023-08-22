@@ -15,7 +15,7 @@ import { utils } from "starknetid.js";
 import { Abi, Contract, Provider } from "starknet";
 import naming_abi from "../../abi/starknet/naming_abi.json";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
-import { isValidDomain } from "../../utils/stringService";
+import { isValidDomain, getDomainWithStark } from "../../utils/stringService";
 import { useIsValid } from "../../hooks/naming";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
@@ -105,7 +105,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   useEffect(() => {
     const existingResults =
       JSON.parse(localStorage.getItem("search-history") as string) || [];
-    const firstResults = existingResults.slice(0, 5);
+    const firstResults = existingResults.slice(0, 2);
     const resultPromises = firstResults.map(
       (result: { name: string; lastAccessed: number }) =>
         getStatus(result.name, result.lastAccessed)
@@ -191,7 +191,9 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
       saveSearch(result as SearchResult);
       setCurrentResult(null);
       setTypedValue("");
-      router.push(`/search?domain=${result.name}`);
+      if (!result.error)
+        router.push(`/register/${getDomainWithStark(result.name)}`);
+      else router.push(`/search?domain=${getDomainWithStark(result.name)}`);
     }
   }
 
