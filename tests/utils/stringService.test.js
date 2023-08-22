@@ -17,6 +17,8 @@ import {
   shortenDomain,
   changeTwitterProfilePic,
   cleanUsername,
+  getDomainWithStark,
+  isValidEmail,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -60,6 +62,13 @@ describe("Should test getDomainWithoutStark", () => {
     expect(getDomainWithoutStark("1232575")).toBe("1232575");
     expect(getDomainWithoutStark("1232575.stark")).toBe("1232575");
     expect(getDomainWithoutStark("1232575.sta")).toBe("1232575.sta");
+  });
+});
+
+describe("Should test getDomainWithStark", () => {
+  it("Should return string with .stark at the end", () => {
+    expect(getDomainWithStark("1232575")).toBe("1232575.stark");
+    expect(getDomainWithStark("1232575.stark")).toBe("1232575.stark");
   });
 });
 
@@ -315,5 +324,34 @@ describe("changeTwitterProfilePic function", () => {
     const result2 = changeTwitterProfilePic(url2);
     expect(result1).toBe(undefined);
     expect(result2).toBe(undefined);
+  });
+});
+
+describe("isValidEmail function", () => {
+  it("should return true for valid emails", () => {
+    const validEmails = [
+      "test@example.com",
+      "test.email@example.com",
+      "test.email@subdomain.example.com",
+      "test.email@sub-domain.example.com",
+    ];
+
+    validEmails.forEach((email) => {
+      expect(isValidEmail(email)).toBe(true);
+    });
+  });
+
+  it("should return false for invalid emails", () => {
+    const invalidEmails = [
+      "invalid-email",
+      "@example.com",
+      "test.email@.com",
+      "test.email@subdomain.example",
+      "test.email@subdomain..com",
+    ];
+
+    invalidEmails.forEach((email) => {
+      expect(isValidEmail(email)).toBe(false);
+    });
   });
 });

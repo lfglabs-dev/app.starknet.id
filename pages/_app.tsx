@@ -26,7 +26,7 @@ const connectors = [
 ];
 
 if (typeof window !== "undefined") {
-  posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
+  posthog.init(process.env.POSTHOG_KEY as string, {
     api_host: "https://app.posthog.com",
     session_recording: {
       recordCrossOriginIframes: true,

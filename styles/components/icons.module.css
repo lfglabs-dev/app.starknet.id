@@ -21,6 +21,8 @@
   padding: 0.1rem;
 }
 
+.unclickableIconTwitter,
+.unclickableIconDiscord,
 .clickableIconDiscord,
 .clickableIconGithub,
 .clickableIconTwitter {
@@ -29,6 +31,10 @@
   padding: 0.5rem;
   cursor: pointer;
   position: relative;
+}
+
+.unclickableIconTwitter {
+  cursor: default;
 }
 
 .clickableIconAnima {
@@ -53,11 +59,16 @@
   background-color: #7289d9;
 }
 
+.unclickableIconDiscord {
+  cursor: default;
+  background-color: #7289d9;
+}
+
 .button_icon {
   width: 24px;
   margin-right: 12px;
 }
 
 .clickableIconAnima {
-  background-color: #E5E5E5;
+  background-color: #e5e5e5;
 }

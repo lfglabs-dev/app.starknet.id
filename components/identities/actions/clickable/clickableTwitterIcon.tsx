@@ -1,49 +1,28 @@
 import { Tooltip } from "@mui/material";
 import { useRouter } from "next/router";
-import React, {
-  FunctionComponent,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { FunctionComponent } from "react";
 import TwitterIcon from "../../../UI/iconsComponents/icons/twitterIcon";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import styles from "../../../../styles/components/icons.module.css";
-import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 import theme from "../../../../styles/theme";
 import { posthog } from "posthog-js";
 
 type ClickableTwitterIconProps = {
   width: string;
-  tokenId: string;
   isOwner: boolean;
-  domain: string;
+  tokenId: string;
+  twitterId?: string;
+  domain?: string;
 };
 
 const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
   width,
+  twitterId,
   tokenId,
   isOwner,
   domain,
 }) => {
   const router = useRouter();
-  const [twitterId, setTwitterId] = useState<string | undefined>();
-  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
-
-  useEffect(() => {
-    starknetIdNavigator
-      ?.getVerifierData(tokenId, "twitter")
-      .then((response) => {
-        if (response.toString(10) !== "0") {
-          setTwitterId(response.toString(10));
-        } else {
-          setTwitterId(undefined);
-        }
-      })
-      .catch(() => {
-        return;
-      });
-  }, [tokenId, domain]);
 
   function startVerification(link: string): void {
     posthog?.capture("twitterVerificationStart");
@@ -73,6 +52,15 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
             <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
           </div>
         ) : null}
+        <TwitterIcon width={width} color={"white"} />
+      </div>
+    </Tooltip>
+  ) : twitterId ? (
+    <Tooltip title={`${domain} twitter is verified`} arrow>
+      <div className={styles.unclickableIconTwitter}>
+        <div className={styles.verifiedIcon}>
+          <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
+        </div>
         <TwitterIcon width={width} color={"white"} />
       </div>
     </Tooltip>

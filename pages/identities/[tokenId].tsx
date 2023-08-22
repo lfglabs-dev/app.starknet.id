@@ -1,22 +1,30 @@
 import React, { useEffect, useState } from "react";
-import styles from "../../styles/Home.module.css";
-import styles2 from "../../styles/components/identitiesV1.module.css";
+import homeStyles from "../../styles/Home.module.css";
+import styles from "../../styles/components/identitiesV1.module.css";
 import { useRouter } from "next/router";
 import { NextPage } from "next";
-import { ThreeDots } from "react-loader-spinner";
 import IdentityWarnings from "../../components/identities/identityWarnings";
 import IdentityCard from "../../components/identities/identityCard";
 import IdentityActions from "../../components/identities/actions/identityActions";
-import theme from "../../styles/theme";
+import { hexToDecimal } from "../../utils/feltService";
+import { useAccount } from "@starknet-react/core";
+import IdentityPageSkeleton from "../../components/identities/skeletons/identityPageSkeleton";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
+  const { address } = useAccount();
   const tokenId: string = router.query.tokenId as string;
   const [identity, setIdentity] = useState<Identity>();
   const [isIdentityADomain, setIsIdentityADomain] = useState<
     boolean | undefined
   >();
   const [hideActions, setHideActions] = useState(false);
+  const [isOwner, setIsOwner] = useState(true);
+
+  useEffect(() => {
+    if (!identity || !address) return;
+    setIsOwner(identity.owner_addr === hexToDecimal(address));
+  }, [identity, address]);
 
   const hideActionsHandler = (state: boolean) => {
     if (state == true) {
@@ -50,32 +58,23 @@ const TokenIdPage: NextPage = () => {
   }, [tokenId]);
 
   return (
-    <div className={styles.screen}>
-      <div className={styles.wrapperScreen}>
-        <div className={styles2.containerIdentity}>
-          {isIdentityADomain === undefined ? (
-            <div className="h-full flex items-center justify-center">
-              <ThreeDots
-                height="25"
-                width="80"
-                radius="9"
-                color={theme.palette.primary.main}
-                ariaLabel="three-dots-loading"
-                visible={true}
-              />
-            </div>
+    <div className={homeStyles.screen}>
+      <div className={homeStyles.wrapperScreen}>
+        <div className={styles.containerIdentity}>
+          {isIdentityADomain === undefined || !identity ? (
+            <IdentityPageSkeleton />
           ) : (
             <>
-              <div className={styles2.identityBox}>
+              <div className={styles.identityBox}>
                 <IdentityCard
                   identity={identity}
                   tokenId={tokenId}
-                  domain={
-                    isIdentityADomain ? identity?.domain : `SID: ${tokenId}`
-                  }
+                  isIdentityADomain={isIdentityADomain}
+                  isOwner={isOwner}
                 />
                 {!hideActions && (
                   <IdentityActions
+                    isOwner={isOwner}
                     tokenId={tokenId}
                     isIdentityADomain={isIdentityADomain}
                     identity={identity}

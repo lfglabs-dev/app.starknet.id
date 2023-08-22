@@ -165,11 +165,7 @@ const Discord: NextPage = () => {
         <div className={styles.container}>
           {screen === "verifyDiscord" &&
             (!isConnected ? (
-              <SuccessScreen
-                onClick={() => router.push(`/identities/${tokenId}`)}
-                buttonText="Get back to your starknet identity"
-                successMessage="Congrats, your discord is verified !"
-              />
+              <h1 className="sm:text-5xl text-5xl">You need to connect !</h1>
             ) : (
               <>
                 <h1 className="sm:text-5xl text-5xl mt-4">
