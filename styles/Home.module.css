@@ -11,9 +11,6 @@
   flex-direction: column;
   width: 100%;
   justify-content: center;
-}
-
-.verticalCenter {
   height: calc(100% - 12vh);
 }
 

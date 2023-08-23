@@ -153,7 +153,7 @@ const Twitter: NextPage = () => {
 
   return (
     <div className={styles.screen}>
-      <div className={`${styles.wrapperScreen} ${styles.verticalCenter}`}>
+      <div className={styles.wrapperScreen}>
         <div className={styles.container}>
           {screen === "verifyTwitter" &&
             (!isConnected ? (
