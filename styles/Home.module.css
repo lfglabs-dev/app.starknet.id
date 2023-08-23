@@ -13,6 +13,10 @@
   justify-content: center;
 }
 
+.verticalCenter {
+  height: calc(100% - 12vh);
+}
+
 .containerScreen,
 .container {
   height: 100%;
