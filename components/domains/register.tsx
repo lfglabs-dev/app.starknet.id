@@ -51,7 +51,7 @@ const Register: FunctionComponent<RegisterProps> = ({
     functionName: "compute_buy_price",
     args: [encodedDomain, duration * 365],
   });
-  const { account, address, connector } = useAccount();
+  const { account, address } = useAccount();
   const { data: userBalanceData, error: userBalanceDataError } =
     useContractRead({
       address: etherContract?.address as string,
@@ -404,12 +404,10 @@ const Register: FunctionComponent<RegisterProps> = ({
                 !duration ||
                 duration < 1 ||
                 !targetAddress ||
-                invalidBalance ||
-                !termsCheckBox ||
-                (connector?.id != "argentWebWallet" && invalidBalance)
+                invalidBalance
               }
             >
-              {connector?.id != "argentWebWallet" && invalidBalance
+              {invalidBalance
                 ? "You don't have enough eth"
                 : "Register from L2"}
             </Button>

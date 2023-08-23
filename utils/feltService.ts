@@ -38,6 +38,11 @@ export function gweiToEth(gwei: string): string {
   return ethBigInt.toString();
 }
 
+// A function that converts a number to a string with max 2 decimals
+export function numberToFixedString(num: number): string {
+  return num.toFixed(2);
+}
+
 export function toUint256(n: string): { low: string; high: string } {
   const b = BigInt(n);
   return {

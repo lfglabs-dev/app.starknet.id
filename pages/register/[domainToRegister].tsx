@@ -1,0 +1,42 @@
+import React from "react";
+import type { NextPage } from "next";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import homeStyles from "../../styles/Home.module.css";
+import styles from "../../styles/search.module.css";
+import SearchBar from "../../components/UI/searchBar";
+import {
+  getDomainWithoutStark,
+  isStarkRootDomain,
+} from "../../utils/stringService";
+import RegisterV2 from "../../components/domains/registerV2";
+
+const RegistrationPage: NextPage = () => {
+  const router = useRouter();
+  const [domain, setDomain] = useState<string>("");
+
+  useEffect(() => {
+    if (
+      router?.query?.domainToRegister &&
+      isStarkRootDomain(router.query.domainToRegister as string)
+    ) {
+      setDomain(router.query.domainToRegister as string);
+    }
+  }, [router]);
+
+  return (
+    <div className={homeStyles.screen}>
+      <div className={styles.container}>
+        <div className="sm:w-2/5 w-4/5 mt-5 mb-5">
+          <SearchBar
+            onChangeTypedValue={(typeValue: string) => setDomain(typeValue)}
+            showHistory={false}
+          />
+        </div>
+        <RegisterV2 domain={getDomainWithoutStark(domain)} />
+      </div>
+    </div>
+  );
+};
+
+export default RegistrationPage;

@@ -10,7 +10,6 @@ import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
 import RenewalModal from "./renewalModal";
 import { hexToDecimal } from "../../../utils/feltService";
-import IdentitiesActionsSkeleton from "./identitiesActionsSkeleton";
 import ClickableAction from "../../UI/iconsComponents/clickableAction";
 import styles from "../../../styles/components/identityMenu.module.css";
 import { timestampToReadableDate } from "../../../utils/dateService";
@@ -31,6 +30,7 @@ type IdentityActionsProps = {
   tokenId: string;
   isIdentityADomain: boolean;
   hideActionsHandler: (state: boolean) => void;
+  isOwner: boolean;
 };
 
 const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
@@ -38,6 +38,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   tokenId,
   isIdentityADomain,
   hideActionsHandler,
+  isOwner,
 }) => {
   const [isAddressFormOpen, setIsAddressFormOpen] = useState<boolean>(false);
   const [isRenewFormOpen, setIsRenewFormOpen] = useState<boolean>(false);
@@ -47,8 +48,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const { address } = useAccount();
   const encodedDomains = utils.encodeDomain(identity?.domain);
   const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
-  const [isOwner, setIsOwner] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
   const { addTransaction } = useTransactionManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
@@ -87,37 +86,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   }
 
   useEffect(() => {
-    type fullIds = { id: string; domain: string };
-
-    function checkIfOwner(fullIds: fullIds[]): boolean {
-      let isOwner = false;
-
-      for (let i = 0; i < fullIds.length; i++) {
-        if (fullIds[i].id === tokenId) {
-          isOwner = true;
-        }
-      }
-
-      return isOwner;
-    }
-
-    if (address && tokenId) {
-      setLoading(true);
-      // Our Indexer
-      fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_LINK
-        }/addr_to_full_ids?addr=${hexToDecimal(address)}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          setIsOwner(checkIfOwner(data.full_ids));
-          setLoading(false);
-        });
-    }
-  }, [address, tokenId]);
-
-  useEffect(() => {
     if (!address || !identity?.domain) return;
     fetch(
       `${
@@ -153,189 +121,180 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   return (
     <div className={styles.actionsContainer}>
-      {loading ? (
-        <IdentitiesActionsSkeleton />
-      ) : (
-        <>
-          <div className="flex flex-col items-center justify-center">
-            {identity && !isOwner && isIdentityADomain && (
-              <>
+      <>
+        <div className="flex flex-col items-center justify-center">
+          {identity && !isOwner && isIdentityADomain && (
+            <>
+              <ClickableAction
+                title="View on Aspect"
+                icon={
+                  <AspectIcon width="25" color={theme.palette.secondary.main} />
+                }
+                description="Check this identity on Aspect"
+                onClick={() =>
+                  window.open(
+                    `https://aspect.co/asset/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
+                  )
+                }
+              />
+            </>
+          )}
+          {identity && isOwner && (
+            <div className="flex flex-col items-center justify-center">
+              {callDataEncodedDomain[0] === 1 && !isAutoRenewalEnabled ? (
                 <ClickableAction
-                  title="View on Aspect"
+                  title="ENABLE AUTO RENEWAL"
+                  style="primary"
+                  description="Don't lose your domain!"
                   icon={
-                    <AspectIcon
+                    <ChangeIcon
                       width="25"
                       color={theme.palette.secondary.main}
                     />
                   }
-                  description="Check this identity on Aspect"
-                  onClick={() =>
-                    window.open(
-                      `https://aspect.co/asset/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
-                    )
-                  }
+                  onClick={() => setIsAutoRenewalOpen(true)}
                 />
-              </>
-            )}
-            {identity && isOwner && (
-              <div className="flex flex-col items-center justify-center">
-                {callDataEncodedDomain[0] === 1 && !isAutoRenewalEnabled ? (
-                  <ClickableAction
-                    title="ENABLE AUTO RENEWAL"
-                    style="primary"
-                    description="Don't lose your domain!"
-                    icon={
-                      <ChangeIcon
-                        width="25"
-                        color={theme.palette.primary.main}
-                      />
-                    }
-                    onClick={() => setIsAutoRenewalOpen(true)}
+              ) : null}
+              {callDataEncodedDomain[0] === 1 ? (
+                <ClickableAction
+                  title="RENEW YOUR DOMAIN"
+                  description={`Expires on ${timestampToReadableDate(
+                    identity?.domain_expiry ?? 0
+                  )}`}
+                  icon={
+                    <ChangeIcon
+                      width="25"
+                      color={theme.palette.secondary.main}
+                    />
+                  }
+                  onClick={() => setIsRenewFormOpen(true)}
+                />
+              ) : null}
+              {!identity.is_owner_main && (
+                <ClickableAction
+                  title="Set as main domain"
+                  description="Set this domain as your main domain"
+                  icon={
+                    <MainIcon
+                      width="25"
+                      firstColor={theme.palette.secondary.main}
+                      secondColor={theme.palette.secondary.main}
+                    />
+                  }
+                  onClick={() => setAddressToDomain()}
+                />
+              )}
+              <ClickableAction
+                title="CHANGE DOMAIN TARGET"
+                description="Change target address"
+                icon={
+                  <AddressIcon
+                    width="25"
+                    color={theme.palette.secondary.main}
                   />
-                ) : null}
-                {callDataEncodedDomain[0] === 1 ? (
+                }
+                onClick={() => setIsAddressFormOpen(true)}
+              />
+
+              {viewMoreClicked ? (
+                <>
                   <ClickableAction
-                    title="RENEW YOUR DOMAIN"
-                    description={`Expires on ${timestampToReadableDate(
-                      identity?.domain_expiry ?? 0
-                    )}`}
+                    title="MOVE YOUR IDENTITY NFT"
+                    description="Move your identity to another wallet"
                     icon={
-                      <ChangeIcon
+                      <TransferIcon
                         width="25"
                         color={theme.palette.secondary.main}
                       />
                     }
-                    onClick={() => setIsRenewFormOpen(true)}
+                    onClick={() => setIsTransferFormOpen(true)}
                   />
-                ) : null}
-                {!identity.is_owner_main && (
                   <ClickableAction
-                    title="Set as main domain"
-                    description="Set this domain as your main domain"
+                    title="CREATE A SUBDOMAIN"
+                    description="Create a new subdomain"
                     icon={
-                      <MainIcon
+                      <PlusIcon
                         width="25"
-                        firstColor={theme.palette.secondary.main}
-                        secondColor={theme.palette.secondary.main}
+                        color={theme.palette.secondary.main}
                       />
                     }
-                    onClick={() => setAddressToDomain()}
+                    onClick={() => setIsSubdomainFormOpen(true)}
                   />
-                )}
-                <ClickableAction
-                  title="CHANGE DOMAIN TARGET"
-                  description="Change target address"
-                  icon={
-                    <AddressIcon
-                      width="25"
-                      color={theme.palette.secondary.main}
-                    />
-                  }
-                  onClick={() => setIsAddressFormOpen(true)}
-                />
-
-                {viewMoreClicked ? (
-                  <>
+                  {callDataEncodedDomain[0] === 1 && isAutoRenewalEnabled ? (
                     <ClickableAction
-                      title="MOVE YOUR IDENTITY NFT"
-                      description="Move your identity to another wallet"
+                      title="DISABLE AUTO RENEWAL"
+                      description="You'll loose your if you don't renew it"
                       icon={
-                        <TransferIcon
+                        <ChangeIcon
                           width="25"
                           color={theme.palette.secondary.main}
                         />
                       }
-                      onClick={() => setIsTransferFormOpen(true)}
+                      onClick={() => setIsAutoRenewalOpen(true)}
                     />
-                    <ClickableAction
-                      title="CREATE A SUBDOMAIN"
-                      description="Create a new subdomain"
-                      icon={
-                        <PlusIcon
-                          width="25"
-                          color={theme.palette.secondary.main}
-                        />
-                      }
-                      onClick={() => setIsSubdomainFormOpen(true)}
-                    />
-                    {callDataEncodedDomain[0] === 1 && isAutoRenewalEnabled ? (
-                      <ClickableAction
-                        title="DISABLE AUTO RENEWAL"
-                        style="primary"
-                        description="You'll loose your if you don't renew it"
-                        icon={
-                          <ChangeIcon
-                            width="25"
-                            color={theme.palette.primary.main}
-                          />
-                        }
-                        onClick={() => setIsAutoRenewalOpen(true)}
-                      />
-                    ) : null}
-
-                    <p
-                      onClick={() => setViewMoreClicked(false)}
-                      className={styles.viewMore}
-                    >
-                      View less
-                    </p>
-                  </>
-                ) : (
+                  ) : null}
                   <p
-                    onClick={() => {
-                      posthog?.capture("clickViewMore");
-                      setViewMoreClicked(true);
-                    }}
+                    onClick={() => setViewMoreClicked(false)}
                     className={styles.viewMore}
                   >
-                    View more
+                    View less
                   </p>
-                )}
-              </div>
-            )}
-          </div>
+                </>
+              ) : (
+                <p
+                  onClick={() => {
+                    posthog?.capture("clickViewMore");
+                    setViewMoreClicked(true);
+                  }}
+                  className={styles.viewMore}
+                >
+                  View more
+                </p>
+              )}
+            </div>
+          )}
+        </div>
 
-          <RenewalModal
-            handleClose={() => setIsRenewFormOpen(false)}
-            isModalOpen={isRenewFormOpen}
-            callDataEncodedDomain={callDataEncodedDomain}
-            identity={identity}
-          />
-          <ChangeAddressModal
-            handleClose={() => setIsAddressFormOpen(false)}
-            isModalOpen={isAddressFormOpen}
-            callDataEncodedDomain={callDataEncodedDomain}
-            domain={identity?.domain}
-            currentTargetAddress={identity?.addr}
-          />
-          <TransferFormModal
-            handleClose={() => setIsTransferFormOpen(false)}
-            isModalOpen={isTransferFormOpen}
-            callDataEncodedDomain={callDataEncodedDomain}
-          />
-          <SubdomainModal
-            handleClose={() => setIsSubdomainFormOpen(false)}
-            isModalOpen={isSubdomainFormOpen}
-            callDataEncodedDomain={callDataEncodedDomain}
-            domain={identity?.domain}
-          />
-          <TxConfirmationModal
-            txHash={mainDomainData?.transaction_hash}
-            isTxModalOpen={isTxModalOpen}
-            closeModal={() => setIsTxModalOpen(false)}
-            title="Your Transaction is on it's way !"
-          />
-          <AutoRenewalModal
-            handleClose={() => setIsAutoRenewalOpen(false)}
-            isModalOpen={isAutoRenewalOpen}
-            callDataEncodedDomain={callDataEncodedDomain}
-            identity={identity}
-            isEnabled={isAutoRenewalEnabled}
-            domain={identity?.domain}
-            limitPrice={limitPrice}
-          />
-        </>
-      )}
+        <RenewalModal
+          handleClose={() => setIsRenewFormOpen(false)}
+          isModalOpen={isRenewFormOpen}
+          callDataEncodedDomain={callDataEncodedDomain}
+          identity={identity}
+        />
+        <ChangeAddressModal
+          handleClose={() => setIsAddressFormOpen(false)}
+          isModalOpen={isAddressFormOpen}
+          callDataEncodedDomain={callDataEncodedDomain}
+          domain={identity?.domain}
+          currentTargetAddress={identity?.addr}
+        />
+        <TransferFormModal
+          handleClose={() => setIsTransferFormOpen(false)}
+          isModalOpen={isTransferFormOpen}
+          callDataEncodedDomain={callDataEncodedDomain}
+        />
+        <SubdomainModal
+          handleClose={() => setIsSubdomainFormOpen(false)}
+          isModalOpen={isSubdomainFormOpen}
+          callDataEncodedDomain={callDataEncodedDomain}
+          domain={identity?.domain}
+        />
+        <TxConfirmationModal
+          txHash={mainDomainData?.transaction_hash}
+          isTxModalOpen={isTxModalOpen}
+          closeModal={() => setIsTxModalOpen(false)}
+          title="Your Transaction is on it's way !"
+        />
+        <AutoRenewalModal
+          handleClose={() => setIsAutoRenewalOpen(false)}
+          isModalOpen={isAutoRenewalOpen}
+          callDataEncodedDomain={callDataEncodedDomain}
+          identity={identity}
+          isEnabled={isAutoRenewalEnabled}
+          domain={identity?.domain}
+          limitPrice={limitPrice}
+        />
+      </>
     </div>
   );
 };

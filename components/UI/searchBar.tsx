@@ -1,68 +1,259 @@
-import React from "react";
+import React, {
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  FunctionComponent,
+  useState,
+  KeyboardEvent,
+} from "react";
 import { useRouter } from "next/router";
-import { InputAdornment, TextField } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { FunctionComponent, KeyboardEvent, useState } from "react";
+import { TextField, styled } from "@mui/material";
+import styles from "../../styles/search.module.css";
+import SearchResult from "./searchResult";
+import { utils } from "starknetid.js";
+import { Abi, Contract, Provider } from "starknet";
+import naming_abi from "../../abi/starknet/naming_abi.json";
+import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
+import { isValidDomain, getDomainWithStark } from "../../utils/stringService";
 import { useIsValid } from "../../hooks/naming";
-import { usePostHog } from "posthog-js/react";
+
+const CustomTextField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root": {
+    padding: "10px 35px",
+    caretColor: "#454545",
+    "& fieldset": {
+      border: "1px solid #CDCCCC",
+      borderRadius: "20px",
+      boxShadow: "0px 2px 30px 0px rgba(0, 0, 0, 0.06)",
+      backgroundColor: "#FFFFFF",
+    },
+    "& .MuiInputBase-input": {
+      color: "#454545",
+      fontSize: "24px",
+      fontStyle: "normal",
+      fontWeight: "700",
+      lineHeight: "24px",
+      letterSpacing: "0.24px",
+      textAlign: "center",
+      zIndex: "1",
+    },
+    "&:hover fieldset": {
+      border: "1px solid #CDCCCC",
+    },
+    "& ::placeholder": {
+      color: "#B0AEAE",
+      textAlign: "center",
+      fontSize: "24px",
+      fontStyle: "normal",
+      fontWeight: "700",
+      lineHeight: "24px",
+      letterSpacing: "0.24px",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    "&.Mui-focused ::placeholder": {
+      color: "transparent",
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: theme.palette.primary.main,
+    },
+  },
+  [theme.breakpoints.down("sm")]: {
+    "& .MuiOutlinedInput-root": {
+      padding: "0 30px",
+      "& .MuiInputBase-input": {
+        fontSize: "22px",
+        lineHeight: "22px",
+        letterSpacing: "0.2px",
+      },
+      "& ::placeholder": {
+        fontSize: "16px",
+        lineHeight: "20px",
+        letterSpacing: "0.2px",
+      },
+    },
+  },
+}));
 
 type SearchBarProps = {
   onChangeTypedValue?: (typedValue: string) => void;
+  showHistory: boolean;
 };
+
 const SearchBar: FunctionComponent<SearchBarProps> = ({
   onChangeTypedValue,
+  showHistory,
 }) => {
   const router = useRouter();
+  const resultsRef = useRef<HTMLDivElement>(null);
   const [typedValue, setTypedValue] = useState<string>("");
-  const isDomainValid = useIsValid(typedValue);
+  const isValid = useIsValid(typedValue);
+  const [currentResult, setCurrentResult] = useState<SearchResult | null>();
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [showResults, setShowResults] = useState<boolean>(false);
+  const { provider } = useContext(StarknetIdJsContext);
+
+  const contract = useMemo(() => {
+    return new Contract(
+      naming_abi as Abi,
+      process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+      provider as Provider
+    );
+  }, [provider]);
+
+  useEffect(() => {
+    const existingResults =
+      JSON.parse(localStorage.getItem("search-history") as string) || [];
+    const firstResults = existingResults.slice(0, 2);
+    const resultPromises = firstResults.map(
+      (result: { name: string; lastAccessed: number }) =>
+        getStatus(result.name, result.lastAccessed)
+    );
+    Promise.all(resultPromises).then((fullResults) => {
+      fullResults.sort(
+        (firstResult: SearchResult, secondResult: SearchResult) =>
+          secondResult.lastAccessed - firstResult.lastAccessed
+      );
+      setSearchResults(fullResults);
+    });
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        resultsRef.current &&
+        !resultsRef.current.contains(event.target as Node)
+      ) {
+        setShowResults(false);
+      } else {
+        setShowResults(true);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   function handleChange(value: string) {
     setTypedValue(value.toLowerCase());
+    getStatus(value).then((result) => {
+      setCurrentResult(result);
+    });
+  }
+
+  async function getStatus(
+    name: string,
+    lastAccessed?: number
+  ): Promise<SearchResult> {
+    const valid = isValidDomain(name);
+    if (valid !== true) {
+      return {
+        name,
+        error: true,
+        message: valid + " is not a valid caracter",
+        lastAccessed: lastAccessed ?? Date.now(),
+      };
+    } else {
+      const currentTimeStamp = new Date().getTime() / 1000;
+      const encoded = name
+        ? utils.encodeDomain(name).map((elem) => elem.toString())
+        : [];
+      return new Promise((resolve) => {
+        contract?.call("domain_to_expiry", [encoded]).then((res) => {
+          if (Number(res?.["expiry"]) < currentTimeStamp) {
+            resolve({
+              name,
+              error: false,
+              message: "Available",
+              lastAccessed: lastAccessed ?? Date.now(),
+            });
+          } else {
+            resolve({
+              name,
+              error: true,
+              message: "Unavailable",
+              lastAccessed: lastAccessed ?? Date.now(),
+            });
+          }
+        });
+      });
+    }
+  }
+
+  function search(result: SearchResult) {
+    if (
+      typeof isValidDomain(result.name) === "boolean" &&
+      result?.name.length > 0
+    ) {
+      onChangeTypedValue?.(result.name);
+      saveSearch(result as SearchResult);
+      setCurrentResult(null);
+      setTypedValue("");
+      if (!result.error)
+        router.push(`/register/${getDomainWithStark(result.name)}`);
+      else router.push(`/search?domain=${getDomainWithStark(result.name)}`);
+    }
+  }
+
+  function saveSearch(newResult: SearchResult) {
+    setSearchResults((prevResults) => {
+      const updatedResults = [...(prevResults || [])]; // Clone the previous results
+      const existingResult = updatedResults.find(
+        (result) => result.name === newResult.name
+      );
+
+      if (existingResult) {
+        existingResult.lastAccessed = Date.now();
+      } else {
+        newResult.lastAccessed = Date.now();
+        updatedResults.unshift(newResult);
+      }
+
+      updatedResults.sort((a, b) => b.lastAccessed - a.lastAccessed);
+      const localStorageResults = updatedResults.map((result) => ({
+        name: result.name,
+        lastAccessed: result.lastAccessed,
+      }));
+      localStorage.setItem(
+        "search-history",
+        JSON.stringify(localStorageResults)
+      );
+
+      return updatedResults;
+    });
   }
 
   function onEnter(ev: KeyboardEvent<HTMLDivElement>) {
     if (ev.key === "Enter") {
-      search(typedValue);
+      search(currentResult as SearchResult);
       ev.preventDefault();
     }
   }
 
-  function search(typedValue: string) {
-    if (typeof isDomainValid === "boolean") {
-      onChangeTypedValue?.(typedValue);
-      router.push(`/search?domain=${typedValue}`);
-    }
-  }
-
   return (
-    <TextField
-      fullWidth
-      className="z-[0]"
-      id="outlined-basic"
-      label={
-        isDomainValid != true
-          ? `"${isDomainValid}" is not a valid character`
-          : "Your Username"
-      }
-      placeholder="Type your .stark domain here"
-      variant="outlined"
-      onChange={(e) => handleChange(e.target.value)}
-      onKeyPress={(ev) => onEnter(ev)}
-      InputProps={{
-        endAdornment: (
-          <InputAdornment
-            onClick={() => {
-              if (typedValue) search(typedValue);
-            }}
-            className="cursor-pointer"
-            position="end"
-          >
-            <SearchIcon />
-          </InputAdornment>
-        ),
-      }}
-      error={isDomainValid != true}
-    />
+    <div className={styles.searchContainer} ref={resultsRef}>
+      <CustomTextField
+        fullWidth
+        id="outlined-basic"
+        placeholder="Search your username"
+        variant="outlined"
+        onChange={(e) => handleChange(e.target.value)}
+        value={typedValue}
+        error={isValid != true}
+        onKeyDown={(ev) => onEnter(ev)}
+        autoComplete="off"
+      />
+      {showResults && (typedValue.length > 0 || searchResults.length > 0) ? (
+        <SearchResult
+          currentResult={currentResult}
+          history={searchResults}
+          search={search}
+          showHistory={showHistory}
+        />
+      ) : null}
+    </div>
   );
 };
 
