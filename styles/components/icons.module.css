@@ -21,6 +21,8 @@
   padding: 0.1rem;
 }
 
+.unclickableIconTwitter,
+.unclickableIconDiscord,
 .clickableIconDiscord,
 .clickableIconGithub,
 .clickableIconTwitter {
@@ -53,13 +55,22 @@
   background-color: #7289d9;
 }
 
+.unclickableIconDiscord {
+  background-color: #7289d9;
+  cursor: default;
+}
+
+.unclickableIconTwitter {
+  cursor: default;
+}
+
 .button_icon {
   width: 24px;
   margin-right: 12px;
 }
 
 .clickableIconAnima {
-  background-color: #E5E5E5;
+  background-color: #e5e5e5;
 }
 
 .tooltip {
@@ -80,7 +91,7 @@
 }
 
 .tooltipSub {
-  color: var(--content-600, #8C8989);
+  color: var(--content-600, #8c8989);
   font-size: 10px;
   font-style: normal;
   font-weight: 400;
