@@ -56,7 +56,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
   const [termsBox, setTermsBox] = useState<boolean>(true);
-  const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  // const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [sponsor, setSponsor] = useState<string>("0");
 
@@ -76,9 +76,10 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
       args: [address],
     });
   const { writeAsync: execute, data: registerData } = useContractWrite({
-    calls: renewalBox
-      ? callData.concat(registerCalls.renewal(encodedDomain, price))
-      : callData,
+    // calls: renewalBox
+    //   ? callData.concat(registerCalls.renewal(encodedDomain, price))
+    //   : callData,
+    calls: callData,
   });
   const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
@@ -257,15 +258,15 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
             <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            <TextField
-              helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
+            {/* <TextField
+              helperText="Please understand that entering your email is not mandatory to register a domain, we won't share your email with anyone. We'll use it only to inform you about your domain and our news."
               label="Email address"
               value={email}
               onChange={(e) => changeEmail(e.target.value)}
               color="secondary"
               error={emailError}
               errorMessage={"Please enter a valid email address"}
-            />
+            /> */}
             {/* <UsForm
               isUsResident={isUsResident}
               onUsResidentChange={() => setIsUsResident(!isUsResident)}
@@ -299,16 +300,16 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           <RegisterSummary
             ethRegistrationPrice={price}
             duration={duration}
-            renewalBox={renewalBox}
+            renewalBox={false}
             salesTaxRate={salesTaxRate}
             isUsResident={isUsResident}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
-            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+            // onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
-            renewalBox={renewalBox}
+            // renewalBox={renewalBox}
           />
           {address ? (
             <Button
@@ -345,7 +346,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           )}
         </div>
       </div>
-      <img className={styles.image} src="/visuals/desk4-7.webp" />
+      <img className={styles.image} src="/visuals/registerV2.webp" />
       <TxConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
