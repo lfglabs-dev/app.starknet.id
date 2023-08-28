@@ -86,9 +86,10 @@ const ClickablePersonhoodIcon: FunctionComponent<
   };
 
   const initAnimaSession = () => {
-    fetch("/api/anima/init_session")
+    fetch(`/api/anima/init_session?address=${address}`)
       .then((response) => response.json())
       .then((result) => {
+        console.log("result", result);
         if (result && result.session_id) setSessionId(result.session_id);
       })
       .catch((error) =>
