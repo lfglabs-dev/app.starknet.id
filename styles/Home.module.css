@@ -10,8 +10,8 @@
   display: inline-flex;
   flex-direction: column;
   width: 100%;
-  height: calc(100% - 12vh);
   justify-content: center;
+  height: calc(100% - 12vh);
 }
 
 .containerScreen,

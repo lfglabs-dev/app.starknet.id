@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@anima-protocol/personhood-sdk-react": "^0.4.4",
-    "@argent/starknet-react-webwallet-connector": "^6.4.2",
+    "@argent/starknet-react-webwallet-connector": "^6.5.0",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@mui/icons-material": "^5.8.4",
@@ -33,6 +33,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
     "react-loader-spinner": "^5.2.0",
+    "sales-tax": "^2.12.0",
     "starknet": "^5.14.1",
     "starknetid.js": "^1.5.3",
     "twitter-api-sdk": "^1.2.1"

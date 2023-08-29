@@ -1,4 +1,5 @@
 import { BN } from "bn.js";
+import { basicAlphabet } from "./constants";
 
 export function minifyAddress(address: string | undefined): string {
   if (!address) return "";
@@ -46,6 +47,16 @@ export function getDomainWithoutStark(str: string | undefined): string {
 
   if (str.endsWith(".stark")) {
     return str.slice(0, str.length - 6);
+  } else {
+    return str;
+  }
+}
+
+export function getDomainWithStark(str: string | undefined): string {
+  if (!str) return "";
+
+  if (!str.endsWith(".stark")) {
+    return str.concat(".stark");
   } else {
     return str;
   }
@@ -127,4 +138,16 @@ export function changeTwitterProfilePic(url: string): string {
 
 export function cleanUsername(username: string): string {
   return username.startsWith("@") ? username.substring(1) : username;
+}
+
+export function isValidEmail(email: string): boolean {
+  if (email.includes("..")) return false; // Ensure no consecutive dots
+  return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email);
+}
+
+export function isValidDomain(domain: string | undefined): boolean | string {
+  if (!domain) domain = "";
+
+  for (const char of domain) if (!basicAlphabet.includes(char)) return char;
+  return true;
 }

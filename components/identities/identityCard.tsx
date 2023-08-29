@@ -12,26 +12,32 @@ import { ContentCopy } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 import Notification from "../UI/notification";
 import CopiedIcon from "../UI/iconsComponents/icons/copiedIcon";
+import CalendarIcon from "../UI/iconsComponents/icons/calendarIcon";
 import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
 import theme from "../../styles/theme";
+import { timestampToReadableDate } from "../../utils/dateService";
 
 type IdentityCardProps = {
-  identity?: Identity;
-  domain?: string;
+  identity: Identity;
+  isIdentityADomain: boolean;
   tokenId: string;
+  isOwner: boolean;
 };
 
 const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   tokenId,
-  domain,
+  isIdentityADomain,
   identity,
+  isOwner,
 }) => {
-  const responsiveDomain = shortenDomain(domain as string, 25);
+  const responsiveDomainOrId = isIdentityADomain
+    ? shortenDomain(identity.domain as string, 25)
+    : `SID: ${tokenId}`;
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
     setCopied(true);
-    navigator.clipboard.writeText(decimalToHex(identity?.addr));
+    navigator.clipboard.writeText(decimalToHex(identity.addr));
     setTimeout(() => {
       setCopied(false);
     }, 1500);
@@ -40,18 +46,29 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <div className="lg:mt-10 flex items-center lg:justify-between justify-center gap-5 my-2 flex-wrap lg:flex-row ">
+        <div className="lg:mt-10 flex items-center lg:justify-between justify-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row ">
           <div className="my-2">
             <img
               src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`}
               height={170}
               width={170}
               alt="identicon"
+              className="mt-1 mb-3"
             />
+            {identity.domain_expiry ? (
+              <Tooltip title="Expiry date of this domain" arrow>
+                <div className={styles.expiryContainer}>
+                  <CalendarIcon width="16" color={theme.palette.primary.main} />
+                  <p className={styles.expiryText}>
+                    {timestampToReadableDate(identity.domain_expiry)}
+                  </p>
+                </div>
+              </Tooltip>
+            ) : null}
           </div>
           <div>
             <div className="flex flex-row items-center justify-center">
-              <h1 className={styles.domain}>{responsiveDomain}</h1>
+              <h1 className={styles.domain}>{responsiveDomainOrId}</h1>
               {identity && identity.is_owner_main && (
                 <div className="ml-2">
                   <MainIcon
@@ -62,12 +79,12 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 </div>
               )}
             </div>
-            {identity?.addr ? (
+            {identity.addr ? (
               <>
                 <div className="flex flex-row lg:mt-6 mt-2">
                   <StarknetIcon width="32px" color="" />
                   <h2 className="ml-3 text-xl">
-                    {minifyAddress(decimalToHex(identity?.addr))}
+                    {minifyAddress(decimalToHex(identity.addr))}
                   </h2>
                   <div className="cursor-pointer ml-3">
                     {!copied ? (
@@ -90,8 +107,8 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
 
             <div className=" lg:mt-6 mt-2 flex lg:justify-start justify-center lg:items-start items-center">
               <SocialMediaActions
-                domain={identity?.domain}
-                isOwner={true}
+                identity={identity}
+                isOwner={isOwner}
                 tokenId={tokenId}
               />
             </div>
