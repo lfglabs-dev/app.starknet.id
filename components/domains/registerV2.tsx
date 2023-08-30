@@ -238,11 +238,24 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   ]);
 
   useEffect(() => {
-    if (!registerData?.transaction_hash) return;
+    if (!registerData?.transaction_hash || !salt) return;
     posthog?.capture("register");
-    addTransaction({ hash: registerData?.transaction_hash ?? "" });
+    // register the metadata to the sales manager db
+    const requestOptions = {
+      method: "POST",
+      body: JSON.stringify({
+        meta_hash: computeMetadataHash(email, usState, salt),
+        email: email,
+        tax_state: usState,
+        salt: salt,
+      }),
+    };
+    fetch(`https://goerli.api.sales.starknet.id./add_metadata`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => console.log(data));
+    addTransaction({ hash: registerData.transaction_hash });
     setIsTxModalOpen(true);
-  }, [registerData]);
+  }, [registerData, salt, email, usState]);
 
   function changeAddress(value: string): void {
     isHexString(value) ? setTargetAddress(value) : null;
