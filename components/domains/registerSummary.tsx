@@ -14,6 +14,8 @@ type RegisterSummaryProps = {
   renewalBox: boolean;
   salesTaxRate: number;
   isUsResident: boolean;
+  isUsdPriceDisplayed?: boolean;
+  customMessage?: string;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -22,6 +24,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   renewalBox,
   salesTaxRate,
   isUsResident,
+  isUsdPriceDisplayed = true,
+  customMessage,
 }) => {
   const [isEthPriceDisplayed, setIsEthPriceDisplayed] = useState<boolean>(true);
   const [ethUsdPrice, setEthUsdPrice] = useState<number>(0);
@@ -29,6 +33,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   const recurrence = renewalBox && duration === 1 ? "/year" : "";
 
   useEffect(() => {
+    if (!isUsdPriceDisplayed) return;
+
     fetch(
       "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
     )
@@ -102,15 +108,19 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
         <h4 className={styles.totalDueTitle}>Total due:</h4>
         <div className={styles.priceContainer}>
           <p className={styles.legend}>
-            for {duration} {duration === 1 ? "year" : "years"}
+            {customMessage
+              ? customMessage
+              : `for ${duration} ${duration === 1 ? "year" : "years"}`}
           </p>
           {isEthPriceDisplayed ? displayEthPrice() : displayUsdPrice()}
         </div>
       </div>
-      <CurrencySwitcher
-        isEthPriceDisplayed={isEthPriceDisplayed}
-        onCurrencySwitch={() => setIsEthPriceDisplayed(!isEthPriceDisplayed)}
-      />
+      {isUsdPriceDisplayed ? (
+        <CurrencySwitcher
+          isEthPriceDisplayed={isEthPriceDisplayed}
+          onCurrencySwitch={() => setIsEthPriceDisplayed(!isEthPriceDisplayed)}
+        />
+      ) : null}
     </div>
   );
 };
