@@ -44,7 +44,7 @@ const Navbar: FunctionComponent = () => {
   const { hashes } = useTransactionManager();
   const [showWallet, setShowWallet] = useState<boolean>(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     async function tryAutoConnect(connectors: Connector[]) {
       // to handle autoconnect starknet-react adds connector id in local storage
       // if there is no value stored, we show the wallet modal
