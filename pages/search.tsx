@@ -66,7 +66,6 @@ const SearchPage: NextPage = () => {
           <IdentityCard
             tokenId={identity.starknet_id ?? ""}
             identity={identity}
-            isIdentityADomain={true}
             isOwner={isOwner}
           />
         ) : (

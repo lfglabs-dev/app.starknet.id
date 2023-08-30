@@ -18,26 +18,24 @@ import theme from "../../styles/theme";
 import { timestampToReadableDate } from "../../utils/dateService";
 
 type IdentityCardProps = {
-  identity: Identity;
-  isIdentityADomain: boolean;
+  identity?: Identity;
   tokenId: string;
   isOwner: boolean;
 };
 
 const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   tokenId,
-  isIdentityADomain,
   identity,
   isOwner,
 }) => {
-  const responsiveDomainOrId = isIdentityADomain
+  const responsiveDomainOrId = identity
     ? shortenDomain(identity.domain as string, 25)
     : `SID: ${tokenId}`;
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
     setCopied(true);
-    navigator.clipboard.writeText(decimalToHex(identity.addr));
+    navigator.clipboard.writeText(decimalToHex(identity?.addr));
     setTimeout(() => {
       setCopied(false);
     }, 1500);
@@ -55,7 +53,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
               alt="identicon"
               className="mt-1 mb-3"
             />
-            {identity.domain_expiry ? (
+            {identity?.domain_expiry ? (
               <Tooltip title="Expiry date of this domain" arrow>
                 <div className={styles.expiryContainer}>
                   <CalendarIcon width="16" color={theme.palette.primary.main} />
@@ -79,7 +77,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 </div>
               )}
             </div>
-            {identity.addr ? (
+            {identity?.addr ? (
               <>
                 <div className="flex flex-row lg:mt-6 mt-2">
                   <StarknetIcon width="32px" color="" />

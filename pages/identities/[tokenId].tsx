@@ -46,7 +46,7 @@ const TokenIdPage: NextPage = () => {
           })
           .then((data: Identity) => {
             setIdentity(data);
-            setIsIdentityADomain(true);
+            setIsIdentityADomain(Boolean(data?.domain));
           })
           .catch(() => {
             setIsIdentityADomain(false);
@@ -61,7 +61,7 @@ const TokenIdPage: NextPage = () => {
     <div className={homeStyles.screen}>
       <div className={homeStyles.wrapperScreen}>
         <div className={styles.containerIdentity}>
-          {isIdentityADomain === undefined || !identity ? (
+          {isIdentityADomain === undefined ? (
             <IdentityPageSkeleton />
           ) : (
             <>
@@ -69,7 +69,6 @@ const TokenIdPage: NextPage = () => {
                 <IdentityCard
                   identity={identity}
                   tokenId={tokenId}
-                  isIdentityADomain={isIdentityADomain}
                   isOwner={isOwner}
                 />
                 {!hideActions && (
