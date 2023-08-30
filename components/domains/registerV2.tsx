@@ -60,6 +60,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   // const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [sponsor, setSponsor] = useState<string>("0");
+  const [salt, setSalt] = useState<string | undefined>();
+  const [metaHash, setMetahash] = useState<string | undefined>();
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -87,6 +89,20 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     new Map()
   );
   const { addTransaction } = useTransactionManager();
+
+  // on first load, we generate a salt
+  useEffect(() => {
+    setSalt(generateSalt());
+  }, []);
+
+  // we update compute the purchase metadata hash
+  useEffect(() => {
+    // salt must not be empty to preserve privacy
+    if (!salt) return;
+    (async () => {
+      setMetahash(await computeMetadataHash(email, usState, salt));
+    })();
+  }, [email, usState, salt]);
 
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
@@ -134,10 +150,10 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     }
   }, [domain]);
 
-  // Set mulitcalls
+  // Set multicalls
   useEffect(() => {
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-
+    const txMetaHash = "0x" + metaHash;
     if (
       tokenId != 0 &&
       !hasMainDomain &&
@@ -150,7 +166,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           tokenId,
           targetAddress,
           sponsor,
-          duration
+          duration,
+          txMetaHash
         ),
         registerCalls.addressToDomain(encodedDomain),
       ]);
@@ -167,7 +184,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           tokenId,
           targetAddress,
           sponsor,
-          duration
+          duration,
+          txMetaHash
         ),
       ]);
     } else if (
@@ -183,7 +201,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           newTokenId,
           targetAddress,
           sponsor,
-          duration
+          duration,
+          txMetaHash
         ),
         registerCalls.addressToDomain(encodedDomain),
       ]);
@@ -201,7 +220,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           newTokenId,
           targetAddress,
           sponsor,
-          duration
+          duration,
+          txMetaHash
         ),
       ]);
     }
@@ -214,6 +234,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     hasMainDomain,
     address,
     sponsor,
+    metaHash,
   ]);
 
   useEffect(() => {
@@ -318,23 +339,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
                   setDomainsMinting((prev) =>
                     new Map(prev).set(encodedDomain.toString(), true)
                   );
-                  const salt = generateSalt();
-                  const requestOptions = {
-                    method: "POST",
-                    body: JSON.stringify({
-                      meta_hash: computeMetadataHash(email, usState, salt),
-                      email: email,
-                      tax_state: usState,
-                      salt: salt,
-                    }),
-                  };
-
-                  fetch(
-                    `https://goerli.api.saled.starknet.id./add_metadata`,
-                    requestOptions
-                  )
-                    .then((response) => response.json())
-                    .then((data) => console.log(data));
                 })
               }
               disabled={
