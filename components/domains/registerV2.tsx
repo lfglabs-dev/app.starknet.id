@@ -22,7 +22,7 @@ import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
-// import UsForm from "./usForm";
+import UsForm from "./usForm";
 import { Divider } from "@mui/material";
 import RegisterCheckboxes from "./registerCheckboxes";
 import NumberTextField from "../UI/numberTextField";
@@ -30,6 +30,7 @@ import RegisterSummary from "./registerSummary";
 import salesTax from "sales-tax";
 import Wallets from "../UI/wallets";
 import registerCalls from "../../utils/registerCalls";
+import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 
 type RegisterV2Props = {
   domain: string;
@@ -244,7 +245,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     if (isUsResident) {
       salesTax.getSalesTax("US", usState).then((tax) => {
         setSalesTaxRate(tax.rate);
-        console.log(tax.rate);
       });
     }
   }, [isUsResident, usState]);
@@ -258,7 +258,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
             <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            {/* <TextField
+            <TextField
               helperText="Please understand that entering your email is not mandatory to register a domain, we won't share your email with anyone. We'll use it only to inform you about your domain and our news."
               label="Email address"
               value={email}
@@ -266,13 +266,13 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
               color="secondary"
               error={emailError}
               errorMessage={"Please enter a valid email address"}
-            /> */}
-            {/* <UsForm
+            />
+            <UsForm
               isUsResident={isUsResident}
               onUsResidentChange={() => setIsUsResident(!isUsResident)}
               usState={usState}
               changeUsState={(value) => setUsState(value)}
-            /> */}
+            />
             <TextField
               helperText="The Starknet address the domain will resolve to."
               label="Target address"
@@ -314,11 +314,28 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           {address ? (
             <Button
               onClick={() =>
-                execute().then(() =>
+                execute().then(() => {
                   setDomainsMinting((prev) =>
                     new Map(prev).set(encodedDomain.toString(), true)
+                  );
+                  const salt = generateSalt();
+                  const requestOptions = {
+                    method: "POST",
+                    body: JSON.stringify({
+                      meta_hash: computeMetadataHash(email, usState, salt),
+                      email: email,
+                      tax_state: usState,
+                      salt: salt,
+                    }),
+                  };
+
+                  fetch(
+                    `https://goerli.api.saled.starknet.id./add_metadata`,
+                    requestOptions
                   )
-                )
+                    .then((response) => response.json())
+                    .then((data) => console.log(data));
+                })
               }
               disabled={
                 (domainsMinting.get(encodedDomain) as boolean) ||

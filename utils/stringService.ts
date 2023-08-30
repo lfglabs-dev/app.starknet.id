@@ -128,8 +128,8 @@ export function numberToString(element: number | undefined): string {
   return new BN(element).toString(10);
 }
 // a function that take a number as a string like 1111 and convert it to 000000001111
-export function convertNumberToFixedLengthString(number: string): string {
-  return number.padStart(12, "0");
+export function convertNumberToFixedLengthString(number?: string): string {
+  return number ? number.padStart(12, "0") : "000000000000";
 }
 
 export function changeTwitterProfilePic(url: string): string {
