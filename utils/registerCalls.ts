@@ -15,7 +15,8 @@ function buy(
   tokenId: number,
   targetAddress: string,
   sponsor: string,
-  duration: number
+  duration: number,
+  metadata: string
 ): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
@@ -27,6 +28,7 @@ function buy(
       0,
       hexToDecimal(targetAddress),
       sponsor,
+      metadata,
     ],
   };
 }

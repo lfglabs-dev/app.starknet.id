@@ -225,6 +225,21 @@
     "type": "event"
   },
   {
+    "data": [
+      {
+        "name": "domain",
+        "type": "felt"
+      },
+      {
+        "name": "metadata",
+        "type": "felt"
+      }
+    ],
+    "keys": [],
+    "name": "SaleMetadata",
+    "type": "event"
+  },
+  {
     "inputs": [
       {
         "name": "starknetid_contract_addr",
@@ -441,6 +456,10 @@
       {
         "name": "sponsor",
         "type": "felt"
+      },
+      {
+        "name": "metadata",
+        "type": "felt"
       }
     ],
     "name": "buy",
@@ -472,6 +491,10 @@
       {
         "name": "discount_id",
         "type": "felt"
+      },
+      {
+        "name": "metadata",
+        "type": "felt"
       }
     ],
     "name": "buy_discounted",
@@ -490,6 +513,14 @@
       },
       {
         "name": "sponsor",
+        "type": "felt"
+      },
+      {
+        "name": "discount_id",
+        "type": "felt"
+      },
+      {
+        "name": "metadata",
         "type": "felt"
       }
     ],
