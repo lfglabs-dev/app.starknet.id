@@ -241,21 +241,20 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     if (!registerData?.transaction_hash || !salt) return;
     posthog?.capture("register");
     // register the metadata to the sales manager db
-    const requestOptions = {
+
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         meta_hash: metadataHash,
         email: email,
         tax_state: usState,
         salt: salt,
       }),
-    };
-    fetch(
-      `${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`,
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((data) => console.log(data));
+    })
+      .then((res) => res.json())
+      .catch((err) => console.log("Error on sending metadata:", err));
+
     addTransaction({ hash: registerData.transaction_hash });
     setIsTxModalOpen(true);
   }, [registerData, salt, email, usState]);
