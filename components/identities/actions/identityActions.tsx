@@ -15,7 +15,6 @@ import styles from "../../../styles/components/identityMenu.module.css";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { utils } from "starknetid.js";
 import theme from "../../../styles/theme";
-import AspectIcon from "../../UI/iconsComponents/icons/aspectIcon";
 import MainIcon from "../../UI/iconsComponents/icons/mainIcon";
 import AddressIcon from "../../UI/iconsComponents/icons/addressIcon";
 import ChangeIcon from "../../UI/iconsComponents/icons/changeIcon";
@@ -23,6 +22,7 @@ import TransferIcon from "../../UI/iconsComponents/icons/transferIcon";
 import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../../UI/txConfirmationModal";
+import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -101,6 +101,21 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           {identity && !isOwner && isIdentityADomain && (
             <>
               <ClickableAction
+                title="View on Unframed"
+                icon={
+                  <UnframedIcon
+                    width="30"
+                    color={theme.palette.secondary.main}
+                  />
+                }
+                description="Check this identity on Unframed"
+                onClick={() =>
+                  window.open(
+                    `https://unframed.co/item/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
+                  )
+                }
+              />
+              {/* <ClickableAction
                 title="View on Aspect"
                 icon={
                   <AspectIcon width="25" color={theme.palette.secondary.main} />
@@ -111,7 +126,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     `https://aspect.co/asset/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
                   )
                 }
-              />
+              /> */}
             </>
           )}
           {identity && isOwner && (

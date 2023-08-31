@@ -39,10 +39,10 @@
   height: 100%;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1124px) {
   .identityBox {
     flex-direction: row;
     justify-content: center;
-    gap: 5rem;
+    gap: 3rem;
   }
 }
