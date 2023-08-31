@@ -61,7 +61,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [sponsor, setSponsor] = useState<string>("0");
   const [salt, setSalt] = useState<string | undefined>();
-  const [metaHash, setMetahash] = useState<string | undefined>();
+  const [metadataHash, setMetadataHash] = useState<string | undefined>();
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -100,7 +100,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     // salt must not be empty to preserve privacy
     if (!salt) return;
     (async () => {
-      setMetahash(await computeMetadataHash(email, usState, salt));
+      setMetadataHash(await computeMetadataHash(email, usState, salt));
     })();
   }, [email, usState, salt]);
 
@@ -153,7 +153,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   // Set multicalls
   useEffect(() => {
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-    const txMetaHash = "0x" + metaHash;
+    const txMetadataHash = "0x" + metadataHash;
     if (
       tokenId != 0 &&
       !hasMainDomain &&
@@ -167,7 +167,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           targetAddress,
           sponsor,
           duration,
-          txMetaHash
+          txMetadataHash
         ),
         registerCalls.addressToDomain(encodedDomain),
       ]);
@@ -185,7 +185,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           targetAddress,
           sponsor,
           duration,
-          txMetaHash
+          txMetadataHash
         ),
       ]);
     } else if (
@@ -202,7 +202,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           targetAddress,
           sponsor,
           duration,
-          txMetaHash
+          txMetadataHash
         ),
         registerCalls.addressToDomain(encodedDomain),
       ]);
@@ -221,7 +221,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           targetAddress,
           sponsor,
           duration,
-          txMetaHash
+          txMetadataHash
         ),
       ]);
     }
@@ -234,7 +234,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     hasMainDomain,
     address,
     sponsor,
-    metaHash,
+    metadataHash,
   ]);
 
   useEffect(() => {
@@ -244,7 +244,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     const requestOptions = {
       method: "POST",
       body: JSON.stringify({
-        meta_hash: computeMetadataHash(email, usState, salt),
+        meta_hash: metadataHash,
         email: email,
         tax_state: usState,
         salt: salt,
