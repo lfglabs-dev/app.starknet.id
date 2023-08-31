@@ -250,7 +250,10 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
         salt: salt,
       }),
     };
-    fetch(`https://goerli.api.sales.starknet.id./add_metadata`, requestOptions)
+    fetch(
+      `${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`,
+      requestOptions
+    )
       .then((response) => response.json())
       .then((data) => console.log(data));
     addTransaction({ hash: registerData.transaction_hash });
