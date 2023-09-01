@@ -10,7 +10,7 @@ export function generateSalt(): string {
 
 export async function computeMetadataHash(
   email: string,
-  groups: Array<string>,
+  groups: string[],
   taxState: string,
   salt: string
 ): Promise<string> {

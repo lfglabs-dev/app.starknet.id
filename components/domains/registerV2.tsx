@@ -40,7 +40,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [groups, setGroups] = useState<Array<string>>(["98125177486837731"]);
+  const [groups, setGroups] = useState<string[]>(["98125177486837731"]);
   const [emailError, setEmailError] = useState<boolean>(false);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
