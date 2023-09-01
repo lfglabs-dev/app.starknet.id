@@ -40,6 +40,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+  const [groups, setGroups] = useState<Array<string>>(["98125177486837731"]);
   const [emailError, setEmailError] = useState<boolean>(false);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
@@ -100,7 +101,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     // salt must not be empty to preserve privacy
     if (!salt) return;
     (async () => {
-      setMetadataHash(await computeMetadataHash(email, usState, salt));
+      setMetadataHash(await computeMetadataHash(email, groups, usState, salt));
     })();
   }, [email, usState, salt]);
 
@@ -248,6 +249,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
       body: JSON.stringify({
         meta_hash: metadataHash,
         email: email,
+        groups,
         tax_state: usState,
         salt: salt,
       }),
