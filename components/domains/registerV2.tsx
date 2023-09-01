@@ -248,7 +248,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         meta_hash: metadataHash,
-        email: email,
+        email,
         groups,
         tax_state: usState,
         salt: salt,
