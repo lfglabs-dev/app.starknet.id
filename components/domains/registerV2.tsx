@@ -22,7 +22,7 @@ import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
-// import UsForm from "./usForm";
+import UsForm from "./usForm";
 import { Divider } from "@mui/material";
 import RegisterCheckboxes from "./registerCheckboxes";
 import NumberTextField from "../UI/numberTextField";
@@ -30,6 +30,7 @@ import RegisterSummary from "./registerSummary";
 import salesTax from "sales-tax";
 import Wallets from "../UI/wallets";
 import registerCalls from "../../utils/registerCalls";
+import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 
 type RegisterV2Props = {
   domain: string;
@@ -39,6 +40,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+  const [groups, setGroups] = useState<string[]>(["98125177486837731"]);
   const [emailError, setEmailError] = useState<boolean>(false);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
@@ -59,6 +61,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   // const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [sponsor, setSponsor] = useState<string>("0");
+  const [salt, setSalt] = useState<string | undefined>();
+  const [metadataHash, setMetadataHash] = useState<string | undefined>();
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -86,6 +90,20 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     new Map()
   );
   const { addTransaction } = useTransactionManager();
+
+  // on first load, we generate a salt
+  useEffect(() => {
+    setSalt(generateSalt());
+  }, []);
+
+  // we update compute the purchase metadata hash
+  useEffect(() => {
+    // salt must not be empty to preserve privacy
+    if (!salt) return;
+    (async () => {
+      setMetadataHash(await computeMetadataHash(email, groups, usState, salt));
+    })();
+  }, [email, usState, salt]);
 
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
@@ -133,10 +151,10 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     }
   }, [domain]);
 
-  // Set mulitcalls
+  // Set multicalls
   useEffect(() => {
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-
+    const txMetadataHash = "0x" + metadataHash;
     if (
       tokenId != 0 &&
       !hasMainDomain &&
@@ -149,7 +167,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           tokenId,
           targetAddress,
           sponsor,
-          duration
+          duration,
+          txMetadataHash
         ),
         registerCalls.addressToDomain(encodedDomain),
       ]);
@@ -166,7 +185,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           tokenId,
           targetAddress,
           sponsor,
-          duration
+          duration,
+          txMetadataHash
         ),
       ]);
     } else if (
@@ -182,7 +202,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           newTokenId,
           targetAddress,
           sponsor,
-          duration
+          duration,
+          txMetadataHash
         ),
         registerCalls.addressToDomain(encodedDomain),
       ]);
@@ -200,7 +221,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           newTokenId,
           targetAddress,
           sponsor,
-          duration
+          duration,
+          txMetadataHash
         ),
       ]);
     }
@@ -213,14 +235,31 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     hasMainDomain,
     address,
     sponsor,
+    metadataHash,
   ]);
 
   useEffect(() => {
-    if (!registerData?.transaction_hash) return;
+    if (!registerData?.transaction_hash || !salt) return;
     posthog?.capture("register");
-    addTransaction({ hash: registerData?.transaction_hash ?? "" });
+    // register the metadata to the sales manager db
+
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        meta_hash: metadataHash,
+        email,
+        groups,
+        tax_state: usState,
+        salt: salt,
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) => console.log("Error on sending metadata:", err));
+
+    addTransaction({ hash: registerData.transaction_hash });
     setIsTxModalOpen(true);
-  }, [registerData]);
+  }, [registerData, salt, email, usState]);
 
   function changeAddress(value: string): void {
     isHexString(value) ? setTargetAddress(value) : null;
@@ -244,7 +283,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     if (isUsResident) {
       salesTax.getSalesTax("US", usState).then((tax) => {
         setSalesTaxRate(tax.rate);
-        console.log(tax.rate);
       });
     }
   }, [isUsResident, usState]);
@@ -258,7 +296,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
             <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            {/* <TextField
+            <TextField
               helperText="Please understand that entering your email is not mandatory to register a domain, we won't share your email with anyone. We'll use it only to inform you about your domain and our news."
               label="Email address"
               value={email}
@@ -266,13 +304,13 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
               color="secondary"
               error={emailError}
               errorMessage={"Please enter a valid email address"}
-            /> */}
-            {/* <UsForm
+            />
+            <UsForm
               isUsResident={isUsResident}
               onUsResidentChange={() => setIsUsResident(!isUsResident)}
               usState={usState}
               changeUsState={(value) => setUsState(value)}
-            /> */}
+            />
             <TextField
               helperText="The Starknet address the domain will resolve to."
               label="Target address"
@@ -314,11 +352,11 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           {address ? (
             <Button
               onClick={() =>
-                execute().then(() =>
+                execute().then(() => {
                   setDomainsMinting((prev) =>
                     new Map(prev).set(encodedDomain.toString(), true)
-                  )
-                )
+                  );
+                })
               }
               disabled={
                 (domainsMinting.get(encodedDomain) as boolean) ||

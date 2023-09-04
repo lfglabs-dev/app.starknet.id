@@ -5,7 +5,7 @@ import NextCors from "nextjs-cors";
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<{
-    ids: Array<string>;
+    ids: string[];
   }>
 ) {
   await NextCors(req, res, {
@@ -16,7 +16,7 @@ export default async function handler(
   const {
     query: { addr },
   } = req;
-  const ids: Array<string> = [];
+  const ids: string[] = [];
   const { db } = await connectToDatabase();
   const documents = db
     .collection("starknet_ids")
