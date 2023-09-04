@@ -3,6 +3,7 @@ import {
   decimalToHex,
   stringToHex,
   gweiToEth,
+  applyRateToBigInt,
 } from "../../utils/feltService";
 
 describe("Should test hexToDecimal function", () => {
@@ -73,5 +74,31 @@ describe("Should test gweiToEth function", () => {
 
   it("Should return 0 if the argument is an empty string", () => {
     expect(gweiToEth("")).toEqual("0");
+  });
+});
+
+describe("Should test applyRateToBigInt function", () => {
+  it("Should return the correct value after multiplying by a percentage", () => {
+    expect(applyRateToBigInt("100000000000000000000", 0.35)).toEqual(
+      "35000000000000000000"
+    );
+    expect(applyRateToBigInt("100000000000000000000", 0.75)).toEqual(
+      "75000000000000000000"
+    );
+    expect(applyRateToBigInt(BigInt("100000000000000000000"), 0.5)).toEqual(
+      "50000000000000000000"
+    );
+  });
+
+  it("Should return 0 if the argument is an empty string or zero", () => {
+    expect(applyRateToBigInt("", 0.35)).toEqual("0");
+    expect(applyRateToBigInt("0", 0.75)).toEqual("0");
+    expect(applyRateToBigInt(BigInt(0), 0.5)).toEqual("0");
+  });
+
+  it("Should handle negative percentages", () => {
+    expect(applyRateToBigInt("100000000000000000000", -0.35)).toEqual(
+      "-35000000000000000000"
+    );
   });
 });

@@ -45,20 +45,21 @@ const UsForm: FunctionComponent<UsFormProps> = ({
         <RadioGroup
           aria-labelledby="demo-controlled-radio-buttons-group"
           name="controlled-radio-buttons-group"
-          className="flex flex-row gap-4"
           value={isUsResident}
           onChange={onUsResidentChange}
         >
-          <FormControlLabel
-            value={true}
-            control={<Radio />}
-            label={<p className={textFieldStyles.legend}>Yes</p>}
-          />
-          <FormControlLabel
-            value={false}
-            control={<Radio />}
-            label={<p className={textFieldStyles.legend}>No</p>}
-          />
+          <div className="flex flex-row gap-4">
+            <FormControlLabel
+              value={true}
+              control={<Radio />}
+              label={<p className={textFieldStyles.legend}>Yes</p>}
+            />
+            <FormControlLabel
+              value={false}
+              control={<Radio />}
+              label={<p className={textFieldStyles.legend}>No</p>}
+            />
+          </div>
         </RadioGroup>
       </div>
       {/* {isUsResident ? (
