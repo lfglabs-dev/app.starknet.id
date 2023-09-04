@@ -96,11 +96,15 @@ export function isXplorerSubdomain(domain: string): boolean {
 }
 
 // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
-export function isStarkRootDomain(domain: string): boolean {
+export function isStarkRootDomain(domain?: string): boolean {
+  if (!domain) return false;
+
   return /^([a-z0-9-]){1,48}\.stark$/.test(domain);
 }
 
-export function isStarkDomain(domain: string) {
+export function isStarkDomain(domain?: string): boolean {
+  if (!domain) return false;
+
   return /^(?:[a-z0-9-]{1,48}(?:[a-z0-9-]{1,48}[a-z0-9-])?\.)*[a-z0-9-]{1,48}\.stark$/.test(
     domain
   );
@@ -120,6 +124,12 @@ export function getDomainKind(domain: string | undefined): DomainKind {
   } else {
     return "none";
   }
+}
+
+export function getDomainLength(domain: string | undefined): number {
+  if (!domain) return 0;
+
+  return getDomainWithoutStark(domain).length;
 }
 
 export function numberToString(element: number | undefined): string {

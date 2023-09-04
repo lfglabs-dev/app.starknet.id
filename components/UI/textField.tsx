@@ -14,6 +14,7 @@ type TextFieldProps = {
   errorMessage?: string;
   placeholder?: string;
   helperText?: string;
+  type?: React.InputHTMLAttributes<unknown>["type"];
 };
 
 const TextField: FunctionComponent<TextFieldProps> = ({
@@ -26,6 +27,7 @@ const TextField: FunctionComponent<TextFieldProps> = ({
   errorMessage,
   placeholder,
   helperText,
+  type,
 }) => {
   return (
     <div className="flex flex-col w-full">
@@ -50,6 +52,7 @@ const TextField: FunctionComponent<TextFieldProps> = ({
       </div>
 
       <TextFieldMui
+        type={type}
         error={error}
         fullWidth
         value={value}

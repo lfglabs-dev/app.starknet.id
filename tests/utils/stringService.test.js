@@ -21,6 +21,7 @@ import {
   isValidEmail,
   convertNumberToFixedLengthString,
   isValidDomain,
+  getDomainLength,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -393,5 +394,20 @@ describe("isValidDomain function", () => {
   it("should return true for empty or undefined input", () => {
     expect(isValidDomain("")).toBe(true);
     expect(isValidDomain(undefined)).toBe(true);
+  });
+});
+
+describe("Should test getDomainLength function", () => {
+  it("Should return the correct domain length", () => {
+    expect(getDomainLength("example")).toEqual(7);
+  });
+
+  it("Should consider the effect of removing 'stark'", () => {
+    expect(getDomainLength("example.stark")).toEqual(7);
+  });
+
+  it("Should return 0 for undefined or invalid domain", () => {
+    expect(getDomainLength(undefined)).toEqual(0);
+    expect(getDomainLength("")).toEqual(0);
   });
 });
