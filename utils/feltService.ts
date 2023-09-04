@@ -37,6 +37,25 @@ export function gweiToEth(gwei: string): string {
   return ethBigInt.toString();
 }
 
+export function applyRateToBigInt(
+  bigIntStr: string | bigint,
+  percentage: number
+): string {
+  // Convert the string to a BigInt
+  if (typeof bigIntStr === "string") {
+    bigIntStr = BigInt(bigIntStr);
+  }
+
+  // Convert the percentage to an integer by scaling it up by 100
+  const integerPercentage = BigInt(Math.round(percentage * 100));
+
+  // Perform the multiplication
+  const result = (bigIntStr * integerPercentage) / BigInt(100);
+
+  // Convert the result back to a string
+  return result.toString();
+}
+
 // A function that converts a number to a string with max 2 decimals
 export function numberToFixedString(num: number): string {
   return num.toFixed(2);
