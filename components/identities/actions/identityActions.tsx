@@ -16,13 +16,13 @@ import { timestampToReadableDate } from "../../../utils/dateService";
 import { utils } from "starknetid.js";
 import theme from "../../../styles/theme";
 import MainIcon from "../../UI/iconsComponents/icons/mainIcon";
-import AddressIcon from "../../UI/iconsComponents/icons/addressIcon";
 import ChangeIcon from "../../UI/iconsComponents/icons/changeIcon";
 import TransferIcon from "../../UI/iconsComponents/icons/transferIcon";
 import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../../UI/txConfirmationModal";
 import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
+import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -162,10 +162,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 title="CHANGE DOMAIN TARGET"
                 description="Change target address"
                 icon={
-                  <AddressIcon
-                    width="25"
-                    color={theme.palette.secondary.main}
-                  />
+                  <SignsIcon width="25" color={theme.palette.secondary.main} />
                 }
                 onClick={() => setIsAddressFormOpen(true)}
               />

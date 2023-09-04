@@ -6,12 +6,12 @@ import {
   shortenDomain,
 } from "../../utils/stringService";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
-import { ContentCopy } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 import Notification from "../UI/notification";
-import CopiedIcon from "../UI/iconsComponents/icons/copiedIcon";
 import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
 import theme from "../../styles/theme";
+import CopyIcon from "../UI/iconsComponents/icons/copyIcon";
+import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
 
 type ExternalDomainCardProps = {
   domain: string;
@@ -71,13 +71,15 @@ const ExternalDomainCard: FunctionComponent<ExternalDomainCardProps> = ({
               <div className="cursor-pointer ml-3">
                 {!copied ? (
                   <Tooltip title="Copy" arrow>
-                    <ContentCopy
+                    <div
                       className={styles.contentCopy}
                       onClick={() => copyToClipboard()}
-                    />
+                    >
+                      <CopyIcon width="25" color={"currentColor"} />
+                    </div>
                   </Tooltip>
                 ) : (
-                  <CopiedIcon color={theme.palette.primary.main} width="25" />
+                  <DoneIcon color={theme.palette.primary.main} width="25" />
                 )}
               </div>
             </div>
