@@ -107,7 +107,14 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     // salt must not be empty to preserve privacy
     if (!salt) return;
     (async () => {
-      setMetadataHash(await computeMetadataHash(email, groups, usState, salt));
+      setMetadataHash(
+        await computeMetadataHash(
+          email,
+          groups,
+          isUsResident ? usState : "none",
+          salt
+        )
+      );
     })();
   }, [email, usState, salt]);
 
@@ -117,7 +124,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
       setPrice(getPriceFromDomain(duration, domain));
     else {
       const high = priceData?.["price"].high << BigInt(128);
-      setPrice(getPriceFromDomain(duration, domain));
+      setPrice((priceData?.["price"].low + high).toString(10));
     }
   }, [priceData, priceError]);
 
@@ -130,7 +137,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   }, [userBalanceData, userBalanceDataError]);
 
   useEffect(() => {
-    console.log("price", price);
     if (balance && price) {
       if (gweiToEth(balance) > gweiToEth(price)) {
         setInvalidBalance(false);
@@ -214,8 +220,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   useEffect(() => {
     if (!registerData?.transaction_hash || !salt) return;
     posthog?.capture("register");
-    // register the metadata to the sales manager db
 
+    // register the metadata to the sales manager db
     fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

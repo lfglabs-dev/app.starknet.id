@@ -3,14 +3,14 @@ import styles from "../../styles/components/walletMessage.module.css";
 import { FunctionComponent } from "react";
 import { Modal } from "@mui/material";
 import { useAccount, useTransactions } from "@starknet-react/core";
-import { ContentCopy } from "@mui/icons-material";
-import CopiedIcon from "./iconsComponents/icons/copiedIcon";
 import ClickableAction from "./iconsComponents/clickableAction";
 import { CommonTransactionReceiptResponse } from "starknet";
 import CloseIcon from "./iconsComponents/icons/closeIcon";
 import ArgentIcon from "./iconsComponents/icons/argentIcon";
 import theme from "../../styles/theme";
-import LogoutIcon from "@mui/icons-material/Logout";
+import ExitIcon from "./iconsComponents/icons/exitIcon";
+import CopyIcon from "./iconsComponents/icons/copyIcon";
+import DoneIcon from "./iconsComponents/icons/doneIcon";
 
 type ModalWalletProps = {
   closeModal: () => void;
@@ -96,7 +96,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
         <div className="flex flex-row justify-around flex-wrap mb-3">
           <ClickableAction
             onClick={disconnectByClick}
-            icon={<LogoutIcon width="25" />}
+            icon={<ExitIcon width="25" color="currentColor" />}
             title="Disconnect"
             width="auto"
           />
@@ -104,9 +104,9 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
             onClick={copyToClipboard}
             icon={
               copied ? (
-                <CopiedIcon width="25" color={theme.palette.primary.main} />
+                <DoneIcon width="25" color={theme.palette.primary.main} />
               ) : (
-                <ContentCopy width="25" />
+                <CopyIcon width="25" color={"currentColor"} />
               )
             }
             title="Copy Address"
