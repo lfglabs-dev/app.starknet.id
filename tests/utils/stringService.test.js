@@ -19,6 +19,9 @@ import {
   cleanUsername,
   getDomainWithStark,
   isValidEmail,
+  convertNumberToFixedLengthString,
+  isValidDomain,
+  getDomainLength,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -353,5 +356,58 @@ describe("isValidEmail function", () => {
     invalidEmails.forEach((email) => {
       expect(isValidEmail(email)).toBe(false);
     });
+  });
+});
+
+describe("convertNumberToFixedLengthString function", () => {
+  it("should return a 12-character string with leading zeros", () => {
+    expect(convertNumberToFixedLengthString("1111")).toBe("000000001111");
+    expect(convertNumberToFixedLengthString("5")).toBe("000000000005");
+    expect(convertNumberToFixedLengthString("123456789012")).toBe(
+      "123456789012"
+    ); // Already 12 characters long
+  });
+
+  it("should return all zeros for empty input", () => {
+    expect(convertNumberToFixedLengthString("")).toBe("000000000000");
+  });
+
+  it("should handle undefined or null as all zeros", () => {
+    expect(convertNumberToFixedLengthString(undefined)).toBe("000000000000");
+    expect(convertNumberToFixedLengthString(null)).toBe("000000000000");
+  });
+});
+
+describe("isValidDomain function", () => {
+  it("should return true for valid domains", () => {
+    expect(isValidDomain("example")).toBe(true);
+    expect(isValidDomain("subdomain-example")).toBe(true);
+    expect(isValidDomain("sub-domainoexample")).toBe(true);
+  });
+
+  it("should return false for invalid domains", () => {
+    expect(isValidDomain("example.")).toBe(".");
+    expect(isValidDomain("example_")).toBe("_");
+    expect(isValidDomain("sub/domain.example")).toBe("/");
+  });
+
+  it("should return true for empty or undefined input", () => {
+    expect(isValidDomain("")).toBe(true);
+    expect(isValidDomain(undefined)).toBe(true);
+  });
+});
+
+describe("Should test getDomainLength function", () => {
+  it("Should return the correct domain length", () => {
+    expect(getDomainLength("example")).toEqual(7);
+  });
+
+  it("Should consider the effect of removing 'stark'", () => {
+    expect(getDomainLength("example.stark")).toEqual(7);
+  });
+
+  it("Should return 0 for undefined or invalid domain", () => {
+    expect(getDomainLength(undefined)).toEqual(0);
+    expect(getDomainLength("")).toEqual(0);
   });
 });

@@ -131,7 +131,7 @@
   line-height: 16px; /* 133.333% */
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1124px) {
   .identityCardSkeleton {
     width: 300px;
     height: 300px;

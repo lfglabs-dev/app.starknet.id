@@ -19,7 +19,10 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
   const isExpired =
     Number(identity?.domain_expiry) < currentTimeStamp &&
     !isSubdomain(identity?.domain);
-  const isDifferentAddress = identity?.addr != hexToDecimal(address);
+  const showWarning =
+    identity?.addr != hexToDecimal(address) &&
+    identity?.owner_addr === hexToDecimal(address) &&
+    Boolean(address);
 
   return isIdentityADomain ? (
     <>
@@ -35,10 +38,7 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
           </span>
         </>
       </Notification>
-      <Notification
-        visible={isDifferentAddress && Boolean(address)}
-        severity="error"
-      >
+      <Notification visible={showWarning} severity="error">
         <>&nbsp;Be careful this domain is not linked to your current address.</>
       </Notification>
     </>
