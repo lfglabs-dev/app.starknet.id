@@ -19,7 +19,6 @@ import MainIcon from "../../UI/iconsComponents/icons/mainIcon";
 import ChangeIcon from "../../UI/iconsComponents/icons/changeIcon";
 import TransferIcon from "../../UI/iconsComponents/icons/transferIcon";
 import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
-import { posthog } from "posthog-js";
 import TxConfirmationModal from "../../UI/txConfirmationModal";
 import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
 import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
@@ -83,7 +82,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   useEffect(() => {
     if (!mainDomainData?.transaction_hash) return;
-    posthog?.capture("setAsMainDomain");
     addTransaction({ hash: mainDomainData?.transaction_hash ?? "" });
     setIsTxModalOpen(true);
   }, [mainDomainData]);
@@ -201,7 +199,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
               ) : (
                 <p
                   onClick={() => {
-                    posthog?.capture("clickViewMore");
                     setViewMoreClicked(true);
                   }}
                   className={styles.viewMore}

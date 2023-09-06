@@ -12,7 +12,6 @@ import { numberToString } from "../../../utils/stringService";
 import SelectDomain from "../../domains/selectDomains";
 import Button from "../../UI/button";
 import { utils } from "starknetid.js";
-import { posthog } from "posthog-js";
 import ConfirmationTx from "../../UI/confirmationTx";
 import { Call } from "starknet";
 
@@ -112,7 +111,6 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
 
   useEffect(() => {
     if (!transferDomainData?.transaction_hash) return;
-    posthog?.capture("changeAddress");
     addTransaction({ hash: transferDomainData?.transaction_hash ?? "" });
     setIsTxSent(true);
   }, [transferDomainData]);

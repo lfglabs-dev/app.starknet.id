@@ -16,7 +16,6 @@ import { gweiToEth, hexToDecimal } from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi, Call } from "starknet";
-import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 
 type RegisterProps = {
@@ -268,7 +267,6 @@ const Register: FunctionComponent<RegisterProps> = ({
 
   useEffect(() => {
     if (!registerData?.transaction_hash) return;
-    posthog?.capture("register");
     addTransaction({ hash: registerData?.transaction_hash ?? "" });
     setIsTxModalOpen(true);
   }, [registerData]);

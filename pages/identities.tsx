@@ -73,7 +73,6 @@ const Identities: NextPage = () => {
 
   useEffect(() => {
     if (!mintData?.transaction_hash) return;
-    posthog?.capture("mint");
     addTransaction({ hash: mintData?.transaction_hash });
     setIsTxModalOpen(true);
   }, [mintData]);
