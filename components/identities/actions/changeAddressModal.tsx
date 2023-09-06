@@ -9,7 +9,6 @@ import { isHexString, minifyAddress } from "../../../utils/stringService";
 import styles from "../../../styles/components/modalMessage.module.css";
 import Button from "../../UI/button";
 import { hexToDecimal, decimalToHex } from "../../../utils/feltService";
-import { posthog } from "posthog-js";
 import ConfirmationTx from "../../UI/confirmationTx";
 
 type ChangeAddressModalProps = {
@@ -46,7 +45,6 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
 
   useEffect(() => {
     if (!domainToAddressData?.transaction_hash) return;
-    posthog?.capture("changeAddress");
     addTransaction({ hash: domainToAddressData?.transaction_hash ?? "" });
     setIsTxSent(true);
   }, [domainToAddressData]);

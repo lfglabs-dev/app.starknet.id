@@ -36,6 +36,7 @@ import Wallets from "../UI/wallets";
 import registerCalls from "../../utils/registerCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import { getPriceFromDomain } from "../../utils/priceService";
+// import { useFeatureFlagVariantKey } from "posthog-js/react";
 
 type RegisterV2Props = {
   domain: string;
@@ -45,6 +46,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
+  // const pageVariant = useFeatureFlagVariantKey("onforceEmailRegistration");
+  // console.log("pageVariant", pageVariant);
   const [groups, setGroups] = useState<string[]>(["98125177486837731"]);
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
@@ -279,6 +282,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
             <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
+            {/* {pageVariant === "onforceEmail" ? ( */}
             <TextField
               helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
               label="Email address"
@@ -289,6 +293,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
               errorMessage={"Please enter a valid email address"}
               type="email"
             />
+            {/* ) : null} */}
+
             <UsForm
               isUsResident={isUsResident}
               onUsResidentChange={() => setIsUsResident(!isUsResident)}
@@ -360,7 +366,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
                 ? "We need your US State"
                 : invalidBalance
                 ? "You don't have enough eth"
-                : emailError
+                : // : emailError && pageVariant === "onforceEmail"
+                emailError
                 ? "Enter a valid Email"
                 : "Register my domain"}
             </Button>
