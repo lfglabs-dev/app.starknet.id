@@ -10,7 +10,7 @@ import SocialMediaActions from "./actions/socialmediaActions";
 import { decimalToHex } from "../../utils/feltService";
 import { Tooltip } from "@mui/material";
 import Notification from "../UI/notification";
-import CalendarIcon from "../UI/iconsComponents/icons/calendarIcon";
+import CalendarIcon from "../UI/iconsComponents/icons/calendarValidateIcon";
 import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
 import theme from "../../styles/theme";
 import { timestampToReadableDate } from "../../utils/dateService";
