@@ -37,8 +37,9 @@ function buy_discounted(
   encodedDomain: string,
   tokenId: number,
   targetAddress: string,
+  duration: number,
   discountId: string,
-  duration: number
+  metadata: string
 ): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
@@ -50,6 +51,7 @@ function buy_discounted(
       0,
       hexToDecimal(targetAddress),
       discountId,
+      metadata,
     ],
   };
 }

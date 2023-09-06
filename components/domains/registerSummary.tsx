@@ -31,10 +31,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   const [ethUsdPrice, setEthUsdPrice] = useState<number>(0);
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<number>(0);
   const recurrence = renewalBox && duration === 1 ? "/year" : "";
-
   useEffect(() => {
-    if (!isUsdPriceDisplayed) return;
-
     fetch(
       "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
     )

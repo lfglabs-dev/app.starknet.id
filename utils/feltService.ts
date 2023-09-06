@@ -34,7 +34,6 @@ export function gweiToEth(gwei: string): string {
 
   const ethBigInt = gweiBigInt.div(scaleFactor).round(5);
 
-  console.log("ethBigInt", ethBigInt.toString());
   return ethBigInt.toString();
 }
 

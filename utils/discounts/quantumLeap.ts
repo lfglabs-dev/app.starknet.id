@@ -31,5 +31,5 @@ export const quantumLeapDiscount: QuantumLeapDiscount = {
   },
   name: "The Quantum Leap",
   image: "/quantumleap/quantumLeapAstro.webp",
-  expiry: 1693496881 * 1000,
+  expiry: 1699996881 * 1000,
 } as const;

@@ -29,6 +29,7 @@ const DiscountCheckoutScreen: FunctionComponent<
           discountId={discountId}
           customMessage={customMessage}
           price={price}
+          mailGroups={["98125177486837731", "1$_domain_group"]}
         />
       </div>
     </div>

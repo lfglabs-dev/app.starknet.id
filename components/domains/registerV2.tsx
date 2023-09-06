@@ -48,7 +48,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   const [email, setEmail] = useState<string>("");
   // const pageVariant = useFeatureFlagVariantKey("onforceEmailRegistration");
   // console.log("pageVariant", pageVariant);
-  const [groups, setGroups] = useState<string[]>(["98125177486837731"]);
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
@@ -113,7 +112,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
       setMetadataHash(
         await computeMetadataHash(
           email,
-          groups,
+          ["98125177486837731"], // default group for domain Owner
           isUsResident ? usState : "none",
           salt
         )
@@ -231,7 +230,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-        groups,
+        groups: ["98125177486837731"], // Domain Owner group
         tax_state: isUsResident ? usState : "none",
         salt: salt,
       }),

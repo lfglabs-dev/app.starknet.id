@@ -29,7 +29,7 @@ const DiscountUpsellScreen: FunctionComponent<DiscountUpsellScreenProps> = ({
             <ArrowLeftIcon width="24px" color={theme.palette.secondary.main} />
             <p className="ml-2">Back</p>
           </div>
-          <div className="flex flex-col justify-start items-start text-center sm:text-start gap-3">
+          <div className="flex flex-col lg:items-start items-center text-center sm:text-start gap-3">
             <h1 className={styles.title}>
               {title.desc}
               <br />

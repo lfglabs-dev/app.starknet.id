@@ -33,7 +33,7 @@ const DiscountOfferScreen: FunctionComponent<DiscountOfferScreenProps> = ({
           <Timer expiry={expiry} fixed />
         </div>
         <div className="max-w-xl flex flex-col items-start justify-start gap-5 mx-5 mb-5">
-          <div className="flex flex-col justify-start items-start text-center sm:text-start gap-3">
+          <div className="flex flex-col lg:items-start items-center text-center sm:text-start gap-3">
             <h1 className={styles.title}>
               {title.desc}
               <br />
