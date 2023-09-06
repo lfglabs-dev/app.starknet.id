@@ -50,7 +50,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
     {
       contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
       entrypoint: "renew",
-      calldata: [callDataEncodedDomain[1], duration * 365, 0],
+      calldata: [callDataEncodedDomain[1], duration * 365, 0, 0, 0],
     },
   ];
 
