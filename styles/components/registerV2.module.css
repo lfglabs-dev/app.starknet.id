@@ -94,10 +94,9 @@
 }
 
 .image {
-  height: 1200px;
-  width: auto;
+  max-height: 1200px;
   position: absolute;
-  left: 40%;
+  left: 50%;
   z-index: -1;
   border-radius: 0rem 1rem 1rem 0rem;
 }

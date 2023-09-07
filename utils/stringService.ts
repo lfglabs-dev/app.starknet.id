@@ -96,11 +96,15 @@ export function isXplorerSubdomain(domain: string): boolean {
 }
 
 // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
-export function isStarkRootDomain(domain: string): boolean {
+export function isStarkRootDomain(domain?: string): boolean {
+  if (!domain) return false;
+
   return /^([a-z0-9-]){1,48}\.stark$/.test(domain);
 }
 
-export function isStarkDomain(domain: string) {
+export function isStarkDomain(domain?: string): boolean {
+  if (!domain) return false;
+
   return /^(?:[a-z0-9-]{1,48}(?:[a-z0-9-]{1,48}[a-z0-9-])?\.)*[a-z0-9-]{1,48}\.stark$/.test(
     domain
   );
@@ -122,14 +126,20 @@ export function getDomainKind(domain: string | undefined): DomainKind {
   }
 }
 
+export function getDomainLength(domain: string | undefined): number {
+  if (!domain) return 0;
+
+  return getDomainWithoutStark(domain).length;
+}
+
 export function numberToString(element: number | undefined): string {
   if (element === undefined) return "";
 
   return new BN(element).toString(10);
 }
 // a function that take a number as a string like 1111 and convert it to 000000001111
-export function convertNumberToFixedLengthString(number: string): string {
-  return number.padStart(12, "0");
+export function convertNumberToFixedLengthString(number?: string): string {
+  return number ? number.padStart(12, "0") : "000000000000";
 }
 
 export function changeTwitterProfilePic(url: string): string {

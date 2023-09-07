@@ -9,7 +9,7 @@ type TokenURI = {
   expiry?: number;
   attributes?: Array<{
     trait_type: string;
-    value: string | number | Array<string>;
+    value: string | number | string[];
   }>;
 };
 

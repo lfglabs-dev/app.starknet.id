@@ -7,6 +7,7 @@ import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import theme from "../../../../styles/theme";
 import { posthog } from "posthog-js";
+import ClickableWarningIcon from "./clickableWarningIcon";
 
 type ClickableGithubIconProps = {
   width: string;
@@ -14,6 +15,7 @@ type ClickableGithubIconProps = {
   isOwner: boolean;
   githubId?: string;
   domain?: string;
+  needUpdate: boolean;
 };
 
 const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
@@ -22,6 +24,7 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
   isOwner,
   githubId,
   domain,
+  needUpdate,
 }) => {
   const router = useRouter();
   const [githubUsername, setGithubUsername] = useState<string | undefined>();
@@ -44,30 +47,42 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
   }
 
   return isOwner ? (
-    <Tooltip
-      title={
-        githubUsername
-          ? `Change your github account from ${githubUsername} to another one`
-          : "Start github verification"
-      }
-      arrow
-    >
-      <div
-        className={styles.clickableIconGithub}
-        onClick={() =>
+    needUpdate ? (
+      <ClickableWarningIcon
+        startVerification={() =>
           startVerification(
             `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENTID}`
           )
         }
+        icon={<GithubIcon width={width} color="white" />}
+        className={styles.clickableIconGithub}
+      />
+    ) : (
+      <Tooltip
+        title={
+          githubUsername
+            ? `Change your github account from ${githubUsername} to another one`
+            : "Start github verification"
+        }
+        arrow
       >
-        {githubUsername ? (
-          <div className={styles.verifiedIcon}>
-            <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
-          </div>
-        ) : null}
-        <GithubIcon width={width} color={"white"} />
-      </div>
-    </Tooltip>
+        <div
+          className={styles.clickableIconGithub}
+          onClick={() =>
+            startVerification(
+              `https://github.com/login/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_GITHUB_CLIENTID}`
+            )
+          }
+        >
+          {githubUsername ? (
+            <div className={styles.verifiedIcon}>
+              <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
+            </div>
+          ) : null}
+          <GithubIcon width={width} color={"white"} />
+        </div>
+      </Tooltip>
+    )
   ) : githubUsername ? (
     <Tooltip title={`Check ${minifyDomain(domain ?? "")} github`} arrow>
       <div

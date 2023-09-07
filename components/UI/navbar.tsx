@@ -1,10 +1,5 @@
 import Link from "next/link";
-import React, {
-  useState,
-  useEffect,
-  FunctionComponent,
-  useLayoutEffect,
-} from "react";
+import React, { useState, useEffect, FunctionComponent } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { FaDiscord, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
@@ -17,7 +12,6 @@ import {
   Connector,
 } from "@starknet-react/core";
 import Wallets from "./wallets";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { useMediaQuery } from "@mui/material";
@@ -25,6 +19,7 @@ import { CircularProgress } from "@mui/material";
 import ModalWallet from "./modalWallet";
 import { constants } from "starknet";
 import { useTheme } from "@mui/material/styles";
+import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -44,7 +39,7 @@ const Navbar: FunctionComponent = () => {
   const { hashes } = useTransactionManager();
   const [showWallet, setShowWallet] = useState<boolean>(false);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     async function tryAutoConnect(connectors: Connector[]) {
       // to handle autoconnect starknet-react adds connector id in local storage
       // if there is no value stored, we show the wallet modal
@@ -189,7 +184,10 @@ const Navbar: FunctionComponent = () => {
                       ) : (
                         <div className="flex justify-center items-center">
                           <p className="mr-3">{domainOrAddress}</p>
-                          <AccountCircleIcon />
+                          <ProfilFilledIcon
+                            width="24"
+                            color={theme.palette.background.default}
+                          />
                         </div>
                       )}
                     </>
