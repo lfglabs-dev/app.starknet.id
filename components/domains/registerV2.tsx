@@ -40,15 +40,15 @@ import { getPriceFromDomain } from "../../utils/priceService";
 
 type RegisterV2Props = {
   domain: string;
+  groups: string[];
 };
 
-const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
+const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   // const pageVariant = useFeatureFlagVariantKey("onforceEmailRegistration");
   // console.log("pageVariant", pageVariant);
-  const [groups, setGroups] = useState<string[]>(["98125177486837731"]);
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
