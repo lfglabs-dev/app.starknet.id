@@ -154,20 +154,23 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     if (!autorenewData?.transaction_hash || !salt) return;
     // posthog?.capture("register");
 
-    // register the metadata to the sales manager db
-    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        meta_hash: metadataHash,
-        email: "",
-        groups,
-        tax_state: isUsResident ? usState : "none",
-        salt: salt,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.log("Error while sending metadata:", err));
+    if (!isEnabled) {
+      // register the metadata to the sales manager db
+      // only when enabling auto renewal
+      fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          meta_hash: metadataHash,
+          email: "",
+          groups,
+          tax_state: isUsResident ? usState : "none",
+          salt: salt,
+        }),
+      })
+        .then((res) => res.json())
+        .catch((err) => console.log("Error while sending metadata:", err));
+    }
 
     addTransaction({ hash: autorenewData?.transaction_hash ?? "" });
     setIsTxSent(true);
@@ -230,12 +233,14 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                 </div>
               </div>
             ) : null}
-            <UsForm
-              isUsResident={isUsResident}
-              onUsResidentChange={() => setIsUsResident(!isUsResident)}
-              usState={usState}
-              changeUsState={(value) => setUsState(value)}
-            />
+            {!isEnabled ? (
+              <UsForm
+                isUsResident={isUsResident}
+                onUsResidentChange={() => setIsUsResident(!isUsResident)}
+                usState={usState}
+                changeUsState={(value) => setUsState(value)}
+              />
+            ) : null}
             <Divider className="w-full" />
             <RegisterSummary
               ethRegistrationPrice={limitPrice}
@@ -245,11 +250,15 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
               isUsResident={isUsResident}
               isAutoRenew
             />
-            <Divider className="w-full" />
-            <RegisterCheckboxes
-              onChangeTermsBox={() => setTermsBox(!termsBox)}
-              termsBox={termsBox}
-            />
+            {!isEnabled ? (
+              <>
+                <Divider className="w-full" />
+                <RegisterCheckboxes
+                  onChangeTermsBox={() => setTermsBox(!termsBox)}
+                  termsBox={termsBox}
+                />
+              </>
+            ) : null}
             <Button
               disabled={!termsBox || (isUsResident && !usState)}
               onClick={() => {
