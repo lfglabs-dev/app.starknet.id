@@ -28,6 +28,10 @@ const Wallets: FunctionComponent<WalletsProps> = ({
   }, [account, closeWallet]);
 
   useEffect(() => {
+    shuffle(connectors);
+  }, [connectors.length]);
+
+  useEffect(() => {
     // get wallets download links from get-starknet-core
     // if browser is not recognized, it will default to their download pages
     getDiscoveryWallets.getDiscoveryWallets().then((wallets) => {
@@ -51,6 +55,11 @@ const Wallets: FunctionComponent<WalletsProps> = ({
     });
   }, []);
 
+  function connectWallet(connector: Connector): void {
+    connect(connector);
+    closeWallet();
+  }
+
   function getBrowser(): string | undefined {
     const userAgent = navigator.userAgent;
     if (userAgent.includes("Chrome")) {
@@ -62,10 +71,12 @@ const Wallets: FunctionComponent<WalletsProps> = ({
     }
   }
 
-  function connectWallet(connector: Connector): void {
-    connect(connector);
-    closeWallet();
-  }
+  const shuffle = <T extends any[]>(arr: T) => {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  };
 
   return (
     <Modal
