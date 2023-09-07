@@ -14,6 +14,7 @@ type RegisterSummaryProps = {
   renewalBox: boolean;
   salesTaxRate: number;
   isUsResident: boolean;
+  isAutoRenew?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -22,6 +23,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   renewalBox,
   salesTaxRate,
   isUsResident,
+  isAutoRenew = false,
 }) => {
   const [isEthPriceDisplayed, setIsEthPriceDisplayed] = useState<boolean>(true);
   const [ethUsdPrice, setEthUsdPrice] = useState<number>(0);
@@ -99,10 +101,13 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   return (
     <div className={styles.pricesSummary}>
       <div className={styles.totalDue}>
-        <h4 className={styles.totalDueTitle}>Total due:</h4>
+        <h4 className={styles.totalDueTitle}>
+          {!isAutoRenew ? "Total due:" : "Price"}
+        </h4>
         <div className={styles.priceContainer}>
           <p className={styles.legend}>
-            for {duration} {duration === 1 ? "year" : "years"}
+            {isAutoRenew ? "per" : `for ${duration}`}{" "}
+            {duration === 1 ? "year" : "years"}
           </p>
           {isEthPriceDisplayed ? displayEthPrice() : displayUsdPrice()}
         </div>

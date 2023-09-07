@@ -1,4 +1,4 @@
-import { Modal } from "@mui/material";
+import { Divider, Modal } from "@mui/material";
 import {
   useAccount,
   useContractRead,
@@ -7,12 +7,17 @@ import {
 } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useEtherContract, usePricingContract } from "../../../hooks/contracts";
-import styles from "../../../styles/components/wallets.module.css";
+import styles from "../../../styles/components/autoRenewal.module.css";
+import formStyles from "../../../styles/components/registerV2.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi } from "starknet";
-import { toUint256 } from "../../../utils/feltService";
+import { applyRateToBigInt, toUint256 } from "../../../utils/feltService";
 import ConfirmationTx from "../../UI/confirmationTx";
+import UsForm from "../../domains/usForm";
+import RegisterCheckboxes from "../../domains/registerCheckboxes";
+import RegisterSummary from "../../domains/registerSummary";
+import salesTax from "sales-tax";
 
 type AutoRenewalModalProps = {
   handleClose: () => void;
@@ -37,6 +42,11 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [limitPrice, setLimitPrice] = useState<string>("0");
   const [needApproval, setNeedApproval] = useState<boolean>(false);
   const [isTxSent, setIsTxSent] = useState(false);
+  const [isUsResident, setIsUsResident] = useState<boolean>(false);
+  const [usState, setUsState] = useState<string>("DE");
+  const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
+  const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
+  const [termsBox, setTermsBox] = useState<boolean>(true);
   const { contract: pricingContract } = usePricingContract();
   const { contract: etherContract } = useEtherContract();
   const { addTransaction } = useTransactionManager();
@@ -113,6 +123,18 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     setIsTxSent(true);
   }, [autorenewData]);
 
+  useEffect(() => {
+    if (isUsResident) {
+      salesTax.getSalesTax("US", usState).then((tax) => {
+        setSalesTaxRate(tax.rate);
+        if (price) setSalesTaxAmount(applyRateToBigInt(price, tax.rate));
+      });
+    } else {
+      setSalesTaxRate(0);
+      setSalesTaxAmount("");
+    }
+  }, [isUsResident, usState, price]);
+
   return (
     <Modal
       disableAutoFocus
@@ -138,51 +160,66 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
               ></path>
             </svg>
           </button>
-          <p className={styles.menu_title}>
-            {isEnabled ? "Disable" : "Enable"} auto renewal for{" "}
-            {identity?.domain}
-          </p>
-          <p className="break-all mt-5">
-            Avoid losing your domain and renew it automatically each year one
-            month before it expires! (You can disable this option when you
-            want.)
-          </p>
-          <div className="mt-5 flex flex-col justify-center">
-            {identity?.domain_expiry && (
-              <p className="break-all">
-                <span className="strong">Expiry date :</span>&nbsp;
-                <span>
-                  {timestampToReadableDate(identity?.domain_expiry ?? 0)}
-                </span>
+          <div className={styles.form}>
+            <div className="flex flex-col items-start gap-4 self-stretch">
+              <p className={formStyles.legend}>
+                {isEnabled ? "Disable" : "Enable"} auto renewal for{" "}
               </p>
-            )}
-            {identity?.domain_expiry && (
-              <p className="break-all">
-                <span className="strong">Auto renewal date :</span>&nbsp;
-                <span>
-                  {timestampToReadableDate(
-                    identity?.domain_expiry - 2592000 ?? 0
-                  )}
-                </span>
-              </p>
-            )}
-            <p className="break-all">
-              <span className="strong">Price :</span>&nbsp;
-              <span>
-                {Math.round(Number(price) * 0.000000000000000001 * 10000) /
-                  10000}{" "}
-                ETH/year
-              </span>
-            </p>
-            <div className="mt-5 flex justify-center">
-              <Button
-                onClick={() => {
-                  enableAutoRenewal();
-                }}
-              >
-                {isEnabled ? "Disable" : "Enable"} auto renewal
-              </Button>
+              <h3 className={formStyles.domain}>{identity?.domain}</h3>
             </div>
+            <div className="flex flex-col items-start gap-4 self-stretch">
+              <p className={formStyles.legend}>
+                Avoid losing your domain and renew it automatically each year
+                one month before it expires! (You can disable this option when
+                you want.)
+              </p>
+            </div>
+            {identity?.domain_expiry ? (
+              <div className="flex flex-col items-start gap-4 self-stretch">
+                <div className="flex flex-row items-center gap-4 self-stretch">
+                  <p className={formStyles.legend}>Expiry date:</p>
+                  <p className={formStyles.legend}>
+                    {timestampToReadableDate(identity?.domain_expiry ?? 0)}
+                  </p>
+                </div>
+                <div className="flex flex-row items-center gap-4 self-stretch">
+                  <p className={formStyles.legend}>Auto renewal date:</p>
+                  <p className={formStyles.legend}>
+                    {timestampToReadableDate(
+                      identity?.domain_expiry - 2592000 ?? 0
+                    )}
+                  </p>
+                </div>
+              </div>
+            ) : null}
+            <UsForm
+              isUsResident={isUsResident}
+              onUsResidentChange={() => setIsUsResident(!isUsResident)}
+              usState={usState}
+              changeUsState={(value) => setUsState(value)}
+            />
+            <Divider className="w-full" />
+            <RegisterSummary
+              ethRegistrationPrice={limitPrice}
+              duration={1}
+              renewalBox={false}
+              salesTaxRate={salesTaxRate}
+              isUsResident={isUsResident}
+              isAutoRenew
+            />
+            <Divider className="w-full" />
+            <RegisterCheckboxes
+              onChangeTermsBox={() => setTermsBox(!termsBox)}
+              termsBox={termsBox}
+            />
+            <Button
+              disabled={!termsBox || (isUsResident && !usState)}
+              onClick={() => {
+                enableAutoRenewal();
+              }}
+            >
+              {isEnabled ? "Disable" : "Enable"} auto renewal
+            </Button>
           </div>
         </div>
       )}

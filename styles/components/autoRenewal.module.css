@@ -1,0 +1,34 @@
+.menu {
+    position: absolute;
+    background-color: #FFF;
+    align-self: center;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 20px;
+    padding: 45px;
+    max-width: 550px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.menu_close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 22px;
+    stroke: black;
+    cursor: pointer;
+    transition: 0.3s;
+    background-color: transparent;
+    border: none;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    align-self: stretch;
+  }
