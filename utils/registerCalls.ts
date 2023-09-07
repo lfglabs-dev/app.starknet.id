@@ -49,7 +49,11 @@ function mint(tokenId: number): Call {
   };
 }
 
-function renewal(encodedDomain: string, price: string): Call[] {
+function enableRenewal(
+  encodedDomain: string,
+  price: string,
+  metahash: string
+): Call[] {
   return [
     {
       contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
@@ -62,8 +66,18 @@ function renewal(encodedDomain: string, price: string): Call[] {
     },
     {
       contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      entrypoint: "toggle_renewals",
-      calldata: [encodedDomain.toString(), price, 0],
+      entrypoint: "enable_renewals",
+      calldata: [encodedDomain.toString(), price, metahash],
+    },
+  ];
+}
+
+function disableRenewal(encodedDomain: string, price: string): Call[] {
+  return [
+    {
+      contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+      entrypoint: "disable_renewals",
+      calldata: [encodedDomain.toString(), price],
     },
   ];
 }
@@ -81,7 +95,8 @@ const registerCalls = {
   buy,
   addressToDomain,
   mint,
-  renewal,
+  enableRenewal,
+  disableRenewal,
   vatTransfer,
 };
 

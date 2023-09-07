@@ -11,13 +11,17 @@ import styles from "../../../styles/components/autoRenewal.module.css";
 import formStyles from "../../../styles/components/registerV2.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
-import { Abi } from "starknet";
-import { applyRateToBigInt, toUint256 } from "../../../utils/feltService";
+import { Abi, Call } from "starknet";
 import ConfirmationTx from "../../UI/confirmationTx";
 import UsForm from "../../domains/usForm";
 import RegisterCheckboxes from "../../domains/registerCheckboxes";
 import RegisterSummary from "../../domains/registerSummary";
 import salesTax from "sales-tax";
+import {
+  computeMetadataHash,
+  generateSalt,
+} from "../../../utils/userDataService";
+import registerCalls from "../../../utils/registerCalls";
 
 type AutoRenewalModalProps = {
   handleClose: () => void;
@@ -45,8 +49,11 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
-  const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
+  const [groups, setGroups] = useState<string[]>(["98125177486837731"]);
+  const [salt, setSalt] = useState<string | undefined>();
+  const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [termsBox, setTermsBox] = useState<boolean>(true);
+  const [callData, setCallData] = useState<Call[]>([]);
   const { contract: pricingContract } = usePricingContract();
   const { contract: etherContract } = useEtherContract();
   const { addTransaction } = useTransactionManager();
@@ -65,6 +72,9 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
     ],
   });
+  const { writeAsync: execute, data: autorenewData } = useContractWrite({
+    calls: callData,
+  });
 
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
@@ -78,29 +88,26 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     if (limitPrice === "0") setLimitPrice(price);
   }, [address, domain, price, limitPrice]);
 
-  const renewCallToggleRenewals = {
-    contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-    entrypoint: "toggle_renewals",
-    calldata: [
-      callDataEncodedDomain[1],
-      toUint256(limitPrice).low,
-      toUint256(limitPrice).high,
-    ],
-  };
+  // on first load, we generate a salt
+  useEffect(() => {
+    setSalt(generateSalt());
+  }, []);
 
-  const renewCallApprove = {
-    contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-    entrypoint: "approve",
-    calldata: [
-      process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      "340282366920938463463374607431768211455",
-      "340282366920938463463374607431768211455",
-    ],
-  };
-
-  const renew_calls = needApproval
-    ? [renewCallApprove, renewCallToggleRenewals]
-    : [renewCallToggleRenewals];
+  // we update compute the purchase metadata hash
+  useEffect(() => {
+    // salt must not be empty to preserve privacy
+    if (!salt) return;
+    (async () => {
+      setMetadataHash(
+        await computeMetadataHash(
+          "",
+          groups,
+          isUsResident ? usState : "none",
+          salt
+        )
+      );
+    })();
+  }, [usState, salt]);
 
   useEffect(() => {
     // check approval has been granted to renewal contract
@@ -112,28 +119,59 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       setNeedApproval(true);
   }, [approvalData, approvalError]);
 
-  const { writeAsync: enableAutoRenewal, data: autorenewData } =
-    useContractWrite({
-      calls: renew_calls,
-    });
-
-  useEffect(() => {
-    if (!autorenewData?.transaction_hash) return;
-    addTransaction({ hash: autorenewData?.transaction_hash ?? "" });
-    setIsTxSent(true);
-  }, [autorenewData]);
-
   useEffect(() => {
     if (isUsResident) {
       salesTax.getSalesTax("US", usState).then((tax) => {
         setSalesTaxRate(tax.rate);
-        if (price) setSalesTaxAmount(applyRateToBigInt(price, tax.rate));
       });
     } else {
       setSalesTaxRate(0);
-      setSalesTaxAmount("");
     }
   }, [isUsResident, usState, price]);
+
+  // Set Renewal Multicall
+  useEffect(() => {
+    if (isEnabled) {
+      setCallData(
+        registerCalls.disableRenewal(
+          callDataEncodedDomain[1].toString(),
+          limitPrice
+        )
+      );
+    } else {
+      const txMetadataHash = "0x" + metadataHash;
+      setCallData(
+        registerCalls.enableRenewal(
+          callDataEncodedDomain[1].toString(),
+          limitPrice,
+          txMetadataHash
+        )
+      );
+    }
+  }, [needApproval, isEnabled]);
+
+  useEffect(() => {
+    if (!autorenewData?.transaction_hash || !salt) return;
+    // posthog?.capture("register");
+
+    // register the metadata to the sales manager db
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        meta_hash: metadataHash,
+        email: "",
+        groups,
+        tax_state: isUsResident ? usState : "none",
+        salt: salt,
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) => console.log("Error while sending metadata:", err));
+
+    addTransaction({ hash: autorenewData?.transaction_hash ?? "" });
+    setIsTxSent(true);
+  }, [autorenewData, usState, salt]);
 
   return (
     <Modal
@@ -215,7 +253,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
             <Button
               disabled={!termsBox || (isUsResident && !usState)}
               onClick={() => {
-                enableAutoRenewal();
+                execute();
               }}
             >
               {isEnabled ? "Disable" : "Enable"} auto renewal
