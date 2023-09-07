@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import styles from "../../styles/components/wallets.module.css";
 import { Connector, useAccount, useConnectors } from "@starknet-react/core";
 import Button from "./button";
@@ -20,16 +20,21 @@ const Wallets: FunctionComponent<WalletsProps> = ({
   const { account } = useAccount();
   const [argent, setArgent] = useState<string>("");
   const [braavos, setBraavos] = useState<string>("");
+  const combinations = [
+    [0, 1, 2],
+    [0, 2, 1],
+    [1, 0, 2],
+    [1, 2, 0],
+    [2, 0, 1],
+    [2, 1, 0],
+  ];
+  const rand = useMemo(() => Math.floor(Math.random() * 6), []);
 
   useEffect(() => {
     if (account) {
       closeWallet();
     }
   }, [account, closeWallet]);
-
-  useEffect(() => {
-    shuffle(connectors);
-  }, [connectors.length]);
 
   useEffect(() => {
     // get wallets download links from get-starknet-core
@@ -71,13 +76,6 @@ const Wallets: FunctionComponent<WalletsProps> = ({
     }
   }
 
-  const shuffle = <T extends any[]>(arr: T) => {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-  };
-
   return (
     <Modal
       disableAutoFocus
@@ -103,7 +101,8 @@ const Wallets: FunctionComponent<WalletsProps> = ({
           </svg>
         </button>
         <p className={styles.menu_title}>You need a Starknet wallet</p>
-        {connectors.map((connector) => {
+        {combinations[rand].map((index) => {
+          const connector = connectors[index];
           if (connector.available()) {
             return (
               <div className="mt-5 flex justify-center" key={connector.id}>
