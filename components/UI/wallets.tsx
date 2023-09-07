@@ -68,6 +68,29 @@ const Wallets: FunctionComponent<WalletsProps> = ({
                 </Button>
               </div>
             );
+          } else {
+            return (
+              <div className="mt-5 flex justify-center" key={connector.id}>
+                <Button
+                  onClick={() =>
+                    window.open(
+                      `${
+                        connector.id === "braavos"
+                          ? "https://braavos.app/download-braavos-wallet/"
+                          : "https://chrome.google.com/webstore/detail/argent-x/dlcobpjiigpikoobohmabehhmhfoodbb"
+                      }`
+                    )
+                  }
+                >
+                  <div className="flex justify-center items-center">
+                    <WalletIcons id={connector.id} />
+                    {connector.id === "braavos" || connector.id === "argentX"
+                      ? `Install ${connector.id}`
+                      : "Login with Email"}
+                  </div>
+                </Button>
+              </div>
+            );
           }
         })}
       </div>
