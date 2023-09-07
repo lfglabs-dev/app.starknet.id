@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "../../styles/components/wallets.module.css";
 import { Connector, useAccount, useConnectors } from "@starknet-react/core";
 import Button from "./button";
 import { FunctionComponent, useEffect } from "react";
 import { Modal } from "@mui/material";
 import WalletIcons from "./iconsComponents/icons/walletIcons";
+import getDiscoveryWallets from "get-starknet-core";
 
 type WalletsProps = {
   closeWallet: () => void;
@@ -17,12 +18,49 @@ const Wallets: FunctionComponent<WalletsProps> = ({
 }) => {
   const { connect, connectors } = useConnectors();
   const { account } = useAccount();
+  const [argent, setArgent] = useState<string>("");
+  const [braavos, setBraavos] = useState<string>("");
 
   useEffect(() => {
     if (account) {
       closeWallet();
     }
   }, [account, closeWallet]);
+
+  useEffect(() => {
+    // get wallets download links from get-starknet-core
+    // if browser is not recognized, it will default to their download pages
+    getDiscoveryWallets.getDiscoveryWallets().then((wallets) => {
+      const browser = getBrowser();
+
+      wallets.map((wallet) => {
+        if (wallet.id === "argentX") {
+          setArgent(
+            browser
+              ? wallet.downloads[browser]
+              : "https://www.argent.xyz/argent-x/"
+          );
+        } else if (wallet.id === "braavos") {
+          setBraavos(
+            browser
+              ? wallet.downloads[browser]
+              : "https://braavos.app/download-braavos-wallet/"
+          );
+        }
+      });
+    });
+  }, []);
+
+  function getBrowser(): string | undefined {
+    const userAgent = navigator.userAgent;
+    if (userAgent.includes("Chrome")) {
+      return "chrome";
+    } else if (userAgent.includes("Firefox")) {
+      return "firefox";
+    } else {
+      return undefined;
+    }
+  }
 
   function connectWallet(connector: Connector): void {
     connect(connector);
@@ -75,11 +113,7 @@ const Wallets: FunctionComponent<WalletsProps> = ({
                   <Button
                     onClick={() =>
                       window.open(
-                        `${
-                          connector.id === "braavos"
-                            ? "https://braavos.app/download-braavos-wallet/"
-                            : "https://chrome.google.com/webstore/detail/argent-x/dlcobpjiigpikoobohmabehhmhfoodbb"
-                        }`
+                        `${connector.id === "braavos" ? braavos : argent}`
                       )
                     }
                   >
