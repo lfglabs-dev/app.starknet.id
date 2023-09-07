@@ -24,7 +24,7 @@ import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
   const [nav, setNav] = useState<boolean>(false);
-  const [hasWallet, setHasWallet] = useState<boolean>(true);
+  const [hasWallet, setHasWallet] = useState<boolean>(false);
   const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
