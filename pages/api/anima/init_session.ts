@@ -25,6 +25,7 @@ export default async function handler(
   )
     .then((response) => response.json())
     .then((result) => {
+      console.log("result from anima", result);
       if (result && result.length > 0) {
         res.status(200).json({ session_id: result[0].session.id });
       } else {
