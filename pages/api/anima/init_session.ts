@@ -27,7 +27,8 @@ export default async function handler(
     .then((result) => {
       console.log("result from anima", result);
       if (result && result.length > 0) {
-        res.status(200).json({ session_id: result[0].session.id });
+        // res.status(200).json({ session_id: result[0].session.id });
+        res.status(200).json({ session_id: result, first: true });
       } else {
         // init a new session
         const initRequestOptions = {
@@ -38,7 +39,8 @@ export default async function handler(
           .then((response) => response.json())
           .then((result) => {
             console.log("result from init anima session", result);
-            res.status(200).json({ session_id: result.session_id });
+            // res.status(200).json({ session_id: result.session_id });
+            res.status(200).json({ session_id: result, first: false });
           })
           .catch((error) => {
             console.log(
