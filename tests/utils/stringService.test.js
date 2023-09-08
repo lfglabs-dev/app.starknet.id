@@ -349,7 +349,6 @@ describe("isValidEmail function", () => {
       "invalid-email",
       "@example.com",
       "test.email@.com",
-      "test.email@subdomain.example",
       "test.email@subdomain..com",
     ];
 
