@@ -370,7 +370,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
                 invalidBalance ||
                 !termsBox ||
                 (isUsResident && !usState) ||
-                emailError
+                (emailError && onForceEmail)
               }
             >
               {!termsBox
