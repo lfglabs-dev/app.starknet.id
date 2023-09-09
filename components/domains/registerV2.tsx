@@ -40,9 +40,10 @@ import { getPriceFromDomain } from "../../utils/priceService";
 
 type RegisterV2Props = {
   domain: string;
+  groups: string[];
 };
 
-const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
+const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
