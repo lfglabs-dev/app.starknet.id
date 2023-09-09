@@ -25,6 +25,7 @@ const DiscountOfferScreen: FunctionComponent<DiscountOfferScreenProps> = ({
     setSearchResult(searchResult);
     setScreen(2);
   }
+
   return (
     <div className={homeStyles.wrapperScreen}>
       <div className={styles.container}>

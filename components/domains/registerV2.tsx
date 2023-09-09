@@ -110,7 +110,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       setMetadataHash(
         await computeMetadataHash(
           email,
-          ["98125177486837731"], // default group for domain Owner
+          groups, // default group for domain Owner
           isUsResident ? usState : "none",
           salt
         )
@@ -228,7 +228,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-        groups: ["98125177486837731"], // Domain Owner group
+        groups,
         tax_state: isUsResident ? usState : "none",
         salt: salt,
       }),
@@ -370,7 +370,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
                 invalidBalance ||
                 !termsBox ||
                 (isUsResident && !usState) ||
-                emailError
+                (emailError && onForceEmail)
               }
             >
               {!termsBox

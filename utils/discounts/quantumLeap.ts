@@ -5,6 +5,7 @@ type QuantumLeapDiscount = {
   expiry: number;
   image: string;
   name: string;
+  discountMailGroupId: string;
 };
 
 export const quantumLeapDiscount: QuantumLeapDiscount = {
@@ -13,7 +14,7 @@ export const quantumLeapDiscount: QuantumLeapDiscount = {
     customMessage: "3 months (with Quantum Leap discount)",
     discountId: "1",
     price: "599178082191783",
-    desc: "For the Quantum Leap campaign, get your domain for just $1 and unlock a world of possibilities. Customize your On-chain StarkNet username, elevate your blockchain us er experience, and access domain benefits.",
+    desc: "To celebrate the Quantum Leap, get your domain for just $1 and unlock a world of possibilities. Customize your On-chain StarkNet username, elevate your blockchain us er experience, and access domain benefits.",
     title: { desc: "Get your domain", catch: "for 1$" },
     image: "/quantumleap/quantumLeapAstro.webp",
   },
@@ -31,5 +32,6 @@ export const quantumLeapDiscount: QuantumLeapDiscount = {
   },
   name: "The Quantum Leap",
   image: "/quantumleap/quantumLeapAstro.webp",
-  expiry: 1699996881 * 1000,
+  expiry: 1694908799 * 1000,
+  discountMailGroupId: "98859014745490932",
 } as const;

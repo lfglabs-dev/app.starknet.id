@@ -11,11 +11,20 @@ type DiscountCheckoutScreenProps = {
   customMessage: string;
   price: string;
   goBack: () => void;
+  mailGroupId: string;
 };
 
 const DiscountCheckoutScreen: FunctionComponent<
   DiscountCheckoutScreenProps
-> = ({ domain, duration, discountId, customMessage, price, goBack }) => {
+> = ({
+  domain,
+  duration,
+  discountId,
+  customMessage,
+  price,
+  goBack,
+  mailGroupId,
+}) => {
   return (
     <div className={styles.container}>
       <div className="flex flex-col gap-8">
@@ -29,7 +38,10 @@ const DiscountCheckoutScreen: FunctionComponent<
           discountId={discountId}
           customMessage={customMessage}
           price={price}
-          mailGroups={["98125177486837731", "1$_domain_group"]}
+          mailGroups={[
+            process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? "",
+            mailGroupId,
+          ]} // Second group is the special group for
         />
       </div>
     </div>
