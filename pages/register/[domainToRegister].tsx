@@ -33,7 +33,10 @@ const RegistrationPage: NextPage = () => {
             showHistory={false}
           />
         </div>
-        <RegisterV2 domain={getDomainWithoutStark(domain)} />
+        <RegisterV2
+          domain={getDomainWithoutStark(domain)}
+          groups={[process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? ""]}
+        />
       </div>
     </div>
   );

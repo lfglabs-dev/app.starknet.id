@@ -36,19 +36,16 @@ import Wallets from "../UI/wallets";
 import registerCalls from "../../utils/registerCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import { getPriceFromDomain } from "../../utils/priceService";
-// import { useFeatureFlagVariantKey } from "posthog-js/react";
 
 type RegisterV2Props = {
   domain: string;
+  groups: string[];
 };
 
-const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
+const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  // const pageVariant = useFeatureFlagVariantKey("onforceEmailRegistration");
-  // console.log("pageVariant", pageVariant);
-  const [groups, setGroups] = useState<string[]>(["98125177486837731"]);
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
@@ -222,7 +219,9 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
 
   useEffect(() => {
     if (!registerData?.transaction_hash || !salt) return;
-    posthog?.capture("register");
+    posthog?.capture("register", {
+      onForceEmail,
+    });
 
     // register the metadata to the sales manager db
     fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
@@ -273,6 +272,22 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     }
   }, [isUsResident, usState, price]);
 
+  // AB Testing
+  const [onForceEmail, setOnForceEmail] = useState<boolean>();
+  useEffect(() => {
+    posthog.onFeatureFlags(function () {
+      // feature flags should be available at this point
+      if (
+        posthog.getFeatureFlag("onforceEmail") == "test" ||
+        process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+      ) {
+        setOnForceEmail(true);
+      } else {
+        setOnForceEmail(false);
+      }
+    });
+  }, []);
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -282,18 +297,18 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
             <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            {/* {pageVariant === "onforceEmail" ? ( */}
-            <TextField
-              helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
-              label="Email address"
-              value={email}
-              onChange={(e) => changeEmail(e.target.value)}
-              color="secondary"
-              error={emailError}
-              errorMessage={"Please enter a valid email address"}
-              type="email"
-            />
-            {/* ) : null} */}
+            {onForceEmail ? (
+              <TextField
+                helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
+                label="Email address"
+                value={email}
+                onChange={(e) => changeEmail(e.target.value)}
+                color="secondary"
+                error={emailError}
+                errorMessage={"Please enter a valid email address"}
+                type="email"
+              />
+            ) : null}
 
             <UsForm
               isUsResident={isUsResident}
@@ -357,7 +372,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
                 invalidBalance ||
                 !termsBox ||
                 (isUsResident && !usState) ||
-                emailError
+                (emailError && onForceEmail)
               }
             >
               {!termsBox
@@ -366,8 +381,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
                 ? "We need your US State"
                 : invalidBalance
                 ? "You don't have enough eth"
-                : // : emailError && pageVariant === "onforceEmail"
-                emailError
+                : emailError && onForceEmail
                 ? "Enter a valid Email"
                 : "Register my domain"}
             </Button>

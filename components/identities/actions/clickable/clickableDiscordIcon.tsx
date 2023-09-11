@@ -39,7 +39,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
       <ClickableWarningIcon
         startVerification={() =>
           startVerification(
-            `https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}%2Fdiscord&response_type=code&scope=identify`
+            `https://discord.com/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}%2Fdiscord&response_type=code&scope=identify`
           )
         }
         icon={<DiscordIcon width={"18"} color={"white"} />}
@@ -58,7 +58,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
           className={styles.clickableIconDiscord}
           onClick={() =>
             startVerification(
-              `https://discord.com/oauth2/authorize?client_id=991638947451129886&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}%2Fdiscord&response_type=code&scope=identify`
+              `https://discord.com/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_APP_LINK}%2Fdiscord&response_type=code&scope=identify`
             )
           }
         >
