@@ -299,7 +299,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
           <div className="flex flex-col items-start gap-6 self-stretch">
             {onForceEmail ? (
               <TextField
-                helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
+                helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
                 label="Email address"
                 value={email}
                 onChange={(e) => changeEmail(e.target.value)}
