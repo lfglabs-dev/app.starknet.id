@@ -67,7 +67,7 @@ function enableRenewal(
     {
       contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
       entrypoint: "enable_renewals",
-      calldata: [encodedDomain.toString(), price, metahash],
+      calldata: [encodedDomain.toString(), price, 0, metahash],
     },
   ];
 }
@@ -77,7 +77,7 @@ function disableRenewal(encodedDomain: string, price: string): Call[] {
     {
       contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
       entrypoint: "disable_renewals",
-      calldata: [encodedDomain.toString(), price],
+      calldata: [encodedDomain.toString(), price, 0],
     },
   ];
 }

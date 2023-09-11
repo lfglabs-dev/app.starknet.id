@@ -17,11 +17,14 @@ import UsForm from "../../domains/usForm";
 import RegisterCheckboxes from "../../domains/registerCheckboxes";
 import RegisterSummary from "../../domains/registerSummary";
 import salesTax from "sales-tax";
+import TextField from "../../UI/textField";
 import {
   computeMetadataHash,
   generateSalt,
 } from "../../../utils/userDataService";
 import registerCalls from "../../../utils/registerCalls";
+import { isValidEmail } from "../../../utils/stringService";
+import { gweiToEth } from "../../../utils/feltService";
 
 type AutoRenewalModalProps = {
   handleClose: () => void;
@@ -49,7 +52,9 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
+  const [email, setEmail] = useState<string>("");
   const [groups, setGroups] = useState<string[]>(["98125177486837731"]);
+  const [emailError, setEmailError] = useState<boolean>(true);
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [termsBox, setTermsBox] = useState<boolean>(true);
@@ -100,7 +105,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     (async () => {
       setMetadataHash(
         await computeMetadataHash(
-          "",
+          email,
           groups,
           isUsResident ? usState : "none",
           salt
@@ -140,10 +145,11 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       );
     } else {
       const txMetadataHash = "0x" + metadataHash;
+      const finalPrice = price + salesTaxRate * Number(price);
       setCallData(
         registerCalls.enableRenewal(
           callDataEncodedDomain[1].toString(),
-          limitPrice,
+          finalPrice.toString(),
           txMetadataHash
         )
       );
@@ -162,7 +168,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           meta_hash: metadataHash,
-          email: "",
+          email,
           groups,
           tax_state: isUsResident ? usState : "none",
           salt: salt,
@@ -175,6 +181,11 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     addTransaction({ hash: autorenewData?.transaction_hash ?? "" });
     setIsTxSent(true);
   }, [autorenewData, usState, salt]);
+
+  function changeEmail(value: string): void {
+    setEmail(value);
+    setEmailError(isValidEmail(value) ? false : true);
+  }
 
   return (
     <Modal
@@ -214,6 +225,18 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                 one month before it expires! (You can disable this option when
                 you want.)
               </p>
+            </div>
+            <div className="flex flex-col items-start gap-6 self-stretch">
+              <TextField
+                helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
+                label="Email address"
+                value={email}
+                onChange={(e) => changeEmail(e.target.value)}
+                color="secondary"
+                error={emailError}
+                errorMessage={"Please enter a valid email address"}
+                type="email"
+              />
             </div>
             {identity?.domain_expiry ? (
               <div className="flex flex-col items-start gap-4 self-stretch">
