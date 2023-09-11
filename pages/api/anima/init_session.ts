@@ -29,10 +29,16 @@ export default async function handler(
       if (result && result.length > 0) {
         res.status(200).json({ session_id: result[0].session.id });
       } else {
+        const initHeaders = new Headers();
+        initHeaders.append(
+          "Api-Key",
+          process.env.NEXT_PUBLIC_ANIMA_API_KEY as string
+        );
+        initHeaders.append("Content-Type", "application/json");
         // init a new session
         const initRequestOptions = {
           method: "POST",
-          headers: myHeaders,
+          headers: initHeaders,
         };
         fetch("https://api.pop.anima.io/v1/personhood/init", initRequestOptions)
           .then((response) => response.json())
