@@ -38,9 +38,7 @@ export default async function handler(
           .then((response) => response.json())
           .then((result) => {
             console.log("result from init anima session", result);
-            if (result && result.session_id.message)
-              res.status(404).json(result);
-            else res.status(200).json({ session_id: result.session_id });
+            res.status(200).json({ session_id: result });
           })
           .catch((error) => {
             console.log(
