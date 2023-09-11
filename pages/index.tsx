@@ -13,8 +13,7 @@ const Domain: NextPage = () => {
             <div className="flex flex-col justify-start items-start text-center sm:text-start">
               <h1 className="title">Choose your Stark Domain</h1>
               <p className="description">
-                Be unmistakable on Starknet: One profile, seamlessly connecting
-                you to the entire ecosystem.
+                Your name, seamlessly connecting you to the entire ecosystem.
               </p>
             </div>
             <SearchBar showHistory />
