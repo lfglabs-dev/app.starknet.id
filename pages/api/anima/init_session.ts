@@ -25,7 +25,6 @@ export default async function handler(
   )
     .then((response) => response.json())
     .then((result) => {
-      console.log("result from anima", result);
       if (result && result.length > 0) {
         res.status(200).json({ session_id: result[0].session.id });
       } else {
@@ -43,8 +42,7 @@ export default async function handler(
         fetch("https://api.pop.anima.io/v1/personhood/init", initRequestOptions)
           .then((response) => response.json())
           .then((result) => {
-            console.log("result from init anima session", result);
-            res.status(200).json({ session_id: result });
+            res.status(200).json({ session_id: result.session_id });
           })
           .catch((error) => {
             console.log(
