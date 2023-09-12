@@ -3,7 +3,6 @@
   align-items: center;
   gap: 24px;
   justify-content: center;
-  flex-wrap: wrap;
 }
 
 .upsellIllustration,
@@ -51,16 +50,6 @@
   flex-shrink: 0;
 }
 
-.backArrow {
-  width: 100%;
-  flex-shrink: 0;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  cursor: pointer;
-  font-family: "Poppins-Bold";
-}
-
 .upsellButtons {
   display: flex;
   flex-direction: column;
@@ -74,6 +63,16 @@
   font-family: "QuickZap";
   text-transform: uppercase;
   cursor: pointer;
+}
+
+.backArrow {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  font-family: "Poppins-Bold";
 }
 
 @media (max-width: 1024px) {

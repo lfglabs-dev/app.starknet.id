@@ -30,6 +30,8 @@ import Wallets from "../UI/wallets";
 import registerCalls from "../../utils/registerCalls";
 import UsForm from "../domains/usForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
+import ArrowLeftIcon from "../UI/iconsComponents/icons/arrows/arrowLeftIcon";
+import theme from "../../styles/theme";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -38,6 +40,7 @@ type RegisterDiscountProps = {
   customMessage: string;
   price: string;
   mailGroups: string[];
+  goBack: () => void;
 };
 
 const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
@@ -47,6 +50,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   customMessage,
   price,
   mailGroups,
+  goBack,
 }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -252,6 +256,10 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.form}>
+          <div className={styles.backArrow} onClick={() => goBack()}>
+            <ArrowLeftIcon width="24px" color={theme.palette.secondary.main} />
+            <p className="ml-2">Back</p>
+          </div>
           <div className="flex flex-col items-start gap-4 self-stretch">
             <p className={styles.legend}>Your registration</p>
             <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>

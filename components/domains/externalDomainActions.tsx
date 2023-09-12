@@ -55,7 +55,7 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
           <div className="flex flex-col items-center justify-center">
             <ClickableAction
               title="Set as main domain"
-              description="Set this domain as your main domain"
+              description="Display this domain when connecting to dapps"
               icon={
                 <MainIcon
                   width="25"

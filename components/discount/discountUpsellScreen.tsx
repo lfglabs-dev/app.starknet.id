@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/discount.module.css";
 import homeStyles from "../../styles/Home.module.css";
-import ArrowLeftIcon from "../UI/iconsComponents/icons/arrowLeftIcon";
 import theme from "../../styles/theme";
 import Button from "../UI/button";
+import ArrowLeftIcon from "../UI/iconsComponents/icons/arrows/arrowLeftIcon";
 
 type DiscountUpsellScreenProps = {
   onUpsellChoice: (isUpselled: boolean) => void;
