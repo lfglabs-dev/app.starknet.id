@@ -59,8 +59,8 @@ const ClickableWarningIcon: FunctionComponent<ClickableWarningIconProps> = ({
                 Update Verification Status
               </div>
               <div className={styles.tooltipSub}>
-                Your need to upgrade this verification to the new starknet
-                version, please upgrade to not loose your verification.
+                Update to the new StarkNet version to maintain your verification
+                status.
               </div>
             </div>
             <div>

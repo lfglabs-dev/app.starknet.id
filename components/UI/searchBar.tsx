@@ -87,7 +87,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   onChangeTypedValue,
   showHistory,
   onSearch,
-  is5LettersOnly = true,
+  is5LettersOnly = false,
 }) => {
   const router = useRouter();
   const resultsRef = useRef<HTMLDivElement>(null);

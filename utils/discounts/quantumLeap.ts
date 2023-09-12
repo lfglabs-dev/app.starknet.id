@@ -10,16 +10,16 @@ type QuantumLeapDiscount = {
 
 export const quantumLeapDiscount: QuantumLeapDiscount = {
   offer: {
-    duration: 81,
+    duration: 81, // in days
     customMessage: "3 months (with Quantum Leap discount)",
     discountId: "1",
     price: "599178082191783",
-    desc: "To celebrate the Quantum Leap, get your domain for just $1 and unlock a world of possibilities. Customize your On-chain StarkNet username, elevate your blockchain us er experience, and access domain benefits.",
+    desc: "To celebrate the Quantum Leap, get your domain for just $1 and unlock a world of possibilities. Customize your On-chain StarkNet username, elevate your blockchain user experience, and access domain benefits.",
     title: { desc: "Get your domain", catch: "for 1$" },
     image: "/quantumleap/quantumLeapAstro.webp",
   },
   upsell: {
-    duration: 731,
+    duration: 731, // in days
     customMessage: "3 years (with Quantum Leap discount)",
     discountId: "2",
     price: "18000000000000000",
@@ -32,6 +32,6 @@ export const quantumLeapDiscount: QuantumLeapDiscount = {
   },
   name: "The Quantum Leap",
   image: "/quantumleap/quantumLeapAstro.webp",
-  expiry: 1694908799 * 1000,
+  expiry: 1694995199 * 1000, // timestamp in ms
   discountMailGroupId: "98859014745490932",
-} as const;
+};
