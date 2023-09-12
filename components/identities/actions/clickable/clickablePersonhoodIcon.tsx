@@ -116,12 +116,14 @@ const ClickablePersonhoodIcon: FunctionComponent<
 
   const executeVerification = () => {
     execute().finally(() => {
+      console.log("is in finally");
       setCallData([]);
       setIsVerified(true);
       setIsLoading(false);
       setIsOpen(false);
       setSessionId(undefined);
       posthog?.capture("popVerificationTx");
+      console.log("end of finally");
     });
   };
 
