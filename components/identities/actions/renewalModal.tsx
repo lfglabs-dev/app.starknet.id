@@ -11,7 +11,6 @@ import homeStyles from "../../../styles/Home.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi } from "starknet";
-import { posthog } from "posthog-js";
 import ConfirmationTx from "../../UI/confirmationTx";
 
 type RenewalModalProps = {
@@ -50,7 +49,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
     {
       contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
       entrypoint: "renew",
-      calldata: [callDataEncodedDomain[1], duration * 365, 0],
+      calldata: [callDataEncodedDomain[1], duration * 365, 0, 0, 0],
     },
   ];
 
@@ -68,7 +67,6 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
 
   useEffect(() => {
     if (!renewData?.transaction_hash) return;
-    posthog?.capture("renew");
     addTransaction({ hash: renewData?.transaction_hash ?? "" });
     setIsTxSent(true);
   }, [renewData]);
@@ -111,12 +109,12 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
           <div className="mt-5 flex flex-col justify-center">
             {identity?.domain_expiry && (
               <p>
-                The Expiry Data of {identity?.domain} is{" "}
+                The date of expiry of {identity?.domain} is{" "}
                 <strong>
                   {timestampToReadableDate(identity?.domain_expiry ?? 0)}
                 </strong>
-                . If you don&apos;t renew your domain before the expiry date
-                someone else will be able to take it from you.
+                . If you don&apos;t renew your domain before it expires, someone
+                else will be able to take it from you.
               </p>
             )}
 

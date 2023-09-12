@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/search.module.css";
-import ArrowIcon from "./iconsComponents/icons/arrowIcon";
 import theme from "../../styles/theme";
+import ChevronRightIcon from "./iconsComponents/icons/arrows/chevronRightIcon";
 
 type SearchBadgeProps = {
   message: string;
@@ -15,8 +15,8 @@ const SearchBadge: FunctionComponent<SearchBadgeProps> = ({
   return (
     <div className={`${styles.badge} ${error ? styles.error : styles.success}`}>
       <span>{message}</span>
-      <ArrowIcon
-        width="17"
+      <ChevronRightIcon
+        width="14"
         color={error ? "#D32F2F" : theme.palette.primary.main}
       />
     </div>

@@ -14,7 +14,11 @@ import {
   isHexString,
   isValidEmail,
 } from "../../utils/stringService";
-import { gweiToEth, hexToDecimal } from "../../utils/feltService";
+import {
+  gweiToEth,
+  hexToDecimal,
+  applyRateToBigInt,
+} from "../../utils/feltService";
 import SelectDomain from "./selectDomains";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi, Call } from "starknet";
@@ -22,7 +26,7 @@ import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
-// import UsForm from "./usForm";
+import UsForm from "./usForm";
 import { Divider } from "@mui/material";
 import RegisterCheckboxes from "./registerCheckboxes";
 import NumberTextField from "../UI/numberTextField";
@@ -30,24 +34,28 @@ import RegisterSummary from "./registerSummary";
 import salesTax from "sales-tax";
 import Wallets from "../UI/wallets";
 import registerCalls from "../../utils/registerCalls";
+import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
+import { getPriceFromDomain } from "../../utils/priceService";
 
 type RegisterV2Props = {
   domain: string;
+  groups: string[];
 };
 
-const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
+const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [emailError, setEmailError] = useState<boolean>(false);
+  const [emailError, setEmailError] = useState<boolean>(true);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
+  const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [duration, setDuration] = useState<number>(1);
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
-  const [price, setPrice] = useState<string>("0");
-  const [balance, setBalance] = useState<string>("0");
+  const [price, setPrice] = useState<string>("");
+  const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
   const { contract: etherContract } = useEtherContract();
@@ -59,6 +67,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   // const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [sponsor, setSponsor] = useState<string>("0");
+  const [salt, setSalt] = useState<string | undefined>();
+  const [metadataHash, setMetadataHash] = useState<string | undefined>();
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -87,8 +97,31 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   );
   const { addTransaction } = useTransactionManager();
 
+  // on first load, we generate a salt
   useEffect(() => {
-    if (priceError || !priceData) setPrice("0");
+    setSalt(generateSalt());
+  }, []);
+
+  // we update compute the purchase metadata hash
+  useEffect(() => {
+    // salt must not be empty to preserve privacy
+    if (!salt) return;
+    (async () => {
+      setMetadataHash(
+        await computeMetadataHash(
+          email,
+          groups,
+          isUsResident ? usState : "none",
+          salt
+        )
+      );
+    })();
+  }, [email, usState, salt]);
+
+  useEffect(() => {
+    // if price query does not work we use the off-chain hardcoded price
+    if (priceError || !priceData)
+      setPrice(getPriceFromDomain(duration, domain));
     else {
       const high = priceData?.["price"].high << BigInt(128);
       setPrice((priceData?.["price"].low + high).toString(10));
@@ -96,7 +129,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
   }, [priceData, priceError]);
 
   useEffect(() => {
-    if (userBalanceDataError || !userBalanceData) setBalance("0");
+    if (userBalanceDataError || !userBalanceData) setBalance("");
     else {
       const high = userBalanceData?.["balance"].high << BigInt(128);
       setBalance((userBalanceData?.["balance"].low + high).toString(10));
@@ -133,77 +166,44 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     }
   }, [domain]);
 
-  // Set mulitcalls
+  // Set Register Multicall
   useEffect(() => {
+    // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
+    const txMetadataHash = "0x" + metadataHash;
+    const addressesMatch =
+      hexToDecimal(address) === hexToDecimal(targetAddress);
 
-    if (
-      tokenId != 0 &&
-      !hasMainDomain &&
-      hexToDecimal(address) === hexToDecimal(targetAddress)
-    ) {
-      setCallData([
-        registerCalls.approve(price),
-        registerCalls.buy(
-          encodedDomain,
-          tokenId,
-          targetAddress,
-          sponsor,
-          duration
-        ),
-        registerCalls.addressToDomain(encodedDomain),
-      ]);
-    } else if (
-      (tokenId != 0 && hasMainDomain) ||
-      (tokenId != 0 &&
-        !hasMainDomain &&
-        hexToDecimal(address) != hexToDecimal(targetAddress))
-    ) {
-      setCallData([
-        registerCalls.approve(price),
-        registerCalls.buy(
-          encodedDomain,
-          tokenId,
-          targetAddress,
-          sponsor,
-          duration
-        ),
-      ]);
-    } else if (
-      tokenId === 0 &&
-      !hasMainDomain &&
-      hexToDecimal(address) === hexToDecimal(targetAddress)
-    ) {
-      setCallData([
-        registerCalls.approve(price),
-        registerCalls.mint(newTokenId),
-        registerCalls.buy(
-          encodedDomain,
-          newTokenId,
-          targetAddress,
-          sponsor,
-          duration
-        ),
-        registerCalls.addressToDomain(encodedDomain),
-      ]);
-    } else if (
-      (tokenId === 0 && hasMainDomain) ||
-      (tokenId === 0 &&
-        !hasMainDomain &&
-        hexToDecimal(address) != hexToDecimal(targetAddress))
-    ) {
-      setCallData([
-        registerCalls.approve(price),
-        registerCalls.mint(newTokenId),
-        registerCalls.buy(
-          encodedDomain,
-          newTokenId,
-          targetAddress,
-          sponsor,
-          duration
-        ),
-      ]);
+    // Common calls
+    const calls = [
+      registerCalls.approve(price),
+      registerCalls.buy(
+        encodedDomain,
+        tokenId === 0 ? newTokenId : tokenId,
+        targetAddress,
+        sponsor,
+        duration,
+        txMetadataHash
+      ),
+    ];
+
+    // If the user is a US resident, we add the sales tax
+    if (salesTaxRate) {
+      calls.unshift(registerCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
     }
+
+    // If the user choose to mint a new identity
+    if (tokenId === 0) {
+      calls.unshift(registerCalls.mint(newTokenId)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+    }
+
+    // If the user do not have a main domain and the address match
+    if (addressesMatch && !hasMainDomain) {
+      calls.push(registerCalls.addressToDomain(encodedDomain));
+    }
+
+    // Merge and set the call data
+    setCallData(calls);
   }, [
     tokenId,
     duration,
@@ -213,14 +213,34 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     hasMainDomain,
     address,
     sponsor,
+    metadataHash,
+    salesTaxRate,
   ]);
 
   useEffect(() => {
-    if (!registerData?.transaction_hash) return;
-    posthog?.capture("register");
-    addTransaction({ hash: registerData?.transaction_hash ?? "" });
+    if (!registerData?.transaction_hash || !salt) return;
+    posthog?.capture("register", {
+      onForceEmail,
+    });
+
+    // register the metadata to the sales manager db
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        meta_hash: metadataHash,
+        email,
+        groups,
+        tax_state: isUsResident ? usState : "none",
+        salt: salt,
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) => console.log("Error on sending metadata:", err));
+
+    addTransaction({ hash: registerData.transaction_hash });
     setIsTxModalOpen(true);
-  }, [registerData]);
+  }, [registerData, salt, email, usState]);
 
   function changeAddress(value: string): void {
     isHexString(value) ? setTargetAddress(value) : null;
@@ -244,10 +264,29 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
     if (isUsResident) {
       salesTax.getSalesTax("US", usState).then((tax) => {
         setSalesTaxRate(tax.rate);
-        console.log(tax.rate);
+        if (price) setSalesTaxAmount(applyRateToBigInt(price, tax.rate));
       });
+    } else {
+      setSalesTaxRate(0);
+      setSalesTaxAmount("");
     }
-  }, [isUsResident, usState]);
+  }, [isUsResident, usState, price]);
+
+  // AB Testing
+  const [onForceEmail, setOnForceEmail] = useState<boolean>();
+  useEffect(() => {
+    posthog.onFeatureFlags(function () {
+      // feature flags should be available at this point
+      if (
+        posthog.getFeatureFlag("onforceEmail") == "test" ||
+        process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+      ) {
+        setOnForceEmail(true);
+      } else {
+        setOnForceEmail(false);
+      }
+    });
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -258,21 +297,25 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
             <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            {/* <TextField
-              helperText="Please understand that entering your email is not mandatory to register a domain, we won't share your email with anyone. We'll use it only to inform you about your domain and our news."
-              label="Email address"
-              value={email}
-              onChange={(e) => changeEmail(e.target.value)}
-              color="secondary"
-              error={emailError}
-              errorMessage={"Please enter a valid email address"}
-            /> */}
-            {/* <UsForm
+            {onForceEmail ? (
+              <TextField
+                helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
+                label="Email address"
+                value={email}
+                onChange={(e) => changeEmail(e.target.value)}
+                color="secondary"
+                error={emailError}
+                errorMessage={"Please enter a valid email address"}
+                type="email"
+              />
+            ) : null}
+
+            <UsForm
               isUsResident={isUsResident}
               onUsResidentChange={() => setIsUsResident(!isUsResident)}
               usState={usState}
               changeUsState={(value) => setUsState(value)}
-            /> */}
+            />
             <TextField
               helperText="The Starknet address the domain will resolve to."
               label="Target address"
@@ -314,11 +357,11 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
           {address ? (
             <Button
               onClick={() =>
-                execute().then(() =>
+                execute().then(() => {
                   setDomainsMinting((prev) =>
                     new Map(prev).set(encodedDomain.toString(), true)
-                  )
-                )
+                  );
+                })
               }
               disabled={
                 (domainsMinting.get(encodedDomain) as boolean) ||
@@ -328,7 +371,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
                 !targetAddress ||
                 invalidBalance ||
                 !termsBox ||
-                (isUsResident && !usState)
+                (isUsResident && !usState) ||
+                (emailError && onForceEmail)
               }
             >
               {!termsBox
@@ -337,6 +381,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain }) => {
                 ? "We need your US State"
                 : invalidBalance
                 ? "You don't have enough eth"
+                : emailError && onForceEmail
+                ? "Enter a valid Email"
                 : "Register my domain"}
             </Button>
           ) : (

@@ -96,11 +96,15 @@ export function isXplorerSubdomain(domain: string): boolean {
 }
 
 // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
-export function isStarkRootDomain(domain: string): boolean {
+export function isStarkRootDomain(domain?: string): boolean {
+  if (!domain) return false;
+
   return /^([a-z0-9-]){1,48}\.stark$/.test(domain);
 }
 
-export function isStarkDomain(domain: string) {
+export function isStarkDomain(domain?: string): boolean {
+  if (!domain) return false;
+
   return /^(?:[a-z0-9-]{1,48}(?:[a-z0-9-]{1,48}[a-z0-9-])?\.)*[a-z0-9-]{1,48}\.stark$/.test(
     domain
   );
@@ -122,14 +126,20 @@ export function getDomainKind(domain: string | undefined): DomainKind {
   }
 }
 
+export function getDomainLength(domain: string | undefined): number {
+  if (!domain) return 0;
+
+  return getDomainWithoutStark(domain).length;
+}
+
 export function numberToString(element: number | undefined): string {
   if (element === undefined) return "";
 
   return new BN(element).toString(10);
 }
 // a function that take a number as a string like 1111 and convert it to 000000001111
-export function convertNumberToFixedLengthString(number: string): string {
-  return number.padStart(12, "0");
+export function convertNumberToFixedLengthString(number?: string): string {
+  return number ? number.padStart(12, "0") : "000000000000";
 }
 
 export function changeTwitterProfilePic(url: string): string {
@@ -142,7 +152,10 @@ export function cleanUsername(username: string): string {
 
 export function isValidEmail(email: string): boolean {
   if (email.includes("..")) return false; // Ensure no consecutive dots
-  return /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email);
+  const emailRegex =
+    // eslint-disable-next-line no-control-regex
+    /^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
+  return emailRegex.test(email);
 }
 
 export function isValidDomain(domain: string | undefined): boolean | string {

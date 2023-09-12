@@ -14,12 +14,15 @@ import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
+import Button from "../components/UI/button";
+import Wallets from "../components/UI/wallets";
 
 const Identities: NextPage = () => {
-  const { account } = useAccount();
+  const { account, address } = useAccount();
   const [loading, setLoading] = useState<boolean>(false);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
   const [externalDomains, setExternalDomains] = useState<string[]>([]);
+  const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
@@ -73,7 +76,6 @@ const Identities: NextPage = () => {
 
   useEffect(() => {
     if (!mintData?.transaction_hash) return;
-    posthog?.capture("mint");
     addTransaction({ hash: mintData?.transaction_hash });
     setIsTxModalOpen(true);
   }, [mintData]);
@@ -83,34 +85,47 @@ const Identities: NextPage = () => {
   }
 
   return (
-    <div className={styles.screen}>
-      <div className="firstLeavesGroup">
-        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup02.svg" />
-      </div>
-      <div className="secondLeavesGroup">
-        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
-      </div>
-      <div className={styles.container}>
-        <h1 className="title">Your Starknet identities</h1>
-        <div className={styles.containerGallery}>
-          {loading ? (
-            <IdentitiesSkeleton />
-          ) : (
-            <IdentitiesGallery
-              identities={ownedIdentities}
-              externalDomains={externalDomains}
-            />
-          )}
-          <MintIdentity onClick={() => mint()} />
+    <>
+      <div className={styles.screen}>
+        <div className="firstLeavesGroup">
+          <img width="100%" alt="leaf" src="/leaves/new/leavesGroup02.svg" />
         </div>
+        <div className="secondLeavesGroup">
+          <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
+        </div>
+        <div className={styles.container}>
+          <h1 className="title">Your Starknet identities</h1>
+          {!address && ownedIdentities.length === 0 ? (
+            <div className="mt-7">
+              <Button onClick={() => setWalletModalOpen(true)}>
+                Connect wallet
+              </Button>
+            </div>
+          ) : null}
+          <div className={styles.containerGallery}>
+            {loading ? (
+              <IdentitiesSkeleton />
+            ) : (
+              <IdentitiesGallery
+                identities={ownedIdentities}
+                externalDomains={externalDomains}
+              />
+            )}
+            <MintIdentity onClick={() => mint()} />
+          </div>
+        </div>
+        <TxConfirmationModal
+          txHash={mintData?.transaction_hash}
+          isTxModalOpen={isTxModalOpen}
+          closeModal={() => setIsTxModalOpen(false)}
+          title="Your identity NFT is on it's way !"
+        />
       </div>
-      <TxConfirmationModal
-        txHash={mintData?.transaction_hash}
-        isTxModalOpen={isTxModalOpen}
-        closeModal={() => setIsTxModalOpen(false)}
-        title="Your identity NFT is on it's way !"
+      <Wallets
+        closeWallet={() => setWalletModalOpen(false)}
+        hasWallet={walletModalOpen}
       />
-    </div>
+    </>
   );
 };
 

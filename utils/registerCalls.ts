@@ -15,7 +15,8 @@ function buy(
   tokenId: number,
   targetAddress: string,
   sponsor: string,
-  duration: number
+  duration: number,
+  metadata: string
 ): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
@@ -27,6 +28,7 @@ function buy(
       0,
       hexToDecimal(targetAddress),
       sponsor,
+      metadata,
     ],
   };
 }
@@ -66,12 +68,21 @@ function renewal(encodedDomain: string, price: string): Call[] {
   ];
 }
 
+function vatTransfer(amount: string): Call {
+  return {
+    contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
+    entrypoint: "transfer",
+    calldata: [process.env.NEXT_PUBLIC_VAT_CONTRACT as string, amount, "0"],
+  };
+}
+
 const registerCalls = {
   approve,
   buy,
   addressToDomain,
   mint,
   renewal,
+  vatTransfer,
 };
 
 export default registerCalls;

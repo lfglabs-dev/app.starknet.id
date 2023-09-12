@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 
-const warningIcon: FunctionComponent<IconProps> = ({ width, color }) => {
+const WarningIcon: FunctionComponent<IconProps> = ({ width, color }) => {
   return (
     <svg
       width={width}
@@ -20,4 +20,4 @@ const warningIcon: FunctionComponent<IconProps> = ({ width, color }) => {
   );
 };
 
-export default warningIcon;
+export default WarningIcon;
