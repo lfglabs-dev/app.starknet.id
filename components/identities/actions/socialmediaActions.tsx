@@ -50,7 +50,7 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
           isOwner={isOwner}
           width="25"
           tokenId={tokenId}
-          domain={identity.domain}
+          domain={identity?.domain}
         />
       </div>
     </>
