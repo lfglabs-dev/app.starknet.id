@@ -102,6 +102,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
 
   const sign = useCallback(
     (payload: string | object) => {
+      console.log("signing");
       return account?.signMessage(payload as typedData.TypedData) as Promise<
         string | StarknetSignature
       >;
@@ -126,6 +127,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
   };
 
   const getSignature = () => {
+    console.log("get signtaure");
     fetch(`/api/anima/get_signature?sessionId=${sessionId}`)
       .then((response) => response.json())
       .then((sig) => {
