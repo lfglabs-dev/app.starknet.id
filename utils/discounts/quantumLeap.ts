@@ -19,10 +19,10 @@ export const quantumLeapDiscount: QuantumLeapDiscount = {
     image: "/quantumleap/quantumLeapAstro.webp",
   },
   upsell: {
-    duration: 731, // in days
+    duration: 1095, // in days
     customMessage: "3 years (with Quantum Leap discount)",
     discountId: "2",
-    price: "18000000000000000",
+    price: "18899999999999739",
     desc: "Don't miss out on this one-time offer special Quantum Leap! Elevate your domain experience with an exclusive opportunity to renew for 3 years, while paying only for 2. Act now before it's gone!",
     title: {
       desc: "Special Offer:",
