@@ -139,25 +139,29 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
 
   function handleChange(value: string) {
     setTypedValue(value.toLowerCase());
-
-    // Cancel previous request
-    if (controllerRef.current) {
-      controllerRef.current.abort();
-    }
-
-    // Create a new AbortController
-    controllerRef.current = new AbortController();
-
-    getStatus(value, undefined, controllerRef.current.signal)
-      .then((result) => {
-        setCurrentResult(result);
-      })
-      .catch((error) => {
-        if (error !== "Aborted") {
-          console.error("An unexpected error occurred:", error);
-        }
-      });
   }
+
+  useEffect(() => {
+    if (typedValue) {
+      // Cancel previous request
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+
+      // Create a new AbortController
+      controllerRef.current = new AbortController();
+
+      getStatus(typedValue, undefined, controllerRef.current.signal)
+        .then((result) => {
+          setCurrentResult(result);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("An unexpected error occurred:", error);
+          }
+        });
+    }
+  }, [typedValue]);
 
   async function getStatus(
     name: string,
