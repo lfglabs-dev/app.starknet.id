@@ -91,6 +91,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
 }) => {
   const router = useRouter();
   const resultsRef = useRef<HTMLDivElement>(null);
+  const controllerRef = useRef<AbortController | null>(null);
   const [typedValue, setTypedValue] = useState<string>("");
   const isValid = useIsValid(typedValue);
   const [currentResult, setCurrentResult] = useState<SearchResult | null>();
@@ -142,14 +143,36 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
 
   function handleChange(value: string) {
     setTypedValue(value.toLowerCase());
-    getStatus(value).then((result) => {
-      setCurrentResult(result);
-    });
   }
+
+  useEffect(() => {
+    if (typedValue) {
+      // Cancel previous request
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+
+      // Create a new AbortController
+      controllerRef.current = new AbortController();
+
+      getStatus(typedValue, undefined, controllerRef.current.signal)
+        .then((result) => {
+          setCurrentResult(result);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("An unexpected error occurred:", error);
+          }
+        });
+    } else {
+      setCurrentResult(null);
+    }
+  }, [typedValue]);
 
   async function getStatus(
     name: string,
-    lastAccessed?: number
+    lastAccessed?: number,
+    signal?: AbortSignal
   ): Promise<SearchResult> {
     const valid = isValidDomain(name);
     if (valid !== true) {
@@ -171,7 +194,10 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
       const encoded = name
         ? utils.encodeDomain(name).map((elem) => elem.toString())
         : [];
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
+        if (signal?.aborted) {
+          return reject("Aborted");
+        }
         contract?.call("domain_to_expiry", [encoded]).then((res) => {
           if (Number(res?.["expiry"]) < currentTimeStamp) {
             resolve({
