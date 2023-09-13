@@ -160,6 +160,8 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
             console.error("An unexpected error occurred:", error);
           }
         });
+    } else {
+      setCurrentResult(null);
     }
   }, [typedValue]);
 
