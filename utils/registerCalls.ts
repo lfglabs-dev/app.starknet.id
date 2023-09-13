@@ -33,6 +33,29 @@ function buy(
   };
 }
 
+function buy_discounted(
+  encodedDomain: string,
+  tokenId: number,
+  targetAddress: string,
+  duration: number,
+  discountId: string,
+  metadata: string
+): Call {
+  return {
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+    entrypoint: "buy_discounted",
+    calldata: [
+      numberToString(tokenId),
+      encodedDomain,
+      numberToString(duration),
+      0,
+      hexToDecimal(targetAddress),
+      discountId,
+      metadata,
+    ],
+  };
+}
+
 function addressToDomain(encodedDomain: string): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
@@ -82,6 +105,7 @@ const registerCalls = {
   addressToDomain,
   mint,
   renewal,
+  buy_discounted,
   vatTransfer,
 };
 

@@ -12,9 +12,7 @@ import MintIdentity from "../components/identities/mintIdentity";
 import { useRouter } from "next/router";
 import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
-import { posthog } from "posthog-js";
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
-import Button from "../components/UI/button";
 import Wallets from "../components/UI/wallets";
 
 const Identities: NextPage = () => {
@@ -95,13 +93,7 @@ const Identities: NextPage = () => {
         </div>
         <div className={styles.container}>
           <h1 className="title">Your Starknet identities</h1>
-          {!address && ownedIdentities.length === 0 ? (
-            <div className="mt-7">
-              <Button onClick={() => setWalletModalOpen(true)}>
-                Connect wallet
-              </Button>
-            </div>
-          ) : null}
+
           <div className={styles.containerGallery}>
             {loading ? (
               <IdentitiesSkeleton />
@@ -111,7 +103,9 @@ const Identities: NextPage = () => {
                 externalDomains={externalDomains}
               />
             )}
-            <MintIdentity onClick={() => mint()} />
+            <MintIdentity
+              onClick={address ? () => mint() : () => setWalletModalOpen(true)}
+            />
           </div>
         </div>
         <TxConfirmationModal

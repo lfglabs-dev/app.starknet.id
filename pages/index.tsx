@@ -9,8 +9,8 @@ const Domain: NextPage = () => {
     <div className={homeStyles.screen}>
       <div className={homeStyles.wrapperScreen}>
         <div className={styles.container}>
-          <div className="max-w-xl flex flex-col items-start justify-start gap-5 mx-5 mb-5">
-            <div className="flex flex-col justify-start items-start text-center sm:text-start">
+          <div className={styles.searchBarContainer}>
+            <div className="flex flex-col">
               <h1 className="title">Choose your Stark Domain</h1>
               <p className="description">
                 Your name, seamlessly connecting you to the entire ecosystem.
@@ -19,7 +19,7 @@ const Domain: NextPage = () => {
             <SearchBar showHistory />
           </div>
           <img
-            src="https://www.starknet.id/visuals/affiliates/affiliationIllu.webp"
+            src="/visuals/domainVisual.webp"
             className={styles.illustration}
           />
         </div>
