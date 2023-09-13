@@ -129,6 +129,16 @@
   border-radius: 52px;
 }
 
+.backArrow {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  font-family: "Poppins-Bold";
+}
+
 @media (max-width: 1084px) {
   .image {
     visibility: hidden;

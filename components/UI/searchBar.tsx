@@ -10,7 +10,7 @@ import React, {
 import { useRouter } from "next/router";
 import { TextField, styled } from "@mui/material";
 import styles from "../../styles/search.module.css";
-import SearchResult from "./searchResult";
+import SearchResult from "../UI/searchResult";
 import { utils } from "starknetid.js";
 import { Abi, Contract, Provider } from "starknet";
 import naming_abi from "../../abi/starknet/naming_abi.json";
@@ -79,14 +79,19 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
 type SearchBarProps = {
   onChangeTypedValue?: (typedValue: string) => void;
   showHistory: boolean;
+  onSearch?: (result: SearchResult) => void;
+  is5LettersOnly?: boolean;
 };
 
 const SearchBar: FunctionComponent<SearchBarProps> = ({
   onChangeTypedValue,
   showHistory,
+  onSearch,
+  is5LettersOnly = false,
 }) => {
   const router = useRouter();
   const resultsRef = useRef<HTMLDivElement>(null);
+  const controllerRef = useRef<AbortController | null>(null);
   const [typedValue, setTypedValue] = useState<string>("");
   const isValid = useIsValid(typedValue);
   const [currentResult, setCurrentResult] = useState<SearchResult | null>();
@@ -138,14 +143,36 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
 
   function handleChange(value: string) {
     setTypedValue(value.toLowerCase());
-    getStatus(value).then((result) => {
-      setCurrentResult(result);
-    });
   }
+
+  useEffect(() => {
+    if (typedValue) {
+      // Cancel previous request
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+
+      // Create a new AbortController
+      controllerRef.current = new AbortController();
+
+      getStatus(typedValue, undefined, controllerRef.current.signal)
+        .then((result) => {
+          setCurrentResult(result);
+        })
+        .catch((error) => {
+          if (error.name !== "AbortError") {
+            console.error("An unexpected error occurred:", error);
+          }
+        });
+    } else {
+      setCurrentResult(null);
+    }
+  }, [typedValue]);
 
   async function getStatus(
     name: string,
-    lastAccessed?: number
+    lastAccessed?: number,
+    signal?: AbortSignal
   ): Promise<SearchResult> {
     const valid = isValidDomain(name);
     if (valid !== true) {
@@ -155,12 +182,22 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         message: valid + " is not a valid caracter",
         lastAccessed: lastAccessed ?? Date.now(),
       };
+    } else if (is5LettersOnly && name.length < 5) {
+      return {
+        name,
+        error: true,
+        message: "Only 5 letters domains for this discount",
+        lastAccessed: lastAccessed ?? Date.now(),
+      };
     } else {
       const currentTimeStamp = new Date().getTime() / 1000;
       const encoded = name
         ? utils.encodeDomain(name).map((elem) => elem.toString())
         : [];
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
+        if (signal?.aborted) {
+          return reject("Aborted");
+        }
         contract?.call("domain_to_expiry", [encoded]).then((res) => {
           if (Number(res?.["expiry"]) < currentTimeStamp) {
             resolve({
@@ -188,12 +225,16 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
       result?.name.length > 0
     ) {
       onChangeTypedValue?.(result.name);
-      saveSearch(result as SearchResult);
+      showHistory && saveSearch(result as SearchResult);
       setCurrentResult(null);
       setTypedValue("");
-      if (!result.error)
-        router.push(`/register/${getDomainWithStark(result.name)}`);
-      else router.push(`/search?domain=${getDomainWithStark(result.name)}`);
+      onSearch
+        ? !result.error
+          ? onSearch(result)
+          : null
+        : !result.error
+        ? router.push(`/register/${getDomainWithStark(result.name)}`)
+        : router.push(`/search?domain=${getDomainWithStark(result.name)}`);
     }
   }
 

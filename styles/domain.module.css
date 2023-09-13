@@ -5,7 +5,6 @@
   align-items: center;
   gap: 3rem;
   position: relative;
-  flex-wrap: wrap-reverse;
   height: 85vh;
 }
 
@@ -13,18 +12,31 @@
   display: flex;
   margin-left: 1.25rem;
   margin-right: 1.25rem;
-  margin-top: 1.25rem;
-  justify-content: center;
-  width: 34rem;
+  margin-bottom: 1.25rem;
+  flex-direction: column;
+  gap: 1.25rem;
+  justify-content: flex-start;
+  align-items: flex-start;
+  max-width: 36rem;
 }
 
 .illustration {
-  width: 400px;
+  width: 500px;
+}
+
+.description {
+  color: var(--content-600, #8c8989);
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
 }
 
 @media (max-width: 1024px) {
   .illustration {
     display: none;
-    width: 200px;
+  }
+  .searchBarContainer {
+    text-align: center;
   }
 }

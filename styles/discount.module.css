@@ -1,0 +1,87 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  justify-content: center;
+}
+
+.upsellIllustration,
+.illustration {
+  width: 450px;
+  align-self: stretch;
+}
+
+.upsellIllustration {
+  width: 400px;
+}
+
+.illustrationContainer {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.description {
+  color: var(--content-600, #8c8989);
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.title {
+  font-family: "QuickZap";
+  font-size: 3.5rem;
+  color: var(--secondary);
+  text-shadow: 1px 1px var(--tertiary);
+  text-transform: uppercase;
+}
+
+.upsellContainer {
+  display: flex;
+  width: 1441px;
+  height: 924px;
+  padding: 64px 128px;
+  flex-direction: column;
+  align-items: center;
+  gap: 64px;
+  flex-shrink: 0;
+}
+
+.upsellButtons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  align-self: stretch;
+}
+
+.upsellButtons p {
+  font-family: "QuickZap";
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.backArrow {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  font-family: "Poppins-Bold";
+}
+
+@media (max-width: 1024px) {
+  .illustrationContainer {
+    display: none;
+  }
+
+  .title {
+    font-size: 2.5rem;
+    text-align: center;
+  }
+}
