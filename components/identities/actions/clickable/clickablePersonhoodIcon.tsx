@@ -2,13 +2,11 @@ import { Modal, Tooltip, CircularProgress } from "@mui/material";
 import React, {
   FunctionComponent,
   useCallback,
-  useContext,
   useEffect,
   useState,
 } from "react";
 import styles from "../../../../styles/components/icons.module.css";
 import modalStyles from "../../../../styles/components/modalMessage.module.css";
-import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 import "@anima-protocol/personhood-sdk-react/style.css";
 import {
   Personhood,
@@ -29,15 +27,14 @@ type ClickablePersonhoodIconProps = {
   tokenId: string;
   isOwner: boolean;
   domain?: string;
+  isVerified?: boolean;
 };
 
 const ClickablePersonhoodIcon: FunctionComponent<
   ClickablePersonhoodIconProps
-> = ({ width, tokenId, isOwner, domain }) => {
+> = ({ width, tokenId, isOwner, domain, isVerified }) => {
   const { account, address } = useAccount();
-  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [sessionId, setSessionId] = useState<string | undefined>();
-  const [isVerified, setIsVerified] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [callData, setCallData] = useState<Call[]>([]);
@@ -47,24 +44,6 @@ const ClickablePersonhoodIcon: FunctionComponent<
   });
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
-
-  useEffect(() => {
-    starknetIdNavigator
-      ?.getVerifierData(
-        parseInt(tokenId),
-        "proof_of_personhood",
-        process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT
-      )
-      .then((response) => {
-        if (response.toString(10) !== "0") {
-          console.log("response", response.toString(10));
-          setIsVerified(true);
-        }
-      })
-      .catch(() => {
-        return;
-      });
-  }, [starknetIdNavigator]);
 
   useEffect(() => {
     if (!verifierData?.transaction_hash) return;
@@ -117,7 +96,6 @@ const ClickablePersonhoodIcon: FunctionComponent<
   const executeVerification = () => {
     execute().finally(() => {
       setCallData([]);
-      setIsVerified(true);
       setIsLoading(false);
       setIsOpen(false);
       setSessionId(undefined);

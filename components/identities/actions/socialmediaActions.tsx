@@ -51,6 +51,7 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
           width="25"
           tokenId={tokenId}
           domain={identity?.domain}
+          isVerified={identity?.proof_of_personhood}
         />
       </div>
     </>
