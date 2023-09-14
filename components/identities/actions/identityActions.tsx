@@ -171,7 +171,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
               {callDataEncodedDomain[0] === 1 ? (
                 <ClickableAction
                   title="RENEW YOUR DOMAIN"
-                  description={`Expires on ${timestampToReadableDate(
+                  style="primary"
+                  description={`Will expire on ${timestampToReadableDate(
                     identity?.domain_expiry ?? 0
                   )}`}
                   icon={
@@ -210,7 +211,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 <>
                   <ClickableAction
                     title="MOVE YOUR IDENTITY NFT"
-                    description="Move your identity to another wallet"
+                    description="Transfer your identity to another wallet"
                     icon={
                       <TransferIcon
                         width="25"

@@ -58,8 +58,11 @@ export function applyRateToBigInt(
 }
 
 // A function that converts a number to a string with max 2 decimals
-export function numberToFixedString(num: number): string {
-  return num.toFixed(2);
+export function numberToFixedString(
+  num: number,
+  numberOfDecimals?: number
+): string {
+  return num.toFixed(numberOfDecimals || 2);
 }
 
 export function toUint256(n: string): { low: string; high: string } {

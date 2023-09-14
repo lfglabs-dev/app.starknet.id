@@ -46,3 +46,13 @@ type UsState = {
   name: string;
   abbreviation: string;
 };
+
+type Discount = {
+  duration: number;
+  customMessage: string;
+  discountId: string;
+  price: string;
+  desc: string;
+  title: { desc: string; catch: string };
+  image?: string;
+};
