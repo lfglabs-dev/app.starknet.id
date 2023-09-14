@@ -11,8 +11,6 @@
     display: flex;
     flex-direction: column;
     z-index: 1000;
-    overflow: scroll;
-    height: calc(100% - 20px);
 }
 
 .menu_close {
@@ -33,4 +31,10 @@
     align-items: flex-start;
     gap: 16px;
     align-self: stretch;
-  }
+}
+
+@media (min-width: 768px) {
+    .menu {
+        max-height: calc(100% - 20px);
+    }
+}

@@ -16,7 +16,7 @@ type RegisterSummaryProps = {
   isUsResident: boolean;
   isUsdPriceDisplayed?: boolean;
   customMessage?: string;
-  customPriceTitle?: string;
+  customPriceTitle?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -27,7 +27,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   isUsResident,
   isUsdPriceDisplayed = true,
   customMessage,
-  customPriceTitle,
+  customPriceTitle = false,
 }) => {
   const [isEthPriceDisplayed, setIsEthPriceDisplayed] = useState<boolean>(true);
   const [ethUsdPrice, setEthUsdPrice] = useState<number>(0);

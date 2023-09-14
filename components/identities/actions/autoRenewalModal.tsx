@@ -24,7 +24,7 @@ import {
 } from "../../../utils/userDataService";
 import registerCalls from "../../../utils/registerCalls";
 import { isValidEmail } from "../../../utils/stringService";
-import { gweiToEth } from "../../../utils/feltService";
+import { applyRateToBigInt, gweiToEth } from "../../../utils/feltService";
 
 type AutoRenewalModalProps = {
   handleClose: () => void;
@@ -33,7 +33,7 @@ type AutoRenewalModalProps = {
   identity?: Identity;
   isEnabled?: boolean;
   domain?: string;
-  limitPrice?: string;
+  limit?: string;
 };
 
 const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
@@ -43,15 +43,17 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   identity,
   isEnabled,
   domain,
+  limit,
 }) => {
   const { address } = useAccount();
   const [price, setPrice] = useState<string>("0");
-  const [limitPrice, setLimitPrice] = useState<string>("0");
+  const [limitPrice, setLimitPrice] = useState<string>(limit ?? "0");
   const [needApproval, setNeedApproval] = useState<boolean>(false);
   const [isTxSent, setIsTxSent] = useState(false);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
+  const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [email, setEmail] = useState<string>("");
   const [groups, setGroups] = useState<string[]>(["98125177486837731"]);
   const [emailError, setEmailError] = useState<boolean>(true);
@@ -112,7 +114,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         )
       );
     })();
-  }, [usState, salt]);
+  }, [usState, salt, email]);
 
   useEffect(() => {
     // check approval has been granted to renewal contract
@@ -128,6 +130,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     if (isUsResident) {
       salesTax.getSalesTax("US", usState).then((tax) => {
         setSalesTaxRate(tax.rate);
+        if (price) setSalesTaxAmount(applyRateToBigInt(price, tax.rate));
       });
     } else {
       setSalesTaxRate(0);
@@ -145,7 +148,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       );
     } else {
       const txMetadataHash = "0x" + metadataHash;
-      const finalPrice = price + salesTaxRate * Number(price);
+      const finalPrice = Number(price) + Number(salesTaxAmount);
       setCallData(
         registerCalls.enableRenewal(
           callDataEncodedDomain[1].toString(),
@@ -154,7 +157,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         )
       );
     }
-  }, [needApproval, isEnabled]);
+  }, [needApproval, isEnabled, price, salesTaxRate, metadataHash]);
 
   useEffect(() => {
     if (!autorenewData?.transaction_hash || !salt) return;
@@ -201,7 +204,9 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
           txHash={autorenewData?.transaction_hash}
         />
       ) : (
-        <div className={styles.menu}>
+        <div
+          className={`${styles.menu} ${isEnabled ? "" : "overflow-scroll"} `}
+        >
           <button className={styles.menu_close} onClick={handleClose}>
             <svg viewBox="0 0 24 24">
               <path
@@ -226,18 +231,20 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                 you want.)
               </p>
             </div>
-            <div className="flex flex-col items-start gap-6 self-stretch">
-              <TextField
-                helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
-                label="Email address"
-                value={email}
-                onChange={(e) => changeEmail(e.target.value)}
-                color="secondary"
-                error={emailError}
-                errorMessage={"Please enter a valid email address"}
-                type="email"
-              />
-            </div>
+            {!isEnabled ? (
+              <div className="flex flex-col items-start gap-6 self-stretch">
+                <TextField
+                  helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
+                  label="Email address"
+                  value={email}
+                  onChange={(e) => changeEmail(e.target.value)}
+                  color="secondary"
+                  error={emailError}
+                  errorMessage={"Please enter a valid email address"}
+                  type="email"
+                />
+              </div>
+            ) : null}
             {identity?.domain_expiry ? (
               <div className="flex flex-col items-start gap-4 self-stretch">
                 <div className="flex flex-row items-center gap-4 self-stretch">
@@ -271,7 +278,9 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
               renewalBox={false}
               salesTaxRate={salesTaxRate}
               isUsResident={isUsResident}
-              isAutoRenew
+              isUsdPriceDisplayed={false}
+              customMessage="per year"
+              customPriceTitle
             />
             {!isEnabled ? (
               <>

@@ -95,7 +95,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("data fetched", data);
         if (!data.error && data.auto_renewal_enabled) {
           setIsAutoRenewalEnabled(true);
           setLimitPrice(data.limit_price);
@@ -302,7 +301,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           identity={identity}
           isEnabled={isAutoRenewalEnabled}
           domain={identity?.domain}
-          limitPrice={limitPrice}
+          limit={limitPrice}
         />
       </>
     </div>
