@@ -252,7 +252,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   }
 
   function changeDuration(value: number): void {
-    if (isNaN(value)) return;
+    if (isNaN(value) || value > maxYearsToRegister || value < 1) return;
     setDuration(value);
   }
 
@@ -327,12 +327,17 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
             <SelectDomain tokenId={tokenId} changeTokenId={changeTokenId} />
             <NumberTextField
               value={duration}
-              label="Years to register"
+              label="Years to register (max 25 years)"
               placeholder="years"
               onChange={(e) => changeDuration(Number(e.target.value))}
-              incrementValue={() => setDuration(duration + 1)}
-              decrementValue={() => setDuration(duration - 1)}
-              range={[1, maxYearsToRegister]}
+              incrementValue={() =>
+                setDuration(
+                  duration < maxYearsToRegister ? duration + 1 : duration
+                )
+              }
+              decrementValue={() =>
+                setDuration(duration > 1 ? duration - 1 : duration)
+              }
               defaultValue={duration}
               color="secondary"
               required
