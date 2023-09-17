@@ -13,7 +13,7 @@ import {
 import { utils } from "starknetid.js";
 import { isHexString, numberToString } from "../../utils/stringService";
 import { gweiToEth, hexToDecimal } from "../../utils/feltService";
-import SelectDomain from "./selectDomains";
+import SelectIdentity from "./selectIdentity";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi, Call } from "starknet";
 import TxConfirmationModal from "../UI/txConfirmationModal";
@@ -318,7 +318,7 @@ const Register: FunctionComponent<RegisterProps> = ({
             />
           </div>
         </div>
-        <SelectDomain tokenId={tokenId} changeTokenId={changeTokenId} />
+        <SelectIdentity tokenId={tokenId} changeTokenId={changeTokenId} />
         <div className={styles.cardCenter}>
           <p className="text">
             Price:&nbsp;

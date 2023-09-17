@@ -10,12 +10,12 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { hexToDecimal } from "../../utils/feltService";
 import textFieldStyles from "../../styles/components/textField.module.css";
 
-type SelectDomainProps = {
+type SelectIdentityProps = {
   tokenId: number;
   changeTokenId: (value: number) => void;
 };
 
-const SelectDomain: FunctionComponent<SelectDomainProps> = ({
+const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
   tokenId,
   changeTokenId,
 }) => {
@@ -98,4 +98,4 @@ const SelectDomain: FunctionComponent<SelectDomainProps> = ({
   );
 };
 
-export default SelectDomain;
+export default SelectIdentity;

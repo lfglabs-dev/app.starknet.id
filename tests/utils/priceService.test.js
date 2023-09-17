@@ -7,31 +7,29 @@ describe("Should test price service file", () => {
   it("Test getPriceFromDomain functions with different domains", () => {
     let randomString = generateString(0, totalAlphabet);
     expect(getPriceFromDomain(1, randomString.concat(".stark"))).toEqual(
-      PRICES.ONE.toString()
+      PRICES.ONE
     );
 
     randomString = generateString(1, totalAlphabet);
     expect(getPriceFromDomain(1, randomString.concat(".stark"))).toEqual(
-      PRICES.ONE.toString()
+      PRICES.ONE
     );
 
     randomString = generateString(2, totalAlphabet);
     expect(getPriceFromDomain(1, randomString.concat(".stark"))).toEqual(
-      PRICES.TWO.toString()
+      PRICES.TWO
     );
 
     randomString = generateString(3, totalAlphabet);
-    expect(getPriceFromDomain(1, randomString)).toEqual(
-      PRICES.THREE.toString()
-    );
+    expect(getPriceFromDomain(1, randomString)).toEqual(PRICES.THREE);
 
     randomString = generateString(4, totalAlphabet);
-    expect(getPriceFromDomain(1, randomString)).toEqual(PRICES.FOUR.toString());
+    expect(getPriceFromDomain(1, randomString)).toEqual(PRICES.FOUR);
 
     randomString = generateString(5, totalAlphabet);
-    expect(getPriceFromDomain(1, randomString)).toEqual(PRICES.FIVE.toString());
+    expect(getPriceFromDomain(1, randomString)).toEqual(PRICES.FIVE);
 
     randomString = generateString(6, totalAlphabet);
-    expect(getPriceFromDomain(1, randomString)).toEqual(PRICES.FIVE.toString());
+    expect(getPriceFromDomain(1, randomString)).toEqual(PRICES.FIVE);
   });
 });

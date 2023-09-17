@@ -9,7 +9,7 @@ import { useIsValid } from "../../../hooks/naming";
 import styles from "../../../styles/components/modalMessage.module.css";
 import { hexToDecimal } from "../../../utils/feltService";
 import { numberToString } from "../../../utils/stringService";
-import SelectDomain from "../../domains/selectDomains";
+import SelectIdentity from "../../domains/selectIdentity";
 import Button from "../../UI/button";
 import { utils } from "starknetid.js";
 import ConfirmationTx from "../../UI/confirmationTx";
@@ -162,7 +162,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
               required
               error={isDomainValid != true}
             />
-            <SelectDomain
+            <SelectIdentity
               tokenId={targetTokenId}
               changeTokenId={changeTokenId}
             />
