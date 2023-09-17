@@ -250,7 +250,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
             <TextField
-              helperText="Please understand that entering your email is not mandatory to register a domain, we won't share your email with anyone. We'll use it only to inform you about your domain and our news."
+              helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news, you can unsubscribe at any moment."
               label="Email address"
               value={email}
               onChange={(e) => changeEmail(e.target.value)}
