@@ -32,6 +32,6 @@ export const quantumLeapDiscount: QuantumLeapDiscount = {
   },
   name: "The Quantum Leap",
   image: "/quantumleap/quantumLeapAstro.webp",
-  expiry: 1694995199 * 1000, // timestamp in ms
+  expiry: 1695308400 * 1000, // timestamp in ms
   discountMailGroupId: "98859014745490932",
 };
