@@ -7,7 +7,6 @@ import {
 } from "../../utils/stringService";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import SocialMediaActions from "./actions/socialmediaActions";
-import { decimalToHex } from "../../utils/feltService";
 import { Tooltip } from "@mui/material";
 import Notification from "../UI/notification";
 import CalendarIcon from "../UI/iconsComponents/icons/calendarValidateIcon";
@@ -34,8 +33,10 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
+    // if not addr, returns early
+    if (!identity?.addr) return;
     setCopied(true);
-    navigator.clipboard.writeText(decimalToHex(identity?.addr));
+    navigator.clipboard.writeText(identity.addr);
     setTimeout(() => {
       setCopied(false);
     }, 1500);
@@ -82,7 +83,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 <div className="flex flex-row lg:mt-6 mt-2">
                   <StarknetIcon width="32px" color="" />
                   <h2 className="ml-3 text-xl">
-                    {minifyAddress(decimalToHex(identity.addr))}
+                    {minifyAddress(identity.addr)}
                   </h2>
                   <div className="cursor-pointer ml-3">
                     {!copied ? (

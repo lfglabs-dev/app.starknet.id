@@ -23,7 +23,7 @@ const TokenIdPage: NextPage = () => {
 
   useEffect(() => {
     if (!identity || !address) return;
-    setIsOwner(identity.owner_addr === hexToDecimal(address));
+    setIsOwner(hexToDecimal(identity.owner_addr) === hexToDecimal(address));
   }, [identity, address]);
 
   const hideActionsHandler = (state: boolean) => {
