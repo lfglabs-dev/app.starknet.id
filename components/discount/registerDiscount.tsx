@@ -198,7 +198,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
   useEffect(() => {
     if (!registerData?.transaction_hash) return;
-    posthog?.capture("register", { onForceEmail });
+    posthog?.capture("register");
 
     // register the metadata to the sales manager db
     fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
@@ -236,22 +236,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     }
   }, [isUsResident, usState, price]);
 
-  // AB Testing
-  const [onForceEmail, setOnForceEmail] = useState<boolean>();
-  useEffect(() => {
-    posthog.onFeatureFlags(function () {
-      // feature flags should be available at this point
-      if (
-        posthog.getFeatureFlag("onforceEmail") == "test" ||
-        process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-      ) {
-        setOnForceEmail(true);
-      } else {
-        setOnForceEmail(false);
-      }
-    });
-  }, []);
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -266,7 +250,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
             <TextField
-              helperText="Please understand that entering your email is not mandatory to register a domain, we won't share your email with anyone. We'll use it only to inform you about your domain and our news."
+              helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news, you can unsubscribe at any moment."
               label="Email address"
               value={email}
               onChange={(e) => changeEmail(e.target.value)}

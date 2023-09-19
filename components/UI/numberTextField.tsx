@@ -9,7 +9,6 @@ type NumberTextFieldProps = {
   value: number;
   onChange: OutlinedInputProps["onChange"];
   color: "primary" | "secondary" | "error" | "info" | "success" | "warning";
-  range: number[];
   incrementValue: () => void;
   decrementValue: () => void;
   required?: boolean;
@@ -34,7 +33,6 @@ const NumberTextField: FunctionComponent<NumberTextFieldProps> = ({
   placeholder,
   helperText,
   defaultValue = 1,
-  range,
 }) => {
   return (
     <div className="flex flex-col w-full">
@@ -76,7 +74,6 @@ const NumberTextField: FunctionComponent<NumberTextFieldProps> = ({
           classes: {
             input: styles.textfieldNumber,
           },
-          inputProps: { min: range[0], max: range[1] },
           startAdornment: (
             <InputAdornment
               className="cursor-pointer"
