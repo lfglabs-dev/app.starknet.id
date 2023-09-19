@@ -8,7 +8,7 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
 import styles from "../../../styles/components/modalMessage.module.css";
 import Button from "../../UI/button";
-import { hexToDecimal, decimalToHex } from "../../../utils/feltService";
+import { hexToDecimal } from "../../../utils/feltService";
 import ConfirmationTx from "../../UI/confirmationTx";
 
 type ChangeAddressModalProps = {
@@ -91,10 +91,8 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
                 <p>
                   A stark domain resolves to a Starknet address, the current
                   target address of {domain} is{" "}
-                  <strong>
-                    {minifyAddress(decimalToHex(currentTargetAddress))}
-                  </strong>
-                  . You can change it by using this form.
+                  <strong>{minifyAddress(currentTargetAddress)}</strong>. You
+                  can change it by using this form.
                 </p>
               )}
               <div className="mt-5">

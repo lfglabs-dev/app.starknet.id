@@ -12,6 +12,7 @@ type Identity = {
   old_discord?: string;
   old_twitter?: string;
   old_github?: string;
+  proof_of_personhood?: boolean;
   starknet_id?: string;
   error?: string;
 };
