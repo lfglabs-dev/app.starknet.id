@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import ClickableDiscordIcon from "./clickable/clickableDiscordIcon";
 import ClickableGithubIcon from "./clickable/clickableGithubIcon";
 import ClickableTwitterIcon from "./clickable/clickableTwitterIcon";
-// import ClickablePersonhoodIcon from "./clickable/clickablePersonhoodIcon";
+import ClickablePersonhoodIcon from "./clickable/clickablePersonhoodIcon";
 
 type SocialMediaActionsProps = {
   tokenId: string;
@@ -46,12 +46,13 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
           githubId={identity?.github ?? identity?.old_github}
           domain={identity?.domain}
         />
-        {/* <ClickablePersonhoodIcon
+        <ClickablePersonhoodIcon
           isOwner={isOwner}
           width="25"
           tokenId={tokenId}
-          domain={identity.domain}
-        /> */}
+          domain={identity?.domain}
+          isVerified={identity?.proof_of_personhood}
+        />
       </div>
     </>
   );
