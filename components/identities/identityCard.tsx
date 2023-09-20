@@ -27,7 +27,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   identity,
   isOwner,
 }) => {
-  const responsiveDomainOrId = identity
+  const responsiveDomainOrId = identity?.domain
     ? shortenDomain(identity.domain as string, 25)
     : `SID: ${tokenId}`;
   const [copied, setCopied] = useState(false);
