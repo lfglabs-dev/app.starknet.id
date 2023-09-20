@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import {
   useAccount,
@@ -23,6 +23,9 @@ import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
 import TxConfirmationModal from "../../UI/txConfirmationModal";
 import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
 import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
+import { Call } from "starknet";
+import registerCalls from "../../../utils/registerCalls";
+import ConfirmationTx from "../../UI/confirmationTx";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -55,6 +58,28 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const [limitPrice, setLimitPrice] = useState<string>("0");
+  const [isTxSent, setIsTxSent] = useState(false);
+  const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
+    []
+  );
+  const { writeAsync: disableRenewal, data: disableRenewalData } =
+    useContractWrite({
+      calls: disableRenewalCalldata,
+    });
+
+  const nextAutoRenew = useMemo(() => {
+    const now = Math.floor(Date.now() / 1000);
+    if (identity?.domain_expiry) {
+      if (identity?.domain_expiry + 2592000 < now) {
+        return "Next today";
+      } else {
+        return (
+          "Next on " +
+          timestampToReadableDate(identity?.domain_expiry - 2592000)
+        );
+      }
+    }
+  }, []);
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -116,6 +141,23 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     hideActionsHandler(false);
   }
 
+  useEffect(() => {
+    if (isAutoRenewalEnabled) {
+      setDisableRenewalCalldata(
+        registerCalls.disableRenewal(
+          callDataEncodedDomain[1].toString(),
+          limitPrice
+        )
+      );
+    }
+  }, [limitPrice, isAutoRenewalEnabled]);
+
+  useEffect(() => {
+    if (!disableRenewalData?.transaction_hash) return;
+    addTransaction({ hash: disableRenewalData?.transaction_hash ?? "" });
+    setIsTxSent(true);
+  }, [disableRenewalData]);
+
   return (
     <div className={styles.actionsContainer}>
       <>
@@ -157,29 +199,19 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 <ClickableAction
                   title="ENABLE AUTO RENEWAL"
                   style="primary"
-                  description="Don't lose your domain!"
-                  icon={
-                    <ChangeIcon
-                      width="25"
-                      color={theme.palette.secondary.main}
-                    />
-                  }
+                  description={nextAutoRenew}
+                  icon={<div className={styles.renewalIcon}>ON</div>}
                   onClick={() => setIsAutoRenewalOpen(true)}
                 />
               ) : null}
               {callDataEncodedDomain[0] === 1 ? (
                 <ClickableAction
                   title="RENEW YOUR DOMAIN"
-                  style="primary"
+                  style={`${isAutoRenewalEnabled ? "primary" : "secondary"}`}
                   description={`Will expire on ${timestampToReadableDate(
                     identity?.domain_expiry ?? 0
                   )}`}
-                  icon={
-                    <ChangeIcon
-                      width="25"
-                      color={theme.palette.secondary.main}
-                    />
-                  }
+                  icon={<ChangeIcon width="23" color="#284028" />}
                   onClick={() => setIsRenewFormOpen(true)}
                 />
               ) : null}
@@ -189,7 +221,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   description="Set this domain as your main domain"
                   icon={
                     <MainIcon
-                      width="25"
+                      width="23"
                       firstColor={theme.palette.secondary.main}
                       secondColor={theme.palette.secondary.main}
                     />
@@ -233,14 +265,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   {callDataEncodedDomain[0] === 1 && isAutoRenewalEnabled ? (
                     <ClickableAction
                       title="DISABLE AUTO RENEWAL"
-                      description="You'll loose your if you don't renew it"
-                      icon={
-                        <ChangeIcon
-                          width="25"
-                          color={theme.palette.secondary.main}
-                        />
-                      }
-                      onClick={() => setIsAutoRenewalOpen(true)}
+                      description={nextAutoRenew}
+                      icon={<div className={styles.renewalIcon}>OFF</div>}
+                      onClick={() => disableRenewal()}
                     />
                   ) : null}
                   <p
@@ -299,10 +326,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           isModalOpen={isAutoRenewalOpen}
           callDataEncodedDomain={callDataEncodedDomain}
           identity={identity}
-          isEnabled={isAutoRenewalEnabled}
+          // isEnabled={isAutoRenewalEnabled}
           domain={identity?.domain}
           limit={limitPrice}
         />
+        {isTxSent ? (
+          <ConfirmationTx
+            closeModal={() => setIsTxSent(false)}
+            txHash={disableRenewalData?.transaction_hash}
+          />
+        ) : null}
       </>
     </div>
   );

@@ -64,7 +64,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
   const [termsBox, setTermsBox] = useState<boolean>(true);
-  // const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [sponsor, setSponsor] = useState<string>("0");
   const [salt, setSalt] = useState<string | undefined>();
@@ -202,6 +202,19 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       calls.push(registerCalls.addressToDomain(encodedDomain));
     }
 
+    // If the user has toggled autorenewal
+    if (renewalBox) {
+      const limitPrice = 0;
+      // todo: calculate right limit_price = price + tax
+      calls.push(
+        ...registerCalls.enableRenewal(
+          encodedDomain,
+          limitPrice.toString(),
+          txMetadataHash
+        )
+      );
+    }
+
     // Merge and set the call data
     setCallData(calls);
   }, [
@@ -215,6 +228,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     sponsor,
     metadataHash,
     salesTaxRate,
+    renewalBox,
   ]);
 
   useEffect(() => {
@@ -334,10 +348,10 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
-            // onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
-            // renewalBox={renewalBox}
+            renewalBox={renewalBox}
           />
           {address ? (
             <Button

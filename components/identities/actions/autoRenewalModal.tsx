@@ -1,4 +1,4 @@
-import { Divider, Modal } from "@mui/material";
+import { Modal } from "@mui/material";
 import {
   useAccount,
   useContractRead,
@@ -8,14 +8,12 @@ import {
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useEtherContract, usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/autoRenewal.module.css";
-import formStyles from "../../../styles/components/registerV2.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi, Call } from "starknet";
 import ConfirmationTx from "../../UI/confirmationTx";
 import UsForm from "../../domains/usForm";
 import RegisterCheckboxes from "../../domains/registerCheckboxes";
-import RegisterSummary from "../../domains/registerSummary";
 import salesTax from "sales-tax";
 import TextField from "../../UI/textField";
 import {
@@ -31,7 +29,6 @@ type AutoRenewalModalProps = {
   isModalOpen: boolean;
   callDataEncodedDomain: (number | string)[];
   identity?: Identity;
-  isEnabled?: boolean;
   domain?: string;
   limit?: string;
 };
@@ -41,7 +38,6 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   isModalOpen,
   callDataEncodedDomain,
   identity,
-  isEnabled,
   domain,
   limit,
 }) => {
@@ -137,49 +133,38 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     }
   }, [isUsResident, usState, price]);
 
-  // Set Renewal Multicall
+  // Set Enable Auto Renewal Multicall
   useEffect(() => {
-    if (isEnabled) {
-      setCallData(
-        registerCalls.disableRenewal(
-          callDataEncodedDomain[1].toString(),
-          limitPrice
-        )
-      );
-    } else {
-      const txMetadataHash = "0x" + metadataHash;
-      const finalPrice = Number(price) + Number(salesTaxAmount);
-      setCallData(
-        registerCalls.enableRenewal(
-          callDataEncodedDomain[1].toString(),
-          finalPrice.toString(),
-          txMetadataHash
-        )
-      );
-    }
-  }, [needApproval, isEnabled, price, salesTaxRate, metadataHash]);
+    const txMetadataHash = "0x" + metadataHash;
+    const finalPrice = Number(price) + Number(salesTaxAmount);
+    setCallData(
+      registerCalls.enableRenewal(
+        callDataEncodedDomain[1].toString(),
+        finalPrice.toString(),
+        txMetadataHash
+      )
+    );
+  }, [needApproval, price, salesTaxRate, metadataHash]);
 
   useEffect(() => {
     if (!autorenewData?.transaction_hash || !salt) return;
     // posthog?.capture("register");
 
-    if (!isEnabled) {
-      // register the metadata to the sales manager db
-      // only when enabling auto renewal
-      fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          meta_hash: metadataHash,
-          email,
-          groups,
-          tax_state: isUsResident ? usState : "none",
-          salt: salt,
-        }),
-      })
-        .then((res) => res.json())
-        .catch((err) => console.log("Error while sending metadata:", err));
-    }
+    // register the metadata to the sales manager db
+    // when enabling auto renewal, if user wasn't already registered
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        meta_hash: metadataHash,
+        email,
+        groups,
+        tax_state: isUsResident ? usState : "none",
+        salt: salt,
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) => console.log("Error while sending metadata:", err));
 
     addTransaction({ hash: autorenewData?.transaction_hash ?? "" });
     setIsTxSent(true);
@@ -204,9 +189,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
           txHash={autorenewData?.transaction_hash}
         />
       ) : (
-        <div
-          className={`${styles.menu} ${isEnabled ? "" : "overflow-scroll"} `}
-        >
+        <div className={`${styles.menu} "overflow-scroll"`}>
           <button className={styles.menu_close} onClick={handleClose}>
             <svg viewBox="0 0 24 24">
               <path
@@ -218,87 +201,56 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
             </svg>
           </button>
           <div className={styles.form}>
-            <div className="flex flex-col items-start gap-4 self-stretch">
-              <p className={formStyles.legend}>
-                {isEnabled ? "Disable" : "Enable"} auto renewal for{" "}
-              </p>
-              <h3 className={formStyles.domain}>{identity?.domain}</h3>
+            <div className="flex flex-col items-start gap-4 self-center">
+              <h2 className={styles.title}>Enable auto renewal</h2>
             </div>
-            <div className="flex flex-col items-start gap-4 self-stretch">
-              <p className={formStyles.legend}>
-                Avoid losing your domain and renew it automatically each year
-                one month before it expires! (You can disable this option when
-                you want.)
+            <div className="flex flex-col items-start gap-4 self-center">
+              <p className={styles.desc}>
+                Enable automatic domain renewal to ensure uninterrupted
+                ownership and benefits. Never worry about expiration dates
+                again.{" "}
+                {identity?.domain_expiry
+                  ? `Your domain will be renewed for 1 year on  
+                ${timestampToReadableDate(
+                  identity.domain_expiry - 2592000
+                )} at ${gweiToEth(limitPrice)} ETH.`
+                  : null}
               </p>
             </div>
-            {!isEnabled ? (
-              <div className="flex flex-col items-start gap-6 self-stretch">
-                <TextField
-                  helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
-                  label="Email address"
-                  value={email}
-                  onChange={(e) => changeEmail(e.target.value)}
-                  color="secondary"
-                  error={emailError}
-                  errorMessage={"Please enter a valid email address"}
-                  type="email"
-                />
-              </div>
-            ) : null}
-            {identity?.domain_expiry ? (
-              <div className="flex flex-col items-start gap-4 self-stretch">
-                <div className="flex flex-row items-center gap-4 self-stretch">
-                  <p className={formStyles.legend}>Expiry date:</p>
-                  <p className={formStyles.legend}>
-                    {timestampToReadableDate(identity?.domain_expiry ?? 0)}
-                  </p>
-                </div>
-                <div className="flex flex-row items-center gap-4 self-stretch">
-                  <p className={formStyles.legend}>Auto renewal date:</p>
-                  <p className={formStyles.legend}>
-                    {timestampToReadableDate(
-                      identity?.domain_expiry - 2592000 ?? 0
-                    )}
-                  </p>
-                </div>
-              </div>
-            ) : null}
-            {!isEnabled ? (
-              <UsForm
-                isUsResident={isUsResident}
-                onUsResidentChange={() => setIsUsResident(!isUsResident)}
-                usState={usState}
-                changeUsState={(value) => setUsState(value)}
+            <div className="flex flex-col items-start gap-6 self-stretch">
+              <TextField
+                helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
+                label="Your email address"
+                value={email}
+                onChange={(e) => changeEmail(e.target.value)}
+                color="secondary"
+                error={emailError}
+                errorMessage={"Please enter a valid email address"}
+                type="email"
               />
-            ) : null}
-            <Divider className="w-full" />
-            <RegisterSummary
-              ethRegistrationPrice={limitPrice}
-              duration={1}
-              renewalBox={false}
-              salesTaxRate={salesTaxRate}
+            </div>
+            <UsForm
               isUsResident={isUsResident}
-              isUsdPriceDisplayed={false}
-              customMessage="per year"
-              customPriceTitle
+              onUsResidentChange={() => setIsUsResident(!isUsResident)}
+              usState={usState}
+              changeUsState={(value) => setUsState(value)}
             />
-            {!isEnabled ? (
-              <>
-                <Divider className="w-full" />
-                <RegisterCheckboxes
-                  onChangeTermsBox={() => setTermsBox(!termsBox)}
-                  termsBox={termsBox}
-                />
-              </>
-            ) : null}
-            <Button
-              disabled={!termsBox || (isUsResident && !usState)}
-              onClick={() => {
-                execute();
-              }}
-            >
-              {isEnabled ? "Disable" : "Enable"} auto renewal
-            </Button>
+            <>
+              <RegisterCheckboxes
+                onChangeTermsBox={() => setTermsBox(!termsBox)}
+                termsBox={termsBox}
+              />
+            </>
+            <div>
+              <Button
+                disabled={!termsBox || (isUsResident && !usState)}
+                onClick={() => {
+                  execute();
+                }}
+              >
+                Enable auto renewal
+              </Button>
+            </div>
           </div>
         </div>
       )}

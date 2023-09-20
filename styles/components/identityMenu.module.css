@@ -104,6 +104,15 @@
   background-color: var(--secondary300);
 }
 
+.renewalIcon {
+  font-family: "QuickZap";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  color: var(--secondary)
+}
+
 @media (max-width: 1024px) {
   .clickableActionPrimary,
   .clickableActionSecondary {
