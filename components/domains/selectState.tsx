@@ -1,4 +1,4 @@
-import { ListItemText, MenuItem, Select, useMediaQuery } from "@mui/material";
+import { ListItemText, MenuItem, Select } from "@mui/material";
 import React, { FunctionComponent } from "react";
 import textFieldStyles from "../../styles/components/textField.module.css";
 import allUsStates from "../../public/usa/allUsStates.json";
@@ -12,16 +12,10 @@ const SelectState: FunctionComponent<SelectStateProps> = ({
   usState,
   changeUsState,
 }) => {
-  const matches = useMediaQuery("(max-width: 1084px)");
-
   return (
     <div className="flex flex-col w-full">
       <div className="flex my-1">
-        <p className={textFieldStyles.legend}>
-          {matches
-            ? "Select an identity*"
-            : "Select an identity to link with your domain*"}
-        </p>
+        <p className={textFieldStyles.legend}>Select your state*</p>
       </div>
       <Select
         fullWidth
