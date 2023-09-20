@@ -15,7 +15,7 @@ const SelectState: FunctionComponent<SelectStateProps> = ({
   return (
     <div className="flex flex-col w-full">
       <div className="flex my-1">
-        <p className={textFieldStyles.legend}>Select your State*</p>
+        <p className={textFieldStyles.legend}>Select your state*</p>
       </div>
       <Select
         fullWidth
