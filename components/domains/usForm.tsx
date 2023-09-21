@@ -18,6 +18,7 @@ type UsFormProps = {
   ) => void;
   usState: string;
   changeUsState: (value: string) => void;
+  variant?: "default" | "white";
 };
 
 const UsForm: FunctionComponent<UsFormProps> = ({
@@ -25,6 +26,7 @@ const UsForm: FunctionComponent<UsFormProps> = ({
   onUsResidentChange,
   usState,
   changeUsState,
+  variant = "default",
 }) => {
   return (
     <FormControl className="flex gap-4 w-full">
@@ -42,25 +44,31 @@ const UsForm: FunctionComponent<UsFormProps> = ({
           <p className={textFieldStyles.legend}>Do you live in the USA ?*</p>
         </div>
 
-        <RadioGroup
-          aria-labelledby="demo-controlled-radio-buttons-group"
-          name="controlled-radio-buttons-group"
-          value={isUsResident}
-          onChange={onUsResidentChange}
+        <div
+          className={
+            variant === "white" ? textFieldStyles.radioWhite : "bg-transparent"
+          }
         >
-          <div className="flex flex-row gap-4">
-            <FormControlLabel
-              value={true}
-              control={<Radio />}
-              label={<p className={textFieldStyles.legend}>Yes</p>}
-            />
-            <FormControlLabel
-              value={false}
-              control={<Radio />}
-              label={<p className={textFieldStyles.legend}>No</p>}
-            />
-          </div>
-        </RadioGroup>
+          <RadioGroup
+            aria-labelledby="demo-controlled-radio-buttons-group"
+            name="controlled-radio-buttons-group"
+            value={isUsResident}
+            onChange={onUsResidentChange}
+          >
+            <div className="flex flex-row gap-4">
+              <FormControlLabel
+                value={true}
+                control={<Radio />}
+                label={<p className={textFieldStyles.legend}>Yes</p>}
+              />
+              <FormControlLabel
+                value={false}
+                control={<Radio />}
+                label={<p className={textFieldStyles.legend}>No</p>}
+              />
+            </div>
+          </RadioGroup>
+        </div>
       </div>
       {/* {isUsResident ? (
         <TextField

@@ -56,6 +56,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [termsBox, setTermsBox] = useState<boolean>(true);
+  const [needMedadata, setNeedMetadata] = useState<boolean>(true);
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: pricingContract } = usePricingContract();
   const { contract: etherContract } = useEtherContract();
@@ -96,10 +97,22 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     setSalt(generateSalt());
   }, []);
 
+  useEffect(() => {
+    if (!identity?.addr) return;
+    fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_LINK}/renewal/get_metahash?addr=${identity?.addr}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("data", data);
+      })
+      .catch((err) => console.log("Error while fetching metadata:", err));
+  }, [identity]);
+
   // we update compute the purchase metadata hash
   useEffect(() => {
     // salt must not be empty to preserve privacy
-    if (!salt) return;
+    if (!salt || !needMedadata) return;
     (async () => {
       setMetadataHash(
         await computeMetadataHash(
@@ -110,7 +123,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         )
       );
     })();
-  }, [usState, salt, email]);
+  }, [usState, salt, email, needMedadata]);
 
   useEffect(() => {
     // check approval has been granted to renewal contract
@@ -152,19 +165,20 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
 
     // register the metadata to the sales manager db
     // when enabling auto renewal, if user wasn't already registered
-    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        meta_hash: metadataHash,
-        email,
-        groups,
-        tax_state: isUsResident ? usState : "none",
-        salt: salt,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.log("Error while sending metadata:", err));
+    if (needMedadata)
+      fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          meta_hash: metadataHash,
+          email,
+          groups,
+          tax_state: isUsResident ? usState : "none",
+          salt: salt,
+        }),
+      })
+        .then((res) => res.json())
+        .catch((err) => console.log("Error while sending metadata:", err));
 
     addTransaction({ hash: autorenewData?.transaction_hash ?? "" });
     setIsTxSent(true);
@@ -217,28 +231,35 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                   : null}
               </p>
             </div>
-            <div className="flex flex-col items-start gap-6 self-stretch">
-              <TextField
-                helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
-                label="Your email address"
-                value={email}
-                onChange={(e) => changeEmail(e.target.value)}
-                color="secondary"
-                error={emailError}
-                errorMessage={"Please enter a valid email address"}
-                type="email"
-              />
-            </div>
-            <UsForm
-              isUsResident={isUsResident}
-              onUsResidentChange={() => setIsUsResident(!isUsResident)}
-              usState={usState}
-              changeUsState={(value) => setUsState(value)}
-            />
+            {needMedadata ? (
+              <>
+                <div className="flex flex-col items-start gap-6 self-stretch">
+                  <TextField
+                    helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news."
+                    label="Your email address"
+                    value={email}
+                    onChange={(e) => changeEmail(e.target.value)}
+                    color="secondary"
+                    error={emailError}
+                    errorMessage={"Please enter a valid email address"}
+                    type="email"
+                    variant="white"
+                  />
+                </div>
+                <UsForm
+                  isUsResident={isUsResident}
+                  onUsResidentChange={() => setIsUsResident(!isUsResident)}
+                  usState={usState}
+                  changeUsState={(value) => setUsState(value)}
+                  variant="white"
+                />
+              </>
+            ) : null}
             <>
               <RegisterCheckboxes
                 onChangeTermsBox={() => setTermsBox(!termsBox)}
                 termsBox={termsBox}
+                variant="white"
               />
             </>
             <div>

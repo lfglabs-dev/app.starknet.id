@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useMemo } from "react";
 import { Checkbox } from "@mui/material";
 
 type RegisterCheckboxes = {
@@ -6,6 +6,7 @@ type RegisterCheckboxes = {
   onChangeRenewalBox?: () => void;
   termsBox: boolean;
   renewalBox?: boolean;
+  variant?: "default" | "white";
 };
 
 const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
@@ -13,6 +14,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   onChangeTermsBox,
   termsBox,
   renewalBox,
+  variant = "default",
 }) => {
   return (
     <div className="w-full mb-3">
@@ -21,7 +23,13 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
           className="flex items-center justify-left text-xs mr-2 cursor-pointer"
           onClick={onChangeTermsBox}
         >
-          <Checkbox checked={termsBox} sx={{ padding: 0 }} />
+          <Checkbox
+            checked={termsBox}
+            sx={{
+              padding: 0,
+              background: variant === "white" ? "#FFF" : "transparent",
+            }}
+          />
           <p className="ml-2">
             Accept{" "}
             <a
