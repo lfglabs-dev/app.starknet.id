@@ -104,9 +104,15 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("data", data);
+        if (data.meta_hash) {
+          setNeedMetadata(false);
+          setMetadataHash(data.meta_hash);
+        } else setNeedMetadata(true);
       })
-      .catch((err) => console.log("Error while fetching metadata:", err));
+      .catch((err) => {
+        console.log("Error while fetching metadata:", err);
+        setNeedMetadata(true);
+      });
   }, [identity]);
 
   // we update compute the purchase metadata hash
