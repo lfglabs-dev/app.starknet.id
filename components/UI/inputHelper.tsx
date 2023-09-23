@@ -3,8 +3,8 @@ import { Tooltip, TooltipProps, styled, tooltipClasses } from "@mui/material";
 import InfoIcon from "./iconsComponents/icons/infoIcon";
 
 type InputHelperProps = {
+  children: ReactNode;
   helperText?: string;
-  children?: ReactNode;
   error?: boolean;
 };
 

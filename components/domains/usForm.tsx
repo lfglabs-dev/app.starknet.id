@@ -4,9 +4,7 @@ import {
   FormControlLabel,
   Radio,
   RadioGroup,
-  Tooltip,
 } from "@mui/material";
-import InfoIcon from "../UI/iconsComponents/icons/infoIcon";
 import textFieldStyles from "../../styles/components/textField.module.css";
 import SelectState from "./selectState";
 import InputHelper from "../UI/inputHelper";
