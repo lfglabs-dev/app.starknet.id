@@ -1,9 +1,7 @@
 .screen {
-  height: 100vh;
-  z-index: 0;
+  height: 88vh;
   position: relative;
-  padding-top: 12vh;
-  background-color: var(--background);
+  margin-top: 12vh;
 }
 
 .wrapperScreen {

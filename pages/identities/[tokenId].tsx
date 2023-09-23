@@ -58,7 +58,7 @@ const TokenIdPage: NextPage = () => {
   }, [tokenId]);
 
   return (
-    <div className={homeStyles.screen}>
+    <div className={`${homeStyles.screen} z-10 `}>
       <div className={homeStyles.wrapperScreen}>
         <div className={styles.containerIdentity}>
           {isIdentityADomain === undefined ? (
