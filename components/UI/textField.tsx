@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/textField.module.css";
-import { OutlinedInputProps, Tooltip } from "@mui/material";
-import InfoIcon from "./iconsComponents/icons/infoIcon";
+import { OutlinedInputProps } from "@mui/material";
 import { TextField as TextFieldMui } from "@mui/material";
+import InputHelper from "./inputHelper";
 
 type TextFieldProps = {
   label: string;
@@ -32,17 +32,6 @@ const TextField: FunctionComponent<TextFieldProps> = ({
   return (
     <div className="flex flex-col w-full">
       <div className="flex gap-1 my-1">
-        {helperText ? (
-          <Tooltip
-            className="cursor-pointer"
-            title={helperText}
-            placement="top"
-          >
-            <div>
-              <InfoIcon width="20px" color={error ? "red" : "#454545"} />
-            </div>
-          </Tooltip>
-        ) : null}
         {error ? (
           <p className={styles.errorLegend}>{errorMessage}</p>
         ) : (
@@ -50,23 +39,24 @@ const TextField: FunctionComponent<TextFieldProps> = ({
         )}
         {required ? "*" : ""}
       </div>
-
-      <TextFieldMui
-        type={type}
-        error={error}
-        fullWidth
-        value={value}
-        variant="outlined"
-        onChange={onChange}
-        color={color}
-        InputProps={{
-          classes: {
-            root: styles.textfield,
-          },
-        }}
-        required={required}
-        placeholder={placeholder}
-      />
+      <InputHelper helperText={helperText} error={error}>
+        <TextFieldMui
+          type={type}
+          error={error}
+          fullWidth
+          value={value}
+          variant="outlined"
+          onChange={onChange}
+          color={color}
+          InputProps={{
+            classes: {
+              root: styles.textfield,
+            },
+          }}
+          required={required}
+          placeholder={placeholder}
+        />
+      </InputHelper>
     </div>
   );
 };
