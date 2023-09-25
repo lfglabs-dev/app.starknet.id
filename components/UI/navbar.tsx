@@ -137,7 +137,7 @@ const Navbar: FunctionComponent = () => {
 
   return (
     <>
-      <div className={"fixed w-full z-[1] bg-background"}>
+      <div className={"fixed w-full z-[1] bg-background top-0"}>
         <div className={styles.navbarContainer}>
           <div className="ml-4">
             <Link href="/" className="cursor-pointer">

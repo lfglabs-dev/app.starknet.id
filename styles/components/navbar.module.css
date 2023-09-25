@@ -6,9 +6,6 @@
   cursor: pointer;
   font-weight: 600;
   color: var(--secondary);
-}
-
-.menuItem {
   text-transform: underline;
 }
 
