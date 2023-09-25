@@ -13,11 +13,13 @@
   gap: 12px;
   width: 100%;
   position: relative;
-  transition: 0.3s ease-in-out;
 }
 
-.searchContainer:hover {
-  opacity: 0.7;
+.searchContainer fieldset {
+  transition: 0.3s ease-in-out;
+}
+.searchContainer:hover fieldset {
+  border: 2px solid var(--primary) !important;
 }
 
 .results {
