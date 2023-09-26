@@ -17,7 +17,7 @@ import Wallets from "../components/UI/wallets";
 
 const Identities: NextPage = () => {
   const { account, address } = useAccount();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
   const [externalDomains, setExternalDomains] = useState<string[]>([]);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
@@ -39,7 +39,6 @@ const Identities: NextPage = () => {
   useEffect(() => {
     if (account) {
       // Our Indexer
-      setLoading(true);
       fetch(
         `${
           process.env.NEXT_PUBLIC_SERVER_LINK
@@ -48,6 +47,7 @@ const Identities: NextPage = () => {
         .then((response) => response.json())
         .then((data) => {
           setOwnedIdentities(data.full_ids);
+          setLoading(false);
         });
 
       fetch(
@@ -58,7 +58,6 @@ const Identities: NextPage = () => {
         .then((response) => response.json())
         .then((data: ExternalDomains) => {
           setExternalDomains(data.domains);
-          setLoading(false);
         });
     }
 

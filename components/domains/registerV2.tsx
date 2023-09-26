@@ -23,7 +23,6 @@ import SelectDomain from "./selectDomains";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi, Call } from "starknet";
 import { posthog } from "posthog-js";
-import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
 import UsForm from "./usForm";
@@ -36,6 +35,7 @@ import Wallets from "../UI/wallets";
 import registerCalls from "../../utils/registerCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import { getPriceFromDomain } from "../../utils/priceService";
+import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 
 type RegisterV2Props = {
   domain: string;
@@ -378,11 +378,10 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         </div>
       </div>
       <img className={styles.image} src="/visuals/registerV2.webp" />
-      <TxConfirmationModal
+      <RegisterConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
         closeModal={() => setIsTxModalOpen(false)}
-        title="Your domain is on it's way !"
       />
       <Wallets
         closeWallet={() => setWalletModalOpen(false)}
