@@ -131,6 +131,53 @@
   line-height: 16px; /* 133.333% */
 }
 
+.pfpSection {
+  height: 170px;
+  width: 170px;
+  margin-top: 0.25rem; 
+  margin-bottom: 0.75rem; 
+  position: relative;
+}
+
+.pfp {
+  height: 170px;
+  width: 170px;
+  border: 2px solid var(--primary);
+  background:#FFF;
+  border-radius: 19px;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.pfp p, .mobilePfp p {
+  color: #B0AEAE;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px;
+}
+
+.mobilePfp {
+  position: absolute;
+  border-radius: 100px;
+  background: #FFF;
+  padding: 4px 13px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  bottom: 7px;
+  right: 7px;
+}
+.mobilePfp p {
+  color:  #6C5D59;
+}
+
 @media (max-width: 1124px) {
   .identityCardSkeleton {
     width: 300px;

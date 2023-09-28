@@ -9,6 +9,7 @@ import IdentityActions from "../../components/identities/actions/identityActions
 import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";
 import IdentityPageSkeleton from "../../components/identities/skeletons/identityPageSkeleton";
+import UpdateProfilePic from "../../components/identities/updateProfilePic";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -20,6 +21,7 @@ const TokenIdPage: NextPage = () => {
   >();
   const [hideActions, setHideActions] = useState(false);
   const [isOwner, setIsOwner] = useState(true);
+  const [isUpdatingPp, setIsUpdatingPp] = useState(false);
 
   useEffect(() => {
     if (!identity || !address) return;
@@ -59,17 +61,18 @@ const TokenIdPage: NextPage = () => {
 
   return (
     <div className={`${homeStyles.screen} z-10 `}>
-      <div className={homeStyles.wrapperScreen}>
-        <div className={styles.containerIdentity}>
-          {isIdentityADomain === undefined ? (
-            <IdentityPageSkeleton />
-          ) : (
+      {isIdentityADomain === undefined ? (
+        <IdentityPageSkeleton />
+      ) : !isUpdatingPp ? (
+        <div className={homeStyles.wrapperScreen}>
+          <div className={styles.containerIdentity}>
             <>
               <div className={styles.identityBox}>
                 <IdentityCard
                   identity={identity}
                   tokenId={tokenId}
                   isOwner={isOwner}
+                  updateProfilePic={() => setIsUpdatingPp(true)}
                 />
                 {!hideActions && (
                   <IdentityActions
@@ -86,9 +89,15 @@ const TokenIdPage: NextPage = () => {
                 identity={identity}
               />
             </>
-          )}
+          </div>
         </div>
-      </div>
+      ) : (
+        <UpdateProfilePic
+          tokenId={tokenId}
+          identity={identity}
+          back={() => setIsUpdatingPp(false)}
+        />
+      )}
     </div>
   );
 };

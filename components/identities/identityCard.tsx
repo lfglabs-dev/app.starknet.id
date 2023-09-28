@@ -7,7 +7,7 @@ import {
 } from "../../utils/stringService";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import SocialMediaActions from "./actions/socialmediaActions";
-import { Tooltip } from "@mui/material";
+import { Tooltip, useMediaQuery } from "@mui/material";
 import Notification from "../UI/notification";
 import CalendarIcon from "../UI/iconsComponents/icons/calendarValidateIcon";
 import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
@@ -15,22 +15,27 @@ import theme from "../../styles/theme";
 import { timestampToReadableDate } from "../../utils/dateService";
 import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
 import CopyIcon from "../UI/iconsComponents/icons/copyIcon";
+import EditIcon from "../UI/iconsComponents/icons/editIcon";
 
 type IdentityCardProps = {
   identity?: Identity;
   tokenId: string;
   isOwner: boolean;
+  updateProfilePic: () => void;
 };
 
 const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   tokenId,
   identity,
   isOwner,
+  updateProfilePic,
 }) => {
   const responsiveDomainOrId = identity?.domain
     ? shortenDomain(identity.domain as string, 25)
     : `SID: ${tokenId}`;
   const [copied, setCopied] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const isMobile = useMediaQuery("(max-width:425px)");
 
   const copyToClipboard = () => {
     // if not addr, returns early
@@ -47,13 +52,39 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
       <div className={styles.container}>
         <div className="lg:mt-10 flex items-center lg:justify-between justify-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row">
           <div className="my-2">
-            <img
-              src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`}
-              height={170}
-              width={170}
-              alt="identicon"
-              className="mt-1 mb-3"
-            />
+            <div
+              className={styles.pfpSection}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              {isHovered && isOwner && !isMobile ? (
+                <div className={styles.pfp} onClick={() => updateProfilePic()}>
+                  <EditIcon width="28" color={theme.palette.secondary.main} />
+                  <p>Edit your NFT</p>
+                </div>
+              ) : (
+                <>
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`}
+                    height={170}
+                    width={170}
+                    alt="identicon"
+                  />
+                  {isOwner && isMobile ? (
+                    <div
+                      className={styles.mobilePfp}
+                      onClick={() => updateProfilePic()}
+                    >
+                      <EditIcon
+                        width="16"
+                        color={theme.palette.secondary.main}
+                      />
+                      <p>Edit</p>
+                    </div>
+                  ) : null}
+                </>
+              )}
+            </div>
             {identity?.domain_expiry ? (
               <Tooltip title="Expiry date of this domain" arrow>
                 <div className={styles.expiryContainer}>

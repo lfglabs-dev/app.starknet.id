@@ -20,3 +20,32 @@ type Identity = {
 type ExternalDomains = {
   domains: string[];
 };
+
+type StarkscanNftProps = {
+  animation_url: string | null;
+  attributes: Attribute[];
+  contract_address: string;
+  description: string | null;
+  external_url: string;
+  image_url: string | null;
+  image_medium_url: string | null;
+  image_small_url: string | null;
+  minted_at_transaction_hash: string | null;
+  minted_by_address: string | null;
+  token_id: string;
+  name: string | null;
+  nft_id: string | null;
+  token_uri: string | null;
+  minted_at_timestamp: number;
+};
+
+type Attribute = {
+  trait_type: string;
+  value: string | number;
+};
+
+type StarkscanApiResult = {
+  data: StarkscanNftProps[];
+  next_url?: string;
+  remainder?: StarkscanNftProps[];
+};
