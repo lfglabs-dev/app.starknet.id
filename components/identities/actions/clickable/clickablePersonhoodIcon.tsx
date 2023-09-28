@@ -12,7 +12,6 @@ import {
   Personhood,
   StarknetSignature,
 } from "@anima-protocol/personhood-sdk-react";
-import AnimaIcon from "../../../UI/iconsComponents/icons/animaIcon";
 import { useAccount, useTransactionManager } from "@starknet-react/core";
 import { Call, constants, shortString, typedData } from "starknet";
 import { useContractWrite } from "@starknet-react/core";
@@ -21,6 +20,7 @@ import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import theme from "../../../../styles/theme";
 import { posthog } from "posthog-js";
+import ProfilSecurityIcon from "../../../UI/iconsComponents/icons/profilSecurityIcon";
 
 type ClickablePersonhoodIconProps = {
   width: string;
@@ -152,7 +152,10 @@ const ClickablePersonhoodIcon: FunctionComponent<
                 <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
               </div>
             ) : null}
-            <AnimaIcon width={width} color={"white"} />
+            <ProfilSecurityIcon
+              width={width}
+              color={theme.palette.secondary.main}
+            />
           </div>
         </Tooltip>
         {isOpen && (
@@ -240,7 +243,10 @@ const ClickablePersonhoodIcon: FunctionComponent<
   ) : isVerified ? (
     <Tooltip title={`${minifyDomain(domain ?? "")} is a human`} arrow>
       <div className={styles.clickableIconAnima}>
-        <AnimaIcon width={width} color="white" />
+        <ProfilSecurityIcon
+          width={width}
+          color={theme.palette.secondary.main}
+        />
         <div className={styles.verifiedIcon}>
           <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
         </div>
