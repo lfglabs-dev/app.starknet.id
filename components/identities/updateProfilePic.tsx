@@ -117,7 +117,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
                 );
               })
             ) : (
-              <p>You don't own any whitelisted NFTs yet. </p>
+              <p>You don&apos;t own any whitelisted NFTs yet. </p>
             )}
           </div>
         </div>
