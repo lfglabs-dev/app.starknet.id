@@ -21,7 +21,7 @@ type IdentityCardProps = {
   identity?: Identity;
   tokenId: string;
   isOwner: boolean;
-  updateProfilePic: () => void;
+  updateProfilePic?: () => void;
 };
 
 const IdentityCard: FunctionComponent<IdentityCardProps> = ({
@@ -58,7 +58,10 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
               onMouseLeave={() => setIsHovered(false)}
             >
               {isHovered && isOwner && !isMobile ? (
-                <div className={styles.pfp} onClick={() => updateProfilePic()}>
+                <div
+                  className={styles.pfp}
+                  onClick={() => updateProfilePic && updateProfilePic()}
+                >
                   <EditIcon width="28" color={theme.palette.secondary.main} />
                   <p>Edit your NFT</p>
                 </div>
@@ -73,7 +76,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                   {isOwner && isMobile ? (
                     <div
                       className={styles.mobilePfp}
-                      onClick={() => updateProfilePic()}
+                      onClick={() => updateProfilePic && updateProfilePic()}
                     >
                       <EditIcon
                         width="16"
