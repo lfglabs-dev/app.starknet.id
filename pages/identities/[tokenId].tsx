@@ -70,13 +70,13 @@ const TokenIdPage: NextPage = () => {
     if (!tokenId) return;
 
     const getVerifierData = async () => {
-      let nftId = await starknetIdNavigator?.getExtendedVerifierData(
+      const nftId = await starknetIdNavigator?.getExtendedVerifierData(
         tokenId,
         "nft_pp_id",
         2,
         process.env.NEXT_PUBLIC_NFT_PP_VERIFIER
       );
-      let nftContract = await starknetIdNavigator?.getVerifierData(
+      const nftContract = await starknetIdNavigator?.getVerifierData(
         tokenId,
         "nft_pp_contract",
         process.env.NEXT_PUBLIC_NFT_PP_VERIFIER
