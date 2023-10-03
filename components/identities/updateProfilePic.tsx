@@ -10,12 +10,16 @@ type UpdateProfilePicProps = {
   identity?: Identity;
   tokenId: string;
   back: () => void;
+  openTxModal: () => void;
+  setPfpTxHash: (hash: string) => void;
 };
 
 const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   tokenId,
   identity,
   back,
+  openTxModal,
+  setPfpTxHash,
 }) => {
   const [userNft, setUserNft] = useState<StarkscanNftProps[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -27,17 +31,21 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     hexToDecimal(
       "0x0154520b48b692bb8b926434bbd24d797e806704af28b6cdcea30ea7db6a996b"
     ),
-    // Braavos Journey
+    // Identicons
     hexToDecimal(
-      "0x00057c4b510d66eb1188a7173f31cccee47b9736d40185da8144377b896d5ff3"
+      "0x0783a9097b26eae0586373b2ce0ed3529ddc44069d1e0fbc4f66d42b69d6850d"
     ),
-    // Xplorer
+    // Braavos shield
     hexToDecimal(
-      "0x01b22f7a9d18754c994ae0ee9adb4628d414232e3ebd748c386ac286f86c3066"
+      "0x04353bb6424de0b468ec4c984e01637fb2fafd3bdf81f4af367077fcbb9382c1"
     ),
     // Briq
     hexToDecimal(
       "0x01435498bf393da86b4733b9264a86b58a42b31f8d8b8ba309593e5c17847672"
+    ),
+    // Eykar
+    hexToDecimal(
+      "0x041e1382e604688da7f22e7fbb6113ba3649b84a87b58f4dc1cf5bfa96dfc2cf"
     ),
   ];
 
@@ -80,18 +88,22 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   const filterAssets = async (assets: StarkscanNftProps[]) => {
     const filteredAssets: StarkscanNftProps[] = [];
     assets.forEach((asset: StarkscanNftProps) => {
-      // todo: uncomment after testing
-      //   if (whitelistedContracts.includes(hexToDecimal(asset.contract_address))) {
-      filteredAssets.push(asset);
-      //   }
+      if (whitelistedContracts.includes(hexToDecimal(asset.contract_address))) {
+        filteredAssets.push(asset);
+      }
     });
-    console.log("filteredAssets", filteredAssets);
     setUserNft(filteredAssets);
   };
 
   const selectPicture = (nft: StarkscanNftProps) => {
     setOpenModal(true);
     setSelectedPic(nft);
+  };
+
+  const goBack = () => {
+    setOpenModal(false);
+    openTxModal();
+    back();
   };
 
   return (
@@ -124,9 +136,10 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
       </div>
       <ModalProfilePic
         open={openModal}
-        closeModal={() => setOpenModal(false)}
+        closeModal={goBack}
         nft={selectedPic as StarkscanNftProps}
         id={tokenId}
+        setPfpTxHash={setPfpTxHash}
       />
     </>
   );

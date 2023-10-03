@@ -154,6 +154,10 @@
   align-items: center;
 }
 
+.pfpImg {
+  border-radius: 19px;
+}
+
 .pfp p, .mobilePfp p {
   color: #B0AEAE;
   font-size: 14px;

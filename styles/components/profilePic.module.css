@@ -133,14 +133,21 @@
     line-height: 24px;
 }
 
+.modalActions {
+    z-index: 1;
+    margin: 0 auto;
+}
+
 .leavesLeft {
     position: absolute;
     left: 0;
     z-index: 0;
+    pointer-events: none;
 }
 
 .leavesRight {
     position: absolute;
     right: 0;
     z-index: 0;
+    pointer-events: none;
 }

@@ -7,7 +7,7 @@ import {
 } from "../../utils/stringService";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import SocialMediaActions from "./actions/socialmediaActions";
-import { Tooltip, useMediaQuery } from "@mui/material";
+import { Skeleton, Tooltip, useMediaQuery } from "@mui/material";
 import Notification from "../UI/notification";
 import CalendarIcon from "../UI/iconsComponents/icons/calendarValidateIcon";
 import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
@@ -22,6 +22,7 @@ type IdentityCardProps = {
   tokenId: string;
   isOwner: boolean;
   updateProfilePic?: () => void;
+  ppImageUrl?: string;
 };
 
 const IdentityCard: FunctionComponent<IdentityCardProps> = ({
@@ -29,6 +30,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   identity,
   isOwner,
   updateProfilePic,
+  ppImageUrl,
 }) => {
   const responsiveDomainOrId = identity?.domain
     ? shortenDomain(identity.domain as string, 25)
@@ -67,12 +69,22 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 </div>
               ) : (
                 <>
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`}
-                    height={170}
-                    width={170}
-                    alt="identicon"
-                  />
+                  {ppImageUrl ? (
+                    <img
+                      src={ppImageUrl}
+                      height={170}
+                      width={170}
+                      alt="identicon"
+                      className={styles.pfpImg}
+                    />
+                  ) : (
+                    <Skeleton
+                      variant="rectangular"
+                      width={170}
+                      height={170}
+                      className={styles.pfpImg}
+                    />
+                  )}
                   {isOwner && isMobile ? (
                     <div
                       className={styles.mobilePfp}

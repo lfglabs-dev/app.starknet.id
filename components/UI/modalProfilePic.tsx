@@ -14,16 +14,19 @@ import {
 } from "@starknet-react/core";
 import { Call } from "starknet";
 import registerCalls from "../../utils/registerCalls";
+import { hexToDecimal } from "../../utils/feltService";
 
 type ModalProfilePicProps = {
   closeModal: () => void;
   open: boolean;
   nft: StarkscanNftProps;
   id: string;
+  setPfpTxHash: (hash: string) => void;
 };
 
 const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   closeModal,
+  setPfpTxHash,
   open,
   nft,
   id,
@@ -35,11 +38,18 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
     calls: callData,
   });
 
+  console.log("calls", callData);
+
   useEffect(() => {
     if (!nft) return;
+    console.log("nft", nft);
     const nft_id = nft.token_id;
     setCallData([
-      registerCalls.updateProfilePicture(nft.contract_address, nft_id, id),
+      registerCalls.updateProfilePicture(
+        hexToDecimal(nft.contract_address),
+        nft_id,
+        id
+      ),
     ]);
   }, [nft, id]);
 
@@ -47,8 +57,9 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
     if (!updateData?.transaction_hash) return;
 
     // todo: add tx, close modal, goback to profile & show notification on approved tx
-    // addTransaction({ hash: registerData.transaction_hash });
-    // setIsTxModalOpen(true);
+    addTransaction({ hash: updateData.transaction_hash });
+    setPfpTxHash(updateData.transaction_hash);
+    closeModal();
   }, [updateData]);
 
   return (
@@ -94,7 +105,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
             />
           </div>
         ) : null}
-        <div className="mx-auto z-1">
+        <div className={ppStyles.modalActions}>
           <ClickableAction
             title="Yes, confirm the modification"
             style="primary"
