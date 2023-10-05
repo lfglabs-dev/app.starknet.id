@@ -15,6 +15,7 @@ import {
 import { Call } from "starknet";
 import registerCalls from "../../utils/registerCalls";
 import { hexToDecimal } from "../../utils/feltService";
+import { getImgUrl } from "../../utils/stringService";
 
 type ModalProfilePicProps = {
   closeModal: () => void;
@@ -38,11 +39,8 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
     calls: callData,
   });
 
-  console.log("calls", callData);
-
   useEffect(() => {
     if (!nft) return;
-    console.log("nft", nft);
     const nft_id = nft.token_id;
     setCallData([
       registerCalls.updateProfilePicture(
@@ -92,17 +90,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
         <p className={ppStyles.modalTitle}>Do you want to add this NFT?</p>
         {nft?.image_url ? (
           <div className={ppStyles.nftImg}>
-            <img
-              src={
-                nft.image_url.startsWith("ipfs://")
-                  ? nft.image_url.replace(
-                      "ipfs://",
-                      "https://gateway.pinata.cloud/ipfs/"
-                    )
-                  : nft.image_url
-              }
-              alt={`Image of ${nft.name}`}
-            />
+            <img src={getImgUrl(nft.image_url)} alt={`Image of ${nft.name}`} />
           </div>
         ) : null}
         <div className={ppStyles.modalActions}>

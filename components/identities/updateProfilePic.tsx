@@ -5,6 +5,7 @@ import theme from "../../styles/theme";
 import { hexToDecimal } from "../../utils/feltService";
 import NftCard from "../UI/nftCard";
 import ModalProfilePic from "../UI/modalProfilePic";
+import { filterAssets, retrieveAssets } from "../../utils/nftService";
 
 type UpdateProfilePicProps = {
   identity?: Identity;
@@ -26,27 +27,9 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   const [selectedPic, setSelectedPic] = useState<StarkscanNftProps | null>(
     null
   );
-  const whitelistedContracts = [
-    // Starknet Quest contracts
-    hexToDecimal(
-      "0x0154520b48b692bb8b926434bbd24d797e806704af28b6cdcea30ea7db6a996b"
-    ),
-    // Identicons
-    hexToDecimal(
-      "0x0783a9097b26eae0586373b2ce0ed3529ddc44069d1e0fbc4f66d42b69d6850d"
-    ),
-    // Braavos shield
-    hexToDecimal(
-      "0x04353bb6424de0b468ec4c984e01637fb2fafd3bdf81f4af367077fcbb9382c1"
-    ),
-    // Briq
-    hexToDecimal(
-      "0x01435498bf393da86b4733b9264a86b58a42b31f8d8b8ba309593e5c17847672"
-    ),
-    // Eykar
-    hexToDecimal(
-      "0x041e1382e604688da7f22e7fbb6113ba3649b84a87b58f4dc1cf5bfa96dfc2cf"
-    ),
+  const whitelistedContracts: string[] = [
+    hexToDecimal(process.env.NEXT_PUBLIC_STARKNETID_CONTRACT),
+    hexToDecimal(process.env.NEXT_PUBLIC_NFT_SQ_CONTRACT),
   ];
 
   useEffect(() => {
@@ -55,45 +38,10 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
       `${process.env.NEXT_PUBLIC_SERVER_LINK}/starkscan/fetch_nfts`,
       identity.addr
     ).then((data) => {
-      console.log(data.data);
-      filterAssets(data.data);
+      const filteredAssets = filterAssets(data.data, whitelistedContracts);
+      setUserNft(filteredAssets);
     });
   }, [tokenId, identity]);
-
-  // Retrieve assets from Starkscan API
-  const retrieveAssets = async (
-    url: string,
-    addr: string,
-    accumulatedAssets: StarkscanNftProps[] = []
-  ): Promise<StarkscanApiResult> => {
-    return fetch(`${url}?addr=${addr}`)
-      .then((res) => res.json())
-      .then((data) => {
-        const assets = [...accumulatedAssets, ...data.data];
-        if (data.next_url) {
-          return retrieveAssets(
-            `${url}?addr=${addr}&next_url=${data.next_url}`,
-            addr,
-            assets
-          );
-        } else {
-          return {
-            data: assets,
-          };
-        }
-      });
-  };
-
-  // Filter assets received from Starkscan API & filter solo buildings represented on the land
-  const filterAssets = async (assets: StarkscanNftProps[]) => {
-    const filteredAssets: StarkscanNftProps[] = [];
-    assets.forEach((asset: StarkscanNftProps) => {
-      if (whitelistedContracts.includes(hexToDecimal(asset.contract_address))) {
-        filteredAssets.push(asset);
-      }
-    });
-    setUserNft(filteredAssets);
-  };
 
   const selectPicture = (nft: StarkscanNftProps) => {
     setOpenModal(true);
@@ -119,6 +67,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
           <div className={styles.nftSection}>
             {userNft && userNft.length > 0 ? (
               userNft.map((nft, index) => {
+                if (!nft.image_url) return null;
                 return (
                   <NftCard
                     key={index}

@@ -1,5 +1,6 @@
 import { BN } from "bn.js";
 import { basicAlphabet } from "./constants";
+import { hexToDecimal } from "./feltService";
 
 export function minifyAddress(address: string | undefined): string {
   if (!address) return "";
@@ -163,4 +164,12 @@ export function isValidDomain(domain: string | undefined): boolean | string {
 
   for (const char of domain) if (!basicAlphabet.includes(char)) return char;
   return true;
+}
+
+export function getImgUrl(image: string): string {
+  if (image.startsWith("ipfs://")) {
+    return image.replace("ipfs://", "https://gateway.pinata.cloud/ipfs/");
+  } else {
+    return image;
+  }
 }

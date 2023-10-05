@@ -3,6 +3,7 @@ import styles from "../../styles/components/profilePic.module.css";
 import theme from "../../styles/theme";
 import AddIcon from "./iconsComponents/icons/addIcon";
 import { useMediaQuery } from "@mui/material";
+import { getImgUrl } from "../../utils/stringService";
 
 type NftCardProps = {
   image: string;
@@ -15,22 +16,8 @@ const NftCard: FunctionComponent<NftCardProps> = ({
   name,
   selectPicture,
 }) => {
-  const [imageUri, setImageUri] = useState<string>("");
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const isMobile = useMediaQuery("(max-width:425px)");
-
-  useEffect(() => {
-    if (!image) return;
-    if (image.startsWith("ipfs://")) {
-      setImageUri(
-        image.replace("ipfs://", "https://gateway.pinata.cloud/ipfs/")
-      );
-    } else {
-      setImageUri(image);
-    }
-  }, [image]);
-
-  if (!image) return null;
 
   return (
     <div
@@ -43,7 +30,7 @@ const NftCard: FunctionComponent<NftCardProps> = ({
           className={styles.nftImg}
           onClick={() => isMobile && selectPicture()}
         >
-          <img src={imageUri} alt={`Image of ${name}`} />
+          <img src={getImgUrl(image)} alt={`Image of ${name}`} />
         </div>
       ) : (
         <div className={styles.nftHovered} onClick={selectPicture}>

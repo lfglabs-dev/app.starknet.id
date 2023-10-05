@@ -22,6 +22,7 @@ import {
   convertNumberToFixedLengthString,
   isValidDomain,
   getDomainLength,
+  getImgUrl,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -408,5 +409,19 @@ describe("Should test getDomainLength function", () => {
   it("Should return 0 for undefined or invalid domain", () => {
     expect(getDomainLength(undefined)).toEqual(0);
     expect(getDomainLength("")).toEqual(0);
+  });
+});
+
+describe("Should test getImgUrl function", () => {
+  it("Should return the same image url", () => {
+    expect(getImgUrl("https://myimage.png")).toEqual("https://myimage.png");
+  });
+
+  it("Should return the correct image url if it's an image stored on ipfs", () => {
+    expect(getImgUrl("ipfs://myimage")).toEqual("https://gateway.pinata.cloud/ipfs/myimage");
+  });
+
+  it("Should return an empty string for an empty image url", () => {
+    expect(getImgUrl("")).toEqual("");
   });
 });
