@@ -102,7 +102,6 @@ const ClickablePersonhoodIcon: FunctionComponent<
       posthog?.capture("popVerificationTx");
     });
   };
-
   const getSignature = () => {
     fetch(`/api/anima/get_signature?sessionId=${sessionId}`)
       .then((response) => response.json())
@@ -115,7 +114,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
             entrypoint: "write_confirmation",
             calldata: [
               tokenId,
-              Math.floor(Date.now() / 1000),
+              Math.floor(Date.now() / 1000 + 15 * 60),
               shortString.encodeShortString("proof_of_personhood"),
               hexToDecimal(hexSessionId),
               sig.r,

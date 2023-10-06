@@ -27,7 +27,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   identity,
   isOwner,
 }) => {
-  const responsiveDomainOrId = identity
+  const responsiveDomainOrId = identity?.domain
     ? shortenDomain(identity.domain as string, 25)
     : `SID: ${tokenId}`;
   const [copied, setCopied] = useState(false);
@@ -45,7 +45,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <div className="lg:mt-10 flex items-center lg:justify-between justify-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row ">
+        <div className="lg:mt-10 flex items-center lg:justify-between justify-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row">
           <div className="my-2">
             <img
               src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`}
