@@ -57,7 +57,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isAutoRenewalOpen, setIsAutoRenewalOpen] = useState<boolean>(false);
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
-  const [limitPrice, setLimitPrice] = useState<string>("0");
+  const [allowance, setAllowance] = useState<string>("0");
   const [isTxSent, setIsTxSent] = useState(false);
   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
     []
@@ -120,9 +120,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        if (!data.error && data.auto_renewal_enabled) {
+        if (!data.error && data.enabled) {
           setIsAutoRenewalEnabled(true);
-          setLimitPrice(data.limit_price);
+          setAllowance(data.allowance);
         } else {
           setIsAutoRenewalEnabled(false);
         }
@@ -144,13 +144,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   useEffect(() => {
     if (isAutoRenewalEnabled) {
       setDisableRenewalCalldata(
-        registerCalls.disableRenewal(
-          callDataEncodedDomain[1].toString(),
-          limitPrice
-        )
+        registerCalls.disableRenewal(callDataEncodedDomain[1].toString())
       );
     }
-  }, [limitPrice, isAutoRenewalEnabled]);
+  }, [allowance, isAutoRenewalEnabled]);
 
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
@@ -328,7 +325,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           identity={identity}
           // isEnabled={isAutoRenewalEnabled}
           domain={identity?.domain}
-          limit={limitPrice}
+          allowance={allowance}
         />
         {isTxSent ? (
           <ConfirmationTx

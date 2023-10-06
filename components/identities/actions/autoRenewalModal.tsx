@@ -6,7 +6,7 @@ import {
   useTransactionManager,
 } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { useEtherContract, usePricingContract } from "../../../hooks/contracts";
+import { usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/autoRenewal.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
@@ -30,7 +30,7 @@ type AutoRenewalModalProps = {
   callDataEncodedDomain: (number | string)[];
   identity?: Identity;
   domain?: string;
-  limit?: string;
+  allowance?: string;
 };
 
 const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
@@ -39,12 +39,13 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   callDataEncodedDomain,
   identity,
   domain,
-  limit,
+  allowance,
 }) => {
   const { address } = useAccount();
   const [price, setPrice] = useState<string>("0");
-  const [limitPrice, setLimitPrice] = useState<string>(limit ?? "0");
-  const [needApproval, setNeedApproval] = useState<boolean>(false);
+  const [renewalAllowance, setRenewalAllowance] = useState<string>(
+    allowance ?? "0"
+  );
   const [isTxSent, setIsTxSent] = useState(false);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
@@ -59,22 +60,12 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: pricingContract } = usePricingContract();
-  const { contract: etherContract } = useEtherContract();
   const { addTransaction } = useTransactionManager();
   const { data: priceData, error: priceError } = useContractRead({
     address: pricingContract?.address as string,
     abi: pricingContract?.abi as Abi,
     functionName: "compute_renew_price",
     args: [callDataEncodedDomain[1], 365],
-  });
-  const { data: approvalData, error: approvalError } = useContractRead({
-    address: etherContract?.address as string,
-    abi: etherContract?.abi as Abi,
-    functionName: "allowance",
-    args: [
-      address as string,
-      process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-    ],
   });
   const { writeAsync: execute, data: autorenewData } = useContractWrite({
     calls: callData,
@@ -89,8 +80,8 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   }, [priceData, priceError]);
 
   useEffect(() => {
-    if (limitPrice === "0") setLimitPrice(price);
-  }, [address, domain, price, limitPrice]);
+    if (renewalAllowance === "0") setRenewalAllowance(price);
+  }, [address, domain, price, renewalAllowance]);
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -132,16 +123,6 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   }, [usState, salt, email, needMedadata]);
 
   useEffect(() => {
-    // check approval has been granted to renewal contract
-    if (approvalError || !approvalData) return;
-    if (
-      approvalData?.["remaining"].low === BigInt(0) &&
-      approvalData?.["remaining"].high === BigInt(0)
-    )
-      setNeedApproval(true);
-  }, [approvalData, approvalError]);
-
-  useEffect(() => {
     if (isUsResident) {
       salesTax.getSalesTax("US", usState).then((tax) => {
         setSalesTaxRate(tax.rate);
@@ -163,7 +144,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         txMetadataHash
       )
     );
-  }, [needApproval, price, salesTaxRate, metadataHash]);
+  }, [price, salesTaxRate, metadataHash]);
 
   useEffect(() => {
     if (!autorenewData?.transaction_hash || !salt) return;
@@ -233,7 +214,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                   ? `Your domain will be renewed for 1 year on  
                 ${timestampToReadableDate(
                   identity.domain_expiry - 2592000
-                )} at ${gweiToEth(limitPrice)} ETH.`
+                )} at ${gweiToEth(renewalAllowance)} ETH.`
                   : null}
               </p>
             </div>
