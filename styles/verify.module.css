@@ -1,0 +1,32 @@
+.title {
+  color: var(--secondary);
+  text-align: center;
+  font-family: QuickZap;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 58px; /* 145% */
+}
+
+.subtitle {
+  margin-top: 16px;
+  color: var(--content-600, #8c8989);
+  text-align: center;
+
+  /* Body/default/regular */
+  font-family: Poppins-Regular;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 125% */
+}
+
+.buttonContainer {
+  margin-top: 48px;
+}
+
+.backButton {
+  position: absolute;
+  top: 2rem;
+  left: 2rem;
+}
