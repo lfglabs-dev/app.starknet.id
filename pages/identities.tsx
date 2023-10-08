@@ -8,12 +8,13 @@ import {
 } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
-import MintIdentity from "../components/identities/mintIdentity";
+import MintIcon from "../components/UI/iconsComponents/icons/mintIcon";
 import { useRouter } from "next/router";
 import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
 import Wallets from "../components/UI/wallets";
+import ClickableAction from "../components/UI/iconsComponents/clickableAction";
 
 const Identities: NextPage = () => {
   const { account, address } = useAccount();
@@ -84,37 +85,50 @@ const Identities: NextPage = () => {
 
   return (
     <>
-      <div className={styles.screen}>
-        <div className="firstLeavesGroup">
-          <img width="100%" alt="leaf" src="/leaves/new/leavesGroup02.svg" />
-        </div>
-        <div className="secondLeavesGroup">
-          <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
-        </div>
-        <div className={styles.container}>
-          <h1 className="title">Your Starknet identities</h1>
-
-          <div className={styles.containerGallery}>
-            {loading ? (
-              <IdentitiesSkeleton />
-            ) : (
-              <IdentitiesGallery
-                identities={ownedIdentities}
-                externalDomains={externalDomains}
-              />
-            )}
-            <MintIdentity
+      <div className="firstLeavesGroup">
+        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup02.svg" />
+      </div>
+      <div className="secondLeavesGroup">
+        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
+      </div>
+      <div className={styles.containerGallery}>
+        <div>
+          {loading ? (
+            <IdentitiesSkeleton />
+          ) : ownedIdentities.length + externalDomains.length === 0 ? (
+            <>
+              <h1 className="title text-center">
+                All Your Identities in One Place
+              </h1>
+              <p className="description text-center mb-6">
+                Easily access and manage all your identities from one
+                centralized location. Streamline your digital presence with
+                convenience and control.
+              </p>
+            </>
+          ) : (
+            <IdentitiesGallery
+              identities={ownedIdentities}
+              externalDomains={externalDomains}
+            />
+          )}
+          <div className="w-full flex justify-center items-center px-4">
+            <ClickableAction
+              title="ADD IDENTITIES"
+              icon={<MintIcon />}
               onClick={address ? () => mint() : () => setWalletModalOpen(true)}
+              width="auto"
             />
           </div>
         </div>
-        <TxConfirmationModal
-          txHash={mintData?.transaction_hash}
-          isTxModalOpen={isTxModalOpen}
-          closeModal={() => setIsTxModalOpen(false)}
-          title="Your identity NFT is on it's way !"
-        />
       </div>
+      <TxConfirmationModal
+        txHash={mintData?.transaction_hash}
+        isTxModalOpen={isTxModalOpen}
+        closeModal={() => setIsTxModalOpen(false)}
+        title="Your identity NFT is on it's way !"
+      />
+
       <Wallets
         closeWallet={() => setWalletModalOpen(false)}
         hasWallet={walletModalOpen}

@@ -22,7 +22,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
   const router = useRouter();
   return (
     // Our Indexer
-    <>
+    <div className={styles.galeryContainer}>
       {identities.map((identity, index) => {
         return (
           <div key={index} className={styles.imageGallery}>
@@ -46,7 +46,9 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
               onClick={() => router.push(`/identities/${identity.id}`)}
             />
             {identity.domain ? (
-              <p className="font-bold mt-2">{minifyDomain(identity.domain)}</p>
+              <p className="font-bold font-quickZap">
+                {minifyDomain(identity.domain)}
+              </p>
             ) : null}
           </div>
         );
@@ -87,35 +89,20 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
 
         return (
           <div key={index} className={styles.imageGallery}>
+            {getIdentityImage(domainKind)}
+            <p className="font-bold mt-2">{minifyDomain(domain)}</p>
             <div className={styles.expiryWarning}>
               <Tooltip
                 title="This is domain is an external domain and is not an identity, you won't see it on your wallet."
                 arrow
               >
-                <ErrorIcon color="error" />
+                <ErrorIcon color="warning" />
               </Tooltip>
             </div>
-            {getIdentityImage(domainKind)}
-            <p className="font-bold mt-2">{minifyDomain(domain)}</p>
           </div>
         );
       })}
-    </>
-
-    // // Aspect indexer
-    // <>
-    //   {identities.map((asset, index) => (
-    //     <div key={index} className={styles.imageGallery}>
-    //       <img
-    //         width={150}
-    //         height={150}
-    //         src={`https://www.starknet.id/api/identicons/${asset.token_id}`}
-    //         alt="avatar"
-    //         onClick={() => router.push(`/identities/${asset.token_id}`)}
-    //       />
-    //     </div>
-    //   ))}
-    // </>
+    </div>
   );
 };
 

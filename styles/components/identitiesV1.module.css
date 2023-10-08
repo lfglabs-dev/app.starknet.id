@@ -1,15 +1,33 @@
+.galeryContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  margin-top: 2rem;
+  max-width: 50rem;
+  margin: auto;
+}
+
 .imageGallery {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
   cursor: pointer;
-  margin: 1rem;
-  height: 160px;
-  margin-bottom: 3rem;
   position: relative;
+  border-radius: 20px;
+  background: var(--background-light);
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  padding: 24px;
 }
 
 .expiryWarning {
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: 42px;
+  right: 42px;
 }
 
 .containerIdentity {
@@ -44,5 +62,13 @@
     flex-direction: row;
     justify-content: center;
     gap: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .expiryWarning {
+    position: relative;
+    top: 0;
+    left: 0;
   }
 }
