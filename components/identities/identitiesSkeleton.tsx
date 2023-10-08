@@ -5,9 +5,9 @@ import styles from "../../styles/components/identitiesV1.module.css";
 const IdentitiesSkeleton: FunctionComponent = () => {
   return (
     <div className={styles.identitiesSkeleton}>
-      <Skeleton variant="circular" width={150} height={150} />
-      <Skeleton variant="circular" width={150} height={150} />
-      <Skeleton variant="circular" width={150} height={150} />
+      <Skeleton variant="rounded" width={198} height={246} />
+      <Skeleton variant="rounded" width={198} height={246} />
+      <Skeleton variant="rounded" width={198} height={246} />
     </div>
   );
 };

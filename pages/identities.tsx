@@ -18,7 +18,7 @@ import ClickableAction from "../components/UI/iconsComponents/clickableAction";
 
 const Identities: NextPage = () => {
   const { account, address } = useAccount();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
   const [externalDomains, setExternalDomains] = useState<string[]>([]);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
@@ -40,7 +40,6 @@ const Identities: NextPage = () => {
   useEffect(() => {
     if (account) {
       // Our Indexer
-      setLoading(true);
       fetch(
         `${
           process.env.NEXT_PUBLIC_SERVER_LINK
@@ -49,6 +48,7 @@ const Identities: NextPage = () => {
         .then((response) => response.json())
         .then((data) => {
           setOwnedIdentities(data.full_ids);
+          setLoading(false);
         });
 
       fetch(
@@ -59,7 +59,6 @@ const Identities: NextPage = () => {
         .then((response) => response.json())
         .then((data: ExternalDomains) => {
           setExternalDomains(data.domains);
-          setLoading(false);
         });
     }
 
@@ -85,22 +84,16 @@ const Identities: NextPage = () => {
 
   return (
     <>
-      <div className="firstLeavesGroup">
-        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup02.svg" />
-      </div>
-      <div className="secondLeavesGroup">
-        <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
-      </div>
       <div className={styles.containerGallery}>
         <div>
           {loading ? (
             <IdentitiesSkeleton />
           ) : ownedIdentities.length + externalDomains.length === 0 ? (
             <>
-              <h1 className="title text-center">
+              <h1 className="title text-center mb-[16px]">
                 All Your Identities in One Place
               </h1>
-              <p className="description text-center mb-6">
+              <p className="description text-center max-w-2xl">
                 Easily access and manage all your identities from one
                 centralized location. Streamline your digital presence with
                 convenience and control.
@@ -112,7 +105,7 @@ const Identities: NextPage = () => {
               externalDomains={externalDomains}
             />
           )}
-          <div className="w-full flex justify-center items-center px-4">
+          <div className="w-full flex justify-center items-center px-4 mt-[33px]">
             <ClickableAction
               title="ADD IDENTITIES"
               icon={<MintIcon />}
