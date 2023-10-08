@@ -12,7 +12,6 @@ import ErrorScreen from "../components/UI/screens/errorScreen";
 import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
 import { posthog } from "posthog-js";
-import TxConfirmationModal from "../components/UI/txConfirmationModal";
 import { Call } from "starknet";
 import VerifyFirstStep from "../components/verify/verifyFirstStep";
 
@@ -45,7 +44,6 @@ const Discord: NextPage = () => {
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Call | undefined>();
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   useEffect(() => {
     if (!tokenId) {
@@ -135,11 +133,11 @@ const Discord: NextPage = () => {
         !transactionData?.status.includes("ACCEPTED") &&
         transactionData?.status !== "PENDING"
       ) {
-        setIsTxModalOpen(true);
         posthog?.capture("discordVerificationTx");
         addTransaction({
           hash: discordVerificationData?.transaction_hash ?? "",
         });
+        router.push(`/identities/${tokenId}`);
       } else if (transactionError) {
         setScreen("error");
       }
@@ -182,15 +180,6 @@ const Discord: NextPage = () => {
           )}
         </div>
       </div>
-      <TxConfirmationModal
-        txHash={discordVerificationData?.transaction_hash}
-        isTxModalOpen={isTxModalOpen}
-        closeModal={() => {
-          setIsTxModalOpen(false);
-          router.push(`/identities/${tokenId}`);
-        }}
-        title="Your transaction is on it's way !"
-      />
     </div>
   );
 };

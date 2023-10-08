@@ -13,7 +13,6 @@ import { Screen } from "./discord";
 import { NextPage } from "next";
 import { stringToHex } from "../utils/feltService";
 import { posthog } from "posthog-js";
-import TxConfirmationModal from "../components/UI/txConfirmationModal";
 import { Call } from "starknet";
 import VerifyFirstStep from "../components/verify/verifyFirstStep";
 
@@ -38,7 +37,6 @@ const Twitter: NextPage = () => {
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Call | undefined>();
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   useEffect(() => {
     if (!tokenId) {
@@ -128,11 +126,11 @@ const Twitter: NextPage = () => {
         !transactionData?.status.includes("ACCEPTED") &&
         transactionData?.status !== "PENDING"
       ) {
-        setIsTxModalOpen(true);
         posthog?.capture("twitterVerificationTx");
         addTransaction({
           hash: twitterVerificationData?.transaction_hash ?? "",
         });
+        router.push(`/identities/${tokenId}`);
       } else if (transactionError) {
         setScreen("error");
       }
@@ -173,15 +171,6 @@ const Twitter: NextPage = () => {
               buttonText="Retry to verify"
             />
           )}
-          <TxConfirmationModal
-            txHash={twitterVerificationData?.transaction_hash}
-            isTxModalOpen={isTxModalOpen}
-            closeModal={() => {
-              setIsTxModalOpen(false);
-              router.push(`/identities/${tokenId}`);
-            }}
-            title="Your transaction is on it's way !"
-          />
         </div>
       </div>
     </div>

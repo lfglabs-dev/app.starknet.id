@@ -13,7 +13,6 @@ import { Screen } from "./discord";
 import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
 import { posthog } from "posthog-js";
-import TxConfirmationModal from "../components/UI/txConfirmationModal";
 import { Call } from "starknet";
 import VerifyFirstStep from "../components/verify/verifyFirstStep";
 
@@ -38,7 +37,6 @@ const Github: NextPage = () => {
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Call | undefined>();
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   useEffect(() => {
     if (!tokenId) {
@@ -126,11 +124,11 @@ const Github: NextPage = () => {
         !transactionData?.status.includes("ACCEPTED") &&
         transactionData?.status !== "PENDING"
       ) {
-        setIsTxModalOpen(true);
         posthog?.capture("githubVerificationTx");
         addTransaction({
           hash: githubVerificationData?.transaction_hash ?? "",
         });
+        router.push(`/identities/${tokenId}`);
       } else if (transactionError) {
         setScreen("error");
       }
@@ -171,15 +169,6 @@ const Github: NextPage = () => {
               buttonText="Retry to verify"
             />
           )}
-          <TxConfirmationModal
-            txHash={githubVerificationData?.transaction_hash}
-            isTxModalOpen={isTxModalOpen}
-            closeModal={() => {
-              setIsTxModalOpen(false);
-              router.push(`/identities/${tokenId}`);
-            }}
-            title="Your transaction is on it's way !"
-          />
         </div>
       </div>
     </div>
