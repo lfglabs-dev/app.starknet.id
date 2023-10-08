@@ -105,7 +105,7 @@ const Identities: NextPage = () => {
               externalDomains={externalDomains}
             />
           )}
-          <div className="w-full flex justify-center items-center px-4 mt-[33px]">
+          <div className="w-fit block mx-auto px-4 mt-[33px]">
             <ClickableAction
               title="ADD IDENTITIES"
               icon={<MintIcon />}
