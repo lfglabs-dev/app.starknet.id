@@ -17,7 +17,7 @@ import Wallets from "../components/UI/wallets";
 import ClickableAction from "../components/UI/iconsComponents/clickableAction";
 
 const Identities: NextPage = () => {
-  const { account, address } = useAccount();
+  const { address } = useAccount();
   const [loading, setLoading] = useState<boolean>(true);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
   const [externalDomains, setExternalDomains] = useState<string[]>([]);
@@ -38,12 +38,13 @@ const Identities: NextPage = () => {
   });
 
   useEffect(() => {
-    if (account) {
+    if (address) {
+      setLoading(true);
       // Our Indexer
       fetch(
         `${
           process.env.NEXT_PUBLIC_SERVER_LINK
-        }/addr_to_full_ids?addr=${hexToDecimal(account.address)}`
+        }/addr_to_full_ids?addr=${hexToDecimal(address)}`
       )
         .then((response) => response.json())
         .then((data) => {
@@ -54,12 +55,14 @@ const Identities: NextPage = () => {
       fetch(
         `${
           process.env.NEXT_PUBLIC_SERVER_LINK
-        }/addr_to_external_domains?addr=${hexToDecimal(account.address)}`
+        }/addr_to_external_domains?addr=${hexToDecimal(address)}`
       )
         .then((response) => response.json())
         .then((data: ExternalDomains) => {
           setExternalDomains(data.domains);
         });
+    } else {
+      setLoading(false);
     }
 
     // // Aspect Indexer
@@ -70,7 +73,7 @@ const Identities: NextPage = () => {
     //   .then((data) => {
     //     setOwnedIdentities(data.assets);
     //   });
-  }, [account, router.asPath]);
+  }, [address, router.asPath]);
 
   useEffect(() => {
     if (!mintData?.transaction_hash) return;
@@ -88,7 +91,8 @@ const Identities: NextPage = () => {
         <div>
           {loading ? (
             <IdentitiesSkeleton />
-          ) : ownedIdentities.length + externalDomains.length === 0 ? (
+          ) : ownedIdentities.length + externalDomains.length === 0 ||
+            !address ? (
             <>
               <h1 className="title text-center mb-[16px]">
                 All Your Identities in One Place
@@ -98,21 +102,35 @@ const Identities: NextPage = () => {
                 centralized location. Streamline your digital presence with
                 convenience and control.
               </p>
+              <div className="w-fit block mx-auto px-4 mt-[33px]">
+                <ClickableAction
+                  title="ADD IDENTITIES"
+                  icon={<MintIcon />}
+                  onClick={
+                    address ? () => mint() : () => setWalletModalOpen(true)
+                  }
+                  width="auto"
+                />
+              </div>
             </>
           ) : (
-            <IdentitiesGallery
-              identities={ownedIdentities}
-              externalDomains={externalDomains}
-            />
+            <div>
+              <IdentitiesGallery
+                identities={ownedIdentities}
+                externalDomains={externalDomains}
+              />
+              <div className="w-fit block mx-auto px-4 mt-[33px]">
+                <ClickableAction
+                  title="ADD IDENTITIES"
+                  icon={<MintIcon />}
+                  onClick={
+                    address ? () => mint() : () => setWalletModalOpen(true)
+                  }
+                  width="auto"
+                />
+              </div>
+            </div>
           )}
-          <div className="w-fit block mx-auto px-4 mt-[33px]">
-            <ClickableAction
-              title="ADD IDENTITIES"
-              icon={<MintIcon />}
-              onClick={address ? () => mint() : () => setWalletModalOpen(true)}
-              width="auto"
-            />
-          </div>
         </div>
       </div>
       <TxConfirmationModal
