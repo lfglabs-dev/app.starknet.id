@@ -58,7 +58,6 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
         const domainKind = getDomainKind(domain);
 
         function getIdentityImage(domainKind: DomainKind): ReactNode {
-          console.log(domainKind);
           switch (domainKind) {
             case "braavos":
               return (
