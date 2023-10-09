@@ -46,7 +46,7 @@
     font-style: normal;
     font-weight: 400;
     line-height: 32px; /* 106.667% */
-    margin-bottom: 20px;
+    margin-bottom: 32px;
 }
 
 .nftSection {
@@ -54,11 +54,7 @@
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-}
-
-.nftCard {
-    flex-basis: 25%;
-    padding: 0 10px;
+    gap: 32px;
 }
   
 .nftImg {
@@ -67,7 +63,6 @@
     overflow: hidden;
     box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
     border-radius: 24px;
-    margin: 1rem auto;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -84,7 +79,6 @@
 .nftHovered {
     height: 180px;
     width: 180px;
-    margin: 1rem auto;
     border-radius: 24px;
     border: 2px solid var(--primary);
     background:#FFF;
