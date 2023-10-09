@@ -48,10 +48,12 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     setSelectedPic(nft);
   };
 
-  const goBack = () => {
+  const goBack = (cancel: boolean) => {
     setOpenModal(false);
-    openTxModal();
-    back();
+    if (!cancel) {
+      openTxModal();
+      back();
+    }
   };
 
   return (

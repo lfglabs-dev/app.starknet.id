@@ -7,18 +7,14 @@ import ClickableAction from "./iconsComponents/clickableAction";
 import theme from "../../styles/theme";
 import DoneFilledIcon from "./iconsComponents/icons/doneFilledIcon";
 import ArrowLeftIcon from "./iconsComponents/icons/arrowLeftIcon";
-import {
-  useAccount,
-  useContractWrite,
-  useTransactionManager,
-} from "@starknet-react/core";
+import { useContractWrite, useTransactionManager } from "@starknet-react/core";
 import { Call } from "starknet";
 import registerCalls from "../../utils/registerCalls";
 import { hexToDecimal } from "../../utils/feltService";
 import { getImgUrl } from "../../utils/stringService";
 
 type ModalProfilePicProps = {
-  closeModal: () => void;
+  closeModal: (cancel: boolean) => void;
   open: boolean;
   nft: StarkscanNftProps;
   id: string;
@@ -32,7 +28,6 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   nft,
   id,
 }) => {
-  const { address } = useAccount();
   const [callData, setCallData] = useState<Call[]>([]);
   const { addTransaction } = useTransactionManager();
   const { writeAsync: execute, data: updateData } = useContractWrite({
@@ -53,11 +48,9 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
 
   useEffect(() => {
     if (!updateData?.transaction_hash) return;
-
-    // todo: add tx, close modal, goback to profile & show notification on approved tx
     addTransaction({ hash: updateData.transaction_hash });
     setPfpTxHash(updateData.transaction_hash);
-    closeModal();
+    closeModal(false);
   }, [updateData]);
 
   return (
@@ -77,7 +70,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
           src="/leaves/new/leavesGroup04.svg"
           className={ppStyles.leavesRight}
         />
-        <button className={styles.menu_close} onClick={closeModal}>
+        <button className={styles.menu_close} onClick={() => closeModal(true)}>
           <svg viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -89,7 +82,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
         </button>
         <p className={ppStyles.modalTitle}>Do you want to add this NFT?</p>
         {nft?.image_url ? (
-          <div className={ppStyles.nftImg}>
+          <div className={`${ppStyles.nftImg} mx-auto my-5`}>
             <img src={getImgUrl(nft.image_url)} alt={`Image of ${nft.name}`} />
           </div>
         ) : null}
@@ -107,7 +100,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
             description=""
             onClick={() => execute()}
           />
-          <div className={ppStyles.modalBack} onClick={closeModal}>
+          <div className={ppStyles.modalBack} onClick={() => closeModal(true)}>
             <ArrowLeftIcon width="24" color={theme.palette.secondary.main} />
             <p>No, Cancel</p>
           </div>
