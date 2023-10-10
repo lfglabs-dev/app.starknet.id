@@ -8,14 +8,13 @@ import {
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import { Screen } from "./discord";
 import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
 import { posthog } from "posthog-js";
-import TxConfirmationModal from "../components/UI/txConfirmationModal";
 import { Call } from "starknet";
+import VerifyFirstStep from "../components/verify/verifyFirstStep";
 
 type SignRequestData = {
   status: Status;
@@ -38,7 +37,6 @@ const Github: NextPage = () => {
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Call | undefined>();
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   useEffect(() => {
     if (!tokenId) {
@@ -126,11 +124,11 @@ const Github: NextPage = () => {
         !transactionData?.status.includes("ACCEPTED") &&
         transactionData?.status !== "PENDING"
       ) {
-        setIsTxModalOpen(true);
         posthog?.capture("githubVerificationTx");
         addTransaction({
           hash: githubVerificationData?.transaction_hash ?? "",
         });
+        router.push(`/identities/${tokenId}`);
       } else if (transactionError) {
         setScreen("error");
       }
@@ -157,16 +155,13 @@ const Github: NextPage = () => {
             (!isConnected ? (
               <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
             ) : (
-              <>
-                <h1 className="sm:text-5xl text-5xl mt-4">
-                  It&apos;s time to verify your github on chain !
-                </h1>
-                <div className="mt-8">
-                  <Button disabled={Boolean(!calls)} onClick={verifyGithub}>
-                    Verify my github
-                  </Button>
-                </div>
-              </>
+              <VerifyFirstStep
+                onClick={verifyGithub}
+                disabled={Boolean(!calls)}
+                buttonLabel="Verify my Github"
+                title="It's time to verify your github on chain !"
+                subtitle="Safeguard your account with our network verification page"
+              />
             ))}
           {errorScreen && (
             <ErrorScreen
@@ -174,15 +169,6 @@ const Github: NextPage = () => {
               buttonText="Retry to verify"
             />
           )}
-          <TxConfirmationModal
-            txHash={githubVerificationData?.transaction_hash}
-            isTxModalOpen={isTxModalOpen}
-            closeModal={() => {
-              setIsTxModalOpen(false);
-              router.push(`/identities/${tokenId}`);
-            }}
-            title="Your transaction is on it's way !"
-          />
         </div>
       </div>
     </div>

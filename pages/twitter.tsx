@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "../styles/Home.module.css";
+import homeStyles from "../styles/Home.module.css";
 import {
   useAccount,
   useContractWrite,
@@ -8,14 +8,13 @@ import {
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import { Screen } from "./discord";
 import { NextPage } from "next";
 import { stringToHex } from "../utils/feltService";
 import { posthog } from "posthog-js";
-import TxConfirmationModal from "../components/UI/txConfirmationModal";
 import { Call } from "starknet";
+import VerifyFirstStep from "../components/verify/verifyFirstStep";
 
 type SignRequestData = {
   status: Status;
@@ -38,7 +37,6 @@ const Twitter: NextPage = () => {
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Call | undefined>();
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   useEffect(() => {
     if (!tokenId) {
@@ -128,11 +126,11 @@ const Twitter: NextPage = () => {
         !transactionData?.status.includes("ACCEPTED") &&
         transactionData?.status !== "PENDING"
       ) {
-        setIsTxModalOpen(true);
         posthog?.capture("twitterVerificationTx");
         addTransaction({
           hash: twitterVerificationData?.transaction_hash ?? "",
         });
+        router.push(`/identities/${tokenId}`);
       } else if (transactionError) {
         setScreen("error");
       }
@@ -152,23 +150,20 @@ const Twitter: NextPage = () => {
   const errorScreen = isConnected && screen === "error";
 
   return (
-    <div className={styles.screen}>
-      <div className={styles.wrapperScreen}>
-        <div className={styles.container}>
+    <div className={homeStyles.screen}>
+      <div className={homeStyles.wrapperScreen}>
+        <div className={homeStyles.container}>
           {screen === "verifyTwitter" &&
             (!isConnected ? (
               <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
             ) : (
-              <>
-                <h1 className="sm:text-5xl text-5xl mt-4">
-                  It&apos;s time to verify your twitter on chain !
-                </h1>
-                <div className="mt-8">
-                  <Button disabled={Boolean(!calls)} onClick={verifyTwitter}>
-                    Verify my Twitter
-                  </Button>
-                </div>
-              </>
+              <VerifyFirstStep
+                onClick={verifyTwitter}
+                disabled={Boolean(!calls)}
+                buttonLabel="Verify my Twitter"
+                title="It's time to verify your twitter on chain !"
+                subtitle="Safeguard your account with our network verification page"
+              />
             ))}
           {errorScreen && (
             <ErrorScreen
@@ -176,15 +171,6 @@ const Twitter: NextPage = () => {
               buttonText="Retry to verify"
             />
           )}
-          <TxConfirmationModal
-            txHash={twitterVerificationData?.transaction_hash}
-            isTxModalOpen={isTxModalOpen}
-            closeModal={() => {
-              setIsTxModalOpen(false);
-              router.push(`/identities/${tokenId}`);
-            }}
-            title="Your transaction is on it's way !"
-          />
         </div>
       </div>
     </div>
