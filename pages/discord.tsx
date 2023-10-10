@@ -8,13 +8,12 @@ import {
 } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import Button from "../components/UI/button";
 import ErrorScreen from "../components/UI/screens/errorScreen";
-import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
 import { posthog } from "posthog-js";
-import TxConfirmationModal from "../components/UI/txConfirmationModal";
 import { Call } from "starknet";
+import VerifyFirstStep from "../components/verify/verifyFirstStep";
+import identityChangeCalls from "../utils/callData/identityChangeCalls";
 
 export type Screen =
   | "verifyDiscord"
@@ -22,30 +21,19 @@ export type Screen =
   | "verifyTwitter"
   | "verifyGithub";
 
-type SignRequestData = {
-  status: Status;
-  username: string;
-  user_id: number;
-  sign0: string;
-  sign1: string;
-  timestamp: number;
-  discriminator: string;
-};
-
 const Discord: NextPage = () => {
   const router = useRouter();
   const [isConnected, setIsConnected] = useState(true);
   const routerCode: string = router.query.code as string;
   //Server Sign Request
   const [signRequestData, setSignRequestData] = useState<
-    SignRequestData | ErrorRequestData
+    DiscordSignRequestData | ErrorRequestData
   >();
   const { addTransaction } = useTransactionManager();
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Call | undefined>();
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   useEffect(() => {
     if (!tokenId) {
@@ -60,18 +48,18 @@ const Discord: NextPage = () => {
       return;
     }
 
-    setCalls({
-      contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
-      entrypoint: "write_confirmation",
-      calldata: [
+    setCalls(
+      identityChangeCalls.writeVerifierData(
         tokenId,
-        (signRequestData as SignRequestData).timestamp.toString(),
-        stringToHex("discord"),
-        (signRequestData as SignRequestData).user_id.toString(),
-        (signRequestData as SignRequestData).sign0,
-        (signRequestData as SignRequestData).sign1,
-      ],
-    });
+        (signRequestData as DiscordSignRequestData).timestamp,
+        "discord",
+        (signRequestData as DiscordSignRequestData).user_id,
+        [
+          (signRequestData as DiscordSignRequestData).sign0,
+          (signRequestData as DiscordSignRequestData).sign1,
+        ]
+      )
+    );
   }, [signRequestData, tokenId]);
 
   //Set discord code
@@ -135,11 +123,11 @@ const Discord: NextPage = () => {
         !transactionData?.status.includes("ACCEPTED") &&
         transactionData?.status !== "PENDING"
       ) {
-        setIsTxModalOpen(true);
         posthog?.capture("discordVerificationTx");
         addTransaction({
           hash: discordVerificationData?.transaction_hash ?? "",
         });
+        router.push(`/identities/${tokenId}`);
       } else if (transactionError) {
         setScreen("error");
       }
@@ -166,16 +154,13 @@ const Discord: NextPage = () => {
             (!isConnected ? (
               <h1 className="sm:text-5xl text-5xl">You need to connect !</h1>
             ) : (
-              <>
-                <h1 className="sm:text-5xl text-5xl mt-4">
-                  It&apos;s time to verify your discord on chain !
-                </h1>
-                <div className="mt-8">
-                  <Button disabled={Boolean(!calls)} onClick={verifyDiscord}>
-                    Verify my Discord
-                  </Button>
-                </div>
-              </>
+              <VerifyFirstStep
+                onClick={verifyDiscord}
+                disabled={Boolean(!calls)}
+                buttonLabel="Verify my Discord"
+                title="It's time to verify your discord on chain !"
+                subtitle="Safeguard your account with our network verification page"
+              />
             ))}
           {errorScreen && (
             <ErrorScreen
@@ -185,15 +170,6 @@ const Discord: NextPage = () => {
           )}
         </div>
       </div>
-      <TxConfirmationModal
-        txHash={discordVerificationData?.transaction_hash}
-        isTxModalOpen={isTxModalOpen}
-        closeModal={() => {
-          setIsTxModalOpen(false);
-          router.push(`/identities/${tokenId}`);
-        }}
-        title="Your transaction is on it's way !"
-      />
     </div>
   );
 };

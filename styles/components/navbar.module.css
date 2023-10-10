@@ -6,10 +6,12 @@
   cursor: pointer;
   font-weight: 600;
   color: var(--secondary);
+  text-transform: underline;
+  transition: 0.3s ease-in-out;
 }
 
-.menuItem {
-  text-transform: underline;
+.menuItem:hover {
+  opacity: 0.7;
 }
 
 .menuItemSmall {

@@ -29,15 +29,11 @@ export function getPriceFromDomain(duration: number, domain: string): bigint {
 }
 
 export function getPriceFromDomains(
-  domains: Record<string, boolean>,
+  domains: string[],
   duration: number
 ): bigint {
-  const domainsString: string[] = Object.entries(domains)
-    .filter(([domainUnsued, isSelected]) => isSelected)
-    .map(([domain]) => domain);
-
   // Calculate the sum of all prices with getPriceFromDomain
-  return domainsString.reduce(
+  return domains.reduce(
     (acc, domain) => acc + getPriceFromDomain(duration, domain),
     BigInt(0)
   );

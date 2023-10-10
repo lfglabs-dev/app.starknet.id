@@ -56,3 +56,22 @@ type Discount = {
   title: { desc: string; catch: string };
   image?: string;
 };
+
+type SignRequestData = {
+  status: Status;
+  name: string;
+  user_id: string;
+  sign0: string;
+  sign1: string;
+  timestamp: number;
+};
+
+type DiscordSignRequestData = {
+  status: Status;
+  username: string;
+  user_id: number;
+  sign0: string;
+  sign1: string;
+  timestamp: number;
+  discriminator: string;
+};

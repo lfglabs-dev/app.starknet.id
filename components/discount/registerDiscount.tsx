@@ -27,7 +27,7 @@ import RegisterCheckboxes from "../domains/registerCheckboxes";
 import RegisterSummary from "../domains/registerSummary";
 import salesTax from "sales-tax";
 import Wallets from "../UI/wallets";
-import registerCalls from "../../utils/registerCalls";
+import registrationCalls from "../../utils/callData/registrationCalls";
 import UsForm from "../domains/usForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import ArrowLeftIcon from "../UI/iconsComponents/icons/arrows/arrowLeftIcon";
@@ -83,7 +83,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     });
   const { writeAsync: execute, data: registerData } = useContractWrite({
     // calls: renewalBox
-    //   ? callData.concat(registerCalls.renewal(encodedDomain, price))
+    //   ? callData.concat(registrationCalls.renewal(encodedDomain, price))
     //   : callData,
     calls: callData,
   });
@@ -161,9 +161,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       hexToDecimal(address) === hexToDecimal(targetAddress);
     // Common calls
     const calls = [
-      registerCalls.mint(newTokenId),
-      registerCalls.approve(price),
-      registerCalls.buy_discounted(
+      registrationCalls.mint(newTokenId),
+      registrationCalls.approve(price),
+      registrationCalls.buy_discounted(
         encodedDomain,
         newTokenId,
         targetAddress,
@@ -175,12 +175,12 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
     // If the user is a US resident, we add the sales tax
     if (salesTaxRate) {
-      calls.unshift(registerCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+      calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
     }
 
     // If the user do not have a main domain and the address match
     if (addressesMatch && !hasMainDomain) {
-      calls.push(registerCalls.addressToDomain(encodedDomain));
+      calls.push(registrationCalls.addressToDomain(encodedDomain));
     }
 
     // Merge and set the call data
@@ -198,7 +198,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
   useEffect(() => {
     if (!registerData?.transaction_hash) return;
-    posthog?.capture("register", { onForceEmail });
+    posthog?.capture("register");
 
     // register the metadata to the sales manager db
     fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
@@ -236,22 +236,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     }
   }, [isUsResident, usState, price]);
 
-  // AB Testing
-  const [onForceEmail, setOnForceEmail] = useState<boolean>();
-  useEffect(() => {
-    posthog.onFeatureFlags(function () {
-      // feature flags should be available at this point
-      if (
-        posthog.getFeatureFlag("onforceEmail") == "test" ||
-        process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-      ) {
-        setOnForceEmail(true);
-      } else {
-        setOnForceEmail(false);
-      }
-    });
-  }, []);
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -266,7 +250,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
             <TextField
-              helperText="Please understand that entering your email is not mandatory to register a domain, we won't share your email with anyone. We'll use it only to inform you about your domain and our news."
+              helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news, you can unsubscribe at any moment."
               label="Email address"
               value={email}
               onChange={(e) => changeEmail(e.target.value)}

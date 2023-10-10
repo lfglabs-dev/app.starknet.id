@@ -25,6 +25,7 @@ const RenewalDomainsBox: FunctionComponent<RenewalDomainsBoxProps> = ({
 
   useEffect(() => {
     if (address) {
+      setIsLoading(true);
       fetch(
         `${
           process.env.NEXT_PUBLIC_SERVER_LINK
@@ -44,6 +45,8 @@ const RenewalDomainsBox: FunctionComponent<RenewalDomainsBoxProps> = ({
           );
           setIsLoading(false);
         });
+    } else {
+      setIsLoading(false);
     }
   }, [address]);
 
@@ -74,7 +77,7 @@ const RenewalDomainsBox: FunctionComponent<RenewalDomainsBoxProps> = ({
         {ownedDomains.length === 0 ? (
           <p className={styles.legend}>
             You don&apos;t have any domain to renew or you&apos;re not connected
-            to your any wallet
+            to your wallet
           </p>
         ) : (
           ownedDomains.map((identity: FullId, index) => (

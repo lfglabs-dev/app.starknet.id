@@ -33,7 +33,7 @@ import NumberTextField from "../UI/numberTextField";
 import RegisterSummary from "./registerSummary";
 import salesTax from "sales-tax";
 import Wallets from "../UI/wallets";
-import registerCalls from "../../utils/registerCalls";
+import registrationCalls from "../../utils/callData/registrationCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import { getPriceFromDomain } from "../../utils/priceService";
 
@@ -87,7 +87,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     });
   const { writeAsync: execute, data: registerData } = useContractWrite({
     // calls: renewalBox
-    //   ? callData.concat(registerCalls.renewal(encodedDomain, price))
+    //   ? callData.concat(registrationCalls.renewal(encodedDomain, price))
     //   : callData,
     calls: callData,
   });
@@ -176,8 +176,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // Common calls
     const calls = [
-      registerCalls.approve(price),
-      registerCalls.buy(
+      registrationCalls.approve(price),
+      registrationCalls.buy(
         encodedDomain,
         tokenId === 0 ? newTokenId : tokenId,
         targetAddress,
@@ -189,17 +189,17 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // If the user is a US resident, we add the sales tax
     if (salesTaxRate) {
-      calls.unshift(registerCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+      calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
     }
 
     // If the user choose to mint a new identity
     if (tokenId === 0) {
-      calls.unshift(registerCalls.mint(newTokenId)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+      calls.unshift(registrationCalls.mint(newTokenId)); // IMPORTANT: We use unshift to put the call at the beginning of the array
     }
 
     // If the user do not have a main domain and the address match
     if (addressesMatch && !hasMainDomain) {
-      calls.push(registerCalls.addressToDomain(encodedDomain));
+      calls.push(registrationCalls.addressToDomain(encodedDomain));
     }
 
     // Merge and set the call data
@@ -219,9 +219,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
   useEffect(() => {
     if (!registerData?.transaction_hash || !salt) return;
-    posthog?.capture("register", {
-      onForceEmail,
-    });
+    posthog?.capture("register");
 
     // register the metadata to the sales manager db
     fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
@@ -272,22 +270,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     }
   }, [isUsResident, usState, price]);
 
-  // AB Testing
-  const [onForceEmail, setOnForceEmail] = useState<boolean>();
-  useEffect(() => {
-    posthog.onFeatureFlags(function () {
-      // feature flags should be available at this point
-      if (
-        posthog.getFeatureFlag("onforceEmail") == "test" ||
-        process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-      ) {
-        setOnForceEmail(true);
-      } else {
-        setOnForceEmail(false);
-      }
-    });
-  }, []);
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -297,18 +279,16 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
             <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            {onForceEmail ? (
-              <TextField
-                helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
-                label="Email address"
-                value={email}
-                onChange={(e) => changeEmail(e.target.value)}
-                color="secondary"
-                error={emailError}
-                errorMessage={"Please enter a valid email address"}
-                type="email"
-              />
-            ) : null}
+            <TextField
+              helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
+              label="Email address"
+              value={email}
+              onChange={(e) => changeEmail(e.target.value)}
+              color="secondary"
+              error={emailError}
+              errorMessage={"Please enter a valid email address"}
+              type="email"
+            />
 
             <UsForm
               isUsResident={isUsResident}
@@ -377,7 +357,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
                 invalidBalance ||
                 !termsBox ||
                 (isUsResident && !usState) ||
-                (emailError && onForceEmail)
+                emailError
               }
             >
               {!termsBox
@@ -386,7 +366,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
                 ? "We need your US State"
                 : invalidBalance
                 ? "You don't have enough eth"
-                : emailError && onForceEmail
+                : emailError
                 ? "Enter a valid Email"
                 : "Register my domain"}
             </Button>

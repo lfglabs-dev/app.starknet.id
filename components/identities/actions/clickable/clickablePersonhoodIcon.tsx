@@ -2,13 +2,11 @@ import { Modal, Tooltip, CircularProgress } from "@mui/material";
 import React, {
   FunctionComponent,
   useCallback,
-  useContext,
   useEffect,
   useState,
 } from "react";
 import styles from "../../../../styles/components/icons.module.css";
 import modalStyles from "../../../../styles/components/modalMessage.module.css";
-import { StarknetIdJsContext } from "../../../../context/StarknetIdJsProvider";
 import "@anima-protocol/personhood-sdk-react/style.css";
 import {
   Personhood,
@@ -23,24 +21,24 @@ import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import theme from "../../../../styles/theme";
 import { posthog } from "posthog-js";
+import identityChangeCalls from "../../../../utils/callData/identityChangeCalls";
 
 type ClickablePersonhoodIconProps = {
   width: string;
   tokenId: string;
   isOwner: boolean;
   domain?: string;
+  isVerified?: boolean;
 };
 
 const ClickablePersonhoodIcon: FunctionComponent<
   ClickablePersonhoodIconProps
-> = ({ width, tokenId, isOwner, domain }) => {
+> = ({ width, tokenId, isOwner, domain, isVerified }) => {
   const { account, address } = useAccount();
-  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [sessionId, setSessionId] = useState<string | undefined>();
-  const [isVerified, setIsVerified] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [callData, setCallData] = useState<Call[]>([]);
+  const [callData, setCallData] = useState<Call>();
   const { addTransaction } = useTransactionManager();
   const { writeAsync: execute, data: verifierData } = useContractWrite({
     calls: callData,
@@ -49,30 +47,12 @@ const ClickablePersonhoodIcon: FunctionComponent<
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
 
   useEffect(() => {
-    starknetIdNavigator
-      ?.getVerifierData(
-        parseInt(tokenId),
-        "proof_of_personhood",
-        process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT
-      )
-      .then((response) => {
-        if (response.toString(10) !== "0") {
-          console.log("response", response.toString(10));
-          setIsVerified(true);
-        }
-      })
-      .catch(() => {
-        return;
-      });
-  }, [starknetIdNavigator]);
-
-  useEffect(() => {
     if (!verifierData?.transaction_hash) return;
     addTransaction({ hash: verifierData?.transaction_hash });
   }, [verifierData]);
 
   useEffect(() => {
-    if (callData && callData.length > 0 && !isVerified && isLoading) {
+    if (callData && !isVerified && isLoading) {
       executeVerification();
     }
   }, [isLoading, callData]);
@@ -86,9 +66,10 @@ const ClickablePersonhoodIcon: FunctionComponent<
   };
 
   const initAnimaSession = () => {
-    fetch("/api/anima/init_session")
+    fetch(`/api/anima/init_session?address=${address}`)
       .then((response) => response.json())
       .then((result) => {
+        console.log("result", result);
         if (result && result.session_id) setSessionId(result.session_id);
       })
       .catch((error) =>
@@ -115,34 +96,27 @@ const ClickablePersonhoodIcon: FunctionComponent<
 
   const executeVerification = () => {
     execute().finally(() => {
-      setCallData([]);
-      setIsVerified(true);
+      setCallData(undefined);
       setIsLoading(false);
       setIsOpen(false);
+      setSessionId(undefined);
       posthog?.capture("popVerificationTx");
     });
   };
-
   const getSignature = () => {
     fetch(`/api/anima/get_signature?sessionId=${sessionId}`)
       .then((response) => response.json())
       .then((sig) => {
         const hexSessionId = "0x" + (sessionId as string).replace(/-/g, "");
-        setCallData([
-          {
-            contractAddress: process.env
-              .NEXT_PUBLIC_VERIFIER_POP_CONTRACT as string,
-            entrypoint: "write_confirmation",
-            calldata: [
-              tokenId,
-              Math.floor(Date.now() / 1000),
-              shortString.encodeShortString("proof_of_personhood"),
-              hexToDecimal(hexSessionId),
-              sig.r,
-              sig.s,
-            ],
-          },
-        ]);
+        setCallData(
+          identityChangeCalls.writeVerifierData(
+            tokenId,
+            Math.floor(Date.now() / 1000 + 15 * 60),
+            shortString.encodeShortString("proof_of_personhood"),
+            hexToDecimal(hexSessionId),
+            [sig.r, sig.s]
+          )
+        );
       })
       .catch((error) =>
         console.log("An error occured while fetching signture", error)

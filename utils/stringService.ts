@@ -164,3 +164,13 @@ export function isValidDomain(domain: string | undefined): boolean | string {
   for (const char of domain) if (!basicAlphabet.includes(char)) return char;
   return true;
 }
+
+export function selectedDomainsToArray(
+  selectedDomains: Record<string, boolean>
+): string[] {
+  const domainsString: string[] = Object.entries(selectedDomains)
+    .filter(([, isSelected]) => isSelected)
+    .map(([domain]) => domain);
+
+  return domainsString;
+}

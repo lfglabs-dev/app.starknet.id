@@ -8,8 +8,10 @@ import {
   useContractWrite,
   useTransactionManager,
 } from "@starknet-react/core";
-import { utils } from "starknetid.js";
-import { getDomainWithStark, isValidEmail } from "../../utils/stringService";
+import {
+  isValidEmail,
+  selectedDomainsToArray,
+} from "../../utils/stringService";
 import { gweiToEth, applyRateToBigInt } from "../../utils/feltService";
 import { Abi, Call } from "starknet";
 import { posthog } from "posthog-js";
@@ -25,13 +27,13 @@ import Wallets from "../UI/wallets";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import { getPriceFromDomains } from "../../utils/priceService";
 import RenewalDomainsBox from "./renewalDomainsBox";
+import registrationCalls from "../../utils/callData/registrationCalls";
 
 type RenewalProps = {
-  domain: string;
   groups: string[];
 };
 
-const Renewal: FunctionComponent<RenewalProps> = ({ domain, groups }) => {
+const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
@@ -44,13 +46,9 @@ const Renewal: FunctionComponent<RenewalProps> = ({ domain, groups }) => {
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract: etherContract } = useEtherContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-  const encodedDomain = utils
-    .encodeDomain(domain)
-    .map((element) => element.toString())[0];
   const [termsBox, setTermsBox] = useState<boolean>(true);
-  const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  // const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
-  const [sponsor, setSponsor] = useState<string>("0");
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [selectedDomains, setSelectedDomains] =
@@ -65,15 +63,14 @@ const Renewal: FunctionComponent<RenewalProps> = ({ domain, groups }) => {
     });
   const { writeAsync: execute, data: renewData } = useContractWrite({
     // calls: renewalBox
-    //   ? callData.concat(registerCalls.renewal(encodedDomain, price))
+    //   ? callData.concat(registrationCalls.renewal(encodedDomain, price))
     //   : callData,
     calls: callData,
   });
-  const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
-    new Map()
-  );
-
+  const [domainsMinting, setDomainsMinting] =
+    useState<Record<string, boolean>>();
   const { addTransaction } = useTransactionManager();
+  const duration = 1; // on year by default
 
   useEffect(() => {
     if (!renewData?.transaction_hash || !salt) return;
@@ -121,7 +118,12 @@ const Renewal: FunctionComponent<RenewalProps> = ({ domain, groups }) => {
 
   useEffect(() => {
     if (!selectedDomains) return;
-    setPrice(getPriceFromDomains(selectedDomains, 1).toString());
+    setPrice(
+      getPriceFromDomains(
+        selectedDomainsToArray(selectedDomains),
+        duration
+      ).toString()
+    );
   }, [selectedDomains]);
 
   useEffect(() => {
@@ -142,20 +144,6 @@ const Renewal: FunctionComponent<RenewalProps> = ({ domain, groups }) => {
     }
   }, [balance, price]);
 
-  useEffect(() => {
-    const referralData = localStorage.getItem("referralData");
-    if (referralData) {
-      const data = JSON.parse(referralData);
-      if (data.sponsor && data?.expiry >= new Date().getTime()) {
-        setSponsor(data.sponsor);
-      } else {
-        setSponsor("0");
-      }
-    } else {
-      setSponsor("0");
-    }
-  }, []);
-
   function changeEmail(value: string): void {
     setEmail(value);
     setEmailError(isValidEmail(value) ? false : true);
@@ -173,13 +161,32 @@ const Renewal: FunctionComponent<RenewalProps> = ({ domain, groups }) => {
     }
   }, [isUsResident, usState, price]);
 
+  useEffect(() => {
+    if (selectedDomains) {
+      const calls = [
+        registrationCalls.approve(price),
+        ...registrationCalls.multiCallRenewal(
+          selectedDomainsToArray(selectedDomains),
+          duration
+        ),
+      ];
+
+      // If the user is a US resident, we add the sales tax
+      if (salesTaxRate) {
+        calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+      }
+
+      setCallData(calls);
+    }
+  }, [selectedDomains, price, salesTaxRate]);
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.form}>
           <div className="flex flex-col items-start gap-4 self-stretch">
             <p className={styles.legend}>Your renewal</p>
-            <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
+            <h3 className={styles.domain}>Renew Your domain(s)</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
             <TextField
@@ -215,27 +222,26 @@ const Renewal: FunctionComponent<RenewalProps> = ({ domain, groups }) => {
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
-            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+            // onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
-            renewalBox={renewalBox}
+            // renewalBox={renewalBox}
           />
           {address ? (
             <Button
               onClick={() =>
                 execute().then(() => {
-                  setDomainsMinting((prev) =>
-                    new Map(prev).set(encodedDomain.toString(), true)
-                  );
+                  setDomainsMinting(selectedDomains);
                 })
               }
               disabled={
-                (domainsMinting.get(encodedDomain) as boolean) ||
+                domainsMinting === selectedDomains ||
                 !address ||
                 invalidBalance ||
                 !termsBox ||
                 (isUsResident && !usState) ||
-                emailError
+                emailError ||
+                !selectedDomains
               }
             >
               {!termsBox
@@ -244,9 +250,11 @@ const Renewal: FunctionComponent<RenewalProps> = ({ domain, groups }) => {
                 ? "We need your US State"
                 : invalidBalance
                 ? "You don't have enough eth"
+                : !selectedDomains
+                ? "Select a domain to renew"
                 : emailError
                 ? "Enter a valid Email"
-                : "Register my domain"}
+                : "Renew my domain(s)"}
             </Button>
           ) : (
             <Button onClick={() => setWalletModalOpen(true)}>
