@@ -10,6 +10,9 @@ module.exports = {
         background: "#FFF9F0",
       },
     },
+    fontFamily: {
+      quickZap: ["QuickZap"],
+    },
   },
   plugins: [],
 };

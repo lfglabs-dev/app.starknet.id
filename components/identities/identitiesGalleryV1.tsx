@@ -22,7 +22,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
   const router = useRouter();
   return (
     // Our Indexer
-    <>
+    <div className={styles.galeryContainer}>
       {identities.map((identity, index) => {
         return (
           <div key={index} className={styles.imageGallery}>
@@ -45,9 +45,12 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
               alt="avatar"
               onClick={() => router.push(`/identities/${identity.id}`)}
             />
-            {identity.domain ? (
-              <p className="font-bold mt-2">{minifyDomain(identity.domain)}</p>
-            ) : null}
+
+            <p className="font-bold font-quickZap">
+              {identity.domain
+                ? minifyDomain(identity.domain)
+                : `ID: ${identity.id}`}
+            </p>
           </div>
         );
       })}
@@ -61,15 +64,19 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                 <img
                   width={150}
                   height={150}
-                  src={"/braavos/braavosLogo.svg"}
+                  src={"/braavos/braavosLogoWithBackground.webp"}
                   alt="avatar"
                   onClick={() => router.push(`/externaldomains/${domain}`)}
+                  className="rounded-[16px]"
                 />
               );
             case "xplorer":
               return (
-                <div onClick={() => router.push(`/externaldomains/${domain}`)}>
-                  <ArgentIcon width={"150px"} color="#f36a3d" />
+                <div
+                  onClick={() => router.push(`/externaldomains/${domain}`)}
+                  className="bg-[#ffebd8] p-[16px] rounded-[16px]"
+                >
+                  <ArgentIcon width={"118px"} color="#f36a3d" />
                 </div>
               );
             default:
@@ -87,35 +94,20 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
 
         return (
           <div key={index} className={styles.imageGallery}>
+            {getIdentityImage(domainKind)}
+            <p className="font-bold font-quickZap">{minifyDomain(domain)}</p>
             <div className={styles.expiryWarning}>
               <Tooltip
                 title="This is domain is an external domain and is not an identity, you won't see it on your wallet."
                 arrow
               >
-                <ErrorIcon color="error" />
+                <ErrorIcon color="warning" />
               </Tooltip>
             </div>
-            {getIdentityImage(domainKind)}
-            <p className="font-bold mt-2">{minifyDomain(domain)}</p>
           </div>
         );
       })}
-    </>
-
-    // // Aspect indexer
-    // <>
-    //   {identities.map((asset, index) => (
-    //     <div key={index} className={styles.imageGallery}>
-    //       <img
-    //         width={150}
-    //         height={150}
-    //         src={`https://www.starknet.id/api/identicons/${asset.token_id}`}
-    //         alt="avatar"
-    //         onClick={() => router.push(`/identities/${asset.token_id}`)}
-    //       />
-    //     </div>
-    //   ))}
-    // </>
+    </div>
   );
 };
 
