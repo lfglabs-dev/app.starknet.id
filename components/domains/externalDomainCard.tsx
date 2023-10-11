@@ -44,12 +44,13 @@ const ExternalDomainCard: FunctionComponent<ExternalDomainCardProps> = ({
             <img
               src={
                 domainKind === "braavos"
-                  ? "/braavos/braavosLogo.svg"
+                  ? "/braavos/braavosLogoWithBackground.webp"
                   : `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/0`
               }
               height={150}
               width={150}
               alt="identicon"
+              className="rounded-[16px]"
             />
           </div>
           <div className="flex flex-col justify-center items-center">

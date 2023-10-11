@@ -38,3 +38,11 @@ export function getPriceFromDomains(
     BigInt(0)
   );
 }
+
+export function areDomainSelected(
+  selectedDomains: Record<string, boolean> | undefined
+): boolean {
+  if (!selectedDomains) return false;
+
+  return Object.values(selectedDomains).some((isSelected) => isSelected);
+}

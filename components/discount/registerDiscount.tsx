@@ -30,8 +30,7 @@ import Wallets from "../UI/wallets";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import UsForm from "../domains/usForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
-import ArrowLeftIcon from "../UI/iconsComponents/icons/arrows/arrowLeftIcon";
-import theme from "../../styles/theme";
+import BackButton from "../UI/backButton";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -240,10 +239,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.form}>
-          <div className={styles.backArrow} onClick={() => goBack()}>
-            <ArrowLeftIcon width="24px" color={theme.palette.secondary.main} />
-            <p className="ml-2">Back</p>
-          </div>
+          <BackButton onClick={() => goBack()} />
           <div className="flex flex-col items-start gap-4 self-stretch">
             <p className={styles.legend}>Your registration</p>
             <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>

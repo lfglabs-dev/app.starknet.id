@@ -4,6 +4,7 @@ import {
   PRICES,
   getPriceFromDomain,
   getPriceFromDomains,
+  areDomainSelected,
 } from "../../utils/priceService";
 import { generateString } from "../../utils/stringService";
 
@@ -66,5 +67,46 @@ describe("getPriceFromDomains function", () => {
       getPriceFromDomain(2, "qsd") +
       getPriceFromDomain(2, "q.stark");
     expect(getPriceFromDomains(domains, duration)).toEqual(expectedPrice);
+  });
+});
+
+describe("areDomainSelected function", () => {
+  it("should return true if at least one domain is selected", () => {
+    const input1 = {
+      "example.com": true,
+      "test.com": false,
+      "sample.com": false,
+    };
+    expect(areDomainSelected(input1)).toBe(true);
+
+    const input2 = {
+      "example.com": false,
+      "test.com": true,
+      "sample.com": false,
+    };
+    expect(areDomainSelected(input2)).toBe(true);
+  });
+
+  it("should return false if no domains are selected", () => {
+    const input = {
+      "example.com": false,
+      "test.com": false,
+      "sample.com": false,
+    };
+    expect(areDomainSelected(input)).toBe(false);
+  });
+
+  it("should return true if all domains are selected", () => {
+    const input = {
+      "example.com": true,
+      "test.com": true,
+      "sample.com": true,
+    };
+    expect(areDomainSelected(input)).toBe(true);
+  });
+
+  it("should return false if argument is undefined", () => {
+    const input = undefined;
+    expect(areDomainSelected(input)).toBe(false);
   });
 });

@@ -12,9 +12,21 @@
   color: var(--secondary);
   text-align: center;
   font-family: Poppins-Bold;
-  font-size: 20px;
+  font-size: 15px;
   font-style: normal;
   font-weight: 700;
   line-height: 24px; /* 120% */
   letter-spacing: 0.2px;
+}
+
+.arrowIcon {
+  fill: var(--secondary);
+}
+
+.backButton:hover .arrowIcon {
+  fill: #402d28bb;
+}
+
+.backButton:hover .backButtonLabel {
+  opacity: 0.7;
 }

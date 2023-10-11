@@ -20,14 +20,18 @@ import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
 import UsForm from "./usForm";
 import { Divider } from "@mui/material";
-import RegisterCheckboxes from "./registerCheckboxes";
 import RegisterSummary from "./registerSummary";
 import salesTax from "sales-tax";
 import Wallets from "../UI/wallets";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
-import { getPriceFromDomains } from "../../utils/priceService";
+import {
+  areDomainSelected,
+  getPriceFromDomains,
+} from "../../utils/priceService";
 import RenewalDomainsBox from "./renewalDomainsBox";
 import registrationCalls from "../../utils/callData/registrationCalls";
+import BackButton from "../UI/backButton";
+import { useRouter } from "next/router";
 
 type RenewalProps = {
   groups: string[];
@@ -46,7 +50,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract: etherContract } = useEtherContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-  const [termsBox, setTermsBox] = useState<boolean>(true);
+  // const [termsBox, setTermsBox] = useState<boolean>(true);
   // const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [salt, setSalt] = useState<string | undefined>();
@@ -70,6 +74,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [domainsMinting, setDomainsMinting] =
     useState<Record<string, boolean>>();
   const { addTransaction } = useTransactionManager();
+  const router = useRouter();
   const duration = 1; // on year by default
 
   useEffect(() => {
@@ -184,7 +189,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.form}>
-          <div className="flex flex-col items-start gap-4 self-stretch">
+          <BackButton onClick={() => router.back()} />
+          <div className="flex flex-col items-start gap-0 self-stretch">
             <p className={styles.legend}>Your renewal</p>
             <h3 className={styles.domain}>Renew Your domain(s)</h3>
           </div>
@@ -221,12 +227,12 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
             isUsResident={isUsResident}
           />
           <Divider className="w-full" />
-          <RegisterCheckboxes
+          {/* <RegisterCheckboxes
             // onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
             // renewalBox={renewalBox}
-          />
+          /> */}
           {address ? (
             <Button
               onClick={() =>
@@ -238,19 +244,20 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
                 domainsMinting === selectedDomains ||
                 !address ||
                 invalidBalance ||
-                !termsBox ||
+                // !termsBox ||
                 (isUsResident && !usState) ||
                 emailError ||
-                !selectedDomains
+                !areDomainSelected(selectedDomains)
               }
             >
-              {!termsBox
+              {/* {!termsBox
                 ? "Please accept terms & policies"
-                : isUsResident && !usState
+                :  */}
+              {isUsResident && !usState
                 ? "We need your US State"
                 : invalidBalance
                 ? "You don't have enough eth"
-                : !selectedDomains
+                : !areDomainSelected(selectedDomains)
                 ? "Select a domain to renew"
                 : emailError
                 ? "Enter a valid Email"

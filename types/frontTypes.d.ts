@@ -1,6 +1,7 @@
 type IconProps = {
   color: string;
   width: string;
+  className?: string;
 };
 
 type FullId = {

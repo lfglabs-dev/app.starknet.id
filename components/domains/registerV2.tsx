@@ -28,7 +28,6 @@ import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
 import UsForm from "./usForm";
 import { Divider } from "@mui/material";
-import RegisterCheckboxes from "./registerCheckboxes";
 import NumberTextField from "../UI/numberTextField";
 import RegisterSummary from "./registerSummary";
 import salesTax from "sales-tax";
@@ -63,7 +62,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
-  const [termsBox, setTermsBox] = useState<boolean>(true);
   // const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [sponsor, setSponsor] = useState<string>("0");
@@ -318,7 +316,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
               decrementValue={() =>
                 setDuration(duration > 1 ? duration - 1 : duration)
               }
-              defaultValue={duration}
               color="secondary"
               required
             />
@@ -333,12 +330,12 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
             isUsResident={isUsResident}
           />
           <Divider className="w-full" />
-          <RegisterCheckboxes
+          {/* <RegisterCheckboxes
             // onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
             // renewalBox={renewalBox}
-          />
+          /> */}
           {address ? (
             <Button
               onClick={() =>
@@ -355,14 +352,11 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
                 duration < 1 ||
                 !targetAddress ||
                 invalidBalance ||
-                !termsBox ||
                 (isUsResident && !usState) ||
                 emailError
               }
             >
-              {!termsBox
-                ? "Please accept terms & policies"
-                : isUsResident && !usState
+              {isUsResident && !usState
                 ? "We need your US State"
                 : invalidBalance
                 ? "You don't have enough eth"
