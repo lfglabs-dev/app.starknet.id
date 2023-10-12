@@ -13,7 +13,6 @@ import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi, Call } from "starknet";
 import ConfirmationTx from "../../UI/confirmationTx";
 import UsForm from "../../domains/usForm";
-import RegisterCheckboxes from "../../domains/registerCheckboxes";
 import salesTax from "sales-tax";
 import TextField from "../../UI/textField";
 import {
@@ -56,7 +55,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [emailError, setEmailError] = useState<boolean>(true);
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
-  const [termsBox, setTermsBox] = useState<boolean>(true);
+  // const [termsBox, setTermsBox] = useState<boolean>(true);
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: pricingContract } = usePricingContract();
@@ -242,16 +241,16 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                 />
               </>
             ) : null}
-            <>
+            {/* <>
               <RegisterCheckboxes
                 onChangeTermsBox={() => setTermsBox(!termsBox)}
                 termsBox={termsBox}
                 variant="white"
               />
-            </>
-            <div>
+            </> */}
+            <div className={`${!needMedadata ? "mx-auto" : ""}`}>
               <Button
-                disabled={!termsBox || (isUsResident && !usState)}
+                disabled={isUsResident && !usState}
                 onClick={() => {
                   execute();
                 }}
