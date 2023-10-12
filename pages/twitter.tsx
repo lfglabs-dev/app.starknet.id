@@ -11,19 +11,10 @@ import { useRouter } from "next/router";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import { Screen } from "./discord";
 import { NextPage } from "next";
-import { stringToHex } from "../utils/feltService";
 import { posthog } from "posthog-js";
 import { Call } from "starknet";
 import VerifyFirstStep from "../components/verify/verifyFirstStep";
-
-type SignRequestData = {
-  status: Status;
-  name: string;
-  user_id: string;
-  sign0: string;
-  sign1: string;
-  timestamp: number;
-};
+import identityChangeCalls from "../utils/callData/identityChangeCalls";
 
 const Twitter: NextPage = () => {
   const router = useRouter();
@@ -51,18 +42,18 @@ const Twitter: NextPage = () => {
       return;
     }
 
-    setCalls({
-      contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
-      entrypoint: "write_confirmation",
-      calldata: [
+    setCalls(
+      identityChangeCalls.writeVerifierData(
         tokenId,
-        (signRequestData as SignRequestData).timestamp.toString(),
-        stringToHex("twitter"),
-        (signRequestData as SignRequestData).user_id.toString(),
-        (signRequestData as SignRequestData).sign0,
-        (signRequestData as SignRequestData).sign1,
-      ],
-    });
+        (signRequestData as SignRequestData).timestamp,
+        "twitter",
+        (signRequestData as SignRequestData).user_id,
+        [
+          (signRequestData as SignRequestData).sign0,
+          (signRequestData as SignRequestData).sign1,
+        ]
+      )
+    );
   }, [signRequestData, tokenId]);
 
   // ["", "0x74776974746572", "0", [null, null]];
@@ -78,7 +69,7 @@ const Twitter: NextPage = () => {
     }
   }, [account]);
 
-  //Set discord code
+  //Set twitter code
   const [code, setCode] = useState<string>("");
   useEffect(() => {
     setCode(routerCode);

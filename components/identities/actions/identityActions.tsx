@@ -24,8 +24,9 @@ import TxConfirmationModal from "../../UI/txConfirmationModal";
 import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
 import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
 import { Call } from "starknet";
-import registerCalls from "../../../utils/registerCalls";
 import ConfirmationTx from "../../UI/confirmationTx";
+import { useRouter } from "next/router";
+import registrationCalls from "../../../utils/callData/registrationCalls";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -53,6 +54,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const { addTransaction } = useTransactionManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
+  const router = useRouter();
   // AutoRenewals
   const [isAutoRenewalOpen, setIsAutoRenewalOpen] = useState<boolean>(false);
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
@@ -145,7 +147,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   useEffect(() => {
     if (isAutoRenewalEnabled) {
       setDisableRenewalCalldata(
-        registerCalls.disableRenewal(callDataEncodedDomain[1].toString())
+        registrationCalls.disableRenewal(callDataEncodedDomain[1].toString())
       );
     }
   }, [allowance, isAutoRenewalEnabled]);
@@ -209,8 +211,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   description={`Will expire on ${timestampToReadableDate(
                     identity?.domain_expiry ?? 0
                   )}`}
-                  icon={<ChangeIcon width="23" color="#284028" />}
-                  onClick={() => setIsRenewFormOpen(true)}
+                  icon={
+                    <ChangeIcon width="25" color={theme.palette.primary.main} />
+                  }
+                  onClick={() => router.push("/renewal")}
                 />
               ) : null}
               {!identity.is_owner_main && (

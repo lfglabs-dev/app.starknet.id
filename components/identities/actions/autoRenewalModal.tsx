@@ -20,7 +20,7 @@ import {
   computeMetadataHash,
   generateSalt,
 } from "../../../utils/userDataService";
-import registerCalls from "../../../utils/registerCalls";
+import registrationCalls from "../../../utils/callData/registrationCalls";
 import { isValidEmail } from "../../../utils/stringService";
 import { applyRateToBigInt, gweiToEth } from "../../../utils/feltService";
 
@@ -138,7 +138,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     const txMetadataHash = "0x" + metadataHash;
     const finalPrice = Number(price) + Number(salesTaxAmount);
     setCallData(
-      registerCalls.enableRenewal(
+      registrationCalls.enableRenewal(
         callDataEncodedDomain[1].toString(),
         finalPrice.toString(),
         txMetadataHash

@@ -10,20 +10,11 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ErrorScreen from "../components/UI/screens/errorScreen";
 import { Screen } from "./discord";
-import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
 import { posthog } from "posthog-js";
 import { Call } from "starknet";
 import VerifyFirstStep from "../components/verify/verifyFirstStep";
-
-type SignRequestData = {
-  status: Status;
-  name: string;
-  user_id: string;
-  sign0: string;
-  sign1: string;
-  timestamp: number;
-};
+import identityChangeCalls from "../utils/callData/identityChangeCalls";
 
 const Github: NextPage = () => {
   const router = useRouter();
@@ -51,18 +42,18 @@ const Github: NextPage = () => {
       return;
     }
 
-    setCalls({
-      contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
-      entrypoint: "write_confirmation",
-      calldata: [
+    setCalls(
+      identityChangeCalls.writeVerifierData(
         tokenId,
-        (signRequestData as SignRequestData).timestamp.toString(),
-        stringToHex("github"),
+        (signRequestData as SignRequestData).timestamp,
+        "github",
         (signRequestData as SignRequestData).user_id,
-        (signRequestData as SignRequestData).sign0,
-        (signRequestData as SignRequestData).sign1,
-      ],
-    });
+        [
+          (signRequestData as SignRequestData).sign0,
+          (signRequestData as SignRequestData).sign1,
+        ]
+      )
+    );
   }, [signRequestData, tokenId]);
 
   //Manage Connection
@@ -76,7 +67,7 @@ const Github: NextPage = () => {
     }
   }, [account]);
 
-  //Set discord code
+  //Set github code
   const [code, setCode] = useState<string>("");
   useEffect(() => {
     setCode(routerCode);

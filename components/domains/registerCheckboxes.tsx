@@ -2,9 +2,9 @@ import React, { FunctionComponent, useMemo } from "react";
 import { Checkbox } from "@mui/material";
 
 type RegisterCheckboxes = {
-  onChangeTermsBox: () => void;
+  onChangeTermsBox?: () => void;
   onChangeRenewalBox?: () => void;
-  termsBox: boolean;
+  termsBox?: boolean;
   renewalBox?: boolean;
   variant?: "default" | "white";
 };
@@ -53,7 +53,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
             </a>
           </p>
         </div>
-        {renewalBox && (
+        {onChangeRenewalBox ? (
           <div
             className="flex items-center justify-left text-xs cursor-pointer"
             onClick={onChangeRenewalBox}
@@ -63,7 +63,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
               Enable auto-renewal and don&apos;t pay gas for your yearly renewal
             </p>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

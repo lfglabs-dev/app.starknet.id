@@ -8,22 +8,41 @@ export const PRICES = {
   FIVE: BigInt("24657534246575") * BigInt(365),
 };
 
-export function getPriceFromDomain(duration: number, domain: string): string {
+export function getPriceFromDomain(duration: number, domain: string): bigint {
   const domainLength = getDomainLength(domain);
   const durationBigInt = BigInt(duration);
 
   switch (domainLength) {
     case 0:
-      return (durationBigInt * PRICES.ONE).toString();
+      return durationBigInt * PRICES.ONE;
     case 1:
-      return (durationBigInt * PRICES.ONE).toString();
+      return durationBigInt * PRICES.ONE;
     case 2:
-      return (durationBigInt * PRICES.TWO).toString();
+      return durationBigInt * PRICES.TWO;
     case 3:
-      return (durationBigInt * PRICES.THREE).toString();
+      return durationBigInt * PRICES.THREE;
     case 4:
-      return (durationBigInt * PRICES.FOUR).toString();
+      return durationBigInt * PRICES.FOUR;
     default:
-      return (durationBigInt * PRICES.FIVE).toString();
+      return durationBigInt * PRICES.FIVE;
   }
+}
+
+export function getPriceFromDomains(
+  domains: string[],
+  duration: number
+): bigint {
+  // Calculate the sum of all prices with getPriceFromDomain
+  return domains.reduce(
+    (acc, domain) => acc + getPriceFromDomain(duration, domain),
+    BigInt(0)
+  );
+}
+
+export function areDomainSelected(
+  selectedDomains: Record<string, boolean> | undefined
+): boolean {
+  if (!selectedDomains) return false;
+
+  return Object.values(selectedDomains).some((isSelected) => isSelected);
 }

@@ -1,6 +1,6 @@
 import { Call } from "starknet";
-import { numberToString } from "./stringService";
-import { hexToDecimal } from "./feltService";
+import { numberToString } from "../stringService";
+import { hexToDecimal } from "../feltService";
 
 function approve(price: string): Call {
   return {
@@ -113,7 +113,33 @@ function vatTransfer(amount: string): Call {
   };
 }
 
-const registerCalls = {
+function renew(
+  encodedDomain: string,
+  duration: number,
+  sponsor?: string
+): Call {
+  return {
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+    entrypoint: "renew",
+    calldata: [encodedDomain, duration * 365, sponsor ?? 0, 0, 0],
+  };
+}
+
+function multiCallRenewal(
+  encodedDomains: string[],
+  duration: number,
+  sponsor?: string
+): Call[] {
+  return encodedDomains.map((encodedDomain) => {
+    return {
+      contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+      entrypoint: "renew",
+      calldata: [encodedDomain, duration * 365, sponsor ?? 0, 0, 0],
+    };
+  });
+}
+
+const registrationCalls = {
   approve,
   buy,
   addressToDomain,
@@ -122,6 +148,8 @@ const registerCalls = {
   disableRenewal,
   buy_discounted,
   vatTransfer,
+  renew,
+  multiCallRenewal,
 };
 
-export default registerCalls;
+export default registrationCalls;
