@@ -17,7 +17,6 @@ type NumberTextFieldProps = {
   type?: React.InputHTMLAttributes<unknown>["type"];
   placeholder?: string;
   helperText?: string;
-  defaultValue?: number;
 };
 
 const NumberTextField: FunctionComponent<NumberTextFieldProps> = ({
@@ -32,7 +31,6 @@ const NumberTextField: FunctionComponent<NumberTextFieldProps> = ({
   errorMessage,
   placeholder,
   helperText,
-  defaultValue = 1,
 }) => {
   return (
     <div className="flex flex-col w-full">
@@ -137,7 +135,6 @@ const NumberTextField: FunctionComponent<NumberTextFieldProps> = ({
         }}
         required={required}
         placeholder={placeholder}
-        defaultValue={defaultValue}
       />
     </div>
   );

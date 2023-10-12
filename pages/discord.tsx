@@ -9,11 +9,11 @@ import {
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ErrorScreen from "../components/UI/screens/errorScreen";
-import { stringToHex } from "../utils/feltService";
 import { NextPage } from "next";
 import { posthog } from "posthog-js";
 import { Call } from "starknet";
 import VerifyFirstStep from "../components/verify/verifyFirstStep";
+import identityChangeCalls from "../utils/callData/identityChangeCalls";
 
 export type Screen =
   | "verifyDiscord"
@@ -21,23 +21,13 @@ export type Screen =
   | "verifyTwitter"
   | "verifyGithub";
 
-type SignRequestData = {
-  status: Status;
-  username: string;
-  user_id: number;
-  sign0: string;
-  sign1: string;
-  timestamp: number;
-  discriminator: string;
-};
-
 const Discord: NextPage = () => {
   const router = useRouter();
   const [isConnected, setIsConnected] = useState(true);
   const routerCode: string = router.query.code as string;
   //Server Sign Request
   const [signRequestData, setSignRequestData] = useState<
-    SignRequestData | ErrorRequestData
+    DiscordSignRequestData | ErrorRequestData
   >();
   const { addTransaction } = useTransactionManager();
 
@@ -58,18 +48,18 @@ const Discord: NextPage = () => {
       return;
     }
 
-    setCalls({
-      contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
-      entrypoint: "write_confirmation",
-      calldata: [
+    setCalls(
+      identityChangeCalls.writeVerifierData(
         tokenId,
-        (signRequestData as SignRequestData).timestamp.toString(),
-        stringToHex("discord"),
-        (signRequestData as SignRequestData).user_id.toString(),
-        (signRequestData as SignRequestData).sign0,
-        (signRequestData as SignRequestData).sign1,
-      ],
-    });
+        (signRequestData as DiscordSignRequestData).timestamp,
+        "discord",
+        (signRequestData as DiscordSignRequestData).user_id,
+        [
+          (signRequestData as DiscordSignRequestData).sign0,
+          (signRequestData as DiscordSignRequestData).sign1,
+        ]
+      )
+    );
   }, [signRequestData, tokenId]);
 
   //Set discord code

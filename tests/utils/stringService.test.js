@@ -22,6 +22,7 @@ import {
   convertNumberToFixedLengthString,
   isValidDomain,
   getDomainLength,
+  selectedDomainsToArray,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -408,5 +409,41 @@ describe("Should test getDomainLength function", () => {
   it("Should return 0 for undefined or invalid domain", () => {
     expect(getDomainLength(undefined)).toEqual(0);
     expect(getDomainLength("")).toEqual(0);
+  });
+});
+
+describe("selectedDomainsToArray function", () => {
+  it("should return an array of selected domains", () => {
+    const input = {
+      "example.com": true,
+      "test.com": false,
+      "sample.com": true,
+      "demo.com": false,
+    };
+
+    const output = ["example.com", "sample.com"];
+    expect(selectedDomainsToArray(input)).toEqual(output);
+  });
+
+  it("should return an empty array if no domains are selected", () => {
+    const input = {
+      "example.com": false,
+      "test.com": false,
+      "sample.com": false,
+    };
+
+    const output = [];
+    expect(selectedDomainsToArray(input)).toEqual(output);
+  });
+
+  it("should return an array of all domains if all are selected", () => {
+    const input = {
+      "example.com": true,
+      "test.com": true,
+      "sample.com": true,
+    };
+
+    const output = ["example.com", "test.com", "sample.com"];
+    expect(selectedDomainsToArray(input)).toEqual(output);
   });
 });
