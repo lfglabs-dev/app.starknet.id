@@ -137,7 +137,7 @@ const Navbar: FunctionComponent = () => {
 
   return (
     <>
-      <div className={"fixed w-full z-[1] bg-background top-0"}>
+      <div className={"fixed w-full z-20 bg-background top-0"}>
         <div className={styles.navbarContainer}>
           <div className="ml-4">
             <Link href="/" className="cursor-pointer">
@@ -210,7 +210,7 @@ const Navbar: FunctionComponent = () => {
         <div
           className={
             nav
-              ? "lg:hidden fixed left-0 top-0 w-full h-screen bg-black/10"
+              ? "lg:hidden fixed left-0 top-0 w-full h-screen bg-black/10 z-10"
               : ""
           }
         >
