@@ -22,10 +22,14 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
   const router = useRouter();
   return (
     // Our Indexer
-    <div className={styles.galeryContainer}>
+    <div className={styles.galleryContainer}>
       {identities.map((identity, index) => {
         return (
-          <div key={index} className={styles.imageGallery}>
+          <div
+            key={index}
+            className={styles.imageGallery}
+            onClick={() => router.push(`/identities/${identity.id}`)}
+          >
             {isIdentityExpiringSoon(identity) ? (
               <div className={styles.expiryWarning}>
                 <Tooltip
@@ -43,7 +47,6 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
               height={150}
               src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${identity.id}`}
               alt="avatar"
-              onClick={() => router.push(`/identities/${identity.id}`)}
             />
 
             <p className="font-bold font-quickZap">

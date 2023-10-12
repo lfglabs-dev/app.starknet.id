@@ -11,7 +11,7 @@ import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
 import MintIcon from "../components/UI/iconsComponents/icons/mintIcon";
 import { useRouter } from "next/router";
 import { hexToDecimal } from "../utils/feltService";
-import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
+import IdentitiesSkeleton from "../components/identities/skeletons/identitiesSkeleton";
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
 import Wallets from "../components/UI/wallets";
 import ClickableAction from "../components/UI/iconsComponents/clickableAction";

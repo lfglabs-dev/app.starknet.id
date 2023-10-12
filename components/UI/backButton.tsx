@@ -7,11 +7,17 @@ type BackButtonProps = {
   onClick: () => void;
 };
 
-const BackButton: FunctionComponent<BackButtonProps> = ({ onClick }) => (
-  <button onClick={onClick} className={styles.backButton}>
-    <ArrowLeftIcon color={theme.palette.secondary.main} width="24" />
-    <p className={styles.backButtonLabel}>Back</p>
-  </button>
-);
+const BackButton: FunctionComponent<BackButtonProps> = ({ onClick }) => {
+  return (
+    <button onClick={onClick} className={styles.backButton}>
+      <ArrowLeftIcon
+        className={styles.arrowIcon}
+        color={theme.palette.secondary.main}
+        width="24"
+      />
+      <p className={styles.backButtonLabel}>Back</p>
+    </button>
+  );
+};
 
 export default BackButton;

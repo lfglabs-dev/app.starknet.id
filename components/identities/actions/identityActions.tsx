@@ -22,6 +22,7 @@ import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
 import TxConfirmationModal from "../../UI/txConfirmationModal";
 import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
 import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
+import { useRouter } from "next/router";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -49,6 +50,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const { addTransaction } = useTransactionManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
+  const router = useRouter();
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -139,7 +141,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   icon={
                     <ChangeIcon width="25" color={theme.palette.primary.main} />
                   }
-                  onClick={() => setIsRenewFormOpen(true)}
+                  onClick={() => router.push("/renewal")}
                 />
               ) : null}
               {!identity.is_owner_main && (
