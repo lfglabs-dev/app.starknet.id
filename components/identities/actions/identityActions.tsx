@@ -113,21 +113,22 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     if (!address || !identity?.domain) return;
     fetch(
       `${
-        process.env.NEXT_PUBLIC_RENEWAL_INDEXER
-      }/get_renewal_data?address=${hexToDecimal(address)}&domain=${
+        process.env.NEXT_PUBLIC_SERVER_LINK
+      }/renewal/get_renewal_data?addr=${hexToDecimal(address)}&domain=${
         identity.domain
       }`
     )
       .then((response) => response.json())
       .then((data) => {
+        console.log("renewal_data", data);
         if (!data.error && data.enabled) {
           setIsAutoRenewalEnabled(true);
-          setAllowance(data.allowance);
+          setAllowance(BigInt(data.allowance).toString(10));
         } else {
           setIsAutoRenewalEnabled(false);
         }
       });
-  }, [address, tokenId]);
+  }, [address, tokenId, identity]);
 
   useEffect(() => {
     if (!mainDomainData?.transaction_hash) return;
@@ -323,7 +324,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           isModalOpen={isAutoRenewalOpen}
           callDataEncodedDomain={callDataEncodedDomain}
           identity={identity}
-          // isEnabled={isAutoRenewalEnabled}
           domain={identity?.domain}
           allowance={allowance}
         />
