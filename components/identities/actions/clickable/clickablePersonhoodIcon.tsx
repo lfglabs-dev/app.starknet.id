@@ -14,7 +14,7 @@ import {
 } from "@anima-protocol/personhood-sdk-react";
 import AnimaIcon from "../../../UI/iconsComponents/icons/animaIcon";
 import { useAccount, useTransactionManager } from "@starknet-react/core";
-import { Call, constants, shortString, typedData } from "starknet";
+import { Call, constants, typedData } from "starknet";
 import { useContractWrite } from "@starknet-react/core";
 import { hexToDecimal } from "../../../../utils/feltService";
 import { minifyDomain } from "../../../../utils/stringService";
@@ -38,7 +38,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
   const [sessionId, setSessionId] = useState<string | undefined>();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [callData, setCallData] = useState<Call>();
+  const [callData, setCallData] = useState<Call[]>();
   const { addTransaction } = useTransactionManager();
   const { writeAsync: execute, data: verifierData } = useContractWrite({
     calls: callData,
@@ -108,7 +108,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
       .then((response) => response.json())
       .then((sig) => {
         const hexSessionId = "0x" + (sessionId as string).replace(/-/g, "");
-        setCallData(
+        setCallData([
           identityChangeCalls.writeVerifierData(
             process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT as string,
             tokenId,
@@ -116,8 +116,8 @@ const ClickablePersonhoodIcon: FunctionComponent<
             "proof_of_personhood",
             hexToDecimal(hexSessionId),
             [sig.r, sig.s]
-          )
-        );
+          ),
+        ]);
       })
       .catch((error) =>
         console.log("An error occured while fetching signture", error)

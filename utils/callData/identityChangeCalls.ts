@@ -10,7 +10,7 @@ function writeVerifierData(
   signatures: string[]
 ): Call {
   return {
-    contractAddress,
+    contractAddress: contractAddress,
     entrypoint: "write_confirmation",
     calldata: [
       tokenId,
