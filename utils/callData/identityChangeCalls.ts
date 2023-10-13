@@ -2,6 +2,7 @@ import { Call } from "starknet";
 import { stringToHex } from "../feltService";
 
 function writeVerifierData(
+  contractAddress: string,
   tokenId: string,
   timestamp: number,
   dataType: string,
@@ -9,7 +10,7 @@ function writeVerifierData(
   signatures: string[]
 ): Call {
   return {
-    contractAddress: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
+    contractAddress,
     entrypoint: "write_confirmation",
     calldata: [
       tokenId,

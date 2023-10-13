@@ -44,6 +44,7 @@ const Twitter: NextPage = () => {
 
     setCalls(
       identityChangeCalls.writeVerifierData(
+        process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as string,
         tokenId,
         (signRequestData as SignRequestData).timestamp,
         "twitter",
