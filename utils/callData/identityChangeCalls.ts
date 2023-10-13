@@ -1,4 +1,4 @@
-import { Call } from "starknet";
+import { Call, shortString } from "starknet";
 import { stringToHex } from "../feltService";
 
 function writeVerifierData(
@@ -10,12 +10,12 @@ function writeVerifierData(
   signatures: string[]
 ): Call {
   return {
-    contractAddress: contractAddress,
+    contractAddress,
     entrypoint: "write_confirmation",
     calldata: [
       tokenId,
       timestamp,
-      stringToHex(dataType),
+      shortString.encodeShortString(dataType),
       dataToWrite.toString(),
       signatures[0],
       signatures[1],
