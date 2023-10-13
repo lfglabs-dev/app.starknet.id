@@ -108,19 +108,16 @@ const ClickablePersonhoodIcon: FunctionComponent<
       .then((response) => response.json())
       .then((sig) => {
         const hexSessionId = "0x" + (sessionId as string).replace(/-/g, "");
-        setCallData({
-          contractAddress: process.env
-            .NEXT_PUBLIC_VERIFIER_POP_CONTRACT as string,
-          entrypoint: "write_confirmation",
-          calldata: [
+        setCallData(
+          identityChangeCalls.writeVerifierData(
+            process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT as string,
             tokenId,
             Math.floor(Date.now() / 1000 + 15 * 60),
-            shortString.encodeShortString("proof_of_personhood"),
+            "proof_of_personhood",
             hexToDecimal(hexSessionId),
-            sig.r,
-            sig.s,
-          ],
-        });
+            [sig.r, sig.s]
+          )
+        );
       })
       .catch((error) =>
         console.log("An error occured while fetching signture", error)
