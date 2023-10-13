@@ -14,9 +14,9 @@ import {
 } from "@anima-protocol/personhood-sdk-react";
 import AnimaIcon from "../../../UI/iconsComponents/icons/animaIcon";
 import { useAccount, useTransactionManager } from "@starknet-react/core";
-import { Call, constants, typedData } from "starknet";
+import { Call, constants, shortString, typedData } from "starknet";
 import { useContractWrite } from "@starknet-react/core";
-import { hexToDecimal } from "../../../../utils/feltService";
+import { hexToDecimal, stringToHex } from "../../../../utils/feltService";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import theme from "../../../../styles/theme";
@@ -108,16 +108,19 @@ const ClickablePersonhoodIcon: FunctionComponent<
       .then((response) => response.json())
       .then((sig) => {
         const hexSessionId = "0x" + (sessionId as string).replace(/-/g, "");
-        setCallData(
-          identityChangeCalls.writeVerifierData(
-            process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT as string,
+        setCallData({
+          contractAddress: process.env
+            .NEXT_PUBLIC_VERIFIER_POP_CONTRACT as string,
+          entrypoint: "write_confirmation",
+          calldata: [
             tokenId,
             Math.floor(Date.now() / 1000 + 15 * 60),
-            "proof_of_personhood",
+            shortString.encodeShortString("proof_of_personhood"),
             hexToDecimal(hexSessionId),
-            [sig.r, sig.s]
-          )
-        );
+            sig.r,
+            sig.s,
+          ],
+        });
       })
       .catch((error) =>
         console.log("An error occured while fetching signture", error)
