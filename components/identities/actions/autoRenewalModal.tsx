@@ -217,7 +217,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                   : null}
               </p>
             </div>
-            {needMedadata ? (
+            {!needMedadata ? (
               <>
                 <div className="flex flex-col items-start gap-6 self-stretch">
                   <TextField
@@ -241,13 +241,6 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                 />
               </>
             ) : null}
-            {/* <>
-              <RegisterCheckboxes
-                onChangeTermsBox={() => setTermsBox(!termsBox)}
-                termsBox={termsBox}
-                variant="white"
-              />
-            </> */}
             <div className={`${!needMedadata ? "mx-auto" : ""}`}>
               <Button
                 disabled={isUsResident && !usState}

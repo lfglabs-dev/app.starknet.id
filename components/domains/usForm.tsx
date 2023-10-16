@@ -6,6 +6,7 @@ import {
   RadioGroup,
 } from "@mui/material";
 import textFieldStyles from "../../styles/components/textField.module.css";
+import variantStyles from "../../styles/components/variants.module.css";
 import SelectState from "./selectState";
 import InputHelper from "../UI/inputHelper";
 
@@ -33,7 +34,13 @@ const UsForm: FunctionComponent<UsFormProps> = ({
         <div className="flex gap-1 my-1">
           <p className={textFieldStyles.legend}>Do you live in the USA ?*</p>
         </div>
-        <div className="border-solid border border-[#c4c4c4ff] rounded-[7.983px] pl-[16.5px] py-1">
+        <div
+          className={
+            variant === "white"
+              ? variantStyles.whiteUsForm
+              : variantStyles.defaultUsForm
+          }
+        >
           <InputHelper helperText="If you live in the US, we need your ZIP code due to the USA tax policy.">
             <RadioGroup
               aria-labelledby="demo-controlled-radio-buttons-group"

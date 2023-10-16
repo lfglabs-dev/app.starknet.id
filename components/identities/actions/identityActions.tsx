@@ -197,8 +197,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
               {callDataEncodedDomain[0] === 1 && !isAutoRenewalEnabled ? (
                 <ClickableAction
                   title="ENABLE AUTO RENEWAL"
-                  style="primary"
                   description={nextAutoRenew}
+                  style="primary"
                   icon={<div className={styles.renewalIcon}>ON</div>}
                   onClick={() => setIsAutoRenewalOpen(true)}
                 />
@@ -206,7 +206,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
               {callDataEncodedDomain[0] === 1 ? (
                 <ClickableAction
                   title="RENEW YOUR DOMAIN"
-                  style={`${isAutoRenewalEnabled ? "primary" : "secondary"}`}
+                  style="primary"
                   description={`Will expire on ${timestampToReadableDate(
                     identity?.domain_expiry ?? 0
                   )}`}

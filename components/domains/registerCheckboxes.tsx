@@ -1,5 +1,6 @@
-import React, { FunctionComponent, useMemo } from "react";
+import React, { FunctionComponent } from "react";
 import { Checkbox } from "@mui/material";
+import styles from "../../styles/components/variants.module.css";
 
 type RegisterCheckboxes = {
   onChangeTermsBox?: () => void;
@@ -25,10 +26,11 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
         >
           <Checkbox
             checked={termsBox}
-            sx={{
-              padding: 0,
-              background: variant === "white" ? "#FFF" : "transparent",
-            }}
+            className={
+              variant === "white"
+                ? styles.whiteCheckbox
+                : styles.defaultCheckbox
+            }
           />
           <p className="ml-2">
             Accept{" "}
