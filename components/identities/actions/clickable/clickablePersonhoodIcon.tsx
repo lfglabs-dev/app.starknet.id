@@ -110,6 +110,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
         const hexSessionId = "0x" + (sessionId as string).replace(/-/g, "");
         setCallData(
           identityChangeCalls.writeVerifierData(
+            process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT as string,
             tokenId,
             Math.floor(Date.now() / 1000 + 15 * 60),
             shortString.encodeShortString("proof_of_personhood"),
