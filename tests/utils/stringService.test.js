@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import { encodeDomain } from "starknetid.js/packages/core/dist/utils";
 import { basicAlphabet } from "../../utils/constants";
 import {
   is1234Domain,
@@ -415,21 +416,24 @@ describe("Should test getDomainLength function", () => {
 describe("selectedDomainsToArray function", () => {
   it("should return an array of selected domains", () => {
     const input = {
-      "example.com": true,
-      "test.com": false,
-      "sample.com": true,
-      "demo.com": false,
+      example: true,
+      test: false,
+      sample: true,
+      demo: false,
     };
 
-    const output = ["example.com", "sample.com"];
+    const output = [
+      encodeDomain("example")[0].toString(),
+      encodeDomain("sample")[0].toString(),
+    ];
     expect(selectedDomainsToArray(input)).toEqual(output);
   });
 
   it("should return an empty array if no domains are selected", () => {
     const input = {
-      "example.com": false,
-      "test.com": false,
-      "sample.com": false,
+      example: false,
+      test: false,
+      sample: false,
     };
 
     const output = [];
@@ -438,12 +442,16 @@ describe("selectedDomainsToArray function", () => {
 
   it("should return an array of all domains if all are selected", () => {
     const input = {
-      "example.com": true,
-      "test.com": true,
-      "sample.com": true,
+      example: true,
+      test: true,
+      sample: true,
     };
 
-    const output = ["example.com", "test.com", "sample.com"];
+    const output = [
+      encodeDomain("example")[0].toString(),
+      encodeDomain("test")[0].toString(),
+      encodeDomain("sample")[0].toString(),
+    ];
     expect(selectedDomainsToArray(input)).toEqual(output);
   });
 });
