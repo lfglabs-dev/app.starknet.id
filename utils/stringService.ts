@@ -171,6 +171,16 @@ export function selectedDomainsToArray(
 ): string[] {
   const domainsString: string[] = Object.entries(selectedDomains)
     .filter(([, isSelected]) => isSelected)
+    .map(([domain]) => domain);
+
+  return domainsString;
+}
+
+export function selectedDomainsToEncodedArray(
+  selectedDomains: Record<string, boolean>
+): string[] {
+  const domainsString: string[] = Object.entries(selectedDomains)
+    .filter(([, isSelected]) => isSelected)
     .map(([domain]) => encodeDomain(domain)[0].toString());
 
   return domainsString;
