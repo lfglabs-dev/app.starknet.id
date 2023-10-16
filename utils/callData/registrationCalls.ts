@@ -157,6 +157,7 @@ function multiCallAutoRenewal(
       ],
     },
   ];
+
   domains.map((domain) => {
     const encodedDomain = utils
       .encodeDomain(domain)
