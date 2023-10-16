@@ -348,8 +348,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
           <Divider className="w-full" />
           <RegisterCheckboxes
             onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
-            // onChangeTermsBox={() => setTermsBox(!termsBox)}
-            // termsBox={termsBox}
             renewalBox={renewalBox}
           />
           {address ? (
