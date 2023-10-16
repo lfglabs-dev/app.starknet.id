@@ -1,6 +1,8 @@
 import { Call } from "starknet";
 import { numberToString } from "../stringService";
-import { hexToDecimal } from "../feltService";
+import { applyRateToBigInt, hexToDecimal } from "../feltService";
+import { utils } from "starknetid.js";
+import { getPriceFromDomain } from "../priceService";
 
 function approve(price: string): Call {
   return {
@@ -139,6 +141,39 @@ function multiCallRenewal(
   });
 }
 
+function multiCallAutoRenewal(
+  domains: string[],
+  metahash: string,
+  salesTaxRate: number
+): Call[] {
+  let calls = [
+    {
+      contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
+      entrypoint: "approve",
+      calldata: [
+        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+        "340282366920938463463374607431768211455",
+        "340282366920938463463374607431768211455",
+      ],
+    },
+  ];
+  domains.map((domain) => {
+    const encodedDomain = utils
+      .encodeDomain(domain)
+      .map((element) => element.toString())[0];
+    const price = getPriceFromDomain(1, domain);
+    const allowance: string = salesTaxRate
+      ? (Number(price) + applyRateToBigInt(price, salesTaxRate)).toString()
+      : price.toString();
+    calls.push({
+      contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+      entrypoint: "enable_renewals",
+      calldata: [encodedDomain, allowance, "0", metahash],
+    });
+  });
+  return calls;
+}
+
 const registrationCalls = {
   approve,
   buy,
@@ -150,6 +185,7 @@ const registrationCalls = {
   vatTransfer,
   renew,
   multiCallRenewal,
+  multiCallAutoRenewal,
 };
 
 export default registrationCalls;

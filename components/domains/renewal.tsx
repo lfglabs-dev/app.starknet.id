@@ -32,6 +32,7 @@ import RenewalDomainsBox from "./renewalDomainsBox";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import BackButton from "../UI/backButton";
 import { useRouter } from "next/router";
+import RegisterCheckboxes from "./registerCheckboxes";
 
 type RenewalProps = {
   groups: string[];
@@ -51,7 +52,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const { contract: etherContract } = useEtherContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   // const [termsBox, setTermsBox] = useState<boolean>(true);
-  // const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
@@ -66,9 +67,6 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       args: [address],
     });
   const { writeAsync: execute, data: renewData } = useContractWrite({
-    // calls: renewalBox
-    //   ? callData.concat(registrationCalls.renewal(encodedDomain, price))
-    //   : callData,
     calls: callData,
   });
   const [domainsMinting, setDomainsMinting] =
@@ -181,6 +179,16 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
       }
 
+      if (renewalBox) {
+        calls.push(
+          ...registrationCalls.multiCallAutoRenewal(
+            selectedDomainsToArray(selectedDomains),
+            "0x" + metadataHash,
+            salesTaxRate
+          )
+        );
+      }
+
       setCallData(calls);
     }
   }, [selectedDomains, price, salesTaxRate]);
@@ -227,12 +235,10 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
             isUsResident={isUsResident}
           />
           <Divider className="w-full" />
-          {/* <RegisterCheckboxes
-            // onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
-            onChangeTermsBox={() => setTermsBox(!termsBox)}
-            termsBox={termsBox}
-            // renewalBox={renewalBox}
-          /> */}
+          <RegisterCheckboxes
+            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+            renewalBox={renewalBox}
+          />
           {address ? (
             <Button
               onClick={() =>

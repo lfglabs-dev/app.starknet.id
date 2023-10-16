@@ -55,7 +55,6 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [emailError, setEmailError] = useState<boolean>(true);
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
-  // const [termsBox, setTermsBox] = useState<boolean>(true);
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: pricingContract } = usePricingContract();
@@ -217,7 +216,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                   : null}
               </p>
             </div>
-            {!needMedadata ? (
+            {needMedadata ? (
               <>
                 <div className="flex flex-col items-start gap-6 self-stretch">
                   <TextField

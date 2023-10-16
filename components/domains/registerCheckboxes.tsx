@@ -20,41 +20,44 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   return (
     <div className="w-full mb-3">
       <div className="flex mt-2 flex-col sm:flex-row">
-        <div
-          className="flex items-center justify-left text-xs mr-2 cursor-pointer"
-          onClick={onChangeTermsBox}
-        >
-          <Checkbox
-            checked={termsBox}
-            className={
-              variant === "white"
-                ? styles.whiteCheckbox
-                : styles.defaultCheckbox
-            }
-          />
-          <p className="ml-2">
-            Accept{" "}
-            <a
-              className="underline"
-              href={process.env.NEXT_PUBLIC_STARKNET_ID + "/pdfs/Terms.pdf"}
-              target="_blank"
-              rel="noreferrer"
-            >
-              terms
-            </a>{" "}
-            &{" "}
-            <a
-              className="underline"
-              href={
-                process.env.NEXT_PUBLIC_STARKNET_ID + "/pdfs/PrivacyPolicy.pdf"
+        {onChangeTermsBox ? (
+          <div
+            className="flex items-center justify-left text-xs mr-2 cursor-pointer"
+            onClick={onChangeTermsBox}
+          >
+            <Checkbox
+              checked={termsBox}
+              className={
+                variant === "white"
+                  ? styles.whiteCheckbox
+                  : styles.defaultCheckbox
               }
-              target="_blank"
-              rel="noreferrer"
-            >
-              policies
-            </a>
-          </p>
-        </div>
+            />
+            <p className="ml-2">
+              Accept{" "}
+              <a
+                className="underline"
+                href={process.env.NEXT_PUBLIC_STARKNET_ID + "/pdfs/Terms.pdf"}
+                target="_blank"
+                rel="noreferrer"
+              >
+                terms
+              </a>{" "}
+              &{" "}
+              <a
+                className="underline"
+                href={
+                  process.env.NEXT_PUBLIC_STARKNET_ID +
+                  "/pdfs/PrivacyPolicy.pdf"
+                }
+                target="_blank"
+                rel="noreferrer"
+              >
+                policies
+              </a>
+            </p>
+          </div>
+        ) : null}
         {onChangeRenewalBox ? (
           <div
             className="flex items-center justify-left text-xs cursor-pointer"
