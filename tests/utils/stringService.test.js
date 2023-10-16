@@ -24,6 +24,7 @@ import {
   isValidDomain,
   getDomainLength,
   selectedDomainsToArray,
+  selectedDomainsToEncodedArray
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -413,7 +414,7 @@ describe("Should test getDomainLength function", () => {
   });
 });
 
-describe("selectedDomainsToArray function", () => {
+describe("selectedDomainsToEncodedArray function", () => {
   it("should return an array of selected domains", () => {
     const input = {
       example: true,
@@ -426,7 +427,7 @@ describe("selectedDomainsToArray function", () => {
       encodeDomain("example")[0].toString(),
       encodeDomain("sample")[0].toString(),
     ];
-    expect(selectedDomainsToArray(input)).toEqual(output);
+    expect(selectedDomainsToEncodedArray(input)).toEqual(output);
   });
 
   it("should return an empty array if no domains are selected", () => {
@@ -437,7 +438,7 @@ describe("selectedDomainsToArray function", () => {
     };
 
     const output = [];
-    expect(selectedDomainsToArray(input)).toEqual(output);
+    expect(selectedDomainsToEncodedArray(input)).toEqual(output);
   });
 
   it("should return an array of all domains if all are selected", () => {
@@ -452,6 +453,42 @@ describe("selectedDomainsToArray function", () => {
       encodeDomain("test")[0].toString(),
       encodeDomain("sample")[0].toString(),
     ];
+    expect(selectedDomainsToEncodedArray(input)).toEqual(output);
+  });
+});
+
+describe("selectedDomainsToArray function", () => {
+  it("should return an array of selected domains", () => {
+    const input = {
+      "example.com": true,
+      "test.com": false,
+      "sample.com": true,
+      "demo.com": false,
+    };
+
+    const output = ["example.com", "sample.com"];
+    expect(selectedDomainsToArray(input)).toEqual(output);
+  });
+
+  it("should return an empty array if no domains are selected", () => {
+    const input = {
+      "example.com": false,
+      "test.com": false,
+      "sample.com": false,
+    };
+
+    const output = [];
+    expect(selectedDomainsToArray(input)).toEqual(output);
+  });
+
+  it("should return an array of all domains if all are selected", () => {
+    const input = {
+      "example.com": true,
+      "test.com": true,
+      "sample.com": true,
+    };
+
+    const output = ["example.com", "test.com", "sample.com"];
     expect(selectedDomainsToArray(input)).toEqual(output);
   });
 });

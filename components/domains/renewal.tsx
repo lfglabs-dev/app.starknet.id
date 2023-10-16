@@ -11,6 +11,7 @@ import {
 import {
   isValidEmail,
   selectedDomainsToArray,
+  selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
 import { gweiToEth, applyRateToBigInt } from "../../utils/feltService";
 import { Abi, Call } from "starknet";
@@ -171,7 +172,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       const calls = [
         registrationCalls.approve(price),
         ...registrationCalls.multiCallRenewal(
-          selectedDomainsToArray(selectedDomains),
+          selectedDomainsToEncodedArray(selectedDomains),
           duration
         ),
       ];
