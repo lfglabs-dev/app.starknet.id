@@ -4,6 +4,7 @@ import {
   stringToHex,
   gweiToEth,
   applyRateToBigInt,
+  toUint256,
 } from "../../utils/feltService";
 
 describe("Should test hexToDecimal function", () => {
@@ -102,3 +103,33 @@ describe("Should test applyRateToBigInt function", () => {
     );
   });
 });
+
+describe("Should test the toUint256 function", () => {
+  it("should return correct low and high values for valid inputs", () => {
+    const input = "1234567890";
+    const result = toUint256(input);
+
+    const expectedLow = "1234567890";
+    const expectedHigh = "0";
+
+    expect(result.low).toBe(expectedLow);
+    expect(result.high).toBe(expectedHigh);
+  });
+
+  it("Should handle extremely large numbers", () => {
+    const largeInput = "1206167596222043737899107594365023368541035738443865566657697352045290673496";
+    const result = toUint256(largeInput);
+
+    const expectedLow = "113427455640312821154458202477256070488";
+    const expectedHigh = "3544607988759775765608368578435044693";
+
+    expect(result.low).toBe(expectedLow);
+    expect(result.high).toBe(expectedHigh);
+  });
+
+  it("should throw an error for invalid inputs", () => {
+    const invalidInput = "invalidNumber";
+
+    expect(() => toUint256(invalidInput)).toThrow();
+  });
+})
