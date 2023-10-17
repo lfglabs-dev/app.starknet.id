@@ -1,8 +1,6 @@
 import { Call } from "starknet";
 import { numberToString } from "../stringService";
-import { applyRateToBigInt, hexToDecimal } from "../feltService";
-import { utils } from "starknetid.js";
-import { getPriceFromDomain } from "../priceService";
+import { hexToDecimal } from "../feltService";
 
 function approve(price: string): Call {
   return {
@@ -74,39 +72,6 @@ function mint(tokenId: number): Call {
   };
 }
 
-function enableRenewal(
-  encodedDomain: string,
-  price: string,
-  metahash: string
-): Call[] {
-  return [
-    {
-      contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-      entrypoint: "approve",
-      calldata: [
-        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-        "340282366920938463463374607431768211455",
-        "340282366920938463463374607431768211455",
-      ],
-    },
-    {
-      contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      entrypoint: "enable_renewals",
-      calldata: [encodedDomain.toString(), price, 0, metahash],
-    },
-  ];
-}
-
-function disableRenewal(encodedDomain: string): Call[] {
-  return [
-    {
-      contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      entrypoint: "disable_renewals",
-      calldata: [encodedDomain.toString()],
-    },
-  ];
-}
-
 function vatTransfer(amount: string): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
@@ -141,52 +106,15 @@ function multiCallRenewal(
   });
 }
 
-function multiCallAutoRenewal(
-  domains: string[],
-  metahash: string,
-  salesTaxRate: number
-): Call[] {
-  let calls = [
-    {
-      contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-      entrypoint: "approve",
-      calldata: [
-        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-        "340282366920938463463374607431768211455",
-        "340282366920938463463374607431768211455",
-      ],
-    },
-  ];
-
-  domains.map((domain) => {
-    const encodedDomain = utils
-      .encodeDomain(domain)
-      .map((element) => element.toString())[0];
-    const price = getPriceFromDomain(1, domain);
-    const allowance: string = salesTaxRate
-      ? (Number(price) + applyRateToBigInt(price, salesTaxRate)).toString()
-      : price.toString();
-    calls.push({
-      contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      entrypoint: "enable_renewals",
-      calldata: [encodedDomain, allowance, "0", metahash],
-    });
-  });
-  return calls;
-}
-
 const registrationCalls = {
   approve,
   buy,
   addressToDomain,
   mint,
-  enableRenewal,
-  disableRenewal,
   buy_discounted,
   vatTransfer,
   renew,
   multiCallRenewal,
-  multiCallAutoRenewal,
 };
 
 export default registrationCalls;

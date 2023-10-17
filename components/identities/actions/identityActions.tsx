@@ -26,7 +26,7 @@ import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
 import { Call } from "starknet";
 import ConfirmationTx from "../../UI/confirmationTx";
 import { useRouter } from "next/router";
-import registrationCalls from "../../../utils/callData/registrationCalls";
+import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -146,7 +146,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   useEffect(() => {
     if (isAutoRenewalEnabled) {
       setDisableRenewalCalldata(
-        registrationCalls.disableRenewal(callDataEncodedDomain[1].toString())
+        autoRenewalCalls.disableRenewal(callDataEncodedDomain[1].toString())
       );
     }
   }, [allowance, isAutoRenewalEnabled]);

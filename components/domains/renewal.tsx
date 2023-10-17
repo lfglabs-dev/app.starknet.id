@@ -31,9 +31,12 @@ import {
 } from "../../utils/priceService";
 import RenewalDomainsBox from "./renewalDomainsBox";
 import registrationCalls from "../../utils/callData/registrationCalls";
+import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import BackButton from "../UI/backButton";
 import { useRouter } from "next/router";
 import RegisterCheckboxes from "./registerCheckboxes";
+import { utils } from "starknetid.js";
+import { getPriceFromDomain } from "../../utils/priceService";
 
 type RenewalProps = {
   groups: string[];
@@ -181,13 +184,25 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       }
 
       if (renewalBox) {
-        calls.push(
-          ...registrationCalls.multiCallAutoRenewal(
-            selectedDomainsToArray(selectedDomains),
-            "0x" + metadataHash,
-            salesTaxRate
-          )
-        );
+        calls.push(autoRenewalCalls.approve());
+        selectedDomainsToArray(selectedDomains).map((domain) => {
+          const encodedDomain = utils
+            .encodeDomain(domain)
+            .map((element) => element.toString())[0];
+          const price = getPriceFromDomain(1, domain);
+          const allowance: string = salesTaxRate
+            ? (
+                Number(price) + applyRateToBigInt(price, salesTaxRate)
+              ).toString()
+            : price.toString();
+          calls.push(
+            autoRenewalCalls.enableRenewal(
+              encodedDomain,
+              allowance,
+              "0x" + metadataHash
+            )
+          );
+        });
       }
 
       setCallData(calls);

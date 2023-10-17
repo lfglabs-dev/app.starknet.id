@@ -22,6 +22,7 @@ import {
 import registrationCalls from "../../../utils/callData/registrationCalls";
 import { isValidEmail } from "../../../utils/stringService";
 import { applyRateToBigInt, gweiToEth } from "../../../utils/feltService";
+import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
 
 type AutoRenewalModalProps = {
   handleClose: () => void;
@@ -137,13 +138,14 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   useEffect(() => {
     const txMetadataHash = "0x" + metadataHash;
     const finalPrice = Number(price) + Number(salesTaxAmount);
-    setCallData(
-      registrationCalls.enableRenewal(
+    setCallData([
+      autoRenewalCalls.approve(),
+      autoRenewalCalls.enableRenewal(
         callDataEncodedDomain[1].toString(),
         finalPrice.toString(),
         txMetadataHash
-      )
-    );
+      ),
+    ]);
   }, [price, salesTaxRate, metadataHash]);
 
   useEffect(() => {

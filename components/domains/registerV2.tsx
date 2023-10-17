@@ -36,6 +36,7 @@ import registrationCalls from "../../utils/callData/registrationCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import { getPriceFromDomain } from "../../utils/priceService";
 import RegisterCheckboxes from "./registerCheckboxes";
+import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 
 type RegisterV2Props = {
   domain: string;
@@ -85,9 +86,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       args: [address],
     });
   const { writeAsync: execute, data: registerData } = useContractWrite({
-    // calls: renewalBox
-    //   ? callData.concat(registrationCalls.renewal(encodedDomain, price))
-    //   : callData,
     calls: callData,
   });
   const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");
@@ -207,7 +205,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         ? (parseInt(salesTaxAmount) + parseInt(price)).toString()
         : price;
       calls.push(
-        ...registrationCalls.enableRenewal(
+        autoRenewalCalls.approve(),
+        autoRenewalCalls.enableRenewal(
           encodedDomain,
           limitPrice,
           txMetadataHash
