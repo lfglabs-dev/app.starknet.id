@@ -109,13 +109,13 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       setMetadataHash(
         await computeMetadataHash(
           email,
-          groups, // default group for domain Owner
+          renewalBox ? groups : [groups[0]], // default group for domain Owner
           isUsResident ? usState : "none",
           salt
         )
       );
     })();
-  }, [email, usState, salt]);
+  }, [email, usState, salt, renewalBox]);
 
   useEffect(() => {
     // if price query does not work we use the off-chain hardcoded price
@@ -242,7 +242,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-        groups,
+        groups: renewalBox ? groups : [groups[0]],
         tax_state: isUsResident ? usState : "none",
         salt: salt,
       }),

@@ -87,7 +87,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-        groups,
+        groups: renewalBox ? groups : [groups[0]],
         tax_state: isUsResident ? usState : "none",
         salt: salt,
       }),
@@ -112,13 +112,13 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       setMetadataHash(
         await computeMetadataHash(
           email,
-          groups, // default group for domain Owner
+          renewalBox ? groups : [groups[0]], // default group for domain Owner
           isUsResident ? usState : "none",
           salt
         )
       );
     })();
-  }, [email, usState, salt]);
+  }, [email, usState, salt, renewalBox]);
 
   useEffect(() => {
     if (!selectedDomains) return;

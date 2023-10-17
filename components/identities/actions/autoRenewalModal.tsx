@@ -51,7 +51,9 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [email, setEmail] = useState<string>("");
-  const [groups, setGroups] = useState<string[]>(["98125177486837731"]);
+  const groups: string[] = [
+    process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
+  ];
   const [emailError, setEmailError] = useState<boolean>(true);
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
