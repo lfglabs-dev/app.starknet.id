@@ -1,6 +1,7 @@
 import BN from "bn.js";
 import { isHexString } from "./stringService";
 import Big from "big.js";
+import { UINT_128_MAX } from "./constants";
 
 export function stringToHex(str: string): string {
   if (!str) return "";
@@ -62,4 +63,9 @@ export function numberToFixedString(
   numberOfDecimals?: number
 ): string {
   return num.toFixed(numberOfDecimals || 2);
+}
+
+export function fromUint256(low: BigInt, high: BigInt): string {
+  const bhigh = (high as any) << BigInt(128);
+  return ((low as any) + bhigh).toString(10);
 }

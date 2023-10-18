@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import homeStyles from "../../styles/Home.module.css";
 import styles from "../../styles/components/identitiesV1.module.css";
 import { useRouter } from "next/router";
@@ -6,17 +6,16 @@ import { NextPage } from "next";
 import IdentityWarnings from "../../components/identities/identityWarnings";
 import IdentityCard from "../../components/identities/identityCard";
 import IdentityActions from "../../components/identities/actions/identityActions";
-import { decimalToHex, hexToDecimal } from "../../utils/feltService";
+import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";
 import IdentityPageSkeleton from "../../components/identities/skeletons/identityPageSkeleton";
 import UpdateProfilePic from "../../components/identities/updateProfilePic";
 import TxConfirmationModal from "../../components/UI/txConfirmationModal";
-import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
+import useProfilePicture from "../../hooks/useProfilePicture";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
   const { address } = useAccount();
-  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const tokenId: string = router.query.tokenId as string;
   const [identity, setIdentity] = useState<Identity>();
   const [isIdentityADomain, setIsIdentityADomain] = useState<
@@ -27,7 +26,7 @@ const TokenIdPage: NextPage = () => {
   const [isUpdatingPp, setIsUpdatingPp] = useState(false);
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [ppTxHash, setPpTxHash] = useState<string>();
-  const [ppImageUrl, setPpImgUrl] = useState<string | undefined>();
+  const ppImageUrl = useProfilePicture(tokenId);
 
   useEffect(() => {
     if (!identity || !address) return;
@@ -64,59 +63,6 @@ const TokenIdPage: NextPage = () => {
       return () => clearInterval(timer);
     }
   }, [tokenId]);
-
-  // Check if user has a pfp set
-  useEffect(() => {
-    if (!tokenId) return;
-
-    const getVerifierData = async () => {
-      const nftId = await starknetIdNavigator?.getExtendedVerifierData(
-        tokenId,
-        "nft_pp_id",
-        2,
-        process.env.NEXT_PUBLIC_NFT_PP_VERIFIER
-      );
-      const nftContract = await starknetIdNavigator?.getVerifierData(
-        tokenId,
-        "nft_pp_contract",
-        process.env.NEXT_PUBLIC_NFT_PP_VERIFIER
-      );
-
-      if (
-        nftContract &&
-        nftContract !== BigInt(0) &&
-        nftId &&
-        nftId.length > 1
-      ) {
-        const nft = await fetch(
-          `https://${
-            process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-              ? "api-testnet"
-              : "api"
-          }.starkscan.co/api/v0/nft/${decimalToHex(
-            nftContract.toString(10)
-          )}/${nftId[0].toString(10)}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "x-api-key": `${process.env.NEXT_PUBLIC_STARKSCAN}`,
-            },
-          }
-        ).then((res) => res.json());
-        if (nft.image_url) setPpImgUrl(nft.image_url);
-        else
-          setPpImgUrl(
-            `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`
-          );
-      } else {
-        setPpImgUrl(
-          `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`
-        );
-      }
-    };
-    getVerifierData();
-  }, [tokenId, identity, starknetIdNavigator, ppTxHash, isTxModalOpen]);
 
   return (
     <>

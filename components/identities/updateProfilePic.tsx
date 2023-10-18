@@ -1,11 +1,10 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import styles from "../../styles/components/profilePic.module.css";
-import ArrowLeftIcon from "../UI/iconsComponents/icons/arrowLeftIcon";
-import theme from "../../styles/theme";
 import { hexToDecimal } from "../../utils/feltService";
 import NftCard from "../UI/nftCard";
 import ModalProfilePic from "../UI/modalProfilePic";
 import { filterAssets, retrieveAssets } from "../../utils/nftService";
+import BackButton from "../UI/backButton";
 
 type UpdateProfilePicProps = {
   identity?: Identity;
@@ -59,9 +58,8 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.arrows} onClick={() => back()}>
-          <ArrowLeftIcon width="24" color={theme.palette.secondary.main} />
-          <p>Back</p>
+        <div className={styles.arrows}>
+          <BackButton onClick={() => back()} />
         </div>
         <div className={styles.gallery}>
           <p className={styles.subtitle}>Your NFTs</p>

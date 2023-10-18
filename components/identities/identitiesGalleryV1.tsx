@@ -9,6 +9,7 @@ import {
   timestampToReadableDate,
 } from "../../utils/dateService";
 import ArgentIcon from "../UI/iconsComponents/icons/argentIcon";
+import IdentityImage from "./identityImage";
 
 type IdentitiesGalleryV1Props = {
   identities: FullId[];
@@ -42,12 +43,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                 </Tooltip>
               </div>
             ) : null}
-            <img
-              width={150}
-              height={150}
-              src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${identity.id}`}
-              alt="avatar"
-            />
+            <IdentityImage tokenId={identity.id} />
 
             <p className="font-bold font-quickZap">
               {identity.domain

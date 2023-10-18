@@ -4,6 +4,7 @@ import {
   stringToHex,
   gweiToEth,
   applyRateToBigInt,
+  fromUint256,
 } from "../../utils/feltService";
 
 describe("Should test hexToDecimal function", () => {
@@ -101,4 +102,25 @@ describe("Should test applyRateToBigInt function", () => {
       "-35000000000000000000"
     );
   });
+});
+
+describe("fromUint256 function", () => {
+  it("should correctly combine low and high BigInts", () => {
+    expect(fromUint256(BigInt(1), BigInt(0))).toBe("1");
+    expect(fromUint256(BigInt(0), BigInt(1))).toBe("340282366920938463463374607431768211456"); // 2^128
+    expect(fromUint256(BigInt(1), BigInt(1))).toBe("340282366920938463463374607431768211457"); // 2^128 + 1
+  });
+  
+  it("should handle edge cases", () => {
+    expect(fromUint256(BigInt(0), BigInt(0))).toBe("0");
+    expect(
+      fromUint256(BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"), BigInt(0))
+    ).toBe("340282366920938463463374607431768211455"); // 2^128 - 1
+    expect(
+      fromUint256(
+        BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"), 
+        BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
+      )
+    ).toBe("115792089237316195423570985008687907853269984665640564039457584007913129639935"); // 2^256 - 1
+  });  
 });
