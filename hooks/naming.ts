@@ -12,7 +12,7 @@ type DomainData = {
 };
 
 export function useDomainFromAddress(
-  address: string | BigInt | undefined
+  address: string | bigint | undefined
 ): DomainData {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [domain, setDomain] = useState<string>("");
@@ -94,7 +94,7 @@ export function useTokenIdFromDomain(domain: string): TokenIdData {
 }
 
 type ExpiryData = {
-  expiry?: BigInt[][];
+  expiry?: bigint[][];
   error?: string;
 };
 

@@ -1,5 +1,6 @@
 import { BN } from "bn.js";
 import { basicAlphabet } from "./constants";
+import { encodeDomain } from "starknetid.js/packages/core/dist/utils";
 
 export function minifyAddress(address: string | undefined): string {
   if (!address) return "";
@@ -171,6 +172,16 @@ export function selectedDomainsToArray(
   const domainsString: string[] = Object.entries(selectedDomains)
     .filter(([, isSelected]) => isSelected)
     .map(([domain]) => domain);
+
+  return domainsString;
+}
+
+export function selectedDomainsToEncodedArray(
+  selectedDomains: Record<string, boolean>
+): string[] {
+  const domainsString: string[] = Object.entries(selectedDomains)
+    .filter(([, isSelected]) => isSelected)
+    .map(([domain]) => encodeDomain(domain)[0].toString());
 
   return domainsString;
 }
