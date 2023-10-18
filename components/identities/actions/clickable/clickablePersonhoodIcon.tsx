@@ -103,6 +103,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
       posthog?.capture("popVerificationTx");
     });
   };
+  console.log( shortString.encodeShortString("proof_of_personhood"));
   const getSignature = () => {
     fetch(`/api/anima/get_signature?sessionId=${sessionId}`)
       .then((response) => response.json())
@@ -113,7 +114,8 @@ const ClickablePersonhoodIcon: FunctionComponent<
             process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT as string,
             tokenId,
             Math.floor(Date.now() / 1000 + 15 * 60),
-            shortString.encodeShortString("proof_of_personhood"),
+            // hardcoded "proof_of_personhood"
+            "2507652182250236150756610039180649816461897572",
             hexToDecimal(hexSessionId),
             [sig.r, sig.s]
           )
