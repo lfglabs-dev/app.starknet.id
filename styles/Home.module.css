@@ -27,14 +27,12 @@
 }
 
 .containerGallery {
+  margin-top: 12vh;
+  min-height: 88vh;
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  margin-top: 2rem;
-  max-height: 100%;
-  max-width: 50rem;
-  overflow-y: auto;
+  flex-direction: column;
 }
 
 .title {

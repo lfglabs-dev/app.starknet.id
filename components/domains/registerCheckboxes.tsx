@@ -45,7 +45,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
             </a>
           </p>
         </div>
-        {renewalBox && (
+        {onChangeRenewalBox ? (
           <div
             className="flex items-center justify-left text-xs cursor-pointer"
             onClick={onChangeRenewalBox}
@@ -55,7 +55,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
               Enable auto-renewal and don&apos;t pay gas for your yearly renewal
             </p>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

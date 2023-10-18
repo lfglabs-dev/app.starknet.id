@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+import { encodeDomain } from "starknetid.js/packages/core/dist/utils";
 import { basicAlphabet } from "../../utils/constants";
 import {
   is1234Domain,
@@ -23,6 +24,8 @@ import {
   isValidDomain,
   getDomainLength,
   getImgUrl,
+  selectedDomainsToArray,
+  selectedDomainsToEncodedArray
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -409,6 +412,85 @@ describe("Should test getDomainLength function", () => {
   it("Should return 0 for undefined or invalid domain", () => {
     expect(getDomainLength(undefined)).toEqual(0);
     expect(getDomainLength("")).toEqual(0);
+  });
+});
+
+describe("selectedDomainsToEncodedArray function", () => {
+  it("should return an array of selected domains", () => {
+    const input = {
+      example: true,
+      test: false,
+      sample: true,
+      demo: false,
+    };
+
+    const output = [
+      encodeDomain("example")[0].toString(),
+      encodeDomain("sample")[0].toString(),
+    ];
+    expect(selectedDomainsToEncodedArray(input)).toEqual(output);
+  });
+
+  it("should return an empty array if no domains are selected", () => {
+    const input = {
+      example: false,
+      test: false,
+      sample: false,
+    };
+
+    const output = [];
+    expect(selectedDomainsToEncodedArray(input)).toEqual(output);
+  });
+
+  it("should return an array of all domains if all are selected", () => {
+    const input = {
+      example: true,
+      test: true,
+      sample: true,
+    };
+
+    const output = [
+      encodeDomain("example")[0].toString(),
+      encodeDomain("test")[0].toString(),
+      encodeDomain("sample")[0].toString(),
+    ];
+    expect(selectedDomainsToEncodedArray(input)).toEqual(output);
+  });
+});
+
+describe("selectedDomainsToArray function", () => {
+  it("should return an array of selected domains", () => {
+    const input = {
+      "example.com": true,
+      "test.com": false,
+      "sample.com": true,
+      "demo.com": false,
+    };
+
+    const output = ["example.com", "sample.com"];
+    expect(selectedDomainsToArray(input)).toEqual(output);
+  });
+
+  it("should return an empty array if no domains are selected", () => {
+    const input = {
+      "example.com": false,
+      "test.com": false,
+      "sample.com": false,
+    };
+
+    const output = [];
+    expect(selectedDomainsToArray(input)).toEqual(output);
+  });
+
+  it("should return an array of all domains if all are selected", () => {
+    const input = {
+      "example.com": true,
+      "test.com": true,
+      "sample.com": true,
+    };
+
+    const output = ["example.com", "test.com", "sample.com"];
+    expect(selectedDomainsToArray(input)).toEqual(output);
   });
 });
 

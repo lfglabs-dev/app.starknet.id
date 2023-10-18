@@ -1,6 +1,7 @@
 import { BN } from "bn.js";
 import { basicAlphabet } from "./constants";
 import { hexToDecimal } from "./feltService";
+import { encodeDomain } from "starknetid.js/packages/core/dist/utils";
 
 export function minifyAddress(address: string | undefined): string {
   if (!address) return "";
@@ -164,6 +165,26 @@ export function isValidDomain(domain: string | undefined): boolean | string {
 
   for (const char of domain) if (!basicAlphabet.includes(char)) return char;
   return true;
+}
+
+export function selectedDomainsToArray(
+  selectedDomains: Record<string, boolean>
+): string[] {
+  const domainsString: string[] = Object.entries(selectedDomains)
+    .filter(([, isSelected]) => isSelected)
+    .map(([domain]) => domain);
+
+  return domainsString;
+}
+
+export function selectedDomainsToEncodedArray(
+  selectedDomains: Record<string, boolean>
+): string[] {
+  const domainsString: string[] = Object.entries(selectedDomains)
+    .filter(([, isSelected]) => isSelected)
+    .map(([domain]) => encodeDomain(domain)[0].toString());
+
+  return domainsString;
 }
 
 export function getImgUrl(image: string): string {

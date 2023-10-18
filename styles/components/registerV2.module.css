@@ -34,6 +34,31 @@
   line-height: 20px; /* 142.857% */
 }
 
+.domainsToRenew {
+  color: #6d696a;
+  /* Body/small/medium */
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+}
+
+.renewalBox {
+  display: flex;
+  padding: 19.159px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 9.58px;
+  align-self: stretch;
+  border-radius: 7.983px;
+  border: 1.597px solid var(--content-400, #cdcccc);
+  background: var(--background-paper, #fff);
+
+  /* Small Shadow */
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+}
+
 .domain {
   color: #454545;
   /* Title/H3 */
@@ -49,7 +74,7 @@
   padding: 0px 48px;
   flex-direction: column;
   align-items: flex-start;
-  gap: 48px;
+  gap: 28px;
   align-self: stretch;
 }
 
