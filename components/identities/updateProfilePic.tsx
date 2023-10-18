@@ -32,8 +32,8 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   );
   const whitelistedContracts: string[] =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-      ? NFT_CONTRACT_TESTNET
-      : NFT_CONTRACT_MAINNET;
+      ? NFT_CONTRACT_TESTNET.map((hex) => hexToDecimal(hex))
+      : NFT_CONTRACT_MAINNET.map((hex) => hexToDecimal(hex));
 
   useEffect(() => {
     if (!identity?.addr) return;
