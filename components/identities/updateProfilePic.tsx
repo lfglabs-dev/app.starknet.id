@@ -5,6 +5,10 @@ import NftCard from "../UI/nftCard";
 import ModalProfilePic from "../UI/modalProfilePic";
 import { filterAssets, retrieveAssets } from "../../utils/nftService";
 import BackButton from "../UI/backButton";
+import {
+  NFT_CONTRACT_MAINNET,
+  NFT_CONTRACT_TESTNET,
+} from "../../utils/constants";
 
 type UpdateProfilePicProps = {
   identity?: Identity;
@@ -26,10 +30,10 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   const [selectedPic, setSelectedPic] = useState<StarkscanNftProps | null>(
     null
   );
-  const whitelistedContracts: string[] = [
-    hexToDecimal(process.env.NEXT_PUBLIC_STARKNETID_CONTRACT),
-    hexToDecimal(process.env.NEXT_PUBLIC_NFT_SQ_CONTRACT),
-  ];
+  const whitelistedContracts: string[] =
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+      ? NFT_CONTRACT_TESTNET
+      : NFT_CONTRACT_MAINNET;
 
   useEffect(() => {
     if (!identity?.addr) return;
