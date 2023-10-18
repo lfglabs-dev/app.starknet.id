@@ -9,7 +9,7 @@ import DoneFilledIcon from "./iconsComponents/icons/doneFilledIcon";
 import ArrowLeftIcon from "./iconsComponents/icons/arrowLeftIcon";
 import { useContractWrite, useTransactionManager } from "@starknet-react/core";
 import { Call } from "starknet";
-import registerCalls from "../../utils/registerCalls";
+import identityChangeCalls from "../../utils/callData/identityChangeCalls";
 import { hexToDecimal } from "../../utils/feltService";
 import { getImgUrl } from "../../utils/stringService";
 
@@ -38,7 +38,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
     if (!nft) return;
     const nft_id = nft.token_id;
     setCallData([
-      registerCalls.updateProfilePicture(
+      identityChangeCalls.updateProfilePicture(
         hexToDecimal(nft.contract_address),
         nft_id,
         id
