@@ -115,7 +115,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
             tokenId,
             Math.floor(Date.now() / 1000 + 15 * 60),
             // hardcoded "proof_of_personhood"
-            "2507652182250236150756610039180649816461897572",
+            "proof_of_personhood",
             hexToDecimal(hexSessionId),
             [sig.r, sig.s]
           )
