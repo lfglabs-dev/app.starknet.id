@@ -105,7 +105,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       setMetadataHash(
         await computeMetadataHash(
           email,
-          mailGroups,
           isUsResident ? usState : "none",
           salt
         )

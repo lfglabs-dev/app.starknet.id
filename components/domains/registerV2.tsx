@@ -108,7 +108,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       setMetadataHash(
         await computeMetadataHash(
           email,
-          groups, // default group for domain Owner
           isUsResident ? usState : "none",
           salt
         )
