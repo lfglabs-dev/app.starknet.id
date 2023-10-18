@@ -14,7 +14,7 @@ import {
 } from "@anima-protocol/personhood-sdk-react";
 import AnimaIcon from "../../../UI/iconsComponents/icons/animaIcon";
 import { useAccount, useTransactionManager } from "@starknet-react/core";
-import { Call, constants, shortString, typedData } from "starknet";
+import { Call, constants, typedData } from "starknet";
 import { useContractWrite } from "@starknet-react/core";
 import { hexToDecimal } from "../../../../utils/feltService";
 import { minifyDomain } from "../../../../utils/stringService";
@@ -113,7 +113,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
             process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT as string,
             tokenId,
             Math.floor(Date.now() / 1000 + 15 * 60),
-            shortString.encodeShortString("proof_of_personhood"),
+            "proof_of_personhood",
             hexToDecimal(hexSessionId),
             [sig.r, sig.s]
           )
