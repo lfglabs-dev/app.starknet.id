@@ -6,8 +6,8 @@ import ModalProfilePic from "../UI/modalProfilePic";
 import { filterAssets, retrieveAssets } from "../../utils/nftService";
 import BackButton from "../UI/backButton";
 import {
-  NFT_CONTRACT_MAINNET,
-  NFT_CONTRACT_TESTNET,
+  PFP_WL_CONTRACTS_MAINNET,
+  PFP_WL_CONTRACTS_TESTNET,
 } from "../../utils/constants";
 
 type UpdateProfilePicProps = {
@@ -32,8 +32,8 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   );
   const whitelistedContracts: string[] =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-      ? NFT_CONTRACT_TESTNET.map((hex) => hexToDecimal(hex))
-      : NFT_CONTRACT_MAINNET.map((hex) => hexToDecimal(hex));
+      ? PFP_WL_CONTRACTS_TESTNET.map((hex) => hexToDecimal(hex))
+      : PFP_WL_CONTRACTS_MAINNET.map((hex) => hexToDecimal(hex));
 
   useEffect(() => {
     if (!identity?.addr) return;
