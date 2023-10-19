@@ -35,13 +35,17 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
       ? PFP_WL_CONTRACTS_TESTNET.map((hex) => hexToDecimal(hex))
       : PFP_WL_CONTRACTS_MAINNET.map((hex) => hexToDecimal(hex));
 
+  console.log("whitelistedContracts", whitelistedContracts);
+
   useEffect(() => {
     if (!identity?.addr) return;
     retrieveAssets(
       `${process.env.NEXT_PUBLIC_SERVER_LINK}/starkscan/fetch_nfts`,
       identity.addr
     ).then((data) => {
+      console.log("data", data);
       const filteredAssets = filterAssets(data.data, whitelistedContracts);
+      console.log("filteredAssets", filteredAssets);
       setUserNft(filteredAssets);
     });
   }, [tokenId, identity]);

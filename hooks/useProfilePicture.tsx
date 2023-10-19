@@ -14,11 +14,8 @@ export default function useProfilePicture(tokenId: string) {
         tokenId,
         process.env.NEXT_PUBLIC_NFT_PP_VERIFIER
       );
-      console.log("data", data);
       if (data && data.some((value) => value !== BigInt(0))) {
-        console.log("has values");
         const nftId = fromUint256(data[2], data[3]);
-        console.log("nftId", nftId);
 
         const nft = await fetch(
           `https://${
@@ -42,7 +39,6 @@ export default function useProfilePicture(tokenId: string) {
             `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`
           );
       } else {
-        console.log("has no values");
         setImage(
           `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`
         );

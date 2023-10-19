@@ -5,14 +5,20 @@ export const retrieveAssets = async (
   url: string,
   addr: string,
   accumulatedAssets: StarkscanNftProps[] = []
+  //cursorValue: string | null = null
 ): Promise<StarkscanApiResult> => {
   return fetch(`${url}?addr=${addr}`)
     .then((res) => res.json())
     .then((data) => {
+      console.log("data inside", data);
       const assets = [...accumulatedAssets, ...data.data];
+      console.log("assets inside", assets);
       if (data.next_url) {
+        const params = new URLSearchParams(new URL(data.next_url).search);
+        const cursorValue = params.get("cursor");
+        console.log("cursorValue", cursorValue);
         return retrieveAssets(
-          `${url}?addr=${addr}&next_url=${data.next_url}`,
+          `${url}?addr=${addr}&cursor=${cursorValue}`,
           addr,
           assets
         );
