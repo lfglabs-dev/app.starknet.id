@@ -11,6 +11,7 @@ import {
 import { utils } from "starknetid.js";
 import {
   getDomainWithStark,
+  formatHexString,
   isHexString,
   isValidEmail,
 } from "../../utils/stringService";
@@ -108,7 +109,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       setMetadataHash(
         await computeMetadataHash(
           email,
-          groups, // default group for domain Owner
+          //groups, // default group for domain Owner
           isUsResident ? usState : "none",
           salt
         )
@@ -226,13 +227,24 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-        groups,
         tax_state: isUsResident ? usState : "none",
         salt: salt,
       }),
     })
       .then((res) => res.json())
       .catch((err) => console.log("Error on sending metadata:", err));
+
+    console.log("tx_hash:", registerData.transaction_hash);
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tx_hash: formatHexString(registerData.transaction_hash),
+        groups,
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) => console.log("Error on registering to email:", err));
 
     addTransaction({ hash: registerData.transaction_hash });
     setIsTxModalOpen(true);
