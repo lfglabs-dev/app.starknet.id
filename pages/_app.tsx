@@ -14,8 +14,8 @@ import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
 
 const connectors = [
-  new InjectedConnector({ options: { id: "argentX" } }),
   new InjectedConnector({ options: { id: "braavos" } }),
+  new InjectedConnector({ options: { id: "argentX" } }),
   new WebWalletConnector({
     url:
       process.env.NEXT_PUBLIC_IS_TESTNET === "true"
