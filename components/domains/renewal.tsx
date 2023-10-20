@@ -114,7 +114,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       setMetadataHash(
         await computeMetadataHash(
           email,
-          groups, // default group for domain Owner
+          //groups, // default group for domain Owner
           isUsResident ? usState : "none",
           salt
         )
