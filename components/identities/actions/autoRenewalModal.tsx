@@ -145,7 +145,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
 
   // Set Enable Auto Renewal Multicall
   useEffect(() => {
-    let calls: Call[] = [];
+    const calls: Call[] = [];
     if (
       erc20AllowanceError ||
       (erc20AllowanceData &&
