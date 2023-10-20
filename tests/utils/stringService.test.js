@@ -6,6 +6,7 @@ import {
   getDomainWithoutStark,
   isStarkRootDomain,
   isHexString,
+  formatHexString,
   isSubdomain,
   minifyAddress,
   minifyDomain,
@@ -25,7 +26,7 @@ import {
   getDomainLength,
   getImgUrl,
   selectedDomainsToArray,
-  selectedDomainsToEncodedArray
+  selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -172,6 +173,51 @@ describe("Should test isHexString", () => {
         "0x061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3"
       )
     ).toBeTruthy();
+  });
+});
+
+describe("Should test formatHexString", () => {
+  it("Should format a hex string without 0x prefix and add leading zeros", () => {
+    const input = "a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    const expected =
+      "0x0000000a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    expect(formatHexString(input)).toEqual(expected);
+  });
+
+  it("Should format a hex string with 0x prefix and add leading zeros", () => {
+    const input = "0xa78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    const expected =
+      "0x0000000a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    expect(formatHexString(input)).toEqual(expected);
+  });
+
+  it("Should format a hex string without leading zeros", () => {
+    const input =
+      "0x061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    const expected =
+      "0x061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    expect(formatHexString(input)).toEqual(expected);
+  });
+
+  it("Should format a short hex string with many leading zeros", () => {
+    const input = "0x1b";
+    const expected =
+      "0x000000000000000000000000000000000000000000000000000000000000001b";
+    expect(formatHexString(input)).toEqual(expected);
+  });
+
+  it("Should handle an empty string", () => {
+    const input = "";
+    const expected =
+      "0x0000000000000000000000000000000000000000000000000000000000000000";
+    expect(formatHexString(input)).toEqual(expected);
+  });
+
+  it("Should handle non-hex characters by not altering them (though this might not be intended behavior)", () => {
+    const input = "0xabcg";
+    const expected =
+      "0x000000000000000000000000000000000000000000000000000000000000abcg";
+    expect(formatHexString(input)).toEqual(expected);
   });
 });
 

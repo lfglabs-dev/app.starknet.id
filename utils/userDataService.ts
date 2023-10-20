@@ -10,12 +10,10 @@ export function generateSalt(): string {
 
 export async function computeMetadataHash(
   email: string,
-  groups: string[],
   taxState: string,
   salt: string
 ): Promise<string> {
-  const groupsStr: string = groups.join(",");
-  const message: string = [email, taxState, groupsStr, salt].join("|");
+  const message: string = [email, taxState, salt].join("|");
   const encoder = new TextEncoder();
   const data: Uint8Array = encoder.encode(message);
   const hashBuffer: ArrayBuffer = await crypto.subtle.digest("SHA-256", data);
