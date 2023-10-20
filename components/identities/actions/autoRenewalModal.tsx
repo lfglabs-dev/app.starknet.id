@@ -6,7 +6,7 @@ import {
   useTransactionManager,
 } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { usePricingContract } from "../../../hooks/contracts";
+import { useEtherContract, usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/autoRenewal.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
@@ -20,9 +20,10 @@ import {
   generateSalt,
 } from "../../../utils/userDataService";
 import registrationCalls from "../../../utils/callData/registrationCalls";
-import { isValidEmail } from "../../../utils/stringService";
+import { formatHexString, isValidEmail } from "../../../utils/stringService";
 import { applyRateToBigInt, gweiToEth } from "../../../utils/feltService";
 import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
+import { UINT_128_MAX } from "../../../utils/constants";
 
 type AutoRenewalModalProps = {
   handleClose: () => void;
@@ -61,6 +62,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: pricingContract } = usePricingContract();
+  const { contract: etherContract } = useEtherContract();
   const { addTransaction } = useTransactionManager();
   const { data: priceData, error: priceError } = useContractRead({
     address: pricingContract?.address as string,
@@ -68,6 +70,13 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     functionName: "compute_renew_price",
     args: [callDataEncodedDomain[1], 365],
   });
+  const { data: erc20AllowanceData, error: erc20AllowanceError } =
+    useContractRead({
+      address: etherContract?.address as string,
+      abi: etherContract?.abi as Abi,
+      functionName: "allowance",
+      args: [address, process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string],
+    });
   const { writeAsync: execute, data: autorenewData } = useContractWrite({
     calls: callData,
   });
@@ -115,7 +124,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       setMetadataHash(
         await computeMetadataHash(
           email,
-          groups,
+          // groups,
           isUsResident ? usState : "none",
           salt
         )
@@ -136,17 +145,27 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
 
   // Set Enable Auto Renewal Multicall
   useEffect(() => {
+    let calls: Call[] = [];
+    if (
+      erc20AllowanceError ||
+      (erc20AllowanceData &&
+        erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
+        erc20AllowanceData["remaining"].high !== UINT_128_MAX)
+    ) {
+      calls.push(autoRenewalCalls.approve());
+    }
+
     const txMetadataHash = "0x" + metadataHash;
     const finalPrice = Number(price) + Number(salesTaxAmount);
-    setCallData([
-      autoRenewalCalls.approve(),
+    calls.push(
       autoRenewalCalls.enableRenewal(
         callDataEncodedDomain[1].toString(),
         finalPrice.toString(),
         txMetadataHash
-      ),
-    ]);
-  }, [price, salesTaxRate, metadataHash]);
+      )
+    );
+    setCallData(calls);
+  }, [price, salesTaxRate, metadataHash, erc20AllowanceData]);
 
   useEffect(() => {
     if (!autorenewData?.transaction_hash || !salt) return;
@@ -154,20 +173,31 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
 
     // register the metadata to the sales manager db
     // when enabling auto renewal, if user wasn't already registered
-    if (needMedadata)
+    if (needMedadata) {
       fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           meta_hash: metadataHash,
           email,
-          groups,
           tax_state: isUsResident ? usState : "none",
           salt: salt,
         }),
       })
         .then((res) => res.json())
         .catch((err) => console.log("Error while sending metadata:", err));
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tx_hash: formatHexString(autorenewData.transaction_hash),
+        groups,
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) => console.log("Error on registering to email:", err));
 
     addTransaction({ hash: autorenewData?.transaction_hash ?? "" });
     setIsTxSent(true);

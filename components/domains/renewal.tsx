@@ -103,7 +103,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         tx_hash: formatHexString(renewData.transaction_hash),
-        groups,
+        groups: renewalBox ? groups : [groups[0]],
       }),
     })
       .then((res) => res.json())

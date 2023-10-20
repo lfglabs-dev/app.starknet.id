@@ -108,11 +108,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       setMetadataHash(
         await computeMetadataHash(
           email,
-<<<<<<< HEAD
-          renewalBox ? groups : [groups[0]], // default group for domain Owner
-=======
           //groups, // default group for domain Owner
->>>>>>> testnet
           isUsResident ? usState : "none",
           salt
         )
@@ -246,10 +242,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-<<<<<<< HEAD
-        groups: renewalBox ? groups : [groups[0]],
-=======
->>>>>>> testnet
         tax_state: isUsResident ? usState : "none",
         salt: salt,
       }),
@@ -262,7 +254,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         tx_hash: formatHexString(registerData.transaction_hash),
-        groups,
+        groups: renewalBox ? groups : [groups[0]],
       }),
     })
       .then((res) => res.json())
