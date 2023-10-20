@@ -9,6 +9,7 @@ import {
   useTransactionManager,
 } from "@starknet-react/core";
 import {
+  formatHexString,
   isValidEmail,
   selectedDomainsToArray,
   selectedDomainsToEncodedArray,
@@ -90,13 +91,23 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-        groups: renewalBox ? groups : [groups[0]],
         tax_state: isUsResident ? usState : "none",
         salt: salt,
       }),
     })
       .then((res) => res.json())
       .catch((err) => console.log("Error on sending metadata:", err));
+
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tx_hash: formatHexString(renewData.transaction_hash),
+        groups,
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) => console.log("Error on registering to email:", err));
 
     addTransaction({ hash: renewData.transaction_hash });
     setIsTxModalOpen(true);
@@ -115,7 +126,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       setMetadataHash(
         await computeMetadataHash(
           email,
-          renewalBox ? groups : [groups[0]], // default group for domain Owner
+          //groups, // default group for domain Owner
           isUsResident ? usState : "none",
           salt
         )
