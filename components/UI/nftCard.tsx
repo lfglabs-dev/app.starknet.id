@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import theme from "../../styles/theme";
 import AddIcon from "./iconsComponents/icons/addIcon";

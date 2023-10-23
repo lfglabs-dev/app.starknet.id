@@ -1,3 +1,7 @@
+import {
+  PFP_WL_CONTRACTS_MAINNET,
+  PFP_WL_CONTRACTS_TESTNET,
+} from "./constants";
 import { hexToDecimal } from "./feltService";
 
 // Retrieve assets from Starkscan API
@@ -37,4 +41,10 @@ export const filterAssets = (
     }
   });
   return filteredAssets;
+};
+
+export const getWhitelistedPfpContracts = (): string[] => {
+  return process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+    ? PFP_WL_CONTRACTS_TESTNET.map((hex) => hexToDecimal(hex))
+    : PFP_WL_CONTRACTS_MAINNET.map((hex) => hexToDecimal(hex));
 };

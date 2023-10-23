@@ -15,18 +15,18 @@ import { getImgUrl } from "../../utils/stringService";
 
 type ModalProfilePicProps = {
   closeModal: (cancel: boolean) => void;
-  open: boolean;
-  nft: StarkscanNftProps;
-  id: string;
+  isModalOpen: boolean;
+  nftData: StarkscanNftProps;
+  tokenId: string;
   setPfpTxHash: (hash: string) => void;
 };
 
 const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   closeModal,
   setPfpTxHash,
-  open,
-  nft,
-  id,
+  isModalOpen,
+  nftData,
+  tokenId,
 }) => {
   const [callData, setCallData] = useState<Call[]>([]);
   const { addTransaction } = useTransactionManager();
@@ -35,16 +35,16 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   });
 
   useEffect(() => {
-    if (!nft) return;
-    const nft_id = nft.token_id;
+    if (!nftData) return;
+    const nft_id = nftData.token_id;
     setCallData([
       identityChangeCalls.updateProfilePicture(
-        hexToDecimal(nft.contract_address),
+        hexToDecimal(nftData.contract_address),
         nft_id,
-        id
+        tokenId
       ),
     ]);
-  }, [nft, id]);
+  }, [nftData, tokenId]);
 
   useEffect(() => {
     if (!updateData?.transaction_hash) return;
@@ -56,20 +56,12 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   return (
     <Modal
       disableAutoFocus
-      open={open}
+      open={isModalOpen}
       onClose={closeModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <div className={styles.menu}>
-        <img
-          src="/leaves/new/leavesGroup03.svg"
-          className={ppStyles.leavesLeft}
-        />
-        <img
-          src="/leaves/new/leavesGroup04.svg"
-          className={ppStyles.leavesRight}
-        />
         <button className={styles.menu_close} onClick={() => closeModal(true)}>
           <svg viewBox="0 0 24 24">
             <path
@@ -81,9 +73,12 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
           </svg>
         </button>
         <p className={ppStyles.modalTitle}>Do you want to add this NFT?</p>
-        {nft?.image_url ? (
+        {nftData?.image_url ? (
           <div className={`${ppStyles.nftImg} mx-auto my-5`}>
-            <img src={getImgUrl(nft.image_url)} alt={`Image of ${nft.name}`} />
+            <img
+              src={getImgUrl(nftData.image_url)}
+              alt={`Image of ${nftData.name}`}
+            />
           </div>
         ) : null}
         <div className={ppStyles.modalActions}>
