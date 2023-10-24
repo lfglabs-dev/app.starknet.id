@@ -8,15 +8,16 @@ import {
 } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
-import MintIdentity from "../components/identities/mintIdentity";
+import MintIcon from "../components/UI/iconsComponents/icons/mintIcon";
 import { useRouter } from "next/router";
 import { hexToDecimal } from "../utils/feltService";
-import IdentitiesSkeleton from "../components/identities/identitiesSkeleton";
+import IdentitiesSkeleton from "../components/identities/skeletons/identitiesSkeleton";
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
 import Wallets from "../components/UI/wallets";
+import ClickableAction from "../components/UI/iconsComponents/clickableAction";
 
 const Identities: NextPage = () => {
-  const { account, address } = useAccount();
+  const { address } = useAccount();
   const [loading, setLoading] = useState<boolean>(true);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
   const [externalDomains, setExternalDomains] = useState<string[]>([]);
@@ -37,12 +38,13 @@ const Identities: NextPage = () => {
   });
 
   useEffect(() => {
-    if (account) {
+    if (address) {
+      setLoading(true);
       // Our Indexer
       fetch(
         `${
           process.env.NEXT_PUBLIC_SERVER_LINK
-        }/addr_to_full_ids?addr=${hexToDecimal(account.address)}`
+        }/addr_to_full_ids?addr=${hexToDecimal(address)}`
       )
         .then((response) => response.json())
         .then((data) => {
@@ -53,12 +55,14 @@ const Identities: NextPage = () => {
       fetch(
         `${
           process.env.NEXT_PUBLIC_SERVER_LINK
-        }/addr_to_external_domains?addr=${hexToDecimal(account.address)}`
+        }/addr_to_external_domains?addr=${hexToDecimal(address)}`
       )
         .then((response) => response.json())
         .then((data: ExternalDomains) => {
           setExternalDomains(data.domains);
         });
+    } else {
+      setLoading(false);
     }
 
     // // Aspect Indexer
@@ -69,7 +73,7 @@ const Identities: NextPage = () => {
     //   .then((data) => {
     //     setOwnedIdentities(data.assets);
     //   });
-  }, [account, router.asPath]);
+  }, [address, router.asPath]);
 
   useEffect(() => {
     if (!mintData?.transaction_hash) return;
@@ -83,37 +87,59 @@ const Identities: NextPage = () => {
 
   return (
     <>
-      <div className={styles.screen}>
-        <div className="firstLeavesGroup">
-          <img width="100%" alt="leaf" src="/leaves/new/leavesGroup02.svg" />
-        </div>
-        <div className="secondLeavesGroup">
-          <img width="100%" alt="leaf" src="/leaves/new/leavesGroup01.svg" />
-        </div>
-        <div className={styles.container}>
-          <h1 className="title">Your Starknet identities</h1>
-
-          <div className={styles.containerGallery}>
-            {loading ? (
-              <IdentitiesSkeleton />
-            ) : (
+      <div className={styles.containerGallery}>
+        <div>
+          {loading ? (
+            <IdentitiesSkeleton />
+          ) : ownedIdentities.length + externalDomains.length === 0 ||
+            !address ? (
+            <>
+              <h1 className="title text-center mb-[16px]">
+                All Your Identities in One Place
+              </h1>
+              <p className="description text-center max-w-2xl">
+                Easily access and manage all your identities from one
+                centralized location. Streamline your digital presence with
+                convenience and control.
+              </p>
+              <div className="w-fit block mx-auto px-4 mt-[33px]">
+                <ClickableAction
+                  title="ADD IDENTITIES"
+                  icon={<MintIcon />}
+                  onClick={
+                    address ? () => mint() : () => setWalletModalOpen(true)
+                  }
+                  width="auto"
+                />
+              </div>
+            </>
+          ) : (
+            <div>
               <IdentitiesGallery
                 identities={ownedIdentities}
                 externalDomains={externalDomains}
               />
-            )}
-            <MintIdentity
-              onClick={address ? () => mint() : () => setWalletModalOpen(true)}
-            />
-          </div>
+              <div className="w-fit block mx-auto px-4 mt-[33px]">
+                <ClickableAction
+                  title="ADD IDENTITIES"
+                  icon={<MintIcon />}
+                  onClick={
+                    address ? () => mint() : () => setWalletModalOpen(true)
+                  }
+                  width="auto"
+                />
+              </div>
+            </div>
+          )}
         </div>
-        <TxConfirmationModal
-          txHash={mintData?.transaction_hash}
-          isTxModalOpen={isTxModalOpen}
-          closeModal={() => setIsTxModalOpen(false)}
-          title="Your identity NFT is on it's way !"
-        />
       </div>
+      <TxConfirmationModal
+        txHash={mintData?.transaction_hash}
+        isTxModalOpen={isTxModalOpen}
+        closeModal={() => setIsTxModalOpen(false)}
+        title="Your identity NFT is on it's way !"
+      />
+
       <Wallets
         closeWallet={() => setWalletModalOpen(false)}
         hasWallet={walletModalOpen}

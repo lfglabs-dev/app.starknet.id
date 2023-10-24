@@ -1,10 +1,12 @@
 /* eslint-disable no-undef */
+import { encodeDomain } from "starknetid.js/packages/core/dist/utils";
 import { basicAlphabet } from "../../utils/constants";
 import {
   is1234Domain,
   getDomainWithoutStark,
   isStarkRootDomain,
   isHexString,
+  formatHexString,
   isSubdomain,
   minifyAddress,
   minifyDomain,
@@ -22,6 +24,8 @@ import {
   convertNumberToFixedLengthString,
   isValidDomain,
   getDomainLength,
+  selectedDomainsToArray,
+  selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -168,6 +172,51 @@ describe("Should test isHexString", () => {
         "0x061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3"
       )
     ).toBeTruthy();
+  });
+});
+
+describe("Should test formatHexString", () => {
+  it("Should format a hex string without 0x prefix and add leading zeros", () => {
+    const input = "a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    const expected =
+      "0x0000000a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    expect(formatHexString(input)).toEqual(expected);
+  });
+
+  it("Should format a hex string with 0x prefix and add leading zeros", () => {
+    const input = "0xa78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    const expected =
+      "0x0000000a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    expect(formatHexString(input)).toEqual(expected);
+  });
+
+  it("Should format a hex string without leading zeros", () => {
+    const input =
+      "0x061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    const expected =
+      "0x061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
+    expect(formatHexString(input)).toEqual(expected);
+  });
+
+  it("Should format a short hex string with many leading zeros", () => {
+    const input = "0x1b";
+    const expected =
+      "0x000000000000000000000000000000000000000000000000000000000000001b";
+    expect(formatHexString(input)).toEqual(expected);
+  });
+
+  it("Should handle an empty string", () => {
+    const input = "";
+    const expected =
+      "0x0000000000000000000000000000000000000000000000000000000000000000";
+    expect(formatHexString(input)).toEqual(expected);
+  });
+
+  it("Should handle non-hex characters by not altering them (though this might not be intended behavior)", () => {
+    const input = "0xabcg";
+    const expected =
+      "0x000000000000000000000000000000000000000000000000000000000000abcg";
+    expect(formatHexString(input)).toEqual(expected);
   });
 });
 
@@ -408,5 +457,84 @@ describe("Should test getDomainLength function", () => {
   it("Should return 0 for undefined or invalid domain", () => {
     expect(getDomainLength(undefined)).toEqual(0);
     expect(getDomainLength("")).toEqual(0);
+  });
+});
+
+describe("selectedDomainsToEncodedArray function", () => {
+  it("should return an array of selected domains", () => {
+    const input = {
+      example: true,
+      test: false,
+      sample: true,
+      demo: false,
+    };
+
+    const output = [
+      encodeDomain("example")[0].toString(),
+      encodeDomain("sample")[0].toString(),
+    ];
+    expect(selectedDomainsToEncodedArray(input)).toEqual(output);
+  });
+
+  it("should return an empty array if no domains are selected", () => {
+    const input = {
+      example: false,
+      test: false,
+      sample: false,
+    };
+
+    const output = [];
+    expect(selectedDomainsToEncodedArray(input)).toEqual(output);
+  });
+
+  it("should return an array of all domains if all are selected", () => {
+    const input = {
+      example: true,
+      test: true,
+      sample: true,
+    };
+
+    const output = [
+      encodeDomain("example")[0].toString(),
+      encodeDomain("test")[0].toString(),
+      encodeDomain("sample")[0].toString(),
+    ];
+    expect(selectedDomainsToEncodedArray(input)).toEqual(output);
+  });
+});
+
+describe("selectedDomainsToArray function", () => {
+  it("should return an array of selected domains", () => {
+    const input = {
+      "example.com": true,
+      "test.com": false,
+      "sample.com": true,
+      "demo.com": false,
+    };
+
+    const output = ["example.com", "sample.com"];
+    expect(selectedDomainsToArray(input)).toEqual(output);
+  });
+
+  it("should return an empty array if no domains are selected", () => {
+    const input = {
+      "example.com": false,
+      "test.com": false,
+      "sample.com": false,
+    };
+
+    const output = [];
+    expect(selectedDomainsToArray(input)).toEqual(output);
+  });
+
+  it("should return an array of all domains if all are selected", () => {
+    const input = {
+      "example.com": true,
+      "test.com": true,
+      "sample.com": true,
+    };
+
+    const output = ["example.com", "test.com", "sample.com"];
+    expect(selectedDomainsToArray(input)).toEqual(output);
   });
 });

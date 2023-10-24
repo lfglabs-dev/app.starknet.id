@@ -1,5 +1,6 @@
 import { BN } from "bn.js";
 import { basicAlphabet } from "./constants";
+import { encodeDomain } from "starknetid.js/packages/core/dist/utils";
 
 export function minifyAddress(address: string | undefined): string {
   if (!address) return "";
@@ -65,6 +66,28 @@ export function getDomainWithStark(str: string | undefined): string {
 export function isHexString(str: string): boolean {
   if (str === "") return true;
   return /^0x[0123456789abcdefABCDEF]+$/.test(str);
+}
+
+// this makes sure hex string will be 64 chars
+export function formatHexString(txHash : string) {
+  // Remove the '0x' prefix if it exists
+  if (txHash.startsWith('0x')) {
+      txHash = txHash.slice(2);
+  }
+
+  // Calculate the number of leading zeros needed
+  const totalHashLength = 64; // 64 characters for the hash
+  const leadingZerosNeeded = totalHashLength - txHash.length;
+
+  // Add the required leading zeros
+  for (let i = 0; i < leadingZerosNeeded; i++) {
+      txHash = '0' + txHash;
+  }
+
+  // Add the '0x' prefix back
+  txHash = '0x' + txHash;
+
+  return txHash.toLowerCase();
 }
 
 export function generateString(length: number, characters: string): string {
@@ -163,4 +186,24 @@ export function isValidDomain(domain: string | undefined): boolean | string {
 
   for (const char of domain) if (!basicAlphabet.includes(char)) return char;
   return true;
+}
+
+export function selectedDomainsToArray(
+  selectedDomains: Record<string, boolean>
+): string[] {
+  const domainsString: string[] = Object.entries(selectedDomains)
+    .filter(([, isSelected]) => isSelected)
+    .map(([domain]) => domain);
+
+  return domainsString;
+}
+
+export function selectedDomainsToEncodedArray(
+  selectedDomains: Record<string, boolean>
+): string[] {
+  const domainsString: string[] = Object.entries(selectedDomains)
+    .filter(([, isSelected]) => isSelected)
+    .map(([domain]) => encodeDomain(domain)[0].toString());
+
+  return domainsString;
 }

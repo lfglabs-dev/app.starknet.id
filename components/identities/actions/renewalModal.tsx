@@ -12,6 +12,7 @@ import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi } from "starknet";
 import ConfirmationTx from "../../UI/confirmationTx";
+import registrationCalls from "../../../utils/callData/registrationCalls";
 
 type RenewalModalProps = {
   handleClose: () => void;
@@ -39,22 +40,11 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
   const { addTransaction } = useTransactionManager();
   const [isTxSent, setIsTxSent] = useState(false);
 
-  //  renew execute
-  const renew_calls = [
-    {
-      contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-      entrypoint: "approve",
-      calldata: [process.env.NEXT_PUBLIC_NAMING_CONTRACT as string, price, 0],
-    },
-    {
-      contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-      entrypoint: "renew",
-      calldata: [callDataEncodedDomain[1], duration * 365, 0, 0, 0],
-    },
-  ];
-
   const { writeAsync: renew, data: renewData } = useContractWrite({
-    calls: renew_calls,
+    calls: [
+      registrationCalls.approve(price),
+      registrationCalls.renew(callDataEncodedDomain[1].toString(), duration),
+    ],
   });
 
   useEffect(() => {

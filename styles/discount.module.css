@@ -66,13 +66,18 @@
 }
 
 .backArrow {
-  width: 100%;
+  width: fit-content;
   flex-shrink: 0;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   cursor: pointer;
   font-family: "Poppins-Bold";
+  transition: 0.3s ease-in-out;
+}
+
+.backArrow:hover {
+  opacity: 0.7;
 }
 
 @media (max-width: 1024px) {

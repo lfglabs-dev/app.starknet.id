@@ -8,50 +8,37 @@ import {
   useContractWrite,
   useTransactionManager,
 } from "@starknet-react/core";
-import { utils } from "starknetid.js";
-import { getDomainWithStark, isValidEmail } from "../../utils/stringService";
 import {
-  applyRateToBigInt,
-  gweiToEth,
-  hexToDecimal,
-  numberToFixedString,
-} from "../../utils/feltService";
-import { useDisplayName } from "../../hooks/displayName.tsx";
+  isValidEmail,
+  selectedDomainsToArray,
+  selectedDomainsToEncodedArray,
+} from "../../utils/stringService";
+import { gweiToEth, applyRateToBigInt } from "../../utils/feltService";
 import { Abi, Call } from "starknet";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
+import UsForm from "./usForm";
 import { Divider } from "@mui/material";
-import RegisterCheckboxes from "../domains/registerCheckboxes";
-import RegisterSummary from "../domains/registerSummary";
+import RegisterSummary from "./registerSummary";
 import salesTax from "sales-tax";
 import Wallets from "../UI/wallets";
-import registrationCalls from "../../utils/callData/registrationCalls";
-import UsForm from "../domains/usForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
+import {
+  areDomainSelected,
+  getPriceFromDomains,
+} from "../../utils/priceService";
+import RenewalDomainsBox from "./renewalDomainsBox";
+import registrationCalls from "../../utils/callData/registrationCalls";
 import BackButton from "../UI/backButton";
+import { useRouter } from "next/router";
 
-type RegisterDiscountProps = {
-  domain: string;
-  duration: number;
-  discountId: string;
-  customMessage: string;
-  price: string;
-  mailGroups: string[];
-  goBack: () => void;
+type RenewalProps = {
+  groups: string[];
 };
 
-const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
-  domain,
-  duration,
-  discountId,
-  customMessage,
-  price,
-  mailGroups,
-  goBack,
-}) => {
-  const [targetAddress, setTargetAddress] = useState<string>("");
+const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
@@ -59,20 +46,19 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [callData, setCallData] = useState<Call[]>([]);
-  const [balance, setBalance] = useState<string>("0");
+  const [price, setPrice] = useState<string>("");
+  const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
-  const [salt, setSalt] = useState<string | undefined>();
   const { contract: etherContract } = useEtherContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-  const encodedDomain = utils
-    .encodeDomain(domain)
-    .map((element) => element.toString())[0];
-  const [termsBox, setTermsBox] = useState<boolean>(true);
+  // const [termsBox, setTermsBox] = useState<boolean>(true);
   // const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
+  const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
-
-  const { account, address } = useAccount();
+  const [selectedDomains, setSelectedDomains] =
+    useState<Record<string, boolean>>();
+  const { address } = useAccount();
   const { data: userBalanceData, error: userBalanceDataError } =
     useContractRead({
       address: etherContract?.address as string,
@@ -80,17 +66,40 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       functionName: "balanceOf",
       args: [address],
     });
-  const { writeAsync: execute, data: registerData } = useContractWrite({
+  const { writeAsync: execute, data: renewData } = useContractWrite({
     // calls: renewalBox
     //   ? callData.concat(registrationCalls.renewal(encodedDomain, price))
     //   : callData,
     calls: callData,
   });
-  const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");
-  const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
-    new Map()
-  );
+  const [domainsMinting, setDomainsMinting] =
+    useState<Record<string, boolean>>();
   const { addTransaction } = useTransactionManager();
+  const router = useRouter();
+  const duration = 1; // on year by default
+
+  useEffect(() => {
+    if (!renewData?.transaction_hash || !salt) return;
+    posthog?.capture("renewal from page");
+
+    // register the metadata to the sales manager db
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        meta_hash: metadataHash,
+        email,
+        groups,
+        tax_state: isUsResident ? usState : "none",
+        salt: salt,
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) => console.log("Error on sending metadata:", err));
+
+    addTransaction({ hash: renewData.transaction_hash });
+    setIsTxModalOpen(true);
+  }, [renewData, salt, email, usState]);
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -105,7 +114,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       setMetadataHash(
         await computeMetadataHash(
           email,
-          //mailGroups,
+          //groups, // default group for domain Owner
           isUsResident ? usState : "none",
           salt
         )
@@ -114,7 +123,17 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   }, [email, usState, salt]);
 
   useEffect(() => {
-    if (userBalanceDataError || !userBalanceData) setBalance("0");
+    if (!selectedDomains) return;
+    setPrice(
+      getPriceFromDomains(
+        selectedDomainsToArray(selectedDomains),
+        duration
+      ).toString()
+    );
+  }, [selectedDomains]);
+
+  useEffect(() => {
+    if (userBalanceDataError || !userBalanceData) setBalance("");
     else {
       const high = userBalanceData?.["balance"].high << BigInt(128);
       setBalance((userBalanceData?.["balance"].low + high).toString(10));
@@ -130,93 +149,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       }
     }
   }, [balance, price]);
-
-  useEffect(() => {
-    if (address) {
-      setTargetAddress(address);
-    }
-  }, [address]);
-
-  // Set sponsor
-  // useEffect(() => {
-  //   const referralData = localStorage.getItem("referralData");
-  //   if (referralData) {
-  //     const data = JSON.parse(referralData);
-  //     if (data.sponsor && data?.expiry >= new Date().getTime()) {
-  //       setSponsor(data.sponsor);
-  //     } else {
-  //       setSponsor("0");
-  //     }
-  //   } else {
-  //     setSponsor("0");
-  //   }
-  // }, [domain]);
-
-  // Set mulitcalls
-  useEffect(() => {
-    const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-    const txMetadataHash = "0x" + metadataHash;
-    const addressesMatch =
-      hexToDecimal(address) === hexToDecimal(targetAddress);
-    // Common calls
-    const calls = [
-      registrationCalls.mint(newTokenId),
-      registrationCalls.approve(price),
-      registrationCalls.buy_discounted(
-        encodedDomain,
-        newTokenId,
-        targetAddress,
-        duration,
-        discountId,
-        txMetadataHash
-      ),
-    ];
-
-    // If the user is a US resident, we add the sales tax
-    if (salesTaxRate) {
-      calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
-    }
-
-    // If the user do not have a main domain and the address match
-    if (addressesMatch && !hasMainDomain) {
-      calls.push(registrationCalls.addressToDomain(encodedDomain));
-    }
-
-    // Merge and set the call data
-    setCallData(calls);
-  }, [
-    duration,
-    targetAddress,
-    price,
-    domain,
-    hasMainDomain,
-    address,
-    metadataHash,
-    salesTaxRate,
-  ]);
-
-  useEffect(() => {
-    if (!registerData?.transaction_hash) return;
-    posthog?.capture("register");
-
-    // register the metadata to the sales manager db
-    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        meta_hash: metadataHash,
-        email,
-        groups: mailGroups, // Domain Owner group + quantumleap group^
-        tax_state: isUsResident ? usState : "none",
-        salt: salt,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.log("Error on sending metadata:", err));
-
-    addTransaction({ hash: registerData?.transaction_hash ?? "" });
-    setIsTxModalOpen(true);
-  }, [registerData]);
 
   function changeEmail(value: string): void {
     setEmail(value);
@@ -235,24 +167,44 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     }
   }, [isUsResident, usState, price]);
 
+  useEffect(() => {
+    if (selectedDomains) {
+      const calls = [
+        registrationCalls.approve(price),
+        ...registrationCalls.multiCallRenewal(
+          selectedDomainsToEncodedArray(selectedDomains),
+          duration
+        ),
+      ];
+
+      // If the user is a US resident, we add the sales tax
+      if (salesTaxRate) {
+        calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+      }
+
+      setCallData(calls);
+    }
+  }, [selectedDomains, price, salesTaxRate]);
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.form}>
-          <BackButton onClick={() => goBack()} />
-          <div className="flex flex-col items-start gap-4 self-stretch">
-            <p className={styles.legend}>Your registration</p>
-            <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
+          <BackButton onClick={() => router.back()} />
+          <div className="flex flex-col items-start gap-0 self-stretch">
+            <p className={styles.legend}>Your renewal</p>
+            <h3 className={styles.domain}>Renew Your domain(s)</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
             <TextField
-              helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news, you can unsubscribe at any moment."
+              helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
               label="Email address"
               value={email}
               onChange={(e) => changeEmail(e.target.value)}
               color="secondary"
               error={emailError}
-              errorMessage="Please enter a valid email address"
+              errorMessage={"Please enter a valid email address"}
+              type="email"
             />
             <UsForm
               isUsResident={isUsResident}
@@ -260,54 +212,57 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
               usState={usState}
               changeUsState={(value) => setUsState(value)}
             />
+            <RenewalDomainsBox
+              helperText="Check the box of the domains you want to renew"
+              setSelectedDomains={setSelectedDomains}
+              selectedDomains={selectedDomains}
+            />
           </div>
         </div>
         <div className={styles.summary}>
           <RegisterSummary
             ethRegistrationPrice={price}
-            duration={Number(numberToFixedString(duration / 365))}
+            duration={1}
             renewalBox={false}
             salesTaxRate={salesTaxRate}
             isUsResident={isUsResident}
-            isUsdPriceDisplayed={false}
-            customMessage={customMessage}
           />
           <Divider className="w-full" />
-          <RegisterCheckboxes
+          {/* <RegisterCheckboxes
             // onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
             // renewalBox={renewalBox}
-          />
+          /> */}
           {address ? (
             <Button
               onClick={() =>
-                execute().then(() =>
-                  setDomainsMinting((prev) =>
-                    new Map(prev).set(encodedDomain.toString(), true)
-                  )
-                )
+                execute().then(() => {
+                  setDomainsMinting(selectedDomains);
+                })
               }
               disabled={
-                (domainsMinting.get(encodedDomain) as boolean) ||
-                !account ||
-                !duration ||
-                !targetAddress ||
+                domainsMinting === selectedDomains ||
+                !address ||
                 invalidBalance ||
-                !termsBox ||
+                // !termsBox ||
                 (isUsResident && !usState) ||
-                emailError
+                emailError ||
+                !areDomainSelected(selectedDomains)
               }
             >
-              {!termsBox
+              {/* {!termsBox
                 ? "Please accept terms & policies"
-                : isUsResident && !usState
+                :  */}
+              {isUsResident && !usState
                 ? "We need your US State"
                 : invalidBalance
                 ? "You don't have enough eth"
+                : !areDomainSelected(selectedDomains)
+                ? "Select a domain to renew"
                 : emailError
                 ? "Enter a valid Email"
-                : "Register my domain"}
+                : "Renew my domain(s)"}
             </Button>
           ) : (
             <Button onClick={() => setWalletModalOpen(true)}>
@@ -318,7 +273,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       </div>
       <img className={styles.image} src="/visuals/registerV2.webp" />
       <TxConfirmationModal
-        txHash={registerData?.transaction_hash}
+        txHash={renewData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
         closeModal={() => setIsTxModalOpen(false)}
         title="Your domain is on it's way !"
@@ -331,4 +286,4 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   );
 };
 
-export default RegisterDiscount;
+export default Renewal;
