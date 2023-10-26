@@ -5,6 +5,7 @@ export const UINT_128_MAX = (BigInt(1) << BigInt(128)) - BigInt(1);
 
 export const PFP_WL_CONTRACTS_TESTNET = [
   "0x041e1382e604688da7f22e7fbb6113ba3649b84a87b58f4dc1cf5bfa96dfc2cf",
+  "0x0154520b48b692bb8b926434bbd24d797e806704af28b6cdcea30ea7db6a996b",
 ];
 
 export const PFP_WL_CONTRACTS_MAINNET = [
