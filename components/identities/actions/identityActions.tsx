@@ -267,7 +267,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     <ClickableAction
                       title="DISABLE AUTO RENEWAL"
                       description={nextAutoRenew}
-                      icon={<div className={styles.renewalIcon}>OFF</div>}
+                      icon={<div className={styles.renewalIconOff}>OFF</div>}
                       onClick={() => disableRenewal()}
                     />
                   ) : null}
