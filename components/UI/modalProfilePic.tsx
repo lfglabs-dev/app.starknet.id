@@ -88,8 +88,8 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
             icon={
               <DoneFilledIcon
                 width="30"
-                filled={theme.palette.primary.main}
                 color="#FFFFFF"
+                secondColor={theme.palette.primary.main}
               />
             }
             description=""
