@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/search.module.css";
 import SearchBar from "../components/UI/searchBar";
-import { isStarkRootDomain } from "../utils/stringService";
+import { getImgUrl, isStarkRootDomain } from "../utils/stringService";
 import IdentityCard from "../components/identities/identityCard";
 import IdentityCardSkeleton from "../components/identities/skeletons/identityCardSkeleton";
 import { useAccount } from "@starknet-react/core";
@@ -67,6 +67,11 @@ const SearchPage: NextPage = () => {
             tokenId={identity.starknet_id ?? ""}
             identity={identity}
             isOwner={isOwner}
+            ppImageUrl={
+              identity?.img_url
+                ? getImgUrl(identity.img_url)
+                : `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${identity?.starknet_id}`
+            }
           />
         ) : (
           <IdentityCardSkeleton />

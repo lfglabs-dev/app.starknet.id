@@ -22,7 +22,7 @@ type IdentityCardProps = {
   tokenId: string;
   isOwner: boolean;
   updateProfilePic?: () => void;
-  ppImageUrl?: string;
+  ppImageUrl: string;
 };
 
 const IdentityCard: FunctionComponent<IdentityCardProps> = ({
