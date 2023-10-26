@@ -11,7 +11,7 @@ import { useAccount } from "@starknet-react/core";
 import IdentityPageSkeleton from "../../components/identities/skeletons/identityPageSkeleton";
 import UpdateProfilePic from "../../components/identities/updateProfilePic";
 import TxConfirmationModal from "../../components/UI/txConfirmationModal";
-import useProfilePicture from "../../hooks/useProfilePicture";
+import { getImgUrl } from "../../utils/stringService";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -26,7 +26,6 @@ const TokenIdPage: NextPage = () => {
   const [isUpdatingPp, setIsUpdatingPp] = useState(false);
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [ppTxHash, setPpTxHash] = useState<string>();
-  const ppImageUrl = useProfilePicture(tokenId);
 
   useEffect(() => {
     if (!identity || !address) return;
@@ -79,7 +78,11 @@ const TokenIdPage: NextPage = () => {
                     tokenId={tokenId}
                     isOwner={isOwner}
                     updateProfilePic={() => setIsUpdatingPp(true)}
-                    ppImageUrl={ppImageUrl}
+                    ppImageUrl={
+                      identity?.img_url
+                        ? getImgUrl(identity.img_url)
+                        : `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${identity?.starknet_id}`
+                    }
                   />
                   {!hideActions && (
                     <IdentityActions

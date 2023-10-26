@@ -15,6 +15,7 @@ type Identity = {
   proof_of_personhood?: boolean;
   starknet_id?: string;
   error?: string;
+  img_url?: string;
 };
 
 type ExternalDomains = {

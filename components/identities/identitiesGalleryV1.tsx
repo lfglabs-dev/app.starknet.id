@@ -1,7 +1,11 @@
 import React, { FunctionComponent, ReactNode } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
-import { getDomainKind, minifyDomain } from "../../utils/stringService";
+import {
+  getDomainKind,
+  getImgUrl,
+  minifyDomain,
+} from "../../utils/stringService";
 import ErrorIcon from "@mui/icons-material/Error";
 import { Tooltip } from "@mui/material";
 import {
@@ -9,7 +13,6 @@ import {
   timestampToReadableDate,
 } from "../../utils/dateService";
 import ArgentIcon from "../UI/iconsComponents/icons/argentIcon";
-import IdentityImage from "./identityImage";
 
 type IdentitiesGalleryV1Props = {
   identities: FullId[];
@@ -43,7 +46,17 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                 </Tooltip>
               </div>
             ) : null}
-            <IdentityImage tokenId={identity.id} />
+            <img
+              width={150}
+              height={150}
+              src={
+                identity.pp_url
+                  ? getImgUrl(identity.pp_url)
+                  : `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${identity.id}`
+              }
+              alt="avatar"
+              className="rounded-[20px]"
+            />
 
             <p className="font-bold font-quickZap">
               {identity.domain

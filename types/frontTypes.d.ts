@@ -1,7 +1,7 @@
 type IconProps = {
   color: string;
   width: string;
-  filled?: string;
+  secondColor?: string;
   className?: string;
 };
 
@@ -9,6 +9,7 @@ type FullId = {
   id: string;
   domain: string;
   domain_expiry: number | null;
+  pp_url: string | null;
 };
 
 type ErrorRequestData = {
