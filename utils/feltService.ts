@@ -69,3 +69,11 @@ export function fromUint256(low: BigInt, high: BigInt): string {
   const bhigh = (high as any) << BigInt(128);
   return ((low as any) + bhigh).toString(10);
 }
+
+export function toUint256(n: string): { low: string; high: string } {
+  const b = BigInt(n);
+  return {
+    low: (b & UINT_128_MAX).toString(),
+    high: (b >> BigInt(128)).toString(),
+  };
+}
