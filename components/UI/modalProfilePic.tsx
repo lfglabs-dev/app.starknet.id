@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "../../styles/components/modalMessage.module.css";
 import ppStyles from "../../styles/components/profilePic.module.css";
 import { FunctionComponent } from "react";
@@ -12,6 +12,7 @@ import { Call } from "starknet";
 import identityChangeCalls from "../../utils/callData/identityChangeCalls";
 import { hexToDecimal } from "../../utils/feltService";
 import { getImgUrl } from "../../utils/stringService";
+import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 
 type ModalProfilePicProps = {
   closeModal: (cancel: boolean) => void;
@@ -33,6 +34,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   const { writeAsync: execute, data: updateData } = useContractWrite({
     calls: callData,
   });
+  const { updateIdentityImg } = useContext(StarknetIdJsContext);
 
   useEffect(() => {
     if (!nftData) return;
@@ -50,6 +52,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
     if (!updateData?.transaction_hash) return;
     addTransaction({ hash: updateData.transaction_hash });
     setPfpTxHash(updateData.transaction_hash);
+    updateIdentityImg(tokenId, nftData.image_url as string);
     closeModal(false);
   }, [updateData]);
 

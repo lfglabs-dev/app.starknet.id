@@ -1,11 +1,7 @@
-import React, { FunctionComponent, ReactNode } from "react";
+import React, { FunctionComponent, ReactNode, useContext } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
-import {
-  getDomainKind,
-  getImgUrl,
-  minifyDomain,
-} from "../../utils/stringService";
+import { getDomainKind, minifyDomain } from "../../utils/stringService";
 import ErrorIcon from "@mui/icons-material/Error";
 import { Tooltip } from "@mui/material";
 import {
@@ -13,6 +9,7 @@ import {
   timestampToReadableDate,
 } from "../../utils/dateService";
 import ArgentIcon from "../UI/iconsComponents/icons/argentIcon";
+import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 
 type IdentitiesGalleryV1Props = {
   identities: FullId[];
@@ -24,6 +21,8 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
   externalDomains = [],
 }) => {
   const router = useRouter();
+  const { getPfp } = useContext(StarknetIdJsContext);
+
   return (
     // Our Indexer
     <div className={styles.galleryContainer}>
@@ -49,11 +48,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
             <img
               width={150}
               height={150}
-              src={
-                identity.pp_url
-                  ? getImgUrl(identity.pp_url)
-                  : `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${identity.id}`
-              }
+              src={getPfp(identity.id)}
               alt="avatar"
               className="rounded-[20px]"
             />

@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/search.module.css";
 import SearchBar from "../components/UI/searchBar";
-import { getImgUrl, isStarkRootDomain } from "../utils/stringService";
+import { isStarkRootDomain } from "../utils/stringService";
 import IdentityCard from "../components/identities/identityCard";
 import IdentityCardSkeleton from "../components/identities/skeletons/identityCardSkeleton";
 import { useAccount } from "@starknet-react/core";
 import { hexToDecimal } from "../utils/feltService";
+import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
 
 const SearchPage: NextPage = () => {
   const router = useRouter();
@@ -17,6 +18,7 @@ const SearchPage: NextPage = () => {
   const [identity, setIdentity] = useState<Identity>();
   const { address } = useAccount();
   const [isOwner, setIsOwner] = useState(true);
+  const { getPfp } = useContext(StarknetIdJsContext);
 
   useEffect(() => {
     if (!identity || !address) return;
@@ -67,11 +69,7 @@ const SearchPage: NextPage = () => {
             tokenId={identity.starknet_id ?? ""}
             identity={identity}
             isOwner={isOwner}
-            ppImageUrl={
-              identity?.img_url
-                ? getImgUrl(identity.img_url)
-                : `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${identity?.starknet_id}`
-            }
+            ppImageUrl={getPfp(identity.starknet_id ?? "")}
           />
         ) : (
           <IdentityCardSkeleton />
