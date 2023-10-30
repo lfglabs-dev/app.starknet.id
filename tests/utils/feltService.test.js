@@ -5,6 +5,7 @@ import {
   gweiToEth,
   applyRateToBigInt,
   fromUint256,
+  toUint256,
 } from "../../utils/feltService";
 
 describe("Should test hexToDecimal function", () => {
