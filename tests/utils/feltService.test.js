@@ -4,6 +4,8 @@ import {
   stringToHex,
   gweiToEth,
   applyRateToBigInt,
+  fromUint256,
+  toUint256,
 } from "../../utils/feltService";
 
 describe("Should test hexToDecimal function", () => {
@@ -102,3 +104,54 @@ describe("Should test applyRateToBigInt function", () => {
     );
   });
 });
+
+describe("fromUint256 function", () => {
+  it("should correctly combine low and high BigInts", () => {
+    expect(fromUint256(BigInt(1), BigInt(0))).toBe("1");
+    expect(fromUint256(BigInt(0), BigInt(1))).toBe("340282366920938463463374607431768211456"); // 2^128
+    expect(fromUint256(BigInt(1), BigInt(1))).toBe("340282366920938463463374607431768211457"); // 2^128 + 1
+  });
+  
+  it("should handle edge cases", () => {
+    expect(fromUint256(BigInt(0), BigInt(0))).toBe("0");
+    expect(
+      fromUint256(BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"), BigInt(0))
+    ).toBe("340282366920938463463374607431768211455"); // 2^128 - 1
+    expect(
+      fromUint256(
+        BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"), 
+        BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
+      )
+    ).toBe("115792089237316195423570985008687907853269984665640564039457584007913129639935"); // 2^256 - 1
+  });  
+});
+
+describe("Should test the toUint256 function", () => {
+  it("should return correct low and high values for valid inputs", () => {
+    const input = "1234567890";
+    const result = toUint256(input);
+
+    const expectedLow = "1234567890";
+    const expectedHigh = "0";
+
+    expect(result.low).toBe(expectedLow);
+    expect(result.high).toBe(expectedHigh);
+  });
+
+  it("Should handle extremely large numbers", () => {
+    const largeInput = "1206167596222043737899107594365023368541035738443865566657697352045290673496";
+    const result = toUint256(largeInput);
+
+    const expectedLow = "113427455640312821154458202477256070488";
+    const expectedHigh = "3544607988759775765608368578435044693";
+
+    expect(result.low).toBe(expectedLow);
+    expect(result.high).toBe(expectedHigh);
+  });
+
+  it("should throw an error for invalid inputs", () => {
+    const invalidInput = "invalidNumber";
+
+    expect(() => toUint256(invalidInput)).toThrow();
+  });
+})
