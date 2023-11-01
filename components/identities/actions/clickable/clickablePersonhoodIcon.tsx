@@ -13,7 +13,6 @@ import {
   StarknetSignature,
 } from "@anima-protocol/personhood-sdk-react";
 import AnimaIcon from "../../../UI/iconsComponents/icons/animaIcon";
-// useTransactionManager
 import { useAccount } from "@starknet-react/core";
 import { Call, constants, typedData } from "starknet";
 import { useContractWrite } from "@starknet-react/core";
