@@ -32,6 +32,7 @@ export enum TransactionType {
   VERIFIER = "VERIFIER",
   MAIN_DOMAIN = "MAIN_DOMAIN",
   SUBDOMAIN = "SUBDOMAIN",
+  SET_PFP = "SET_PFP",
 }
 
 export const PENDING_TRANSACTION = "Transaction pending...";
@@ -48,6 +49,7 @@ export const notificationTitle: Record<TransactionType, string> = {
   [TransactionType.VERIFIER]: "Verifier added",
   [TransactionType.MAIN_DOMAIN]: "Main domain set",
   [TransactionType.SUBDOMAIN]: "Subdomain created",
+  [TransactionType.SET_PFP]: "New profile picture set",
 };
 
 export const notificationLinkText: Record<NotificationType, string> = {
