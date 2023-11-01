@@ -10,6 +10,7 @@ import {
   alchemyProvider,
   argent,
   braavos,
+  useInjectedConnectors,
 } from "@starknet-react/core";
 import { WebWalletConnector } from "@argent/starknet-react-webwallet-connector";
 import { Analytics } from "@vercel/analytics/react";
@@ -51,6 +52,24 @@ function MyApp({ Component, pageProps }: AppProps) {
     ],
     []
   );
+  // const { connectors } = useInjectedConnectors({
+  //   // Show these connectors if the user has no connector installed.
+  //   recommended: [
+  //     braavos(),
+  //     argent(),
+  //     new WebWalletConnector({
+  //       url:
+  //         process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+  //           ? "https://web.hydrogen.argent47.net"
+  //           : "https://web.argent.xyz/",
+  //     }) as any,
+  //   ],
+  //   // Hide recommended connectors if the user has any connector installed.
+  //   includeRecommended: "onlyIfNoConnectors",
+  //   // Randomize the order of the connectors.
+  //   order: undefined,
+  // });
+
   return (
     <>
       <StarknetConfig
@@ -82,13 +101,3 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp;
-function useInjectedConnectors(arg0: {
-  // Show these connectors if the user has no connector installed.
-  recommended: import("@starknet-react/core").InjectedConnector[];
-  // Hide recommended connectors if the user has any connector installed.
-  includeRecommended: string;
-  // Randomize the order of the connectors.
-  order: string;
-}): { connectors: any } {
-  throw new Error("Function not implemented.");
-}
