@@ -2,22 +2,21 @@ import React, { useEffect, useState } from "react";
 import styles from "../../styles/components/walletMessage.module.css";
 import { FunctionComponent } from "react";
 import { Modal } from "@mui/material";
-import { useAccount, useTransactions } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
 import ClickableAction from "./iconsComponents/clickableAction";
-import { CommonTransactionReceiptResponse } from "starknet";
 import CloseIcon from "./iconsComponents/icons/closeIcon";
 import ArgentIcon from "./iconsComponents/icons/argentIcon";
 import theme from "../../styles/theme";
 import ExitIcon from "./iconsComponents/icons/exitIcon";
 import CopyIcon from "./iconsComponents/icons/copyIcon";
 import DoneIcon from "./iconsComponents/icons/doneIcon";
+import { useNotificationManager } from "../../hooks/useNotificationManager";
 
 type ModalWalletProps = {
   closeModal: () => void;
   open: boolean;
   domain: string;
   disconnectByClick: () => void;
-  hashes: string[];
   setTxLoading: (txLoading: number) => void;
 };
 
@@ -26,36 +25,27 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
   open,
   domain,
   disconnectByClick,
-  hashes,
   setTxLoading,
 }) => {
   const { address, connector } = useAccount();
   const [copied, setCopied] = useState(false);
-  const transactions = useTransactions({ hashes, watch: true });
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   // Argent web wallet is detectable only like this
   const isWebWallet = (connector as any)?._wallet?.id === "argentWebWallet";
-
-  // TODO: Check for starknet react fix and delete that code
-  useEffect(() => {
-    const interval = setInterval(() => {
-      for (const tx of transactions) {
-        tx.refetch();
-      }
-    }, 3_000);
-    return () => clearInterval(interval);
-  }, [transactions?.length]);
+  const { notifications } = useNotificationManager();
 
   useEffect(() => {
-    if (transactions) {
-      // Give the number of tx that are loading (I use any because there is a problem on Starknet React types)
+    if (notifications) {
+      // Give the number of tx that are loading
       setTxLoading(
-        transactions.filter((tx) => (tx?.data as any)?.status === "RECEIVED")
-          .length
+        notifications.filter(
+          (notif: SIDNotification<TransactionData>) =>
+            notif.data.status === "pending"
+        ).length
       );
     }
-  }, [transactions]);
+  }, [notifications]);
 
   const copyToClipboard = () => {
     if (!address) return;
@@ -132,32 +122,29 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
         <div className={styles.menu_txs}>
           <div className={styles.tx_title}>My transactions</div>
           <div>
-            {transactions && transactions.length > 0 ? (
-              transactions.map((tx) => {
+            {notifications && notifications.length > 0 ? (
+              notifications.map((tx) => {
                 return (
-                  <div
-                    className={styles.menu_tx}
-                    key={tx.data?.transaction_hash}
-                  >
+                  <div className={styles.menu_tx} key={tx.data?.hash}>
                     <a
                       href={`https://${
                         network === "testnet" ? "testnet." : ""
-                      }starkscan.co/tx/${tx.data?.transaction_hash}`}
+                      }starkscan.co/tx/${tx.data?.hash}`}
                       className={styles.tx_hash}
                       target="_blank"
                       rel="noreferrer"
                     >
-                      {tx.data?.transaction_hash?.slice(0, 6) +
+                      {tx.data?.hash?.slice(0, 6) +
                         "..." +
-                        tx.data?.transaction_hash?.slice(
-                          tx.data?.transaction_hash.length - 6,
-                          tx.data?.transaction_hash.length
+                        tx.data?.hash?.slice(
+                          tx.data?.hash.length - 6,
+                          tx.data?.hash.length
                         )}
                     </a>
                     <div>
-                      {tx.status === "success" &&
+                      {tx.data.status === "success" &&
                         tx.data &&
-                        (tx.data as CommonTransactionReceiptResponse).status}
+                        tx.data?.txStatus}
                     </div>
                   </div>
                 );

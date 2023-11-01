@@ -1,12 +1,12 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useEtherContract, usePricingContract } from "../../hooks/contracts";
+import { usePricingContract } from "../../hooks/contracts";
 import {
   useAccount,
+  useBalance,
   useContractRead,
   useContractWrite,
-  useTransactionManager,
 } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import {
@@ -36,6 +36,8 @@ import registrationCalls from "../../utils/callData/registrationCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import { getPriceFromDomain } from "../../utils/priceService";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
+import { useNotificationManager } from "../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../utils/constants";
 
 type RegisterV2Props = {
   domain: string;
@@ -58,7 +60,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
-  const { contract: etherContract } = useEtherContract();
+  // const { contract: etherContract } = useEtherContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
@@ -77,13 +79,10 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   });
 
   const { account, address } = useAccount();
-  const { data: userBalanceData, error: userBalanceDataError } =
-    useContractRead({
-      address: etherContract?.address as string,
-      abi: etherContract?.abi as Abi,
-      functionName: "balanceOf",
-      args: [address],
-    });
+  const { data: userBalanceData, error: userBalanceDataError } = useBalance({
+    address,
+    watch: true,
+  });
   const { writeAsync: execute, data: registerData } = useContractWrite({
     // calls: renewalBox
     //   ? callData.concat(registrationCalls.renewal(encodedDomain, price))
@@ -94,7 +93,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -129,10 +128,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("");
-    else {
-      const high = userBalanceData?.["balance"].high << BigInt(128);
-      setBalance((userBalanceData?.["balance"].low + high).toString(10));
-    }
+    else setBalance(userBalanceData.value.toString(10));
   }, [userBalanceData, userBalanceDataError]);
 
   useEffect(() => {
@@ -245,7 +241,16 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       .then((res) => res.json())
       .catch((err) => console.log("Error on registering to email:", err));
 
-    addTransaction({ hash: registerData.transaction_hash });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: "Registering your domain",
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.BUY_DOMAIN,
+        hash: registerData.transaction_hash,
+        status: "pending",
+      },
+    });
     setIsTxModalOpen(true);
   }, [registerData, salt, email, usState]);
 

@@ -1,28 +1,23 @@
-import React from "react";
+import React, { useMemo } from "react";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import Navbar from "../components/UI/navbar";
 import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
-import { InjectedConnector, StarknetConfig } from "@starknet-react/core";
+import {
+  StarknetConfig,
+  alchemyProvider,
+  argent,
+  braavos,
+} from "@starknet-react/core";
 import { WebWalletConnector } from "@argent/starknet-react-webwallet-connector";
 import { Analytics } from "@vercel/analytics/react";
 import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
-
-const connectors = [
-  new InjectedConnector({ options: { id: "braavos" } }),
-  new InjectedConnector({ options: { id: "argentX" } }),
-  new WebWalletConnector({
-    url:
-      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-        ? "https://web.hydrogen.argent47.net"
-        : "https://web.argent.xyz/",
-  }),
-];
+import { goerli, mainnet } from "@starknet-react/chains";
 
 if (typeof window !== "undefined") {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
@@ -35,9 +30,35 @@ if (typeof window !== "undefined") {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const chains = [
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? goerli : mainnet,
+  ];
+  const providers = [
+    alchemyProvider({
+      apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string,
+    }),
+  ];
+  const connectors = useMemo(
+    () => [
+      braavos(),
+      argent(),
+      new WebWalletConnector({
+        url:
+          process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+            ? "https://web.hydrogen.argent47.net"
+            : "https://web.argent.xyz/",
+      }),
+    ],
+    []
+  );
   return (
     <>
-      <StarknetConfig connectors={connectors as any} autoConnect>
+      <StarknetConfig
+        chains={chains}
+        providers={providers}
+        connectors={connectors as any}
+        autoConnect
+      >
         <StarknetIdJsProvider>
           <ThemeProvider theme={theme}>
             <Head>
@@ -61,3 +82,13 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp;
+function useInjectedConnectors(arg0: {
+  // Show these connectors if the user has no connector installed.
+  recommended: import("@starknet-react/core").InjectedConnector[];
+  // Hide recommended connectors if the user has any connector installed.
+  includeRecommended: string;
+  // Randomize the order of the connectors.
+  order: string;
+}): { connectors: any } {
+  throw new Error("Function not implemented.");
+}

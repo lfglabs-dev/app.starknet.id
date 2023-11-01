@@ -1,13 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useEtherContract } from "../../hooks/contracts";
-import {
-  useAccount,
-  useContractRead,
-  useContractWrite,
-  useTransactionManager,
-} from "@starknet-react/core";
+import { useAccount, useBalance, useContractWrite } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import { getDomainWithStark, isValidEmail } from "../../utils/stringService";
 import {
@@ -17,7 +11,7 @@ import {
   numberToFixedString,
 } from "../../utils/feltService";
 import { useDisplayName } from "../../hooks/displayName.tsx";
-import { Abi, Call } from "starknet";
+import { Call } from "starknet";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
@@ -31,6 +25,8 @@ import registrationCalls from "../../utils/callData/registrationCalls";
 import UsForm from "../domains/usForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import BackButton from "../UI/backButton";
+import { useNotificationManager } from "../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../utils/constants";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -62,7 +58,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [balance, setBalance] = useState<string>("0");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const [salt, setSalt] = useState<string | undefined>();
-  const { contract: etherContract } = useEtherContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
@@ -73,13 +68,10 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
 
   const { account, address } = useAccount();
-  const { data: userBalanceData, error: userBalanceDataError } =
-    useContractRead({
-      address: etherContract?.address as string,
-      abi: etherContract?.abi as Abi,
-      functionName: "balanceOf",
-      args: [address],
-    });
+  const { data: userBalanceData, error: userBalanceDataError } = useBalance({
+    address,
+    watch: true,
+  });
   const { writeAsync: execute, data: registerData } = useContractWrite({
     // calls: renewalBox
     //   ? callData.concat(registrationCalls.renewal(encodedDomain, price))
@@ -90,7 +82,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -115,10 +107,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("0");
-    else {
-      const high = userBalanceData?.["balance"].high << BigInt(128);
-      setBalance((userBalanceData?.["balance"].low + high).toString(10));
-    }
+    else setBalance(userBalanceData.value.toString(10));
   }, [userBalanceData, userBalanceDataError]);
 
   useEffect(() => {
@@ -214,7 +203,16 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       .then((res) => res.json())
       .catch((err) => console.log("Error on sending metadata:", err));
 
-    addTransaction({ hash: registerData?.transaction_hash ?? "" });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: "Registering a domain",
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.BUY_DOMAIN,
+        hash: registerData.transaction_hash,
+        status: "pending",
+      },
+    });
     setIsTxModalOpen(true);
   }, [registerData]);
 

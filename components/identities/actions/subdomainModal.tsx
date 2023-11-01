@@ -1,9 +1,5 @@
 import { Modal, TextField } from "@mui/material";
-import {
-  useAccount,
-  useContractWrite,
-  useTransactionManager,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useIsValid } from "../../../hooks/naming";
 import styles from "../../../styles/components/modalMessage.module.css";
@@ -14,6 +10,8 @@ import Button from "../../UI/button";
 import { utils } from "starknetid.js";
 import ConfirmationTx from "../../UI/confirmationTx";
 import { Call } from "starknet";
+import { useNotificationManager } from "../../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../../utils/constants";
 
 type SubdomainModalProps = {
   handleClose: () => void;
@@ -36,7 +34,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   const isDomainValid = useIsValid(subdomain);
   const [callData, setCallData] = useState<Call[]>([]);
   const { address } = useAccount();
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
   const { writeAsync: transfer_domain, data: transferDomainData } =
     useContractWrite({
       calls: callData,
@@ -111,7 +109,16 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
 
   useEffect(() => {
     if (!transferDomainData?.transaction_hash) return;
-    addTransaction({ hash: transferDomainData?.transaction_hash ?? "" });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `For ${domain}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.SUBDOMAIN,
+        hash: transferDomainData.transaction_hash,
+        status: "pending",
+      },
+    });
     setIsTxSent(true);
   }, [transferDomainData]);
 

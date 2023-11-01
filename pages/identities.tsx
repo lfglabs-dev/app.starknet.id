@@ -1,11 +1,7 @@
 import React from "react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
-import {
-  useAccount,
-  useContractWrite,
-  useTransactionManager,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
 import MintIcon from "../components/UI/iconsComponents/icons/mintIcon";
@@ -15,6 +11,8 @@ import IdentitiesSkeleton from "../components/identities/skeletons/identitiesSke
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
 import Wallets from "../components/UI/wallets";
 import ClickableAction from "../components/UI/iconsComponents/clickableAction";
+import { useNotificationManager } from "../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../utils/constants";
 
 const Identities: NextPage = () => {
   const { address } = useAccount();
@@ -25,7 +23,7 @@ const Identities: NextPage = () => {
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
 
   //Mint
   const callData = {
@@ -34,7 +32,7 @@ const Identities: NextPage = () => {
     calldata: [randomTokenId],
   };
   const { writeAsync: execute, data: mintData } = useContractWrite({
-    calls: callData,
+    calls: [callData],
   });
 
   useEffect(() => {
@@ -64,20 +62,20 @@ const Identities: NextPage = () => {
     } else {
       setLoading(false);
     }
-
-    // // Aspect Indexer
-    // fetch(
-    //   `https://api-testnet.aspect.co/api/v0/assets?contract_address=${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string}&owner_address=${account.address}&sort_by=minted_at&order_by=desc`
-    // )
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     setOwnedIdentities(data.assets);
-    //   });
   }, [address, router.asPath]);
 
   useEffect(() => {
     if (!mintData?.transaction_hash) return;
-    addTransaction({ hash: mintData?.transaction_hash });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `Minting identity #${randomTokenId}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.MINT_IDENTITY,
+        hash: mintData.transaction_hash,
+        status: "pending",
+      },
+    });
     setIsTxModalOpen(true);
   }, [mintData]);
 

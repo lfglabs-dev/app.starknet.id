@@ -1,14 +1,18 @@
 import Link from "next/link";
-import React, { useState, useEffect, FunctionComponent } from "react";
+import React, {
+  useState,
+  useEffect,
+  FunctionComponent,
+  useCallback,
+} from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { FaDiscord, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import Button from "./button";
 import {
-  useConnectors,
+  useConnect,
   useAccount,
-  useProvider,
-  useTransactionManager,
+  useDisconnect,
   Connector,
 } from "@starknet-react/core";
 import Wallets from "./wallets";
@@ -25,52 +29,73 @@ const Navbar: FunctionComponent = () => {
   const theme = useTheme();
   const [nav, setNav] = useState<boolean>(false);
   const [hasWallet, setHasWallet] = useState<boolean>(false);
-  const { address } = useAccount();
+  const { address, account } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const { available, connect, disconnect, refresh, connectors } =
-    useConnectors();
-  const { provider } = useProvider();
+  const { connect, connectors } = useConnect();
+  const { disconnect } = useDisconnect();
   const isMobile = useMediaQuery("(max-width:425px)");
   const domainOrAddress = useDisplayName(address ?? "", isMobile);
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   const [txLoading, setTxLoading] = useState<number>(0);
-  const { hashes } = useTransactionManager();
   const [showWallet, setShowWallet] = useState<boolean>(false);
 
+  // useEffect(() => {
+  //   async function tryAutoConnect(connectors: Connector[]) {
+  //     // to handle autoconnect starknet-react adds connector id in local storage
+  //     // if there is no value stored, we show the wallet modal
+  //     const lastConnectedConnectorId =
+  //       localStorage.getItem("lastUsedConnector");
+  //     if (lastConnectedConnectorId === null) {
+  //       return;
+  //     }
+
+  //     const lastConnectedConnector = connectors.find(
+  //       (connector) => connector.id === lastConnectedConnectorId
+  //     );
+  //     if (lastConnectedConnector === undefined) {
+  //       return;
+  //     }
+
+  //     try {
+  //       if (!(await lastConnectedConnector.ready())) {
+  //         // Not authorized anymore.
+  //         return;
+  //       }
+
+  //       await connect({lastConnectedConnector});
+  //     } catch {
+  //       // no-op
+  //     }
+  //   }
+
+  //   const timeout = setTimeout(() => {
+  //     if (!address) {
+  //       tryAutoConnect(connectors);
+  //     }
+  //   }, 1000);
+  //   return () => clearTimeout(timeout);
+  // }, []);
+
   useEffect(() => {
-    async function tryAutoConnect(connectors: Connector[]) {
-      // to handle autoconnect starknet-react adds connector id in local storage
-      // if there is no value stored, we show the wallet modal
-      const lastConnectedConnectorId =
-        localStorage.getItem("lastUsedConnector");
-      if (lastConnectedConnectorId === null) {
-        return;
-      }
-
-      const lastConnectedConnector = connectors.find(
-        (connector) => connector.id === lastConnectedConnectorId
-      );
-      if (lastConnectedConnector === undefined) {
-        return;
-      }
-
-      try {
-        if (!(await lastConnectedConnector.ready())) {
-          // Not authorized anymore.
-          return;
-        }
-
-        await connect(lastConnectedConnector);
-      } catch {
-        // no-op
-      }
-    }
-
+    // to handle autoconnect starknet-react adds connector id in local storage
+    // if there is no value stored, we show the wallet modal
     const timeout = setTimeout(() => {
       if (!address) {
-        tryAutoConnect(connectors);
+        if (!localStorage.getItem("lastUsedConnector")) {
+          if (connectors.length > 0) setHasWallet(true);
+        } else {
+          const lastConnectedConnectorId =
+            localStorage.getItem("lastUsedConnector");
+          if (lastConnectedConnectorId === null) return;
+
+          const lastConnectedConnector = connectors.find(
+            (connector) => connector.id === lastConnectedConnectorId
+          );
+          if (lastConnectedConnector === undefined) return;
+          tryConnect(lastConnectedConnector);
+        }
       }
     }, 1000);
     return () => clearTimeout(timeout);
@@ -81,9 +106,8 @@ const Navbar: FunctionComponent = () => {
   }, [address]);
 
   useEffect(() => {
-    if (!isConnected) return;
-
-    provider.getChainId().then((chainId) => {
+    if (!isConnected || !account) return;
+    account.getChainId().then((chainId) => {
       const isWrongNetwork =
         (chainId === constants.StarknetChainId.SN_GOERLI &&
           network === "mainnet") ||
@@ -91,7 +115,19 @@ const Navbar: FunctionComponent = () => {
           network === "testnet");
       setIsWrongNetwork(isWrongNetwork);
     });
-  }, [provider, network, isConnected]);
+  }, [account, network, isConnected]);
+
+  const tryConnect = useCallback(
+    async (connector: Connector) => {
+      if (address) return;
+      if (await connector.ready()) {
+        connect({ connector });
+
+        return;
+      }
+    },
+    [address, connectors]
+  );
 
   function disconnectByClick(): void {
     disconnect();
@@ -107,18 +143,8 @@ const Navbar: FunctionComponent = () => {
 
   function onTopButtonClick(): void {
     if (!isConnected) {
-      refresh();
-      if (available.length > 0) {
-        if (available.length === 1) {
-          connect(available[0]);
-        } else {
-          setHasWallet(true);
-        }
-      } else {
-        setHasWallet(true);
-      }
+      setHasWallet(true);
     } else {
-      // disconnectByClick();
       setShowWallet(true);
     }
   }
@@ -127,12 +153,6 @@ const Navbar: FunctionComponent = () => {
     const textToReturn = isConnected ? domainOrAddress : "connect wallet";
 
     return textToReturn;
-  }
-
-  // Refresh available connectors before showing wallet modal
-  function refreshAndShowWallet(): void {
-    refresh();
-    setHasWallet(true);
   }
 
   return (
@@ -166,7 +186,7 @@ const Navbar: FunctionComponent = () => {
                   onClick={
                     isConnected
                       ? () => setShowWallet(true)
-                      : () => refreshAndShowWallet()
+                      : () => setHasWallet(true)
                   }
                 >
                   {isConnected ? (
@@ -312,7 +332,6 @@ const Navbar: FunctionComponent = () => {
         open={showWallet}
         closeModal={() => setShowWallet(false)}
         disconnectByClick={disconnectByClick}
-        hashes={hashes}
         setTxLoading={setTxLoading}
       />
       <Wallets
