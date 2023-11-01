@@ -1,5 +1,6 @@
 import { BN } from "bn.js";
 import { basicAlphabet } from "./constants";
+import { hexToDecimal } from "./feltService";
 import { encodeDomain } from "starknetid.js/packages/core/dist/utils";
 
 export function minifyAddress(address: string | undefined): string {
@@ -206,4 +207,12 @@ export function selectedDomainsToEncodedArray(
     .map(([domain]) => encodeDomain(domain)[0].toString());
 
   return domainsString;
+}
+
+export function getImgUrl(image: string): string {
+  if (image.startsWith("ipfs://")) {
+    return image.replace("ipfs://", "https://gateway.pinata.cloud/ipfs/");
+  } else {
+    return image;
+  }
 }

@@ -37,7 +37,7 @@
     "react-loader-spinner": "^5.2.0",
     "sales-tax": "^2.12.0",
     "starknet": "^5.19.5",
-    "starknetid.js": "^1.5.3",
+    "starknetid.js": "^1.5.4",
     "twitter-api-sdk": "^1.2.1"
   },
   "devDependencies": {

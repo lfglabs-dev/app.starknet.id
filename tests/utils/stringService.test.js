@@ -24,6 +24,7 @@ import {
   convertNumberToFixedLengthString,
   isValidDomain,
   getDomainLength,
+  getImgUrl,
   selectedDomainsToArray,
   selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
@@ -536,5 +537,19 @@ describe("selectedDomainsToArray function", () => {
 
     const output = ["example.com", "test.com", "sample.com"];
     expect(selectedDomainsToArray(input)).toEqual(output);
+  });
+});
+
+describe("Should test getImgUrl function", () => {
+  it("Should return the same image url", () => {
+    expect(getImgUrl("https://myimage.png")).toEqual("https://myimage.png");
+  });
+
+  it("Should return the correct image url if it's an image stored on ipfs", () => {
+    expect(getImgUrl("ipfs://myimage")).toEqual("https://gateway.pinata.cloud/ipfs/myimage");
+  });
+
+  it("Should return an empty string for an empty image url", () => {
+    expect(getImgUrl("")).toEqual("");
   });
 });
