@@ -123,10 +123,10 @@ const Twitter: NextPage = () => {
         posthog?.capture("twitterVerificationTx");
         addTransaction({
           timestamp: Date.now(),
-          subtext: "Discord verification",
+          subtext: "Twitter verification",
           type: NotificationType.TRANSACTION,
           data: {
-            type: TransactionType.VERIFIER,
+            type: TransactionType.VERIFIER_TWITTER,
             hash: twitterVerificationData.transaction_hash,
             status: "pending",
           },

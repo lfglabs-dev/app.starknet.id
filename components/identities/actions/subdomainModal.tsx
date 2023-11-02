@@ -114,7 +114,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       subtext: `For ${domain}`,
       type: NotificationType.TRANSACTION,
       data: {
-        type: TransactionType.SUBDOMAIN,
+        type: TransactionType.SUBDOMAIN_CREATION,
         hash: transferDomainData.transaction_hash,
         status: "pending",
       },

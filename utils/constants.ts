@@ -29,9 +29,12 @@ export enum TransactionType {
   DISABLE_AUTORENEW = "DISABLE_AUTORENEW",
   CHANGE_ADDRESS = "CHANGE_ADDRESS",
   TRANSFER_IDENTITY = "TRANSFER_IDENTITY",
-  VERIFIER = "VERIFIER",
+  VERIFIER_POP = "VERIFIER_POP",
+  VERIFIER_TWITTER = "VERIFIER_TWITTER",
+  VERIFIER_DISCORD = "VERIFIER_DISCORD",
+  VERIFIER_GITHUB = "VERIFIER_GITHUB",
   MAIN_DOMAIN = "MAIN_DOMAIN",
-  SUBDOMAIN = "SUBDOMAIN",
+  SUBDOMAIN_CREATION = "SUBDOMAIN_CREATION",
   SET_PFP = "SET_PFP",
 }
 
@@ -46,9 +49,12 @@ export const notificationTitle: Record<TransactionType, string> = {
   [TransactionType.DISABLE_AUTORENEW]: "Auto renewal disabled",
   [TransactionType.CHANGE_ADDRESS]: "Address changed",
   [TransactionType.TRANSFER_IDENTITY]: "Domain transferred",
-  [TransactionType.VERIFIER]: "Verifier added",
+  [TransactionType.VERIFIER_POP]: "Proof of personhood verified",
+  [TransactionType.VERIFIER_TWITTER]: "Twitter verified",
+  [TransactionType.VERIFIER_DISCORD]: "Discord verified",
+  [TransactionType.VERIFIER_GITHUB]: "Github verified",
   [TransactionType.MAIN_DOMAIN]: "Main domain set",
-  [TransactionType.SUBDOMAIN]: "Subdomain created",
+  [TransactionType.SUBDOMAIN_CREATION]: "Subdomain created",
   [TransactionType.SET_PFP]: "New profile picture set",
 };
 

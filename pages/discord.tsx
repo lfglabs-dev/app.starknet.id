@@ -132,7 +132,7 @@ const Discord: NextPage = () => {
           subtext: "Discord verification",
           type: NotificationType.TRANSACTION,
           data: {
-            type: TransactionType.VERIFIER,
+            type: TransactionType.VERIFIER_DISCORD,
             hash: discordVerificationData.transaction_hash,
             status: "pending",
           },

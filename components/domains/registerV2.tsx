@@ -242,7 +242,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     addTransaction({
       timestamp: Date.now(),
-      subtext: "Registering your domain",
+      subtext: "Domain registration",
       type: NotificationType.TRANSACTION,
       data: {
         type: TransactionType.BUY_DOMAIN,

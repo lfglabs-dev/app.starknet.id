@@ -17,7 +17,6 @@ export function useNotificationManager() {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      console.log("notifications", notifications);
       notifications.forEach(checkTransactionStatus);
     }, 5000);
 
@@ -34,8 +33,6 @@ export function useNotificationManager() {
       const transaction = notification.data;
       const data = await provider.getTransactionReceipt(transaction.hash);
       const updatedTransactions = [...notifications];
-
-      console.log("data", data);
 
       if (data?.status === "REJECTED" || data?.status === "REVERTED") {
         updatedTransactions[index].data.status = "error";

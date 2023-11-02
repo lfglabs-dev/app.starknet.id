@@ -55,7 +55,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
       subtext: "Proof of personhood",
       type: NotificationType.TRANSACTION,
       data: {
-        type: TransactionType.VERIFIER,
+        type: TransactionType.VERIFIER_POP,
         hash: verifierData.transaction_hash,
         status: "pending",
       },

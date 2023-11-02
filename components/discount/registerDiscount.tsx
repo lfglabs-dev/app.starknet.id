@@ -205,7 +205,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
     addTransaction({
       timestamp: Date.now(),
-      subtext: "Registering a domain",
+      subtext: "Domain registration",
       type: NotificationType.TRANSACTION,
       data: {
         type: TransactionType.BUY_DOMAIN,

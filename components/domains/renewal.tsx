@@ -91,7 +91,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
 
     addTransaction({
       timestamp: Date.now(),
-      subtext: "Renewing your domain",
+      subtext: "Domain renewal",
       type: NotificationType.TRANSACTION,
       data: {
         type: TransactionType.RENEW_DOMAIN,

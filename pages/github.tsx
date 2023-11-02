@@ -121,10 +121,10 @@ const Github: NextPage = () => {
         posthog?.capture("githubVerificationTx");
         addTransaction({
           timestamp: Date.now(),
-          subtext: "Discord verification",
+          subtext: "Github verified",
           type: NotificationType.TRANSACTION,
           data: {
-            type: TransactionType.VERIFIER,
+            type: TransactionType.VERIFIER_GITHUB,
             hash: githubVerificationData.transaction_hash,
             status: "pending",
           },

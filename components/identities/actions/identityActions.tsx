@@ -87,7 +87,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       subtext: "Set as main domain",
       type: NotificationType.TRANSACTION,
       data: {
-        type: TransactionType.BUY_DOMAIN,
+        type: TransactionType.MAIN_DOMAIN,
         hash: mainDomainData.transaction_hash,
         status: "pending",
       },
