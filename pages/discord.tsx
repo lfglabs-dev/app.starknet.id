@@ -129,7 +129,7 @@ const Discord: NextPage = () => {
         posthog?.capture("discordVerificationTx");
         addTransaction({
           timestamp: Date.now(),
-          subtext: "Discord verification",
+          subtext: `Discord verification on Starknet ID #${tokenId}`,
           type: NotificationType.TRANSACTION,
           data: {
             type: TransactionType.VERIFIER_DISCORD,

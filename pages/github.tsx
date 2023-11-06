@@ -121,7 +121,7 @@ const Github: NextPage = () => {
         posthog?.capture("githubVerificationTx");
         addTransaction({
           timestamp: Date.now(),
-          subtext: "Github verified",
+          subtext: `Github verification on Starknet ID #${tokenId}`,
           type: NotificationType.TRANSACTION,
           data: {
             type: TransactionType.VERIFIER_GITHUB,

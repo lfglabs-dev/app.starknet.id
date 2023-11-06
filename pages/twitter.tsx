@@ -123,7 +123,7 @@ const Twitter: NextPage = () => {
         posthog?.capture("twitterVerificationTx");
         addTransaction({
           timestamp: Date.now(),
-          subtext: "Twitter verification",
+          subtext: `Twitter verification on Starknet ID #${tokenId}`,
           type: NotificationType.TRANSACTION,
           data: {
             type: TransactionType.VERIFIER_TWITTER,
