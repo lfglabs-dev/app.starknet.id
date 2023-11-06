@@ -67,7 +67,7 @@ const TokenIdPage: NextPage = () => {
 
   return (
     <>
-      <div className={`${homeStyles.screen} z-10 `}>
+      <div className={`${homeStyles.screen} z-10 pt-[64px]`}>
         <div className="ml-16">
           <BackButton onClick={() => window.history.back()} />
         </div>
