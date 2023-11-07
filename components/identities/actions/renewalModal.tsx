@@ -1,9 +1,5 @@
 import { Modal, TextField } from "@mui/material";
-import {
-  useContractRead,
-  useContractWrite,
-  useTransactionManager,
-} from "@starknet-react/core";
+import { useContractRead, useContractWrite } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/modalMessage.module.css";
@@ -13,6 +9,8 @@ import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi } from "starknet";
 import ConfirmationTx from "../../UI/confirmationTx";
 import registrationCalls from "../../../utils/callData/registrationCalls";
+import { useNotificationManager } from "../../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../../utils/constants";
 
 type RenewalModalProps = {
   handleClose: () => void;
@@ -37,7 +35,7 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
     functionName: "compute_renew_price",
     args: [callDataEncodedDomain[1], duration * 365],
   });
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
   const [isTxSent, setIsTxSent] = useState(false);
 
   const { writeAsync: renew, data: renewData } = useContractWrite({
@@ -57,7 +55,16 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
 
   useEffect(() => {
     if (!renewData?.transaction_hash) return;
-    addTransaction({ hash: renewData?.transaction_hash ?? "" });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: "Renew domain",
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.RENEW_DOMAIN,
+        hash: renewData.transaction_hash,
+        status: "pending",
+      },
+    });
     setIsTxSent(true);
   }, [renewData]);
 

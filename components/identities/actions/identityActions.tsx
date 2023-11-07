@@ -1,10 +1,6 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import {
-  useAccount,
-  useContractWrite,
-  useTransactionManager,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
@@ -23,6 +19,8 @@ import TxConfirmationModal from "../../UI/txConfirmationModal";
 import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
 import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
 import { useRouter } from "next/router";
+import { useNotificationManager } from "../../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../../utils/constants";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -47,7 +45,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const { address } = useAccount();
   const encodedDomains = utils.encodeDomain(identity?.domain);
   const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
   const router = useRouter();
@@ -72,7 +70,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const { writeAsync: set_address_to_domain, data: mainDomainData } =
     useContractWrite({
       calls: isAccountTargetAddress
-        ? set_address_to_domain_calls
+        ? [set_address_to_domain_calls]
         : [set_domain_to_address_calls, set_address_to_domain_calls],
     });
 
@@ -84,7 +82,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   useEffect(() => {
     if (!mainDomainData?.transaction_hash) return;
-    addTransaction({ hash: mainDomainData?.transaction_hash ?? "" });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: "Set as main domain",
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.MAIN_DOMAIN,
+        hash: mainDomainData.transaction_hash,
+        status: "pending",
+      },
+    });
     setIsTxModalOpen(true);
   }, [mainDomainData]);
 

@@ -7,12 +7,14 @@ import ClickableAction from "./iconsComponents/clickableAction";
 import theme from "../../styles/theme";
 import DoneFilledIcon from "./iconsComponents/icons/doneFilledIcon";
 import ArrowLeftIcon from "./iconsComponents/icons/arrowLeftIcon";
-import { useContractWrite, useTransactionManager } from "@starknet-react/core";
+import { useContractWrite } from "@starknet-react/core";
 import { Call } from "starknet";
 import identityChangeCalls from "../../utils/callData/identityChangeCalls";
 import { hexToDecimal, toUint256 } from "../../utils/feltService";
 import { getImgUrl } from "../../utils/stringService";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
+import { useNotificationManager } from "../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../utils/constants";
 
 type ModalProfilePicProps = {
   closeModal: (cancel: boolean) => void;
@@ -30,7 +32,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   tokenId,
 }) => {
   const [callData, setCallData] = useState<Call[]>([]);
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
   const { writeAsync: execute, data: updateData } = useContractWrite({
     calls: callData,
   });
@@ -51,7 +53,16 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
 
   useEffect(() => {
     if (!updateData?.transaction_hash) return;
-    addTransaction({ hash: updateData.transaction_hash });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `For identity ${tokenId}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.SET_PFP,
+        hash: updateData.transaction_hash,
+        status: "pending",
+      },
+    });
     setPfpTxHash(updateData.transaction_hash);
     updateIdentityImg(tokenId, nftData.image_url as string);
     closeModal(false);
