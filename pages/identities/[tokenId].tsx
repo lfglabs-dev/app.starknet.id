@@ -67,14 +67,14 @@ const TokenIdPage: NextPage = () => {
 
   return (
     <>
-      <div className={`${homeStyles.screen} z-10 pt-[64px]`}>
-        <div className="ml-16">
-          <BackButton onClick={() => window.history.back()} />
-        </div>
+      <div className={styles.screen}>
         {isIdentityADomain === undefined ? (
           <IdentityPageSkeleton />
         ) : !isUpdatingPp ? (
           <div className={homeStyles.wrapperScreen}>
+            <div className={styles.backButton}>
+              <BackButton onClick={() => window.history.back()} />
+            </div>
             <div className={styles.containerIdentity}>
               <>
                 <div className={styles.identityBox}>
