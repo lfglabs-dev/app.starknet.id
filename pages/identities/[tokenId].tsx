@@ -12,6 +12,7 @@ import IdentityPageSkeleton from "../../components/identities/skeletons/identity
 import UpdateProfilePic from "../../components/identities/updateProfilePic";
 import TxConfirmationModal from "../../components/UI/txConfirmationModal";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
+import BackButton from "../../components/UI/backButton";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -66,11 +67,14 @@ const TokenIdPage: NextPage = () => {
 
   return (
     <>
-      <div className={`${homeStyles.screen} z-10 `}>
+      <div className={styles.screen}>
         {isIdentityADomain === undefined ? (
           <IdentityPageSkeleton />
         ) : !isUpdatingPp ? (
           <div className={homeStyles.wrapperScreen}>
+            <div className={styles.backButton}>
+              <BackButton onClick={() => window.history.back()} />
+            </div>
             <div className={styles.containerIdentity}>
               <>
                 <div className={styles.identityBox}>
