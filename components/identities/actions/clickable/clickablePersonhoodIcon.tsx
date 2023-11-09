@@ -12,16 +12,18 @@ import {
   Personhood,
   StarknetSignature,
 } from "@anima-protocol/personhood-sdk-react";
-import AnimaIcon from "../../../UI/iconsComponents/icons/animaIcon";
-import { useAccount, useTransactionManager } from "@starknet-react/core";
-import { Call, constants, shortString, typedData } from "starknet";
+import { useAccount } from "@starknet-react/core";
+import { Call, constants, typedData } from "starknet";
 import { useContractWrite } from "@starknet-react/core";
 import { hexToDecimal } from "../../../../utils/feltService";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import theme from "../../../../styles/theme";
 import { posthog } from "posthog-js";
+import ProfilSecurityIcon from "../../../UI/iconsComponents/icons/profilSecurityIcon";
 import identityChangeCalls from "../../../../utils/callData/identityChangeCalls";
+import { useNotificationManager } from "../../../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../../../utils/constants";
 
 type ClickablePersonhoodIconProps = {
   width: string;
@@ -39,16 +41,25 @@ const ClickablePersonhoodIcon: FunctionComponent<
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [callData, setCallData] = useState<Call>();
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
   const { writeAsync: execute, data: verifierData } = useContractWrite({
-    calls: callData,
+    calls: [callData as Call],
   });
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
 
   useEffect(() => {
     if (!verifierData?.transaction_hash) return;
-    addTransaction({ hash: verifierData?.transaction_hash });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: "Proof of personhood",
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.VERIFIER_POP,
+        hash: verifierData.transaction_hash,
+        status: "pending",
+      },
+    });
   }, [verifierData]);
 
   useEffect(() => {
@@ -148,7 +159,10 @@ const ClickablePersonhoodIcon: FunctionComponent<
                 <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
               </div>
             ) : null}
-            <AnimaIcon width={width} color={"white"} />
+            <ProfilSecurityIcon
+              width={width}
+              color={theme.palette.secondary.main}
+            />
           </div>
         </Tooltip>
         {isOpen && (
@@ -236,7 +250,10 @@ const ClickablePersonhoodIcon: FunctionComponent<
   ) : isVerified ? (
     <Tooltip title={`${minifyDomain(domain ?? "")} is a human`} arrow>
       <div className={styles.clickableIconAnima}>
-        <AnimaIcon width={width} color="white" />
+        <ProfilSecurityIcon
+          width={width}
+          color={theme.palette.secondary.main}
+        />
         <div className={styles.verifiedIcon}>
           <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
         </div>

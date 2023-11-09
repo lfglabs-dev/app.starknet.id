@@ -41,7 +41,7 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
     calldata: callDataEncodedDomain,
   };
   const { writeAsync: set_address_to_domain } = useContractWrite({
-    calls: set_address_to_domain_calls,
+    calls: [set_address_to_domain_calls],
   });
 
   function setAddressToDomain(): void {
