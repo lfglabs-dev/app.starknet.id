@@ -77,9 +77,9 @@
 }
 
 .backButton {
-  margin-left: 4rem;
-  margin-top: calc(12vh + 64px);
-  margin-bottom: 64px;
+  margin-left: 2rem;
+  margin-top: calc(12vh + 2rem);
+  margin-bottom: 1rem;
 }
 
 .wrapperScreen {
