@@ -1,8 +1,7 @@
 import React, { FunctionComponent } from "react";
-import { getDomainWithoutStark, isSubdomain } from "../../utils/stringService";
+import { isSubdomain } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";
-import Link from "next/link";
 import Notification from "../UI/notification";
 
 type IdentityWarningsProps = {
@@ -26,17 +25,8 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
 
   return isIdentityADomain ? (
     <>
-      <Notification visible={isExpired && Boolean(address)} severity="error">
-        <>
-          This domain has expired you can buy it on the&nbsp;
-          <span className="underline">
-            <Link
-              href={"/search?domain=" + getDomainWithoutStark(identity?.domain)}
-            >
-              domain page
-            </Link>
-          </span>
-        </>
+      <Notification visible={true && Boolean(address)} severity="error">
+        This domain has expired. You can renew it by clicking RENEW YOUR DOMAIN.
       </Notification>
       <Notification visible={showWarning} severity="error">
         <>&nbsp;Be careful this domain is not linked to your current address.</>
