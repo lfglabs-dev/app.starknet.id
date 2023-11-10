@@ -25,7 +25,7 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
 
   return isIdentityADomain ? (
     <>
-      <Notification visible={true && Boolean(address)} severity="error">
+      <Notification visible={isExpired && Boolean(address)} severity="error">
         This domain has expired. You can renew it by clicking RENEW YOUR DOMAIN.
       </Notification>
       <Notification visible={showWarning} severity="error">
