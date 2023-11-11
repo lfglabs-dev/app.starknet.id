@@ -1,4 +1,4 @@
-import { FunctionComponent, MouseEvent } from "react";
+import React, { FunctionComponent, MouseEvent } from "react";
 import styles from "../../styles/components/desktopNav.module.css";
 import Link from "next/link";
 import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
