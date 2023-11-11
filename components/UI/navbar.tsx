@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
-import { FaDiscord, FaTwitter } from "react-icons/fa";
+import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import Button from "./button";
 import {
@@ -24,6 +24,7 @@ import ModalWallet from "./modalWallet";
 import { constants } from "starknet";
 import { useTheme } from "@mui/material/styles";
 import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
+import DesktopNav from "./desktopNav";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -144,6 +145,14 @@ const Navbar: FunctionComponent = () => {
               {/* <Link href="/jointhetribe">
                 <li className={styles.menuItem}>Join the tribe</li>
               </Link> */}
+              <div
+                onClick={handleNav}
+                className={styles.menuBurger}
+                aria-expanded={nav}
+              >
+                <AiOutlineMenu color={theme.palette.secondary.main} size={25} />
+                {nav ? <DesktopNav /> : null}
+              </div>
               <div className="text-beige mx-5">
                 <Button
                   onClick={
@@ -200,7 +209,7 @@ const Navbar: FunctionComponent = () => {
           <div
             className={
               nav
-                ? "fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-background px-5 ease-in duration-500 flex justify-between flex-col"
+                ? "fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-background px-5 ease-in duration-500 flex justify-between flex-col overflow-auto"
                 : "fixed left-[-100%] top-0 p-10 ease-in h-screen flex justify-between flex-col"
             }
           >
@@ -247,6 +256,42 @@ const Navbar: FunctionComponent = () => {
                         Domains
                       </li>
                     </Link>
+                    <Link href="/offers">
+                      <li
+                        onClick={() => setNav(false)}
+                        className={styles.menuItemSmall}
+                      >
+                        My Offers
+                      </li>
+                    </Link>
+                    <Link href={process.env.NEXT_PUBLIC_STARKNET_ID as string}>
+                      <li
+                        onClick={() => setNav(false)}
+                        className={styles.menuItemSmall}
+                      >
+                        Website
+                      </li>
+                    </Link>
+                    <Link href="https://docs.starknet.id/">
+                      <li
+                        onClick={() => setNav(false)}
+                        className={styles.menuItemSmall}
+                      >
+                        Documentation
+                      </li>
+                    </Link>
+                    <Link
+                      href={`${
+                        process.env.NEXT_PUBLIC_STARKNET_ID as string
+                      }/affiliates/individual-program`}
+                    >
+                      <li
+                        onClick={() => setNav(false)}
+                        className={styles.menuItemSmall}
+                      >
+                        Affiliation
+                      </li>
+                    </Link>
                   </ul>
                 </div>
               </div>
@@ -265,6 +310,11 @@ const Navbar: FunctionComponent = () => {
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
                   <Link href="https://discord.com/invite/8uS2Mgcsza">
                     <FaDiscord size={28} color={theme.palette.secondary.main} />
+                  </Link>
+                </div>
+                <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
+                  <Link href="https://github.com/starknet-id">
+                    <FaGithub size={28} color={theme.palette.secondary.main} />
                   </Link>
                 </div>
               </div>
