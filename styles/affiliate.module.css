@@ -1,67 +1,159 @@
 .screen {
-  height: 88vh;
-  position: relative;
-  margin-top: 12vh;
+    height: 88vh;
+    position: relative;
+    margin-top: 12vh;
 }
 
 .wrapperScreen {
-  display: inline-flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: center;
-  height: calc(100% - 12vh);
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: calc(100% - 12vh);
 }
 
 .container {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
+    height: 100%;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.button_text {
+    display: flex;
+    gap: 1rem;
+}
+
+.chain_container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+    border-radius: 20px;
+}
+
+.domain_list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+    width: 100%;
+    overflow-y: auto;
+    height: 100%;
+    padding: 2rem 1rem;
+}
+
+.domain_box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    min-height: 120px;
+    padding: 1rem;
+    box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+}
+
+.each_chain_container {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+    overflow: hidden;
+}
+
+.each_chain_content {
+    padding: 2rem;
+    width: 100%;
 }
 
 .banner {
-  display: flex;
-  width: 90%;
-  gap: 2.5rem;
-  border-radius: 20px;
-  background-color: #fffcf8;
-  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-  max-height: 500px;
+    display: flex;
+    width: 90%;
+    gap: 3rem;
+    border-radius: 20px;
+    background-color: #FFFCF8;
+    box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+    max-height: 500px;
 }
 
 .image {
-  border-radius: 20px;
-  width: 50%;
-  aspect-ratio: 1;
+    border-radius: 20px;
+    width: 50%;
+    aspect-ratio: 1;
+}
+
+.button_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.progress_bar_container {
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.connectButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    gap: 1rem;
+}
+
+.connectEthLayout {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
 }
 
 .banner_content {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 3rem;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
-  .title {
-    font-size: 2rem;
-  }
+    .title {
+        font-size: 2rem;
+    }
 
-  .container {
-    height: 85vh;
-  }
+    .container {
+        height: 85vh;
+    }
 }
 
 @media (max-width: 768px) {
-  .container {
-    height: 85vh;
-  }
+    .container {
+        height: 85vh;
+    }
 
-  .title {
-    font-size: 2rem;
-  }
+    .title {
+        font-size: 2rem;
+    }
+
+    .banner {
+        flex-direction: column;
+        height: auto;
+        gap: 1rem;
+        max-height: none;
+        margin-top: 300px;
+    }
+
+    .image {
+        width: 100%;
+        aspect-ratio: 1;
+    }
 }

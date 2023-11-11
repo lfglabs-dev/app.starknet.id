@@ -1,3 +1,4 @@
+import "@rainbow-me/rainbowkit/styles.css";
 import React, { useMemo } from "react";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
@@ -18,6 +19,11 @@ import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
 import { goerli, mainnet } from "@starknet-react/chains";
+import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { configureChains, createConfig, WagmiConfig } from "wagmi";
+import { mainnet as mainnetEth } from "wagmi/chains";
+import { alchemyProvider as alchemyProviderEth } from "wagmi/providers/alchemy";
+import { publicProvider } from "wagmi/providers/public";
 
 if (typeof window !== "undefined") {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
@@ -51,32 +57,54 @@ function MyApp({ Component, pageProps }: AppProps) {
     ],
     []
   );
+
+  const { chains: EthChains, publicClient } = configureChains(
+    [mainnetEth],
+    [
+      alchemyProviderEth({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY }),
+      publicProvider(),
+    ]
+  );
+  const { connectors: connectorsEth } = getDefaultWallets({
+    appName: "My RainbowKit App",
+    projectId: "a570f8b4f3efe77edb1bf47f2be11495",
+    chains: EthChains,
+  });
+  const wagmiConfig = createConfig({
+    autoConnect: true,
+    connectors: connectorsEth,
+    publicClient,
+  });
   return (
     <>
-      <StarknetConfig
-        chains={chains}
-        providers={providers}
-        connectors={connectors as any}
-        autoConnect
-      >
-        <StarknetIdJsProvider>
-          <ThemeProvider theme={theme}>
-            <Head>
-              <title>Starknet.id</title>
-              <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1"
-              />
-            </Head>
-            <Navbar />
-            <AcceptCookies message="We'd love to count you on our traffic stats to ensure you get the best experience on our website !" />
-            <PostHogProvider client={posthog}>
-              <Component {...pageProps} />
-            </PostHogProvider>
-          </ThemeProvider>
-          <Analytics />
-        </StarknetIdJsProvider>
-      </StarknetConfig>
+      <WagmiConfig config={wagmiConfig}>
+        <RainbowKitProvider chains={EthChains} coolMode>
+          <StarknetConfig
+            chains={chains}
+            providers={providers}
+            connectors={connectors as any}
+            autoConnect
+          >
+            <StarknetIdJsProvider>
+              <ThemeProvider theme={theme}>
+                <Head>
+                  <title>Starknet.id</title>
+                  <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1"
+                  />
+                </Head>
+                <Navbar />
+                <AcceptCookies message="We'd love to count you on our traffic stats to ensure you get the best experience on our website !" />
+                <PostHogProvider client={posthog}>
+                  <Component {...pageProps} />
+                </PostHogProvider>
+              </ThemeProvider>
+              <Analytics />
+            </StarknetIdJsProvider>
+          </StarknetConfig>
+        </RainbowKitProvider>
+      </WagmiConfig>
     </>
   );
 }

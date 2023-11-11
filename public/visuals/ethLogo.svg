@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="26" viewBox="0 0 16 26" fill="none">
+    <g id="ethereum-eth-logo 1" clip-path="url(#clip0_2112_13505)">
+        <g id="Layer_x0020_1">
+            <g id="_1421394342400">
+                <g id="Group">
+                    <path id="Vector" d="M7.50782 0.875L7.34375 1.43332V17.6331L7.50782 17.7971L15.0135 13.3522L7.50782 0.875Z" fill="white"/>
+                    <path id="Vector_2" d="M7.50586 0.875L0 13.3522L7.50586 17.7971V9.93416V0.875Z" fill="white"/>
+                    <path id="Vector_3" d="M7.50262 19.2209L7.41016 19.3339V25.1045L7.50262 25.3749L15.0129 14.7783L7.50262 19.2209Z" fill="white"/>
+                    <path id="Vector_4" d="M7.50586 25.3749V19.2209L0 14.7783L7.50586 25.3749Z" fill="white"/>
+                    <path id="Vector_5" d="M7.50781 17.797L15.0135 13.3521L7.50781 9.93408V17.797Z" fill="white"/>
+                    <path id="Vector_6" d="M0 13.3521L7.50586 17.797V9.93408L0 13.3521Z" fill="white"/>
+                </g>
+            </g>
+        </g>
+    </g>
+    <defs>
+        <clipPath id="clip0_2112_13505">
+            <rect width="15.0161" height="24.5" fill="white" transform="translate(0 0.875)"/>
+        </clipPath>
+    </defs>
+</svg>
