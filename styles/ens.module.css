@@ -10,7 +10,6 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: calc(100% - 12vh);
 }
 
 .container {
@@ -38,12 +37,12 @@
 
 .domain_list {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 2rem;
   width: 100%;
   overflow-y: auto;
   height: 100%;
-  padding: 2rem 1rem;
+  padding: 2rem 1rem 3rem;
 }
 
 .domain_box {
@@ -79,7 +78,6 @@
   background-color: #fffcf8;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   max-height: 430px;
-  margin-top: 3rem;
 }
 
 .image {
@@ -132,16 +130,9 @@
     font-size: 2rem;
   }
 
-  .container {
-    height: 85vh;
-  }
 }
 
 @media (max-width: 768px) {
-  .container {
-    height: 85vh;
-  }
-
   .title {
     font-size: 2rem;
   }
@@ -151,12 +142,15 @@
     height: auto;
     gap: 1rem;
     max-height: none;
-    margin-top: 300px;
   }
 
   .image {
     width: 100%;
     height: auto;
     aspect-ratio: 1;
+  }
+
+  .domain_list {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }

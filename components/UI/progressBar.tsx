@@ -12,6 +12,7 @@ const ProgressBar: FunctionComponent<ProgressBarProps> = ({
   doneSteps,
   totalSteps,
 }) => {
+  console.log({ doneSteps, totalSteps });
   return (
     <div className={styles.container}>
       {Array.from(Array(totalSteps).keys()).map((_, index) => {
@@ -26,7 +27,7 @@ const ProgressBar: FunctionComponent<ProgressBarProps> = ({
         );
       })}
       <div className={styles.base_line} />
-      {totalSteps > 0 && doneSteps > 0 && (
+      {totalSteps > 0 ? (
         <div
           className={styles.colored_line}
           style={{
@@ -36,7 +37,7 @@ const ProgressBar: FunctionComponent<ProgressBarProps> = ({
                 : `${((totalSteps - doneSteps - 1) / (totalSteps - 1)) * 100}%`,
           }}
         />
-      )}
+      ) : null}
     </div>
   );
 };

@@ -8,9 +8,13 @@ import styles from "../../styles/affiliate.module.css";
 type ETHButtonProps = {
   title?: React.ReactNode;
   onClick?: () => void;
+  updateEthStatus: (_: string) => void;
 };
 
-const EthConnectButton: FunctionComponent<ETHButtonProps> = ({ title }) => {
+const EthConnectButton: FunctionComponent<ETHButtonProps> = ({
+  title,
+  updateEthStatus,
+}) => {
   return (
     <ConnectButton.Custom>
       {({
@@ -52,6 +56,8 @@ const EthConnectButton: FunctionComponent<ETHButtonProps> = ({ title }) => {
                     </div>
                   </Button>
                 );
+              } else if (connected) {
+                updateEthStatus(account.address);
               }
 
               if (chain.unsupported) {
