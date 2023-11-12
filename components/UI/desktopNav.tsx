@@ -13,20 +13,17 @@ const DesktopNav: FunctionComponent = () => {
     <nav onClick={handleClick} className={styles.navContainer}>
       <div className={styles.columns}>
         <div className={styles.column}>
-          <Link href="/offers">
-            <li className={styles.burgerItem}>My offers</li>
-          </Link>
           <Link href={process.env.NEXT_PUBLIC_STARKNET_ID as string}>
             <li className={styles.burgerItem}>Website</li>
           </Link>
           <Link href="https://www.starknet.id/pdfs/Terms.pdf">
             <li className={styles.burgerItem}>Term of use</li>
           </Link>
-        </div>
-        <div className={styles.column}>
           <Link href="https://docs.starknet.id/">
             <li className={styles.burgerItem}>Documentation</li>
           </Link>
+        </div>
+        <div className={styles.column}>
           <Link
             href={`${
               process.env.NEXT_PUBLIC_STARKNET_ID as string
