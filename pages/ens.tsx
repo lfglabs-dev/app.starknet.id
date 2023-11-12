@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/affiliate.module.css";
 import Image from "next/image";
 import AffiliateImage from "../public/visuals/affiliate.webp";
@@ -7,22 +7,17 @@ import Button from "../components/UI/button";
 import StarknetIcon from "../components/UI/iconsComponents/icons/starknetIcon";
 import EthConnectButton from "../components/affiliate/EthConnectButton";
 import Wallets from "../components/UI/wallets";
-import { Connector, useAccount, useConnect } from "@starknet-react/core";
-import { constants } from "starknet";
-import { useDisplayName } from "../hooks/displayName.tsx";
+import { useAccount } from "@starknet-react/core";
 import { useMediaQuery } from "@mui/material";
 import ProgressBar from "../components/UI/progressBar";
 import EthLogo from "../public/visuals/ethLogo.svg";
+import { NextPage } from "next";
 
-export default function Affiliate() {
+const Ens: NextPage = () => {
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
-  const { address: StarknetAddress, account: StarknetAccount } = useAccount();
-  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const { connect, connectors } = useConnect();
+  const { address: StarknetAddress } = useAccount();
   const isMobile = useMediaQuery("(max-width:425px)");
-  const domainOrAddress = useDisplayName(StarknetAddress ?? "", isMobile);
-  const [currentMilestone, setCurrentMilestone] = useState(0);
-  const [total, setTotal] = useState(3);
+  const [currentStep, setCurrentStep] = useState(0);
   const [selectDomain, setSelectDomain] = useState([]);
 
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -31,50 +26,30 @@ export default function Affiliate() {
 
   const checkAndUpdateStepNumber = () => {
     if (StarknetAddress) {
-      setCurrentMilestone(1);
+      setCurrentStep(2);
     }
     // eslint-disable-next-line no-constant-condition
     else if (2 === 2) {
-      setCurrentMilestone(1);
+      setCurrentStep(1);
     } else if (selectDomain.length > 0) {
-      setCurrentMilestone(1);
+      setCurrentStep(1);
     }
   };
 
   useEffect(() => {
     checkAndUpdateStepNumber();
-  }, []);
+  }, [StarknetAddress]);
 
   useEffect(() => {
-    if (!isConnected || !StarknetAccount) return;
-    StarknetAccount.getChainId().then((chainId) => {
-      const isWrongNetwork =
-        (chainId === constants.StarknetChainId.SN_GOERLI &&
-          network === "mainnet") ||
-        (chainId === constants.StarknetChainId.SN_MAIN &&
-          network === "testnet");
-      setIsWrongNetwork(isWrongNetwork);
-    });
-  }, [StarknetAccount, network, isConnected]);
-
-  const tryConnect = useCallback(
-    async (connector: Connector) => {
-      if (StarknetAddress) return;
-      if (await connector.ready()) {
-        connect({ connector });
-
-        return;
-      }
-    },
-    [StarknetAddress, connectors]
-  );
+    console.log("currentStep", currentStep);
+  }, [currentStep]);
 
   return (
     <div className={styles.screen}>
       <div className={styles.wrapperScreen}>
         <div className={styles.container}>
           <div className={styles.banner}>
-            {currentMilestone + 1 === 1 ? (
+            {currentStep + 1 === 1 ? (
               <>
                 <Image
                   src={AffiliateImage}
@@ -96,9 +71,6 @@ export default function Affiliate() {
                   <div className={styles.button_container}>
                     {StarknetAddress ? (
                       <div className={styles.connectEthLayout}>
-                        <p className="title" style={{ fontSize: 24 }}>
-                          {domainOrAddress.toLocaleUpperCase()} is CONNECTED
-                        </p>
                         <EthConnectButton
                           title={
                             <div className={styles.button_text}>
@@ -126,7 +98,7 @@ export default function Affiliate() {
                   </div>
                 </div>
               </>
-            ) : currentMilestone + 1 === 2 ? (
+            ) : currentStep + 1 === 2 ? (
               <>
                 <Image
                   src={AffiliateImage}
@@ -143,7 +115,7 @@ export default function Affiliate() {
                   </div>
                   <p className="text-left">
                     Get your .eth domain on starknet. Connect, verify, and
-                    elevate your digital identity with cross-chain domains !
+                    elevate your digital identity with cross-chain domains!
                   </p>
                   <div className={styles.button_container}>
                     <Button onClick={() => setWalletModalOpen(true)}>
@@ -210,7 +182,7 @@ export default function Affiliate() {
           </div>
         </div>
         <div className={styles.progress_bar_container}>
-          <ProgressBar done={currentMilestone} total={total} />
+          <ProgressBar doneSteps={currentStep} totalSteps={3} />
         </div>
       </div>
       <Wallets
@@ -219,4 +191,6 @@ export default function Affiliate() {
       />
     </div>
   );
-}
+};
+
+export default Ens;
