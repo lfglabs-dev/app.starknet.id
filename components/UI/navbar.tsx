@@ -149,9 +149,10 @@ const Navbar: FunctionComponent = () => {
                 onClick={handleNav}
                 className={styles.menuBurger}
                 aria-expanded={nav}
+                id="burger"
               >
                 <AiOutlineMenu color={theme.palette.secondary.main} size={25} />
-                {nav ? <DesktopNav /> : null}
+                {nav ? <DesktopNav close={handleNav} /> : null}
               </div>
               <div className="text-beige mx-5">
                 <Button
@@ -256,15 +257,10 @@ const Navbar: FunctionComponent = () => {
                         Domains
                       </li>
                     </Link>
-                    <Link href="/offers">
-                      <li
-                        onClick={() => setNav(false)}
-                        className={styles.menuItemSmall}
-                      >
-                        My Offers
-                      </li>
-                    </Link>
-                    <Link href={process.env.NEXT_PUBLIC_STARKNET_ID as string}>
+                    <Link
+                      href={process.env.NEXT_PUBLIC_STARKNET_ID as string}
+                      target="_blank"
+                    >
                       <li
                         onClick={() => setNav(false)}
                         className={styles.menuItemSmall}
@@ -272,7 +268,7 @@ const Navbar: FunctionComponent = () => {
                         Website
                       </li>
                     </Link>
-                    <Link href="https://docs.starknet.id/">
+                    <Link href="https://docs.starknet.id/" target="_blank">
                       <li
                         onClick={() => setNav(false)}
                         className={styles.menuItemSmall}
@@ -284,6 +280,7 @@ const Navbar: FunctionComponent = () => {
                       href={`${
                         process.env.NEXT_PUBLIC_STARKNET_ID as string
                       }/affiliates/individual-program`}
+                      target="_blank"
                     >
                       <li
                         onClick={() => setNav(false)}
@@ -303,17 +300,20 @@ const Navbar: FunctionComponent = () => {
               </div>
               <div className="flex">
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
-                  <Link href="https://twitter.com/Starknet_id">
+                  <Link href="https://twitter.com/Starknet_id" target="_blank">
                     <FaTwitter size={28} color={theme.palette.secondary.main} />
                   </Link>
                 </div>
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
-                  <Link href="https://discord.com/invite/8uS2Mgcsza">
+                  <Link
+                    href="https://discord.com/invite/8uS2Mgcsza"
+                    target="_blank"
+                  >
                     <FaDiscord size={28} color={theme.palette.secondary.main} />
                   </Link>
                 </div>
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
-                  <Link href="https://github.com/starknet-id">
+                  <Link href="https://github.com/starknet-id" target="_blank">
                     <FaGithub size={28} color={theme.palette.secondary.main} />
                   </Link>
                 </div>
