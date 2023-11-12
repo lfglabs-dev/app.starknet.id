@@ -3,7 +3,7 @@
 import React, { FunctionComponent } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Button from "../UI/button";
-import styles from "../../styles/affiliate.module.css";
+import styles from "../../styles/ens.module.css";
 
 type ETHButtonProps = {
   title?: React.ReactNode;

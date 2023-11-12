@@ -10,6 +10,8 @@
   justify-content: center;
   align-items: center;
   width: 100%;
+  height: calc(100% - 12vh);
+  padding: 0rem 0rem 2rem;
 }
 
 .container {
@@ -150,7 +152,12 @@
     aspect-ratio: 1;
   }
 
+  .wrapperScreen {
+    height: auto;
+  }
+
   .domain_list {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
+
 }

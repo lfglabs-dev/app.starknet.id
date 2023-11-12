@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import styles from "../styles/affiliate.module.css";
+import styles from "../styles/ens.module.css";
 import Image from "next/image";
 import AffiliateImage from "../public/visuals/affiliate.webp";
 import Button from "../components/UI/button";
@@ -198,15 +198,7 @@ const Ens: NextPage = () => {
               </>
             ) : (
               <div className={styles.chain_container}>
-                <div
-                  className={styles.each_chain_container}
-                  style={{
-                    backgroundColor: "#FFFFFF",
-                    borderRight: "2px solid #EAE0D5",
-                    borderTopLeftRadius: 20,
-                    borderBottomLeftRadius: 20,
-                  }}
-                >
+                <div className={styles.each_chain_container}>
                   <div className={styles.each_chain_content}>
                     <h1 className="title">Ethereum</h1>
                     <div className={styles.domain_list}>
