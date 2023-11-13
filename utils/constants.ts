@@ -1,7 +1,7 @@
 export const basicAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-";
 export const bigAlphabet = "这来";
 export const totalAlphabet = basicAlphabet + bigAlphabet;
-export const UINT_128_MAX = (BigInt(1) << BigInt(128)) - BigInt(1);‡
+export const UINT_128_MAX = (BigInt(1) << BigInt(128)) - BigInt(1);
 
 export const PFP_WL_CONTRACTS_TESTNET = [
   "0x041e1382e604688da7f22e7fbb6113ba3649b84a87b58f4dc1cf5bfa96dfc2cf",
