@@ -3,7 +3,6 @@ import {
   useAccount,
   useContractRead,
   useContractWrite,
-  useTransactionManager,
 } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useEtherContract, usePricingContract } from "../../../hooks/contracts";
@@ -24,6 +23,8 @@ import { formatHexString, isValidEmail } from "../../../utils/stringService";
 import { applyRateToBigInt, gweiToEth } from "../../../utils/feltService";
 import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
 import { UINT_128_MAX } from "../../../utils/constants";
+import { useNotificationManager } from "../../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../../utils/constants";
 
 type AutoRenewalModalProps = {
   handleClose: () => void;
@@ -63,7 +64,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: pricingContract } = usePricingContract();
   const { contract: etherContract } = useEtherContract();
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
   const { data: priceData, error: priceError } = useContractRead({
     address: pricingContract?.address as string,
     abi: pricingContract?.abi as Abi,
@@ -75,7 +76,10 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       address: etherContract?.address as string,
       abi: etherContract?.abi as Abi,
       functionName: "allowance",
-      args: [address, process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string],
+      args: [
+        address as string,
+        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+      ],
     });
   const { writeAsync: execute, data: autorenewData } = useContractWrite({
     calls: callData,
@@ -199,7 +203,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       .then((res) => res.json())
       .catch((err) => console.log("Error on registering to email:", err));
 
-    addTransaction({ hash: autorenewData?.transaction_hash ?? "" });
+    // addTransaction({ hash: autorenewData?.transaction_hash ?? "" });
     setIsTxSent(true);
   }, [autorenewData, usState, salt]);
 

@@ -3,7 +3,6 @@ import styles from "../styles/Home.module.css";
 import {
   useAccount,
   useContractWrite,
-  useTransactionManager,
   useWaitForTransaction,
 } from "@starknet-react/core";
 import { useEffect } from "react";
@@ -15,6 +14,8 @@ import { posthog } from "posthog-js";
 import { Call } from "starknet";
 import VerifyFirstStep from "../components/verify/verifyFirstStep";
 import identityChangeCalls from "../utils/callData/identityChangeCalls";
+import { useNotificationManager } from "../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../utils/constants";
 
 const Github: NextPage = () => {
   const router = useRouter();
@@ -23,7 +24,7 @@ const Github: NextPage = () => {
   const [signRequestData, setSignRequestData] = useState<
     SignRequestData | ErrorRequestData
   >();
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
@@ -96,7 +97,7 @@ const Github: NextPage = () => {
     data: githubVerificationData,
     writeAsync: execute,
     error: githubVerificationError,
-  } = useContractWrite({ calls });
+  } = useContractWrite({ calls: [calls as Call] });
 
   const { data: transactionData, error: transactionError } =
     useWaitForTransaction({
@@ -114,11 +115,19 @@ const Github: NextPage = () => {
         transactionData?.status &&
         !transactionError &&
         !transactionData?.status.includes("ACCEPTED") &&
-        transactionData?.status !== "PENDING"
+        transactionData?.status !== "REJECTED" &&
+        transactionData?.status !== "REVERTED"
       ) {
         posthog?.capture("githubVerificationTx");
         addTransaction({
-          hash: githubVerificationData?.transaction_hash ?? "",
+          timestamp: Date.now(),
+          subtext: `Github verification on Starknet ID #${tokenId}`,
+          type: NotificationType.TRANSACTION,
+          data: {
+            type: TransactionType.VERIFIER_GITHUB,
+            hash: githubVerificationData.transaction_hash,
+            status: "pending",
+          },
         });
         router.push(`/identities/${tokenId}`);
       } else if (transactionError) {

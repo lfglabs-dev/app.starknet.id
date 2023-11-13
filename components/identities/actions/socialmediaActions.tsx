@@ -48,7 +48,7 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
         />
         <ClickablePersonhoodIcon
           isOwner={isOwner}
-          width="25"
+          width="28"
           tokenId={tokenId}
           domain={identity?.domain}
           isVerified={identity?.proof_of_personhood}

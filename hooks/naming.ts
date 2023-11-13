@@ -111,5 +111,5 @@ export function useExpiryFromDomain(domain: string): ExpiryData {
     args: [encoded],
   });
 
-  return { expiry: data as any, error: error as string };
+  return { expiry: data as any, error: error?.message as string };
 }

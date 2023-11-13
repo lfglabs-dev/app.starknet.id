@@ -1,15 +1,13 @@
 import { Modal, TextField } from "@mui/material";
-import {
-  useAccount,
-  useContractWrite,
-  useTransactionManager,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
 import styles from "../../../styles/components/modalMessage.module.css";
 import Button from "../../UI/button";
 import { hexToDecimal } from "../../../utils/feltService";
 import ConfirmationTx from "../../UI/confirmationTx";
+import { useNotificationManager } from "../../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../../utils/constants";
 
 type ChangeAddressModalProps = {
   handleClose: () => void;
@@ -28,7 +26,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
 }) => {
   const { address } = useAccount();
   const [targetAddress, setTargetAddress] = useState<string>("");
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
   const [isTxSent, setIsTxSent] = useState(false);
 
   //set_domain_to_address execute
@@ -40,12 +38,21 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
 
   const { writeAsync: set_domain_to_address, data: domainToAddressData } =
     useContractWrite({
-      calls: set_domain_to_address_calls,
+      calls: [set_domain_to_address_calls],
     });
 
   useEffect(() => {
     if (!domainToAddressData?.transaction_hash) return;
-    addTransaction({ hash: domainToAddressData?.transaction_hash ?? "" });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: "Address updated",
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.CHANGE_ADDRESS,
+        hash: domainToAddressData.transaction_hash,
+        status: "pending",
+      },
+    });
     setIsTxSent(true);
   }, [domainToAddressData]);
 

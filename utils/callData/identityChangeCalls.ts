@@ -23,8 +23,22 @@ function writeVerifierData(
   };
 }
 
+function updateProfilePicture(
+  nftContractAddress: string,
+  nft_id_low: string,
+  nft_id_high: string,
+  id: string
+): Call {
+  return {
+    contractAddress: process.env.NEXT_PUBLIC_NFT_PP_VERIFIER as string,
+    entrypoint: "set_native_pp",
+    calldata: [nftContractAddress, nft_id_low, nft_id_high, parseInt(id)],
+  };
+}
+
 const identityChangeCalls = {
   writeVerifierData,
+  updateProfilePicture,
 };
 
 export default identityChangeCalls;

@@ -1,9 +1,5 @@
 import { InputAdornment, Modal, TextField } from "@mui/material";
-import {
-  useAccount,
-  useContractWrite,
-  useTransactionManager,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import React, {
   FunctionComponent,
@@ -18,6 +14,8 @@ import Button from "../../UI/button";
 import { utils } from "starknetid.js";
 import { StarknetIdJsContext } from "../../../context/StarknetIdJsProvider";
 import ConfirmationTx from "../../UI/confirmationTx";
+import { useNotificationManager } from "../../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../../utils/constants";
 
 type TransferFormModalProps = {
   handleClose: () => void;
@@ -35,7 +33,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   const { address } = useAccount();
   const { tokenId } = router.query;
   const numId = parseInt(tokenId as string);
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
   const [addressInput, setAddressInput] = useState<string>("");
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [isTxSent, setIsTxSent] = useState(false);
@@ -66,7 +64,16 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
 
   useEffect(() => {
     if (!transferData?.transaction_hash) return;
-    addTransaction({ hash: transferData?.transaction_hash ?? "" });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `Identity ${tokenId} transfered`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.TRANSFER_IDENTITY,
+        hash: transferData.transaction_hash,
+        status: "pending",
+      },
+    });
     setIsTxSent(true);
   }, [transferData]);
 

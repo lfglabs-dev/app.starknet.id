@@ -65,6 +65,11 @@ export function numberToFixedString(
   return num.toFixed(numberOfDecimals || 2);
 }
 
+export function fromUint256(low: BigInt, high: BigInt): string {
+  const bhigh = (high as any) << BigInt(128);
+  return ((low as any) + bhigh).toString(10);
+}
+
 export function toUint256(n: string): { low: string; high: string } {
   const b = BigInt(n);
   return {

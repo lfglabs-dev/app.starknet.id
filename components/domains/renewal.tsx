@@ -1,13 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useEtherContract } from "../../hooks/contracts";
-import {
-  useAccount,
-  useContractRead,
-  useContractWrite,
-  useTransactionManager,
-} from "@starknet-react/core";
+import { useAccount, useBalance, useContractWrite } from "@starknet-react/core";
 import {
   formatHexString,
   isValidEmail,
@@ -15,7 +9,7 @@ import {
   selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
 import { gweiToEth, applyRateToBigInt } from "../../utils/feltService";
-import { Abi, Call } from "starknet";
+import { Call } from "starknet";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
@@ -29,15 +23,17 @@ import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
   getPriceFromDomains,
+  getPriceFromDomain,
 } from "../../utils/priceService";
 import RenewalDomainsBox from "./renewalDomainsBox";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import BackButton from "../UI/backButton";
 import { useRouter } from "next/router";
-import RegisterCheckboxes from "./registerCheckboxes";
+import { useNotificationManager } from "../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../utils/constants";
+import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
-import { getPriceFromDomain } from "../../utils/priceService";
 
 type RenewalProps = {
   groups: string[];
@@ -54,7 +50,6 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [price, setPrice] = useState<string>("");
   const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
-  const { contract: etherContract } = useEtherContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   // const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
@@ -64,19 +59,16 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
   const { address } = useAccount();
-  const { data: userBalanceData, error: userBalanceDataError } =
-    useContractRead({
-      address: etherContract?.address as string,
-      abi: etherContract?.abi as Abi,
-      functionName: "balanceOf",
-      args: [address],
-    });
+  const { data: userBalanceData, error: userBalanceDataError } = useBalance({
+    address,
+    watch: true,
+  });
   const { writeAsync: execute, data: renewData } = useContractWrite({
     calls: callData,
   });
   const [domainsMinting, setDomainsMinting] =
     useState<Record<string, boolean>>();
-  const { addTransaction } = useTransactionManager();
+  const { addTransaction } = useNotificationManager();
   const router = useRouter();
   const duration = 1; // on year by default
 
@@ -98,18 +90,16 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       .then((res) => res.json())
       .catch((err) => console.log("Error on sending metadata:", err));
 
-    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tx_hash: formatHexString(renewData.transaction_hash),
-        groups: renewalBox ? groups : [groups[0]],
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.log("Error on registering to email:", err));
-
-    addTransaction({ hash: renewData.transaction_hash });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: "Domain renewal",
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.RENEW_DOMAIN,
+        hash: renewData.transaction_hash,
+        status: "pending",
+      },
+    });
     setIsTxModalOpen(true);
   }, [renewData, salt, email, usState]);
 
@@ -146,10 +136,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("");
-    else {
-      const high = userBalanceData?.["balance"].high << BigInt(128);
-      setBalance((userBalanceData?.["balance"].low + high).toString(10));
-    }
+    else setBalance(userBalanceData.value.toString(10));
   }, [userBalanceData, userBalanceDataError]);
 
   useEffect(() => {
