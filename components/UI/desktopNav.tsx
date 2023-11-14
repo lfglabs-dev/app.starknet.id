@@ -1,4 +1,4 @@
-import React, { FunctionComponent, MouseEvent, useEffect, useRef } from "react";
+import React, { FunctionComponent, MouseEvent, useEffect } from "react";
 import styles from "../../styles/components/desktopNav.module.css";
 import Link from "next/link";
 import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
@@ -9,7 +9,6 @@ type DesktopNavProps = {
 };
 
 const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
-  const ref = useRef<HTMLDivElement>(null);
   const handleClick = (e: MouseEvent) => {
     e.stopPropagation();
   };
@@ -17,7 +16,8 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
   // Close when clicking outside the nav
   useEffect(() => {
     const handleClickOutside: EventListener = (e) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      const burger = document.getElementById("burger");
+      if (burger && !burger.contains(e.target as Node)) {
         close();
       }
     };
@@ -27,9 +27,10 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
       // Unbind the event listener on clean up
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [ref]);
+  }, []);
+
   return (
-    <nav onClick={handleClick} className={styles.navContainer} ref={ref}>
+    <nav onClick={handleClick} className={styles.navContainer}>
       <div className={styles.columns}>
         <div className={styles.column}>
           <Link
