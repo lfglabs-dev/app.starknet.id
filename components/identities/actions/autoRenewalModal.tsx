@@ -112,7 +112,8 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         if (data.meta_hash) {
           setNeedMetadata(false);
           setMetadataHash(data.meta_hash);
-          setSalesTaxRate(data.tax_rate);
+          if (data.tax_rate) setSalesTaxRate(data.tax_rate);
+          else setSalesTaxRate(0);
         } else setNeedMetadata(true);
       })
       .catch((err) => {
