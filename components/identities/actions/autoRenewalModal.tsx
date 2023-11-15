@@ -132,6 +132,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   }, [usState, salt, email, needMedadata]);
 
   useEffect(() => {
+    console.log("price 1s", price, "salesTaxRate", salesTaxRate);
     if (!needMedadata && price) {
       setSalesTaxAmount(applyRateToBigInt(price, salesTaxRate));
     } else {
