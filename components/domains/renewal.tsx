@@ -190,7 +190,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
           const price = getPriceFromDomain(1, domain);
           const allowance: string = salesTaxRate
             ? (
-                Number(price) + applyRateToBigInt(price, salesTaxRate)
+                BigInt(price) + BigInt(applyRateToBigInt(price, salesTaxRate))
               ).toString()
             : price.toString();
           calls.push(

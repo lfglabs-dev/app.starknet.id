@@ -148,6 +148,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
 
   // Set Enable Auto Renewal Multicall
   useEffect(() => {
+    if (!price || !salesTaxAmount) return;
     const calls: Call[] = [];
     if (
       erc20AllowanceError ||
@@ -159,7 +160,9 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     }
 
     const txMetadataHash = "0x" + metadataHash;
+    console.log("price", price, "salesTaxAmount", salesTaxAmount);
     const finalPrice = BigInt(price) + BigInt(salesTaxAmount);
+    console.log("finalPrice", finalPrice);
     calls.push(
       autoRenewalCalls.enableRenewal(
         callDataEncodedDomain[1].toString(),

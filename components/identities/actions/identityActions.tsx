@@ -110,7 +110,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   }
 
   useEffect(() => {
-    if (!address || !identity?.domain) return;
+    if (!address || !identity?.domain || !isOwner) return;
     fetch(
       `${
         process.env.NEXT_PUBLIC_SERVER_LINK
@@ -120,6 +120,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     )
       .then((response) => response.json())
       .then((data) => {
+        console.log("renewal data", data);
         if (!data.error && data.enabled) {
           setIsAutoRenewalEnabled(true);
           setAllowance(BigInt(data.allowance).toString(10));
@@ -127,7 +128,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           setIsAutoRenewalEnabled(false);
         }
       });
-  }, [address, tokenId, identity]);
+  }, [address, tokenId, identity, isOwner]);
 
   useEffect(() => {
     if (!mainDomainData?.transaction_hash) return;

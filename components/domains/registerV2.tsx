@@ -198,7 +198,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     // If the user has toggled autorenewal
     if (renewalBox) {
       const limitPrice = salesTaxAmount
-        ? (parseInt(salesTaxAmount) + parseInt(price)).toString()
+        ? (BigInt(salesTaxAmount) + BigInt(price)).toString()
         : price;
       calls.push(
         autoRenewalCalls.approve(),
