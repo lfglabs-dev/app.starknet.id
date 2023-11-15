@@ -120,7 +120,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("data autorenewal", data);
         if (!data.error && data.enabled) {
           setIsAutoRenewalEnabled(true);
           setAllowance(BigInt(data.allowance).toString(10));
