@@ -8,6 +8,28 @@
   color: var(--secondary);
   text-transform: underline;
   transition: 0.3s ease-in-out;
+  position: relative;
+}
+
+.menuBurger {
+  margin-left: 2.5rem /* 40px */;
+  cursor: pointer;
+  position: relative;
+}
+
+.menuBurger[aria-expanded="true"]::before,
+.menuBurger:hover::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+  background-color: red;
+  z-index: -1;
+  border-radius: 100px;
+  background: var(--light-tertiary);
 }
 
 .menuItem:hover {
