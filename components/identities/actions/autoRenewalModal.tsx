@@ -87,6 +87,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
     else {
+      console.log("priceData", priceData);
       const high = priceData?.["price"].high << BigInt(128);
       setPrice((priceData?.["price"].low + high).toString(10));
     }
