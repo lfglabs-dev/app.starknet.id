@@ -120,6 +120,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     )
       .then((response) => response.json())
       .then((data) => {
+        console.log("data autorenewal", data);
         if (!data.error && data.enabled) {
           setIsAutoRenewalEnabled(true);
           setAllowance(BigInt(data.allowance).toString(10));
@@ -160,7 +161,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
-    // addTransaction({ hash: disableRenewalData?.transaction_hash ?? "" });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `Disabled auto renewal for ${identity?.domain}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.DISABLE_AUTORENEW,
+        hash: disableRenewalData.transaction_hash,
+        status: "pending",
+      },
+    });
     setIsTxSent(true);
   }, [disableRenewalData]);
 

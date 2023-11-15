@@ -18,7 +18,6 @@ import {
   computeMetadataHash,
   generateSalt,
 } from "../../../utils/userDataService";
-import registrationCalls from "../../../utils/callData/registrationCalls";
 import { formatHexString, isValidEmail } from "../../../utils/stringService";
 import { applyRateToBigInt, gweiToEth } from "../../../utils/feltService";
 import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
@@ -51,7 +50,6 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [isTxSent, setIsTxSent] = useState(false);
   const [isUsResident, setIsUsResident] = useState<boolean>(false);
   const [usState, setUsState] = useState<string>("DE");
-  const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [email, setEmail] = useState<string>("");
   const groups: string[] = [
@@ -61,6 +59,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
+  const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: pricingContract } = usePricingContract();
   const { contract: etherContract } = useEtherContract();
@@ -103,15 +102,16 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!identity?.addr) return;
+    if (!identity?.owner_addr) return;
     fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_LINK}/renewal/get_metahash?addr=${identity?.addr}`
+      `${process.env.NEXT_PUBLIC_SERVER_LINK}/renewal/get_metahash?addr=${identity?.owner_addr}`
     )
       .then((response) => response.json())
       .then((data) => {
         if (data.meta_hash) {
           setNeedMetadata(false);
           setMetadataHash(data.meta_hash);
+          setSalesTaxRate(data.tax_rate);
         } else setNeedMetadata(true);
       })
       .catch((err) => {
@@ -126,26 +126,25 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     if (!salt || !needMedadata) return;
     (async () => {
       setMetadataHash(
-        await computeMetadataHash(
-          email,
-          // groups,
-          isUsResident ? usState : "none",
-          salt
-        )
+        await computeMetadataHash(email, isUsResident ? usState : "none", salt)
       );
     })();
   }, [usState, salt, email, needMedadata]);
 
   useEffect(() => {
-    if (isUsResident) {
-      salesTax.getSalesTax("US", usState).then((tax) => {
-        setSalesTaxRate(tax.rate);
-        if (price) setSalesTaxAmount(applyRateToBigInt(price, tax.rate));
-      });
+    if (!needMedadata && price) {
+      setSalesTaxAmount(applyRateToBigInt(price, salesTaxRate));
     } else {
-      setSalesTaxRate(0);
+      if (isUsResident) {
+        salesTax.getSalesTax("US", usState).then((tax) => {
+          setSalesTaxRate(tax.rate);
+          if (price) setSalesTaxAmount(applyRateToBigInt(price, tax.rate));
+        });
+      } else {
+        setSalesTaxRate(0);
+      }
     }
-  }, [isUsResident, usState, price]);
+  }, [isUsResident, usState, price, needMedadata, salesTaxRate]);
 
   // Set Enable Auto Renewal Multicall
   useEffect(() => {
@@ -203,7 +202,16 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       .then((res) => res.json())
       .catch((err) => console.log("Error on registering to email:", err));
 
-    // addTransaction({ hash: autorenewData?.transaction_hash ?? "" });
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `Enabled auto renewal for ${domain}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.ENABLE_AUTORENEW,
+        hash: autorenewData.transaction_hash,
+        status: "pending",
+      },
+    });
     setIsTxSent(true);
   }, [autorenewData, usState, salt]);
 
