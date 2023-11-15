@@ -159,7 +159,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     }
 
     const txMetadataHash = "0x" + metadataHash;
-    const finalPrice = Number(price) + Number(salesTaxAmount);
+    const finalPrice = BigInt(price) + BigInt(salesTaxAmount);
     calls.push(
       autoRenewalCalls.enableRenewal(
         callDataEncodedDomain[1].toString(),
