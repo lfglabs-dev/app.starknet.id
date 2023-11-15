@@ -87,7 +87,6 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   useEffect(() => {
     if (priceError || !priceData) setPrice("0");
     else {
-      console.log("priceData", priceData);
       const high = priceData?.["price"].high << BigInt(128);
       setPrice((priceData?.["price"].low + high).toString(10));
     }
@@ -134,7 +133,6 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   }, [usState, salt, email, needMedadata]);
 
   useEffect(() => {
-    console.log("price 1s", price, "salesTaxRate", salesTaxRate);
     if (!needMedadata && price) {
       setSalesTaxAmount(applyRateToBigInt(price, salesTaxRate));
     } else {
@@ -163,9 +161,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     }
 
     const txMetadataHash = "0x" + metadataHash;
-    console.log("price", price, "salesTaxAmount", salesTaxAmount);
     const finalPrice = BigInt(price) + BigInt(salesTaxAmount);
-    console.log("finalPrice", finalPrice);
     calls.push(
       autoRenewalCalls.enableRenewal(
         callDataEncodedDomain[1].toString(),
