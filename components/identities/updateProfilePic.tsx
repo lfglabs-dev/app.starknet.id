@@ -27,6 +27,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
 }) => {
   const [userNft, setUserNft] = useState<StarkscanNftProps[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<string | null>(null);
   const [selectedPic, setSelectedPic] = useState<StarkscanNftProps | null>(
     null
   );
@@ -69,19 +70,28 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
         <div className={styles.gallery}>
           <p className={styles.subtitle}>Your NFTs</p>
           <h2 className={styles.title}>Choose your nft identity</h2>
-          <div className={styles.nftSection}>
+          <div
+            className={styles.nftSection}
+            onMouseLeave={() => setIsHovered(null)}
+          >
             {isLoading ? (
               <PfpSkeleton />
             ) : userNft && userNft.length > 0 ? (
               userNft.map((nft, index) => {
                 if (!nft.image_url) return null;
                 return (
-                  <NftCard
+                  <div
                     key={index}
-                    image={nft.image_url as string}
-                    name={nft.name as string}
-                    selectPicture={() => selectPicture(nft)}
-                  />
+                    onMouseEnter={() => setIsHovered(nft.token_id)}
+                    onMouseLeave={() => setIsHovered(null)}
+                  >
+                    <NftCard
+                      image={nft.image_url as string}
+                      name={nft.name as string}
+                      selectPicture={() => selectPicture(nft)}
+                      isHovered={isHovered === nft.token_id}
+                    />
+                  </div>
                 );
               })
             ) : (

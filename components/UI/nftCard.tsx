@@ -9,22 +9,19 @@ type NftCardProps = {
   image: string;
   name: string;
   selectPicture: () => void;
+  isHovered: boolean;
 };
 
 const NftCard: FunctionComponent<NftCardProps> = ({
   image,
   name,
   selectPicture,
+  isHovered,
 }) => {
-  const [isHovered, setIsHovered] = useState<boolean>(false);
   const isMobile = useMediaQuery("(max-width:425px)");
 
   return (
-    <div
-      className={styles.nftCard}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className={styles.nftCard}>
       {!isHovered || isMobile ? (
         <div
           className={styles.nftImg}

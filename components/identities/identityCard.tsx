@@ -48,6 +48,22 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
       setCopied(false);
     }, 1500);
   };
+  // debounce function to prevent rapid state changes
+  function debounce<F extends (...args: any[]) => void>(
+    func: F,
+    delay: number
+  ): (...args: Parameters<F>) => void {
+    let timeoutId: number | null = null;
+
+    return function (this: ThisParameterType<F>, ...args: Parameters<F>) {
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+      timeoutId = window.setTimeout(() => func.apply(this, args), delay);
+    };
+  }
+  const handleMouseEnter = debounce(() => setIsHovered(true), 100);
+  const handleMouseLeave = debounce(() => setIsHovered(false), 100);
 
   return (
     <div className={styles.wrapper}>
@@ -56,8 +72,8 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           <div className="my-2">
             <div
               className={styles.pfpSection}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               {isHovered && isOwner && !isMobile ? (
                 <div
