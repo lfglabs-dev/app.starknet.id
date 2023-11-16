@@ -111,6 +111,20 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       .then((res) => res.json())
       .catch((err) => console.log("Error on sending metadata:", err));
 
+    // Subscribe to auto renewal mailing list if renewal box is checked
+    if (renewalBox) {
+      fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tx_hash: formatHexString(renewData.transaction_hash),
+          groups,
+        }),
+      })
+        .then((res) => res.json())
+        .catch((err) => console.log("Error on registering to email:", err));
+    }
+
     addTransaction({
       timestamp: Date.now(),
       subtext: "Domain renewal",

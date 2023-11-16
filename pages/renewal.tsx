@@ -10,7 +10,6 @@ const RenewalPage: NextPage = () => {
       <div className={styles.container}>
         <Renewal
           groups={[
-            process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? "",
             process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
           ]}
         />
