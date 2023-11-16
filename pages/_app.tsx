@@ -33,11 +33,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   const chains = [
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? goerli : mainnet,
   ];
-  const providers = [
-    alchemyProvider({
-      apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string,
-    }),
-  ];
+  const providers = alchemyProvider({
+    apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string,
+  });
   const connectors = useMemo(
     () => [
       braavos(),
@@ -55,7 +53,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <StarknetConfig
         chains={chains}
-        providers={providers}
+        provider={providers}
         connectors={connectors as any}
         autoConnect
       >
