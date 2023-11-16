@@ -45,7 +45,7 @@ export function useNotificationManager() {
         data?.finality_status === "ACCEPTED_ON_L1"
       ) {
         updatedTransactions[index].data.txStatus =
-          data.status ?? data.finality_status;
+          data?.status ?? data?.finality_status;
         updatedTransactions[index].data.status = "success";
         setNotifications(updatedTransactions);
       }
