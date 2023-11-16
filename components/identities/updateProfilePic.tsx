@@ -9,6 +9,7 @@ import {
 } from "../../utils/nftService";
 import BackButton from "../UI/backButton";
 import PfpSkeleton from "./skeletons/pfpSkeleton";
+import SelectedCollections from "./selectedCollections";
 
 type UpdateProfilePicProps = {
   identity?: Identity;
@@ -85,23 +86,19 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
                 );
               })
             ) : (
-              <p>You don&apos;t own any whitelisted NFTs yet. </p>
+              <p className={styles.message}>
+                You don&apos;t own any whitelisted NFTs yet.{" "}
+              </p>
             )}
-            {/* {userNft && userNft.length > 0 ? (
-              userNft.map((nft, index) => {
-                if (!nft.image_url) return null;
-                return (
-                  <NftCard
-                    key={index}
-                    image={nft.image_url as string}
-                    name={nft.name as string}
-                    selectPicture={() => selectPicture(nft)}
-                  />
-                );
-              })
-            ) : (
-              <p>You don&apos;t own any whitelisted NFTs yet. </p>
-            )} */}
+          </div>
+          <div>
+            {userNft && userNft.length > 0 ? (
+              <div className={styles.selectedCollections}>
+                <p className={styles.subtitle}>Explore our selection</p>
+                <h2 className={styles.title}>Personalize your identity</h2>
+              </div>
+            ) : null}
+            <SelectedCollections />
           </div>
         </div>
       </div>

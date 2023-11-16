@@ -146,3 +146,49 @@
     z-index: 0;
     pointer-events: none;
 }
+
+.selectedCollections {
+    margin-top: 48px;
+}
+
+.nftCollectionWraper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 48px;
+    margin: 48px 0;
+}
+
+.nftCollectionCard {
+    display: flex;
+    padding: 24px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    cursor: pointer;
+
+    border-radius: 20px;
+    background: var(--background-light);
+    box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+}
+
+.nftCollectionImg {
+    width: 200px;
+    height: 200px;
+    border-radius: 20px;
+}
+
+.nftCollectionName {
+    color: var(--secondary);
+    font-family: "QuickZap";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 28px;
+}
+
+.btnWrapper {
+    width: 230px;
+    margin: 0 auto;
+}

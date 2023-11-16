@@ -18,6 +18,30 @@ export const PFP_WL_CONTRACTS_MAINNET = [
   "0x76503062d78f4481be03c9145022d6a4a71ec0719aa07756f79a2384dc7ef16",
 ];
 
+export const NftCollections = [
+  {
+    imageUri:
+      "https://ipfs.io/ipfs/bafybeiftrkvqyh6fdnqxddml3awxdqanblufvzu4c6dy2gty3l7fexplqm/1.png",
+    name: "Starkpunk",
+    externalLink:
+      "https://unframed.co/collection/0x0727a63f78ee3f1bd18f78009067411ab369c31dece1ae22e16f567906409905",
+  },
+  {
+    imageUri:
+      "https://ipfs.io/ipfs/bafybeiftrkvqyh6fdnqxddml3awxdqanblufvzu4c6dy2gty3l7fexplqm/2.png",
+    name: "Starkpunk",
+    externalLink:
+      "https://unframed.co/collection/0x0727a63f78ee3f1bd18f78009067411ab369c31dece1ae22e16f567906409905",
+  },
+  {
+    imageUri:
+      "https://ipfs.io/ipfs/bafybeiftrkvqyh6fdnqxddml3awxdqanblufvzu4c6dy2gty3l7fexplqm/3.png",
+    name: "Starkpunk",
+    externalLink:
+      "https://unframed.co/collection/0x0727a63f78ee3f1bd18f78009067411ab369c31dece1ae22e16f567906409905",
+  },
+];
+
 export enum NotificationType {
   TRANSACTION = "TRANSACTION",
 }
