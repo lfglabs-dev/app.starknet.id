@@ -170,7 +170,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       )
     );
     setCallData(calls);
-  }, [price, salesTaxRate, metadataHash, erc20AllowanceData]);
+  }, [price, salesTaxRate, metadataHash, erc20AllowanceData, salesTaxAmount]);
 
   useEffect(() => {
     if (!autorenewData?.transaction_hash || !salt) return;

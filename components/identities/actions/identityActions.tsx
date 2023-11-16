@@ -127,7 +127,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           setIsAutoRenewalEnabled(false);
         }
       });
-  }, [address, tokenId, identity, isOwner]);
+  }, [address, tokenId, identity, isOwner, isTxSent]);
 
   useEffect(() => {
     if (!mainDomainData?.transaction_hash) return;
