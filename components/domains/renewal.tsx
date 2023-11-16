@@ -1,7 +1,12 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useAccount, useBalance, useContractWrite } from "@starknet-react/core";
+import {
+  useAccount,
+  useBalance,
+  useContractRead,
+  useContractWrite,
+} from "@starknet-react/core";
 import {
   formatHexString,
   isValidEmail,
@@ -9,7 +14,7 @@ import {
   selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
 import { gweiToEth, applyRateToBigInt } from "../../utils/feltService";
-import { Call } from "starknet";
+import { Abi, Call } from "starknet";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
@@ -31,9 +36,14 @@ import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import BackButton from "../UI/backButton";
 import { useRouter } from "next/router";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
-import { NotificationType, TransactionType } from "../../utils/constants";
+import {
+  NotificationType,
+  TransactionType,
+  UINT_128_MAX,
+} from "../../utils/constants";
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
+import { useEtherContract } from "../../hooks/contracts";
 
 type RenewalProps = {
   groups: string[];
@@ -71,6 +81,17 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
   const duration = 1; // on year by default
+  const { contract: etherContract } = useEtherContract();
+  const { data: erc20AllowanceData, error: erc20AllowanceError } =
+    useContractRead({
+      address: etherContract?.address as string,
+      abi: etherContract?.abi as Abi,
+      functionName: "allowance",
+      args: [
+        address as string,
+        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+      ],
+    });
 
   useEffect(() => {
     if (!renewData?.transaction_hash || !salt) return;
@@ -182,7 +203,15 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       }
 
       if (renewalBox) {
-        calls.push(autoRenewalCalls.approve());
+        if (
+          erc20AllowanceError ||
+          (erc20AllowanceData &&
+            erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
+            erc20AllowanceData["remaining"].high !== UINT_128_MAX)
+        ) {
+          calls.push(autoRenewalCalls.approve());
+        }
+
         selectedDomainsToArray(selectedDomains).map((domain) => {
           const encodedDomain = utils
             .encodeDomain(domain)
@@ -205,7 +234,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
 
       setCallData(calls);
     }
-  }, [selectedDomains, price, salesTaxRate]);
+  }, [selectedDomains, price, salesTaxRate, erc20AllowanceData]);
 
   return (
     <div className={styles.container}>

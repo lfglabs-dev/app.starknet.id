@@ -1,7 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { usePricingContract } from "../../hooks/contracts";
+import { useEtherContract, usePricingContract } from "../../hooks/contracts";
 import {
   useAccount,
   useBalance,
@@ -39,7 +39,11 @@ import RegisterCheckboxes from "./registerCheckboxes";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
-import { NotificationType, TransactionType } from "../../utils/constants";
+import {
+  NotificationType,
+  TransactionType,
+  UINT_128_MAX,
+} from "../../utils/constants";
 
 type RegisterV2Props = {
   domain: string;
@@ -62,6 +66,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
+  const { contract: etherContract } = useEtherContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
@@ -92,6 +97,16 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     new Map()
   );
   const { addTransaction } = useNotificationManager();
+  const { data: erc20AllowanceData, error: erc20AllowanceError } =
+    useContractRead({
+      address: etherContract?.address as string,
+      abi: etherContract?.abi as Abi,
+      functionName: "allowance",
+      args: [
+        address as string,
+        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+      ],
+    });
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -197,11 +212,18 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // If the user has toggled autorenewal
     if (renewalBox) {
+      if (
+        erc20AllowanceError ||
+        (erc20AllowanceData &&
+          erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
+          erc20AllowanceData["remaining"].high !== UINT_128_MAX)
+      ) {
+        calls.push(autoRenewalCalls.approve());
+      }
       const limitPrice = salesTaxAmount
         ? (BigInt(salesTaxAmount) + BigInt(price)).toString()
         : price;
       calls.push(
-        autoRenewalCalls.approve(),
         autoRenewalCalls.enableRenewal(
           encodedDomain,
           limitPrice,
@@ -224,6 +246,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     metadataHash,
     salesTaxRate,
     renewalBox,
+    salesTaxAmount,
+    erc20AllowanceData,
   ]);
 
   useEffect(() => {
