@@ -9,6 +9,7 @@ import {
 } from "../../utils/nftService";
 import BackButton from "../UI/backButton";
 import PfpSkeleton from "./skeletons/pfpSkeleton";
+import { debounce } from "../../utils/debounceService";
 
 type UpdateProfilePicProps = {
   identity?: Identity;
@@ -61,6 +62,9 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     }
   };
 
+  const handleMouseEnter = debounce((id: string) => setIsHovered(id), 100);
+  const handleMouseLeave = debounce(() => setIsHovered(null), 100);
+
   return (
     <>
       <div className={styles.container}>
@@ -82,8 +86,8 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
                 return (
                   <div
                     key={index}
-                    onMouseEnter={() => setIsHovered(nft.token_id)}
-                    onMouseLeave={() => setIsHovered(null)}
+                    onMouseEnter={() => handleMouseEnter(nft.token_id)}
+                    onMouseLeave={handleMouseLeave}
                   >
                     <NftCard
                       image={nft.image_url as string}

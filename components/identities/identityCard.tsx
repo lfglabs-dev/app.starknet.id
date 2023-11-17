@@ -16,6 +16,7 @@ import { timestampToReadableDate } from "../../utils/dateService";
 import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
 import CopyIcon from "../UI/iconsComponents/icons/copyIcon";
 import EditIcon from "../UI/iconsComponents/icons/editIcon";
+import { debounce } from "../../utils/debounceService";
 
 type IdentityCardProps = {
   identity?: Identity;
@@ -48,20 +49,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
       setCopied(false);
     }, 1500);
   };
-  // debounce function to prevent rapid state changes
-  function debounce<F extends (...args: any[]) => void>(
-    func: F,
-    delay: number
-  ): (...args: Parameters<F>) => void {
-    let timeoutId: number | null = null;
 
-    return function (this: ThisParameterType<F>, ...args: Parameters<F>) {
-      if (timeoutId !== null) {
-        clearTimeout(timeoutId);
-      }
-      timeoutId = window.setTimeout(() => func.apply(this, args), delay);
-    };
-  }
   const handleMouseEnter = debounce(() => setIsHovered(true), 100);
   const handleMouseLeave = debounce(() => setIsHovered(false), 100);
 
