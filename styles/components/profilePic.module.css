@@ -157,6 +157,7 @@
     align-items: center;
     gap: 48px;
     margin: 48px 0;
+    justify-content: center;
 }
 
 .nftCollectionCard {
