@@ -74,10 +74,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
         <div className={styles.gallery}>
           <p className={styles.subtitle}>Your NFTs</p>
           <h2 className={styles.title}>Choose your nft identity</h2>
-          <div
-            className={styles.nftSection}
-            onMouseLeave={() => setIsHovered(null)}
-          >
+          <div className={styles.nftSection}>
             {isLoading ? (
               <PfpSkeleton />
             ) : userNft && userNft.length > 0 ? (
