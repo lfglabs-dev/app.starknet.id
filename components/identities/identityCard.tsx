@@ -50,8 +50,8 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
     }, 1500);
   };
 
-  const handleMouseEnter = debounce(() => setIsHovered(true), 100);
-  const handleMouseLeave = debounce(() => setIsHovered(false), 100);
+  const handleMouseEnter = debounce(() => setIsHovered(true), 50);
+  const handleMouseLeave = debounce(() => setIsHovered(false), 50);
 
   return (
     <div className={styles.wrapper}>

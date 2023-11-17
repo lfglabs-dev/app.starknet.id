@@ -62,8 +62,8 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     }
   };
 
-  const handleMouseEnter = debounce((id: string) => setIsHovered(id), 100);
-  const handleMouseLeave = debounce(() => setIsHovered(null), 100);
+  const handleMouseEnter = debounce((id: string) => setIsHovered(id), 50);
+  const handleMouseLeave = debounce(() => setIsHovered(null), 50);
 
   return (
     <>
