@@ -9,6 +9,7 @@ import {
 } from "../../utils/nftService";
 import BackButton from "../UI/backButton";
 import PfpSkeleton from "./skeletons/pfpSkeleton";
+import SelectedCollections from "./selectedCollections";
 import { debounce } from "../../utils/debounceService";
 
 type UpdateProfilePicProps = {
@@ -38,10 +39,10 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!identity?.addr) return;
+    if (!identity?.owner_addr) return;
     retrieveAssets(
       `${process.env.NEXT_PUBLIC_SERVER_LINK}/starkscan/fetch_nfts`,
-      identity.addr
+      identity.owner_addr
     ).then((data) => {
       const filteredAssets = filterAssets(data.data, whitelistedContracts);
       setUserNft(filteredAssets);
@@ -73,7 +74,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
         </div>
         <div className={styles.gallery}>
           <p className={styles.subtitle}>Your NFTs</p>
-          <h2 className={styles.title}>Choose your nft identity</h2>
+          <h2 className={styles.title}>Choose your NFT Profile picture</h2>
           <div className={styles.nftSection}>
             {isLoading ? (
               <PfpSkeleton />
@@ -96,23 +97,19 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
                 );
               })
             ) : (
-              <p>You don&apos;t own any whitelisted NFTs yet. </p>
+              <p className={styles.message}>
+                You don&apos;t own any whitelisted NFTs yet.{" "}
+              </p>
             )}
-            {/* {userNft && userNft.length > 0 ? (
-              userNft.map((nft, index) => {
-                if (!nft.image_url) return null;
-                return (
-                  <NftCard
-                    key={index}
-                    image={nft.image_url as string}
-                    name={nft.name as string}
-                    selectPicture={() => selectPicture(nft)}
-                  />
-                );
-              })
-            ) : (
-              <p>You don&apos;t own any whitelisted NFTs yet. </p>
-            )} */}
+          </div>
+          <div>
+            {userNft && userNft.length > 0 ? (
+              <div className={styles.selectedCollections}>
+                <p className={styles.subtitle}>Get a new Profile Pic</p>
+                <h2 className={styles.title}>Our NFT Collections selection</h2>
+              </div>
+            ) : null}
+            <SelectedCollections />
           </div>
         </div>
       </div>
