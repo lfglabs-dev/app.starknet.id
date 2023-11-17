@@ -29,7 +29,7 @@ export const NftCollections = [
     imageUri: "https://assets.starkguardians.com/collection/1/1.png",
     name: "StarkGuardians",
     externalLink:
-      "https://unframed.co/collection/0x0727a63f78ee3f1bd18f78009067411ab369c31dece1ae22e16f567906409905",
+      "https://pyramid.market/collection/0x2d679a171589777bc996fb27767ff9a2e44c7e07967760dea3df31704ab398a",
   },
   {
     imageUri:
