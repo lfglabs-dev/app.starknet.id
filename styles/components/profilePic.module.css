@@ -175,8 +175,8 @@
 }
 
 .nftCollectionImg {
-    width: 200px;
-    height: 200px;
+    width: 180px;
+    height: 180px;
     border-radius: 20px;
 }
 
@@ -193,3 +193,12 @@
     width: 230px;
     margin: 0 auto;
 }
+
+@media (max-width: 768px) {
+    .gallery {
+        padding: 32px 24px;
+    }
+    .nftCollectionWraper {
+        flex-direction: column;
+    }
+  }
