@@ -9,6 +9,7 @@ import {
 } from "../../utils/nftService";
 import BackButton from "../UI/backButton";
 import PfpSkeleton from "./skeletons/pfpSkeleton";
+import { debounce } from "../../utils/debounceService";
 
 type UpdateProfilePicProps = {
   identity?: Identity;
@@ -27,6 +28,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
 }) => {
   const [userNft, setUserNft] = useState<StarkscanNftProps[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<string | null>(null);
   const [selectedPic, setSelectedPic] = useState<StarkscanNftProps | null>(
     null
   );
@@ -60,6 +62,9 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     }
   };
 
+  const handleMouseEnter = debounce((id: string) => setIsHovered(id), 50);
+  const handleMouseLeave = debounce(() => setIsHovered(null), 50);
+
   return (
     <>
       <div className={styles.container}>
@@ -76,12 +81,18 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
               userNft.map((nft, index) => {
                 if (!nft.image_url) return null;
                 return (
-                  <NftCard
+                  <div
                     key={index}
-                    image={nft.image_url as string}
-                    name={nft.name as string}
-                    selectPicture={() => selectPicture(nft)}
-                  />
+                    onMouseEnter={() => handleMouseEnter(nft.token_id)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <NftCard
+                      image={nft.image_url as string}
+                      name={nft.name as string}
+                      selectPicture={() => selectPicture(nft)}
+                      isHovered={isHovered === nft.token_id}
+                    />
+                  </div>
                 );
               })
             ) : (

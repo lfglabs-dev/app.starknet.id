@@ -16,6 +16,7 @@ import { timestampToReadableDate } from "../../utils/dateService";
 import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
 import CopyIcon from "../UI/iconsComponents/icons/copyIcon";
 import EditIcon from "../UI/iconsComponents/icons/editIcon";
+import { debounce } from "../../utils/debounceService";
 
 type IdentityCardProps = {
   identity?: Identity;
@@ -49,6 +50,9 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
     }, 1500);
   };
 
+  const handleMouseEnter = debounce(() => setIsHovered(true), 50);
+  const handleMouseLeave = debounce(() => setIsHovered(false), 50);
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
@@ -56,8 +60,8 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           <div className="my-2">
             <div
               className={styles.pfpSection}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               {isHovered && isOwner && !isMobile ? (
                 <div
