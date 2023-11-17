@@ -21,7 +21,7 @@ import {
 import { formatHexString, isValidEmail } from "../../../utils/stringService";
 import { applyRateToBigInt, gweiToEth } from "../../../utils/feltService";
 import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
-import { UINT_128_MAX } from "../../../utils/constants";
+import { MONTH_IN_SECONDS, UINT_128_MAX } from "../../../utils/constants";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 
@@ -259,7 +259,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                 {identity?.domain_expiry
                   ? `Your domain will be renewed for 1 year on  
                 ${timestampToReadableDate(
-                  identity.domain_expiry - 2592000
+                  identity.domain_expiry - MONTH_IN_SECONDS
                 )} at ${gweiToEth(renewalAllowance)} ETH.`
                   : null}
               </p>
