@@ -21,21 +21,19 @@ export const PFP_WL_CONTRACTS_MAINNET = [
 export const NftCollections = [
   {
     imageUri:
-      "https://ipfs.io/ipfs/bafybeiftrkvqyh6fdnqxddml3awxdqanblufvzu4c6dy2gty3l7fexplqm/1.png",
-    name: "Starkpunk",
+      "https://api.briq.construction/v1/preview/starknet-mainnet/0x42f5fc1f7b1845b307807fa05672177c9c5483cd4b7cb847000000000000000.png",
+    name: "Ducks everywhere",
+    externalLink: "https://briq.construction/product/ducks_everywhere",
+  },
+  {
+    imageUri: "https://assets.starkguardians.com/collection/1/1.png",
+    name: "StarkGuardians",
     externalLink:
       "https://unframed.co/collection/0x0727a63f78ee3f1bd18f78009067411ab369c31dece1ae22e16f567906409905",
   },
   {
     imageUri:
       "https://ipfs.io/ipfs/bafybeiftrkvqyh6fdnqxddml3awxdqanblufvzu4c6dy2gty3l7fexplqm/2.png",
-    name: "Starkpunk",
-    externalLink:
-      "https://unframed.co/collection/0x0727a63f78ee3f1bd18f78009067411ab369c31dece1ae22e16f567906409905",
-  },
-  {
-    imageUri:
-      "https://ipfs.io/ipfs/bafybeiftrkvqyh6fdnqxddml3awxdqanblufvzu4c6dy2gty3l7fexplqm/3.png",
     name: "Starkpunk",
     externalLink:
       "https://unframed.co/collection/0x0727a63f78ee3f1bd18f78009067411ab369c31dece1ae22e16f567906409905",
