@@ -1,7 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { usePricingContract } from "../../hooks/contracts";
+import { useEtherContract, usePricingContract } from "../../hooks/contracts";
 import {
   useAccount,
   useBalance,
@@ -35,9 +35,15 @@ import Wallets from "../UI/wallets";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import { getPriceFromDomain } from "../../utils/priceService";
+import RegisterCheckboxes from "./registerCheckboxes";
+import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
-import { NotificationType, TransactionType } from "../../utils/constants";
+import {
+  NotificationType,
+  TransactionType,
+  UINT_128_MAX,
+} from "../../utils/constants";
 
 type RegisterV2Props = {
   domain: string;
@@ -60,11 +66,12 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
+  const { contract: etherContract } = useEtherContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
-  // const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [sponsor, setSponsor] = useState<string>("0");
   const [salt, setSalt] = useState<string | undefined>();
@@ -83,9 +90,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     watch: true,
   });
   const { writeAsync: execute, data: registerData } = useContractWrite({
-    // calls: renewalBox
-    //   ? callData.concat(registrationCalls.renewal(encodedDomain, price))
-    //   : callData,
     calls: callData,
   });
   const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");
@@ -93,6 +97,16 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     new Map()
   );
   const { addTransaction } = useNotificationManager();
+  const { data: erc20AllowanceData, error: erc20AllowanceError } =
+    useContractRead({
+      address: etherContract?.address as string,
+      abi: etherContract?.abi as Abi,
+      functionName: "allowance",
+      args: [
+        address as string,
+        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+      ],
+    });
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -113,7 +127,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         )
       );
     })();
-  }, [email, usState, salt]);
+  }, [email, usState, salt, renewalBox]);
 
   useEffect(() => {
     // if price query does not work we use the off-chain hardcoded price
@@ -196,6 +210,28 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       calls.push(registrationCalls.addressToDomain(encodedDomain));
     }
 
+    // If the user has toggled autorenewal
+    if (renewalBox) {
+      if (
+        erc20AllowanceError ||
+        (erc20AllowanceData &&
+          erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
+          erc20AllowanceData["remaining"].high !== UINT_128_MAX)
+      ) {
+        calls.push(autoRenewalCalls.approve());
+      }
+      const limitPrice = salesTaxAmount
+        ? (BigInt(salesTaxAmount) + BigInt(price)).toString()
+        : price;
+      calls.push(
+        autoRenewalCalls.enableRenewal(
+          encodedDomain,
+          limitPrice,
+          txMetadataHash
+        )
+      );
+    }
+
     // Merge and set the call data
     setCallData(calls);
   }, [
@@ -209,6 +245,9 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     sponsor,
     metadataHash,
     salesTaxRate,
+    renewalBox,
+    salesTaxAmount,
+    erc20AllowanceData,
   ]);
 
   useEffect(() => {
@@ -234,7 +273,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         tx_hash: formatHexString(registerData.transaction_hash),
-        groups,
+        groups: renewalBox ? groups : [groups[0]],
       }),
     })
       .then((res) => res.json())
@@ -345,12 +384,10 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
             isUsResident={isUsResident}
           />
           <Divider className="w-full" />
-          {/* <RegisterCheckboxes
-            // onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
-            onChangeTermsBox={() => setTermsBox(!termsBox)}
-            termsBox={termsBox}
-            // renewalBox={renewalBox}
-          /> */}
+          <RegisterCheckboxes
+            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+            renewalBox={renewalBox}
+          />
           {address ? (
             <Button
               onClick={() =>

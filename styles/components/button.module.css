@@ -51,10 +51,9 @@
 
 .nq-button:disabled,
 .nq-button[disabled] {
-  border: 1px solid #999999;
-  background-color: #cccccc;
+  background-color: #cdcccc;
   color: #666666;
-  box-shadow: none;
+  box-shadow: 0px 6px 80px 0px rgba(191, 158, 123, 0.07);
 }
 
 .nq-button:disabled:hover,

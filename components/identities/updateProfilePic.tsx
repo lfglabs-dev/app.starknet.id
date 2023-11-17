@@ -74,7 +74,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
         </div>
         <div className={styles.gallery}>
           <p className={styles.subtitle}>Your NFTs</p>
-          <h2 className={styles.title}>Choose your nft identity</h2>
+          <h2 className={styles.title}>Choose your NFT Profile picture</h2>
           <div className={styles.nftSection}>
             {isLoading ? (
               <PfpSkeleton />
@@ -105,8 +105,8 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
           <div>
             {userNft && userNft.length > 0 ? (
               <div className={styles.selectedCollections}>
-                <p className={styles.subtitle}>Explore our selection</p>
-                <h2 className={styles.title}>Personalize your identity</h2>
+                <p className={styles.subtitle}>Get a new Profile Pic</p>
+                <h2 className={styles.title}>Our NFT Collections selection</h2>
               </div>
             ) : null}
             <SelectedCollections />

@@ -72,25 +72,6 @@ function mint(tokenId: number): Call {
   };
 }
 
-function autoRenew(encodedDomain: string, price: string): Call[] {
-  return [
-    {
-      contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-      entrypoint: "approve",
-      calldata: [
-        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-        "340282366920938463463374607431768211455",
-        "340282366920938463463374607431768211455",
-      ],
-    },
-    {
-      contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      entrypoint: "toggle_renewals",
-      calldata: [encodedDomain.toString(), price, 0],
-    },
-  ];
-}
-
 function vatTransfer(amount: string): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
@@ -130,7 +111,6 @@ const registrationCalls = {
   buy,
   addressToDomain,
   mint,
-  autoRenew,
   buy_discounted,
   vatTransfer,
   renew,

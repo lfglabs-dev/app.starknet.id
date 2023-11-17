@@ -35,7 +35,10 @@ const RegistrationPage: NextPage = () => {
         </div>
         <RegisterV2
           domain={getDomainWithoutStark(domain)}
-          groups={[process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? ""]}
+          groups={[
+            process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? "",
+            process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
+          ]}
         />
       </div>
     </div>
