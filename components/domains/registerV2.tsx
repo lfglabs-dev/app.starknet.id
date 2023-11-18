@@ -16,9 +16,9 @@ import {
   isValidEmail,
 } from "../../utils/stringService";
 import {
+  applyRateToBigInt,
   gweiToEth,
   hexToDecimal,
-  applyRateToBigInt,
 } from "../../utils/feltService";
 import SelectIdentity from "./selectIdentity";
 import { useDisplayName } from "../../hooks/displayName.tsx";
@@ -26,11 +26,10 @@ import { Abi, Call } from "starknet";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
-import UsForm from "./usForm";
+import SwissForm from "./swissForm";
 import { Divider } from "@mui/material";
 import NumberTextField from "../UI/numberTextField";
 import RegisterSummary from "./registerSummary";
-import salesTax from "sales-tax";
 import Wallets from "../UI/wallets";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
@@ -43,6 +42,7 @@ import {
   NotificationType,
   TransactionType,
   UINT_128_MAX,
+  swissVatRate,
 } from "../../utils/constants";
 
 type RegisterV2Props = {
@@ -55,8 +55,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
-  const [isUsResident, setIsUsResident] = useState<boolean>(false);
-  const [usState, setUsState] = useState<string>("DE");
+  const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [duration, setDuration] = useState<number>(1);
@@ -72,6 +71,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  const [termsBox, setTermsBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [sponsor, setSponsor] = useState<string>("0");
   const [salt, setSalt] = useState<string | undefined>();
@@ -122,12 +122,12 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         await computeMetadataHash(
           email,
           //groups, // default group for domain Owner
-          isUsResident ? usState : "none",
+          isSwissResident ? "switzerland" : "none",
           salt
         )
       );
     })();
-  }, [email, usState, salt, renewalBox]);
+  }, [email, salt, renewalBox]);
 
   useEffect(() => {
     // if price query does not work we use the off-chain hardcoded price
@@ -261,7 +261,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-        tax_state: isUsResident ? usState : "none",
+        tax_state: isSwissResident ? "switzerland" : "none",
         salt: salt,
       }),
     })
@@ -290,7 +290,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       },
     });
     setIsTxModalOpen(true);
-  }, [registerData, salt, email, usState]);
+  }, [registerData, salt, email]);
 
   function changeAddress(value: string): void {
     isHexString(value) ? setTargetAddress(value) : null;
@@ -311,16 +311,14 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   }
 
   useEffect(() => {
-    if (isUsResident) {
-      salesTax.getSalesTax("US", usState).then((tax) => {
-        setSalesTaxRate(tax.rate);
-        if (price) setSalesTaxAmount(applyRateToBigInt(price, tax.rate));
-      });
+    if (isSwissResident) {
+      setSalesTaxRate(swissVatRate);
+      setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
     } else {
       setSalesTaxRate(0);
       setSalesTaxAmount("");
     }
-  }, [isUsResident, usState, price]);
+  }, [isSwissResident, price]);
 
   return (
     <div className={styles.container}>
@@ -342,11 +340,9 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
               type="email"
             />
 
-            <UsForm
-              isUsResident={isUsResident}
-              onUsResidentChange={() => setIsUsResident(!isUsResident)}
-              usState={usState}
-              changeUsState={(value) => setUsState(value)}
+            <SwissForm
+              isSwissResident={isSwissResident}
+              onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
             />
             <TextField
               helperText="The Starknet address the domain will resolve to."
@@ -381,10 +377,12 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
             duration={duration}
             renewalBox={false}
             salesTaxRate={salesTaxRate}
-            isUsResident={isUsResident}
+            isSwissResident={isSwissResident}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
+            onChangeTermsBox={() => setTermsBox(!termsBox)}
+            termsBox={termsBox}
             onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             renewalBox={renewalBox}
           />
@@ -404,12 +402,12 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
                 duration < 1 ||
                 !targetAddress ||
                 invalidBalance ||
-                (isUsResident && !usState) ||
+                !termsBox ||
                 emailError
               }
             >
-              {isUsResident && !usState
-                ? "We need your US State"
+              {!termsBox
+                ? "Please accept terms & policies"
                 : invalidBalance
                 ? "You don't have enough eth"
                 : emailError

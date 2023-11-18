@@ -11,8 +11,7 @@ import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi, Call } from "starknet";
 import ConfirmationTx from "../../UI/confirmationTx";
-import UsForm from "../../domains/usForm";
-import salesTax from "sales-tax";
+import SwissForm from "../../domains/swissForm";
 import TextField from "../../UI/textField";
 import {
   computeMetadataHash,
@@ -21,7 +20,11 @@ import {
 import { formatHexString, isValidEmail } from "../../../utils/stringService";
 import { applyRateToBigInt, gweiToEth } from "../../../utils/feltService";
 import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
-import { MONTH_IN_SECONDS, UINT_128_MAX } from "../../../utils/constants";
+import {
+  MONTH_IN_SECONDS,
+  UINT_128_MAX,
+  swissVatRate,
+} from "../../../utils/constants";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 
@@ -48,8 +51,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     allowance ?? "0"
   );
   const [isTxSent, setIsTxSent] = useState(false);
-  const [isUsResident, setIsUsResident] = useState<boolean>(false);
-  const [usState, setUsState] = useState<string>("DE");
+  const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [email, setEmail] = useState<string>("");
   const groups: string[] = [
@@ -127,25 +129,28 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     if (!salt || !needMedadata) return;
     (async () => {
       setMetadataHash(
-        await computeMetadataHash(email, isUsResident ? usState : "none", salt)
+        await computeMetadataHash(
+          email,
+          isSwissResident ? "switzerland" : "none",
+          salt
+        )
       );
     })();
-  }, [usState, salt, email, needMedadata]);
+  }, [salt, email, needMedadata]);
 
   useEffect(() => {
     if (!needMedadata && price) {
       setSalesTaxAmount(applyRateToBigInt(price, salesTaxRate));
     } else {
-      if (isUsResident) {
-        salesTax.getSalesTax("US", usState).then((tax) => {
-          setSalesTaxRate(tax.rate);
-          if (price) setSalesTaxAmount(applyRateToBigInt(price, tax.rate));
-        });
+      if (isSwissResident) {
+        setSalesTaxRate(swissVatRate);
+        setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
       } else {
         setSalesTaxRate(0);
+        setSalesTaxAmount("");
       }
     }
-  }, [isUsResident, usState, price, needMedadata, salesTaxRate]);
+  }, [isSwissResident, price, needMedadata]);
 
   // Set Enable Auto Renewal Multicall
   useEffect(() => {
@@ -185,7 +190,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         body: JSON.stringify({
           meta_hash: metadataHash,
           email,
-          tax_state: isUsResident ? usState : "none",
+          tax_state: isSwissResident ? "switzerland" : "none",
           salt: salt,
         }),
       })
@@ -215,7 +220,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       },
     });
     setIsTxSent(true);
-  }, [autorenewData, usState, salt]);
+  }, [autorenewData, salt]);
 
   function changeEmail(value: string): void {
     setEmail(value);
@@ -279,18 +284,17 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                     variant="white"
                   />
                 </div>
-                <UsForm
-                  isUsResident={isUsResident}
-                  onUsResidentChange={() => setIsUsResident(!isUsResident)}
-                  usState={usState}
-                  changeUsState={(value) => setUsState(value)}
+                <SwissForm
+                  isSwissResident={isSwissResident}
+                  onSwissResidentChange={() =>
+                    setIsSwissResident(!isSwissResident)
+                  }
                   variant="white"
                 />
               </>
             ) : null}
             <div className={`${!needMedadata ? "mx-auto" : ""}`}>
               <Button
-                disabled={isUsResident && !usState}
                 onClick={() => {
                   execute();
                 }}

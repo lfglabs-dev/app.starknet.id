@@ -1,29 +1,29 @@
 .defaultCheckbox {
-    padding: 0;
-    background: transparent;
+  padding: 0;
+  background: transparent;
 }
 
 .whiteCheckbox {
-    padding: 0;
-    background: #FFFFFF;
+  padding: 0;
+  background: #ffffff;
 }
 
-.defaultUsForm {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem; 
-    border-width: 1px; 
-    border-style: solid; 
-    border-color: #c4c4c4ff;
-    padding-left: 16.5px;
-    background: transparent;
+.defaultSwissForm {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #c4c4c4ff;
+  padding-left: 16.5px;
+  background: transparent;
 }
 
-.whiteUsForm {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem; 
-    border-width: 1px; 
-    border-style: solid; 
-    border-color: #c4c4c4ff;
-    padding-left: 16.5px;
-    background: #FFFFFF;
+.whiteSwissForm {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #c4c4c4ff;
+  padding-left: 16.5px;
+  background: #ffffff;
 }
