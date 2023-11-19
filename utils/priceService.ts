@@ -14,7 +14,7 @@ export function getPriceFromDomain(duration: number, domain: string): bigint {
 
   switch (domainLength) {
     case 0:
-      return durationBigInt * PRICES.ONE;
+      return durationBigInt * PRICES.FIVE;
     case 1:
       return durationBigInt * PRICES.ONE;
     case 2:

@@ -12,7 +12,7 @@ describe("Should test price service file", () => {
   it("Test getPriceFromDomain functions with different domains", () => {
     let randomString = generateString(0, totalAlphabet);
     expect(getPriceFromDomain(1, randomString.concat(".stark"))).toEqual(
-      PRICES.ONE
+      PRICES.FIVE
     );
 
     randomString = generateString(1, totalAlphabet);

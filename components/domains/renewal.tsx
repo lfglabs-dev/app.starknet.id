@@ -19,10 +19,9 @@ import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
-import UsForm from "./usForm";
+import SwissForm from "./swissForm";
 import { Divider } from "@mui/material";
 import RegisterSummary from "./registerSummary";
-import salesTax from "sales-tax";
 import Wallets from "../UI/wallets";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
@@ -40,6 +39,7 @@ import {
   NotificationType,
   TransactionType,
   UINT_128_MAX,
+  swissVatRate,
 } from "../../utils/constants";
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
@@ -52,8 +52,7 @@ type RenewalProps = {
 const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
-  const [isUsResident, setIsUsResident] = useState<boolean>(false);
-  const [usState, setUsState] = useState<string>("DE");
+  const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [callData, setCallData] = useState<Call[]>([]);
@@ -61,7 +60,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-  // const [termsBox, setTermsBox] = useState<boolean>(true);
+  const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [salt, setSalt] = useState<string | undefined>();
@@ -104,7 +103,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-        tax_state: isUsResident ? usState : "none",
+        tax_state: isSwissResident ? "switzerland" : "none",
         salt: salt,
       }),
     })
@@ -136,7 +135,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       },
     });
     setIsTxModalOpen(true);
-  }, [renewData, salt, email, usState]);
+  }, [renewData, salt, email]);
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -152,12 +151,12 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         await computeMetadataHash(
           email,
           //groups, // default group for domain Owner
-          isUsResident ? usState : "none",
+          isSwissResident ? "switzerland" : "none",
           salt
         )
       );
     })();
-  }, [email, usState, salt, renewalBox]);
+  }, [email, salt, renewalBox]);
 
   useEffect(() => {
     if (!selectedDomains) return;
@@ -190,16 +189,14 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   }
 
   useEffect(() => {
-    if (isUsResident) {
-      salesTax.getSalesTax("US", usState).then((tax) => {
-        setSalesTaxRate(tax.rate);
-        if (price) setSalesTaxAmount(applyRateToBigInt(price, tax.rate));
-      });
+    if (isSwissResident) {
+      setSalesTaxRate(swissVatRate);
+      setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
     } else {
       setSalesTaxRate(0);
       setSalesTaxAmount("");
     }
-  }, [isUsResident, usState, price]);
+  }, [isSwissResident, price]);
 
   useEffect(() => {
     if (selectedDomains) {
@@ -248,7 +245,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
 
       setCallData(calls);
     }
-  }, [selectedDomains, price, salesTaxRate, erc20AllowanceData]);
+  }, [selectedDomains, price, salesTaxAmount, erc20AllowanceData]);
 
   return (
     <div className={styles.container}>
@@ -270,11 +267,9 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
               errorMessage={"Please enter a valid email address"}
               type="email"
             />
-            <UsForm
-              isUsResident={isUsResident}
-              onUsResidentChange={() => setIsUsResident(!isUsResident)}
-              usState={usState}
-              changeUsState={(value) => setUsState(value)}
+            <SwissForm
+              isSwissResident={isSwissResident}
+              onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
             />
             <RenewalDomainsBox
               helperText="Check the box of the domains you want to renew"
@@ -289,10 +284,12 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
             duration={1}
             renewalBox={false}
             salesTaxRate={salesTaxRate}
-            isUsResident={isUsResident}
+            isSwissResident={isSwissResident}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
+            onChangeTermsBox={() => setTermsBox(!termsBox)}
+            termsBox={termsBox}
             onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             renewalBox={renewalBox}
           />
@@ -307,17 +304,13 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
                 domainsMinting === selectedDomains ||
                 !address ||
                 invalidBalance ||
-                // !termsBox ||
-                (isUsResident && !usState) ||
+                !termsBox ||
                 emailError ||
                 !areDomainSelected(selectedDomains)
               }
             >
-              {/* {!termsBox
+              {!termsBox
                 ? "Please accept terms & policies"
-                :  */}
-              {isUsResident && !usState
-                ? "We need your US State"
                 : invalidBalance
                 ? "You don't have enough eth"
                 : !areDomainSelected(selectedDomains)
