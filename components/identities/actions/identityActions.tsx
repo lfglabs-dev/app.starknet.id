@@ -24,6 +24,7 @@ import { useRouter } from "next/router";
 import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
+import { posthog } from "posthog-js";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -169,6 +170,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       },
     });
     setIsTxModalOpen(true);
+    posthog?.capture("disable-ar"); // track events for analytics
   }, [disableRenewalData]);
 
   return (

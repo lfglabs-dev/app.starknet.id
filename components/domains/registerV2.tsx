@@ -252,6 +252,9 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
   useEffect(() => {
     if (!registerData?.transaction_hash || !salt) return;
+
+    // track the registration event(s) for analytics
+    if (renewalBox) posthog?.capture("enable-ar-register");
     posthog?.capture("register");
 
     // register the metadata to the sales manager db

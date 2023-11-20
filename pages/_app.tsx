@@ -25,6 +25,7 @@ if (typeof window !== "undefined") {
     session_recording: {
       recordCrossOriginIframes: true,
     },
+    capture_pageleave: false,
   });
   (window as any).posthog = posthog;
 }
