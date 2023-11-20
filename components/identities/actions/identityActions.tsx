@@ -20,7 +20,6 @@ import TxConfirmationModal from "../../UI/txConfirmationModal";
 import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
 import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
 import { Call } from "starknet";
-import ConfirmationTx from "../../UI/confirmationTx";
 import { useRouter } from "next/router";
 import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
@@ -58,7 +57,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const [allowance, setAllowance] = useState<string>("0");
-  const [isTxSent, setIsTxSent] = useState(false);
   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
     []
   );
@@ -127,7 +125,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           setIsAutoRenewalEnabled(false);
         }
       });
-  }, [address, tokenId, identity, isOwner, isTxSent]);
+  }, [address, tokenId, identity, isOwner]);
 
   useEffect(() => {
     if (!mainDomainData?.transaction_hash) return;
@@ -170,7 +168,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         status: "pending",
       },
     });
-    setIsTxSent(true);
+    setIsTxModalOpen(true);
   }, [disableRenewalData]);
 
   return (
@@ -346,12 +344,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           domain={identity?.domain}
           allowance={allowance}
         />
-        {isTxSent ? (
-          <ConfirmationTx
-            closeModal={() => setIsTxSent(false)}
-            txHash={disableRenewalData?.transaction_hash}
-          />
-        ) : null}
       </>
     </div>
   );
