@@ -27,6 +27,7 @@ import {
 } from "../../../utils/constants";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
+import { posthog } from "posthog-js";
 
 type AutoRenewalModalProps = {
   handleClose: () => void;
@@ -220,6 +221,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       },
     });
     setIsTxSent(true);
+    posthog?.capture("enable-ar"); // track events for analytics
   }, [autorenewData, salt]);
 
   function changeEmail(value: string): void {
