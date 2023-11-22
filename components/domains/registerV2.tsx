@@ -137,7 +137,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       const high = priceData?.["price"].high << BigInt(128);
       setPrice((priceData?.["price"].low + high).toString(10));
     }
-  }, [priceData, priceError]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [priceData, priceError, duration, domain]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("");
@@ -239,7 +240,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     duration,
     targetAddress,
     price,
-    domain,
+    encodedDomain,
     hasMainDomain,
     address,
     sponsor,
@@ -248,6 +249,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     renewalBox,
     salesTaxAmount,
     erc20AllowanceData,
+    erc20AllowanceError,
   ]);
 
   useEffect(() => {
@@ -293,7 +295,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       },
     });
     setIsTxModalOpen(true);
-  }, [registerData, salt, email]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registerData]); // We only need registerData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
   function changeAddress(value: string): void {
     isHexString(value) ? setTargetAddress(value) : null;

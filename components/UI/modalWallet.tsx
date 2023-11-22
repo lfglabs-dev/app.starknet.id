@@ -45,7 +45,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
         ).length
       );
     }
-  }, [notifications]);
+  }, [notifications, setTxLoading]);
 
   const copyToClipboard = () => {
     if (!address) return;

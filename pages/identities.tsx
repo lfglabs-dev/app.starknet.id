@@ -77,7 +77,8 @@ const Identities: NextPage = () => {
       },
     });
     setIsTxModalOpen(true);
-  }, [mintData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mintData]); // We want this to run only when the tx is sent
 
   function mint() {
     execute();

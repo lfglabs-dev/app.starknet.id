@@ -137,7 +137,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         )
       );
     })();
-  }, [salt, email, needMedadata]);
+  }, [salt, email, needMedadata, isSwissResident]);
 
   useEffect(() => {
     if (!needMedadata && price) {
@@ -151,7 +151,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         setSalesTaxAmount("");
       }
     }
-  }, [isSwissResident, price, needMedadata]);
+  }, [isSwissResident, price, needMedadata, salesTaxRate]);
 
   // Set Enable Auto Renewal Multicall
   useEffect(() => {
@@ -176,11 +176,19 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       )
     );
     setCallData(calls);
-  }, [price, salesTaxRate, metadataHash, erc20AllowanceData, salesTaxAmount]);
+  }, [
+    price,
+    salesTaxRate,
+    metadataHash,
+    erc20AllowanceData,
+    salesTaxAmount,
+    callDataEncodedDomain,
+    erc20AllowanceError,
+  ]);
 
   useEffect(() => {
     if (!autorenewData?.transaction_hash || !salt) return;
-    // posthog?.capture("register");
+    posthog?.capture("enable-ar"); // track events for analytics
 
     // register the metadata to the sales manager db
     // when enabling auto renewal, if user wasn't already registered
@@ -221,8 +229,8 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
       },
     });
     setIsTxSent(true);
-    posthog?.capture("enable-ar"); // track events for analytics
-  }, [autorenewData, salt]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autorenewData]); // We want this to run only when the tx is sent
 
   function changeEmail(value: string): void {
     setEmail(value);

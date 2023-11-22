@@ -9,13 +9,7 @@ export function generateSalt(): string {
 }
 
 export function generateSalts(numberOfSalts: number): string[] {
-  const salts: string[] = [];
-
-  for (let i = 0; i < numberOfSalts; i++) {
-    salts.push(generateSalt());
-  }
-
-  return salts;
+  return Array.from({ length: numberOfSalts }, generateSalt);
 }
 
 export async function computeMetadataHash(

@@ -47,6 +47,7 @@ import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
 import { useEtherContract } from "../../hooks/contracts";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
+import NumberTextField from "../UI/numberTextField";
 
 type RenewalProps = {
   groups: string[];
@@ -82,7 +83,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     useState<Record<string, boolean>>();
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
-  const duration = 1; // on year by default
+  const [duration, setDuration] = useState<number>(1);
+  const maxYearsToRegister = 25;
   const { contract: etherContract } = useEtherContract();
   const { data: erc20AllowanceData, error: erc20AllowanceError } =
     useContractRead({
@@ -144,7 +146,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       },
     });
     setIsTxModalOpen(true);
-  }, [renewData, salts, email]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [renewData]); // We only need renewData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -182,7 +185,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         duration
       ).toString()
     );
-  }, [selectedDomains]);
+  }, [selectedDomains, duration]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("");
@@ -268,7 +271,15 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     erc20AllowanceData,
     metadataHashes,
     salesTaxRate,
+    duration,
+    renewalBox,
+    erc20AllowanceError,
   ]);
+
+  function changeDuration(value: number): void {
+    if (isNaN(value) || value > maxYearsToRegister || value < 1) return;
+    setDuration(value);
+  }
 
   return (
     <div className={styles.container}>
@@ -287,12 +298,28 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
               onChange={(e) => changeEmail(e.target.value)}
               color="secondary"
               error={emailError}
-              errorMessage={"Please enter a valid email address"}
+              errorMessage="Please enter a valid email address"
               type="email"
             />
             <SwissForm
               isSwissResident={isSwissResident}
               onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
+            />
+            <NumberTextField
+              value={duration}
+              label="Years to renew (max 25 years)"
+              placeholder="years"
+              onChange={(e) => changeDuration(Number(e.target.value))}
+              incrementValue={() =>
+                setDuration(
+                  duration < maxYearsToRegister ? duration + 1 : duration
+                )
+              }
+              decrementValue={() =>
+                setDuration(duration > 1 ? duration - 1 : duration)
+              }
+              color="secondary"
+              required
             />
             <RenewalDomainsBox
               helperText="Check the box of the domains you want to renew"
@@ -304,7 +331,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         <div className={styles.summary}>
           <RegisterSummary
             ethRegistrationPrice={price}
-            duration={1}
+            duration={duration}
             renewalBox={false}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
