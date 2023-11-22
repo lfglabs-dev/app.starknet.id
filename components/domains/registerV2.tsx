@@ -127,7 +127,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         )
       );
     })();
-  }, [email, salt, renewalBox]);
+  }, [email, salt, renewalBox, isSwissResident]);
 
   useEffect(() => {
     // if price query does not work we use the off-chain hardcoded price

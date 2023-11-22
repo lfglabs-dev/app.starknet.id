@@ -95,13 +95,21 @@ function renew(
 function multiCallRenewal(
   encodedDomains: string[],
   duration: number,
-  sponsor?: string
+  metadataHashes: string[],
+  sponsor?: string,
+  discountId?: string
 ): Call[] {
-  return encodedDomains.map((encodedDomain) => {
+  return encodedDomains.map((encodedDomain, index) => {
     return {
       contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
       entrypoint: "renew",
-      calldata: [encodedDomain, duration * 365, sponsor ?? 0, 0, 0],
+      calldata: [
+        encodedDomain,
+        duration * 365,
+        sponsor ?? 0,
+        discountId ?? 0,
+        "0x" + metadataHashes[index],
+      ],
     };
   });
 }

@@ -192,7 +192,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
           meta_hash: metadataHash,
           email,
           tax_state: isSwissResident ? "switzerland" : "none",
-          salt: salt,
+          salt,
         }),
       })
         .then((res) => res.json())

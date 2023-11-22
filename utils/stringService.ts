@@ -1,6 +1,5 @@
 import { BN } from "bn.js";
 import { basicAlphabet } from "./constants";
-import { hexToDecimal } from "./feltService";
 import { encodeDomain } from "starknetid.js/packages/core/dist/utils";
 
 export function minifyAddress(address: string | undefined): string {
@@ -70,10 +69,10 @@ export function isHexString(str: string): boolean {
 }
 
 // this makes sure hex string will be 64 chars
-export function formatHexString(txHash : string) {
+export function formatHexString(txHash: string) {
   // Remove the '0x' prefix if it exists
-  if (txHash.startsWith('0x')) {
-      txHash = txHash.slice(2);
+  if (txHash.startsWith("0x")) {
+    txHash = txHash.slice(2);
   }
 
   // Calculate the number of leading zeros needed
@@ -82,11 +81,11 @@ export function formatHexString(txHash : string) {
 
   // Add the required leading zeros
   for (let i = 0; i < leadingZerosNeeded; i++) {
-      txHash = '0' + txHash;
+    txHash = "0" + txHash;
   }
 
   // Add the '0x' prefix back
-  txHash = '0x' + txHash;
+  txHash = "0x" + txHash;
 
   return txHash.toLowerCase();
 }
