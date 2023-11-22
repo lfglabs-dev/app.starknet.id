@@ -66,7 +66,8 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
     setPfpTxHash(updateData.transaction_hash);
     updateIdentityImg(tokenId, nftData.image_url as string);
     closeModal(false);
-  }, [updateData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateData]); // We want to trigger this only when the tx passed
 
   return (
     <Modal

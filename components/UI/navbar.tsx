@@ -63,7 +63,8 @@ const Navbar: FunctionComponent = () => {
       }
     }, 1000);
     return () => clearTimeout(timeout);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // We want this to run only one time so no dependencies
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
@@ -90,7 +91,8 @@ const Navbar: FunctionComponent = () => {
         return;
       }
     },
-    [address, connectors]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [address, connectors, connect]
   );
 
   function disconnectByClick(): void {

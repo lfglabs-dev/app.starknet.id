@@ -16,14 +16,16 @@ import {
 import { gweiToEth, applyRateToBigInt } from "../../utils/feltService";
 import { Abi, Call } from "starknet";
 import { posthog } from "posthog-js";
-import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
 import SwissForm from "./swissForm";
 import { Divider } from "@mui/material";
 import RegisterSummary from "./registerSummary";
 import Wallets from "../UI/wallets";
-import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
+import {
+  computeMetadataHash,
+  generateSalts,
+} from "../../utils/userDataService";
 import {
   areDomainSelected,
   getPriceFromDomains,
@@ -44,6 +46,8 @@ import {
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
 import { useEtherContract } from "../../hooks/contracts";
+import RegisterConfirmationModal from "../UI/registerConfirmationModal";
+import NumberTextField from "../UI/numberTextField";
 
 type RenewalProps = {
   groups: string[];
@@ -63,8 +67,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
-  const [salt, setSalt] = useState<string | undefined>();
-  const [metadataHash, setMetadataHash] = useState<string | undefined>();
+  const [salts, setSalts] = useState<string[] | undefined>();
+  const [metadataHashes, setMetadataHashes] = useState<string[] | undefined>();
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
   const { address } = useAccount();
@@ -79,7 +83,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     useState<Record<string, boolean>>();
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
-  const duration = 1; // on year by default
+  const [duration, setDuration] = useState<number>(1);
+  const maxYearsToRegister = 25;
   const { contract: etherContract } = useEtherContract();
   const { data: erc20AllowanceData, error: erc20AllowanceError } =
     useContractRead({
@@ -93,22 +98,28 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     });
 
   useEffect(() => {
-    if (!renewData?.transaction_hash || !salt) return;
+    if (!renewData?.transaction_hash || !salts || !metadataHashes) return;
     posthog?.capture("renewal from page");
 
     // register the metadata to the sales manager db
-    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        meta_hash: metadataHash,
-        email,
-        tax_state: isSwissResident ? "switzerland" : "none",
-        salt: salt,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.log("Error on sending metadata:", err));
+    Promise.all(
+      salts.map((salt, index) =>
+        fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            meta_hash: metadataHashes[index],
+            email,
+            tax_state: isSwissResident ? "switzerland" : "none",
+            salt: salt,
+          }),
+        })
+      )
+    )
+      .then((responses) => Promise.all(responses.map((res) => res.json())))
+      .catch((error) => {
+        console.log("Error on sending metadata:", error);
+      });
 
     // Subscribe to auto renewal mailing list if renewal box is checked
     if (renewalBox) {
@@ -135,28 +146,36 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       },
     });
     setIsTxModalOpen(true);
-  }, [renewData, salt, email]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [renewData]); // We only need renewData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
   // on first load, we generate a salt
   useEffect(() => {
-    setSalt(generateSalt());
-  }, []);
+    if (!selectedDomains) return;
 
-  // we update compute the purchase metadata hash
+    setSalts(generateSalts(selectedDomainsToArray(selectedDomains).length));
+  }, [selectedDomains]);
+
   useEffect(() => {
     // salt must not be empty to preserve privacy
-    if (!salt) return;
-    (async () => {
-      setMetadataHash(
-        await computeMetadataHash(
-          email,
-          //groups, // default group for domain Owner
-          isSwissResident ? "switzerland" : "none",
-          salt
+    if (!salts) return;
+
+    const computeHashes = async () => {
+      const metaDataHashes = await Promise.all(
+        salts.map((salt) =>
+          computeMetadataHash(
+            email,
+            //groups, // default group for domain Owner
+            isSwissResident ? "switzerland" : "none",
+            salt
+          )
         )
       );
-    })();
-  }, [email, salt, renewalBox]);
+      setMetadataHashes(metaDataHashes);
+    };
+
+    computeHashes();
+  }, [email, salts, renewalBox, isSwissResident]);
 
   useEffect(() => {
     if (!selectedDomains) return;
@@ -166,7 +185,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         duration
       ).toString()
     );
-  }, [selectedDomains]);
+  }, [selectedDomains, duration]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("");
@@ -199,12 +218,13 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   }, [isSwissResident, price]);
 
   useEffect(() => {
-    if (selectedDomains) {
+    if (selectedDomains && metadataHashes) {
       const calls = [
         registrationCalls.approve(price),
         ...registrationCalls.multiCallRenewal(
           selectedDomainsToEncodedArray(selectedDomains),
-          duration
+          duration,
+          metadataHashes
         ),
       ];
 
@@ -223,7 +243,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
           calls.push(autoRenewalCalls.approve());
         }
 
-        selectedDomainsToArray(selectedDomains).map((domain) => {
+        selectedDomainsToArray(selectedDomains).map((domain, index) => {
           const encodedDomain = utils
             .encodeDomain(domain)
             .map((element) => element.toString())[0];
@@ -237,15 +257,29 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
             autoRenewalCalls.enableRenewal(
               encodedDomain,
               allowance,
-              "0x" + metadataHash
+              "0x" + metadataHashes?.[index]
             )
           );
         });
       }
-
       setCallData(calls);
     }
-  }, [selectedDomains, price, salesTaxAmount, erc20AllowanceData]);
+  }, [
+    selectedDomains,
+    price,
+    salesTaxAmount,
+    erc20AllowanceData,
+    metadataHashes,
+    salesTaxRate,
+    duration,
+    renewalBox,
+    erc20AllowanceError,
+  ]);
+
+  function changeDuration(value: number): void {
+    if (isNaN(value) || value > maxYearsToRegister || value < 1) return;
+    setDuration(value);
+  }
 
   return (
     <div className={styles.container}>
@@ -264,12 +298,28 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
               onChange={(e) => changeEmail(e.target.value)}
               color="secondary"
               error={emailError}
-              errorMessage={"Please enter a valid email address"}
+              errorMessage="Please enter a valid email address"
               type="email"
             />
             <SwissForm
               isSwissResident={isSwissResident}
               onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
+            />
+            <NumberTextField
+              value={duration}
+              label="Years to renew (max 25 years)"
+              placeholder="years"
+              onChange={(e) => changeDuration(Number(e.target.value))}
+              incrementValue={() =>
+                setDuration(
+                  duration < maxYearsToRegister ? duration + 1 : duration
+                )
+              }
+              decrementValue={() =>
+                setDuration(duration > 1 ? duration - 1 : duration)
+              }
+              color="secondary"
+              required
             />
             <RenewalDomainsBox
               helperText="Check the box of the domains you want to renew"
@@ -281,7 +331,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         <div className={styles.summary}>
           <RegisterSummary
             ethRegistrationPrice={price}
-            duration={1}
+            duration={duration}
             renewalBox={false}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
@@ -327,11 +377,10 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         </div>
       </div>
       <img className={styles.image} src="/visuals/registerV2.webp" />
-      <TxConfirmationModal
+      <RegisterConfirmationModal
         txHash={renewData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
-        closeModal={() => setIsTxModalOpen(false)}
-        title="Your domain is on it's way !"
+        closeModal={() => window.history.back()}
       />
       <Wallets
         closeWallet={() => setWalletModalOpen(false)}
