@@ -332,7 +332,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
           <RegisterSummary
             ethRegistrationPrice={price}
             duration={duration}
-            renewalBox={false}
+            renewalBox={renewalBox}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
           />

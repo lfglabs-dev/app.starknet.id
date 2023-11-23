@@ -381,7 +381,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
           <RegisterSummary
             ethRegistrationPrice={price}
             duration={duration}
-            renewalBox={false}
+            renewalBox={renewalBox}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
           />

@@ -28,7 +28,7 @@ const SwissForm: FunctionComponent<SwissFormProps> = ({
       <div className="flex flex-col">
         <div className="flex gap-1 my-1">
           <p className={textFieldStyles.legend}>
-            Do you live in the Switzerland ?*
+            Do you live in Switzerland ?*
           </p>
         </div>
         <div
