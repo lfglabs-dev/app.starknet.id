@@ -83,12 +83,28 @@ function vatTransfer(amount: string): Call {
 function renew(
   encodedDomain: string,
   durationInYears: number,
-  sponsor?: string
+  metadataHash: string,
+  sponsor?: string,
+  discountId?: string
 ): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "renew",
-    calldata: [encodedDomain, durationInYears * 365, sponsor ?? 0, 0, 0],
+    calldata: [
+      encodedDomain,
+      durationInYears * 365,
+      sponsor ?? 0,
+      discountId ?? 0,
+      "0x" + metadataHash,
+    ],
+  };
+}
+
+function freeRenewal(encodedDomain: string): Call {
+  return {
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+    entrypoint: "renew_ar_discount",
+    calldata: [encodedDomain],
   };
 }
 
@@ -99,19 +115,19 @@ function multiCallRenewal(
   sponsor?: string,
   discountId?: string
 ): Call[] {
-  return encodedDomains.map((encodedDomain, index) => {
-    return {
-      contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-      entrypoint: "renew",
-      calldata: [
-        encodedDomain,
-        durationInYears * 365,
-        sponsor ?? 0,
-        discountId ?? 0,
-        "0x" + metadataHashes[index],
-      ],
-    };
-  });
+  return encodedDomains.map((encodedDomain, index) =>
+    renew(
+      encodedDomain,
+      durationInYears,
+      metadataHashes[index],
+      sponsor,
+      discountId
+    )
+  );
+}
+
+function multiCallFreeRenewals(encodedDomains: string[]): Call[] {
+  return encodedDomains.map((encodedDomain) => freeRenewal(encodedDomain));
 }
 
 const registrationCalls = {
@@ -123,6 +139,8 @@ const registrationCalls = {
   vatTransfer,
   renew,
   multiCallRenewal,
+  freeRenewal,
+  multiCallFreeRenewals,
 };
 
 export default registrationCalls;

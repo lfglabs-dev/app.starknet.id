@@ -269,13 +269,12 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
           </button>
           <div className={styles.form}>
             <div className="flex flex-col items-start gap-4 self-center">
-              <h2 className={modalStyles.menu_title}>Enable auto renewal</h2>
+              <h2 className={modalStyles.menu_title}>Enable Subscription</h2>
             </div>
             <div className="flex flex-col items-start gap-4 self-center">
               <p className={styles.desc}>
-                Enable automatic domain renewal to ensure uninterrupted
-                ownership and benefits. Never worry about expiration dates
-                again.{" "}
+                Enable domain subscription to ensure uninterrupted ownership and
+                benefits. Never worry about expiration dates again.{" "}
                 {identity?.domain_expiry
                   ? `Your domain will be renewed for 1 year on  
                 ${timestampToReadableDate(

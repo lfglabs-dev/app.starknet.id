@@ -4,7 +4,6 @@ import { useAccount, useContractWrite } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
-import RenewalModal from "./renewalModal";
 import { hexToDecimal } from "../../../utils/feltService";
 import ClickableAction from "../../UI/iconsComponents/clickableAction";
 import styles from "../../../styles/components/identityMenu.module.css";
@@ -42,7 +41,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   isOwner,
 }) => {
   const [isAddressFormOpen, setIsAddressFormOpen] = useState<boolean>(false);
-  const [isRenewFormOpen, setIsRenewFormOpen] = useState<boolean>(false);
   const [isTransferFormOpen, setIsTransferFormOpen] = useState<boolean>(false);
   const [isSubdomainFormOpen, setIsSubdomainFormOpen] =
     useState<boolean>(false);
@@ -215,7 +213,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             <div className="flex flex-col items-center justify-center">
               {callDataEncodedDomain[0] === 1 && !isAutoRenewalEnabled ? (
                 <ClickableAction
-                  title="ENABLE AUTO RENEWAL"
+                  title="ENABLE SUBSCRIPTION"
                   description={nextAutoRenew}
                   style="primary"
                   icon={<div className={styles.renewalIcon}>ON</div>}
@@ -284,7 +282,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   />
                   {callDataEncodedDomain[0] === 1 && isAutoRenewalEnabled ? (
                     <ClickableAction
-                      title="DISABLE AUTO RENEWAL"
+                      title="DISABLE SUBSCRIPTION"
                       description={nextAutoRenew}
                       icon={<div className={styles.renewalIconOff}>OFF</div>}
                       onClick={() => disableRenewal()}
@@ -310,13 +308,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             </div>
           )}
         </div>
-
-        <RenewalModal
-          handleClose={() => setIsRenewFormOpen(false)}
-          isModalOpen={isRenewFormOpen}
-          callDataEncodedDomain={callDataEncodedDomain}
-          identity={identity}
-        />
         <ChangeAddressModal
           handleClose={() => setIsAddressFormOpen(false)}
           isModalOpen={isAddressFormOpen}
