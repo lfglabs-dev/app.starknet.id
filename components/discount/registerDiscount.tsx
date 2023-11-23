@@ -105,7 +105,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         )
       );
     })();
-  }, [email, salt]);
+  }, [email, salt, isSwissResident]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("0");
@@ -184,6 +184,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     address,
     metadataHash,
     salesTaxRate,
+    encodedDomain,
+    discountId,
+    salesTaxAmount,
   ]);
 
   useEffect(() => {
@@ -216,7 +219,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       },
     });
     setIsTxModalOpen(true);
-  }, [registerData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registerData]); // We want to execute this only once when the tx is sent
 
   function changeEmail(value: string): void {
     setEmail(value);

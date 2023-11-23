@@ -136,7 +136,14 @@ const Twitter: NextPage = () => {
         setScreen("error");
       }
     }
-  }, [twitterVerificationData, transactionData, transactionError]);
+  }, [
+    twitterVerificationData,
+    transactionData,
+    transactionError,
+    addTransaction,
+    router,
+    tokenId,
+  ]);
 
   //Screen management
   const [screen, setScreen] = useState<Screen>("verifyTwitter");

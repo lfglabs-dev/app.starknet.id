@@ -48,7 +48,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
       setUserNft(filteredAssets);
       setIsLoading(false);
     });
-  }, [tokenId, identity]);
+  }, [tokenId, identity, whitelistedContracts]);
 
   const selectPicture = (nft: StarkscanNftProps) => {
     setOpenModal(true);
