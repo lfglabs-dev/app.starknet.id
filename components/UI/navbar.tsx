@@ -29,6 +29,7 @@ import DesktopNav from "./desktopNav";
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
   const [nav, setNav] = useState<boolean>(false);
+  const [desktopNav, setDesktopNav] = useState<boolean>(false);
   const [hasWallet, setHasWallet] = useState<boolean>(false);
   const { address, account } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -107,6 +108,10 @@ const Navbar: FunctionComponent = () => {
     setNav(!nav);
   }
 
+  function handleDesktopNav(): void {
+    setDesktopNav(!desktopNav);
+  }
+
   function onTopButtonClick(): void {
     if (!isConnected) {
       setHasWallet(true);
@@ -148,13 +153,13 @@ const Navbar: FunctionComponent = () => {
                 <li className={styles.menuItem}>Join the tribe</li>
               </Link> */}
               <div
-                onClick={handleNav}
+                onClick={handleDesktopNav}
                 className={styles.menuBurger}
                 aria-expanded={nav}
                 id="burger"
               >
                 <AiOutlineMenu color={theme.palette.secondary.main} size={25} />
-                {nav ? <DesktopNav close={handleNav} /> : null}
+                {desktopNav ? <DesktopNav close={handleDesktopNav} /> : null}
               </div>
               <div className="text-beige mx-5">
                 <Button
@@ -201,7 +206,6 @@ const Navbar: FunctionComponent = () => {
             </div>
           </div>
         </div>
-
         <div
           className={
             nav
@@ -244,18 +248,12 @@ const Navbar: FunctionComponent = () => {
                 <div>
                   <ul className="uppercase">
                     <Link href="/identities">
-                      <li
-                        onClick={() => setNav(false)}
-                        className={styles.menuItemSmall}
-                      >
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
                         My Identities
                       </li>
                     </Link>
                     <Link href="/">
-                      <li
-                        onClick={() => setNav(false)}
-                        className={styles.menuItemSmall}
-                      >
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
                         Domains
                       </li>
                     </Link>
@@ -263,18 +261,12 @@ const Navbar: FunctionComponent = () => {
                       href={process.env.NEXT_PUBLIC_STARKNET_ID as string}
                       target="_blank"
                     >
-                      <li
-                        onClick={() => setNav(false)}
-                        className={styles.menuItemSmall}
-                      >
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
                         Website
                       </li>
                     </Link>
                     <Link href="https://docs.starknet.id/" target="_blank">
-                      <li
-                        onClick={() => setNav(false)}
-                        className={styles.menuItemSmall}
-                      >
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
                         Documentation
                       </li>
                     </Link>
@@ -284,10 +276,7 @@ const Navbar: FunctionComponent = () => {
                       }/affiliates/individual-program`}
                       target="_blank"
                     >
-                      <li
-                        onClick={() => setNav(false)}
-                        className={styles.menuItemSmall}
-                      >
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
                         Affiliation
                       </li>
                     </Link>
