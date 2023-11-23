@@ -303,16 +303,14 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                 />
               </>
             ) : null}
-            <div className={`${!needMedadata ? "mx-auto" : ""}`}>
-              <Button
-                disabled={emailError}
-                onClick={() => {
-                  execute();
-                }}
-              >
-                Enable auto renewal
-              </Button>
-            </div>
+            <Button
+              disabled={emailError}
+              onClick={() => {
+                execute();
+              }}
+            >
+              Enable auto renewal
+            </Button>
           </div>
         </div>
       )}
