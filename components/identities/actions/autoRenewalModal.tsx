@@ -111,7 +111,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        if (data.meta_hash) {
+        if (data.meta_hash && parseInt(data.meta_hash) !== 0) {
           setNeedMetadata(false);
           setMetadataHash(data.meta_hash);
           if (data.tax_rate) setSalesTaxRate(data.tax_rate);
