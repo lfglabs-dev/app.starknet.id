@@ -89,6 +89,11 @@
   margin: 10px 0;
 }
 
+.tx_section {
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
 @media (max-width: 1024px) {
   .menu {
     width: 320px;
