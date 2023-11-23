@@ -148,7 +148,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
         setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
       } else {
         setSalesTaxRate(0);
-        setSalesTaxAmount("");
+        setSalesTaxAmount("0");
       }
     }
   }, [isSwissResident, price, needMedadata, salesTaxRate]);
@@ -156,6 +156,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   // Set Enable Auto Renewal Multicall
   useEffect(() => {
     if (!price || !salesTaxAmount) return;
+    console.log("after if");
     const calls: Call[] = [];
     if (
       erc20AllowanceError ||
@@ -303,15 +304,14 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
                 />
               </>
             ) : null}
-            <div className={`${!needMedadata ? "mx-auto" : ""}`}>
-              <Button
-                onClick={() => {
-                  execute();
-                }}
-              >
-                Enable auto renewal
-              </Button>
-            </div>
+            <Button
+              disabled={emailError}
+              onClick={() => {
+                execute();
+              }}
+            >
+              Enable auto renewal
+            </Button>
           </div>
         </div>
       )}
