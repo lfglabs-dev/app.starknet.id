@@ -92,6 +92,7 @@
 .tx_section {
   max-height: 200px;
   overflow-y: scroll;
+  padding-right: 1rem;
 }
 
 @media (max-width: 1024px) {
