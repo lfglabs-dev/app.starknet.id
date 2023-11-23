@@ -6,11 +6,13 @@ import allUsStates from "../../public/usa/allUsStates.json";
 type SelectStateProps = {
   usState: string;
   changeUsState: (value: string) => void;
+  variant?: "default" | "white";
 };
 
 const SelectState: FunctionComponent<SelectStateProps> = ({
   usState,
   changeUsState,
+  variant = "default",
 }) => {
   return (
     <div className="flex flex-col w-full">
@@ -30,6 +32,7 @@ const SelectState: FunctionComponent<SelectStateProps> = ({
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            backgroundColor: variant ? "#FFFFFF" : "transparent",
           },
           "& .css-10hburv-MuiTypography-root": {
             fontFamily: "Poppins-Regular",

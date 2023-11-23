@@ -4,15 +4,21 @@
     "plugin:react/recommended",
     "plugin:@typescript-eslint/recommended"
   ],
+  "plugins": [
+    // ... other plugins
+    "react-hooks"
+  ],
   "parser": "@typescript-eslint/parser",
   "rules": {
-    "@next/next/no-img-element": "off"
+    "@next/next/no-img-element": "off",
+    "react-hooks/exhaustive-deps": "warn" // or "error" if you want it to be treated as an error
   },
   "overrides": [
     {
       "files": ["**/*.test.js"],
       "rules": {
         "no-undef": "off"
+        // ... other rules
       }
     }
   ],

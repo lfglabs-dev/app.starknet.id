@@ -40,9 +40,12 @@ export function useNotificationManager() {
         setNotifications(updatedTransactions);
       } else if (
         data?.status === "ACCEPTED_ON_L2" ||
-        data?.status === "ACCEPTED_ON_L1"
+        data?.status === "ACCEPTED_ON_L1" ||
+        data?.finality_status === "ACCEPTED_ON_L2" ||
+        data?.finality_status === "ACCEPTED_ON_L1"
       ) {
-        updatedTransactions[index].data.txStatus = data.status;
+        updatedTransactions[index].data.txStatus =
+          data?.status ?? data?.finality_status;
         updatedTransactions[index].data.status = "success";
         setNotifications(updatedTransactions);
       }

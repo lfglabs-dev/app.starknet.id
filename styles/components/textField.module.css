@@ -3,6 +3,20 @@
   font-family: "Poppins-Regular";
 }
 
+.inputWhite {
+  background: white;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  border-radius: 7.983px;
+}
+
+.radioWhite {
+  background-color: #FFFFFF;
+  border-radius: 7.983px;
+  padding: 8px 15px;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.23);
+}
+
 .textfieldNumber {
   text-align: center;
 }

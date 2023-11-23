@@ -1,0 +1,29 @@
+.defaultCheckbox {
+  padding: 0;
+  background: transparent;
+}
+
+.whiteCheckbox {
+  padding: 0;
+  background: #ffffff;
+}
+
+.defaultSwissForm {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #c4c4c4ff;
+  padding-left: 16.5px;
+  background: transparent;
+}
+
+.whiteSwissForm {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #c4c4c4ff;
+  padding-left: 16.5px;
+  background: #ffffff;
+}
