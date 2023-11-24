@@ -111,7 +111,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   // on first load, we generate a salt
   useEffect(() => {
     setSalt(generateSalt());
-  }, []);
+  }, [domain]); // we only need to generate a salt once per domain
 
   // we update compute the purchase metadata hash
   useEffect(() => {
