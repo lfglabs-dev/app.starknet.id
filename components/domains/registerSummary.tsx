@@ -13,7 +13,7 @@ type RegisterSummaryProps = {
   ethRegistrationPrice: string;
   renewalBox: boolean;
   salesTaxRate: number;
-  isUsResident: boolean;
+  isSwissResident: boolean;
   isUsdPriceDisplayed?: boolean;
   customMessage?: string;
 };
@@ -23,13 +23,14 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   ethRegistrationPrice,
   renewalBox,
   salesTaxRate,
-  isUsResident,
+  isSwissResident,
   isUsdPriceDisplayed = true,
   customMessage,
 }) => {
   const [isEthPriceDisplayed, setIsEthPriceDisplayed] = useState<boolean>(true);
-  const [ethUsdPrice, setEthUsdPrice] = useState<number>(0);
-  const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<number>(0);
+  const [ethSwissdPrice, setEthSwissdPrice] = useState<number>(0);
+  const [usdRegistrationPrice, setSwissdRegistrationPrice] =
+    useState<number>(0);
   const recurrence = renewalBox && duration === 1 ? "/year" : "";
   useEffect(() => {
     fetch(
@@ -37,21 +38,21 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     )
       .then((res) => res.json())
       .then((data) => {
-        setEthUsdPrice(data?.ethereum?.usd);
+        setEthSwissdPrice(data?.ethereum?.usd);
       })
       .catch((err) => console.log("Coingecko API Error:", err));
   }, []);
 
   useEffect(() => {
-    function computeUsdPrice() {
-      if (ethUsdPrice) {
-        return ethUsdPrice * Number(gweiToEth(ethRegistrationPrice));
+    function computeSwissdPrice() {
+      if (ethSwissdPrice) {
+        return ethSwissdPrice * Number(gweiToEth(ethRegistrationPrice));
       }
       return 0;
     }
 
     if (!isEthPriceDisplayed) {
-      setUsdRegistrationPrice(computeUsdPrice());
+      setSwissdRegistrationPrice(computeSwissdPrice());
     }
   }, [ethRegistrationPrice, isEthPriceDisplayed]);
 
@@ -61,7 +62,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
         <span className="text-gray-800 text-xl not-italic font-bold leading-6 whitespace-nowrap">
           {priceToPay}
         </span>
-        {isUsResident ? (
+        {isSwissResident ? (
           <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
         ) : null}
       </div>
@@ -70,11 +71,11 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 
   function displayEthPrice(): ReactNode {
     const salesTaxAmount =
-      salesTaxRate * Number(gweiToEth(ethRegistrationPrice)) * ethUsdPrice;
+      salesTaxRate * Number(gweiToEth(ethRegistrationPrice)) * ethSwissdPrice;
     const salesTaxInfo = salesTaxAmount
       ? ` (+ ${numberToFixedString(
           salesTaxAmount
-        )}$ worth of ETH for US sales tax)`
+        )}$ worth of ETH for Swiss sales tax)`
       : "";
 
     return displayPrice(
@@ -85,7 +86,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     );
   }
 
-  function displayUsdPrice(): ReactNode {
+  function displaySwissdPrice(): ReactNode {
     const salesTaxAmount = salesTaxRate * usdRegistrationPrice;
     const salesTaxInfo = salesTaxAmount
       ? ` (+ ${numberToFixedString(Number(salesTaxAmount))}$ for US sales tax)`
@@ -109,7 +110,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
               ? customMessage
               : `for ${duration} ${duration === 1 ? "year" : "years"}`}
           </p>
-          {isEthPriceDisplayed ? displayEthPrice() : displayUsdPrice()}
+          {isEthPriceDisplayed ? displayEthPrice() : displaySwissdPrice()}
         </div>
       </div>
       {isUsdPriceDisplayed ? (

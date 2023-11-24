@@ -23,8 +23,10 @@
   --secondary: #402d28;
   --secondary300: #eae0d5;
   --tertiary: #bf9e7b;
+  --light-tertiary: #f5f0eb;
   --background: #fff9f0;
   --background-light: #fffcf8;
+  --dark-content: #454545;
   --nimiq-ease: cubic-bezier(0.25, 0, 0, 1);
   --small-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   --large-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.1);

@@ -6,7 +6,7 @@ import React, {
   useCallback,
 } from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
-import { FaDiscord, FaTwitter } from "react-icons/fa";
+import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import Button from "./button";
 import {
@@ -24,10 +24,12 @@ import ModalWallet from "./modalWallet";
 import { constants } from "starknet";
 import { useTheme } from "@mui/material/styles";
 import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
+import DesktopNav from "./desktopNav";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
   const [nav, setNav] = useState<boolean>(false);
+  const [desktopNav, setDesktopNav] = useState<boolean>(false);
   const [hasWallet, setHasWallet] = useState<boolean>(false);
   const { address, account } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
@@ -62,7 +64,8 @@ const Navbar: FunctionComponent = () => {
       }
     }, 1000);
     return () => clearTimeout(timeout);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // We want this to run only one time so no dependencies
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
@@ -89,7 +92,8 @@ const Navbar: FunctionComponent = () => {
         return;
       }
     },
-    [address, connectors]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [address, connectors, connect]
   );
 
   function disconnectByClick(): void {
@@ -102,6 +106,10 @@ const Navbar: FunctionComponent = () => {
 
   function handleNav(): void {
     setNav(!nav);
+  }
+
+  function handleDesktopNav(): void {
+    setDesktopNav(!desktopNav);
   }
 
   function onTopButtonClick(): void {
@@ -144,6 +152,15 @@ const Navbar: FunctionComponent = () => {
               {/* <Link href="/jointhetribe">
                 <li className={styles.menuItem}>Join the tribe</li>
               </Link> */}
+              <div
+                onClick={handleDesktopNav}
+                className={styles.menuBurger}
+                aria-expanded={nav}
+                id="burger"
+              >
+                <AiOutlineMenu color={theme.palette.secondary.main} size={25} />
+                {desktopNav ? <DesktopNav close={handleDesktopNav} /> : null}
+              </div>
               <div className="text-beige mx-5">
                 <Button
                   onClick={
@@ -189,7 +206,6 @@ const Navbar: FunctionComponent = () => {
             </div>
           </div>
         </div>
-
         <div
           className={
             nav
@@ -200,7 +216,7 @@ const Navbar: FunctionComponent = () => {
           <div
             className={
               nav
-                ? "fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-background px-5 ease-in duration-500 flex justify-between flex-col"
+                ? "fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-background px-5 ease-in duration-500 flex justify-between flex-col overflow-auto"
                 : "fixed left-[-100%] top-0 p-10 ease-in h-screen flex justify-between flex-col"
             }
           >
@@ -232,19 +248,36 @@ const Navbar: FunctionComponent = () => {
                 <div>
                   <ul className="uppercase">
                     <Link href="/identities">
-                      <li
-                        onClick={() => setNav(false)}
-                        className={styles.menuItemSmall}
-                      >
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
                         My Identities
                       </li>
                     </Link>
                     <Link href="/">
-                      <li
-                        onClick={() => setNav(false)}
-                        className={styles.menuItemSmall}
-                      >
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
                         Domains
+                      </li>
+                    </Link>
+                    <Link
+                      href={process.env.NEXT_PUBLIC_STARKNET_ID as string}
+                      target="_blank"
+                    >
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
+                        Website
+                      </li>
+                    </Link>
+                    <Link href="https://docs.starknet.id/" target="_blank">
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
+                        Documentation
+                      </li>
+                    </Link>
+                    <Link
+                      href={`${
+                        process.env.NEXT_PUBLIC_STARKNET_ID as string
+                      }/affiliates/individual-program`}
+                      target="_blank"
+                    >
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
+                        Affiliation
                       </li>
                     </Link>
                   </ul>
@@ -258,13 +291,21 @@ const Navbar: FunctionComponent = () => {
               </div>
               <div className="flex">
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
-                  <Link href="https://twitter.com/Starknet_id">
+                  <Link href="https://twitter.com/Starknet_id" target="_blank">
                     <FaTwitter size={28} color={theme.palette.secondary.main} />
                   </Link>
                 </div>
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
-                  <Link href="https://discord.com/invite/8uS2Mgcsza">
+                  <Link
+                    href="https://discord.com/invite/8uS2Mgcsza"
+                    target="_blank"
+                  >
                     <FaDiscord size={28} color={theme.palette.secondary.main} />
+                  </Link>
+                </div>
+                <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
+                  <Link href="https://github.com/starknet-id" target="_blank">
+                    <FaGithub size={28} color={theme.palette.secondary.main} />
                   </Link>
                 </div>
               </div>

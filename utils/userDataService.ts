@@ -8,6 +8,10 @@ export function generateSalt(): string {
   return saltHex;
 }
 
+export function generateSalts(numberOfSalts: number): string[] {
+  return Array.from({ length: numberOfSalts }, generateSalt);
+}
+
 export async function computeMetadataHash(
   email: string,
   taxState: string,

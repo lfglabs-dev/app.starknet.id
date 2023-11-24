@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useAccount, useContractWrite } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
@@ -10,6 +10,7 @@ import ClickableAction from "../../UI/iconsComponents/clickableAction";
 import styles from "../../../styles/components/identityMenu.module.css";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { utils } from "starknetid.js";
+import AutoRenewalModal from "./autoRenewalModal";
 import theme from "../../../styles/theme";
 import MainIcon from "../../UI/iconsComponents/icons/mainIcon";
 import ChangeIcon from "../../UI/iconsComponents/icons/changeIcon";
@@ -18,9 +19,12 @@ import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
 import TxConfirmationModal from "../../UI/txConfirmationModal";
 import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
 import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
+import { Call } from "starknet";
 import { useRouter } from "next/router";
+import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
+import { posthog } from "posthog-js";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -49,6 +53,32 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
   const router = useRouter();
+  // AutoRenewals
+  const [isAutoRenewalOpen, setIsAutoRenewalOpen] = useState<boolean>(false);
+  const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
+    useState<boolean>(false);
+  const [allowance, setAllowance] = useState<string>("0");
+  const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
+    []
+  );
+  const { writeAsync: disableRenewal, data: disableRenewalData } =
+    useContractWrite({
+      calls: disableRenewalCalldata,
+    });
+
+  const nextAutoRenew = useMemo(() => {
+    const now = Math.floor(Date.now() / 1000);
+    if (identity?.domain_expiry) {
+      if (identity?.domain_expiry + 2592000 < now) {
+        return "Next today";
+      } else {
+        return (
+          "Next on " +
+          timestampToReadableDate(identity?.domain_expiry - 2592000)
+        );
+      }
+    }
+  }, []);
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -78,7 +108,25 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     set_address_to_domain();
   }
 
-  // a useEffact that manages the loading state depending on the is own
+  useEffect(() => {
+    if (!address || !identity?.domain || !isOwner) return;
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_SERVER_LINK
+      }/renewal/get_renewal_data?addr=${hexToDecimal(address)}&domain=${
+        identity.domain
+      }`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.error && data.enabled) {
+          setIsAutoRenewalEnabled(true);
+          setAllowance(BigInt(data.allowance).toString(10));
+        } else {
+          setIsAutoRenewalEnabled(false);
+        }
+      });
+  }, [address, tokenId, identity, isOwner]);
 
   useEffect(() => {
     if (!mainDomainData?.transaction_hash) return;
@@ -100,6 +148,30 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   } else {
     hideActionsHandler(false);
   }
+
+  useEffect(() => {
+    if (isAutoRenewalEnabled) {
+      setDisableRenewalCalldata(
+        autoRenewalCalls.disableRenewal(callDataEncodedDomain[1].toString())
+      );
+    }
+  }, [allowance, isAutoRenewalEnabled]);
+
+  useEffect(() => {
+    if (!disableRenewalData?.transaction_hash) return;
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `Disabled auto renewal for ${identity?.domain}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.DISABLE_AUTORENEW,
+        hash: disableRenewalData.transaction_hash,
+        status: "pending",
+      },
+    });
+    setIsTxModalOpen(true);
+    posthog?.capture("disable-ar"); // track events for analytics
+  }, [disableRenewalData]);
 
   return (
     <div className={styles.actionsContainer}>
@@ -138,6 +210,15 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           )}
           {identity && isOwner && (
             <div className="flex flex-col items-center justify-center">
+              {callDataEncodedDomain[0] === 1 && !isAutoRenewalEnabled ? (
+                <ClickableAction
+                  title="ENABLE AUTO RENEWAL"
+                  description={nextAutoRenew}
+                  style="primary"
+                  icon={<div className={styles.renewalIcon}>ON</div>}
+                  onClick={() => setIsAutoRenewalOpen(true)}
+                />
+              ) : null}
               {callDataEncodedDomain[0] === 1 ? (
                 <ClickableAction
                   title="RENEW YOUR DOMAIN"
@@ -157,7 +238,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   description="Set this domain as your main domain"
                   icon={
                     <MainIcon
-                      width="25"
+                      width="23"
                       firstColor={theme.palette.secondary.main}
                       secondColor={theme.palette.secondary.main}
                     />
@@ -198,6 +279,14 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     }
                     onClick={() => setIsSubdomainFormOpen(true)}
                   />
+                  {callDataEncodedDomain[0] === 1 && isAutoRenewalEnabled ? (
+                    <ClickableAction
+                      title="DISABLE AUTO RENEWAL"
+                      description={nextAutoRenew}
+                      icon={<div className={styles.renewalIconOff}>OFF</div>}
+                      onClick={() => disableRenewal()}
+                    />
+                  ) : null}
                   <p
                     onClick={() => setViewMoreClicked(false)}
                     className={styles.viewMore}
@@ -248,6 +337,14 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           isTxModalOpen={isTxModalOpen}
           closeModal={() => setIsTxModalOpen(false)}
           title="Your Transaction is on it's way !"
+        />
+        <AutoRenewalModal
+          handleClose={() => setIsAutoRenewalOpen(false)}
+          isModalOpen={isAutoRenewalOpen}
+          callDataEncodedDomain={callDataEncodedDomain}
+          identity={identity}
+          domain={identity?.domain}
+          allowance={allowance}
         />
       </>
     </div>

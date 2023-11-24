@@ -15,7 +15,7 @@ function buy(
   tokenId: number,
   targetAddress: string,
   sponsor: string,
-  duration: number,
+  durationInYears: number,
   metadata: string
 ): Call {
   return {
@@ -24,7 +24,7 @@ function buy(
     calldata: [
       numberToString(tokenId),
       encodedDomain,
-      numberToString(duration * 365),
+      numberToString(durationInYears * 365),
       0,
       hexToDecimal(targetAddress),
       sponsor,
@@ -72,25 +72,6 @@ function mint(tokenId: number): Call {
   };
 }
 
-function autoRenew(encodedDomain: string, price: string): Call[] {
-  return [
-    {
-      contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
-      entrypoint: "approve",
-      calldata: [
-        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-        "340282366920938463463374607431768211455",
-        "340282366920938463463374607431768211455",
-      ],
-    },
-    {
-      contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      entrypoint: "toggle_renewals",
-      calldata: [encodedDomain.toString(), price, 0],
-    },
-  ];
-}
-
 function vatTransfer(amount: string): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
@@ -101,26 +82,34 @@ function vatTransfer(amount: string): Call {
 
 function renew(
   encodedDomain: string,
-  duration: number,
+  durationInYears: number,
   sponsor?: string
 ): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "renew",
-    calldata: [encodedDomain, duration * 365, sponsor ?? 0, 0, 0],
+    calldata: [encodedDomain, durationInYears * 365, sponsor ?? 0, 0, 0],
   };
 }
 
 function multiCallRenewal(
   encodedDomains: string[],
-  duration: number,
-  sponsor?: string
+  durationInYears: number,
+  metadataHashes: string[],
+  sponsor?: string,
+  discountId?: string
 ): Call[] {
-  return encodedDomains.map((encodedDomain) => {
+  return encodedDomains.map((encodedDomain, index) => {
     return {
       contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
       entrypoint: "renew",
-      calldata: [encodedDomain, duration * 365, sponsor ?? 0, 0, 0],
+      calldata: [
+        encodedDomain,
+        durationInYears * 365,
+        sponsor ?? 0,
+        discountId ?? 0,
+        "0x" + metadataHashes[index],
+      ],
     };
   });
 }
@@ -130,7 +119,6 @@ const registrationCalls = {
   buy,
   addressToDomain,
   mint,
-  autoRenew,
   buy_discounted,
   vatTransfer,
   renew,

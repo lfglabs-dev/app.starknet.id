@@ -15,6 +15,7 @@ type TextFieldProps = {
   placeholder?: string;
   helperText?: string;
   type?: React.InputHTMLAttributes<unknown>["type"];
+  variant?: "default" | "white";
 };
 
 const TextField: FunctionComponent<TextFieldProps> = ({
@@ -28,6 +29,7 @@ const TextField: FunctionComponent<TextFieldProps> = ({
   placeholder,
   helperText,
   type,
+  variant = "default",
 }) => {
   return (
     <div className="flex flex-col w-full">
@@ -51,6 +53,7 @@ const TextField: FunctionComponent<TextFieldProps> = ({
           InputProps={{
             classes: {
               root: styles.textfield,
+              input: variant === "white" ? styles.inputWhite : "",
             },
           }}
           required={required}

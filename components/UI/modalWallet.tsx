@@ -45,7 +45,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
         ).length
       );
     }
-  }, [notifications]);
+  }, [notifications, setTxLoading]);
 
   const copyToClipboard = () => {
     if (!address) return;
@@ -121,7 +121,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
         </div>
         <div className={styles.menu_txs}>
           <div className={styles.tx_title}>My transactions</div>
-          <div>
+          <div className={styles.tx_section}>
             {notifications && notifications.length > 0 ? (
               notifications.map((tx) => {
                 return (
@@ -142,9 +142,11 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
                         )}
                     </a>
                     <div>
-                      {tx.data.status === "success" &&
-                        tx.data &&
-                        tx.data?.txStatus}
+                      {tx.data.status === "pending"
+                        ? "PENDING"
+                        : tx.data.status === "error"
+                        ? "REJECTED"
+                        : tx.data && tx.data?.txStatus}
                     </div>
                   </div>
                 );

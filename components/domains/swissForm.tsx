@@ -6,38 +6,44 @@ import {
   RadioGroup,
 } from "@mui/material";
 import textFieldStyles from "../../styles/components/textField.module.css";
-import SelectState from "./selectState";
+import variantStyles from "../../styles/components/variants.module.css";
 import InputHelper from "../UI/inputHelper";
 
-type UsFormProps = {
-  isUsResident: boolean;
-  onUsResidentChange: (
+type SwissFormProps = {
+  isSwissResident: boolean;
+  onSwissResidentChange: (
     event: React.ChangeEvent<HTMLInputElement>,
     value: string
   ) => void;
-  usState: string;
-  changeUsState: (value: string) => void;
+  variant?: "default" | "white";
 };
 
-const UsForm: FunctionComponent<UsFormProps> = ({
-  isUsResident,
-  onUsResidentChange,
-  usState,
-  changeUsState,
+const SwissForm: FunctionComponent<SwissFormProps> = ({
+  isSwissResident,
+  onSwissResidentChange,
+  variant = "default",
 }) => {
   return (
     <FormControl className="flex gap-4 w-full">
       <div className="flex flex-col">
         <div className="flex gap-1 my-1">
-          <p className={textFieldStyles.legend}>Do you live in the USA ?*</p>
+          <p className={textFieldStyles.legend}>
+            Do you live in Switzerland ?*
+          </p>
         </div>
-        <div className="border-solid border border-[#c4c4c4ff] rounded-[7.983px] pl-[16.5px] py-1">
-          <InputHelper helperText="If you live in the US, we need your ZIP code due to the USA tax policy.">
+        <div
+          className={
+            variant === "white"
+              ? variantStyles.whiteSwissForm
+              : variantStyles.defaultSwissForm
+          }
+        >
+          <InputHelper helperText="If you live in the Switzerland, we collect VAT due to Swiss tax policy.">
             <RadioGroup
               aria-labelledby="demo-controlled-radio-buttons-group"
               name="controlled-radio-buttons-group"
-              value={isUsResident}
-              onChange={onUsResidentChange}
+              value={isSwissResident}
+              onChange={onSwissResidentChange}
             >
               <div className="flex flex-row gap-4">
                 <FormControlLabel
@@ -55,11 +61,8 @@ const UsForm: FunctionComponent<UsFormProps> = ({
           </InputHelper>
         </div>
       </div>
-      {isUsResident ? (
-        <SelectState usState={usState} changeUsState={changeUsState} />
-      ) : null}
     </FormControl>
   );
 };
 
-export default UsForm;
+export default SwissForm;
