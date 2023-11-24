@@ -137,7 +137,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       const high = priceData?.["price"].high << BigInt(128);
       setPrice((priceData?.["price"].low + high).toString(10));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [priceData, priceError, duration, domain]);
 
   useEffect(() => {
