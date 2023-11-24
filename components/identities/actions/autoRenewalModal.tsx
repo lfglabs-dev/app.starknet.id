@@ -29,6 +29,7 @@ import {
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { posthog } from "posthog-js";
+import { getPriceFromDomain } from "../../../utils/priceService";
 
 type AutoRenewalModalProps = {
   handleClose: () => void;
@@ -89,12 +90,14 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   });
 
   useEffect(() => {
-    if (priceError || !priceData) setPrice("0");
-    else {
+    if (!domain) return;
+    if (priceError || !priceData) {
+      setPrice(getPriceFromDomain(1, domain).toString());
+    } else {
       const high = priceData?.["price"].high << BigInt(128);
       setPrice((priceData?.["price"].low + high).toString(10));
     }
-  }, [priceData, priceError]);
+  }, [domain, priceData, priceError]);
 
   useEffect(() => {
     if (renewalAllowance === "0") setRenewalAllowance(price);
@@ -306,7 +309,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
               </>
             ) : null}
             <Button
-              disabled={emailError}
+              disabled={emailError && needMedadata}
               onClick={() => {
                 execute();
               }}
