@@ -75,7 +75,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     const salesTaxInfo = salesTaxAmount
       ? ` (+ ${numberToFixedString(
           salesTaxAmount
-        )}$ worth of ETH for US sales tax)`
+        )}$ worth of ETH for Swiss sales tax)`
       : "";
 
     return displayPrice(
