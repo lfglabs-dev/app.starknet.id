@@ -7,6 +7,7 @@ import {
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useEtherContract, usePricingContract } from "../../../hooks/contracts";
 import styles from "../../../styles/components/autoRenewal.module.css";
+import modalStyles from "../../../styles/components/modalMessage.module.css";
 import Button from "../../UI/button";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { Abi, Call } from "starknet";
@@ -252,8 +253,8 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
           txHash={autorenewData?.transaction_hash}
         />
       ) : (
-        <div className={`${styles.menu} "overflow-scroll"`}>
-          <button className={styles.menu_close} onClick={handleClose}>
+        <div className={modalStyles.menu}>
+          <button className={modalStyles.menu_close} onClick={handleClose}>
             <svg viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -265,7 +266,7 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
           </button>
           <div className={styles.form}>
             <div className="flex flex-col items-start gap-4 self-center">
-              <h2 className={styles.title}>Enable auto renewal</h2>
+              <h2 className={modalStyles.menu_title}>Enable auto renewal</h2>
             </div>
             <div className="flex flex-col items-start gap-4 self-center">
               <p className={styles.desc}>
