@@ -1,6 +1,5 @@
 .wrapper {
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
   max-width: 90%;
@@ -134,8 +133,8 @@
 .pfpSection {
   height: 170px;
   width: 170px;
-  margin-top: 0.25rem; 
-  margin-bottom: 0.75rem; 
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
   position: relative;
 }
 
@@ -143,7 +142,7 @@
   height: 170px;
   width: 170px;
   border: 2px solid var(--primary);
-  background:#FFF;
+  background: #fff;
   border-radius: 19px;
   cursor: pointer;
 
@@ -158,8 +157,9 @@
   border-radius: 19px;
 }
 
-.pfp p, .mobilePfp p {
-  color: #B0AEAE;
+.pfp p,
+.mobilePfp p {
+  color: #b0aeae;
   font-size: 14px;
   font-style: normal;
   font-weight: 700;
@@ -169,7 +169,7 @@
 .mobilePfp {
   position: absolute;
   border-radius: 100px;
-  background: #FFF;
+  background: #fff;
   padding: 4px 13px;
   display: inline-flex;
   justify-content: center;
@@ -179,7 +179,7 @@
   right: 7px;
 }
 .mobilePfp p {
-  color:  #6C5D59;
+  color: #6c5d59;
 }
 
 @media (max-width: 1124px) {
