@@ -1,212 +1,212 @@
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    max-width: 90%;
-    width: -webkit-fill-available;
-    margin: 0 auto;
-    height: 100%;
-    overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 90%;
+  width: -webkit-fill-available;
+  margin: 12vh auto 0 auto;
+  height: 100%;
+  overflow-y: scroll;
 }
 
 .arrows {
-    display: flex;
-    margin: 35px 0;
-    cursor: pointer;
+  display: flex;
+  margin: 35px 0;
+  cursor: pointer;
 }
 
 .arrows p {
-    margin-left: 10px;
-    font-family: "QuickZap";
+  margin-left: 10px;
+  font-family: "QuickZap";
 }
 
 .gallery {
-    margin: 0 40px 20px;
-    border-radius: 20px;
-    background:  #FFFCF8;
-    box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-    width: -webkit-fill-available;
-    padding: 32px 64px;
-    text-align: left;
+  margin: 0 40px 20px;
+  border-radius: 20px;
+  background: #fffcf8;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  width: -webkit-fill-available;
+  padding: 32px 64px;
+  text-align: left;
 }
 
 .subtitle {
-    color:  #6D696A;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 20px; /* 142.857% */
-    margin-bottom: 8px;
+  color: #6d696a;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px; /* 142.857% */
+  margin-bottom: 8px;
 }
 
 .title {
-    color:  #454545;
-    font-family: "QuickZap";
-    font-size: 30px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 32px; /* 106.667% */
-    margin-bottom: 48px;
+  color: #454545;
+  font-family: "QuickZap";
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px; /* 106.667% */
+  margin-bottom: 48px;
 }
 
 .nftSection {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 32px;
 }
-  
+
 .nftImg {
-    height: 180px;
-    width: 180px;
-    overflow: hidden;
-    box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-    border-radius: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 1;
+  height: 180px;
+  width: 180px;
+  overflow: hidden;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  border-radius: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1;
 }
-  
+
 .nftImg img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .nftHovered {
-    height: 180px;
-    width: 180px;
-    border-radius: 24px;
-    border: 2px solid var(--primary);
-    background:#FFF;
-    cursor: pointer;
-    box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-  
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .nftHovered p {
-    color: #B0AEAE;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 20px;
+  height: 180px;
+  width: 180px;
+  border-radius: 24px;
+  border: 2px solid var(--primary);
+  background: #fff;
+  cursor: pointer;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+}
+
+.nftHovered p {
+  color: #b0aeae;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px;
 }
 
 .modalTitle {
-    color: #032014;
-    font-family: "QuickZap";
-    text-align: center;
-    font-size: 30px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 32px; /* 106.667% */
+  color: #032014;
+  font-family: "QuickZap";
+  text-align: center;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 32px; /* 106.667% */
 }
 
 .modalBack {
-    display: flex;
-    margin: 30px auto 0;
-    cursor: pointer;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  margin: 30px auto 0;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
 }
 
 .modalBack p {
-    margin-left: 10px;
-    color: #454545;
-    font-family: "QuickZap";
-    font-size: 18px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 24px;
+  margin-left: 10px;
+  color: #454545;
+  font-family: "QuickZap";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
 }
 
 .modalActions {
-    z-index: 1;
-    margin: 0 auto;
+  z-index: 1;
+  margin: 0 auto;
 }
 
 .leavesLeft {
-    position: absolute;
-    left: 0;
-    z-index: 0;
-    pointer-events: none;
+  position: absolute;
+  left: 0;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .leavesRight {
-    position: absolute;
-    right: 0;
-    z-index: 0;
-    pointer-events: none;
+  position: absolute;
+  right: 0;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .selectedCollections {
-    margin-top: 48px;
+  margin-top: 48px;
 }
 
 .nftCollectionWraper {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 48px;
-    margin: 48px 0;
-    justify-content: center;
-    flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 48px;
+  margin: 48px 0;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
 .nftCollectionCard {
-    display: flex;
-    padding: 24px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 24px;
-    cursor: pointer;
+  display: flex;
+  padding: 24px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  cursor: pointer;
 
-    border-radius: 20px;
-    background: var(--background-light);
-    box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-    max-width: 240px;
+  border-radius: 20px;
+  background: var(--background-light);
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  max-width: 240px;
 }
 
 .nftCollectionImg {
-    max-width: 180px;
-    max-height: 180px;
-    width: 100%;
-    height: auto;
-    border-radius: 20px;
-    object-fit: contain;
+  max-width: 180px;
+  max-height: 180px;
+  width: 100%;
+  height: auto;
+  border-radius: 20px;
+  object-fit: contain;
 }
 
 .nftCollectionName {
-    color: var(--secondary);
-    font-family: "QuickZap";
-    font-size: 18px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 28px;
+  color: var(--secondary);
+  font-family: "QuickZap";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
 }
 
 .btnWrapper {
-    width: 230px;
-    margin: 0 auto;
+  width: 230px;
+  margin: 0 auto;
 }
 
 @media (max-width: 768px) {
-    .gallery {
-        padding: 32px 24px;
-    }
-    .nftCollectionWraper {
-        flex-direction: column;
-    }
-    .nftCollectionCard {
-        max-width: 100%;
-    }
+  .gallery {
+    padding: 32px 24px;
   }
+  .nftCollectionWraper {
+    flex-direction: column;
+  }
+  .nftCollectionCard {
+    max-width: 100%;
+  }
+}
