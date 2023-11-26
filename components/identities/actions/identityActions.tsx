@@ -78,7 +78,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         );
       }
     }
-  }, []);
+  }, [identity?.domain_expiry]);
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -141,6 +141,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       },
     });
     setIsTxModalOpen(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mainDomainData]);
 
   if (!isIdentityADomain) {
@@ -155,7 +156,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         autoRenewalCalls.disableRenewal(callDataEncodedDomain[1].toString())
       );
     }
-  }, [allowance, isAutoRenewalEnabled]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allowance, isAutoRenewalEnabled]); // We don't add callDataEncodedDomain because it would create an infinite loop
 
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
@@ -171,7 +173,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     });
     setIsTxModalOpen(true);
     posthog?.capture("disable-ar"); // track events for analytics
-  }, [disableRenewalData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [disableRenewalData]); // We want to execute this effect only once, when the transaction is sent
 
   return (
     <div className={styles.actionsContainer}>

@@ -54,7 +54,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     if (!isEthPriceDisplayed) {
       setSwissdRegistrationPrice(computeSwissdPrice());
     }
-  }, [ethRegistrationPrice, isEthPriceDisplayed]);
+  }, [ethRegistrationPrice, ethSwissdPrice, isEthPriceDisplayed]);
 
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
     return (

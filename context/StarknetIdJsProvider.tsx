@@ -18,6 +18,7 @@ export const StarknetIdJsContext = createContext<StarknetIdJsConfig>({
   starknetIdNavigator: null,
   provider: null,
   identitiesTemp: [],
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   updateIdentityImg: () => {},
   getPfp: () => "",
 });
@@ -69,13 +70,15 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
     });
   }, []);
 
-  const getPfp = (id: string): string => {
-    const identity = identitiesTemp.filter((identity) => identity.id === id)[0];
-    if (identity && identity.pp_url) return getImgUrl(identity.pp_url);
-    else return `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${id}`;
-  };
-
   const contextValues = useMemo(() => {
+    const getPfp = (id: string): string => {
+      const identity = identitiesTemp.filter(
+        (identity) => identity.id === id
+      )[0];
+      if (identity && identity.pp_url) return getImgUrl(identity.pp_url);
+      else return `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${id}`;
+    };
+
     return {
       starknetIdNavigator,
       provider,

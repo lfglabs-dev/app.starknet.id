@@ -66,7 +66,8 @@ const RenewalModal: FunctionComponent<RenewalModalProps> = ({
       },
     });
     setIsTxSent(true);
-  }, [renewData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [renewData]); // We want to execute this effect only once, when the transaction is sent
 
   function changeDuration(value: number): void {
     setDuration(value);

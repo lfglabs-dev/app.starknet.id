@@ -122,7 +122,8 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
       );
       setSearchResults(fullResults);
     });
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // We don't add getStatus because this would cause an infinite loop
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -167,7 +168,8 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
     } else {
       setCurrentResult(null);
     }
-  }, [typedValue]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typedValue]); // We won't add getStatus because this would cause an infinite loop
 
   async function getStatus(
     name: string,
