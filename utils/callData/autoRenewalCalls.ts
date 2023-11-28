@@ -20,7 +20,12 @@ function enableRenewal(
   return {
     contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
     entrypoint: "enable_renewals",
-    calldata: [encodedDomain.toString(), price, 0, metahash],
+    calldata: [
+      encodedDomain.toString(),
+      price,
+      0, // sponsor
+      metahash,
+    ],
   };
 }
 

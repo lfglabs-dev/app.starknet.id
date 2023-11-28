@@ -83,6 +83,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [salts, setSalts] = useState<string[] | undefined>();
   const [metadataHashes, setMetadataHashes] = useState<string[] | undefined>();
+  const [needMetadata, setNeedMetadata] = useState<boolean>(false);
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
   const { address } = useAccount();
@@ -167,8 +168,29 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   }, [selectedDomains]);
 
   useEffect(() => {
+    if (!address) return;
+    fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_LINK}/renewal/get_metahash?addr=${address}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.meta_hash && parseInt(data.meta_hash) !== 0) {
+          setNeedMetadata(false);
+          setMetadataHashes([data.meta_hash]);
+          data.tax_rate ? setSalesTaxRate(data.tax_rate) : setSalesTaxRate(0);
+        } else {
+          setNeedMetadata(true);
+        }
+      })
+      .catch((err) => {
+        console.log("Error while fetching metadata:", err);
+        setNeedMetadata(true);
+      });
+  }, [address]);
+
+  useEffect(() => {
     // salt must not be empty to preserve privacy
-    if (!salts) return;
+    if (!salts || !needMetadata) return;
 
     const computeHashes = async () => {
       const metaDataHashes = await Promise.all(
@@ -185,7 +207,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     };
 
     computeHashes();
-  }, [email, salts, renewalBox, isSwissResident]);
+  }, [email, salts, renewalBox, isSwissResident, needMetadata]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("");
@@ -238,10 +260,11 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
         ),
       ];
 
-      // If the user is a US resident, we add the sales tax
-      if (salesTaxRate) {
-        calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
-      }
+      // NO VAT CAUSE It's free
+      // If the user is a Swiss resident, we add the sales tax
+      // if (salesTaxRate) {
+      //   calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+      // }
 
       if (renewalBox) {
         if (
@@ -267,7 +290,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
             autoRenewalCalls.enableRenewal(
               encodedDomain,
               allowance,
-              "0x" + metadataHashes?.[index]
+              "0x" + metadataHashes?.[index] ?? metadataHashes[0]
             )
           );
         });
@@ -297,20 +320,27 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
             <h3 className={styles.domain}>Renew Your domain(s)</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            <TextField
-              helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
-              label="Email address"
-              value={email}
-              onChange={(e) => changeEmail(e.target.value)}
-              color="secondary"
-              error={emailError}
-              errorMessage="Please enter a valid email address"
-              type="email"
-            />
-            <SwissForm
-              isSwissResident={isSwissResident}
-              onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
-            />
+            {needMetadata && (
+              <TextField
+                helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
+                label="Email address"
+                value={email}
+                onChange={(e) => changeEmail(e.target.value)}
+                color="secondary"
+                error={emailError}
+                errorMessage="Please enter a valid email address"
+                type="email"
+              />
+            )}
+            {needMetadata && (
+              <SwissForm
+                isSwissResident={isSwissResident}
+                onSwissResidentChange={() =>
+                  setIsSwissResident(!isSwissResident)
+                }
+              />
+            )}
+
             <RenewalDomainsBox
               helperText="Check the box of the domains you want to renew"
               setSelectedDomains={setSelectedDomains}
@@ -347,7 +377,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
                 !address ||
                 invalidBalance ||
                 !termsBox ||
-                emailError ||
+                (emailError && needMetadata) ||
                 !areDomainSelected(selectedDomains)
               }
             >
@@ -357,7 +387,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
                 ? "You don't have enough eth"
                 : !areDomainSelected(selectedDomains)
                 ? "Select a domain to renew"
-                : emailError
+                : emailError && needMetadata
                 ? "Enter a valid Email"
                 : "Renew my domain(s)"}
             </Button>
