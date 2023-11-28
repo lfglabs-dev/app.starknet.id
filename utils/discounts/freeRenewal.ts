@@ -11,7 +11,7 @@ export const freeRenewalDiscount: FreeRenewalDiscount = {
   name: "The Free Renewal",
   image: "/freeRenewal/freeRenewal.webp",
   expiry: 1701907199 * 1000, // timestamp in ms
-  discountMailGroupId: "98859014745490932",
+  discountMailGroupId: "106085143136961963",
   offer: {
     duration: 90, // in days
     customMessage: "3 months (with Free Renewal discount)",
