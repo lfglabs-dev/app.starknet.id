@@ -18,7 +18,7 @@
     "@mui/material": "^5.10.1",
     "@nimiq/style": "^0.8.4",
     "@starknet-react/chains": "^0.1.0",
-    "@starknet-react/core": "^2.0.0",
+    "@starknet-react/core": "^2.1.0",
     "@vercel/analytics": "^0.1.5",
     "axios": "^1.4.0",
     "big.js": "^6.2.1",
@@ -36,7 +36,7 @@
     "react-icons": "^4.4.0",
     "react-loader-spinner": "^5.2.0",
     "starknet": "^5.19.5",
-    "starknetid.js": "^1.5.4",
+    "starknetid.js": "^1.5.6",
     "twitter-api-sdk": "^1.2.1"
   },
   "devDependencies": {
