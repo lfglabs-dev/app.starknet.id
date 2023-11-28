@@ -66,9 +66,15 @@
 /* Color variations */
 
 /* green */
-.nq-button {
+.primary {
   color: var(--background);
   background: var(--primary);
+}
+
+/* white */
+.white {
+  color: var(--dark-content);
+  background: #FFFFFF;
 }
 
 .nq-button::before {

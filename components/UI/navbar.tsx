@@ -170,6 +170,7 @@ const Navbar: FunctionComponent = () => {
                       ? () => setShowWallet(true)
                       : () => setHasWallet(true)
                   }
+                  variation={isConnected ? "white" : "primary"}
                 >
                   {isConnected ? (
                     <>
@@ -196,7 +197,7 @@ const Navbar: FunctionComponent = () => {
                           ) : (
                             <ProfilFilledIcon
                               width="24"
-                              color={theme.palette.background.default}
+                              color={theme.palette.secondary.main}
                             />
                           )}
                         </div>
