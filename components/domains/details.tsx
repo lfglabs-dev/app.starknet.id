@@ -18,7 +18,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
   const [ownerAddress, setOwnerAddress] = useState<string | undefined>(
     undefined
   );
-  const [tokenId, setTokenId] = useState<number>(0);
+  const [tokenId, setTokenId] = useState<string>("0");
   const [expiryDate, setExpiryDate] = useState<Date | undefined>(undefined);
 
   const { address: domainData, error: domainError } =
@@ -47,7 +47,7 @@ const Details: FunctionComponent<DetailsProps> = ({ domain }) => {
       if (tokenIdData) {
         setTokenId(tokenIdData);
       } else {
-        setTokenId(0);
+        setTokenId("0");
       }
     }
   }, [tokenIdData, tokenIdError]);
