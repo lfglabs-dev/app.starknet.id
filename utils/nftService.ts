@@ -32,7 +32,7 @@ export const retrieveAssets = async (
 // Filter assets based on a whitelisted array of contract addresses
 export const filterAssets = (
   assets: StarkscanNftProps[],
-  whitelist: BigInt[]
+  whitelist: bigint[]
 ): StarkscanNftProps[] => {
   const filteredAssets: StarkscanNftProps[] = [];
   assets.forEach((asset: StarkscanNftProps) => {

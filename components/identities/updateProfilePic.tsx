@@ -47,7 +47,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
       `${process.env.NEXT_PUBLIC_SERVER_LINK}/starkscan/fetch_nfts`,
       identity.owner_addr
     ).then((data) => {
-      const filteredAssets = filterAssets(data.data, whitelistData as BigInt[]);
+      const filteredAssets = filterAssets(data.data, whitelistData as bigint[]);
       setUserNft(filteredAssets);
       setIsLoading(false);
     });
