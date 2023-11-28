@@ -1,7 +1,3 @@
-import {
-  PFP_WL_CONTRACTS_MAINNET,
-  PFP_WL_CONTRACTS_TESTNET,
-} from "./constants";
 import { hexToDecimal } from "./feltService";
 
 // Retrieve assets from Starkscan API
