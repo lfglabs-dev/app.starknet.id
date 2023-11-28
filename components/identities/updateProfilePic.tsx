@@ -1,16 +1,15 @@
-import React, { FunctionComponent, useEffect, useMemo, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import NftCard from "../UI/nftCard";
 import ModalProfilePic from "../UI/modalProfilePic";
-import {
-  filterAssets,
-  getWhitelistedPfpContracts,
-  retrieveAssets,
-} from "../../utils/nftService";
+import { filterAssets, retrieveAssets } from "../../utils/nftService";
 import BackButton from "../UI/backButton";
 import PfpSkeleton from "./skeletons/pfpSkeleton";
 import SelectedCollections from "./selectedCollections";
 import { debounce } from "../../utils/debounceService";
+import { useContractRead } from "@starknet-react/core";
+import { useNftPpVerifierContract } from "../../hooks/contracts";
+import { Abi } from "starknet";
 
 type UpdateProfilePicProps = {
   identity?: Identity;
@@ -34,21 +33,25 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     null
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const whitelistedContracts: string[] = useMemo(() => {
-    return getWhitelistedPfpContracts();
-  }, []);
+  const { contract } = useNftPpVerifierContract();
+  const { data: whitelistData, error: whitelistError } = useContractRead({
+    address: contract?.address as string,
+    abi: contract?.abi as Abi,
+    functionName: "get_whitelisted_contracts",
+    args: [],
+  });
 
   useEffect(() => {
-    if (!identity?.owner_addr) return;
+    if (!identity?.owner_addr || !whitelistData) return;
     retrieveAssets(
       `${process.env.NEXT_PUBLIC_SERVER_LINK}/starkscan/fetch_nfts`,
       identity.owner_addr
     ).then((data) => {
-      const filteredAssets = filterAssets(data.data, whitelistedContracts);
+      const filteredAssets = filterAssets(data.data, whitelistData as BigInt[]);
       setUserNft(filteredAssets);
       setIsLoading(false);
     });
-  }, [tokenId, identity, whitelistedContracts]);
+  }, [tokenId, identity, whitelistData]);
 
   const selectPicture = (nft: StarkscanNftProps) => {
     setOpenModal(true);

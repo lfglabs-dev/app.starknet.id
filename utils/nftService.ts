@@ -32,19 +32,13 @@ export const retrieveAssets = async (
 // Filter assets based on a whitelisted array of contract addresses
 export const filterAssets = (
   assets: StarkscanNftProps[],
-  whitelist: string[]
+  whitelist: BigInt[]
 ): StarkscanNftProps[] => {
   const filteredAssets: StarkscanNftProps[] = [];
   assets.forEach((asset: StarkscanNftProps) => {
-    if (whitelist.includes(hexToDecimal(asset.contract_address))) {
+    if (whitelist.includes(BigInt(hexToDecimal(asset.contract_address)))) {
       filteredAssets.push(asset);
     }
   });
   return filteredAssets;
-};
-
-export const getWhitelistedPfpContracts = (): string[] => {
-  return process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-    ? PFP_WL_CONTRACTS_TESTNET.map((hex) => hexToDecimal(hex))
-    : PFP_WL_CONTRACTS_MAINNET.map((hex) => hexToDecimal(hex));
 };

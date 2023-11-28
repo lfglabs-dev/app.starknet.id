@@ -6,6 +6,7 @@ import verifier_abi from "../abi/starknet/verifier_abi.json";
 import erc20_abi from "../abi/starknet/erc20_abi.json";
 import braavosNFT_abi from "../abi/starknet/braavosNFT_abi.json";
 import renewal_abi from "../abi/starknet/renewal.sierra.json";
+import nft_pp_verifier_abi from "../abi/starknet/nft_pp_verifier_abi.json";
 import { Abi } from "starknet";
 
 export function useStarknetIdContract() {
@@ -54,5 +55,12 @@ export function useRenewalContract() {
   return useContract({
     abi: renewal_abi.abi as Abi,
     address: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT,
+  });
+}
+
+export function useNftPpVerifierContract() {
+  return useContract({
+    abi: nft_pp_verifier_abi.abi as Abi,
+    address: process.env.NEXT_PUBLIC_NFT_PP_VERIFIER,
   });
 }
