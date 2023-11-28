@@ -29,13 +29,16 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
   const { address } = useAccount();
   const [identitiesTemp, setIdentities] = useState<FullId[]>([]);
 
+  const isTestnet = useMemo(() => {
+    return process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? true : false;
+  }, []);
+
   const provider = useMemo(() => {
     return new Provider({
-      sequencer: {
-        network:
-          process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-            ? constants.NetworkName.SN_GOERLI
-            : constants.NetworkName.SN_MAIN,
+      rpc: {
+        nodeUrl: `https://starknet-${
+          isTestnet ? "goerli" : "mainnet"
+        }.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`,
       },
     });
   }, []);
@@ -43,7 +46,7 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
   const starknetIdNavigator = useMemo(() => {
     return new StarknetIdNavigator(
       provider,
-      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+      isTestnet
         ? constants.StarknetChainId.SN_GOERLI
         : constants.StarknetChainId.SN_MAIN
     );
