@@ -290,7 +290,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
             autoRenewalCalls.enableRenewal(
               encodedDomain,
               allowance,
-              "0x" + metadataHashes?.[index] ?? metadataHashes[0]
+              "0x" + needMetadata ? metadataHashes[index] : metadataHashes[0]
             )
           );
         });
@@ -308,6 +308,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     renewalBox,
     erc20AllowanceError,
     discountId,
+    needMetadata,
   ]);
 
   return (
