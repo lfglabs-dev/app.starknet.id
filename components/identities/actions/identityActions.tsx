@@ -9,7 +9,6 @@ import ClickableAction from "../../UI/iconsComponents/clickableAction";
 import styles from "../../../styles/components/identityMenu.module.css";
 import { timestampToReadableDate } from "../../../utils/dateService";
 import { utils } from "starknetid.js";
-import AutoRenewalModal from "./autoRenewalModal";
 import theme from "../../../styles/theme";
 import MainIcon from "../../UI/iconsComponents/icons/mainIcon";
 import ChangeIcon from "../../UI/iconsComponents/icons/changeIcon";
@@ -52,7 +51,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
   const router = useRouter();
   // AutoRenewals
-  const [isAutoRenewalOpen, setIsAutoRenewalOpen] = useState<boolean>(false);
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const [allowance, setAllowance] = useState<string>("0");
@@ -217,7 +215,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   description={nextAutoRenew}
                   style="primary"
                   icon={<div className={styles.renewalIcon}>ON</div>}
-                  onClick={() => setIsAutoRenewalOpen(true)}
+                  onClick={() => router.push("/subscription")}
                 />
               ) : null}
               {callDataEncodedDomain[0] === 1 ? (
@@ -331,14 +329,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           isTxModalOpen={isTxModalOpen}
           closeModal={() => setIsTxModalOpen(false)}
           title="Your Transaction is on it's way !"
-        />
-        <AutoRenewalModal
-          handleClose={() => setIsAutoRenewalOpen(false)}
-          isModalOpen={isAutoRenewalOpen}
-          callDataEncodedDomain={callDataEncodedDomain}
-          identity={identity}
-          domain={identity?.domain}
-          allowance={allowance}
         />
       </>
     </div>
