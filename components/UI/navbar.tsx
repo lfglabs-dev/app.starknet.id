@@ -14,6 +14,7 @@ import {
   useAccount,
   useDisconnect,
   Connector,
+  useStarkProfile,
 } from "@starknet-react/core";
 import Wallets from "./wallets";
 import ModalMessage from "./modalMessage";
@@ -42,6 +43,7 @@ const Navbar: FunctionComponent = () => {
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   const [txLoading, setTxLoading] = useState<number>(0);
   const [showWallet, setShowWallet] = useState<boolean>(false);
+  const { data: profile } = useStarkProfile({ address });
 
   useEffect(() => {
     // to handle autoconnect starknet-react adds connector id in local storage
@@ -168,6 +170,7 @@ const Navbar: FunctionComponent = () => {
                       ? () => setShowWallet(true)
                       : () => setHasWallet(true)
                   }
+                  variation={isConnected ? "white" : "primary"}
                 >
                   {isConnected ? (
                     <>
@@ -184,10 +187,19 @@ const Navbar: FunctionComponent = () => {
                       ) : (
                         <div className="flex justify-center items-center">
                           <p className="mr-3">{domainOrAddress}</p>
-                          <ProfilFilledIcon
-                            width="24"
-                            color={theme.palette.background.default}
-                          />
+                          {profile?.profilePicture ? (
+                            <img
+                              src={profile?.profilePicture}
+                              width="32"
+                              height="32"
+                              className="rounded-full"
+                            />
+                          ) : (
+                            <ProfilFilledIcon
+                              width="24"
+                              color={theme.palette.secondary.main}
+                            />
+                          )}
                         </div>
                       )}
                     </>

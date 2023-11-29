@@ -120,7 +120,8 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       },
     });
     setIsTxSent(true);
-  }, [transferDomainData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transferDomainData]); // We want to call this only once when the transaction is sent
 
   return (
     <Modal

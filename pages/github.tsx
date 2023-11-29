@@ -134,7 +134,14 @@ const Github: NextPage = () => {
         setScreen("error");
       }
     }
-  }, [githubVerificationData, transactionData, transactionError]);
+  }, [
+    githubVerificationData,
+    transactionData,
+    transactionError,
+    addTransaction,
+    router,
+    tokenId,
+  ]);
 
   //Screen management
   const [screen, setScreen] = useState<Screen>("verifyGithub");

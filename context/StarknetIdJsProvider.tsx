@@ -18,6 +18,7 @@ export const StarknetIdJsContext = createContext<StarknetIdJsConfig>({
   starknetIdNavigator: null,
   provider: null,
   identitiesTemp: [],
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   updateIdentityImg: () => {},
   getPfp: () => "",
 });
@@ -28,13 +29,16 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
   const { address } = useAccount();
   const [identitiesTemp, setIdentities] = useState<FullId[]>([]);
 
+  const isTestnet = useMemo(() => {
+    return process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? true : false;
+  }, []);
+
   const provider = useMemo(() => {
     return new Provider({
-      sequencer: {
-        network:
-          process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-            ? constants.NetworkName.SN_GOERLI
-            : constants.NetworkName.SN_MAIN,
+      rpc: {
+        nodeUrl: `https://starknet-${
+          isTestnet ? "goerli" : "mainnet"
+        }.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`,
       },
     });
   }, []);
@@ -42,7 +46,7 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
   const starknetIdNavigator = useMemo(() => {
     return new StarknetIdNavigator(
       provider,
-      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+      isTestnet
         ? constants.StarknetChainId.SN_GOERLI
         : constants.StarknetChainId.SN_MAIN
     );
@@ -69,13 +73,15 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
     });
   }, []);
 
-  const getPfp = (id: string): string => {
-    const identity = identitiesTemp.filter((identity) => identity.id === id)[0];
-    if (identity && identity.pp_url) return getImgUrl(identity.pp_url);
-    else return `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${id}`;
-  };
-
   const contextValues = useMemo(() => {
+    const getPfp = (id: string): string => {
+      const identity = identitiesTemp.filter(
+        (identity) => identity.id === id
+      )[0];
+      if (identity && identity.pp_url) return getImgUrl(identity.pp_url);
+      else return `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${id}`;
+    };
+
     return {
       starknetIdNavigator,
       provider,

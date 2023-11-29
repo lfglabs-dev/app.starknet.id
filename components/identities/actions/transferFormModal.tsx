@@ -75,7 +75,8 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
       },
     });
     setIsTxSent(true);
-  }, [transferData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transferData]); // We want to call this only once when the transaction is sent
 
   useEffect(() => {
     if (isHexString(addressInput)) {
@@ -88,7 +89,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     } else {
       setTargetAddress("");
     }
-  }, [addressInput]);
+  }, [addressInput, starknetIdNavigator]);
 
   function transferIdentityAndSetDomain(): void {
     transfer_identity_and_set_domain();

@@ -142,7 +142,14 @@ const Discord: NextPage = () => {
         setScreen("error");
       }
     }
-  }, [discordVerificationData, transactionData, transactionError]);
+  }, [
+    discordVerificationData,
+    transactionData,
+    transactionError,
+    addTransaction,
+    router,
+    tokenId,
+  ]);
 
   //Screen management
   const [screen, setScreen] = useState<Screen>("verifyDiscord");

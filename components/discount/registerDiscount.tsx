@@ -1,7 +1,12 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useAccount, useBalance, useContractWrite } from "@starknet-react/core";
+import {
+  useAccount,
+  useBalance,
+  useContractRead,
+  useContractWrite,
+} from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import { getDomainWithStark, isValidEmail } from "../../utils/stringService";
 import {
@@ -11,7 +16,7 @@ import {
   numberToFixedString,
 } from "../../utils/feltService";
 import { useDisplayName } from "../../hooks/displayName.tsx";
-import { Call } from "starknet";
+import { Abi, Call } from "starknet";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
@@ -28,8 +33,11 @@ import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
   NotificationType,
   TransactionType,
+  UINT_128_MAX,
   swissVatRate,
 } from "../../utils/constants";
+import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
+import { useEtherContract } from "../../hooks/contracts";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -65,26 +73,33 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
   const [termsBox, setTermsBox] = useState<boolean>(true);
-  // const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
-
   const { account, address } = useAccount();
   const { data: userBalanceData, error: userBalanceDataError } = useBalance({
     address,
     watch: true,
   });
   const { writeAsync: execute, data: registerData } = useContractWrite({
-    // calls: renewalBox
-    //   ? callData.concat(registrationCalls.renewal(encodedDomain, price))
-    //   : callData,
     calls: callData,
   });
   const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
+  const { contract: etherContract } = useEtherContract();
   const { addTransaction } = useNotificationManager();
+  const { data: erc20AllowanceData, error: erc20AllowanceError } =
+    useContractRead({
+      address: etherContract?.address as string,
+      abi: etherContract?.abi as Abi,
+      functionName: "allowance",
+      args: [
+        address as string,
+        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+      ],
+    });
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -105,7 +120,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         )
       );
     })();
-  }, [email, salt]);
+  }, [email, isSwissResident, salt]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("0");
@@ -143,15 +158,16 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   //   }
   // }, [domain]);
 
-  // Set mulitcalls
+  // Set Register Multicall
   useEffect(() => {
+    // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     const txMetadataHash = "0x" + metadataHash;
     const addressesMatch =
       hexToDecimal(address) === hexToDecimal(targetAddress);
+
     // Common calls
     const calls = [
-      registrationCalls.mint(newTokenId),
       registrationCalls.approve(price),
       registrationCalls.buy_discounted(
         encodedDomain,
@@ -173,6 +189,28 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       calls.push(registrationCalls.addressToDomain(encodedDomain));
     }
 
+    // If the user has toggled autorenewal
+    if (renewalBox) {
+      if (
+        erc20AllowanceError ||
+        (erc20AllowanceData &&
+          erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
+          erc20AllowanceData["remaining"].high !== UINT_128_MAX)
+      ) {
+        calls.push(autoRenewalCalls.approve());
+      }
+      const limitPrice = salesTaxAmount
+        ? (BigInt(salesTaxAmount) + BigInt(price)).toString()
+        : price;
+      calls.push(
+        autoRenewalCalls.enableRenewal(
+          encodedDomain,
+          limitPrice,
+          txMetadataHash
+        )
+      );
+    }
+
     // Merge and set the call data
     setCallData(calls);
   }, [
@@ -184,6 +222,12 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     address,
     metadataHash,
     salesTaxRate,
+    encodedDomain,
+    renewalBox,
+    salesTaxAmount,
+    erc20AllowanceError,
+    erc20AllowanceData,
+    discountId,
   ]);
 
   useEffect(() => {
@@ -216,7 +260,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       },
     });
     setIsTxModalOpen(true);
-  }, [registerData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registerData]); // We want to execute this only once after the tx is sent
 
   function changeEmail(value: string): void {
     setEmail(value);
@@ -270,10 +315,10 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
-            // onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
-            // renewalBox={renewalBox}
+            renewalBox={renewalBox}
           />
           {address ? (
             <Button
