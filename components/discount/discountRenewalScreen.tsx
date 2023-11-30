@@ -3,6 +3,7 @@ import styles from "../../styles/discount.module.css";
 import homeStyles from "../../styles/Home.module.css";
 import Timer from "../UI/timer";
 import Button from "../UI/button";
+import { CDNImg } from "../cdn/image";
 
 type DiscountRenewalScreenProps = {
   title: { desc: string; catch: string };
@@ -23,7 +24,7 @@ const DiscountRenewalScreen: FunctionComponent<DiscountRenewalScreenProps> = ({
     <div className={homeStyles.wrapperScreen}>
       <div className={styles.container}>
         <div className={styles.illustrationContainer}>
-          <img src={image} className={styles.illustration} />
+          <CDNImg src={image} className={styles.illustration} />
           <Timer expiry={expiry} fixed />
         </div>
         <div className="max-w-xl flex flex-col items-start justify-start gap-5 mx-5 mb-5">

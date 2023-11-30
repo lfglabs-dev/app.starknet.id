@@ -19,6 +19,8 @@ module.exports = {
       "starknet.id",
       "app.starknet.id",
       "starknetid.netlify.app",
+      "cdn.app.starknet.id",
+      "goerli.cdn.app.starknet.id",
     ],
   },
 };

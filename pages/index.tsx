@@ -3,6 +3,7 @@ import type { NextPage } from "next";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/domain.module.css";
 import SearchBar from "../components/UI/searchBar";
+import { CDNImg } from "../components/cdn/image";
 
 const Domain: NextPage = () => {
   return (
@@ -18,7 +19,7 @@ const Domain: NextPage = () => {
             </div>
             <SearchBar showHistory />
           </div>
-          <img
+          <CDNImg
             src="/visuals/domainVisual.webp"
             className={styles.illustration}
           />

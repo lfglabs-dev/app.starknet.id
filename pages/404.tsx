@@ -1,13 +1,14 @@
 import React from "react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
+import { CDNImg } from "../components/cdn/image";
 
 const NotFound: NextPage = () => {
   return (
     <div className={styles.screen}>
       <div className={styles.wrapperScreen}>
         <div className="flex flex-col items-center justify-center h-full">
-          <img
+          <CDNImg
             src="/visuals/errorIllu.webp"
             height={300}
             width={300}
