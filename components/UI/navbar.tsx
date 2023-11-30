@@ -26,6 +26,7 @@ import { constants } from "starknet";
 import { useTheme } from "@mui/material/styles";
 import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
 import DesktopNav from "./desktopNav";
+import { CDNImg } from "../cdn/image";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -134,7 +135,7 @@ const Navbar: FunctionComponent = () => {
         <div className={styles.navbarContainer}>
           <div className="ml-4">
             <Link href="/" className="cursor-pointer">
-              <img
+              <CDNImg
                 className="cursor-pointer"
                 src="/visuals/StarknetIdLogo.svg"
                 alt="Starknet.id Logo"
@@ -188,7 +189,7 @@ const Navbar: FunctionComponent = () => {
                         <div className="flex justify-center items-center">
                           <p className="mr-3">{domainOrAddress}</p>
                           {profile?.profilePicture ? (
-                            <img
+                            <CDNImg
                               src={profile?.profilePicture}
                               width="32"
                               height="32"
@@ -236,7 +237,7 @@ const Navbar: FunctionComponent = () => {
               <div className="flex w-full items-center justify-between">
                 <div>
                   <Link href="/" className="cursor-pointer">
-                    <img
+                    <CDNImg
                       className="cursor-pointer"
                       src="/visuals/StarknetIdLogo.svg"
                       alt="Starknet.id Logo"

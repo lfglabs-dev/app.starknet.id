@@ -11,6 +11,7 @@ import ExitIcon from "./iconsComponents/icons/exitIcon";
 import CopyIcon from "./iconsComponents/icons/copyIcon";
 import DoneIcon from "./iconsComponents/icons/doneIcon";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
+import { CDNImg } from "../cdn/image";
 
 type ModalWalletProps = {
   closeModal: () => void;
@@ -71,7 +72,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
         <div className={styles.menu_title}>
           <div className={styles.menu_title}>
             {connector && connector.id === "braavos" ? (
-              <img
+              <CDNImg
                 width={"25px"}
                 src="/braavos/braavosLogo.svg"
                 alt="braavos logo"

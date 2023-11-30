@@ -15,6 +15,7 @@ import { getImgUrl } from "../../utils/stringService";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../utils/constants";
+import { CDNImg } from "../cdn/image";
 
 type ModalProfilePicProps = {
   closeModal: (cancel: boolean) => void;
@@ -91,7 +92,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
         <p className={ppStyles.modalTitle}>Do you want to add this NFT?</p>
         {nftData?.image_url ? (
           <div className={`${ppStyles.nftImg} mx-auto my-5`}>
-            <img
+            <CDNImg
               src={getImgUrl(nftData.image_url)}
               alt={`Image of ${nftData.name}`}
             />

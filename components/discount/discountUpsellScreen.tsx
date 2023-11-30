@@ -4,6 +4,7 @@ import homeStyles from "../../styles/Home.module.css";
 import theme from "../../styles/theme";
 import Button from "../UI/button";
 import ArrowLeftIcon from "../UI/iconsComponents/icons/arrows/arrowLeftIcon";
+import { CDNImg } from "../cdn/image";
 
 type DiscountUpsellScreenProps = {
   onUpsellChoice: (isUpselled: boolean) => void;
@@ -40,7 +41,7 @@ const DiscountUpsellScreen: FunctionComponent<DiscountUpsellScreenProps> = ({
         </div>
 
         <div className={styles.illustrationContainer}>
-          <img src={image} className={styles.upsellIllustration} />
+          <CDNImg src={image} className={styles.upsellIllustration} />
         </div>
       </div>
 
