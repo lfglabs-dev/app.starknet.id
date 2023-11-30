@@ -32,6 +32,11 @@ function enableRenewal(
 function disableRenewal(encodedDomain: string): Call[] {
   return [
     {
+      contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
+      entrypoint: "approve",
+      calldata: [process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string, "0", "0"],
+    },
+    {
       contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
       entrypoint: "disable_renewals",
       calldata: [encodedDomain.toString()],
