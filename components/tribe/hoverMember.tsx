@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/jointhetribe.module.css";
-import { CDNImg } from "../cdn/image";
 
 type hoverMemberProps = {
   member: Member;
@@ -20,7 +19,7 @@ const HoverMember: FunctionComponent<hoverMemberProps> = ({
       ) : null}
       {showAvatar ? (
         <div className="flex justify-center">
-          <CDNImg
+          <img
             alt={`@${member.name}'s Twitter avatar`}
             src={member.profile_image_url as string}
             className={styles.avatar}

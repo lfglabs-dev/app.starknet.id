@@ -5,7 +5,6 @@ import { changeTwitterProfilePic } from "../../utils/stringService";
 import ModalMessage from "../UI/modalMessage";
 import HoverMember from "./hoverMember";
 import MemberTooltip from "./memberTooltip";
-import { CDNImg } from "../cdn/image";
 
 type MemberProps = {
   member: Member;
@@ -18,7 +17,7 @@ const Member: FunctionComponent<MemberProps> = ({ member }) => {
   return (
     <div className={styles.avatarContainer}>
       <MemberTooltip title={<HoverMember member={member} />}>
-        <CDNImg
+        <img
           onClick={matches ? () => setOpenModal(true) : undefined}
           alt={`@${member.name}'s Twitter avatar`}
           src={changeTwitterProfilePic(member.profile_image_url)}

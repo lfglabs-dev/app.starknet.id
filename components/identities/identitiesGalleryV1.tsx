@@ -10,7 +10,6 @@ import {
 } from "../../utils/dateService";
 import ArgentIcon from "../UI/iconsComponents/icons/argentIcon";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
-import { CDNImg } from "../cdn/image";
 
 type IdentitiesGalleryV1Props = {
   identities: FullId[];
@@ -46,7 +45,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                 </Tooltip>
               </div>
             ) : null}
-            <CDNImg
+            <img
               width={150}
               height={150}
               src={getPfp(identity.id)}
@@ -69,7 +68,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
           switch (domainKind) {
             case "braavos":
               return (
-                <CDNImg
+                <img
                   width={150}
                   height={150}
                   src={"/braavos/braavosLogoWithBackground.webp"}
@@ -89,7 +88,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
               );
             default:
               return (
-                <CDNImg
+                <img
                   width={150}
                   height={150}
                   src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/0`}

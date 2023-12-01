@@ -3,7 +3,6 @@ import styles from "../../styles/discount.module.css";
 import homeStyles from "../../styles/Home.module.css";
 import SearchBar from "../UI/searchBar";
 import Timer from "../UI/timer";
-import { CDNImg } from "../cdn/image";
 
 type DiscountOfferScreenProps = {
   setSearchResult: (searchResult: SearchResult) => void;
@@ -31,7 +30,7 @@ const DiscountOfferScreen: FunctionComponent<DiscountOfferScreenProps> = ({
     <div className={homeStyles.wrapperScreen}>
       <div className={styles.container}>
         <div className={styles.illustrationContainer}>
-          <CDNImg src={image} className={styles.illustration} />
+          <img src={image} className={styles.illustration} />
           <Timer expiry={expiry} fixed />
         </div>
         <div className="max-w-xl flex flex-col items-start justify-start gap-5 mx-5 mb-5">

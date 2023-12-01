@@ -4,7 +4,6 @@ import theme from "../../styles/theme";
 import AddIcon from "./iconsComponents/icons/addIcon";
 import { useMediaQuery } from "@mui/material";
 import { getImgUrl } from "../../utils/stringService";
-import { CDNImg } from "../cdn/image";
 
 type NftCardProps = {
   image: string;
@@ -28,7 +27,7 @@ const NftCard: FunctionComponent<NftCardProps> = ({
           className={styles.nftImg}
           onClick={() => isMobile && selectPicture()}
         >
-          <CDNImg src={getImgUrl(image)} alt={`Image of ${name}`} />
+          <img src={getImgUrl(image)} alt={`Image of ${name}`} />
         </div>
       ) : (
         <div className={styles.nftHovered} onClick={selectPicture}>

@@ -7,7 +7,6 @@ import { useDomainFromAddress } from "../hooks/naming";
 import FamousMembers from "../components/tribe/famousMembers";
 import TextCopy from "../components/UI/textCopy";
 import SearchMembers from "../components/tribe/searchMembers";
-import { CDNImg } from "../components/cdn/image";
 
 const JoinTheTribe: NextPage = () => {
   const { address } = useAccount();
@@ -27,16 +26,16 @@ const JoinTheTribe: NextPage = () => {
       </section>
 
       <div className={styles.firstLeaf}>
-        <CDNImg alt="leaf" src="/leaves/new/leaf02.svg" />
+        <img alt="leaf" src="/leaves/new/leaf02.svg" />
       </div>
       <div className={styles.secondLeaf}>
-        <CDNImg alt="leaf" src="/leaves/new/leaf03.svg" />
+        <img alt="leaf" src="/leaves/new/leaf03.svg" />
       </div>
       <div className={styles.thirdLeaf}>
-        <CDNImg alt="leaf" src="/leaves/new/leaf02.svg" />
+        <img alt="leaf" src="/leaves/new/leaf02.svg" />
       </div>
       <div className={styles.fourthLeaf}>
-        <CDNImg alt="leaf" src="/leaves/new/leaf03.svg" />
+        <img alt="leaf" src="/leaves/new/leaf03.svg" />
       </div>
       <section id="join" className={styles.section2}>
         <h1 className="title">Get your tribe NFT !</h1>

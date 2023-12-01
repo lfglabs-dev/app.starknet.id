@@ -48,7 +48,6 @@ import { utils } from "starknetid.js";
 import { useEtherContract } from "../../hooks/contracts";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import NumberTextField from "../UI/numberTextField";
-import { CDNImg } from "../cdn/image";
 
 type FreeRenewalProps = {
   groups: string[];
@@ -377,7 +376,7 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
           )}
         </div>
       </div>
-      <CDNImg className={styles.image} src="/visuals/registerV2.webp" />
+      <img className={styles.image} src="/visuals/registerV2.webp" />
       <RegisterConfirmationModal
         txHash={renewData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}

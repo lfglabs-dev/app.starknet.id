@@ -9,7 +9,6 @@ import { useAccount } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { hexToDecimal } from "../../utils/feltService";
 import textFieldStyles from "../../styles/components/textField.module.css";
-import { CDNImg } from "../cdn/image";
 
 type SelectIdentityProps = {
   tokenId: number;
@@ -74,7 +73,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
       >
         <MenuItem value={0}>
           <ListItemIcon>
-            <CDNImg
+            <img
               width={"30px"}
               src="/visuals/StarknetIdLogo.svg"
               alt="starknet.id avatar"
@@ -85,7 +84,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
         {ownedIdentities.map((tokenId: number, index: number) => (
           <MenuItem key={index} value={tokenId}>
             <ListItemIcon>
-              <CDNImg
+              <img
                 width={"25px"}
                 src={`${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${tokenId}`}
                 alt="starknet.id avatar"

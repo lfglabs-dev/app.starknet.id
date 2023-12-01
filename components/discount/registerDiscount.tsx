@@ -38,7 +38,6 @@ import {
 } from "../../utils/constants";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import { useEtherContract } from "../../hooks/contracts";
-import { CDNImg } from "../cdn/image";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -355,7 +354,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           )}
         </div>
       </div>
-      <CDNImg className={styles.image} src="/visuals/registerV2.webp" />
+      <img className={styles.image} src="/visuals/registerV2.webp" />
       <TxConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}

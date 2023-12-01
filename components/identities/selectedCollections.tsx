@@ -4,7 +4,6 @@ import { NftCollections } from "../../utils/constants";
 import ClickableAction from "../UI/iconsComponents/clickableAction";
 import ArrowRightIcon from "../UI/iconsComponents/icons/arrowRightIcon";
 import theme from "../../styles/theme";
-import { CDNImg } from "../cdn/image";
 
 const SelectedCollections: FunctionComponent = () => {
   return (
@@ -17,7 +16,7 @@ const SelectedCollections: FunctionComponent = () => {
               key={index}
               onClick={() => window.open(collection.externalLink)}
             >
-              <CDNImg
+              <img
                 src={collection.imageUri}
                 alt={`${collection.name} image`}
                 className={styles.nftCollectionImg}

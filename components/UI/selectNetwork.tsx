@@ -7,7 +7,6 @@ import {
   Select,
 } from "@mui/material";
 import { useRouter } from "next/router";
-import { CDNImg } from "../cdn/image";
 
 type SelectNetworkProps = {
   network: "testnet" | "mainnet";
@@ -60,7 +59,7 @@ const SelectNetwork: FunctionComponent<SelectNetworkProps> = ({ network }) => {
         >
           <MenuItem value={"testnet"}>
             <ListItemIcon>
-              <CDNImg
+              <img
                 width={"25px"}
                 src="/visuals/starknetLogo.webp"
                 alt="starknet logo"
@@ -71,7 +70,7 @@ const SelectNetwork: FunctionComponent<SelectNetworkProps> = ({ network }) => {
           </MenuItem>
           <MenuItem value={"mainnet"}>
             <ListItemIcon>
-              <CDNImg
+              <img
                 width={"25px"}
                 src="/visuals/starknetLogo.webp"
                 alt="starknet logo"

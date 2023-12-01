@@ -17,7 +17,6 @@ import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
 import CopyIcon from "../UI/iconsComponents/icons/copyIcon";
 import EditIcon from "../UI/iconsComponents/icons/editIcon";
 import { debounce } from "../../utils/debounceService";
-import { CDNImg } from "../cdn/image";
 
 type IdentityCardProps = {
   identity?: Identity;
@@ -75,7 +74,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
               ) : (
                 <>
                   {ppImageUrl ? (
-                    <CDNImg
+                    <img
                       src={ppImageUrl}
                       height={170}
                       width={170}
@@ -161,22 +160,22 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 tokenId={tokenId}
               />
             </div>
-            <CDNImg
+            <img
               alt="leaf"
               src="/leaves/new/leavesGroup01.svg"
               className={styles.lg1}
             />
-            <CDNImg
+            <img
               alt="leaf"
               src="/leaves/new/leavesGroup02.svg"
               className={styles.lg2}
             />
-            <CDNImg
+            <img
               alt="logo"
               src="/visuals/detouredLogo.svg"
               className={styles.detouredLogo}
             />
-            <CDNImg
+            <img
               alt="logo"
               src="/visuals/detouredTextLogo.svg"
               className={styles.detouredTextLogo}
