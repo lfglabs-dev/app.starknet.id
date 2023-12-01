@@ -12,6 +12,7 @@ import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
 import theme from "../../styles/theme";
 import CopyIcon from "../UI/iconsComponents/icons/copyIcon";
 import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
+import { CDNImg } from "../cdn/image";
 
 type ExternalDomainCardProps = {
   domain: string;
@@ -41,7 +42,7 @@ const ExternalDomainCard: FunctionComponent<ExternalDomainCardProps> = ({
       <div className={styles.container}>
         <div className="flex items-center justify-center gap-5 my-2 flex-wrap lg:flex-row ">
           <div className="my-2">
-            <img
+            <CDNImg
               src={
                 domainKind === "braavos"
                   ? "/braavos/braavosLogoWithBackground.webp"

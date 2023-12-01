@@ -44,6 +44,7 @@ import {
   UINT_128_MAX,
   swissVatRate,
 } from "../../utils/constants";
+import { CDNImg } from "../cdn/image";
 
 type RegisterV2Props = {
   domain: string;
@@ -426,7 +427,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
           )}
         </div>
       </div>
-      <img className={styles.image} src="/visuals/registerV2.webp" />
+      <CDNImg className={styles.image} src="/visuals/registerV2.webp" />
       <RegisterConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}

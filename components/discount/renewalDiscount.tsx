@@ -49,6 +49,7 @@ import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
 import { useEtherContract } from "../../hooks/contracts";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
+import { CDNImg } from "../cdn/image";
 
 type RenewalDiscountProps = {
   groups: string[];
@@ -399,7 +400,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
           )}
         </div>
       </div>
-      <img className={styles.image} src="/visuals/registerV2.webp" />
+      <CDNImg className={styles.image} src="/visuals/registerV2.webp" />
       <RegisterConfirmationModal
         txHash={renewData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
