@@ -179,7 +179,7 @@ const Navbar: FunctionComponent = () => {
                           <p className="mr-3">{txLoading} on hold</p>
                           <CircularProgress
                             sx={{
-                              color: "white",
+                              color: theme.palette.secondary.main,
                             }}
                             size={25}
                           />
