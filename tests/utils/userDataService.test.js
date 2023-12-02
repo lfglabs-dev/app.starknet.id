@@ -3,13 +3,15 @@ import {
   generateSalts,
   computeMetadataHash,
 } from "../../utils/userDataService";
-import * as crypto from "crypto-browserify";
 
-jest.mock("crypto-browserify", () => ({
+// Mock the crypto module
+const mockCrypto = {
   subtle: {
     digest: jest.fn(),
   },
-}));
+};
+
+jest.mock("crypto", () => mockCrypto);
 
 describe("generateSalt function", () => {
   it("should return a string with 32 characters (16 bytes)", () => {
