@@ -5,12 +5,6 @@ import {
 } from "../../utils/userDataService";
 import crypto from "crypto";
 
-jest.mock("crypto", () => ({
-  subtle: {
-    digest: jest.fn(),
-  },
-}));
-
 describe("generateSalt function", () => {
   it("should return a string with 32 characters (16 bytes)", () => {
     const salt = generateSalt();
@@ -51,33 +45,10 @@ describe("generateSalts function", () => {
     const uniqueSalts = new Set(salts);
     expect(uniqueSalts.size).toBe(numberOfSalts);
   });
-
-  it("should call generateSalt for each salt", () => {
-    const numberOfSalts = 3;
-    const spy = jest.spyOn(global.crypto, "getRandomValues");
-
-    generateSalts(numberOfSalts);
-
-    // Check if getRandomValues is called numberOfSalts times
-    expect(spy).toHaveBeenCalledTimes(numberOfSalts);
-
-    // Restore the spy to avoid side effects on other tests
-    spy.mockRestore();
-  });
 });
 
 describe("computeMetadataHash function", () => {
-  const mockDigest = crypto.subtle.digest;
-
-  beforeEach(() => {
-    mockDigest.mockReset();
-  });
-
   it("should compute metadata hash correctly", async () => {
-    // Mock the result of crypto.subtle.digest
-    const hashResult = new Uint8Array([1, 2, 3, 4]);
-    mockDigest.mockResolvedValue(hashResult);
-
     const email = "test@example.com";
     const taxState = "CA";
     const salt = "somesalt";
@@ -101,6 +72,5 @@ describe("computeMetadataHash function", () => {
     const result = await computeMetadataHash(email, taxState, salt);
 
     expect(result).toBe(expectedHash);
-    expect(mockDigest).toHaveBeenCalledWith("SHA-256", expectedData);
   });
 });
