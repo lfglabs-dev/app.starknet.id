@@ -61,31 +61,16 @@ describe("generateSalts function", () => {
 
 describe("computeMetadataHash function", () => {
   it("should compute metadata hash correctly", async () => {
-    // Mock the result of crypto.subtle.digest
-    const hashResult = new Uint8Array([1, 2, 3, 4]);
+    const metadata = {
+      name: "Test NFT",
+      description: "Test NFT description",
+      image: "https://test.com/image.png",
+    };
 
-    const email = "test@example.com";
-    const taxState = "CA";
-    const salt = "somesalt";
+    const expectedHash =
+      "6b066616d8fe4ef7bbeade684da7aba3ae89ca68c142cf53bb90a80baced9e";
 
-    const expectedMessage = `${email}|${taxState}|${salt}`;
-    const expectedData = new TextEncoder().encode(expectedMessage);
-
-    const expectedHashBuffer = await crypto.subtle.digest(
-      "SHA-256",
-      expectedData
-    );
-    const expectedHashArray = Array.from(new Uint8Array(expectedHashBuffer));
-    const expectedHashHex = expectedHashArray
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-    const expectedHash = expectedHashHex.substring(
-      0,
-      expectedHashHex.length - 2
-    );
-
-    const result = await computeMetadataHash(email, taxState, salt);
-
-    expect(result).toBe(expectedHash);
+    const hash = await computeMetadataHash(metadata);
+    expect(hash).toBe(expectedHash);
   });
 });
