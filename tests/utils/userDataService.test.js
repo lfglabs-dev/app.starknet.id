@@ -3,9 +3,9 @@ import {
   generateSalts,
   computeMetadataHash,
 } from "../../utils/userDataService";
-import crypto from "crypto";
+import * as crypto from "crypto-browserify";
 
-jest.mock("crypto", () => ({
+jest.mock("crypto-browserify", () => ({
   subtle: {
     digest: jest.fn(),
   },
