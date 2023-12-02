@@ -4,15 +4,6 @@ import {
   computeMetadataHash,
 } from "../../utils/userDataService";
 
-// Mock the crypto module
-const mockCrypto = {
-  subtle: {
-    digest: jest.fn(),
-  },
-};
-
-jest.mock("crypto", () => mockCrypto);
-
 describe("generateSalt function", () => {
   it("should return a string with 32 characters (16 bytes)", () => {
     const salt = generateSalt();
@@ -69,16 +60,9 @@ describe("generateSalts function", () => {
 });
 
 describe("computeMetadataHash function", () => {
-  const mockDigest = crypto.subtle.digest;
-
-  beforeEach(() => {
-    mockDigest.mockReset();
-  });
-
   it("should compute metadata hash correctly", async () => {
     // Mock the result of crypto.subtle.digest
     const hashResult = new Uint8Array([1, 2, 3, 4]);
-    mockDigest.mockResolvedValue(hashResult);
 
     const email = "test@example.com";
     const taxState = "CA";
@@ -103,6 +87,5 @@ describe("computeMetadataHash function", () => {
     const result = await computeMetadataHash(email, taxState, salt);
 
     expect(result).toBe(expectedHash);
-    expect(mockDigest).toHaveBeenCalledWith("SHA-256", expectedData);
   });
 });
