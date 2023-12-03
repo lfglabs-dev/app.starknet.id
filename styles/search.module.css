@@ -127,6 +127,22 @@
   margin: 3rem 0;
 }
 
+.suggestedDomainsSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 24px 0;
+  align-self: stretch;
+  border-radius: 20px;
+
+  /* Small Shadow */
+  box-shadow: var(--small-shadow);
+
+  margin: 3rem 0;
+
+  width: 100%;
+}
+
 .suggestedDomainContainer {
   position: relative;
   width: 100%;
@@ -135,9 +151,13 @@
   cursor: pointer;
 }
 
-.suggestedDomainContainer:has(+ .suggestedDomainContainer)::after {
+.suggestedDomainLink {
+  width: 100%;
+  position: relative;
+}
+
+.suggestedDomainLink:has(+ .suggestedDomainLink)::after {
   content: "";
-  display: block;
   position: absolute;
   left: 0;
   bottom: -16px;
