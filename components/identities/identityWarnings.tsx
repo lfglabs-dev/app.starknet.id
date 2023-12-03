@@ -13,7 +13,7 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
   identity,
   isIdentityADomain,
 }) => {
-  const [hideExpiredNotification, setHideExpiredNotification] = useState(false);
+  const [closeNotification, setCloseNotification] = useState(false);
   const { address } = useAccount();
   const currentTimeStamp = new Date().getTime() / 1000;
   const isExpired =
@@ -27,9 +27,9 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
   return isIdentityADomain ? (
     <>
       <Notification
-        visible={isExpired && Boolean(address) && !hideExpiredNotification}
+        visible={isExpired && Boolean(address) && !closeNotification}
         severity="error"
-        onClose={() => setHideExpiredNotification(true)}
+        onClose={() => setCloseNotification(true)}
       >
         This domain has expired. You can renew it by clicking RENEW YOUR DOMAIN.
       </Notification>
