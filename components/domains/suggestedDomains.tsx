@@ -73,6 +73,20 @@ const generateSuggestedDomains = async (domain: string, contract: Contract) => {
     const j = Math.floor(Math.random() * (i + 1));
     [domains[i], domains[j]] = [domains[j], domains[i]];
   }
+  // Put a domain with the same number + 1 of letters as the original domain at the top if it exists
+  // Then same number of letters
+  // Then same number of letters - 1
+  // Then same number of letters - 2
+  // ... 5
+  const domainLength = domainParts[0].length;
+  for (let i = domainLength + 1; i > domainLength - 5; i--) {
+    const index = domains.findIndex(
+      (suggestedDomain) => suggestedDomain.length === i + 5
+    );
+    if (index !== -1) {
+      domains.unshift(domains.splice(index, 1)[0]);
+    }
+  }
 
   const currentTimeStamp = new Date().getTime() / 1000;
   const availableDomains = [];
@@ -134,6 +148,7 @@ const generateSuggestedNames: (name: string) => string[] = (name) => {
   // Add consonants
   if (isVowel)
     interestingConsonants.forEach((consonant) => {
+      suggestedNames.push(name + consonant);
       vowels.forEach((vowel) => {
         suggestedNames.push(name + consonant + vowel);
       });
