@@ -5,6 +5,9 @@ import {
 } from "../../utils/userDataService";
 import crypto from "crypto";
 
+// Mock the crypto module
+global.crypto = crypto;
+
 describe("generateSalt function", () => {
   it("should return a string with 32 characters (16 bytes)", () => {
     const salt = generateSalt();
