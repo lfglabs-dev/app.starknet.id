@@ -111,22 +111,6 @@
   margin: 1rem auto;
 }
 
-.suggestionTable {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 32px;
-  padding: 24px 0;
-  align-self: stretch;
-  border-radius: 20px;
-  background: var(--background-light);
-
-  /* Small Shadow */
-  box-shadow: var(--small-shadow);
-
-  margin: 3rem 0;
-}
-
 .suggestedDomainsSkeleton {
   display: flex;
   flex-direction: column;
@@ -143,12 +127,38 @@
   width: 100%;
 }
 
+.suggestionTable {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: stretch;
+  border-radius: 20px;
+  background: var(--background-light);
+
+  /* Small Shadow */
+  box-shadow: var(--small-shadow);
+
+  margin: 3rem 0;
+}
+
 .suggestedDomainContainer {
   position: relative;
   width: 100%;
   display: flex;
-  padding: 0 48px;
+  padding: 16px 48px;
   cursor: pointer;
+}
+
+.suggestionTable .suggestedDomainLink:first-child .suggestedDomainContainer {
+  padding-top: 24px;
+}
+
+.suggestionTable .suggestedDomainLink:last-child .suggestedDomainContainer {
+  padding-bottom: 24px;
+}
+
+.suggestedDomainContainer:hover {
+  background-color: var(--background-light300);
 }
 
 .suggestedDomainLink {
@@ -160,7 +170,7 @@
   content: "";
   position: absolute;
   left: 0;
-  bottom: -16px;
+  bottom: 0;
   width: 100%;
   height: 1px;
   background: #f5f0eb;

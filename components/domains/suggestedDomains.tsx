@@ -58,7 +58,7 @@ const SuggestedDomains: FunctionComponent<SuggestedDomainsProps> = ({
             >
               <div className={styles.suggestedDomainContainer}>
                 <p className="mr-auto">{suggestedDomain}</p>
-                <SearchBadge error={false} message={"available"} />
+                <SearchBadge error={false} message={"Available"} />
               </div>
             </Link>
           ))}
