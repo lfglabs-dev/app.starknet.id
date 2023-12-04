@@ -68,30 +68,54 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   const router = useRouter();
   const duration = 1;
   const needsAllowance = useAllowanceCheck(address);
+  const [metadataHash, setMetadataHash] = useState<string | undefined>();
+  const [needMedadata, setNeedMetadata] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (!address) return;
+    fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_LINK}/renewal/get_metahash?addr=${address}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.meta_hash && parseInt(data.meta_hash) !== 0) {
+          setNeedMetadata(false);
+          setMetadataHash(data.meta_hash);
+          if (data.tax_rate) setSalesTaxRate(data.tax_rate);
+          else setSalesTaxRate(0);
+        } else setNeedMetadata(true);
+      })
+      .catch((err) => {
+        console.log("Error while fetching metadata:", err);
+        setNeedMetadata(true);
+      });
+  }, [address]);
 
   useEffect(() => {
     if (!autorenewData?.transaction_hash || !salts || !metadataHashes) return;
     posthog?.capture("enable-ar");
 
     // register the metadata to the sales manager db
-    Promise.all(
-      salts.map((salt, index) =>
-        fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            meta_hash: metadataHashes[index],
-            email,
-            tax_state: isSwissResident ? "switzerland" : "none",
-            salt: salt,
-          }),
-        })
+    if (needMedadata) {
+      Promise.all(
+        salts.map((salt, index) =>
+          fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              meta_hash: metadataHashes[index],
+              email,
+              tax_state: isSwissResident ? "switzerland" : "none",
+              salt: salt,
+            }),
+          })
+        )
       )
-    )
-      .then((responses) => Promise.all(responses.map((res) => res.json())))
-      .catch((error) => {
-        console.log("Error on sending metadata:", error);
-      });
+        .then((responses) => Promise.all(responses.map((res) => res.json())))
+        .catch((error) => {
+          console.log("Error on sending metadata:", error);
+        });
+    }
 
     // Subscribe to auto renewal mailing list if renewal box is checked
     fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
@@ -128,7 +152,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
 
   useEffect(() => {
     // salt must not be empty to preserve privacy
-    if (!salts) return;
+    if (!salts || !needMedadata) return;
 
     const computeHashes = async () => {
       const metaDataHashes = await Promise.all(
@@ -157,14 +181,18 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   }, [selectedDomains, duration]);
 
   useEffect(() => {
-    if (isSwissResident) {
-      setSalesTaxRate(swissVatRate);
-      setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
+    if (!needMedadata && price) {
+      setSalesTaxAmount(applyRateToBigInt(price, salesTaxRate));
     } else {
-      setSalesTaxRate(0);
-      setSalesTaxAmount("");
+      if (isSwissResident) {
+        setSalesTaxRate(swissVatRate);
+        setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
+      } else {
+        setSalesTaxRate(0);
+        setSalesTaxAmount("");
+      }
     }
-  }, [isSwissResident, price]);
+  }, [isSwissResident, price, needMedadata, salesTaxRate]);
 
   useEffect(() => {
     if (selectedDomains && metadataHashes) {
@@ -221,20 +249,26 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
             </p>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            <TextField
-              helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
-              label="Email address"
-              value={email}
-              onChange={(e) => changeEmail(e.target.value)}
-              color="secondary"
-              error={emailError}
-              errorMessage="Please enter a valid email address"
-              type="email"
-            />
-            <SwissForm
-              isSwissResident={isSwissResident}
-              onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
-            />
+            {needMedadata ? (
+              <TextField
+                helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
+                label="Email address"
+                value={email}
+                onChange={(e) => changeEmail(e.target.value)}
+                color="secondary"
+                error={emailError}
+                errorMessage="Please enter a valid email address"
+                type="email"
+              />
+            ) : null}
+            {needMedadata ? (
+              <SwissForm
+                isSwissResident={isSwissResident}
+                onSwissResidentChange={() =>
+                  setIsSwissResident(!isSwissResident)
+                }
+              />
+            ) : null}
             <AutoRenewalDomainsBox
               helperText="Check the box of the domains you want to renew"
               setSelectedDomains={setSelectedDomains}
