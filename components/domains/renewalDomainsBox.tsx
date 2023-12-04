@@ -48,7 +48,7 @@ const RenewalDomainsBox: FunctionComponent<RenewalDomainsBoxProps> = ({
     } else {
       setIsLoading(false);
     }
-  }, [address]);
+  }, [address, setSelectedDomains]);
 
   const handleCheckboxChange = (domain: string) => {
     setSelectedDomains((prevState) => ({

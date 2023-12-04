@@ -1,3 +1,5 @@
+import crypto from "crypto";
+
 export function generateSalt(): string {
   const array = new Uint8Array(16); // 16 bytes = 128 bits
   crypto.getRandomValues(array);
@@ -6,6 +8,10 @@ export function generateSalt(): string {
     .map((b: number) => b.toString(16).padStart(2, "0"))
     .join("");
   return saltHex;
+}
+
+export function generateSalts(numberOfSalts: number): string[] {
+  return Array.from({ length: numberOfSalts }, generateSalt);
 }
 
 export async function computeMetadataHash(

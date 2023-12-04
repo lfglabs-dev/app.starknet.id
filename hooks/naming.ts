@@ -68,13 +68,13 @@ export function useIsValid(domain: string | undefined): boolean | string {
 }
 
 type TokenIdData = {
-  tokenId?: number;
+  tokenId?: string;
   error?: string;
 };
 
 export function useTokenIdFromDomain(domain: string): TokenIdData {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
-  const [tokenId, setTokenId] = useState<number | undefined>();
+  const [tokenId, setTokenId] = useState<string | undefined>();
   const [error, setError] = useState<string | undefined>();
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export function useTokenIdFromDomain(domain: string): TokenIdData {
         .catch((err) => {
           setError(err);
         });
-      setTokenId(token as number);
+      setTokenId(token as string);
     };
     fetchAddress();
   }, [starknetIdNavigator, domain]);

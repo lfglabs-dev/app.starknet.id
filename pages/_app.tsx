@@ -31,6 +31,7 @@ if (typeof window !== "undefined") {
     session_recording: {
       recordCrossOriginIframes: true,
     },
+    capture_pageleave: false,
   });
   (window as any).posthog = posthog;
 }
@@ -39,11 +40,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   const chains = [
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? goerli : mainnet,
   ];
-  const providers = [
-    alchemyProvider({
-      apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string,
-    }),
-  ];
+  const providers = alchemyProvider({
+    apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string,
+  });
   const connectors = useMemo(
     () => [
       braavos(),
@@ -61,7 +60,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   const { chains: EthChains, publicClient } = configureChains(
     [mainnetEth],
     [
-      alchemyProviderEth({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY }),
+      alchemyProviderEth({
+        apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string,
+      }),
       publicProvider(),
     ]
   );
@@ -81,7 +82,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <RainbowKitProvider chains={EthChains} coolMode>
           <StarknetConfig
             chains={chains}
-            providers={providers}
+            provider={providers}
             connectors={connectors as any}
             autoConnect
           >
@@ -105,6 +106,30 @@ function MyApp({ Component, pageProps }: AppProps) {
           </StarknetConfig>
         </RainbowKitProvider>
       </WagmiConfig>
+      <StarknetConfig
+        chains={chains}
+        provider={providers}
+        connectors={connectors as any}
+        autoConnect
+      >
+        <StarknetIdJsProvider>
+          <ThemeProvider theme={theme}>
+            <Head>
+              <title>Starknet.id</title>
+              <meta
+                name="viewport"
+                content="width=device-width, initial-scale=1"
+              />
+            </Head>
+            <Navbar />
+            <AcceptCookies message="We'd love to count you on our traffic stats to ensure you get the best experience on our website !" />
+            <PostHogProvider client={posthog}>
+              <Component {...pageProps} />
+            </PostHogProvider>
+          </ThemeProvider>
+          <Analytics />
+        </StarknetIdJsProvider>
+      </StarknetConfig>
     </>
   );
 }

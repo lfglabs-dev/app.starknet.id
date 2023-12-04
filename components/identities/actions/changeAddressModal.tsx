@@ -54,7 +54,8 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
       },
     });
     setIsTxSent(true);
-  }, [domainToAddressData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [domainToAddressData]); // We want to execute this only once when the tx is sent
 
   function setDomainToAddress(): void {
     set_domain_to_address();

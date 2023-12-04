@@ -1,7 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { usePricingContract } from "../../hooks/contracts";
+import { useEtherContract, usePricingContract } from "../../hooks/contracts";
 import {
   useAccount,
   useBalance,
@@ -16,9 +16,9 @@ import {
   isValidEmail,
 } from "../../utils/stringService";
 import {
+  applyRateToBigInt,
   gweiToEth,
   hexToDecimal,
-  applyRateToBigInt,
 } from "../../utils/feltService";
 import SelectIdentity from "./selectIdentity";
 import { useDisplayName } from "../../hooks/displayName.tsx";
@@ -26,18 +26,24 @@ import { Abi, Call } from "starknet";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
-import UsForm from "./usForm";
+import SwissForm from "./swissForm";
 import { Divider } from "@mui/material";
 import NumberTextField from "../UI/numberTextField";
 import RegisterSummary from "./registerSummary";
-import salesTax from "sales-tax";
 import Wallets from "../UI/wallets";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import { getPriceFromDomain } from "../../utils/priceService";
+import RegisterCheckboxes from "./registerCheckboxes";
+import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
-import { NotificationType, TransactionType } from "../../utils/constants";
+import {
+  NotificationType,
+  TransactionType,
+  UINT_128_MAX,
+  swissVatRate,
+} from "../../utils/constants";
 
 type RegisterV2Props = {
   domain: string;
@@ -49,8 +55,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
-  const [isUsResident, setIsUsResident] = useState<boolean>(false);
-  const [usState, setUsState] = useState<string>("DE");
+  const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [duration, setDuration] = useState<number>(1);
@@ -60,11 +65,13 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
+  const { contract: etherContract } = useEtherContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
-  // const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  const [termsBox, setTermsBox] = useState<boolean>(true);
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [sponsor, setSponsor] = useState<string>("0");
   const [salt, setSalt] = useState<string | undefined>();
@@ -83,9 +90,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     watch: true,
   });
   const { writeAsync: execute, data: registerData } = useContractWrite({
-    // calls: renewalBox
-    //   ? callData.concat(registrationCalls.renewal(encodedDomain, price))
-    //   : callData,
     calls: callData,
   });
   const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");
@@ -93,11 +97,21 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     new Map()
   );
   const { addTransaction } = useNotificationManager();
+  const { data: erc20AllowanceData, error: erc20AllowanceError } =
+    useContractRead({
+      address: etherContract?.address as string,
+      abi: etherContract?.abi as Abi,
+      functionName: "allowance",
+      args: [
+        address as string,
+        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+      ],
+    });
 
   // on first load, we generate a salt
   useEffect(() => {
     setSalt(generateSalt());
-  }, []);
+  }, [domain]); // we only need to generate a salt once per domain
 
   // we update compute the purchase metadata hash
   useEffect(() => {
@@ -108,12 +122,12 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         await computeMetadataHash(
           email,
           //groups, // default group for domain Owner
-          isUsResident ? usState : "none",
+          isSwissResident ? "switzerland" : "none",
           salt
         )
       );
     })();
-  }, [email, usState, salt]);
+  }, [email, salt, renewalBox, isSwissResident]);
 
   useEffect(() => {
     // if price query does not work we use the off-chain hardcoded price
@@ -123,7 +137,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       const high = priceData?.["price"].high << BigInt(128);
       setPrice((priceData?.["price"].low + high).toString(10));
     }
-  }, [priceData, priceError]);
+  }, [priceData, priceError, duration, domain]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("");
@@ -196,6 +210,28 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       calls.push(registrationCalls.addressToDomain(encodedDomain));
     }
 
+    // If the user has toggled autorenewal
+    if (renewalBox) {
+      if (
+        erc20AllowanceError ||
+        (erc20AllowanceData &&
+          erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
+          erc20AllowanceData["remaining"].high !== UINT_128_MAX)
+      ) {
+        calls.push(autoRenewalCalls.approve());
+      }
+      const limitPrice = salesTaxAmount
+        ? (BigInt(salesTaxAmount) + BigInt(price)).toString()
+        : price;
+      calls.push(
+        autoRenewalCalls.enableRenewal(
+          encodedDomain,
+          limitPrice,
+          txMetadataHash
+        )
+      );
+    }
+
     // Merge and set the call data
     setCallData(calls);
   }, [
@@ -203,16 +239,23 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     duration,
     targetAddress,
     price,
-    domain,
+    encodedDomain,
     hasMainDomain,
     address,
     sponsor,
     metadataHash,
     salesTaxRate,
+    renewalBox,
+    salesTaxAmount,
+    erc20AllowanceData,
+    erc20AllowanceError,
   ]);
 
   useEffect(() => {
     if (!registerData?.transaction_hash || !salt) return;
+
+    // track the registration event(s) for analytics
+    if (renewalBox) posthog?.capture("enable-ar-register");
     posthog?.capture("register");
 
     // register the metadata to the sales manager db
@@ -222,7 +265,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-        tax_state: isUsResident ? usState : "none",
+        tax_state: isSwissResident ? "switzerland" : "none",
         salt: salt,
       }),
     })
@@ -234,7 +277,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         tx_hash: formatHexString(registerData.transaction_hash),
-        groups,
+        groups: renewalBox ? groups : [groups[0]],
       }),
     })
       .then((res) => res.json())
@@ -251,7 +294,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       },
     });
     setIsTxModalOpen(true);
-  }, [registerData, salt, email, usState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registerData]); // We only need registerData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
   function changeAddress(value: string): void {
     isHexString(value) ? setTargetAddress(value) : null;
@@ -272,16 +316,14 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   }
 
   useEffect(() => {
-    if (isUsResident) {
-      salesTax.getSalesTax("US", usState).then((tax) => {
-        setSalesTaxRate(tax.rate);
-        if (price) setSalesTaxAmount(applyRateToBigInt(price, tax.rate));
-      });
+    if (isSwissResident) {
+      setSalesTaxRate(swissVatRate);
+      setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
     } else {
       setSalesTaxRate(0);
       setSalesTaxAmount("");
     }
-  }, [isUsResident, usState, price]);
+  }, [isSwissResident, price]);
 
   return (
     <div className={styles.container}>
@@ -303,11 +345,9 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
               type="email"
             />
 
-            <UsForm
-              isUsResident={isUsResident}
-              onUsResidentChange={() => setIsUsResident(!isUsResident)}
-              usState={usState}
-              changeUsState={(value) => setUsState(value)}
+            <SwissForm
+              isSwissResident={isSwissResident}
+              onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
             />
             <TextField
               helperText="The Starknet address the domain will resolve to."
@@ -340,17 +380,17 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
           <RegisterSummary
             ethRegistrationPrice={price}
             duration={duration}
-            renewalBox={false}
+            renewalBox={renewalBox}
             salesTaxRate={salesTaxRate}
-            isUsResident={isUsResident}
+            isSwissResident={isSwissResident}
           />
           <Divider className="w-full" />
-          {/* <RegisterCheckboxes
-            // onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+          <RegisterCheckboxes
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
-            // renewalBox={renewalBox}
-          /> */}
+            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+            renewalBox={renewalBox}
+          />
           {address ? (
             <Button
               onClick={() =>
@@ -367,12 +407,12 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
                 duration < 1 ||
                 !targetAddress ||
                 invalidBalance ||
-                (isUsResident && !usState) ||
+                !termsBox ||
                 emailError
               }
             >
-              {isUsResident && !usState
-                ? "We need your US State"
+              {!termsBox
+                ? "Please accept terms & policies"
                 : invalidBalance
                 ? "You don't have enough eth"
                 : emailError

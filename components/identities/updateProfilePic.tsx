@@ -1,14 +1,15 @@
-import React, { FunctionComponent, useEffect, useMemo, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import NftCard from "../UI/nftCard";
 import ModalProfilePic from "../UI/modalProfilePic";
-import {
-  filterAssets,
-  getWhitelistedPfpContracts,
-  retrieveAssets,
-} from "../../utils/nftService";
+import { filterAssets, retrieveAssets } from "../../utils/nftService";
 import BackButton from "../UI/backButton";
 import PfpSkeleton from "./skeletons/pfpSkeleton";
+import SelectedCollections from "./selectedCollections";
+import { debounce } from "../../utils/debounceService";
+import { useContractRead } from "@starknet-react/core";
+import { useNftPpVerifierContract } from "../../hooks/contracts";
+import { Abi } from "starknet";
 
 type UpdateProfilePicProps = {
   identity?: Identity;
@@ -27,25 +28,30 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
 }) => {
   const [userNft, setUserNft] = useState<StarkscanNftProps[]>([]);
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [isHovered, setIsHovered] = useState<string | null>(null);
   const [selectedPic, setSelectedPic] = useState<StarkscanNftProps | null>(
     null
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const whitelistedContracts: string[] = useMemo(() => {
-    return getWhitelistedPfpContracts();
-  }, []);
+  const { contract } = useNftPpVerifierContract();
+  const { data: whitelistData, error: whitelistError } = useContractRead({
+    address: contract?.address as string,
+    abi: contract?.abi as Abi,
+    functionName: "get_whitelisted_contracts",
+    args: [],
+  });
 
   useEffect(() => {
-    if (!identity?.addr) return;
+    if (!identity?.owner_addr || !whitelistData) return;
     retrieveAssets(
       `${process.env.NEXT_PUBLIC_SERVER_LINK}/starkscan/fetch_nfts`,
-      identity.addr
+      identity.owner_addr
     ).then((data) => {
-      const filteredAssets = filterAssets(data.data, whitelistedContracts);
+      const filteredAssets = filterAssets(data.data, whitelistData as bigint[]);
       setUserNft(filteredAssets);
       setIsLoading(false);
     });
-  }, [tokenId, identity]);
+  }, [tokenId, identity, whitelistData]);
 
   const selectPicture = (nft: StarkscanNftProps) => {
     setOpenModal(true);
@@ -60,6 +66,9 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     }
   };
 
+  const handleMouseEnter = debounce((id: string) => setIsHovered(id), 50);
+  const handleMouseLeave = debounce(() => setIsHovered(null), 50);
+
   return (
     <>
       <div className={styles.container}>
@@ -68,7 +77,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
         </div>
         <div className={styles.gallery}>
           <p className={styles.subtitle}>Your NFTs</p>
-          <h2 className={styles.title}>Choose your nft identity</h2>
+          <h2 className={styles.title}>Choose your NFT Profile picture</h2>
           <div className={styles.nftSection}>
             {isLoading ? (
               <PfpSkeleton />
@@ -76,32 +85,34 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
               userNft.map((nft, index) => {
                 if (!nft.image_url) return null;
                 return (
-                  <NftCard
+                  <div
                     key={index}
-                    image={nft.image_url as string}
-                    name={nft.name as string}
-                    selectPicture={() => selectPicture(nft)}
-                  />
+                    onMouseEnter={() => handleMouseEnter(nft.token_id)}
+                    onMouseLeave={handleMouseLeave}
+                  >
+                    <NftCard
+                      image={nft.image_url as string}
+                      name={nft.name as string}
+                      selectPicture={() => selectPicture(nft)}
+                      isHovered={isHovered === nft.token_id}
+                    />
+                  </div>
                 );
               })
             ) : (
-              <p>You don&apos;t own any whitelisted NFTs yet. </p>
+              <p className={styles.message}>
+                You don&apos;t own any whitelisted NFTs yet.{" "}
+              </p>
             )}
-            {/* {userNft && userNft.length > 0 ? (
-              userNft.map((nft, index) => {
-                if (!nft.image_url) return null;
-                return (
-                  <NftCard
-                    key={index}
-                    image={nft.image_url as string}
-                    name={nft.name as string}
-                    selectPicture={() => selectPicture(nft)}
-                  />
-                );
-              })
-            ) : (
-              <p>You don&apos;t own any whitelisted NFTs yet. </p>
-            )} */}
+          </div>
+          <div>
+            {userNft && userNft.length > 0 ? (
+              <div className={styles.selectedCollections}>
+                <p className={styles.subtitle}>Get a new Profile Pic</p>
+                <h2 className={styles.title}>Our NFT Collections selection</h2>
+              </div>
+            ) : null}
+            <SelectedCollections />
           </div>
         </div>
       </div>

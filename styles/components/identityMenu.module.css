@@ -84,7 +84,7 @@
 }
 
 .clickableActionDescription {
-  font-size: 12px;
+  font-size: 11px;
   text-align: left;
 }
 
@@ -108,12 +108,30 @@
   align-items: center;
   justify-content: center;
   border-radius: 25%;
-  width: 45px;
-  height: 45px;
+  width: 35px;
+  height: 35px;
 }
 
 .clickableIconSecondary {
   background-color: var(--secondary300);
+}
+
+.renewalIcon {
+  font-family: "QuickZap";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  color: var(--primary);
+}
+
+.renewalIconOff {
+  font-family: "QuickZap";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  color: var(--secondary);
 }
 
 @media (max-width: 1024px) {

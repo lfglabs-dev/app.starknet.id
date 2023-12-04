@@ -60,13 +60,24 @@ const ClickablePersonhoodIcon: FunctionComponent<
         status: "pending",
       },
     });
-  }, [verifierData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [verifierData]); // We want to execute this only once when the tx is sent
 
   useEffect(() => {
+    const executeVerification = () => {
+      execute().finally(() => {
+        setCallData(undefined);
+        setIsLoading(false);
+        setIsOpen(false);
+        setSessionId(undefined);
+        posthog?.capture("popVerificationTx");
+      });
+    };
+
     if (callData && !isVerified && isLoading) {
       executeVerification();
     }
-  }, [isLoading, callData]);
+  }, [isLoading, callData, isVerified, execute]);
 
   const startVerification = () => {
     if (!isVerified) {
@@ -80,7 +91,6 @@ const ClickablePersonhoodIcon: FunctionComponent<
     fetch(`/api/anima/init_session?address=${address}`)
       .then((response) => response.json())
       .then((result) => {
-        console.log("result", result);
         if (result && result.session_id) setSessionId(result.session_id);
       })
       .catch((error) =>
@@ -103,17 +113,9 @@ const ClickablePersonhoodIcon: FunctionComponent<
   const onFinish = useCallback(() => {
     setIsLoading(true);
     getSignature();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
 
-  const executeVerification = () => {
-    execute().finally(() => {
-      setCallData(undefined);
-      setIsLoading(false);
-      setIsOpen(false);
-      setSessionId(undefined);
-      posthog?.capture("popVerificationTx");
-    });
-  };
   const getSignature = () => {
     fetch(`/api/anima/get_signature?sessionId=${sessionId}`)
       .then((response) => response.json())
