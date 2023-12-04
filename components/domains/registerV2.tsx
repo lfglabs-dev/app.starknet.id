@@ -1,7 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useEtherContract, usePricingContract } from "../../hooks/contracts";
+import { usePricingContract } from "../../hooks/contracts";
 import {
   useAccount,
   useBalance,
@@ -41,9 +41,9 @@ import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
   NotificationType,
   TransactionType,
-  UINT_128_MAX,
   swissVatRate,
 } from "../../utils/constants";
+import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 
 type RegisterV2Props = {
   domain: string;
@@ -65,7 +65,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
-  const { contract: etherContract } = useEtherContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
@@ -97,16 +96,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     new Map()
   );
   const { addTransaction } = useNotificationManager();
-  const { data: erc20AllowanceData, error: erc20AllowanceError } =
-    useContractRead({
-      address: etherContract?.address as string,
-      abi: etherContract?.abi as Abi,
-      functionName: "allowance",
-      args: [
-        address as string,
-        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      ],
-    });
+  const needsAllowance = useAllowanceCheck(address);
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -212,12 +202,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // If the user has toggled autorenewal
     if (renewalBox) {
-      if (
-        erc20AllowanceError ||
-        (erc20AllowanceData &&
-          erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
-          erc20AllowanceData["remaining"].high !== UINT_128_MAX)
-      ) {
+      if (needsAllowance) {
         calls.push(autoRenewalCalls.approve());
       }
       const limitPrice = salesTaxAmount
@@ -247,8 +232,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     salesTaxRate,
     renewalBox,
     salesTaxAmount,
-    erc20AllowanceData,
-    erc20AllowanceError,
+    needsAllowance,
   ]);
 
   useEffect(() => {

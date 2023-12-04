@@ -1,18 +1,14 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import {
-  useAccount,
-  useContractRead,
-  useContractWrite,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import {
   formatHexString,
   isValidEmail,
   selectedDomainsToArray,
 } from "../../utils/stringService";
 import { applyRateToBigInt } from "../../utils/feltService";
-import { Abi, Call } from "starknet";
+import { Call } from "starknet";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
@@ -35,13 +31,12 @@ import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
   NotificationType,
   TransactionType,
-  UINT_128_MAX,
   swissVatRate,
 } from "../../utils/constants";
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
-import { useEtherContract } from "../../hooks/contracts";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
+import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 
 type SubscriptionProps = {
   groups: string[];
@@ -72,17 +67,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
   const duration = 1;
-  const { contract: etherContract } = useEtherContract();
-  const { data: erc20AllowanceData, error: erc20AllowanceError } =
-    useContractRead({
-      address: etherContract?.address as string,
-      abi: etherContract?.abi as Abi,
-      functionName: "allowance",
-      args: [
-        address as string,
-        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      ],
-    });
+  const needsAllowance = useAllowanceCheck(address);
 
   useEffect(() => {
     if (!autorenewData?.transaction_hash || !salts || !metadataHashes) return;
@@ -171,11 +156,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     );
   }, [selectedDomains, duration]);
 
-  function changeEmail(value: string): void {
-    setEmail(value);
-    setEmailError(isValidEmail(value) ? false : true);
-  }
-
   useEffect(() => {
     if (isSwissResident) {
       setSalesTaxRate(swissVatRate);
@@ -190,12 +170,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     if (selectedDomains && metadataHashes) {
       const calls = [];
 
-      if (
-        erc20AllowanceError ||
-        (erc20AllowanceData &&
-          erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
-          erc20AllowanceData["remaining"].high !== UINT_128_MAX)
-      ) {
+      if (needsAllowance) {
         calls.push(autoRenewalCalls.approve());
       }
 
@@ -223,11 +198,15 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     selectedDomains,
     price,
     salesTaxAmount,
-    erc20AllowanceData,
+    needsAllowance,
     metadataHashes,
     salesTaxRate,
-    erc20AllowanceError,
   ]);
+
+  function changeEmail(value: string): void {
+    setEmail(value);
+    setEmailError(isValidEmail(value) ? false : true);
+  }
 
   return (
     <div className={styles.container}>
@@ -237,8 +216,8 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
           <div className="flex flex-col items-start gap-0 self-stretch">
             <h3 className={styles.domain}>Enable subscription</h3>
             <p className="py-2 text-left">
-              Enable automatic domain renewal to ensure uninterrupted ownership
-              and benefits. Never worry about expiration dates again.
+              Enable subscription to ensure uninterrupted ownership and
+              benefits. Never worry about expiration dates again.
             </p>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
