@@ -34,7 +34,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
                 : styles.defaultCheckbox
             }
           />
-          <p className="ml-2">
+          <p className="ml-2 text-left">
             Accept{" "}
             <a
               className="underline"
@@ -63,7 +63,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
             onClick={onChangeRenewalBox}
           >
             <Checkbox checked={renewalBox} sx={{ padding: 0 }} />
-            <p className="ml-1">
+            <p className="ml-2 text-left">
               Enable subscription and don&apos;t pay gas for your yearly renewal
             </p>
           </div>
