@@ -19,11 +19,32 @@ import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
 import { goerli, mainnet } from "@starknet-react/chains";
-import { getDefaultWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { mainnet as mainnetEth } from "wagmi/chains";
-import { alchemyProvider as alchemyProviderEth } from "wagmi/providers/alchemy";
-import { publicProvider } from "wagmi/providers/public";
+// Solana
+import { clusterApiUrl } from "@solana/web3.js";
+import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
+import {
+  LedgerWalletAdapter,
+  PhantomWalletAdapter,
+  CloverWalletAdapter,
+  SolflareWalletAdapter,
+  SolongWalletAdapter,
+  TorusWalletAdapter,
+  SalmonWalletAdapter,
+  MathWalletAdapter,
+  Coin98WalletAdapter,
+  HuobiWalletAdapter,
+  CoinbaseWalletAdapter,
+  BitKeepWalletAdapter,
+  NekoWalletAdapter,
+  TrustWalletAdapter,
+  NightlyWalletAdapter,
+} from "@solana/wallet-adapter-wallets";
+import {
+  ConnectionProvider,
+  WalletProvider,
+} from "@solana/wallet-adapter-react";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+require("@solana/wallet-adapter-react-ui/styles.css");
 
 if (typeof window !== "undefined") {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
@@ -57,79 +78,62 @@ function MyApp({ Component, pageProps }: AppProps) {
     []
   );
 
-  const { chains: EthChains, publicClient } = configureChains(
-    [mainnetEth],
-    [
-      alchemyProviderEth({
-        apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string,
-      }),
-      publicProvider(),
-    ]
+  const solNetwork = WalletAdapterNetwork.Testnet;
+  const endpoint = useMemo(() => clusterApiUrl(solNetwork), [solNetwork]);
+  // initialise all the wallets you want to use
+  const wallets = useMemo(
+    () => [
+      new PhantomWalletAdapter(),
+      new CloverWalletAdapter(),
+      new SolongWalletAdapter(),
+      new SolflareWalletAdapter(),
+      new TorusWalletAdapter(),
+      new LedgerWalletAdapter(),
+      new SalmonWalletAdapter(),
+      new MathWalletAdapter(),
+      new Coin98WalletAdapter(),
+      new HuobiWalletAdapter(),
+      new CoinbaseWalletAdapter(),
+      new BitKeepWalletAdapter(),
+      new NekoWalletAdapter(),
+      new TrustWalletAdapter(),
+      new NightlyWalletAdapter(),
+    ],
+    [solNetwork]
   );
-  const { connectors: connectorsEth } = getDefaultWallets({
-    appName: "My RainbowKit App",
-    projectId: "a570f8b4f3efe77edb1bf47f2be11495",
-    chains: EthChains,
-  });
-  const wagmiConfig = createConfig({
-    autoConnect: true,
-    connectors: connectorsEth,
-    publicClient,
-  });
+
   return (
     <>
-      <WagmiConfig config={wagmiConfig}>
-        <RainbowKitProvider chains={EthChains} coolMode>
-          <StarknetConfig
-            chains={chains}
-            provider={providers}
-            connectors={connectors as any}
-            autoConnect
-          >
-            <StarknetIdJsProvider>
-              <ThemeProvider theme={theme}>
-                <Head>
-                  <title>Starknet.id</title>
-                  <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1"
-                  />
-                </Head>
-                <Navbar />
-                <AcceptCookies message="We'd love to count you on our traffic stats to ensure you get the best experience on our website !" />
-                <PostHogProvider client={posthog}>
-                  <Component {...pageProps} />
-                </PostHogProvider>
-              </ThemeProvider>
-              <Analytics />
-            </StarknetIdJsProvider>
-          </StarknetConfig>
-        </RainbowKitProvider>
-      </WagmiConfig>
-      <StarknetConfig
-        chains={chains}
-        provider={providers}
-        connectors={connectors as any}
-        autoConnect
-      >
-        <StarknetIdJsProvider>
-          <ThemeProvider theme={theme}>
-            <Head>
-              <title>Starknet.id</title>
-              <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1"
-              />
-            </Head>
-            <Navbar />
-            <AcceptCookies message="We'd love to count you on our traffic stats to ensure you get the best experience on our website !" />
-            <PostHogProvider client={posthog}>
-              <Component {...pageProps} />
-            </PostHogProvider>
-          </ThemeProvider>
-          <Analytics />
-        </StarknetIdJsProvider>
-      </StarknetConfig>
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={wallets}>
+          <WalletModalProvider>
+            <StarknetConfig
+              chains={chains}
+              provider={providers}
+              connectors={connectors as any}
+              autoConnect
+            >
+              <StarknetIdJsProvider>
+                <ThemeProvider theme={theme}>
+                  <Head>
+                    <title>Starknet.id</title>
+                    <meta
+                      name="viewport"
+                      content="width=device-width, initial-scale=1"
+                    />
+                  </Head>
+                  <Navbar />
+                  <AcceptCookies message="We'd love to count you on our traffic stats to ensure you get the best experience on our website !" />
+                  <PostHogProvider client={posthog}>
+                    <Component {...pageProps} />
+                  </PostHogProvider>
+                </ThemeProvider>
+                <Analytics />
+              </StarknetIdJsProvider>
+            </StarknetConfig>
+          </WalletModalProvider>
+        </WalletProvider>
+      </ConnectionProvider>
     </>
   );
 }
