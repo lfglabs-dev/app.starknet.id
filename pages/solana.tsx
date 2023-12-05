@@ -18,10 +18,12 @@ import { useWallet } from "@solana/wallet-adapter-react";
 const Solana: NextPage = () => {
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const { address: starknetAddress } = useAccount();
-  const { publicKey: solPublicKey } = useWallet();
+  const { publicKey: solPublicKey, signMessage } = useWallet();
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [snsDomains, setSnsDomain] = useState([]);
-  const [selectDomain, setSelectDomain] = useState([]);
+  const [snsDomains, setSnsDomain] = useState<string[]>([]);
+  // const [selectDomain, setSelectDomain] = useState([]);
+
+  // todo: check that user has not already claimed the domain
 
   useEffect(() => {
     if (!starknetAddress) setCurrentStep(0);
@@ -39,7 +41,7 @@ const Solana: NextPage = () => {
       .then((response) => response.json())
       .then((res) => {
         console.log("Success:", res);
-        if (res?.success) setSnsDomain(res?.result);
+        if (res?.success) setSnsDomain([...res?.result]);
         else setSnsDomain([]);
       })
       .catch((error) => {
@@ -48,69 +50,62 @@ const Solana: NextPage = () => {
       });
   }, [solPublicKey]);
 
-  const generateSignature = async () => {};
+  const generateSignature = async (solDomain: string) => {
+    if (!signMessage) return;
+    console.log("generating domain for", solDomain);
+    const message = `${solPublicKey} allow claiming ${solDomain}.sol on starknet on ${starknetAddress} at max validity timestamp ${(
+      (Date.now() + 60 * 60 * 1000) /
+      1000
+    ).toFixed(0)}`;
 
-  // useEffect(() => {
-  //   if (!ethAddress) return;
+    // encode message to Uint8Array
+    const encoder = new TextEncoder();
+    const uint8Array = encoder.encode(message);
 
-  //   const getDomains = async () => {
-  //     await provider.lookupAddress(
-  //       "0x5555763613a12D8F3e73be831DFf8598089d3dCa"
-  //     );
-  //   };
-  // }, [ethAddress]);
+    signMessage(uint8Array).then((sig) => {
+      console.log("sig", sig);
+      const byteArray = [
+        206, 199, 156, 20, 14, 95, 246, 72, 242, 185, 62, 14, 5, 220, 22, 249,
+        74, 33, 138, 202, 56, 133, 20, 165, 248, 26, 122, 180, 35, 4, 155, 232,
+        28, 152, 193, 51, 206, 102, 123, 73, 194, 157, 123, 220, 128, 185, 90,
+        217, 136, 130, 1, 70, 17, 223, 169, 6, 2, 246, 203, 215, 213, 66, 89, 5,
+      ];
+      // call server to get stark signature
+    });
+  };
 
-  // All properties on a domain are optional
-  // const domain = {
-  //   name: "Eth Stark Resolver",
-  //   version: "1",
-  //   chainId: 5,
-  // } as const;
+  const generateStarkSig = async (solDomain: string) => {
+    const sig = [
+      206, 199, 156, 20, 14, 95, 246, 72, 242, 185, 62, 14, 5, 220, 22, 249, 74,
+      33, 138, 202, 56, 133, 20, 165, 248, 26, 122, 180, 35, 4, 155, 232, 28,
+      152, 193, 51, 206, 102, 123, 73, 194, 157, 123, 220, 128, 185, 90, 217,
+      136, 130, 1, 70, 17, 223, 169, 6, 2, 246, 203, 215, 213, 66, 89, 5,
+    ];
 
-  // const types = {
-  //   "Claim my .eth.stark domain": [
-  //     { name: "domain", type: "string" },
-  //     { name: "starknet address", type: "string" },
-  //   ],
-  // } as const;
+    const sigQuery = {
+      source_domain: "riton.sol",
+      target_address: starknetAddress, // This should be a string or number depending on your implementation
+      source_signature: sig,
+      max_validity: parseInt(((Date.now() + 60 * 60 * 1000) / 1000).toFixed(0)),
+    };
+    const data = JSON.stringify(sigQuery);
+    console.log("data", data);
 
-  // const message = {
-  //   domain: "riton.eth", // ens domain name
-  //   "starknet address":
-  //     "804388756904569972460955916013815525033312120440152538849502850576260523679",
-  // } as const;
-
-  // const {
-  //   data,
-  //   isError,
-  //   isLoading: isLoadingSignMsg,
-  //   isSuccess,
-  //   signTypedData,
-  //   variables,
-  // } = useSignTypedData({
-  //   domain,
-  //   message,
-  //   primaryType: "Claim my .eth.stark domain",
-  //   types,
-  // });
-
-  // useEffect(() => {
-  //   if (isError || isLoadingSignMsg) return;
-
-  //   // Split signature to get it in r, s, v format
-  //   const splitSig = ethers.Signature.from(data);
-
-  //   // pass it to u256 with starknet.js
-  //   const r = cairo.uint256(splitSig.r);
-  //   const s = cairo.uint256(splitSig.s);
-  //   const v = cairo.uint256(splitSig.v);
-  // }, [data, isError, isLoadingSignMsg, isSuccess]);
-
-  // const messageHash = ethers.TypedDataEncoder.hash(
-  //   domain,
-  //   types as any,
-  //   message
-  // );
+    fetch(`http://0.0.0.0:8080/subdomains/generate_sol_sig`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: data,
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        console.log("Success:", res);
+      })
+      .catch((error) => {
+        console.log("An error occured", error);
+      });
+  };
 
   // const checkAndUpdateStepNumber = () => {
   // if (
@@ -201,8 +196,11 @@ const Solana: NextPage = () => {
                     <div key={index} className={styles.domain_box}>
                       <p className={styles.domainName}>{name}.sol</p>
                       <div>
-                        <Button onClick={() => generateSignature()}>
+                        <Button onClick={() => generateSignature(name)}>
                           Allow on Solana
+                        </Button>
+                        <Button onClick={() => generateStarkSig(name)}>
+                          Test server
                         </Button>
                       </div>
                     </div>

@@ -78,7 +78,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     []
   );
 
-  const solNetwork = WalletAdapterNetwork.Testnet;
+  const solNetwork = WalletAdapterNetwork.Mainnet;
   const endpoint = useMemo(() => clusterApiUrl(solNetwork), [solNetwork]);
   // initialise all the wallets you want to use
   const wallets = useMemo(
