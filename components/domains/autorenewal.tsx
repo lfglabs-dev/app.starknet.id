@@ -282,7 +282,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
                 domainsMinting === selectedDomains ||
                 !address ||
                 !termsBox ||
-                emailError ||
+                (needMedadata && emailError) ||
                 !areDomainSelected(selectedDomains)
               }
             >
@@ -290,7 +290,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
                 ? "Please accept terms & policies"
                 : !areDomainSelected(selectedDomains)
                 ? "Select a domain to renew"
-                : emailError
+                : needMedadata && emailError
                 ? "Enter a valid Email"
                 : "Enable subscription"}
             </Button>
