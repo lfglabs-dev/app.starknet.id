@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from "../styles/ens.module.css";
+import styles from "../styles/solana.module.css";
 import Image from "next/image";
 import AffiliateImage from "../public/visuals/affiliate.webp";
 import Button from "../components/UI/button";
@@ -7,27 +7,20 @@ import StarknetIcon from "../components/UI/iconsComponents/icons/starknetIcon";
 import Wallets from "../components/UI/wallets";
 import { useAccount } from "@starknet-react/core";
 import ProgressBar from "../components/UI/progressBar";
-import EthLogo from "../public/visuals/ethLogo.svg";
+// import EthLogo from "../public/visuals/ethLogo.svg";
 import { NextPage } from "next";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
 
-const DATA = [
-  "ayush.eth",
-  "thomas.eth",
-  "ben.eth",
-  "iris.eth",
-  "kevin.eth",
-  "ayushtom.eth",
-  "ayushtomar.eth",
-];
+//todo: remove from visual ethLogo.svg
+// todo: remove Solana button component
 
 const Solana: NextPage = () => {
   const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const { address: starknetAddress } = useAccount();
   const { publicKey: solPublicKey } = useWallet();
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [totalDomains, setTotalDomains] = useState(DATA);
+  const [snsDomains, setSnsDomain] = useState([]);
   const [selectDomain, setSelectDomain] = useState([]);
 
   useEffect(() => {
@@ -39,7 +32,23 @@ const Solana: NextPage = () => {
   console.log("publicKey", solPublicKey);
   console.log("starknetAddress", starknetAddress);
 
-  // fetch user domains
+  // fetch sol domains from SNS api
+  useEffect(() => {
+    if (!solPublicKey) return;
+    fetch(`https://sns-api.bonfida.com/owners/${solPublicKey}/domains`)
+      .then((response) => response.json())
+      .then((res) => {
+        console.log("Success:", res);
+        if (res?.success) setSnsDomain(res?.result);
+        else setSnsDomain([]);
+      })
+      .catch((error) => {
+        console.log("An error occured", error);
+        setSnsDomain([]);
+      });
+  }, [solPublicKey]);
+
+  const generateSignature = async () => {};
 
   // useEffect(() => {
   //   if (!ethAddress) return;
@@ -125,91 +134,83 @@ const Solana: NextPage = () => {
     <div className={styles.screen}>
       <div className={styles.wrapperScreen}>
         <div className={styles.container}>
-          <div className={styles.banner}>
-            {currentStep === 0 ? (
-              <>
-                <Image
-                  src={AffiliateImage}
-                  alt="hey"
-                  priority
-                  className={styles.image}
-                />
-                <div className={styles.banner_content}>
-                  <div>
-                    <span className="title mr-2">Get your .sol domain on </span>
-                    <span className="title" style={{ color: "#19AA6E" }}>
-                      Starknet
-                    </span>
-                  </div>
-                  <p className="text-left">
-                    Get your .sol domain on starknet. Connect, verify, and
-                    elevate your digital identity with cross-chain domains !
-                  </p>
-                  <div className={styles.button_container}>
-                    <Button onClick={() => setWalletModalOpen(true)}>
-                      <div className="flex flex-row gap-4 justify-center items-center">
-                        <StarknetIcon width="28" color="" />
-                        <p>Connect your Starknet wallet</p>
-                      </div>
-                    </Button>
-                  </div>
+          {currentStep === 0 ? (
+            <div className={styles.banner}>
+              <Image
+                src={AffiliateImage}
+                alt="hey"
+                priority
+                className={styles.image}
+              />
+              <div className={styles.banner_content}>
+                <div>
+                  <span className="title mr-2">Get your .sol domain on </span>
+                  <span className="title" style={{ color: "#19AA6E" }}>
+                    Starknet
+                  </span>
                 </div>
-              </>
-            ) : currentStep === 1 ? (
-              <>
-                <Image
-                  src={AffiliateImage}
-                  alt="hey"
-                  priority
-                  className={styles.image}
-                />
-                <div className={styles.banner_content}>
-                  <div>
-                    <span className="title mr-2">Get your .eth domain on </span>
-                    <span className="title" style={{ color: "#19AA6E" }}>
-                      Starknet
-                    </span>
-                  </div>
-                  <p className="text-left">
-                    Get your .sol domain on starknet. Connect, verify, and
-                    elevate your digital identity with cross-chain domains!
-                  </p>
-                  <div className={styles.button_container}>
-                    <div className={styles.connectEthLayout}>
-                      {/* <SolanaConnectButton
-                        updateSolStatus={(address: string) =>
-                          setSolAddress(address)
-                        }
-                      /> */}
-                      <WalletMultiButton />
+                <p className="text-left">
+                  Get your .sol domain on starknet. Connect, verify, and elevate
+                  your digital identity with cross-chain domains !
+                </p>
+                <div className={styles.button_container}>
+                  <Button onClick={() => setWalletModalOpen(true)}>
+                    <div className="flex flex-row gap-4 justify-center items-center">
+                      <StarknetIcon width="28" color="" />
+                      <p>Connect your Starknet wallet</p>
                     </div>
-                  </div>
+                  </Button>
                 </div>
-              </>
-            ) : (
-              <div className={styles.chain_container}>
-                <div className={styles.each_chain_container}>
-                  <div className={styles.each_chain_content}>
-                    <h1 className="title">Ethereum</h1>
-                    <div className={styles.domain_list}>
-                      {totalDomains.map((name, index) => {
-                        return (
-                          <div key={index} className={styles.domain_box}>
-                            <p>{name}</p>
-                            <div style={{ width: "80%" }}>
-                              <Button onClick={() => console.log("hey")}>
-                                Redeem
-                              </Button>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+              </div>
+            </div>
+          ) : currentStep === 1 ? (
+            <div className={styles.banner}>
+              <Image
+                src={AffiliateImage}
+                alt="hey"
+                priority
+                className={styles.image}
+              />
+              <div className={styles.banner_content}>
+                <div>
+                  <span className="title mr-2">Get your .sol domain on </span>
+                  <span className="title" style={{ color: "#19AA6E" }}>
+                    Starknet
+                  </span>
+                </div>
+                <p className="text-left">
+                  Get your .sol domain on starknet. Connect, verify, and elevate
+                  your digital identity with cross-chain domains!
+                </p>
+                <div className={styles.button_container}>
+                  <div className={styles.connectEthLayout}>
+                    <WalletMultiButton />
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className={styles.domainContainer}>
+              <div className="flex flex-row justify-between	">
+                <h1 className="title text-left">Domains to bridge</h1>
+                <WalletMultiButton />
+              </div>
+              <div className={styles.domain_list}>
+                {snsDomains.map((name, index) => {
+                  return (
+                    <div key={index} className={styles.domain_box}>
+                      <p className={styles.domainName}>{name}.sol</p>
+                      <div>
+                        <Button onClick={() => generateSignature()}>
+                          Allow on Solana
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
         <div className={styles.progress_bar_container}>
           <ProgressBar doneSteps={currentStep} totalSteps={3} />
