@@ -45,8 +45,7 @@
     "starknet": "^5.19.5",
     "starknetid.js": "^2.0.0",
     "twitter-api-sdk": "^1.2.1",
-    "viem": "^1.18.9",
-    "wagmi": "^1.4.6"
+    "viem": "^1.18.9"
   },
   "devDependencies": {
     "@babel/core": "^7.20.5",

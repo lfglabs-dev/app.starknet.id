@@ -21,7 +21,8 @@ const Solana: NextPage = () => {
   const { publicKey: solPublicKey, signMessage } = useWallet();
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [snsDomains, setSnsDomain] = useState<string[]>([]);
-  // const [selectDomain, setSelectDomain] = useState([]);
+  const [hasLoadedSolDomain, setHasLoadedSolDomain] = useState<boolean>(false);
+  const [solSig, setSolSig] = useState<Uint8Array>();
 
   // todo: check that user has not already claimed the domain
 
@@ -43,20 +44,22 @@ const Solana: NextPage = () => {
         console.log("Success:", res);
         if (res?.success) setSnsDomain([...res?.result]);
         else setSnsDomain([]);
+        setHasLoadedSolDomain(true);
       })
       .catch((error) => {
         console.log("An error occured", error);
         setSnsDomain([]);
+        setHasLoadedSolDomain(true);
       });
   }, [solPublicKey]);
 
   const generateSignature = async (solDomain: string) => {
     if (!signMessage) return;
     console.log("generating domain for", solDomain);
-    const message = `${solPublicKey} allow claiming ${solDomain}.sol on starknet on ${starknetAddress} at max validity timestamp ${(
-      (Date.now() + 60 * 60 * 1000) /
-      1000
-    ).toFixed(0)}`;
+    const maxValidity = parseInt(
+      ((Date.now() + 60 * 60 * 1000) / 1000).toFixed(0)
+    );
+    const message = `${solPublicKey} allow claiming ${solDomain}.sol on starknet on ${starknetAddress} at max validity timestamp ${maxValidity}`;
 
     // encode message to Uint8Array
     const encoder = new TextEncoder();
@@ -64,29 +67,21 @@ const Solana: NextPage = () => {
 
     signMessage(uint8Array).then((sig) => {
       console.log("sig", sig);
-      const byteArray = [
-        206, 199, 156, 20, 14, 95, 246, 72, 242, 185, 62, 14, 5, 220, 22, 249,
-        74, 33, 138, 202, 56, 133, 20, 165, 248, 26, 122, 180, 35, 4, 155, 232,
-        28, 152, 193, 51, 206, 102, 123, 73, 194, 157, 123, 220, 128, 185, 90,
-        217, 136, 130, 1, 70, 17, 223, 169, 6, 2, 246, 203, 215, 213, 66, 89, 5,
-      ];
-      // call server to get stark signature
+      setSolSig(sig);
+      generateStarkSig(solDomain, sig, maxValidity);
     });
   };
 
-  const generateStarkSig = async (solDomain: string) => {
-    const sig = [
-      206, 199, 156, 20, 14, 95, 246, 72, 242, 185, 62, 14, 5, 220, 22, 249, 74,
-      33, 138, 202, 56, 133, 20, 165, 248, 26, 122, 180, 35, 4, 155, 232, 28,
-      152, 193, 51, 206, 102, 123, 73, 194, 157, 123, 220, 128, 185, 90, 217,
-      136, 130, 1, 70, 17, 223, 169, 6, 2, 246, 203, 215, 213, 66, 89, 5,
-    ];
-
+  const generateStarkSig = async (
+    solDomain: string,
+    solSig: Uint8Array,
+    maxValidity: number
+  ) => {
     const sigQuery = {
-      source_domain: "riton.sol",
-      target_address: starknetAddress, // This should be a string or number depending on your implementation
-      source_signature: sig,
-      max_validity: parseInt(((Date.now() + 60 * 60 * 1000) / 1000).toFixed(0)),
+      source_domain: solDomain + ".sol",
+      target_address: starknetAddress,
+      source_signature: Array.from(solSig),
+      max_validity: maxValidity,
     };
     const data = JSON.stringify(sigQuery);
     console.log("data", data);
@@ -191,6 +186,7 @@ const Solana: NextPage = () => {
                 <WalletMultiButton />
               </div>
               <div className={styles.domain_list}>
+                {/* // todo: add skeleton if hasLoadedSolDomain is set to false */}
                 {snsDomains.map((name, index) => {
                   return (
                     <div key={index} className={styles.domain_box}>
@@ -199,9 +195,9 @@ const Solana: NextPage = () => {
                         <Button onClick={() => generateSignature(name)}>
                           Allow on Solana
                         </Button>
-                        <Button onClick={() => generateStarkSig(name)}>
+                        {/* <Button onClick={() => generateStarkSig(name)}>
                           Test server
-                        </Button>
+                        </Button> */}
                       </div>
                     </div>
                   );

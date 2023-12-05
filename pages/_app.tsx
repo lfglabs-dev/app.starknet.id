@@ -1,4 +1,4 @@
-import "@rainbow-me/rainbowkit/styles.css";
+// import "@rainbow-me/rainbowkit/styles.css";
 import React, { useMemo } from "react";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
