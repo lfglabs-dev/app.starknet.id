@@ -1,5 +1,3 @@
-import crypto from "crypto";
-
 export function generateSalt(): string {
   const array = new Uint8Array(16); // 16 bytes = 128 bits
   crypto.getRandomValues(array);
