@@ -44,13 +44,6 @@ export function useEtherContract() {
   });
 }
 
-export function useBraavosNftContract() {
-  return useContract({
-    abi: braavosNFT_abi as Abi,
-    address: process.env.NEXT_PUBLIC_BRAAVOS_SHIELD_CONTRACT,
-  });
-}
-
 export function useRenewalContract() {
   return useContract({
     abi: renewal_abi.abi as Abi,
