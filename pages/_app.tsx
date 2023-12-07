@@ -12,7 +12,7 @@ import {
   argent,
   braavos,
 } from "@starknet-react/core";
-import { WebWalletConnector } from "@argent/starknet-react-webwallet-connector";
+import { WebWalletConnector } from "starknetkit/webwallet";
 import { Analytics } from "@vercel/analytics/react";
 import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";

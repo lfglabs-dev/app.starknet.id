@@ -121,7 +121,7 @@ const Solana: NextPage = () => {
     const maxValidity = parseInt(
       ((Date.now() + 60 * 60 * 1000) / 1000).toFixed(0)
     );
-    let leading0Addr = "0x" + starknetAddress?.slice(2).padStart(64, "0");
+    const leading0Addr = "0x" + starknetAddress?.slice(2).padStart(64, "0");
     const message = `${solPublicKey} allow claiming ${solDomain}.sol on starknet on ${leading0Addr} at max validity timestamp ${maxValidity}`;
 
     // encode message to Uint8Array
