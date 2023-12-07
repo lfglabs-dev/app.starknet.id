@@ -5,35 +5,59 @@ import AffiliateImage from "../public/visuals/affiliate.webp";
 import Button from "../components/UI/button";
 import StarknetIcon from "../components/UI/iconsComponents/icons/starknetIcon";
 import Wallets from "../components/UI/wallets";
-import { useAccount } from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import ProgressBar from "../components/UI/progressBar";
-// import EthLogo from "../public/visuals/ethLogo.svg";
 import { NextPage } from "next";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { Call } from "starknet";
+import TxConfirmationModal from "../components/UI/txConfirmationModal";
+import { NotificationType, TransactionType } from "../utils/constants";
+import { useNotificationManager } from "../hooks/useNotificationManager";
+import { Skeleton } from "@mui/material";
+import SolanaCalls from "../utils/callData/solanaCalls";
+import { utils } from "starknetid.js";
+import useHasClaimSolSubdomain from "../hooks/useHasClaimSolSubdomain";
+import DoneFilledIcon from "../components/UI/iconsComponents/icons/doneFilledIcon";
+import theme from "../styles/theme";
+import DomainActions from "../components/solana/domainActions";
 
-//todo: remove from visual ethLogo.svg
-// todo: remove Solana button component
+type StarknetSig = {
+  r: string;
+  s: string;
+  max_validity: number;
+};
+
+type SnsDomainData = {
+  name: string;
+  signature: StarknetSig | undefined;
+  sent: boolean;
+};
 
 const Solana: NextPage = () => {
-  const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const { address: starknetAddress } = useAccount();
   const { publicKey: solPublicKey, signMessage } = useWallet();
+  const { addTransaction } = useNotificationManager();
+  const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
-  const [snsDomains, setSnsDomain] = useState<string[]>([]);
+  const [snsDomains, setSnsDomains] = useState<string[]>([]);
+  const [selectedDomain, setSelectedDomain] = useState<SnsDomainData>();
   const [hasLoadedSolDomain, setHasLoadedSolDomain] = useState<boolean>(false);
-  const [solSig, setSolSig] = useState<Uint8Array>();
-
-  // todo: check that user has not already claimed the domain
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+  const claimedDomains = useHasClaimSolSubdomain(
+    snsDomains,
+    starknetAddress as string
+  );
+  const [callData, setCallData] = useState<Call[]>([]);
+  const { writeAsync: execute, data: registerData } = useContractWrite({
+    calls: callData,
+  });
 
   useEffect(() => {
     if (!starknetAddress) setCurrentStep(0);
     else if (starknetAddress && !solPublicKey) setCurrentStep(1);
     else if (starknetAddress && solPublicKey) setCurrentStep(2);
   }, [starknetAddress, solPublicKey]);
-
-  console.log("publicKey", solPublicKey);
-  console.log("starknetAddress", starknetAddress);
 
   // fetch sol domains from SNS api
   useEffect(() => {
@@ -42,32 +66,69 @@ const Solana: NextPage = () => {
       .then((response) => response.json())
       .then((res) => {
         console.log("Success:", res);
-        if (res?.success) setSnsDomain([...res?.result]);
-        else setSnsDomain([]);
+        if (res?.success && res.result) setSnsDomains(res.result);
+        else setSnsDomains([]);
         setHasLoadedSolDomain(true);
       })
       .catch((error) => {
         console.log("An error occured", error);
-        setSnsDomain([]);
+        setSnsDomains([]);
         setHasLoadedSolDomain(true);
       });
   }, [solPublicKey]);
 
+  useEffect(() => {
+    if (!selectedDomain || !selectedDomain.signature) return;
+    const name = utils.encodeDomain(selectedDomain.name);
+    setCallData([
+      SolanaCalls.claimDomain(
+        name[0].toString(),
+        selectedDomain.signature.r,
+        selectedDomain.signature.s,
+        selectedDomain.signature.max_validity as number
+      ),
+      SolanaCalls.setResolving(name[0].toString(), starknetAddress as string),
+    ]);
+  }, [selectedDomain, starknetAddress]);
+
+  useEffect(() => {
+    if (!registerData?.transaction_hash) return;
+    // posthog?.capture("register");
+
+    if (selectedDomain !== undefined) {
+      setSelectedDomain((prevState) => ({
+        name: prevState ? prevState.name : "",
+        signature: prevState ? prevState.signature : undefined,
+        sent: true,
+      }));
+    }
+
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `Received ${selectedDomain?.name}.sol.stark`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.CLAIM_SOL,
+        hash: registerData.transaction_hash,
+        status: "pending",
+      },
+    });
+    setIsTxModalOpen(true);
+  }, [registerData?.transaction_hash]);
+
   const generateSignature = async (solDomain: string) => {
     if (!signMessage) return;
-    console.log("generating domain for", solDomain);
     const maxValidity = parseInt(
       ((Date.now() + 60 * 60 * 1000) / 1000).toFixed(0)
     );
-    const message = `${solPublicKey} allow claiming ${solDomain}.sol on starknet on ${starknetAddress} at max validity timestamp ${maxValidity}`;
+    let leading0Addr = "0x" + starknetAddress?.slice(2).padStart(64, "0");
+    const message = `${solPublicKey} allow claiming ${solDomain}.sol on starknet on ${leading0Addr} at max validity timestamp ${maxValidity}`;
 
     // encode message to Uint8Array
     const encoder = new TextEncoder();
     const uint8Array = encoder.encode(message);
 
-    signMessage(uint8Array).then((sig) => {
-      console.log("sig", sig);
-      setSolSig(sig);
+    signMessage(uint8Array).then((sig: Uint8Array) => {
       generateStarkSig(solDomain, sig, maxValidity);
     });
   };
@@ -84,9 +145,8 @@ const Solana: NextPage = () => {
       max_validity: maxValidity,
     };
     const data = JSON.stringify(sigQuery);
-    console.log("data", data);
 
-    fetch(`http://0.0.0.0:8080/subdomains/generate_sol_sig`, {
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/crosschain/solana/claim`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -95,30 +155,31 @@ const Solana: NextPage = () => {
     })
       .then((response) => response.json())
       .then((res) => {
-        console.log("Success:", res);
+        setSelectedDomain({
+          name: solDomain,
+          signature: res,
+          sent: false,
+        });
       })
       .catch((error) => {
         console.log("An error occured", error);
       });
   };
 
-  // const checkAndUpdateStepNumber = () => {
-  // if (
-  //   StarknetAddress &&
-  //   connectedEthereumAddress &&
-  //   selectDomain.length > 0
-  // ) {
-  //   setCurrentStep(3);
-  // } else if (StarknetAddress && connectedEthereumAddress) {
-  //   setCurrentStep(2);
-  // } else if (!StarknetAddress) {
-  //   setCurrentStep(1);
-  // }
-  // };
+  const receiveDomain = () => {
+    if (!selectedDomain || selectedDomain.sent) return;
+    execute();
+  };
 
-  // useEffect(() => {
-  //   checkAndUpdateStepNumber();
-  // }, [StarknetAddress, connectedEthereumAddress]);
+  const canReceiveOnStarknet = (name: string): boolean => {
+    return selectedDomain &&
+      selectedDomain.name === name &&
+      selectedDomain.signature &&
+      !selectedDomain.sent &&
+      selectedDomain.signature.max_validity > Date.now() / 1000
+      ? true
+      : false;
+  };
 
   return (
     <div className={styles.screen}>
@@ -172,8 +233,8 @@ const Solana: NextPage = () => {
                   Get your .sol domain on starknet. Connect, verify, and elevate
                   your digital identity with cross-chain domains!
                 </p>
-                <div className={styles.button_container}>
-                  <div className={styles.connectEthLayout}>
+                <div className={styles.buttonContainer}>
+                  <div className={styles.connectLayout}>
                     <WalletMultiButton />
                   </div>
                 </div>
@@ -185,34 +246,79 @@ const Solana: NextPage = () => {
                 <h1 className="title text-left">Domains to bridge</h1>
                 <WalletMultiButton />
               </div>
-              <div className={styles.domain_list}>
-                {/* // todo: add skeleton if hasLoadedSolDomain is set to false */}
-                {snsDomains.map((name, index) => {
-                  return (
-                    <div key={index} className={styles.domain_box}>
-                      <p className={styles.domainName}>{name}.sol</p>
-                      <div>
-                        <Button onClick={() => generateSignature(name)}>
-                          Allow on Solana
-                        </Button>
-                        {/* <Button onClick={() => generateStarkSig(name)}>
-                          Test server
-                        </Button> */}
+              <div className={styles.domainList}>
+                {hasLoadedSolDomain ? (
+                  snsDomains.map((name, index) => {
+                    return (
+                      <div key={index} className={styles.domainBox}>
+                        <div className={styles.domainTitle}>
+                          <p className={styles.domainName}>{name}.sol.stark</p>
+                          {claimedDomains.includes(name) ? (
+                            <DomainActions name={name} />
+                          ) : null}
+                        </div>
+                        <div>
+                          {canReceiveOnStarknet(name) ? (
+                            <Button onClick={receiveDomain}>
+                              Receive on Starknet
+                            </Button>
+                          ) : selectedDomain &&
+                            selectedDomain.name === name &&
+                            selectedDomain.sent ? (
+                            <Button onClick={() => generateSignature(name)}>
+                              Transaction ongoing
+                            </Button>
+                          ) : claimedDomains.includes(name) ? (
+                            <div className={styles.receivedBtn}>
+                              <DoneFilledIcon
+                                width="24"
+                                secondColor={theme.palette.primary.main}
+                                color="#FFF"
+                              />
+                              <p>Received</p>
+                            </div>
+                          ) : (
+                            <Button onClick={() => generateSignature(name)}>
+                              Allow on Solana
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                ) : (
+                  <>
+                    <Skeleton
+                      variant="rectangular"
+                      width={358}
+                      height={124}
+                      className={styles.domainSkeleton}
+                    />
+                    <Skeleton
+                      variant="rectangular"
+                      width={358}
+                      height={124}
+                      className={styles.domainSkeleton}
+                    />
+                  </>
+                )}
               </div>
             </div>
           )}
         </div>
-        <div className={styles.progress_bar_container}>
+        <div className={styles.progressBarContainer}>
           <ProgressBar doneSteps={currentStep} totalSteps={3} />
         </div>
       </div>
       <Wallets
         closeWallet={() => setWalletModalOpen(false)}
         hasWallet={walletModalOpen}
+      />
+      <TxConfirmationModal
+        txHash={registerData?.transaction_hash}
+        isTxModalOpen={isTxModalOpen}
+        closeModal={() => setIsTxModalOpen(false)}
+        title="Your domain is on it's way !"
       />
     </div>
   );

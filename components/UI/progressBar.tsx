@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/progressbar.module.css";
-import Milestone from "../../public/visuals/doneFilledIcon.svg";
-import Image from "next/image";
+import DoneFilledIcon from "./iconsComponents/icons/doneFilledIcon";
+import theme from "../../styles/theme";
 
 type ProgressBarProps = {
   doneSteps: number;
@@ -19,7 +19,11 @@ const ProgressBar: FunctionComponent<ProgressBarProps> = ({
         return (
           <div key={index} className={styles.milestone}>
             {index + 1 <= doneSteps ? (
-              <Image src={Milestone} alt="milestone" width="32" height="32" />
+              <DoneFilledIcon
+                width="32"
+                secondColor={theme.palette.primary.main}
+                color="#FFF"
+              />
             ) : (
               <div className={styles.empty_milestone}>{index + 1}</div>
             )}
