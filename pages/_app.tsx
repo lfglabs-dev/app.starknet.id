@@ -26,14 +26,11 @@ if (typeof window !== "undefined") {
       recordCrossOriginIframes: true,
     },
     capture_pageleave: false,
-    capture_pageview: false,
   });
   (window as any).posthog = posthog;
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-  posthog.capture("$pageview");
-
   const chains = [
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? goerli : mainnet,
   ];

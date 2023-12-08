@@ -3,11 +3,8 @@ import type { NextPage } from "next";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/search.module.css";
 import Renewal from "../components/domains/renewal";
-import posthog from "posthog-js";
 
 const RenewalPage: NextPage = () => {
-  posthog.capture("$pageview");
-
   return (
     <div className={homeStyles.screen}>
       <div className={styles.container}>
