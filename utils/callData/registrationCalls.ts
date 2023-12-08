@@ -27,7 +27,7 @@ function buy(
       numberToString(durationInYears * 365),
       0,
       hexToDecimal(targetAddress),
-      sponsor,
+      "0", // force sponsor to 0
       metadata,
     ],
   };
