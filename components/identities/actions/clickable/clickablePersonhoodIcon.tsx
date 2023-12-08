@@ -70,7 +70,6 @@ const ClickablePersonhoodIcon: FunctionComponent<
         setIsLoading(false);
         setIsOpen(false);
         setSessionId(undefined);
-        posthog?.capture("popVerificationTx");
       });
     };
 
