@@ -6,8 +6,11 @@ import { freeRenewalDiscount } from "../utils/discounts/freeRenewal";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
 import DiscountRenewalScreen from "../components/discount/discountRenewalScreen";
 import RenewalDiscount from "../components/discount/renewalDiscount";
+import posthog from "posthog-js";
 
 const FreeRenewalPage: NextPage = () => {
+  posthog.capture("$pageview");
+
   const [screen, setScreen] = useState<number>(1);
 
   useEffect(() => {
