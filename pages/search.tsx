@@ -11,6 +11,7 @@ import IdentityCardSkeleton from "../components/identities/skeletons/identityCar
 import { useAccount } from "@starknet-react/core";
 import { hexToDecimal } from "../utils/feltService";
 import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
+import SuggestedDomains from "../components/domains/suggestedDomains";
 
 const SearchPage: NextPage = () => {
   const router = useRouter();
@@ -74,6 +75,7 @@ const SearchPage: NextPage = () => {
         ) : (
           <IdentityCardSkeleton />
         )}
+        <SuggestedDomains domain={domain} />
       </div>
     </div>
   );

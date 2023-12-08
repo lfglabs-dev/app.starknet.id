@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { isSubdomain } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";
@@ -13,6 +13,7 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
   identity,
   isIdentityADomain,
 }) => {
+  const [closeNotification, setCloseNotification] = useState(false);
   const { address } = useAccount();
   const currentTimeStamp = new Date().getTime() / 1000;
   const isExpired =
@@ -25,9 +26,14 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
 
   return isIdentityADomain ? (
     <>
-      <Notification visible={isExpired && Boolean(address)} severity="error">
+      <Notification
+        visible={isExpired && Boolean(address) && !closeNotification}
+        severity="error"
+        onClose={() => setCloseNotification(true)}
+      >
         This domain has expired. You can renew it by clicking RENEW YOUR DOMAIN.
       </Notification>
+      )
       <Notification visible={showWarning} severity="error">
         <>&nbsp;Be careful this domain is not linked to your current address.</>
       </Notification>
