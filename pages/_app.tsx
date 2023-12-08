@@ -18,6 +18,7 @@ import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
 import { goerli, mainnet } from "@starknet-react/chains";
+import { addWalnutLogsToConnectors } from "@walnuthq/sdk";
 
 if (typeof window !== "undefined") {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
@@ -55,7 +56,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <StarknetConfig
         chains={chains}
         provider={providers}
-        connectors={connectors as any}
+        connectors={addWalnutLogsToConnectors({ connectors, apiKey: process.env.NEXT_PUBLIC_WALNUT_API_KEY as string }) as any}
         autoConnect
       >
         <StarknetIdJsProvider>
