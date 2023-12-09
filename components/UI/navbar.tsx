@@ -226,11 +226,8 @@ const Navbar: FunctionComponent = () => {
           }
         >
           <div
-            className={
-              nav
-                ? "fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-background px-5 ease-in duration-500 flex justify-between flex-col overflow-auto"
-                : "fixed left-[-100%] top-0 p-10 ease-in h-screen flex justify-between flex-col"
-            }
+            className={`fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-background px-5 ease-in flex justify-between flex-col overflow-auto
+              ${nav ? styles.mobileNavbarShown : styles.mobileNavbarHidden}`}
           >
             <div className="h-full flex flex-col">
               <div className="flex w-full items-center justify-between">
