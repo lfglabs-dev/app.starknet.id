@@ -5,7 +5,7 @@ import React, {
   FunctionComponent,
   useCallback,
 } from "react";
-import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
+import { AiOutlineMenu } from "react-icons/ai";
 import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import Button from "./button";
@@ -26,6 +26,7 @@ import { constants } from "starknet";
 import { useTheme } from "@mui/material/styles";
 import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
 import DesktopNav from "./desktopNav";
+import CloseFilledIcon from "./iconsComponents/icons/closeFilledIcon";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -237,19 +238,19 @@ const Navbar: FunctionComponent = () => {
                       className="cursor-pointer"
                       src="/visuals/StarknetIdLogo.svg"
                       alt="Starknet.id Logo"
-                      width={90}
-                      height={90}
+                      width={72}
+                      height={72}
                     />
                   </Link>
                 </div>
 
                 <div
                   onClick={handleNav}
-                  className="rounded-lg cursor-pointer bg-secondary p-1"
+                  className="cursor-pointer p-1 rounded-full"
                 >
-                  <AiOutlineClose
+                  <CloseFilledIcon
+                    width="32"
                     color={theme.palette.background.default}
-                    size={isMobile ? 25 : 20}
                   />
                 </div>
               </div>
@@ -301,7 +302,7 @@ const Navbar: FunctionComponent = () => {
               <div className="flex">
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
                   <Link href="https://twitter.com/Starknet_id" target="_blank">
-                    <FaTwitter size={28} color={theme.palette.secondary.main} />
+                    <FaTwitter size={28} color={theme.palette.grey[800]} />
                   </Link>
                 </div>
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
@@ -309,12 +310,12 @@ const Navbar: FunctionComponent = () => {
                     href="https://discord.com/invite/8uS2Mgcsza"
                     target="_blank"
                   >
-                    <FaDiscord size={28} color={theme.palette.secondary.main} />
+                    <FaDiscord size={28} color={theme.palette.grey[800]} />
                   </Link>
                 </div>
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
                   <Link href="https://github.com/starknet-id" target="_blank">
-                    <FaGithub size={28} color={theme.palette.secondary.main} />
+                    <FaGithub size={28} color={theme.palette.grey[800]} />
                   </Link>
                 </div>
               </div>

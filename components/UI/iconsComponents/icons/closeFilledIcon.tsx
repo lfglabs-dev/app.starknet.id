@@ -1,11 +1,11 @@
 import React, { FunctionComponent } from "react";
 
-const CloseFilledIcon: FunctionComponent = () => {
+const CloseFilledIcon: FunctionComponent<IconProps> = ({ width, color }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="17"
+      width={width}
+      height={width}
       viewBox="0 0 16 17"
       fill="none"
     >
