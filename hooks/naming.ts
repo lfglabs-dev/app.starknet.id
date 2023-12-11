@@ -93,12 +93,13 @@ export function useTokenIdFromDomain(domain: string): TokenIdData {
   return { tokenId, error };
 }
 
-type ExpiryData = {
-  expiry?: bigint[][];
+type FullDomainData = {
+  expiry?: bigint;
+  owner?: bigint;
   error?: string;
 };
 
-export function useExpiryFromDomain(domain: string): ExpiryData {
+export function useDataFromDomain(domain: string): FullDomainData {
   const { contract } = useNamingContract();
   const encoded = domain
     ? utils.encodeDomain(domain).map((elem) => elem.toString()) // remove when dapp uses starknet.js v5
@@ -107,9 +108,13 @@ export function useExpiryFromDomain(domain: string): ExpiryData {
   const { data, error } = useContractRead({
     address: contract?.address as string,
     abi: contract?.abi as Abi,
-    functionName: "domain_to_expiry",
+    functionName: "domain_to_data",
     args: [encoded],
   });
 
-  return { expiry: data as any, error: error?.message as string };
+  return {
+    expiry: data?.["expiry"],
+    owner: data?.["owner"],
+    error: error?.message as string,
+  };
 }
