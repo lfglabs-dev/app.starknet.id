@@ -37,7 +37,7 @@ describe("Should test decimalToHex function", () => {
         "3246245011749133880110396867610358293809804380010255939993086782333605065223"
       )
     ).toEqual(
-      "0x72d4f3fa4661228ed0c9872007fc7e12a581e000fad7b8f3e3e5bf9e6133207"
+      "0x072d4f3fa4661228ed0c9872007fc7e12a581e000fad7b8f3e3e5bf9e6133207"
     );
   });
 
@@ -46,11 +46,11 @@ describe("Should test decimalToHex function", () => {
   });
 
   it("Should convert a number to its hex representation", () => {
-    expect(decimalToHex(123)).toEqual("0x7b");
+    expect(decimalToHex(123)).toEqual("0x000000000000000000000000000000000000000000000000000000000000007b");
   });
 
   it("Should convert 0 to 0x0", () => {
-    expect(decimalToHex(0)).toEqual("0x0");
+    expect(decimalToHex(0)).toEqual("0x0000000000000000000000000000000000000000000000000000000000000000");
   });
 });
 

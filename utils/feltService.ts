@@ -10,10 +10,14 @@ export function stringToHex(str: string): string {
   return "0x" + buffer.toString("hex");
 }
 
+export function normalizeHex(address: string): string {
+  return "0x" + address.slice(2).padStart(64, "0");
+}
+
 export function decimalToHex(element: string | number | undefined): string {
   if (element === undefined) return "";
 
-  return "0x" + new BN(element).toString(16);
+  return "0x" + new BN(element).toString(16).padStart(64, "0");
 }
 
 export function hexToDecimal(hex: string | undefined): string {
