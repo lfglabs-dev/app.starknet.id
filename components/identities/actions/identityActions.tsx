@@ -88,7 +88,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     callDataEncodedDomain.push(domain.toString(10));
   });
 
-  //Set as main domain execute
+  // todo: optimize by skipping this call if the user doesn't have an old main domain
+  const resetAddrToDomain = {
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+    entrypoint: "reset_address_to_domain",
+    calldata: callDataEncodedDomain,
+  };
+
   const set_main_id = {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_main_id",
@@ -96,7 +102,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   };
 
   const { writeAsync: setMainId, data: mainDomainData } = useContractWrite({
-    calls: [set_main_id],
+    calls: [resetAddrToDomain, set_main_id],
   });
 
   useEffect(() => {
@@ -229,7 +235,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
               {!identity.isMain() && (
                 <ClickableAction
                   title="Set as main domain"
-                  description="Set this domain as your main domain"
+                  description="Set this identity as your main id"
                   icon={
                     <MainIcon
                       width="23"
