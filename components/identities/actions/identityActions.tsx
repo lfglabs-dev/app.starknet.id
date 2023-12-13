@@ -89,26 +89,15 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   });
 
   //Set as main domain execute
-  const set_address_to_domain_calls = {
+  const set_main_id = {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "set_address_to_domain",
+    entrypoint: "set_main_id",
     calldata: callDataEncodedDomain,
   };
-  const set_domain_to_address_calls = {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "set_domain_to_address",
-    calldata: [...callDataEncodedDomain, hexToDecimal(address)],
-  };
-  const { writeAsync: set_address_to_domain, data: mainDomainData } =
-    useContractWrite({
-      calls: isAccountTargetAddress
-        ? [set_address_to_domain_calls]
-        : [set_domain_to_address_calls, set_address_to_domain_calls],
-    });
 
-  function setAddressToDomain(): void {
-    set_address_to_domain();
-  }
+  const { writeAsync: setMainId, data: mainDomainData } = useContractWrite({
+    calls: [set_main_id],
+  });
 
   useEffect(() => {
     if (!address || !identity?.getDomain() || !isOwner) return;
@@ -134,7 +123,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     if (!mainDomainData?.transaction_hash) return;
     addTransaction({
       timestamp: Date.now(),
-      subtext: "Set as main domain",
+      subtext: "Set as main id",
       type: NotificationType.TRANSACTION,
       data: {
         type: TransactionType.MAIN_DOMAIN,
@@ -248,7 +237,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       secondColor={theme.palette.secondary.main}
                     />
                   }
-                  onClick={() => setAddressToDomain()}
+                  onClick={() => setMainId()}
                 />
               )}
               <ClickableAction
