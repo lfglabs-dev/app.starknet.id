@@ -4,16 +4,17 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
 import styles from "../../../styles/components/modalMessage.module.css";
 import Button from "../../UI/button";
-import { hexToDecimal } from "../../../utils/feltService";
+import { hexToDecimal, stringToFelt } from "../../../utils/feltService";
 import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
+import { Identity } from "../../../utils/apiObjects";
 
 type ChangeAddressModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
   callDataEncodedDomain: (number | string)[];
-  domain?: string;
+  identity?: Identity;
   currentTargetAddress?: string;
 };
 
@@ -21,7 +22,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   handleClose,
   isModalOpen,
   callDataEncodedDomain,
-  domain,
+  identity,
   currentTargetAddress = "0",
 }) => {
   const { address } = useAccount();
@@ -30,15 +31,34 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   const [isTxSent, setIsTxSent] = useState(false);
 
   //set_domain_to_address execute
-  const set_domain_to_address_calls = {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "set_domain_to_address",
-    calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress)],
+  const set_domain_to_address_call = {
+    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+    entrypoint: "set_user_data",
+    calldata: [
+      identity?.getId() as string,
+      stringToFelt("starknet"),
+      hexToDecimal(targetAddress),
+      0,
+    ],
   };
 
+  const legacy_address = identity?.getData().domain?.legacy_address;
   const { writeAsync: set_domain_to_address, data: domainToAddressData } =
     useContractWrite({
-      calls: [set_domain_to_address_calls],
+      calls:
+        Boolean(legacy_address) &&
+        legacy_address !=
+          "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ? [
+              {
+                contractAddress: process.env
+                  .NEXT_PUBLIC_NAMING_CONTRACT as string,
+                entrypoint: "clear_legacy_domain_to_address",
+                calldata: [...callDataEncodedDomain],
+              },
+              set_domain_to_address_call,
+            ]
+          : [set_domain_to_address_call],
     });
 
   useEffect(() => {
@@ -92,13 +112,13 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
               </svg>
             </button>
             <p className={styles.menu_title}>
-              Change the target address of {domain}
+              Change the target address of {identity?.getDomain()}
             </p>
             <div className="mt-5 flex flex-col justify-center">
               {currentTargetAddress && (
                 <p>
                   A stark domain resolves to a Starknet address, the current
-                  target address of {domain} is{" "}
+                  target address of {identity?.getDomain()} is{" "}
                   <strong>{minifyAddress(currentTargetAddress)}</strong>. You
                   can change it by using this form.
                 </p>

@@ -305,7 +305,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           handleClose={() => setIsAddressFormOpen(false)}
           isModalOpen={isAddressFormOpen}
           callDataEncodedDomain={callDataEncodedDomain}
-          domain={identity?.getDomain()}
+          identity={identity}
           currentTargetAddress={identity?.getTargetAddress()}
         />
         <TransferFormModal

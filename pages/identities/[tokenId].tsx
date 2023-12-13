@@ -6,7 +6,6 @@ import { NextPage } from "next";
 import IdentityWarnings from "../../components/identities/identityWarnings";
 import IdentityCard from "../../components/identities/identityCard";
 import IdentityActions from "../../components/identities/actions/identityActions";
-import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";
 import IdentityPageSkeleton from "../../components/identities/skeletons/identityPageSkeleton";
 import UpdateProfilePic from "../../components/identities/updateProfilePic";
