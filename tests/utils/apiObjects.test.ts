@@ -1,5 +1,5 @@
 import { Identity } from "../../utils/apiObjects";
-require("dotenv").config({ path: ".env.local" });
+require("dotenv").config({ path: ".env.test" });
 
 describe("Should test Identity object", () => {
   it("Should return the right address", () => {
