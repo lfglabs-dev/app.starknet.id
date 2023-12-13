@@ -111,7 +111,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const set_main_id = {
     contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
     entrypoint: "set_main_id",
-    calldata: callDataEncodedDomain,
+    calldata: [identity?.getId() as string],
   };
 
   const targetAddress = identity?.getTargetAddress();
