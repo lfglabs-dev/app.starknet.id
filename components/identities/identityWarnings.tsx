@@ -33,7 +33,6 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
       >
         This domain has expired. You can renew it by clicking RENEW YOUR DOMAIN.
       </Notification>
-      )
       <Notification visible={showWarning} severity="error">
         <>&nbsp;Be careful this domain is not linked to your current address.</>
       </Notification>
