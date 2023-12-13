@@ -93,7 +93,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const resetAddrToDomain = {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "reset_address_to_domain",
-    calldata: callDataEncodedDomain,
+    calldata: [],
   };
 
   const resetLegacyDomainToAddr = {
