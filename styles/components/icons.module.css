@@ -25,12 +25,18 @@
 .unclickableIconDiscord,
 .clickableIconDiscord,
 .clickableIconGithub,
-.clickableIconTwitter {
+.clickableIconTwitter,
+.clickableIconAnima {
   background-color: #55acee;
   border-radius: 25%;
   padding: 0.5rem;
   cursor: pointer;
   position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .clickableIconAnima {
@@ -45,6 +51,11 @@
   position: absolute;
   top: -0.3rem;
   right: -0.3rem;
+}
+
+.verifiedIcon svg {
+  width: 18px;
+  height: 18px;
 }
 
 .clickableIconGithub {
@@ -70,7 +81,7 @@
 }
 
 .clickableIconAnima {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 .tooltip {
@@ -97,4 +108,23 @@
   font-weight: 400;
   line-height: 16px;
   opacity: 0.8;
+}
+
+@media (max-width: 768px) {
+  .unclickableIconTwitter,
+  .unclickableIconDiscord,
+  .clickableIconDiscord,
+  .clickableIconGithub,
+  .clickableIconTwitter,
+  .clickableIconAnima {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .verifiedIcon svg {
+    width: 24px;
+    height: 24px;
+  }
 }

@@ -177,7 +177,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   return (
     <div className={styles.actionsContainer}>
       <>
-        <div className="flex flex-col items-center justify-center">
+        <div className={styles.identityActions}>
           {identity && !isOwner && isIdentityADomain && (
             <>
               <ClickableAction
@@ -210,7 +210,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
             </>
           )}
           {identity && isOwner && (
-            <div className="flex flex-col items-center justify-center">
+            <div className={styles.identityActions}>
               {callDataEncodedDomain[0] === 1 && !isAutoRenewalEnabled ? (
                 <ClickableAction
                   title="ENABLE SUBSCRIPTION"

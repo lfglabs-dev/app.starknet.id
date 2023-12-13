@@ -63,7 +63,7 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
         >
           {twitterId ? (
             <div className={styles.verifiedIcon}>
-              <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
+              <VerifiedIcon width={"24"} color={theme.palette.primary.main} />
             </div>
           ) : null}
           <TwitterIcon width={width} color={"white"} />
@@ -74,7 +74,7 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
     <Tooltip title={`${domain} twitter is verified`} arrow>
       <div className={styles.unclickableIconTwitter}>
         <div className={styles.verifiedIcon}>
-          <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
+          <VerifiedIcon width={"24"} color={theme.palette.primary.main} />
         </div>
         <TwitterIcon width={width} color={"white"} />
       </div>
