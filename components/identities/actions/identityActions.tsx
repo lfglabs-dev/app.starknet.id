@@ -4,7 +4,7 @@ import { useAccount, useContractWrite } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
-import { hexToDecimal } from "../../../utils/feltService";
+import { hexToDecimal, stringToFelt } from "../../../utils/feltService";
 import ClickableAction from "../../UI/iconsComponents/clickableAction";
 import styles from "../../../styles/components/identityMenu.module.css";
 import { timestampToReadableDate } from "../../../utils/dateService";
@@ -25,6 +25,7 @@ import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { posthog } from "posthog-js";
 import { Identity } from "../../../utils/apiObjects";
+import { formatHexString } from "../../../utils/stringService";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -95,14 +96,38 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     calldata: callDataEncodedDomain,
   };
 
-  const set_main_id = {
+  const resetLegacyDomainToAddr = {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+    entrypoint: "clear_legacy_domain_to_address",
+    calldata: callDataEncodedDomain,
+  };
+
+  const resetDomainToAddr = {
+    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+    entrypoint: "set_user_data",
+    calldata: [identity?.getId() as string, stringToFelt("starknet"), 0, 0],
+  };
+
+  const set_main_id = {
+    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
     entrypoint: "set_main_id",
     calldata: callDataEncodedDomain,
   };
 
+  const targetAddress = identity?.getTargetAddress();
+  const legacyAddress = identity?.getData().domain?.legacy_address;
   const { writeAsync: setMainId, data: mainDomainData } = useContractWrite({
-    calls: [resetAddrToDomain, set_main_id],
+    calls:
+      // if target address is set and does not point to the caller
+      Boolean(targetAddress) &&
+      targetAddress !== formatHexString(address ? address : "")
+        ? Boolean(legacyAddress) && legacyAddress != "0x000"
+          ? // if that's a legacy address
+            [resetAddrToDomain, resetLegacyDomainToAddr, set_main_id]
+          : // if that's a normal address in userData
+            [resetAddrToDomain, resetDomainToAddr, set_main_id]
+        : // if target address is not a problem
+          [resetAddrToDomain, set_main_id],
   });
 
   useEffect(() => {
