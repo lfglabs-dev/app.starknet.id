@@ -45,14 +45,41 @@
   text-align: center;
 }
 
+.closeMobile {
+  display: none;
+}
+
 @media (max-width: 820px) {
   .menu {
     width: 90%;
-    padding: 30px;
+    display: flex;
+    padding: 48px 16px;
+    flex-direction: column;
+    align-items: center;
   }
-
+  .menu button {
+    width: 390px;
+    max-width: calc(90vw - 48px);
+    height: 60px;
+    font-size: 18px;
+  }
   .menu_title {
     font-size: 19px;
     margin: -7px -2px 2px;
+  }
+  .menu_close {
+    display: none;
+  }
+  .closeMobile {
+    display: block;
+    margin: 2rem auto 0;
+    color: var(--dark-content);
+
+    /* Button/18px */
+    font-family: QuickZap;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px; /* 133.333% */
   }
 }

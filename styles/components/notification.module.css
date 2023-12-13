@@ -1,0 +1,52 @@
+.info {
+  background-color: var(--background-light);
+  color: var(--dark-content-800, #454545);
+
+  /* Body/small/medium */
+  font-family: Poppins-Regular;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+}
+
+.actionText {
+  margin-left: 0.75rem;
+  margin-right: 0.25rem;
+  cursor: pointer;
+}
+
+.actionBar {
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .message {
+    color: var(--dark-content);
+
+    /* Body/small/medium */
+    font-family: Poppins-Regular;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 142.857% */
+  }
+  .actionText {
+    color: var(--dark-content);
+
+    /* Button/18px */
+    font-family: QuickZap;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 24px; /* 133.333% */
+  }
+  .actionBar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    width: 100%;
+  }
+}
