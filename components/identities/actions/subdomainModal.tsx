@@ -64,16 +64,6 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             targetTokenId,
           ],
         },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "set_domain_to_address",
-          calldata: [
-            Number(callDataEncodedDomain[0]) + 1,
-            encodedSubdomain,
-            ...callDataEncodedDomain.slice(1),
-            hexToDecimal(address),
-          ],
-        },
       ]);
     } else {
       setCallData([
@@ -91,16 +81,6 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             encodedSubdomain,
             ...callDataEncodedDomain.slice(1),
             newTokenId,
-          ],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "set_domain_to_address",
-          calldata: [
-            Number(callDataEncodedDomain[0]) + 1,
-            encodedSubdomain,
-            ...callDataEncodedDomain.slice(1),
-            hexToDecimal(address ?? ""),
           ],
         },
       ]);
