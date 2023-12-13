@@ -30,6 +30,7 @@ import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { posthog } from "posthog-js";
 import { getPriceFromDomain } from "../../../utils/priceService";
+import { Identity } from "../../../utils/apiObjects";
 
 type AutoRenewalModalProps = {
   handleClose: () => void;
@@ -109,9 +110,11 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!identity?.owner_addr) return;
+    if (!identity?.getOwnerAddress()) return;
     fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_LINK}/renewal/get_metahash?addr=${identity?.owner_addr}`
+      `${
+        process.env.NEXT_PUBLIC_SERVER_LINK
+      }/renewal/get_metahash?addr=${identity?.getOwnerAddress()}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -275,10 +278,10 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
               <p className={styles.desc}>
                 Enable domain subscription to ensure uninterrupted ownership and
                 benefits. Never worry about expiration dates again.{" "}
-                {identity?.domain_expiry
+                {identity?.getDomainExpiry()
                   ? `Your domain will be renewed for 1 year on  
                 ${timestampToReadableDate(
-                  identity.domain_expiry - MONTH_IN_SECONDS
+                  (identity.getDomainExpiry() as number) - MONTH_IN_SECONDS
                 )} at ${gweiToEth(renewalAllowance)} ETH.`
                   : null}
               </p>

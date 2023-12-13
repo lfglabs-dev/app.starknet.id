@@ -3,6 +3,7 @@ import ClickableDiscordIcon from "./clickable/clickableDiscordIcon";
 import ClickableGithubIcon from "./clickable/clickableGithubIcon";
 import ClickableTwitterIcon from "./clickable/clickableTwitterIcon";
 import ClickablePersonhoodIcon from "./clickable/clickablePersonhoodIcon";
+import { Identity } from "../../../utils/apiObjects";
 
 type SocialMediaActionsProps = {
   tokenId: string;
@@ -23,35 +24,47 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
           width="15"
           tokenId={tokenId}
           needUpdate={
-            identity?.old_twitter && !identity?.twitter ? true : false
+            identity?.getOldTwitterData() && !identity?.getTwitterData()
+              ? true
+              : false
           }
-          twitterId={identity?.twitter ?? identity?.old_twitter}
-          domain={identity?.domain}
+          twitterId={
+            identity?.getTwitterData() ?? identity?.getOldTwitterData()
+          }
+          domain={identity?.getDomain()}
         />
         <ClickableDiscordIcon
           isOwner={isOwner}
           width="15"
           tokenId={tokenId}
           needUpdate={
-            identity?.old_discord && !identity?.discord ? true : false
+            identity?.getOldDiscordData() && !identity?.getDiscordData()
+              ? true
+              : false
           }
-          discordId={identity?.discord ?? identity?.old_discord}
-          domain={identity?.domain}
+          discordId={
+            identity?.getDiscordData() ?? identity?.getOldDiscordData()
+          }
+          domain={identity?.getDomain()}
         />
         <ClickableGithubIcon
           isOwner={isOwner}
           width="15"
           tokenId={tokenId}
-          needUpdate={identity?.old_github && !identity?.github ? true : false}
-          githubId={identity?.github ?? identity?.old_github}
-          domain={identity?.domain}
+          needUpdate={
+            identity?.getOldGithubData() && !identity?.getGithubData()
+              ? true
+              : false
+          }
+          githubId={identity?.getGithubData() ?? identity?.getOldGithubData()}
+          domain={identity?.getDomain()}
         />
         <ClickablePersonhoodIcon
           isOwner={isOwner}
           width="28"
           tokenId={tokenId}
-          domain={identity?.domain}
-          isVerified={identity?.proof_of_personhood}
+          domain={identity?.getDomain()}
+          isVerified={identity?.getPop()}
         />
       </div>
     </>

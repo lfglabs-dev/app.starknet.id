@@ -13,6 +13,8 @@ import UpdateProfilePic from "../../components/identities/updateProfilePic";
 import TxConfirmationModal from "../../components/UI/txConfirmationModal";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import BackButton from "../../components/UI/backButton";
+import { Identity } from "../../utils/apiObjects";
+import { formatHexString } from "../../utils/stringService";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -31,7 +33,7 @@ const TokenIdPage: NextPage = () => {
 
   useEffect(() => {
     if (!identity || !address) return;
-    setIsOwner(hexToDecimal(identity.owner_addr) === hexToDecimal(address));
+    setIsOwner(identity.getOwnerAddress() === formatHexString(address));
   }, [identity, address]);
 
   const hideActionsHandler = (state: boolean) => {
@@ -52,8 +54,8 @@ const TokenIdPage: NextPage = () => {
             }
             return response.json();
           })
-          .then((data: Identity) => {
-            setIdentity(data);
+          .then((data: IdentityData) => {
+            setIdentity(new Identity(data));
             setIsIdentityADomain(Boolean(data?.domain));
           })
           .catch(() => {
