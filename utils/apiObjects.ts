@@ -58,7 +58,7 @@ export class Identity {
   }
 
   getId(): string {
-    return this.getId();
+    return this.data.id;
   }
 
   getOwnerAddress(): string {
