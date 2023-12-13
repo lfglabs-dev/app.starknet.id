@@ -48,7 +48,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const { address } = useAccount();
   const encodedDomains = utils.encodeDomain(identity?.getDomain());
   const isAccountTargetAddress =
-    identity?.getTargetAddress() === hexToDecimal(address);
+    hexToDecimal(identity?.getTargetAddress()) === hexToDecimal(address);
   const { addTransaction } = useNotificationManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
