@@ -340,6 +340,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           currentTargetAddress={identity?.getTargetAddress()}
         />
         <TransferFormModal
+          identity={identity}
           handleClose={() => setIsTransferFormOpen(false)}
           isModalOpen={isTransferFormOpen}
           callDataEncodedDomain={callDataEncodedDomain}

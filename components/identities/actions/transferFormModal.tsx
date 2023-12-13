@@ -16,14 +16,17 @@ import { StarknetIdJsContext } from "../../../context/StarknetIdJsProvider";
 import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
+import { Identity } from "../../../utils/apiObjects";
 
 type TransferFormModalProps = {
+  identity: Identity | undefined;
   handleClose: () => void;
   isModalOpen: boolean;
   callDataEncodedDomain: (number | string)[];
 };
 
 const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
+  identity,
   handleClose,
   isModalOpen,
   callDataEncodedDomain,
@@ -32,34 +35,31 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   const router = useRouter();
   const { address } = useAccount();
   const { tokenId } = router.query;
-  const numId = parseInt(tokenId as string);
   const { addTransaction } = useNotificationManager();
   const [addressInput, setAddressInput] = useState<string>("");
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [isTxSent, setIsTxSent] = useState(false);
 
-  //set_domain_to_address execute
-  const transfer_identity_and_set_domain_multicall = [
-    {
-      contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-      entrypoint: "set_domain_to_address",
-      calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress ?? "")],
-    },
-    {
-      contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-      entrypoint: "transferFrom",
-      calldata: [
-        hexToDecimal(address ?? ""),
-        hexToDecimal(targetAddress ?? ""),
-        numId,
-        0,
-      ],
-    },
-  ];
+  // todo: clear target address if necessary
+  // {
+  //   contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+  //   entrypoint: "set_domain_to_address",
+  //   calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress ?? "")],
+  // },
 
+  const transfer_id_call = {
+    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+    entrypoint: "transferFrom",
+    calldata: [
+      hexToDecimal(address ?? ""),
+      hexToDecimal(targetAddress ?? ""),
+      identity?.getId() as string,
+      0,
+    ],
+  };
   const { writeAsync: transfer_identity_and_set_domain, data: transferData } =
     useContractWrite({
-      calls: transfer_identity_and_set_domain_multicall,
+      calls: [transfer_id_call],
     });
 
   useEffect(() => {
