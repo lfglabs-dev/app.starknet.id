@@ -75,7 +75,11 @@ export class Identity {
       return legacyAddress;
     }
     let starknetFromId = this.getUserData(STARKNET);
-    if (starknetFromId) {
+    if (
+      starknetFromId &&
+      starknetFromId !==
+        "0x0000000000000000000000000000000000000000000000000000000000000000"
+    ) {
       return starknetFromId;
     }
     return this.data.owner;
