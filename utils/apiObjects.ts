@@ -49,7 +49,12 @@ export class Identity {
   }
 
   isMain(): boolean {
-    return this.data.main;
+    return (
+      this.data.main ||
+      (this.data.domain?.rev_address
+        ? this.data.domain?.rev_address === this.data.domain?.legacy_address
+        : false)
+    );
   }
 
   getId(): string {
@@ -132,7 +137,7 @@ export class Identity {
           process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT as string
         ),
         PROOF_OF_PERSONHOOD
-      ) == "0x0000000000000000000000000000000000000000000000000000000000000001"
+      ) === "0x0000000000000000000000000000000000000000000000000000000000000001"
     );
   }
 }
