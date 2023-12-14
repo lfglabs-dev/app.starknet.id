@@ -163,7 +163,6 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   // Set Enable Auto Renewal Multicall
   useEffect(() => {
     if (!price || !salesTaxAmount) return;
-    console.log("after if");
     const calls: Call[] = [];
     if (
       erc20AllowanceError ||
