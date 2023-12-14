@@ -4,7 +4,7 @@ require("dotenv").config({ path: ".env.test" });
 describe("Should test Identity object", () => {
   it("Should return the right address", () => {
     const identity = new Identity(getSampleData1());
-    expect(identity.getTargetAddress()).toEqual(
+    expect(identity.targetAddress).toEqual(
       "0x00a00373a00352aa367058555149b573322910d54fcdf3a926e3e56d0dcb4b0c"
     );
   });

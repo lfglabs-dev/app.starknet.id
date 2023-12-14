@@ -24,7 +24,7 @@ const SearchPage: NextPage = () => {
 
   useEffect(() => {
     if (!identity || !address) return;
-    setIsOwner(identity.getOwnerAddress() === formatHexString(address));
+    setIsOwner(identity.ownerAddress === formatHexString(address));
   }, [identity, address]);
 
   useEffect(() => {
@@ -68,10 +68,10 @@ const SearchPage: NextPage = () => {
         </div>
         {identity ? (
           <IdentityCard
-            tokenId={hexToDecimal(identity.getId())}
+            tokenId={hexToDecimal(identity.id)}
             identity={identity}
             isOwner={isOwner}
-            ppImageUrl={getPfp(hexToDecimal(identity.getId()))}
+            ppImageUrl={getPfp(hexToDecimal(identity.id))}
           />
         ) : (
           <IdentityCardSkeleton />

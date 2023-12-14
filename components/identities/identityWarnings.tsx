@@ -18,11 +18,11 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
   const { address } = useAccount();
   const currentTimeStamp = new Date().getTime() / 1000;
   const isExpired =
-    Number(identity?.getDomainExpiry()) < currentTimeStamp &&
-    !isSubdomain(identity?.getDomain());
+    Number(identity?.domainExpiry) < currentTimeStamp &&
+    !isSubdomain(identity?.domain);
   const showWarning =
-    identity?.getTargetAddress() != hexToDecimal(address) &&
-    identity?.getOwnerAddress() === hexToDecimal(address) &&
+    identity?.targetAddress != hexToDecimal(address) &&
+    identity?.ownerAddress === hexToDecimal(address) &&
     Boolean(address);
 
   return isIdentityADomain ? (

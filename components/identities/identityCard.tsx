@@ -34,8 +34,8 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   updateProfilePic,
   ppImageUrl,
 }) => {
-  const responsiveDomainOrId = identity?.getDomain()
-    ? shortenDomain(identity.getDomain(), 25)
+  const responsiveDomainOrId = identity?.domain
+    ? shortenDomain(identity.domain, 25)
     : `SID: ${tokenId}`;
   const [copied, setCopied] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -43,9 +43,9 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
 
   const copyToClipboard = () => {
     // if not addr, returns early
-    if (!identity?.getTargetAddress()) return;
+    if (!identity?.targetAddress) return;
     setCopied(true);
-    navigator.clipboard.writeText(identity.getTargetAddress());
+    navigator.clipboard.writeText(identity.targetAddress);
     setTimeout(() => {
       setCopied(false);
     }, 1500);
@@ -105,13 +105,13 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 </>
               )}
             </div>
-            {identity?.getDomainExpiry() ? (
+            {identity?.domainExpiry ? (
               <Tooltip title="Expiry date of this domain" arrow>
                 <div className={styles.expiryContainer}>
                   <CalendarIcon width="16" color={theme.palette.primary.main} />
                   <p className={styles.expiryText}>
                     {timestampToReadableDate(
-                      identity.getDomainExpiry() as number
+                      identity.domainExpiry as number
                     )}
                   </p>
                 </div>
@@ -121,7 +121,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           <div>
             <div className="flex flex-row items-center justify-center">
               <h1 className={styles.domain}>{responsiveDomainOrId}</h1>
-              {identity && identity.isMain() && (
+              {identity && identity.isMain && (
                 <div className="ml-2">
                   <MainIcon
                     width="30"
@@ -131,12 +131,12 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 </div>
               )}
             </div>
-            {identity?.getTargetAddress() ? (
+            {identity?.targetAddress ? (
               <>
                 <div className="flex flex-row lg:mt-6 mt-2">
                   <StarknetIcon width="32px" color="" />
                   <h2 className="ml-3 text-xl">
-                    {minifyAddress(identity.getTargetAddress())}
+                    {minifyAddress(identity.targetAddress)}
                   </h2>
                   <div className="cursor-pointer ml-3">
                     {!copied ? (

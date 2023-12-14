@@ -24,47 +24,37 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
           width="15"
           tokenId={tokenId}
           needUpdate={
-            identity?.getOldTwitterData() && !identity?.getTwitterData()
-              ? true
-              : false
+            identity?.oldTwitterData && !identity?.twitterData ? true : false
           }
-          twitterId={
-            identity?.getTwitterData() ?? identity?.getOldTwitterData()
-          }
-          domain={identity?.getDomain()}
+          twitterId={identity?.twitterData ?? identity?.oldTwitterData}
+          domain={identity?.domain}
         />
         <ClickableDiscordIcon
           isOwner={isOwner}
           width="15"
           tokenId={tokenId}
           needUpdate={
-            identity?.getOldDiscordData() && !identity?.getDiscordData()
-              ? true
-              : false
+            identity?.oldDiscordData && !identity?.discordData ? true : false
           }
-          discordId={
-            identity?.getDiscordData() ?? identity?.getOldDiscordData()
-          }
-          domain={identity?.getDomain()}
+          discordId={identity?.discordData ?? identity?.oldDiscordData}
+          domain={identity?.domain}
         />
         <ClickableGithubIcon
           isOwner={isOwner}
           width="15"
           tokenId={tokenId}
           needUpdate={
-            identity?.getOldGithubData() && !identity?.getGithubData()
-              ? true
-              : false
+            identity?.oldGithubData && !identity?.githubData ? true : false
           }
-          githubId={identity?.getGithubData() ?? identity?.getOldGithubData()}
-          domain={identity?.getDomain()}
+          githubId={identity?.githubData ?? identity?.oldGithubData}
+          domain={identity?.domain}
         />
         <ClickablePersonhoodIcon
           isOwner={isOwner}
           width="28"
           tokenId={tokenId}
-          domain={identity?.getDomain()}
-          isVerified={identity?.getPop()}
+          domain={identity?.domain}
+          isVerified={identity?.pop}
         />
       </div>
     </>

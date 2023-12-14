@@ -9,12 +9,12 @@ import {
 } from "./verifierFields";
 
 export class Identity {
-  private data: IdentityData;
+  private _data: IdentityData;
   private userDataMap: Map<string, string>;
   private verifierDataMap: Map<string, string>;
 
   constructor(identityData: IdentityData) {
-    this.data = identityData;
+    this._data = identityData;
 
     this.userDataMap = new Map();
     identityData.user_data.forEach((ud) => {
@@ -26,9 +26,8 @@ export class Identity {
       this.verifierDataMap.set(`${vd.verifier}_${vd.field}`, vd.data);
     });
   }
-
-  getData(): IdentityData {
-    return this.data;
+  get data(): IdentityData {
+    return this._data;
   }
 
   getUserData(field: string): string | undefined {
@@ -39,33 +38,33 @@ export class Identity {
     return this.verifierDataMap.get(`${verifier}_${field}`);
   }
 
-  getDomain(): string | undefined {
-    return this.data.domain?.domain;
+  get domain(): string | undefined {
+    return this._data.domain?.domain;
   }
 
-  getDomainExpiry(): number | undefined {
-    return this.data.domain?.expiry;
+  get domainExpiry(): number | undefined {
+    return this._data.domain?.expiry;
   }
 
-  isMain(): boolean {
+  get isMain(): boolean {
     return (
-      this.data.main ||
-      (this.data.domain?.rev_address
-        ? this.data.domain?.rev_address === this.data.domain?.legacy_address
+      this._data.main ||
+      (this._data.domain?.rev_address
+        ? this._data.domain?.rev_address === this._data.domain?.legacy_address
         : false)
     );
   }
 
-  getId(): string {
-    return this.data.id;
+  get id(): string {
+    return this._data.id;
   }
 
-  getOwnerAddress(): string {
-    return this.data.owner;
+  get ownerAddress(): string {
+    return this._data.owner;
   }
 
-  getTargetAddress(): string {
-    let legacyAddress = this.data.domain?.legacy_address;
+  get targetAddress(): string {
+    let legacyAddress = this._data.domain?.legacy_address;
     if (
       legacyAddress &&
       legacyAddress !==
@@ -81,7 +80,7 @@ export class Identity {
     ) {
       return starknetFromId;
     }
-    return this.data.owner;
+    return this._data.owner;
   }
 
   getSocialData(field: string): string | undefined {
@@ -113,31 +112,31 @@ export class Identity {
     );
   }
 
-  getTwitterData(): string | undefined {
+  get twitterData(): string | undefined {
     return this.getSocialData(TWITTER);
   }
 
-  getOldTwitterData(): string | undefined {
+  get oldTwitterData(): string | undefined {
     return this.getOldSocialData(TWITTER);
   }
 
-  getDiscordData(): string | undefined {
+  get discordData(): string | undefined {
     return this.getSocialData(DISCORD);
   }
 
-  getOldDiscordData(): string | undefined {
+  get oldDiscordData(): string | undefined {
     return this.getOldSocialData(DISCORD);
   }
 
-  getGithubData(): string | undefined {
+  get githubData(): string | undefined {
     return this.getSocialData(GITHUB);
   }
 
-  getOldGithubData(): string | undefined {
+  get oldGithubData(): string | undefined {
     return this.getOldSocialData(GITHUB);
   }
 
-  getPop(): boolean {
+  get pop(): boolean {
     return (
       this.getVerifierData(
         formatHexString(

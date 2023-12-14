@@ -36,14 +36,14 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
     contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
     entrypoint: "set_user_data",
     calldata: [
-      identity?.getId() as string,
+      identity?.id as string,
       STARKNET,
       hexToDecimal(targetAddress),
       0,
     ],
   };
 
-  const legacy_address = identity?.getData().domain?.legacy_address;
+  const legacy_address = identity?.data.domain?.legacy_address;
   const { writeAsync: set_domain_to_address, data: domainToAddressData } =
     useContractWrite({
       calls:
@@ -113,13 +113,13 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
               </svg>
             </button>
             <p className={styles.menu_title}>
-              Change the target address of {identity?.getDomain()}
+              Change the target address of {identity?.domain}
             </p>
             <div className="mt-5 flex flex-col justify-center">
               {currentTargetAddress && (
                 <p>
                   A stark domain resolves to a Starknet address, the current
-                  target address of {identity?.getDomain()} is{" "}
+                  target address of {identity?.domain} is{" "}
                   <strong>{minifyAddress(currentTargetAddress)}</strong>. You
                   can change it by using this form.
                 </p>

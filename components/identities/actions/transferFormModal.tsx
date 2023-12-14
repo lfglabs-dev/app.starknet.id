@@ -53,7 +53,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     calldata: [
       hexToDecimal(address ?? ""),
       hexToDecimal(targetAddress ?? ""),
-      identity?.getId() as string,
+      identity?.id as string,
       0,
     ],
   };

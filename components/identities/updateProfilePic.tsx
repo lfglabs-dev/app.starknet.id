@@ -43,10 +43,10 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   });
 
   useEffect(() => {
-    if (!identity?.getOwnerAddress() || !whitelistData) return;
+    if (!identity?.ownerAddress || !whitelistData) return;
     retrieveAssets(
       `${process.env.NEXT_PUBLIC_SERVER_LINK}/starkscan/fetch_nfts`,
-      identity.getOwnerAddress()
+      identity.ownerAddress
     ).then((data) => {
       const filteredAssets = filterAssets(data.data, whitelistData as bigint[]);
       setUserNft(filteredAssets);

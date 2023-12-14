@@ -48,9 +48,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isSubdomainFormOpen, setIsSubdomainFormOpen] =
     useState<boolean>(false);
   const { address } = useAccount();
-  const encodedDomains = utils.encodeDomain(identity?.getDomain());
+  const encodedDomains = utils.encodeDomain(identity?.domain);
   const isAccountTargetAddress =
-    hexToDecimal(identity?.getTargetAddress()) === hexToDecimal(address);
+    hexToDecimal(identity?.targetAddress) === hexToDecimal(address);
   const { addTransaction } = useNotificationManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
@@ -71,15 +71,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   const nextAutoRenew = useMemo(() => {
     const now = Math.floor(Date.now() / 1000);
-    if (identity?.getDomainExpiry()) {
-      if ((identity?.getDomainExpiry() as number) + 2592000 < now) {
+    if (identity?.domainExpiry) {
+      if (identity?.domainExpiry + 2592000 < now) {
         return "Next today";
       } else {
         return (
-          "Next on " +
-          timestampToReadableDate(
-            (identity?.getDomainExpiry() as number) - 2592000
-          )
+          "Next on " + timestampToReadableDate(identity?.domainExpiry - 2592000)
         );
       }
     }
@@ -106,17 +103,17 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const resetDomainToAddr = {
     contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
     entrypoint: "set_user_data",
-    calldata: [identity?.getId() as string, STARKNET, 0, 0],
+    calldata: [identity?.id as string, STARKNET, 0, 0],
   };
 
   const set_main_id = {
     contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
     entrypoint: "set_main_id",
-    calldata: [identity?.getId() as string],
+    calldata: [identity?.id as string],
   };
 
-  const targetAddress = identity?.getTargetAddress();
-  const legacyAddress = identity?.getData().domain?.legacy_address;
+  const targetAddress = identity?.targetAddress;
+  const legacyAddress = identity?.data.domain?.legacy_address;
   const { writeAsync: setMainId, data: mainDomainData } = useContractWrite({
     calls: (() => {
       const basis: {
@@ -150,13 +147,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   }, [address]);
 
   useEffect(() => {
-    if (!address || !identity?.getDomain() || !isOwner) return;
+    if (!address || !identity?.domain || !isOwner) return;
     fetch(
       `${
         process.env.NEXT_PUBLIC_SERVER_LINK
       }/renewal/get_renewal_data?addr=${hexToDecimal(
         address
-      )}&domain=${identity.getDomain()}`
+      )}&domain=${identity.domain}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -204,7 +201,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     if (!disableRenewalData?.transaction_hash) return;
     addTransaction({
       timestamp: Date.now(),
-      subtext: `Disabled auto renewal for ${identity?.getDomain()}`,
+      subtext: `Disabled auto renewal for ${identity?.domain}`,
       type: NotificationType.TRANSACTION,
       data: {
         type: TransactionType.DISABLE_AUTORENEW,
@@ -268,7 +265,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   title="RENEW YOUR DOMAIN"
                   style="primary"
                   description={`Will expire on ${timestampToReadableDate(
-                    identity?.getDomainExpiry() ?? 0
+                    identity?.domainExpiry ?? 0
                   )}`}
                   icon={
                     <ChangeIcon width="25" color={theme.palette.primary.main} />
@@ -276,7 +273,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   onClick={() => router.push("/renewal")}
                 />
               ) : null}
-              {!identity.isMain() && (
+              {!identity.isMain && (
                 <ClickableAction
                   title="Set as main domain"
                   description="Set this identity as your main id"
@@ -356,7 +353,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           isModalOpen={isAddressFormOpen}
           callDataEncodedDomain={callDataEncodedDomain}
           identity={identity}
-          currentTargetAddress={identity?.getTargetAddress()}
+          currentTargetAddress={identity?.targetAddress}
         />
         <TransferFormModal
           identity={identity}
@@ -368,7 +365,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           handleClose={() => setIsSubdomainFormOpen(false)}
           isModalOpen={isSubdomainFormOpen}
           callDataEncodedDomain={callDataEncodedDomain}
-          domain={identity?.getDomain()}
+          domain={identity?.domain}
         />
         <TxConfirmationModal
           txHash={mainDomainData?.transaction_hash}
@@ -381,7 +378,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           isModalOpen={isAutoRenewalOpen}
           callDataEncodedDomain={callDataEncodedDomain}
           identity={identity}
-          domain={identity?.getDomain()}
+          domain={identity?.domain}
           allowance={allowance}
         />
       </>

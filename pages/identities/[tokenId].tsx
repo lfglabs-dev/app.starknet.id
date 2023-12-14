@@ -32,7 +32,7 @@ const TokenIdPage: NextPage = () => {
 
   useEffect(() => {
     if (!identity || !address) return;
-    setIsOwner(identity.getOwnerAddress() === formatHexString(address));
+    setIsOwner(identity.ownerAddress === formatHexString(address));
   }, [identity, address]);
 
   const hideActionsHandler = (state: boolean) => {

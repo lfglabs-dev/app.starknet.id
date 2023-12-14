@@ -110,11 +110,11 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!identity?.getOwnerAddress()) return;
+    if (!identity?.ownerAddress) return;
     fetch(
       `${
         process.env.NEXT_PUBLIC_SERVER_LINK
-      }/renewal/get_metahash?addr=${identity?.getOwnerAddress()}`
+      }/renewal/get_metahash?addr=${identity?.ownerAddress}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -277,10 +277,10 @@ const AutoRenewalModal: FunctionComponent<AutoRenewalModalProps> = ({
               <p className={styles.desc}>
                 Enable domain subscription to ensure uninterrupted ownership and
                 benefits. Never worry about expiration dates again.{" "}
-                {identity?.getDomainExpiry()
+                {identity?.domainExpiry
                   ? `Your domain will be renewed for 1 year on  
                 ${timestampToReadableDate(
-                  (identity.getDomainExpiry() as number) - MONTH_IN_SECONDS
+                  identity.domainExpiry - MONTH_IN_SECONDS
                 )} at ${gweiToEth(renewalAllowance)} ETH.`
                   : null}
               </p>
