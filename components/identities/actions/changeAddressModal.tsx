@@ -9,7 +9,7 @@ import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiObjects";
-import { STARKNET } from "../../../utils/verifierFields";
+import { setStarknetAddress } from "../../../utils/callData/identityChangeCalls";
 
 type ChangeAddressModalProps = {
   handleClose: () => void;
@@ -31,35 +31,15 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   const { addTransaction } = useNotificationManager();
   const [isTxSent, setIsTxSent] = useState(false);
 
-  //set_domain_to_address execute
-  const set_domain_to_address_call = {
-    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-    entrypoint: "set_user_data",
-    calldata: [
-      identity?.id as string,
-      STARKNET,
-      hexToDecimal(targetAddress),
-      0,
-    ],
-  };
-
-  const legacy_address = identity?.data.domain?.legacy_address;
   const { writeAsync: set_domain_to_address, data: domainToAddressData } =
     useContractWrite({
-      calls:
-        Boolean(legacy_address) &&
-        legacy_address !=
-          "0x0000000000000000000000000000000000000000000000000000000000000000"
-          ? [
-              {
-                contractAddress: process.env
-                  .NEXT_PUBLIC_NAMING_CONTRACT as string,
-                entrypoint: "clear_legacy_domain_to_address",
-                calldata: [...callDataEncodedDomain],
-              },
-              set_domain_to_address_call,
-            ]
-          : [set_domain_to_address_call],
+      calls: identity
+        ? setStarknetAddress(
+            identity,
+            hexToDecimal(targetAddress),
+            callDataEncodedDomain
+          )
+        : [],
     });
 
   useEffect(() => {

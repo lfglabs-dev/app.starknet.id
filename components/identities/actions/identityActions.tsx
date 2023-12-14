@@ -4,7 +4,7 @@ import { useAccount, useContractWrite } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
-import { hexToDecimal, stringToHex } from "../../../utils/feltService";
+import { hexToDecimal } from "../../../utils/feltService";
 import ClickableAction from "../../UI/iconsComponents/clickableAction";
 import styles from "../../../styles/components/identityMenu.module.css";
 import { timestampToReadableDate } from "../../../utils/dateService";
@@ -27,6 +27,7 @@ import { posthog } from "posthog-js";
 import { Identity } from "../../../utils/apiObjects";
 import { formatHexString } from "../../../utils/stringService";
 import { STARKNET } from "../../../utils/verifierFields";
+import { setAsMainId } from "../../../utils/callData/identityChangeCalls";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -88,53 +89,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     callDataEncodedDomain.push(domain.toString(10));
   });
 
-  const resetAddrToDomain = {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "reset_address_to_domain",
-    calldata: [],
-  };
-
-  const resetLegacyDomainToAddr = {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "clear_legacy_domain_to_address",
-    calldata: callDataEncodedDomain,
-  };
-
-  const resetDomainToAddr = {
-    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-    entrypoint: "set_user_data",
-    calldata: [identity?.id as string, STARKNET, 0, 0],
-  };
-
-  const set_main_id = {
-    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-    entrypoint: "set_main_id",
-    calldata: [identity?.id as string],
-  };
-
-  const targetAddress = identity?.targetAddress;
-  const legacyAddress = identity?.data.domain?.legacy_address;
   const { writeAsync: setMainId, data: mainDomainData } = useContractWrite({
-    calls: (() => {
-      const basis: {
-        contractAddress: string;
-        entrypoint: string;
-        calldata: (string | number)[];
-      }[] = hasRev ? [resetAddrToDomain] : [];
-      if (
-        Boolean(targetAddress) &&
-        targetAddress !== formatHexString(address ? address : "")
-      ) {
-        if (Boolean(legacyAddress) && legacyAddress != "0x000") {
-          basis.push(resetLegacyDomainToAddr);
-        } else {
-          basis.push(resetDomainToAddr);
-        }
-      }
-      basis.push(set_main_id);
-      basis.push();
-      return basis;
-    })(),
+    calls: identity ? setAsMainId(identity, hasRev, callDataEncodedDomain) : [],
   });
 
   useEffect(() => {
@@ -151,9 +107,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     fetch(
       `${
         process.env.NEXT_PUBLIC_SERVER_LINK
-      }/renewal/get_renewal_data?addr=${hexToDecimal(
-        address
-      )}&domain=${identity.domain}`
+      }/renewal/get_renewal_data?addr=${hexToDecimal(address)}&domain=${
+        identity.domain
+      }`
     )
       .then((response) => response.json())
       .then((data) => {
