@@ -11,17 +11,17 @@ describe("Should test Identity object", () => {
 
   it("Should return the user's twitter id from old verifier", () => {
     const identity = new Identity(getSampleData1());
-    expect(identity.getOldTwitterData()).toEqual("789473368550567936");
+    expect(identity.oldTwitterData).toEqual("789473368550567936");
   });
 
   it("Should return the user's discord id", () => {
     const identity = new Identity(getSampleData1());
-    expect(identity.getDiscordData()).toEqual("1138759348147990529");
+    expect(identity.discordData).toEqual("1138759348147990529");
   });
 
   it("Should return the user's pop", () => {
     const identity = new Identity(getSampleData1());
-    expect(identity.getPop()).toEqual(false);
+    expect(identity.pop).toEqual(false);
   });
 });
 
