@@ -1,4 +1,4 @@
-import { Identity } from "../../utils/apiWrappers/identity";
+import { Identity } from "../../../utils/apiWrappers/identity";
 require("dotenv").config({ path: ".env.test" });
 
 describe("Should test Identity object", () => {
@@ -22,6 +22,16 @@ describe("Should test Identity object", () => {
   it("Should return the user's pop", () => {
     const identity = new Identity(getSampleData1());
     expect(identity.pop).toEqual(false);
+  });
+
+  it("Should ensures my domain is main", () => {
+    const identity = new Identity(getSampleData1());
+    expect(identity.isMain).toEqual(true);
+  });
+
+  it("Should ensures my domain is not main", () => {
+    const identity = new Identity(getSampleData2());
+    expect(identity.isMain).toEqual(false);
   });
 });
 
@@ -108,5 +118,26 @@ function getSampleData1(): IdentityData {
         data: "0x041e1382e604688da7f22e7fbb6113ba3649b84a87b58f4dc1cf5bfa96dfc2cf",
       },
     ],
+  };
+}
+
+function getSampleData2(): IdentityData {
+  return {
+    id: "0x0000000000000000000000000000000000000000000000000000000000000001",
+    owner: "0x00a00373a00352aa367058555149b573322910d54fcdf3a926e3e56d0dcb4b0c",
+    main: false,
+    creation_date: 1671228830,
+    domain: {
+      domain: "th0rgal.stark",
+      root: true,
+      creation_date: 1671228943,
+      expiry: 1828908943,
+      resolver:
+        "0x03c571617caa8578c5cf9ded5e238b3190e6efd60e73643bb4cff9f374978026",
+      legacy_address: "0x123",
+      rev_address: "0x456",
+    },
+    user_data: [],
+    verifier_data: [],
   };
 }
