@@ -59,6 +59,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const [allowance, setAllowance] = useState<string>("0");
+  const [hasRev, setHasRev] = useState<boolean>(false);
   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
     []
   );
@@ -89,7 +90,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     callDataEncodedDomain.push(domain.toString(10));
   });
 
-  // todo: optimize by skipping this call if the user doesn't have an old main domain
   const resetAddrToDomain = {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "reset_address_to_domain",
@@ -117,18 +117,36 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const targetAddress = identity?.getTargetAddress();
   const legacyAddress = identity?.getData().domain?.legacy_address;
   const { writeAsync: setMainId, data: mainDomainData } = useContractWrite({
-    calls:
-      // if target address is set and does not point to the caller
-      Boolean(targetAddress) &&
-      targetAddress !== formatHexString(address ? address : "")
-        ? Boolean(legacyAddress) && legacyAddress != "0x000"
-          ? // if that's a legacy address
-            [resetAddrToDomain, resetLegacyDomainToAddr, set_main_id]
-          : // if that's a normal address in userData
-            [resetAddrToDomain, resetDomainToAddr, set_main_id]
-        : // if target address is not a problem
-          [resetAddrToDomain, set_main_id],
+    calls: (() => {
+      const basis: {
+        contractAddress: string;
+        entrypoint: string;
+        calldata: (string | number)[];
+      }[] = hasRev ? [resetAddrToDomain] : [];
+      if (
+        Boolean(targetAddress) &&
+        targetAddress !== formatHexString(address ? address : "")
+      ) {
+        if (Boolean(legacyAddress) && legacyAddress != "0x000") {
+          basis.push(resetLegacyDomainToAddr);
+        } else {
+          basis.push(resetDomainToAddr);
+        }
+      }
+      basis.push(set_main_id);
+      basis.push();
+      return basis;
+    })(),
   });
+
+  useEffect(() => {
+    if (!address) return;
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_has_rev?addr=${address}`)
+      .then((response) => response.json())
+      .then((jsoned) => {
+        setHasRev(jsoned.has_rev);
+      });
+  }, [address]);
 
   useEffect(() => {
     if (!address || !identity?.getDomain() || !isOwner) return;
