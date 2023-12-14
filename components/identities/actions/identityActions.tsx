@@ -4,7 +4,7 @@ import { useAccount, useContractWrite } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
-import { hexToDecimal, stringToFelt } from "../../../utils/feltService";
+import { hexToDecimal, stringToHex } from "../../../utils/feltService";
 import ClickableAction from "../../UI/iconsComponents/clickableAction";
 import styles from "../../../styles/components/identityMenu.module.css";
 import { timestampToReadableDate } from "../../../utils/dateService";
@@ -26,6 +26,7 @@ import { NotificationType, TransactionType } from "../../../utils/constants";
 import { posthog } from "posthog-js";
 import { Identity } from "../../../utils/apiObjects";
 import { formatHexString } from "../../../utils/stringService";
+import { STARKNET } from "../../../utils/verifierFields";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -105,7 +106,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const resetDomainToAddr = {
     contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
     entrypoint: "set_user_data",
-    calldata: [identity?.getId() as string, stringToFelt("starknet"), 0, 0],
+    calldata: [identity?.getId() as string, STARKNET, 0, 0],
   };
 
   const set_main_id = {

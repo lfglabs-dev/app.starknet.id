@@ -4,11 +4,12 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
 import styles from "../../../styles/components/modalMessage.module.css";
 import Button from "../../UI/button";
-import { hexToDecimal, stringToFelt } from "../../../utils/feltService";
+import { hexToDecimal, stringToHex } from "../../../utils/feltService";
 import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiObjects";
+import { STARKNET } from "../../../utils/verifierFields";
 
 type ChangeAddressModalProps = {
   handleClose: () => void;
@@ -36,7 +37,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
     entrypoint: "set_user_data",
     calldata: [
       identity?.getId() as string,
-      stringToFelt("starknet"),
+      STARKNET,
       hexToDecimal(targetAddress),
       0,
     ],

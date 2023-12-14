@@ -10,10 +10,6 @@ export function stringToHex(str: string): string {
   return "0x" + buffer.toString("hex");
 }
 
-export function stringToFelt(string: string): string {
-  return "0x" + Buffer.from(string).toString("hex");
-}
-
 export function decimalToHex(element: string | number | undefined): string {
   if (element === undefined) return "";
 

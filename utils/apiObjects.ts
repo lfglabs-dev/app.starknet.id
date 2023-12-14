@@ -1,13 +1,12 @@
-import { hexToDecimal, stringToFelt } from "./feltService";
+import { hexToDecimal, stringToHex } from "./feltService";
 import { formatHexString } from "./stringService";
-
-const STARKNET = formatHexString(stringToFelt("starknet"));
-const DISCORD = formatHexString(stringToFelt("discord"));
-const TWITTER = formatHexString(stringToFelt("twitter"));
-const GITHUB = formatHexString(stringToFelt("github"));
-const PROOF_OF_PERSONHOOD = formatHexString(
-  stringToFelt("proof_of_personhood")
-);
+import {
+  DISCORD,
+  GITHUB,
+  PROOF_OF_PERSONHOOD,
+  STARKNET,
+  TWITTER,
+} from "./verifierFields";
 
 export class Identity {
   private data: IdentityData;
