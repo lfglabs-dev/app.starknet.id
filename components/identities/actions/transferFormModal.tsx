@@ -16,7 +16,7 @@ import { StarknetIdJsContext } from "../../../context/StarknetIdJsProvider";
 import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
-import { Identity } from "../../../utils/apiObjects";
+import { Identity } from "../../../utils/apiWrappers/identity";
 
 type TransferFormModalProps = {
   identity: Identity | undefined;

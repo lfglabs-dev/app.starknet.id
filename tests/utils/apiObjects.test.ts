@@ -1,4 +1,4 @@
-import { Identity } from "../../utils/apiObjects";
+import { Identity } from "../../utils/apiWrappers/identity";
 require("dotenv").config({ path: ".env.test" });
 
 describe("Should test Identity object", () => {

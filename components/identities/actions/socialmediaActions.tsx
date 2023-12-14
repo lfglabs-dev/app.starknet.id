@@ -3,7 +3,7 @@ import ClickableDiscordIcon from "./clickable/clickableDiscordIcon";
 import ClickableGithubIcon from "./clickable/clickableGithubIcon";
 import ClickableTwitterIcon from "./clickable/clickableTwitterIcon";
 import ClickablePersonhoodIcon from "./clickable/clickablePersonhoodIcon";
-import { Identity } from "../../../utils/apiObjects";
+import { Identity } from "../../../utils/apiWrappers/identity";
 
 type SocialMediaActionsProps = {
   tokenId: string;

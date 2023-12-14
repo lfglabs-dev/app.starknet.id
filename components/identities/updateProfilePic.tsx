@@ -10,7 +10,7 @@ import { debounce } from "../../utils/debounceService";
 import { useContractRead } from "@starknet-react/core";
 import { useNftPpVerifierContract } from "../../hooks/contracts";
 import { Abi } from "starknet";
-import { Identity } from "../../utils/apiObjects";
+import { Identity } from "../../utils/apiWrappers/identity";
 
 type UpdateProfilePicProps = {
   identity?: Identity;

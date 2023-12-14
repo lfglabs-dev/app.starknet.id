@@ -12,7 +12,7 @@ import UpdateProfilePic from "../../components/identities/updateProfilePic";
 import TxConfirmationModal from "../../components/UI/txConfirmationModal";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import BackButton from "../../components/UI/backButton";
-import { Identity } from "../../utils/apiObjects";
+import { Identity } from "../../utils/apiWrappers/identity";
 import { formatHexString } from "../../utils/stringService";
 
 const TokenIdPage: NextPage = () => {

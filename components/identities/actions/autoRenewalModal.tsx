@@ -30,7 +30,7 @@ import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { posthog } from "posthog-js";
 import { getPriceFromDomain } from "../../../utils/priceService";
-import { Identity } from "../../../utils/apiObjects";
+import { Identity } from "../../../utils/apiWrappers/identity";
 
 type AutoRenewalModalProps = {
   handleClose: () => void;

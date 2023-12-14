@@ -1,12 +1,12 @@
-import { hexToDecimal, stringToHex } from "./feltService";
-import { formatHexString } from "./stringService";
+import { hexToDecimal } from "../feltService";
+import { formatHexString } from "../stringService";
 import {
   DISCORD,
   GITHUB,
   PROOF_OF_PERSONHOOD,
   STARKNET,
   TWITTER,
-} from "./verifierFields";
+} from "../verifierFields";
 
 export class Identity {
   private _data: IdentityData;

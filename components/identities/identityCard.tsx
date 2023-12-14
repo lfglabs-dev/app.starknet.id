@@ -17,7 +17,7 @@ import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
 import CopyIcon from "../UI/iconsComponents/icons/copyIcon";
 import EditIcon from "../UI/iconsComponents/icons/editIcon";
 import { debounce } from "../../utils/debounceService";
-import { Identity } from "../../utils/apiObjects";
+import { Identity } from "../../utils/apiWrappers/identity";
 
 type IdentityCardProps = {
   identity?: Identity;

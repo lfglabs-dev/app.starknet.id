@@ -8,7 +8,7 @@ import { hexToDecimal, stringToHex } from "../../../utils/feltService";
 import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
-import { Identity } from "../../../utils/apiObjects";
+import { Identity } from "../../../utils/apiWrappers/identity";
 import { setStarknetAddress } from "../../../utils/callData/identityChangeCalls";
 
 type ChangeAddressModalProps = {

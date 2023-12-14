@@ -1,6 +1,6 @@
 import { Call } from "starknet";
 import { stringToHex } from "../feltService";
-import { Identity } from "../apiObjects";
+import { Identity } from "../apiWrappers/identity";
 import { STARKNET } from "../verifierFields";
 
 export function setStarknetAddress(

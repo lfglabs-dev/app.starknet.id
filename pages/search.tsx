@@ -11,7 +11,7 @@ import IdentityCardSkeleton from "../components/identities/skeletons/identityCar
 import { useAccount } from "@starknet-react/core";
 import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
 import SuggestedDomains from "../components/domains/suggestedDomains";
-import { Identity } from "../utils/apiObjects";
+import { Identity } from "../utils/apiWrappers/identity";
 import { hexToDecimal } from "../utils/feltService";
 
 const SearchPage: NextPage = () => {

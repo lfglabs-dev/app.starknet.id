@@ -24,7 +24,7 @@ import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { posthog } from "posthog-js";
-import { Identity } from "../../../utils/apiObjects";
+import { Identity } from "../../../utils/apiWrappers/identity";
 import { formatHexString } from "../../../utils/stringService";
 import { STARKNET } from "../../../utils/verifierFields";
 import { setAsMainId } from "../../../utils/callData/identityChangeCalls";

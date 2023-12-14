@@ -3,7 +3,7 @@ import { isSubdomain } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";
 import Notification from "../UI/notification";
-import { Identity } from "../../utils/apiObjects";
+import { Identity } from "../../utils/apiWrappers/identity";
 
 type IdentityWarningsProps = {
   identity?: Identity;
