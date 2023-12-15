@@ -110,9 +110,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 <div className={styles.expiryContainer}>
                   <CalendarIcon width="16" color={theme.palette.primary.main} />
                   <p className={styles.expiryText}>
-                    {timestampToReadableDate(
-                      identity.domainExpiry as number
-                    )}
+                    {timestampToReadableDate(identity.domainExpiry)}
                   </p>
                 </div>
               </Tooltip>
