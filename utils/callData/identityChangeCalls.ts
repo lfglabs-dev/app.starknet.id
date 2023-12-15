@@ -1,5 +1,5 @@
 import { Call } from "starknet";
-import { hexToDecimal, stringToHex } from "../feltService";
+import { stringToHex } from "../feltService";
 import { Identity } from "../apiWrappers/identity";
 import { STARKNET } from "../verifierFields";
 
