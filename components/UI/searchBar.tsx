@@ -200,8 +200,8 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         if (signal?.aborted) {
           return reject("Aborted");
         }
-        contract?.call("domain_to_expiry", [encoded]).then((res) => {
-          if (Number(res?.["expiry"]) < currentTimeStamp) {
+        contract?.call("domain_to_data", [encoded]).then((res) => {
+          if (Number(res["data"]["expiry"]) < currentTimeStamp) {
             resolve({
               name,
               error: false,
