@@ -61,7 +61,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const [allowance, setAllowance] = useState<string>("0");
-  const [hasRev, setHasRev] = useState<boolean>(false);
+  const [hasReverseAddressRecord, setHasReverseAddressRecord] =
+    useState<boolean>(false);
   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
     []
   );
@@ -90,7 +91,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   });
 
   const { writeAsync: setMainId, data: mainDomainData } = useContractWrite({
-    calls: identity ? setAsMainId(identity, hasRev, callDataEncodedDomain) : [],
+    calls: identity
+      ? setAsMainId(identity, hasReverseAddressRecord, callDataEncodedDomain)
+      : [],
   });
 
   useEffect(() => {
@@ -98,7 +101,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_has_rev?addr=${address}`)
       .then((response) => response.json())
       .then((jsoned) => {
-        setHasRev(jsoned.has_rev);
+        setHasReverseAddressRecord(jsoned.has_rev);
       });
   }, [address]);
 
