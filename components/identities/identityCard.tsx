@@ -130,7 +130,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
             </div>
             {identity?.addr ? (
               <>
-                <div className="flex flex-row lg:mt-6 mt-2">
+                <div className={styles.addressBar}>
                   <StarknetIcon width="32px" color="" />
                   <h2 className="ml-3 text-xl">
                     {minifyAddress(identity.addr)}
@@ -152,13 +152,14 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 </div>
               </>
             ) : null}
-
             <div className=" lg:mt-6 mt-2 flex lg:justify-start justify-center lg:items-start items-center">
-              <SocialMediaActions
-                identity={identity}
-                isOwner={isOwner}
-                tokenId={tokenId}
-              />
+              <div className={styles.socialmediaActions}>
+                <SocialMediaActions
+                  identity={identity}
+                  isOwner={isOwner}
+                  tokenId={tokenId}
+                />
+              </div>
             </div>
             <img
               alt="leaf"

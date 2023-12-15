@@ -182,13 +182,52 @@
   color: #6c5d59;
 }
 
+.addressBar {
+  /*
+  flex flex-row lg:mt-6 mt-2
+  */
+  display: flex;
+  flex-direction: row;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 1024px) {
+  .addressBar {
+    margin-top: 1.5rem;
+  }
+}
+
 @media (max-width: 1124px) {
   .identityCardSkeleton {
     width: 300px;
     height: 300px;
   }
+  .pfpSection {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  .pfpImg {
+    width: 180px;
+    height: 180px;
+  }
   .domain {
     font-size: 20px;
+    margin-top: 0.25rem;
+  }
+  .addressBar {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--light-tertiary);
+    width: fit-content;
+    border-radius: 16px;
+    padding: 9px;
+    width: 100%;
+  }
+  .addressBar svg {
+    width: 24px;
+    height: 24px;
   }
   .lg1 {
     visibility: hidden;
@@ -197,18 +236,17 @@
     visibility: hidden;
   }
   .container {
-    max-width: 80%;
-    height: auto;
-    background: transparent;
-    border: none;
-    box-shadow: none;
+    width: 100%;
+    height: fit-content;
+  }
+  .wrapper {
+    max-width: 100%;
+    margin-bottom: 17px;
   }
   .cardCode {
-    width: 0px;
-    height: 0px;
-    visibility: hidden;
+    width: 100%;
+    padding: 0 1rem;
   }
-
   .detouredTextLogo,
   .detouredLogo {
     visibility: hidden;

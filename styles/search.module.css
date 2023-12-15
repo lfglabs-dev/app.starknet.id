@@ -175,3 +175,13 @@
   height: 1px;
   background: #f5f0eb;
 }
+
+@media (max-width: 768px) {
+  .subtitle {
+    font-size: 24px;
+  }
+  .suggestionCategory {
+    margin: 0 1.5rem;
+    max-width: calc(100% - 3rem);
+  }
+}

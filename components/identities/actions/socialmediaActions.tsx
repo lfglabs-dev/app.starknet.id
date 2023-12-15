@@ -20,7 +20,7 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
       <div className="flex flex-row gap-3">
         <ClickableTwitterIcon
           isOwner={isOwner}
-          width="15"
+          width="24"
           tokenId={tokenId}
           needUpdate={
             identity?.old_twitter && !identity?.twitter ? true : false
@@ -30,7 +30,7 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
         />
         <ClickableDiscordIcon
           isOwner={isOwner}
-          width="15"
+          width="28"
           tokenId={tokenId}
           needUpdate={
             identity?.old_discord && !identity?.discord ? true : false
@@ -40,7 +40,7 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
         />
         <ClickableGithubIcon
           isOwner={isOwner}
-          width="15"
+          width="24"
           tokenId={tokenId}
           needUpdate={identity?.old_github && !identity?.github ? true : false}
           githubId={identity?.github ?? identity?.old_github}
@@ -48,7 +48,7 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
         />
         <ClickablePersonhoodIcon
           isOwner={isOwner}
-          width="28"
+          width="35"
           tokenId={tokenId}
           domain={identity?.domain}
           isVerified={identity?.proof_of_personhood}
