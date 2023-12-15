@@ -9,7 +9,7 @@ import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
-import { setStarknetAddress } from "../../../utils/callData/identityChangeCalls";
+import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 
 type ChangeAddressModalProps = {
   handleClose: () => void;
@@ -34,7 +34,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   const { writeAsync: set_domain_to_address, data: domainToAddressData } =
     useContractWrite({
       calls: identity
-        ? setStarknetAddress(
+        ? identityChangeCalls.setStarknetAddress(
             identity,
             hexToDecimal(targetAddress),
             callDataEncodedDomain

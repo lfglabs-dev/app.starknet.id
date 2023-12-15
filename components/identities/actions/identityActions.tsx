@@ -27,7 +27,7 @@ import { posthog } from "posthog-js";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import { formatHexString } from "../../../utils/stringService";
 import { STARKNET } from "../../../utils/verifierFields";
-import { setAsMainId } from "../../../utils/callData/identityChangeCalls";
+import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -92,7 +92,11 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   const { writeAsync: setMainId, data: mainDomainData } = useContractWrite({
     calls: identity
-      ? setAsMainId(identity, hasReverseAddressRecord, callDataEncodedDomain)
+      ? identityChangeCalls.setAsMainId(
+          identity,
+          hasReverseAddressRecord,
+          callDataEncodedDomain
+        )
       : [],
   });
 

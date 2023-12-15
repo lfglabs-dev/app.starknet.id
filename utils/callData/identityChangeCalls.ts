@@ -121,6 +121,10 @@ function updateProfilePicture(
 }
 
 const identityChangeCalls = {
+  transfer,
+  setStarknetAddress,
+  setUserData,
+  setAsMainId,
   writeVerifierData,
   updateProfilePicture,
 };

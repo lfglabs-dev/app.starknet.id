@@ -17,7 +17,7 @@ import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
-import { transfer } from "../../../utils/callData/identityChangeCalls";
+import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 
 type TransferFormModalProps = {
   identity: Identity | undefined;
@@ -43,7 +43,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
 
   const { writeAsync: transfer_identity_and_set_domain, data: transferData } =
     useContractWrite({
-      calls: identity ? transfer(identity, targetAddress) : [],
+      calls: identity ? identityChangeCalls.transfer(identity, targetAddress) : [],
     });
 
   useEffect(() => {
