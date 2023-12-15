@@ -100,8 +100,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     if (!address) return;
     fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_has_rev?addr=${address}`)
       .then((response) => response.json())
-      .then((jsoned) => {
-        setHasReverseAddressRecord(jsoned.has_rev);
+      .then((reverseAddressData) => {
+        setHasReverseAddressRecord(reverseAddressData.has_rev);
       });
   }, [address]);
 
