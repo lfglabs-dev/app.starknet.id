@@ -1,7 +1,23 @@
 import { Call } from "starknet";
-import { stringToHex } from "../feltService";
+import { hexToDecimal, stringToHex } from "../feltService";
 import { Identity } from "../apiWrappers/identity";
 import { STARKNET } from "../verifierFields";
+
+export function transfer(identity: Identity, target: string): Call[] {
+  // todo: clear target address if necessary
+  // {
+  //   contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+  //   entrypoint: "set_domain_to_address",
+  //   calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress ?? "")],
+  // },
+  const transferCall = {
+    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+    entrypoint: "transferFrom",
+    calldata: [identity.ownerAddress, target, identity.id, 0],
+  };
+
+  return [transferCall];
+}
 
 export function setStarknetAddress(
   identity: Identity,

@@ -17,6 +17,7 @@ import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
+import { transfer } from "../../../utils/callData/identityChangeCalls";
 
 type TransferFormModalProps = {
   identity: Identity | undefined;
@@ -40,26 +41,9 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [isTxSent, setIsTxSent] = useState(false);
 
-  // todo: clear target address if necessary
-  // {
-  //   contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-  //   entrypoint: "set_domain_to_address",
-  //   calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress ?? "")],
-  // },
-
-  const transfer_id_call = {
-    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-    entrypoint: "transferFrom",
-    calldata: [
-      hexToDecimal(address ?? ""),
-      hexToDecimal(targetAddress ?? ""),
-      identity?.id as string,
-      0,
-    ],
-  };
   const { writeAsync: transfer_identity_and_set_domain, data: transferData } =
     useContractWrite({
-      calls: [transfer_id_call],
+      calls: identity ? transfer(identity, targetAddress) : [],
     });
 
   useEffect(() => {
