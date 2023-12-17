@@ -3,6 +3,7 @@ import { isSubdomain } from "../../utils/stringService";
 import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";
 import Notification from "../UI/notification";
+import { Identity } from "../../utils/apiWrappers/identity";
 
 type IdentityWarningsProps = {
   identity?: Identity;
@@ -17,11 +18,11 @@ const IdentityWarnings: FunctionComponent<IdentityWarningsProps> = ({
   const { address } = useAccount();
   const currentTimeStamp = new Date().getTime() / 1000;
   const isExpired =
-    Number(identity?.domain_expiry) < currentTimeStamp &&
+    Number(identity?.domainExpiry) < currentTimeStamp &&
     !isSubdomain(identity?.domain);
   const showWarning =
-    identity?.addr != hexToDecimal(address) &&
-    identity?.owner_addr === hexToDecimal(address) &&
+    identity?.targetAddress != hexToDecimal(address) &&
+    identity?.ownerAddress === hexToDecimal(address) &&
     Boolean(address);
 
   return isIdentityADomain ? (

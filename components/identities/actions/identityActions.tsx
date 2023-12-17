@@ -24,6 +24,10 @@ import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { posthog } from "posthog-js";
+import { Identity } from "../../../utils/apiWrappers/identity";
+import { formatHexString } from "../../../utils/stringService";
+import { STARKNET } from "../../../utils/verifierFields";
+import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -46,7 +50,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     useState<boolean>(false);
   const { address } = useAccount();
   const encodedDomains = utils.encodeDomain(identity?.domain);
-  const isAccountTargetAddress = identity?.addr === hexToDecimal(address);
+  const isAccountTargetAddress =
+    hexToDecimal(identity?.targetAddress) === hexToDecimal(address);
   const { addTransaction } = useNotificationManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
@@ -56,6 +61,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const [allowance, setAllowance] = useState<string>("0");
+  const [hasReverseAddressRecord, setHasReverseAddressRecord] =
+    useState<boolean>(false);
   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
     []
   );
@@ -66,17 +73,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   const nextAutoRenew = useMemo(() => {
     const now = Math.floor(Date.now() / 1000);
-    if (identity?.domain_expiry) {
-      if (identity?.domain_expiry + 2592000 < now) {
+    if (identity?.domainExpiry) {
+      if (identity?.domainExpiry + 2592000 < now) {
         return "Next today";
       } else {
         return (
-          "Next on " +
-          timestampToReadableDate(identity?.domain_expiry - 2592000)
+          "Next on " + timestampToReadableDate(identity?.domainExpiry - 2592000)
         );
       }
     }
-  }, [identity?.domain_expiry]);
+  }, [identity]);
 
   // Add all subdomains to the parameters
   const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
@@ -84,27 +90,24 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     callDataEncodedDomain.push(domain.toString(10));
   });
 
-  //Set as main domain execute
-  const set_address_to_domain_calls = {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "set_address_to_domain",
-    calldata: callDataEncodedDomain,
-  };
-  const set_domain_to_address_calls = {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "set_domain_to_address",
-    calldata: [...callDataEncodedDomain, hexToDecimal(address)],
-  };
-  const { writeAsync: set_address_to_domain, data: mainDomainData } =
-    useContractWrite({
-      calls: isAccountTargetAddress
-        ? [set_address_to_domain_calls]
-        : [set_domain_to_address_calls, set_address_to_domain_calls],
-    });
+  const { writeAsync: setMainId, data: mainDomainData } = useContractWrite({
+    calls: identity
+      ? identityChangeCalls.setAsMainId(
+          identity,
+          hasReverseAddressRecord,
+          callDataEncodedDomain
+        )
+      : [],
+  });
 
-  function setAddressToDomain(): void {
-    set_address_to_domain();
-  }
+  useEffect(() => {
+    if (!address) return;
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_has_rev?addr=${address}`)
+      .then((response) => response.json())
+      .then((reverseAddressData) => {
+        setHasReverseAddressRecord(reverseAddressData.has_rev);
+      });
+  }, [address]);
 
   useEffect(() => {
     if (!address || !identity?.domain || !isOwner) return;
@@ -130,7 +133,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     if (!mainDomainData?.transaction_hash) return;
     addTransaction({
       timestamp: Date.now(),
-      subtext: "Set as main domain",
+      subtext: "Set as main id",
       type: NotificationType.TRANSACTION,
       data: {
         type: TransactionType.MAIN_DOMAIN,
@@ -225,7 +228,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   title="RENEW YOUR DOMAIN"
                   style="primary"
                   description={`Will expire on ${timestampToReadableDate(
-                    identity?.domain_expiry ?? 0
+                    identity?.domainExpiry ?? 0
                   )}`}
                   icon={
                     <ChangeIcon width="25" color={theme.palette.primary.main} />
@@ -233,10 +236,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   onClick={() => router.push("/renewal")}
                 />
               ) : null}
-              {!identity.is_owner_main && (
+              {!identity.isMain && (
                 <ClickableAction
                   title="Set as main domain"
-                  description="Set this domain as your main domain"
+                  description="Set this identity as your main id"
                   icon={
                     <MainIcon
                       width="23"
@@ -244,7 +247,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       secondColor={theme.palette.secondary.main}
                     />
                   }
-                  onClick={() => setAddressToDomain()}
+                  onClick={() => setMainId()}
                 />
               )}
               <ClickableAction
@@ -312,10 +315,11 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           handleClose={() => setIsAddressFormOpen(false)}
           isModalOpen={isAddressFormOpen}
           callDataEncodedDomain={callDataEncodedDomain}
-          domain={identity?.domain}
-          currentTargetAddress={identity?.addr}
+          identity={identity}
+          currentTargetAddress={identity?.targetAddress}
         />
         <TransferFormModal
+          identity={identity}
           handleClose={() => setIsTransferFormOpen(false)}
           isModalOpen={isTransferFormOpen}
           callDataEncodedDomain={callDataEncodedDomain}

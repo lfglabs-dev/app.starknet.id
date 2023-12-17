@@ -17,6 +17,7 @@ import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
 import CopyIcon from "../UI/iconsComponents/icons/copyIcon";
 import EditIcon from "../UI/iconsComponents/icons/editIcon";
 import { debounce } from "../../utils/debounceService";
+import { Identity } from "../../utils/apiWrappers/identity";
 
 type IdentityCardProps = {
   identity?: Identity;
@@ -34,7 +35,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   ppImageUrl,
 }) => {
   const responsiveDomainOrId = identity?.domain
-    ? shortenDomain(identity.domain as string, 25)
+    ? shortenDomain(identity.domain, 25)
     : `SID: ${tokenId}`;
   const [copied, setCopied] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -42,9 +43,9 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
 
   const copyToClipboard = () => {
     // if not addr, returns early
-    if (!identity?.addr) return;
+    if (!identity?.targetAddress) return;
     setCopied(true);
-    navigator.clipboard.writeText(identity.addr);
+    navigator.clipboard.writeText(identity.targetAddress);
     setTimeout(() => {
       setCopied(false);
     }, 1500);
@@ -104,12 +105,12 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 </>
               )}
             </div>
-            {identity?.domain_expiry ? (
+            {identity?.domainExpiry ? (
               <Tooltip title="Expiry date of this domain" arrow>
                 <div className={styles.expiryContainer}>
                   <CalendarIcon width="16" color={theme.palette.primary.main} />
                   <p className={styles.expiryText}>
-                    {timestampToReadableDate(identity.domain_expiry)}
+                    {timestampToReadableDate(identity.domainExpiry)}
                   </p>
                 </div>
               </Tooltip>
@@ -118,7 +119,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           <div>
             <div className="flex flex-row items-center justify-center">
               <h1 className={styles.domain}>{responsiveDomainOrId}</h1>
-              {identity && identity.is_owner_main && (
+              {identity && identity.isMain && (
                 <div className="ml-2">
                   <MainIcon
                     width="30"
@@ -128,12 +129,12 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 </div>
               )}
             </div>
-            {identity?.addr ? (
+            {identity?.targetAddress ? (
               <>
                 <div className={styles.addressBar}>
                   <StarknetIcon width="32px" color="" />
                   <h2 className="ml-3 text-xl">
-                    {minifyAddress(identity.addr)}
+                    {minifyAddress(identity.targetAddress)}
                   </h2>
                   <div className="cursor-pointer ml-3">
                     {!copied ? (

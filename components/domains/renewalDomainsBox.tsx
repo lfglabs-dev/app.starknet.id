@@ -3,7 +3,6 @@ import styles from "../../styles/components/registerV2.module.css";
 import { Checkbox, Skeleton, Tooltip } from "@mui/material";
 import InfoIcon from "../UI/iconsComponents/icons/infoIcon";
 import { isStarkRootDomain } from "../../utils/stringService";
-import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";
 
 type RenewalDomainsBoxProps = {
@@ -29,7 +28,7 @@ const RenewalDomainsBox: FunctionComponent<RenewalDomainsBoxProps> = ({
       fetch(
         `${
           process.env.NEXT_PUBLIC_SERVER_LINK
-        }/addr_to_full_ids?addr=${hexToDecimal(address)}`
+        }/addr_to_full_ids?addr=${address}`
       )
         .then((response) => response.json())
         .then((data) => {
