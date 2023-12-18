@@ -5,12 +5,14 @@ import { useRouter } from "next/router";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/search.module.css";
 import SearchBar from "../components/UI/searchBar";
-import { isStarkRootDomain } from "../utils/stringService";
+import { formatHexString, isStarkRootDomain } from "../utils/stringService";
 import IdentityCard from "../components/identities/identityCard";
 import IdentityCardSkeleton from "../components/identities/skeletons/identityCardSkeleton";
 import { useAccount } from "@starknet-react/core";
-import { hexToDecimal } from "../utils/feltService";
 import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
+import SuggestedDomains from "../components/domains/suggestedDomains";
+import { Identity } from "../utils/apiWrappers/identity";
+import { hexToDecimal } from "../utils/feltService";
 
 const SearchPage: NextPage = () => {
   const router = useRouter();
@@ -22,7 +24,7 @@ const SearchPage: NextPage = () => {
 
   useEffect(() => {
     if (!identity || !address) return;
-    setIsOwner(identity.owner_addr === hexToDecimal(address));
+    setIsOwner(identity.ownerAddress === formatHexString(address));
   }, [identity, address]);
 
   useEffect(() => {
@@ -46,8 +48,8 @@ const SearchPage: NextPage = () => {
             }
             return response.json();
           })
-          .then((data: Identity) => {
-            setIdentity(data);
+          .then((data: IdentityData) => {
+            setIdentity(new Identity(data));
           });
       refreshData();
       const timer = setInterval(() => refreshData(), 30e3);
@@ -66,14 +68,15 @@ const SearchPage: NextPage = () => {
         </div>
         {identity ? (
           <IdentityCard
-            tokenId={identity.starknet_id ?? ""}
+            tokenId={hexToDecimal(identity.id)}
             identity={identity}
             isOwner={isOwner}
-            ppImageUrl={getPfp(identity.starknet_id ?? "")}
+            ppImageUrl={getPfp(hexToDecimal(identity.id))}
           />
         ) : (
           <IdentityCardSkeleton />
         )}
+        <SuggestedDomains domain={domain} />
       </div>
     </div>
   );

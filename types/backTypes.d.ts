@@ -1,22 +1,35 @@
 type QueryError = { error: string };
 
-type Identity = {
-  addr: string;
+interface IdentityData {
+  id: string;
+  owner: string;
+  main: boolean;
+  creation_date: number;
+  domain?: Domain;
+  user_data: UserData[];
+  verifier_data: VerifierData[];
+}
+
+interface Domain {
   domain: string;
-  domain_expiry: number | null;
-  is_owner_main: boolean;
-  owner_addr: string;
-  discord?: string;
-  twitter?: string;
-  github?: string;
-  old_discord?: string;
-  old_twitter?: string;
-  old_github?: string;
-  proof_of_personhood?: boolean;
-  starknet_id?: string;
-  error?: string;
-  img_url?: string;
-};
+  root: boolean;
+  creation_date: number;
+  expiry?: number;
+  resolver?: string;
+  legacy_address?: string;
+  rev_address?: string;
+}
+
+interface UserData {
+  field: string;
+  data: string;
+}
+
+interface VerifierData {
+  verifier: string;
+  field: string;
+  data: string;
+}
 
 type ExternalDomains = {
   domains: string[];

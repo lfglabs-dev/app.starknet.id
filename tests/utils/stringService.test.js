@@ -27,6 +27,9 @@ import {
   getImgUrl,
   selectedDomainsToArray,
   selectedDomainsToEncodedArray,
+  getDomainWithStarks,
+  generateSuggestedNames,
+  generateSuggestedDomains,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -77,6 +80,15 @@ describe("Should test getDomainWithStark", () => {
   it("Should return string with .stark at the end", () => {
     expect(getDomainWithStark("1232575")).toBe("1232575.stark");
     expect(getDomainWithStark("1232575.stark")).toBe("1232575.stark");
+  });
+});
+
+describe("Should test getDomainWithStarks", () => {
+  it("Should return an array of domains with .stark at the end", () => {
+    expect(getDomainWithStarks(["1232575", "1232575.stark"])).toEqual([
+      "1232575.stark",
+      "1232575.stark",
+    ]);
   });
 });
 
@@ -546,10 +558,40 @@ describe("Should test getImgUrl function", () => {
   });
 
   it("Should return the correct image url if it's an image stored on ipfs", () => {
-    expect(getImgUrl("ipfs://myimage")).toEqual("https://gateway.pinata.cloud/ipfs/myimage");
+    expect(getImgUrl("ipfs://myimage")).toEqual(
+      "https://gateway.pinata.cloud/ipfs/myimage"
+    );
   });
 
   it("Should return an empty string for an empty image url", () => {
     expect(getImgUrl("")).toEqual("");
+  });
+});
+
+test("generateSuggestedDomains function", () => {
+  const mockContract = {
+    async call() {
+      return Promise.resolve({ expiry: Date.now() / 1000 - 1000 });
+    },
+  };
+
+  const domain = "example.stark";
+  return generateSuggestedDomains(domain, mockContract).then(
+    (suggestedDomains) => {
+      expect(suggestedDomains).toBeInstanceOf(Array);
+      expect(suggestedDomains).toHaveLength(5);
+    }
+  );
+});
+
+describe("generateSuggestedNames function", () => {
+  it("should generate suggested names", () => {
+    const name = "test";
+    const suggestedNames = generateSuggestedNames(name);
+    expect(suggestedNames).toBeInstanceOf(Array);
+    for (let i = 0; i < suggestedNames.length; i++) {
+      expect(typeof suggestedNames[i]).toBe("string");
+    }
+    expect(suggestedNames.length).toBeGreaterThan(0);
   });
 });

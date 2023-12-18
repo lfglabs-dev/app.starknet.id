@@ -13,7 +13,7 @@ export function stringToHex(str: string): string {
 export function decimalToHex(element: string | number | undefined): string {
   if (element === undefined) return "";
 
-  return "0x" + new BN(element).toString(16);
+  return "0x" + new BN(element).toString(16).padStart(64, "0");
 }
 
 export function hexToDecimal(hex: string | undefined): string {

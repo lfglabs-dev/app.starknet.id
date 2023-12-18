@@ -70,7 +70,6 @@ const ClickablePersonhoodIcon: FunctionComponent<
         setIsLoading(false);
         setIsOpen(false);
         setSessionId(undefined);
-        posthog?.capture("popVerificationTx");
       });
     };
 
@@ -257,7 +256,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
           color={theme.palette.secondary.main}
         />
         <div className={styles.verifiedIcon}>
-          <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
+          <VerifiedIcon width={"24"} color={theme.palette.primary.main} />
         </div>
       </div>
     </Tooltip>

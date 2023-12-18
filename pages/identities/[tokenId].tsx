@@ -6,13 +6,14 @@ import { NextPage } from "next";
 import IdentityWarnings from "../../components/identities/identityWarnings";
 import IdentityCard from "../../components/identities/identityCard";
 import IdentityActions from "../../components/identities/actions/identityActions";
-import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";
 import IdentityPageSkeleton from "../../components/identities/skeletons/identityPageSkeleton";
 import UpdateProfilePic from "../../components/identities/updateProfilePic";
 import TxConfirmationModal from "../../components/UI/txConfirmationModal";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import BackButton from "../../components/UI/backButton";
+import { Identity } from "../../utils/apiWrappers/identity";
+import { formatHexString } from "../../utils/stringService";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const TokenIdPage: NextPage = () => {
 
   useEffect(() => {
     if (!identity || !address) return;
-    setIsOwner(hexToDecimal(identity.owner_addr) === hexToDecimal(address));
+    setIsOwner(identity.ownerAddress === formatHexString(address));
   }, [identity, address]);
 
   const hideActionsHandler = (state: boolean) => {
@@ -52,8 +53,8 @@ const TokenIdPage: NextPage = () => {
             }
             return response.json();
           })
-          .then((data: Identity) => {
-            setIdentity(data);
+          .then((data: IdentityData) => {
+            setIdentity(new Identity(data));
             setIsIdentityADomain(Boolean(data?.domain));
           })
           .catch(() => {

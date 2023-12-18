@@ -1,3 +1,7 @@
+.starknetIdLogo {
+  cursor: pointer;
+}
+
 .menuItem {
   margin-left: 2.5rem /* 40px */;
   font-size: 0.875rem /* 14px */;
@@ -41,6 +45,14 @@
   padding-bottom: 1rem /* 16px */;
   font-size: 0.875rem /* 14px */;
   line-height: 1.25rem /* 20px */;
+  color: var(--dark-content);
+  /* Body/default/bold */
+  font-family: Poppins-Bold;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 28px; /* 175% */
+  letter-spacing: 0.16px;
 }
 
 .navbarContainer {
@@ -56,5 +68,68 @@
 @media (max-width: 768px) {
   .navbarContainer {
     height: 80px;
+  }
+  .starknetIdLogo {
+    width: 72px;
+    height: 72px;
+  }
+}
+
+.mobileNavbarShown {
+  animation: mobileNavbarIn 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+.mobileNavbarHidden {
+  display: none;
+  animation: mobileNavbarOut 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+@keyframes mobileNavbarIn {
+  0% {
+    mask: radial-gradient(
+      black 0%,
+      black 50%,
+      transparent 50%,
+      transparent 100%
+    );
+    mask-repeat: no-repeat;
+    mask-size: 1% 1%;
+    mask-position: 50% 50%;
+  }
+  100% {
+    mask: radial-gradient(
+      black 0%,
+      black 50%,
+      transparent 50%,
+      transparent 100%
+    );
+    mask-size: 200% 200%;
+    mask-position: 50% 50%;
+  }
+}
+
+@keyframes mobileNavbarOut {
+  0% {
+    display: flex;
+    mask: radial-gradient(
+      black 0%,
+      black 50%,
+      transparent 50%,
+      transparent 100%
+    );
+    mask-size: 200% 200%;
+    mask-position: 50% 50%;
+  }
+  100% {
+    display: flex;
+    mask: radial-gradient(
+      black 0%,
+      black 50%,
+      transparent 50%,
+      transparent 100%
+    );
+    mask-repeat: no-repeat;
+    mask-size: 1% 1%;
+    mask-position: 50% 50%;
   }
 }

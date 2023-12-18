@@ -3,6 +3,7 @@ import ClickableDiscordIcon from "./clickable/clickableDiscordIcon";
 import ClickableGithubIcon from "./clickable/clickableGithubIcon";
 import ClickableTwitterIcon from "./clickable/clickableTwitterIcon";
 import ClickablePersonhoodIcon from "./clickable/clickablePersonhoodIcon";
+import { Identity } from "../../../utils/apiWrappers/identity";
 
 type SocialMediaActionsProps = {
   tokenId: string;
@@ -20,38 +21,40 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
       <div className="flex flex-row gap-3">
         <ClickableTwitterIcon
           isOwner={isOwner}
-          width="15"
+          width="24"
           tokenId={tokenId}
           needUpdate={
-            identity?.old_twitter && !identity?.twitter ? true : false
+            identity?.oldTwitterData && !identity?.twitterData ? true : false
           }
-          twitterId={identity?.twitter ?? identity?.old_twitter}
+          twitterId={identity?.twitterData ?? identity?.oldTwitterData}
           domain={identity?.domain}
         />
         <ClickableDiscordIcon
           isOwner={isOwner}
-          width="15"
+          width="28"
           tokenId={tokenId}
           needUpdate={
-            identity?.old_discord && !identity?.discord ? true : false
+            identity?.oldDiscordData && !identity?.discordData ? true : false
           }
-          discordId={identity?.discord ?? identity?.old_discord}
+          discordId={identity?.discordData ?? identity?.oldDiscordData}
           domain={identity?.domain}
         />
         <ClickableGithubIcon
           isOwner={isOwner}
-          width="15"
+          width="24"
           tokenId={tokenId}
-          needUpdate={identity?.old_github && !identity?.github ? true : false}
-          githubId={identity?.github ?? identity?.old_github}
+          needUpdate={
+            identity?.oldGithubData && !identity?.githubData ? true : false
+          }
+          githubId={identity?.githubData ?? identity?.oldGithubData}
           domain={identity?.domain}
         />
         <ClickablePersonhoodIcon
           isOwner={isOwner}
-          width="28"
+          width="35"
           tokenId={tokenId}
           domain={identity?.domain}
-          isVerified={identity?.proof_of_personhood}
+          isVerified={identity?.pop}
         />
       </div>
     </>
