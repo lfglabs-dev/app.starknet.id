@@ -1,5 +1,5 @@
 import { InputAdornment, Modal, TextField } from "@mui/material";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useContractWrite } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import React, {
   FunctionComponent,
@@ -8,7 +8,6 @@ import React, {
   useContext,
 } from "react";
 import styles from "../../../styles/components/modalMessage.module.css";
-import { hexToDecimal } from "../../../utils/feltService";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
 import Button from "../../UI/button";
 import { utils } from "starknetid.js";
@@ -23,18 +22,15 @@ type TransferFormModalProps = {
   identity: Identity | undefined;
   handleClose: () => void;
   isModalOpen: boolean;
-  callDataEncodedDomain: (number | string)[];
 };
 
 const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   identity,
   handleClose,
   isModalOpen,
-  callDataEncodedDomain,
 }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const router = useRouter();
-  const { address } = useAccount();
   const { tokenId } = router.query;
   const { addTransaction } = useNotificationManager();
   const [addressInput, setAddressInput] = useState<string>("");
@@ -43,7 +39,9 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
 
   const { writeAsync: transfer_identity_and_set_domain, data: transferData } =
     useContractWrite({
-      calls: identity ? identityChangeCalls.transfer(identity, targetAddress) : [],
+      calls: identity
+        ? identityChangeCalls.transfer(identity, targetAddress)
+        : [],
     });
 
   useEffect(() => {
@@ -83,11 +81,16 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     setAddressInput(value);
   }
 
+  function closeModal(): void {
+    setIsTxSent(false);
+    handleClose();
+  }
+
   return (
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={handleClose}
+      onClose={closeModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >

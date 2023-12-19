@@ -24,8 +24,6 @@ import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { posthog } from "posthog-js";
 import { Identity } from "../../../utils/apiWrappers/identity";
-import { formatHexString } from "../../../utils/stringService";
-import { STARKNET } from "../../../utils/verifierFields";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 
 type IdentityActionsProps = {
@@ -49,8 +47,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     useState<boolean>(false);
   const { address } = useAccount();
   const encodedDomains = utils.encodeDomain(identity?.domain);
-  const isAccountTargetAddress =
-    hexToDecimal(identity?.targetAddress) === hexToDecimal(address);
   const { addTransaction } = useNotificationManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
@@ -320,7 +316,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           identity={identity}
           handleClose={() => setIsTransferFormOpen(false)}
           isModalOpen={isTransferFormOpen}
-          callDataEncodedDomain={callDataEncodedDomain}
         />
         <SubdomainModal
           handleClose={() => setIsSubdomainFormOpen(false)}

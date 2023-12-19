@@ -4,7 +4,7 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
 import styles from "../../../styles/components/modalMessage.module.css";
 import Button from "../../UI/button";
-import { hexToDecimal, stringToHex } from "../../../utils/feltService";
+import { hexToDecimal } from "../../../utils/feltService";
 import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
@@ -66,11 +66,16 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
     isHexString(value) ? setTargetAddress(value) : null;
   }
 
+  function closeModal(): void {
+    setIsTxSent(false);
+    handleClose();
+  }
+
   return (
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={handleClose}
+      onClose={closeModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
