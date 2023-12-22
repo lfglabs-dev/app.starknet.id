@@ -155,7 +155,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         )
       );
     })();
-  }, [email, salt, renewalBox, isSwissResident]);
+  }, [email, salt, renewalBox, isSwissResident, needMedadata]);
 
   useEffect(() => {
     if (!selectedDomains) return;
@@ -189,7 +189,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         calls.push(autoRenewalCalls.approve());
       }
 
-      selectedDomainsToArray(selectedDomains).map((domain, index) => {
+      selectedDomainsToArray(selectedDomains).map((domain) => {
         const encodedDomain = utils
           .encodeDomain(domain)
           .map((element) => element.toString())[0];
