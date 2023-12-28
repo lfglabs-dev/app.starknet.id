@@ -8,12 +8,14 @@ import { hexToDecimal } from "../../../utils/feltService";
 import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
+import { Identity } from "../../../utils/apiWrappers/identity";
+import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 
 type ChangeAddressModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
   callDataEncodedDomain: (number | string)[];
-  domain?: string;
+  identity?: Identity;
   currentTargetAddress?: string;
 };
 
@@ -21,7 +23,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   handleClose,
   isModalOpen,
   callDataEncodedDomain,
-  domain,
+  identity,
   currentTargetAddress = "0",
 }) => {
   const { address } = useAccount();
@@ -29,16 +31,15 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   const { addTransaction } = useNotificationManager();
   const [isTxSent, setIsTxSent] = useState(false);
 
-  //set_domain_to_address execute
-  const set_domain_to_address_calls = {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "set_domain_to_address",
-    calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress)],
-  };
-
   const { writeAsync: set_domain_to_address, data: domainToAddressData } =
     useContractWrite({
-      calls: [set_domain_to_address_calls],
+      calls: identity
+        ? identityChangeCalls.setStarknetAddress(
+            identity,
+            hexToDecimal(targetAddress),
+            callDataEncodedDomain
+          )
+        : [],
     });
 
   useEffect(() => {
@@ -65,11 +66,16 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
     isHexString(value) ? setTargetAddress(value) : null;
   }
 
+  function closeModal(): void {
+    setIsTxSent(false);
+    handleClose();
+  }
+
   return (
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={handleClose}
+      onClose={closeModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -92,13 +98,13 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
               </svg>
             </button>
             <p className={styles.menu_title}>
-              Change the target address of {domain}
+              Change the target address of {identity?.domain}
             </p>
             <div className="mt-5 flex flex-col justify-center">
               {currentTargetAddress && (
                 <p>
                   A stark domain resolves to a Starknet address, the current
-                  target address of {domain} is{" "}
+                  target address of {identity?.domain} is{" "}
                   <strong>{minifyAddress(currentTargetAddress)}</strong>. You
                   can change it by using this form.
                 </p>

@@ -1,12 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import {
-  useAccount,
-  useBalance,
-  useContractRead,
-  useContractWrite,
-} from "@starknet-react/core";
+import { useAccount, useBalance, useContractWrite } from "@starknet-react/core";
 import {
   formatHexString,
   isValidEmail,
@@ -14,7 +9,7 @@ import {
   selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
 import { gweiToEth, applyRateToBigInt } from "../../utils/feltService";
-import { Abi, Call } from "starknet";
+import { Call } from "starknet";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
@@ -40,14 +35,13 @@ import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
   NotificationType,
   TransactionType,
-  UINT_128_MAX,
   swissVatRate,
 } from "../../utils/constants";
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
-import { useEtherContract } from "../../hooks/contracts";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import NumberTextField from "../UI/numberTextField";
+import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 
 type RenewalProps = {
   groups: string[];
@@ -85,17 +79,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const router = useRouter();
   const [duration, setDuration] = useState<number>(1);
   const maxYearsToRegister = 25;
-  const { contract: etherContract } = useEtherContract();
-  const { data: erc20AllowanceData, error: erc20AllowanceError } =
-    useContractRead({
-      address: etherContract?.address as string,
-      abi: etherContract?.abi as Abi,
-      functionName: "allowance",
-      args: [
-        address as string,
-        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      ],
-    });
+  const needsAllowance = useAllowanceCheck(address);
 
   useEffect(() => {
     if (!renewData?.transaction_hash || !salts || !metadataHashes) return;
@@ -234,12 +218,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
       }
 
       if (renewalBox) {
-        if (
-          erc20AllowanceError ||
-          (erc20AllowanceData &&
-            erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
-            erc20AllowanceData["remaining"].high !== UINT_128_MAX)
-        ) {
+        if (needsAllowance) {
           calls.push(autoRenewalCalls.approve());
         }
 
@@ -268,12 +247,11 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     selectedDomains,
     price,
     salesTaxAmount,
-    erc20AllowanceData,
+    needsAllowance,
     metadataHashes,
     salesTaxRate,
     duration,
     renewalBox,
-    erc20AllowanceError,
   ]);
 
   function changeDuration(value: number): void {

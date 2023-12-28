@@ -2,6 +2,7 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import Notification from "../UI/notification";
 import { useRouter } from "next/router";
 import { isHexString } from "../../utils/stringService";
+import styles from "../../styles/components/notification.module.css";
 
 type AcceptCookiesProps = {
   message: string;
@@ -31,20 +32,18 @@ const AcceptCookies: FunctionComponent<AcceptCookiesProps> = ({ message }) => {
   return (
     <Notification visible={!cookiesAccepted} severity="info">
       <div className="flex flex-wrap sm:gap-20 gap-5">
-        <p>{message}</p>
-        <div className="flex">
-          <>
-            <a
-              className="hover:underline"
-              href="https://www.starknet.id/pdfs/PrivacyPolicy.pdf"
-              target="blank"
-            >
-              Privacy Policy
-            </a>
-          </>
+        <p className={styles.message}>{message}</p>
+        <div className={styles.actionBar}>
+          <a
+            className="hover:underline"
+            href="https://www.starknet.id/pdfs/PrivacyPolicy.pdf"
+            target="blank"
+          >
+            Privacy Policy
+          </a>
 
           <strong
-            className="ml-3 mr-1 cursor-pointer"
+            className={styles.actionText}
             onClick={() => {
               setCookiesAccepted(true);
               localStorage.setItem("cookiesAccepted", "true");

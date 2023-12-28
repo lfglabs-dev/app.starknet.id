@@ -134,9 +134,25 @@
   color: var(--secondary);
 }
 
+.identityActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 1024px) {
   .clickableActionPrimary,
   .clickableActionSecondary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .viewMore {
+    margin: 35px 0;
+  }
+  .identityActions {
     width: 100%;
   }
 }

@@ -3,7 +3,6 @@ import { useAccount, useContractWrite } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useIsValid } from "../../../hooks/naming";
 import styles from "../../../styles/components/modalMessage.module.css";
-import { hexToDecimal } from "../../../utils/feltService";
 import { numberToString } from "../../../utils/stringService";
 import SelectIdentity from "../../domains/selectIdentity";
 import Button from "../../UI/button";
@@ -64,16 +63,6 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             targetTokenId,
           ],
         },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "set_domain_to_address",
-          calldata: [
-            Number(callDataEncodedDomain[0]) + 1,
-            encodedSubdomain,
-            ...callDataEncodedDomain.slice(1),
-            hexToDecimal(address),
-          ],
-        },
       ]);
     } else {
       setCallData([
@@ -91,16 +80,6 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             encodedSubdomain,
             ...callDataEncodedDomain.slice(1),
             newTokenId,
-          ],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "set_domain_to_address",
-          calldata: [
-            Number(callDataEncodedDomain[0]) + 1,
-            encodedSubdomain,
-            ...callDataEncodedDomain.slice(1),
-            hexToDecimal(address ?? ""),
           ],
         },
       ]);
@@ -123,11 +102,16 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transferDomainData]); // We want to call this only once when the transaction is sent
 
+  function closeModal(): void {
+    setIsTxSent(false);
+    handleClose();
+  }
+
   return (
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={handleClose}
+      onClose={closeModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >

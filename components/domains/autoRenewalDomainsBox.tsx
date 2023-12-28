@@ -2,10 +2,10 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import styles from "../../styles/components/registerV2.module.css";
 import { Checkbox, Skeleton, Tooltip } from "@mui/material";
 import InfoIcon from "../UI/iconsComponents/icons/infoIcon";
-import { isStarkRootDomain } from "../../utils/stringService";
+import { hexToDecimal } from "../../utils/feltService";
 import { useAccount } from "@starknet-react/core";
 
-type RenewalDomainsBoxProps = {
+type AutoRenewalDomainsBoxProps = {
   helperText: string;
   setSelectedDomains: React.Dispatch<
     React.SetStateAction<Record<string, boolean> | undefined>
@@ -13,13 +13,13 @@ type RenewalDomainsBoxProps = {
   selectedDomains?: Record<string, boolean>;
 };
 
-const RenewalDomainsBox: FunctionComponent<RenewalDomainsBoxProps> = ({
+const AutoRenewalDomainsBox: FunctionComponent<AutoRenewalDomainsBoxProps> = ({
   helperText,
   setSelectedDomains,
   selectedDomains,
 }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [ownedDomains, setOwnedDomains] = useState<FullId[]>([]);
+  const [ownedDomains, setOwnedDomains] = useState<string[]>([]);
   const { address } = useAccount();
 
   useEffect(() => {
@@ -28,17 +28,14 @@ const RenewalDomainsBox: FunctionComponent<RenewalDomainsBoxProps> = ({
       fetch(
         `${
           process.env.NEXT_PUBLIC_SERVER_LINK
-        }/addr_to_full_ids?addr=${address}`
+        }/renewal/get_non_subscribed_domains?addr=${hexToDecimal(address)}`
       )
         .then((response) => response.json())
         .then((data) => {
-          const ownedDomainsToSet: FullId[] = data.full_ids.filter(
-            (identity: FullId) => isStarkRootDomain(identity?.domain)
-          );
-          setOwnedDomains(ownedDomainsToSet);
+          setOwnedDomains(data);
           setSelectedDomains(
-            ownedDomainsToSet.reduce((acc, identity) => {
-              acc[identity.domain] = true; // Initially set all to true. Adjust as needed.
+            data.reduce((acc: { [key: string]: boolean }, domain: string) => {
+              acc[domain] = true; // Initially set all to true. Adjust as needed.
               return acc;
             }, {})
           );
@@ -79,12 +76,12 @@ const RenewalDomainsBox: FunctionComponent<RenewalDomainsBoxProps> = ({
             to your wallet
           </p>
         ) : (
-          ownedDomains.map((identity: FullId, index) => (
+          ownedDomains.map((domain: string, index) => (
             <div key={index} className="flex items-center gap-1">
-              <p className={styles.domainsToRenew}>{identity.domain}</p>
+              <p className={styles.domainsToRenew}>{domain}</p>
               <Checkbox
-                checked={Boolean(selectedDomains?.[identity.domain])}
-                onChange={() => handleCheckboxChange(identity.domain)}
+                checked={Boolean(selectedDomains?.[domain])}
+                onChange={() => handleCheckboxChange(domain)}
                 sx={{ padding: 0 }}
               />
             </div>
@@ -95,4 +92,4 @@ const RenewalDomainsBox: FunctionComponent<RenewalDomainsBoxProps> = ({
   );
 };
 
-export default RenewalDomainsBox;
+export default AutoRenewalDomainsBox;

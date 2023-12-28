@@ -1,12 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import {
-  useAccount,
-  useBalance,
-  useContractRead,
-  useContractWrite,
-} from "@starknet-react/core";
+import { useAccount, useBalance, useContractWrite } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import { getDomainWithStark, isValidEmail } from "../../utils/stringService";
 import {
@@ -16,7 +11,7 @@ import {
   numberToFixedString,
 } from "../../utils/feltService";
 import { useDisplayName } from "../../hooks/displayName.tsx";
-import { Abi, Call } from "starknet";
+import { Call } from "starknet";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
@@ -33,11 +28,10 @@ import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
   NotificationType,
   TransactionType,
-  UINT_128_MAX,
   swissVatRate,
 } from "../../utils/constants";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
-import { useEtherContract } from "../../hooks/contracts";
+import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -88,18 +82,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
-  const { contract: etherContract } = useEtherContract();
   const { addTransaction } = useNotificationManager();
-  const { data: erc20AllowanceData, error: erc20AllowanceError } =
-    useContractRead({
-      address: etherContract?.address as string,
-      abi: etherContract?.abi as Abi,
-      functionName: "allowance",
-      args: [
-        address as string,
-        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      ],
-    });
+  const needsAllowance = useAllowanceCheck(address);
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -191,12 +175,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
     // If the user has toggled autorenewal
     if (renewalBox) {
-      if (
-        erc20AllowanceError ||
-        (erc20AllowanceData &&
-          erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
-          erc20AllowanceData["remaining"].high !== UINT_128_MAX)
-      ) {
+      if (needsAllowance) {
         calls.push(autoRenewalCalls.approve());
       }
       const limitPrice = salesTaxAmount
@@ -225,8 +204,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     encodedDomain,
     renewalBox,
     salesTaxAmount,
-    erc20AllowanceError,
-    erc20AllowanceData,
+    needsAllowance,
     discountId,
   ]);
 

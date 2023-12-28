@@ -10,6 +10,7 @@ import { debounce } from "../../utils/debounceService";
 import { useContractRead } from "@starknet-react/core";
 import { useNftPpVerifierContract } from "../../hooks/contracts";
 import { Abi } from "starknet";
+import { Identity } from "../../utils/apiWrappers/identity";
 
 type UpdateProfilePicProps = {
   identity?: Identity;
@@ -42,10 +43,10 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   });
 
   useEffect(() => {
-    if (!identity?.owner_addr || !whitelistData) return;
+    if (!identity?.ownerAddress || !whitelistData) return;
     retrieveAssets(
       `${process.env.NEXT_PUBLIC_SERVER_LINK}/starkscan/fetch_nfts`,
-      identity.owner_addr
+      identity.ownerAddress
     ).then((data) => {
       const filteredAssets = filterAssets(data.data, whitelistData as bigint[]);
       setUserNft(filteredAssets);

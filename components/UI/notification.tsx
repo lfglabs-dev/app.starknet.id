@@ -1,5 +1,6 @@
 import React, { FunctionComponent, ReactNode } from "react";
 import { Alert, Snackbar } from "@mui/material";
+import styles from "../../styles/components/notification.module.css";
 
 type NotificationProps = {
   children: ReactNode;
@@ -19,7 +20,7 @@ const Notification: FunctionComponent<NotificationProps> = ({
       anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       open={visible}
     >
-      <Alert severity={severity} onClose={onClose}>
+      <Alert severity={severity} onClose={onClose} className={styles[severity]}>
         {children}
       </Alert>
     </Snackbar>

@@ -64,10 +64,10 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
         >
           {discordId ? (
             <div className={styles.verifiedIcon}>
-              <VerifiedIcon width={width} color={theme.palette.primary.main} />
+              <VerifiedIcon width={"24"} color={theme.palette.primary.main} />
             </div>
           ) : null}
-          <DiscordIcon width={"18"} color={"white"} />
+          <DiscordIcon width={width} color={"white"} />
         </div>
       </Tooltip>
     )
@@ -75,7 +75,7 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
     <Tooltip title={`${minifyDomain(domain ?? "")} discord is verified`} arrow>
       <div className={styles.unclickableIconDiscord}>
         <div className={styles.verifiedIcon}>
-          <VerifiedIcon width={"18"} color={theme.palette.primary.main} />
+          <VerifiedIcon width={"24"} color={theme.palette.primary.main} />
         </div>
         <DiscordIcon width={width} color={"white"} />
       </div>
