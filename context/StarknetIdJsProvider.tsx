@@ -1,14 +1,14 @@
 import { useAccount } from "@starknet-react/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { createContext, useMemo } from "react";
-import { Provider, RpcProvider, constants } from "starknet";
+import { RpcProvider, constants } from "starknet";
 import { StarknetIdNavigator } from "starknetid.js";
 import { hexToDecimal } from "../utils/feltService";
 import { getImgUrl } from "../utils/stringService";
 
 type StarknetIdJsConfig = {
   starknetIdNavigator: StarknetIdNavigator | null;
-  provider: Provider | null;
+  provider: RpcProvider | null;
   identitiesTemp: FullId[];
   updateIdentityImg: (id: string, imgUrl: string) => void;
   getPfp: (id: string) => string;
