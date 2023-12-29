@@ -42,6 +42,7 @@ function getSampleData1(): IdentityData {
     main: false,
     creation_date: 1671228830,
     domain: {
+      migrated: false,
       domain: "th0rgal.stark",
       root: true,
       creation_date: 1671228943,
@@ -129,6 +130,7 @@ function getSampleData2(): IdentityData {
     creation_date: 1671228830,
     domain: {
       domain: "th0rgal.stark",
+      migrated: false,
       root: true,
       creation_date: 1671228943,
       expiry: 1828908943,
