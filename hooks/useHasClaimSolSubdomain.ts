@@ -18,6 +18,7 @@ export default function useHasClaimSolSubdomain(
     args: [
       snsDomains.map((domain) => utils.encodeDomain(domain)[0].toString()),
     ],
+    watch: true,
   });
 
   useEffect(() => {

@@ -22,10 +22,13 @@ function setResolving(encodedDomain: string, targetAddr: string): Call {
 }
 
 function setAsMainDomain(encodedDomain: string): Call {
+  // As we're not owner of .sol domain on testnet, we use .soldomain for testing purposes
+  const rootDomain =
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "57437602656154" : "16434";
   return {
-    contractAddress: process.env.NEXT_PUBLIC_SOL_SUBDOMAINS as string,
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_address_to_domain",
-    calldata: [2, encodedDomain, 16434],
+    calldata: [2, encodedDomain, rootDomain],
   };
 }
 

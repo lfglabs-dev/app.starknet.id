@@ -9,14 +9,20 @@ import {
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import OptionIcon from "../UI/iconsComponents/icons/optionIcon";
 import styles from "../../styles/solana.module.css";
-import { Call } from "starknet";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { Abi, Call } from "starknet";
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+} from "@starknet-react/core";
 import SolanaCalls from "../../utils/callData/solanaCalls";
 import { utils } from "starknetid.js";
 import ChangeAddressModal from "./changeAddressModal";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../utils/constants";
 import ConfirmationTx from "../UI/confirmationTx";
+import { useNamingContract } from "../../hooks/contracts";
+import { decimalToHex } from "../../utils/feltService";
 
 type DomainActionsProps = {
   name: string;
@@ -34,6 +40,18 @@ const DomainActions: FunctionComponent<DomainActionsProps> = ({ name }) => {
     useContractWrite({
       calls: mainDomainCalldata,
     });
+  const { contract } = useNamingContract();
+  const rootDomain =
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "soldomain" : "sol";
+  const encodedDomain = utils
+    .encodeDomain(`${name}.${rootDomain}.stark`)
+    .map((x) => x.toString());
+  const { data: resolveData, error: resolveError } = useContractRead({
+    address: contract?.address as string,
+    abi: contract?.abi as Abi,
+    functionName: "domain_to_address",
+    args: [encodedDomain, []],
+  });
 
   useEffect(() => {
     setMainDomainCalldata([
@@ -170,9 +188,7 @@ const DomainActions: FunctionComponent<DomainActionsProps> = ({ name }) => {
         handleClose={() => setOpenModal(false)}
         isModalOpen={openModal}
         domain={name}
-        // todo: call function resolve from naming contract to get the current target address
-        // for testing purposes we use the current starknet address
-        currentTargetAddress={address}
+        currentTargetAddress={decimalToHex((resolveData as string) ?? "0")}
       />
     </div>
   );

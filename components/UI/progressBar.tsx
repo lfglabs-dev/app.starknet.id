@@ -12,7 +12,6 @@ const ProgressBar: FunctionComponent<ProgressBarProps> = ({
   doneSteps,
   totalSteps,
 }) => {
-  console.log({ doneSteps, totalSteps });
   return (
     <div className={styles.container}>
       {Array.from(Array(totalSteps).keys()).map((_, index) => {

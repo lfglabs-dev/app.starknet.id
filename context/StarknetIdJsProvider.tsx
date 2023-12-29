@@ -1,7 +1,7 @@
 import { useAccount } from "@starknet-react/core";
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { createContext, useMemo } from "react";
-import { Provider, constants } from "starknet";
+import { Provider, RpcProvider, constants } from "starknet";
 import { StarknetIdNavigator } from "starknetid.js";
 import { hexToDecimal } from "../utils/feltService";
 import { getImgUrl } from "../utils/stringService";
@@ -34,10 +34,8 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
   }, []);
 
   const provider = useMemo(() => {
-    return new Provider({
-      rpc: {
-        nodeUrl: `${process.env.NEXT_PUBLIC_RPC_URL}`,
-      },
+    return new RpcProvider({
+      nodeUrl: `${process.env.NEXT_PUBLIC_RPC_URL}`,
     });
   }, []);
 

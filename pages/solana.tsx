@@ -65,13 +65,12 @@ const Solana: NextPage = () => {
     fetch(`https://sns-api.bonfida.com/owners/${solPublicKey}/domains`)
       .then((response) => response.json())
       .then((res) => {
-        console.log("Success:", res);
         if (res?.success && res.result) setSnsDomains(res.result);
         else setSnsDomains([]);
         setHasLoadedSolDomain(true);
       })
       .catch((error) => {
-        console.log("An error occured", error);
+        console.log("An error occured while fetching user SNS domains", error);
         setSnsDomains([]);
         setHasLoadedSolDomain(true);
       });
@@ -114,6 +113,7 @@ const Solana: NextPage = () => {
       },
     });
     setIsTxModalOpen(true);
+    setSelectedDomain(undefined);
   }, [registerData?.transaction_hash]);
 
   const generateSignature = async (solDomain: string) => {
@@ -264,8 +264,9 @@ const Solana: NextPage = () => {
                             </Button>
                           ) : selectedDomain &&
                             selectedDomain.name === name &&
-                            selectedDomain.sent ? (
-                            <Button onClick={() => generateSignature(name)}>
+                            selectedDomain.sent &&
+                            !claimedDomains.includes(name) ? (
+                            <Button onClick={() => {}} disabled>
                               Transaction ongoing
                             </Button>
                           ) : claimedDomains.includes(name) ? (
