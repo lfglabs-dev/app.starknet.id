@@ -266,7 +266,12 @@ const Solana: NextPage = () => {
                             selectedDomain.name === name &&
                             selectedDomain.sent &&
                             !claimedDomains.includes(name) ? (
-                            <Button onClick={() => {}} disabled>
+                            <Button
+                              onClick={() => {
+                                /* intentionally empty */
+                              }}
+                              disabled
+                            >
                               Transaction ongoing
                             </Button>
                           ) : claimedDomains.includes(name) ? (
