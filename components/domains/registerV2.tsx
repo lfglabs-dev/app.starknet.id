@@ -75,6 +75,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [sponsor, setSponsor] = useState<string>("0");
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
+  const [needMedadata, setNeedMetadata] = useState<boolean>(true);
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -103,15 +104,35 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     setSalt(generateSalt());
   }, [domain]); // we only need to generate a salt once per domain
 
+  // we check if the user has already registered metadata
+  useEffect(() => {
+    if (!address) return;
+    fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_LINK}/renewal/get_metahash?addr=${address}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.meta_hash && parseInt(data.meta_hash) !== 0) {
+          setNeedMetadata(false);
+          setMetadataHash(data.meta_hash);
+          if (data.tax_rate) setSalesTaxRate(data.tax_rate);
+          else setSalesTaxRate(0);
+        } else setNeedMetadata(true);
+      })
+      .catch((err) => {
+        console.log("Error while fetching metadata:", err);
+        setNeedMetadata(true);
+      });
+  }, [address]);
+
   // we update compute the purchase metadata hash
   useEffect(() => {
     // salt must not be empty to preserve privacy
-    if (!salt) return;
+    if (!salt || !needMedadata) return;
     (async () => {
       setMetadataHash(
         await computeMetadataHash(
           email,
-          //groups, // default group for domain Owner
           isSwissResident ? "switzerland" : "none",
           salt
         )
@@ -243,18 +264,20 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     posthog?.capture("register");
 
     // register the metadata to the sales manager db
-    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        meta_hash: metadataHash,
-        email,
-        tax_state: isSwissResident ? "switzerland" : "none",
-        salt: salt,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.log("Error on sending metadata:", err));
+    if (needMedadata) {
+      fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          meta_hash: metadataHash,
+          email,
+          tax_state: isSwissResident ? "switzerland" : "none",
+          salt: salt,
+        }),
+      })
+        .then((res) => res.json())
+        .catch((err) => console.log("Error on sending metadata:", err));
+    }
 
     fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
       method: "POST",
@@ -281,6 +304,20 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerData]); // We only need registerData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
+  useEffect(() => {
+    if (!needMedadata && price) {
+      setSalesTaxAmount(applyRateToBigInt(price, salesTaxRate));
+    } else {
+      if (isSwissResident) {
+        setSalesTaxRate(swissVatRate);
+        setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
+      } else {
+        setSalesTaxRate(0);
+        setSalesTaxAmount("");
+      }
+    }
+  }, [isSwissResident, price, needMedadata, salesTaxRate]);
+
   function changeAddress(value: string): void {
     isHexString(value) ? setTargetAddress(value) : null;
   }
@@ -299,16 +336,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     setTokenId(Number(value));
   }
 
-  useEffect(() => {
-    if (isSwissResident) {
-      setSalesTaxRate(swissVatRate);
-      setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
-    } else {
-      setSalesTaxRate(0);
-      setSalesTaxAmount("");
-    }
-  }, [isSwissResident, price]);
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -318,21 +345,27 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
             <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            <TextField
-              helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
-              label="Email address"
-              value={email}
-              onChange={(e) => changeEmail(e.target.value)}
-              color="secondary"
-              error={emailError}
-              errorMessage={"Please enter a valid email address"}
-              type="email"
-            />
+            {needMedadata ? (
+              <TextField
+                helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
+                label="Email address"
+                value={email}
+                onChange={(e) => changeEmail(e.target.value)}
+                color="secondary"
+                error={emailError}
+                errorMessage={"Please enter a valid email address"}
+                type="email"
+              />
+            ) : null}
 
-            <SwissForm
-              isSwissResident={isSwissResident}
-              onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
-            />
+            {needMedadata ? (
+              <SwissForm
+                isSwissResident={isSwissResident}
+                onSwissResidentChange={() =>
+                  setIsSwissResident(!isSwissResident)
+                }
+              />
+            ) : null}
             <TextField
               helperText="The Starknet address the domain will resolve to."
               label="Target address"
@@ -392,14 +425,14 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
                 !targetAddress ||
                 invalidBalance ||
                 !termsBox ||
-                emailError
+                (needMedadata && emailError)
               }
             >
               {!termsBox
                 ? "Please accept terms & policies"
                 : invalidBalance
                 ? "You don't have enough eth"
-                : emailError
+                : needMedadata && emailError
                 ? "Enter a valid Email"
                 : "Register my domain"}
             </Button>

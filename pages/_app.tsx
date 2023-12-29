@@ -39,7 +39,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const providers = jsonRpcProvider({
     rpc: (chain: Chain) => {
       return {
-        nodeUrl: `NEXT_PUBLIC_RPC_URL`,
+        nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
       };
     },
   });

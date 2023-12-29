@@ -111,18 +111,12 @@ function freeRenewal(encodedDomain: string): Call {
 function multiCallRenewal(
   encodedDomains: string[],
   durationInYears: number,
-  metadataHashes: string[],
+  metadataHash: string,
   sponsor?: string,
   discountId?: string
 ): Call[] {
   return encodedDomains.map((encodedDomain, index) =>
-    renew(
-      encodedDomain,
-      durationInYears,
-      metadataHashes[index],
-      sponsor,
-      discountId
-    )
+    renew(encodedDomain, durationInYears, metadataHash, sponsor, discountId)
   );
 }
 
