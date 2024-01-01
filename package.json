@@ -37,7 +37,7 @@
     "react-icons": "^4.4.0",
     "react-loader-spinner": "^5.2.0",
     "starknet": "^5.19.5",
-    "starknetid.js": "^2.0.0",
+    "starknetid.js": "^3.0.0",
     "starknetkit": "^1.0.21",
     "twitter-api-sdk": "^1.2.1"
   },
