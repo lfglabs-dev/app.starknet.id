@@ -10,6 +10,7 @@ import {
   alchemyProvider,
   argent,
   braavos,
+  jsonRpcProvider,
 } from "@starknet-react/core";
 import { WebWalletConnector } from "starknetkit/webwallet";
 import { Analytics } from "@vercel/analytics/react";
@@ -17,7 +18,7 @@ import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
-import { goerli, mainnet } from "@starknet-react/chains";
+import { Chain, goerli, mainnet } from "@starknet-react/chains";
 import { addWalnutLogsToConnectors } from "@walnuthq/sdk";
 
 if (typeof window !== "undefined") {
@@ -35,8 +36,10 @@ function MyApp({ Component, pageProps }: AppProps) {
   const chains = [
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? goerli : mainnet,
   ];
-  const providers = alchemyProvider({
-    apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string,
+  const providers = jsonRpcProvider({
+    rpc: (_chain: Chain) => ({
+      nodeUrl: process.env.NEXT_PUBLIC_RPC_URL as string,
+    }),
   });
   const connectors = useMemo(
     () => [
@@ -56,7 +59,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       <StarknetConfig
         chains={chains}
         provider={providers}
-        connectors={addWalnutLogsToConnectors({ connectors, apiKey: process.env.NEXT_PUBLIC_WALNUT_API_KEY as string }) as any}
+        connectors={
+          addWalnutLogsToConnectors({
+            connectors,
+            apiKey: process.env.NEXT_PUBLIC_WALNUT_API_KEY as string,
+          }) as any
+        }
         autoConnect
       >
         <StarknetIdJsProvider>
