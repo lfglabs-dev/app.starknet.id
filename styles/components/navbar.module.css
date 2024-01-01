@@ -65,6 +65,15 @@
   height: 12vh;
 }
 
+.mobileNavBarHeader {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+  padding-left: 4px;
+}
+
 @media (max-width: 768px) {
   .navbarContainer {
     height: 80px;

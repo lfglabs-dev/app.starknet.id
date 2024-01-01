@@ -82,12 +82,12 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
       <>
         {isTxSent ? (
           <ConfirmationTx
-            closeModal={handleClose}
+            closeModal={closeModal}
             txHash={domainToAddressData?.transaction_hash}
           />
         ) : (
           <div className={styles.menu}>
-            <button className={styles.menu_close} onClick={handleClose}>
+            <button className={styles.menu_close} onClick={closeModal}>
               <svg viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
