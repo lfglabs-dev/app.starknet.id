@@ -36,9 +36,7 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
   const provider = useMemo(() => {
     return new Provider({
       rpc: {
-        nodeUrl: `https://starknet-${
-          isTestnet ? "goerli" : "mainnet"
-        }.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`,
+        nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
       },
     });
   }, []);
