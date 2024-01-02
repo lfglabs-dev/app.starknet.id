@@ -108,6 +108,14 @@ strong {
   font-family: "Poppins-Bold";
 }
 
+.wallet-adapter-button:not([disabled]):hover {
+  background-color: #1a1f2e;
+}
+
+.wallet-adapter-button-trigger {
+  background-color: #512da8;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
