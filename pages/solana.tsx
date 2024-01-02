@@ -22,6 +22,7 @@ import DoneFilledIcon from "../components/UI/iconsComponents/icons/doneFilledIco
 import theme from "../styles/theme";
 import DomainActions from "../components/solana/domainActions";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
+import identityChangeCalls from "../utils/callData/identityChangeCalls";
 
 const Solana: NextPage = () => {
   const { address: starknetAddress } = useAccount();
@@ -86,6 +87,7 @@ const Solana: NextPage = () => {
         selectedDomain.signature.max_validity as number
       ),
       SolanaCalls.setResolving(name[0].toString(), starknetAddress as string),
+      SolanaCalls.setAsMainDomain(name[0].toString()),
     ]);
   }, [selectedDomain, starknetAddress]);
 
