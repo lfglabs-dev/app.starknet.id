@@ -21,18 +21,7 @@ import useHasClaimSolSubdomain from "../hooks/useHasClaimSolSubdomain";
 import DoneFilledIcon from "../components/UI/iconsComponents/icons/doneFilledIcon";
 import theme from "../styles/theme";
 import DomainActions from "../components/solana/domainActions";
-
-type StarknetSig = {
-  r: string;
-  s: string;
-  max_validity: number;
-};
-
-type SnsDomainData = {
-  name: string;
-  signature: StarknetSig | undefined;
-  sent: boolean;
-};
+import DiscountEndScreen from "../components/discount/discountEndScreen";
 
 const Solana: NextPage = () => {
   const { address: starknetAddress } = useAccount();
@@ -52,6 +41,16 @@ const Solana: NextPage = () => {
   const { writeAsync: execute, data: registerData } = useContractWrite({
     calls: callData,
   });
+  const [open, setOpen] = useState(true);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const timestamp = currentDate.getTime();
+
+    if (timestamp >= 1706878847 * 1000) {
+      setOpen(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (!starknetAddress) setCurrentStep(0);
@@ -183,145 +182,152 @@ const Solana: NextPage = () => {
 
   return (
     <div className={styles.screen}>
-      <div className={styles.wrapperScreen}>
-        <div className={styles.container}>
-          {currentStep === 0 ? (
-            <div className={styles.banner}>
-              <Image
-                src={AffiliateImage}
-                alt="hey"
-                priority
-                className={styles.image}
-              />
-              <div className={styles.banner_content}>
-                <div>
-                  <span className="title mr-2">Get your .sol domain on </span>
-                  <span className="title" style={{ color: "#19AA6E" }}>
-                    Starknet
-                  </span>
-                </div>
-                <p className="text-left">
-                  Get your .sol domain on starknet. Connect, verify, and elevate
-                  your digital identity with cross-chain domains !
-                </p>
-                <div className={styles.button_container}>
-                  <Button onClick={() => setWalletModalOpen(true)}>
-                    <div className="flex flex-row gap-4 justify-center items-center">
-                      <StarknetIcon width="28" color="" />
-                      <p>Connect your Starknet wallet</p>
-                    </div>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ) : currentStep === 1 ? (
-            <div className={styles.banner}>
-              <Image
-                src={AffiliateImage}
-                alt="hey"
-                priority
-                className={styles.image}
-              />
-              <div className={styles.banner_content}>
-                <div>
-                  <span className="title mr-2">Get your .sol domain on </span>
-                  <span className="title" style={{ color: "#19AA6E" }}>
-                    Starknet
-                  </span>
-                </div>
-                <p className="text-left">
-                  Get your .sol domain on starknet. Connect, verify, and elevate
-                  your digital identity with cross-chain domains!
-                </p>
-                <div className={styles.buttonContainer}>
-                  <div className={styles.connectLayout}>
-                    <WalletMultiButton />
+      {!open ? (
+        <DiscountEndScreen
+          title=".sol domains campaign has ended"
+          image="/freeRenewal/freeRenewal.webp"
+        />
+      ) : (
+        <div className={styles.wrapperScreen}>
+          <div className={styles.container}>
+            {currentStep === 0 ? (
+              <div className={styles.banner}>
+                <Image
+                  src={AffiliateImage}
+                  alt="hey"
+                  priority
+                  className={styles.image}
+                />
+                <div className={styles.banner_content}>
+                  <div>
+                    <span className="title mr-2">Get your .sol domain on </span>
+                    <span className="title" style={{ color: "#19AA6E" }}>
+                      Starknet
+                    </span>
+                  </div>
+                  <p className="text-left">
+                    Get your .sol domain on starknet. Connect, verify, and
+                    elevate your digital identity with cross-chain domains !
+                  </p>
+                  <div className={styles.button_container}>
+                    <Button onClick={() => setWalletModalOpen(true)}>
+                      <div className="flex flex-row gap-4 justify-center items-center">
+                        <StarknetIcon width="28" color="" />
+                        <p>Connect your Starknet wallet</p>
+                      </div>
+                    </Button>
                   </div>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className={styles.domainContainer}>
-              <div className="flex flex-col md:flex-row justify-between	">
-                <h1 className="title text-left">Domains to bridge</h1>
-                <WalletMultiButton />
+            ) : currentStep === 1 ? (
+              <div className={styles.banner}>
+                <Image
+                  src={AffiliateImage}
+                  alt="hey"
+                  priority
+                  className={styles.image}
+                />
+                <div className={styles.banner_content}>
+                  <div>
+                    <span className="title mr-2">Get your .sol domain on </span>
+                    <span className="title" style={{ color: "#19AA6E" }}>
+                      Starknet
+                    </span>
+                  </div>
+                  <p className="text-left">
+                    Get your .sol domain on starknet. Connect, verify, and
+                    elevate your digital identity with cross-chain domains!
+                  </p>
+                  <div className={styles.buttonContainer}>
+                    <div className={styles.connectLayout}>
+                      <WalletMultiButton />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className={styles.domainList}>
-                {hasLoadedSolDomain ? (
-                  snsDomains.length > 0 ? (
-                    snsDomains.map((name, index) => {
-                      return (
-                        <div key={index} className={styles.domainBox}>
-                          <div className={styles.domainTitle}>
-                            <p className={styles.domainName}>
-                              {name}.sol.stark
-                            </p>
-                            {claimedDomains.includes(name) ? (
-                              <DomainActions name={name} />
-                            ) : null}
+            ) : (
+              <div className={styles.domainContainer}>
+                <div className="flex flex-col md:flex-row justify-between	">
+                  <h1 className="title text-left">Domains to bridge</h1>
+                  <WalletMultiButton />
+                </div>
+                <div className={styles.domainList}>
+                  {hasLoadedSolDomain ? (
+                    snsDomains.length > 0 ? (
+                      snsDomains.map((name, index) => {
+                        return (
+                          <div key={index} className={styles.domainBox}>
+                            <div className={styles.domainTitle}>
+                              <p className={styles.domainName}>
+                                {name}.sol.stark
+                              </p>
+                              {claimedDomains.includes(name) ? (
+                                <DomainActions name={name} />
+                              ) : null}
+                            </div>
+                            <div>
+                              {canReceiveOnStarknet(name) ? (
+                                <Button onClick={receiveDomain}>
+                                  Receive on Starknet
+                                </Button>
+                              ) : selectedDomain &&
+                                selectedDomain.name === name &&
+                                selectedDomain.sent &&
+                                !claimedDomains.includes(name) ? (
+                                <Button
+                                  onClick={() => {
+                                    /* intentionally empty */
+                                  }}
+                                  disabled
+                                >
+                                  Transaction ongoing
+                                </Button>
+                              ) : claimedDomains.includes(name) ? (
+                                <div className={styles.receivedBtn}>
+                                  <DoneFilledIcon
+                                    width="24"
+                                    secondColor={theme.palette.primary.main}
+                                    color="#FFF"
+                                  />
+                                  <p>Received</p>
+                                </div>
+                              ) : (
+                                <Button onClick={() => generateSignature(name)}>
+                                  Allow on Solana
+                                </Button>
+                              )}
+                            </div>
                           </div>
-                          <div>
-                            {canReceiveOnStarknet(name) ? (
-                              <Button onClick={receiveDomain}>
-                                Receive on Starknet
-                              </Button>
-                            ) : selectedDomain &&
-                              selectedDomain.name === name &&
-                              selectedDomain.sent &&
-                              !claimedDomains.includes(name) ? (
-                              <Button
-                                onClick={() => {
-                                  /* intentionally empty */
-                                }}
-                                disabled
-                              >
-                                Transaction ongoing
-                              </Button>
-                            ) : claimedDomains.includes(name) ? (
-                              <div className={styles.receivedBtn}>
-                                <DoneFilledIcon
-                                  width="24"
-                                  secondColor={theme.palette.primary.main}
-                                  color="#FFF"
-                                />
-                                <p>Received</p>
-                              </div>
-                            ) : (
-                              <Button onClick={() => generateSignature(name)}>
-                                Allow on Solana
-                              </Button>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })
+                        );
+                      })
+                    ) : (
+                      "You don't own any .sol domains"
+                    )
                   ) : (
-                    "You don't own any .sol domains"
-                  )
-                ) : (
-                  <>
-                    <Skeleton
-                      variant="rectangular"
-                      width={358}
-                      height={124}
-                      className={styles.domainSkeleton}
-                    />
-                    <Skeleton
-                      variant="rectangular"
-                      width={358}
-                      height={124}
-                      className={styles.domainSkeleton}
-                    />
-                  </>
-                )}
+                    <>
+                      <Skeleton
+                        variant="rectangular"
+                        width={358}
+                        height={124}
+                        className={styles.domainSkeleton}
+                      />
+                      <Skeleton
+                        variant="rectangular"
+                        width={358}
+                        height={124}
+                        className={styles.domainSkeleton}
+                      />
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
+          <div className={styles.progressBarContainer}>
+            <ProgressBar doneSteps={currentStep} totalSteps={3} />
+          </div>
         </div>
-        <div className={styles.progressBarContainer}>
-          <ProgressBar doneSteps={currentStep} totalSteps={3} />
-        </div>
-      </div>
+      )}
       <Wallets
         closeWallet={() => setWalletModalOpen(false)}
         hasWallet={walletModalOpen}
