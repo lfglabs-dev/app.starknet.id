@@ -4,6 +4,7 @@ import React, {
   useEffect,
   FunctionComponent,
   useCallback,
+  useContext,
 } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
@@ -27,6 +28,8 @@ import { useTheme } from "@mui/material/styles";
 import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
 import DesktopNav from "./desktopNav";
 import CloseFilledIcon from "./iconsComponents/icons/closeFilledIcon";
+import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
+import { StarkProfile } from "starknetid.js";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -44,7 +47,15 @@ const Navbar: FunctionComponent = () => {
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   const [txLoading, setTxLoading] = useState<number>(0);
   const [showWallet, setShowWallet] = useState<boolean>(false);
-  const { data: profile } = useStarkProfile({ address });
+  const [profile, setProfile] = useState<StarkProfile | undefined>(undefined);
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
+
+  // could be replaced by a useProfileData from starknet-react when updated
+  useEffect(() => {
+    if (starknetIdNavigator !== null && address !== undefined) {
+      starknetIdNavigator.getProfileData(address).then(setProfile);
+    }
+  }, [address]);
 
   useEffect(() => {
     // to handle autoconnect starknet-react adds connector id in local storage
@@ -231,7 +242,7 @@ const Navbar: FunctionComponent = () => {
               ${nav ? styles.mobileNavbarShown : styles.mobileNavbarHidden}`}
           >
             <div className="h-full flex flex-col">
-              <div className="flex w-full items-center justify-between">
+              <div className={styles.mobileNavBarHeader}>
                 <div>
                   <Link href="/" className="cursor-pointer">
                     <img
