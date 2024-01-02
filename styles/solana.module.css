@@ -11,7 +11,7 @@
   align-items: center;
   width: 100%;
   height: calc(100% - 12vh);
-  padding: 0rem 0rem 2rem;
+  padding: 2rem 0 0;
 }
 
 .container {
@@ -33,11 +33,6 @@
   background: var(--background-paper, #FFF);
 }
 
-/* .button_text {
-  display: flex;
-  gap: 1rem;
-} */
-
 .domainContainer {
   overflow: hidden;
   padding: 2rem;
@@ -46,6 +41,7 @@
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   max-height: 600px;
   background: var(--background-paper, #FFF);
+  min-height: 270px;
 }
 
 .domainList {
@@ -222,4 +218,13 @@
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
+  .domainContainer {
+    min-height: 350px;
+  }
+}
+
+@media (max-height: 600px) {
+  .wrapperScreen {
+    height: auto;
+  }
 }

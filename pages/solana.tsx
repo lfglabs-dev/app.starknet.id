@@ -242,56 +242,62 @@ const Solana: NextPage = () => {
             </div>
           ) : (
             <div className={styles.domainContainer}>
-              <div className="flex flex-row justify-between	">
+              <div className="flex flex-col md:flex-row justify-between	">
                 <h1 className="title text-left">Domains to bridge</h1>
                 <WalletMultiButton />
               </div>
               <div className={styles.domainList}>
                 {hasLoadedSolDomain ? (
-                  snsDomains.map((name, index) => {
-                    return (
-                      <div key={index} className={styles.domainBox}>
-                        <div className={styles.domainTitle}>
-                          <p className={styles.domainName}>{name}.sol.stark</p>
-                          {claimedDomains.includes(name) ? (
-                            <DomainActions name={name} />
-                          ) : null}
+                  snsDomains.length > 0 ? (
+                    snsDomains.map((name, index) => {
+                      return (
+                        <div key={index} className={styles.domainBox}>
+                          <div className={styles.domainTitle}>
+                            <p className={styles.domainName}>
+                              {name}.sol.stark
+                            </p>
+                            {claimedDomains.includes(name) ? (
+                              <DomainActions name={name} />
+                            ) : null}
+                          </div>
+                          <div>
+                            {canReceiveOnStarknet(name) ? (
+                              <Button onClick={receiveDomain}>
+                                Receive on Starknet
+                              </Button>
+                            ) : selectedDomain &&
+                              selectedDomain.name === name &&
+                              selectedDomain.sent &&
+                              !claimedDomains.includes(name) ? (
+                              <Button
+                                onClick={() => {
+                                  /* intentionally empty */
+                                }}
+                                disabled
+                              >
+                                Transaction ongoing
+                              </Button>
+                            ) : claimedDomains.includes(name) ? (
+                              <div className={styles.receivedBtn}>
+                                <DoneFilledIcon
+                                  width="24"
+                                  secondColor={theme.palette.primary.main}
+                                  color="#FFF"
+                                />
+                                <p>Received</p>
+                              </div>
+                            ) : (
+                              <Button onClick={() => generateSignature(name)}>
+                                Allow on Solana
+                              </Button>
+                            )}
+                          </div>
                         </div>
-                        <div>
-                          {canReceiveOnStarknet(name) ? (
-                            <Button onClick={receiveDomain}>
-                              Receive on Starknet
-                            </Button>
-                          ) : selectedDomain &&
-                            selectedDomain.name === name &&
-                            selectedDomain.sent &&
-                            !claimedDomains.includes(name) ? (
-                            <Button
-                              onClick={() => {
-                                /* intentionally empty */
-                              }}
-                              disabled
-                            >
-                              Transaction ongoing
-                            </Button>
-                          ) : claimedDomains.includes(name) ? (
-                            <div className={styles.receivedBtn}>
-                              <DoneFilledIcon
-                                width="24"
-                                secondColor={theme.palette.primary.main}
-                                color="#FFF"
-                              />
-                              <p>Received</p>
-                            </div>
-                          ) : (
-                            <Button onClick={() => generateSignature(name)}>
-                              Allow on Solana
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })
+                      );
+                    })
+                  ) : (
+                    "You don't own any .sol domains"
+                  )
                 ) : (
                   <>
                     <Skeleton
