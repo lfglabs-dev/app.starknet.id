@@ -7,7 +7,6 @@ import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
 import {
   StarknetConfig,
-  alchemyProvider,
   argent,
   braavos,
   jsonRpcProvider,
@@ -37,11 +36,9 @@ function MyApp({ Component, pageProps }: AppProps) {
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? goerli : mainnet,
   ];
   const providers = jsonRpcProvider({
-    rpc: (chain: Chain) => {
-      return {
-        nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
-      };
-    },
+    rpc: (_chain: Chain) => ({
+      nodeUrl: process.env.NEXT_PUBLIC_RPC_URL as string,
+    }),
   });
   const connectors = useMemo(
     () => [

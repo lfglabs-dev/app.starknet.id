@@ -12,6 +12,7 @@ interface IdentityData {
 
 interface Domain {
   domain: string;
+  migrated : boolean;
   root: boolean;
   creation_date: number;
   expiry?: number;

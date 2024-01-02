@@ -56,19 +56,19 @@ function buy_discounted(
   };
 }
 
-function addressToDomain(encodedDomain: string): Call {
-  return {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "set_address_to_domain",
-    calldata: [1, encodedDomain],
-  };
-}
-
 function mint(tokenId: number): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
     entrypoint: "mint",
     calldata: [numberToString(tokenId)],
+  };
+}
+
+function mainId(tokenId: number): Call {
+  return {
+    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+    entrypoint: "set_main_id",
+    calldata: [tokenId],
   };
 }
 
@@ -127,7 +127,7 @@ function multiCallFreeRenewals(encodedDomains: string[]): Call[] {
 const registrationCalls = {
   approve,
   buy,
-  addressToDomain,
+  mainId,
   mint,
   buy_discounted,
   vatTransfer,

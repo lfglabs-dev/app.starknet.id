@@ -2,6 +2,7 @@ import { Call } from "starknet";
 import { stringToHex } from "../feltService";
 import { Identity } from "../apiWrappers/identity";
 import { STARKNET } from "../verifierFields";
+import { utils } from "starknetid.js";
 
 export function transfer(identity: Identity, target: string): Call[] {
   // todo: clear target address if necessary
@@ -76,6 +77,19 @@ export function setAsMainId(
   ) {
     output.push(...setStarknetAddress(identity, "0", callDataEncodedDomain));
   }
+
+  // migrate domain if necessary
+  if (identity.data.domain && !identity.data.domain.migrated) {
+    const encodedDomain = utils
+      .encodeDomain(identity.data.domain.domain)
+      .map((elem) => elem.toString());
+    output.push({
+      contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+      entrypoint: "migrate_domain",
+      calldata: [encodedDomain.length, ...encodedDomain],
+    });
+  }
+
   // set as main id
   output.push({
     contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,

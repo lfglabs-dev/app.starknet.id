@@ -218,7 +218,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // If the user do not have a main domain and the address match
     if (addressesMatch && !hasMainDomain) {
-      calls.push(registrationCalls.addressToDomain(encodedDomain));
+      calls.push(registrationCalls.mainId(newTokenId));
     }
 
     // If the user has toggled autorenewal
