@@ -223,6 +223,12 @@
   }
 }
 
+@media (max-width: 425px) {
+  .domainBox {
+    max-width: 100%;
+  }
+}
+
 @media (max-height: 600px) {
   .wrapperScreen {
     height: auto;
