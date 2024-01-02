@@ -7,7 +7,6 @@ import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
 import {
   StarknetConfig,
-  alchemyProvider,
   argent,
   braavos,
   jsonRpcProvider,
