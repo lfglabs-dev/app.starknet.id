@@ -1,5 +1,5 @@
 import { hexToDecimal } from "../feltService";
-import { formatHexString } from "../stringService";
+import { formatHexString, getImgUrl } from "../stringService";
 import {
   DISCORD,
   GITHUB,
@@ -145,5 +145,17 @@ export class Identity {
         PROOF_OF_PERSONHOOD
       ) === "0x0000000000000000000000000000000000000000000000000000000000000001"
     );
+  }
+
+  get imgUrl(): string | undefined {
+    return this._data.img_url;
+  }
+
+  get pfp(): string | undefined {
+    return this.imgUrl
+      ? getImgUrl(this.imgUrl)
+      : `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${hexToDecimal(
+          this.id
+        )}`;
   }
 }

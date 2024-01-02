@@ -5,7 +5,11 @@ import { useRouter } from "next/router";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/search.module.css";
 import SearchBar from "../components/UI/searchBar";
-import { formatHexString, isStarkRootDomain } from "../utils/stringService";
+import {
+  formatHexString,
+  getImgUrl,
+  isStarkRootDomain,
+} from "../utils/stringService";
 import IdentityCard from "../components/identities/identityCard";
 import IdentityCardSkeleton from "../components/identities/skeletons/identityCardSkeleton";
 import { useAccount } from "@starknet-react/core";
@@ -49,6 +53,13 @@ const SearchPage: NextPage = () => {
             return response.json();
           })
           .then((data: IdentityData) => {
+            console.log("data", data);
+            // const test = data?.img_url
+            //   ? getImgUrl(data?.img_url)
+            //   : `${
+            //       process.env.NEXT_PUBLIC_STARKNET_ID
+            //     }/api/identicons/${hexToDecimal(data?.id)}`;
+            // console.log("test", test);
             setIdentity(new Identity(data));
           });
       refreshData();
@@ -71,7 +82,8 @@ const SearchPage: NextPage = () => {
             tokenId={hexToDecimal(identity.id)}
             identity={identity}
             isOwner={isOwner}
-            ppImageUrl={getPfp(hexToDecimal(identity.id))}
+            // ppImageUrl={identity?.pfp as string}
+            ppImageUrl=""
           />
         ) : (
           <IdentityCardSkeleton />

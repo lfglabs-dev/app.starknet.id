@@ -8,11 +8,12 @@ interface IdentityData {
   domain?: Domain;
   user_data: UserData[];
   verifier_data: VerifierData[];
+  img_url?: string;
 }
 
 interface Domain {
   domain: string;
-  migrated : boolean;
+  migrated: boolean;
   root: boolean;
   creation_date: number;
   expiry?: number;
