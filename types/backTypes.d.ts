@@ -8,7 +8,7 @@ interface IdentityData {
   domain?: Domain;
   user_data: UserData[];
   verifier_data: VerifierData[];
-  extended_verifier_data?: ExtendedVerifierData[];
+  extended_verifier_data: ExtendedVerifierData[];
 }
 
 interface Domain {

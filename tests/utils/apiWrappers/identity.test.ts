@@ -119,6 +119,7 @@ function getSampleData1(): IdentityData {
         data: "0x041e1382e604688da7f22e7fbb6113ba3649b84a87b58f4dc1cf5bfa96dfc2cf",
       },
     ],
+    extended_verifier_data: [],
   };
 }
 
@@ -141,5 +142,6 @@ function getSampleData2(): IdentityData {
     },
     user_data: [],
     verifier_data: [],
+    extended_verifier_data: [],
   };
 }

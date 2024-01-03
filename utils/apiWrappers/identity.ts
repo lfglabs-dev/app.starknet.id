@@ -30,14 +30,12 @@ export class Identity {
     });
 
     this.extendedVerifierDataMap = new Map();
-    if (identityData.extended_verifier_data) {
-      identityData.extended_verifier_data.forEach((vd) => {
-        this.extendedVerifierDataMap.set(
-          `${vd.verifier}_${vd.field}`,
-          vd.extended_data
-        );
-      });
-    }
+    identityData.extended_verifier_data.forEach((vd) => {
+      this.extendedVerifierDataMap.set(
+        `${vd.verifier}_${vd.field}`,
+        vd.extended_data
+      );
+    });
   }
   get data(): IdentityData {
     return this._data;
