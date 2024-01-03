@@ -167,16 +167,20 @@ export class Identity {
 
   async getProfilePic(): Promise<string> {
     const identiconsUrl = `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${this.id}`;
+    // Get NFT contract address from verifier_data
     const contractAddress = this.getVerifierData(
       formatHexString(process.env.NEXT_PUBLIC_NFT_PP_VERIFIER as string),
       NFT_PP_CONTRACT
     );
+    // Get NFT token id from extended_verifier_data and convert it to a BigInt array
     const id = this.getExtendedVerifierData(
       formatHexString(process.env.NEXT_PUBLIC_NFT_PP_VERIFIER as string),
       NFT_PP_ID
     )?.map((hex) => BigInt(parseInt(hex, 16)));
 
     if (!id || !contractAddress) return identiconsUrl;
+
+    // Convert token id from uint256 to a string
     const nftId = fromUint256(id[0], id[1]);
 
     try {
