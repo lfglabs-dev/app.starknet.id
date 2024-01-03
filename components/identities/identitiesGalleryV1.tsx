@@ -1,4 +1,10 @@
-import React, { FunctionComponent, ReactNode, useContext } from "react";
+import React, {
+  FunctionComponent,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
 import { getDomainKind, minifyDomain } from "../../utils/stringService";
@@ -10,18 +16,36 @@ import {
 } from "../../utils/dateService";
 import ArgentIcon from "../UI/iconsComponents/icons/argentIcon";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
+import RenewalIcon from "../UI/iconsComponents/icons/renewalIcon";
+import SubscriptionTooltip from "./subscriptionTooltip";
+import { hexToDecimal } from "../../utils/feltService";
 
 type IdentitiesGalleryV1Props = {
   identities: FullId[];
   externalDomains?: string[];
+  address: string;
 };
 
 const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
   identities,
   externalDomains = [],
+  address,
 }) => {
   const router = useRouter();
   const { getPfp } = useContext(StarknetIdJsContext);
+  const [needAutoRenewal, setNeedAutoRenewal] = useState<string[]>();
+
+  useEffect(() => {
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_SERVER_LINK
+      }/renewal/get_non_subscribed_domains?addr=${hexToDecimal(address)}`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setNeedAutoRenewal(data);
+      });
+  }, [address]);
 
   return (
     // Our Indexer
@@ -52,12 +76,27 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
               alt="avatar"
               className="rounded-[20px]"
             />
-
-            <p className="font-bold font-quickZap">
-              {identity.domain
-                ? minifyDomain(identity.domain)
-                : `ID: ${identity.id}`}
-            </p>
+            <div className={styles.identityInfo}>
+              <p className="font-bold font-quickZap">
+                {identity.domain
+                  ? minifyDomain(identity.domain)
+                  : `ID: ${identity.id}`}
+              </p>
+              {needAutoRenewal?.includes(identity.domain) ? (
+                <SubscriptionTooltip title="Subscription is disabled">
+                  <div
+                    className={styles.subscriptionChip}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push("/subscription");
+                    }}
+                  >
+                    <RenewalIcon width="12" color="#F57C00" />
+                    <p className={styles.chipText}>subscription</p>
+                  </div>
+                </SubscriptionTooltip>
+              ) : null}
+            </div>
           </div>
         );
       })}
