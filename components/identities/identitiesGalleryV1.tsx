@@ -43,7 +43,6 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("data fetched", data);
         setNeedAutoRenewal(data);
       });
   }, [address]);
