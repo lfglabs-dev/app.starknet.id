@@ -22,7 +22,6 @@ import DoneFilledIcon from "../components/UI/iconsComponents/icons/doneFilledIco
 import theme from "../styles/theme";
 import DomainActions from "../components/solana/domainActions";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
-import identityChangeCalls from "../utils/callData/identityChangeCalls";
 
 const Solana: NextPage = () => {
   const { address: starknetAddress } = useAccount();
@@ -203,9 +202,7 @@ const Solana: NextPage = () => {
                 <div className={styles.banner_content}>
                   <div>
                     <span className="title mr-2">Get your .sol domain on </span>
-                    <span className="title" style={{ color: "#19AA6E" }}>
-                      Starknet
-                    </span>
+                    <span className={styles.bannerTitle}>Starknet</span>
                   </div>
                   <p className="text-left">
                     Get your .sol domain on starknet. Connect, verify, and
@@ -232,9 +229,7 @@ const Solana: NextPage = () => {
                 <div className={styles.banner_content}>
                   <div>
                     <span className="title mr-2">Get your .sol domain on </span>
-                    <span className="title" style={{ color: "#19AA6E" }}>
-                      Starknet
-                    </span>
+                    <span className={styles.bannerTitle}>Starknet</span>
                   </div>
                   <p className="text-left">
                     Get your .sol domain on starknet. Connect, verify, and

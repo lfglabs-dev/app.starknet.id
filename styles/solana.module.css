@@ -29,7 +29,7 @@
   gap: 3rem;
   border-radius: 20px;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-  max-height: 430px;
+  max-height: 480px;
   background: var(--background-paper, #FFF);
 }
 
@@ -94,13 +94,16 @@
   border-radius: 20px;
   width: 50%;
   aspect-ratio: 1;
+  object-fit: cover;
+  object-position: bottom center;
 }
 
 .buttonContainer {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   width: 100%;
+  margin-top: 24px;
 }
 
 .progressBarContainer {
@@ -137,10 +140,18 @@
 .banner_content {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: left;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 24px;
   padding: 3rem;
+  text-align: left;
+}
+
+.bannerTitle {
+  font-family: "QuickZap";
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  color: var(--primary)
 }
 
 .domainSkeleton {
@@ -186,14 +197,18 @@
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
-  .title {
+  .bannerTitle {
     font-size: 2rem;
   }
 
 }
 
 @media (max-width: 768px) {
-  .title {
+  .wrapperScreen {
+    margin-bottom: 64px;
+  }
+
+  .bannerTitle {
     font-size: 2rem;
   }
 
@@ -202,6 +217,10 @@
     height: auto;
     gap: 1rem;
     max-height: none;
+  }
+
+  .banner_content {
+    text-align: center;
   }
 
   .image {
