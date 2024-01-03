@@ -8,11 +8,12 @@ interface IdentityData {
   domain?: Domain;
   user_data: UserData[];
   verifier_data: VerifierData[];
+  extended_verifier_data: ExtendedVerifierData[];
 }
 
 interface Domain {
   domain: string;
-  migrated : boolean;
+  migrated: boolean;
   root: boolean;
   creation_date: number;
   expiry?: number;
@@ -30,6 +31,12 @@ interface VerifierData {
   verifier: string;
   field: string;
   data: string;
+}
+
+interface ExtendedVerifierData {
+  verifier: string;
+  field: string;
+  extended_data: string[];
 }
 
 type ExternalDomains = {
