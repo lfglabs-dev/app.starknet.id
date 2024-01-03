@@ -1,19 +1,14 @@
-import React, { useContext } from "react";
+import React from "react";
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/search.module.css";
 import SearchBar from "../components/UI/searchBar";
-import {
-  formatHexString,
-  getImgUrl,
-  isStarkRootDomain,
-} from "../utils/stringService";
+import { formatHexString, isStarkRootDomain } from "../utils/stringService";
 import IdentityCard from "../components/identities/identityCard";
 import IdentityCardSkeleton from "../components/identities/skeletons/identityCardSkeleton";
 import { useAccount } from "@starknet-react/core";
-import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
 import SuggestedDomains from "../components/domains/suggestedDomains";
 import { Identity } from "../utils/apiWrappers/identity";
 import { hexToDecimal } from "../utils/feltService";
@@ -24,7 +19,7 @@ const SearchPage: NextPage = () => {
   const [identity, setIdentity] = useState<Identity>();
   const { address } = useAccount();
   const [isOwner, setIsOwner] = useState(true);
-  const { getPfp } = useContext(StarknetIdJsContext);
+  const [ppImageUrl, setPpImageUrl] = useState("");
 
   useEffect(() => {
     if (!identity || !address) return;
@@ -53,13 +48,6 @@ const SearchPage: NextPage = () => {
             return response.json();
           })
           .then((data: IdentityData) => {
-            console.log("data", data);
-            // const test = data?.img_url
-            //   ? getImgUrl(data?.img_url)
-            //   : `${
-            //       process.env.NEXT_PUBLIC_STARKNET_ID
-            //     }/api/identicons/${hexToDecimal(data?.id)}`;
-            // console.log("test", test);
             setIdentity(new Identity(data));
           });
       refreshData();
@@ -67,6 +55,24 @@ const SearchPage: NextPage = () => {
       return () => clearInterval(timer);
     }
   }, [domain]);
+
+  useEffect(() => {
+    if (!identity) {
+      setPpImageUrl("");
+      return;
+    }
+
+    const fetchProfilePic = async () => {
+      try {
+        const imgUrl = await identity.getProfilePic();
+        setPpImageUrl(imgUrl);
+      } catch (error) {
+        setPpImageUrl("");
+      }
+    };
+
+    fetchProfilePic();
+  }, [identity]);
 
   return (
     <div className={homeStyles.screen}>
@@ -82,8 +88,7 @@ const SearchPage: NextPage = () => {
             tokenId={hexToDecimal(identity.id)}
             identity={identity}
             isOwner={isOwner}
-            // ppImageUrl={identity?.pfp as string}
-            ppImageUrl=""
+            ppImageUrl={ppImageUrl}
           />
         ) : (
           <IdentityCardSkeleton />

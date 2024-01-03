@@ -1,4 +1,4 @@
-import { hexToDecimal } from "../feltService";
+import { fromUint256, hexToDecimal } from "../feltService";
 import { formatHexString, getImgUrl } from "../stringService";
 import {
   DISCORD,
@@ -6,12 +6,15 @@ import {
   PROOF_OF_PERSONHOOD,
   STARKNET,
   TWITTER,
+  NFT_PP_CONTRACT,
+  NFT_PP_ID,
 } from "../verifierFields";
 
 export class Identity {
   private _data: IdentityData;
   private userDataMap: Map<string, string>;
   private verifierDataMap: Map<string, string>;
+  private extendedVerifierDataMap: Map<string, string[]>;
 
   constructor(identityData: IdentityData) {
     this._data = identityData;
@@ -25,6 +28,14 @@ export class Identity {
     identityData.verifier_data.forEach((vd) => {
       this.verifierDataMap.set(`${vd.verifier}_${vd.field}`, vd.data);
     });
+
+    this.extendedVerifierDataMap = new Map();
+    identityData.extended_verifier_data.forEach((vd) => {
+      this.extendedVerifierDataMap.set(
+        `${vd.verifier}_${vd.field}`,
+        vd.extended_data
+      );
+    });
   }
   get data(): IdentityData {
     return this._data;
@@ -36,6 +47,13 @@ export class Identity {
 
   getVerifierData(verifier: string, field: string): string | undefined {
     return this.verifierDataMap.get(`${verifier}_${field}`);
+  }
+
+  getExtendedVerifierData(
+    verifier: string,
+    field: string
+  ): string[] | undefined {
+    return this.extendedVerifierDataMap.get(`${verifier}_${field}`);
   }
 
   get domain(): string | undefined {
@@ -147,15 +165,38 @@ export class Identity {
     );
   }
 
-  get imgUrl(): string | undefined {
-    return this._data.img_url;
-  }
+  async getProfilePic(): Promise<string> {
+    const identiconsUrl = `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${this.id}`;
+    const contractAddress = this.getVerifierData(
+      formatHexString(process.env.NEXT_PUBLIC_NFT_PP_VERIFIER as string),
+      NFT_PP_CONTRACT
+    );
+    const id = this.getExtendedVerifierData(
+      formatHexString(process.env.NEXT_PUBLIC_NFT_PP_VERIFIER as string),
+      NFT_PP_ID
+    )?.map((hex) => BigInt(parseInt(hex, 16)));
 
-  get pfp(): string | undefined {
-    return this.imgUrl
-      ? getImgUrl(this.imgUrl)
-      : `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/${hexToDecimal(
-          this.id
-        )}`;
+    if (!id || !contractAddress) return identiconsUrl;
+    const nftId = fromUint256(id[0], id[1]);
+
+    try {
+      const response = await fetch(
+        `https://${
+          process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "api-testnet" : "api"
+        }.starkscan.co/api/v0/nft/${contractAddress}/${nftId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": `${process.env.NEXT_PUBLIC_STARKSCAN}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (!data || !data.image_url) return identiconsUrl;
+      return getImgUrl(data.image_url);
+    } catch (error) {
+      return identiconsUrl;
+    }
   }
 }

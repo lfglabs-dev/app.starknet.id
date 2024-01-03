@@ -8,7 +8,7 @@ interface IdentityData {
   domain?: Domain;
   user_data: UserData[];
   verifier_data: VerifierData[];
-  img_url?: string;
+  extended_verifier_data: ExtendedVerifierData[];
 }
 
 interface Domain {
@@ -31,6 +31,12 @@ interface VerifierData {
   verifier: string;
   field: string;
   data: string;
+}
+
+interface ExtendedVerifierData {
+  verifier: string;
+  field: string;
+  extended_data: string[];
 }
 
 type ExternalDomains = {
