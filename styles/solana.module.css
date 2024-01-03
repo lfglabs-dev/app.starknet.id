@@ -206,6 +206,7 @@
 @media (max-width: 768px) {
   .wrapperScreen {
     margin-bottom: 64px;
+    height: auto;
   }
 
   .bannerTitle {
@@ -229,16 +230,16 @@
     aspect-ratio: 1;
   }
 
-  .wrapperScreen {
-    height: auto;
-  }
-
   .domainList {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 
   .domainContainer {
     min-height: 350px;
+  }
+
+  .buttonContainer {
+    justify-content: center;
   }
 }
 
