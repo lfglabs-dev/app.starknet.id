@@ -6,6 +6,7 @@ import React, {
   FunctionComponent,
   useState,
   KeyboardEvent,
+  useCallback,
 } from "react";
 import { useRouter } from "next/router";
 import { TextField, styled } from "@mui/material";
@@ -17,6 +18,7 @@ import naming_abi from "../../abi/starknet/naming_abi.json";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import { isValidDomain, getDomainWithStark } from "../../utils/stringService";
 import { useIsValid } from "../../hooks/naming";
+import { debounce } from "../../utils/debounceService";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
@@ -142,12 +144,8 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
     };
   }, []);
 
-  function handleChange(value: string) {
-    setTypedValue(value.toLowerCase());
-  }
-
-  useEffect(() => {
-    if (typedValue) {
+  const debounceSearch = useCallback(
+    debounce((searchTerm: string) => {
       // Cancel previous request
       if (controllerRef.current) {
         controllerRef.current.abort();
@@ -156,7 +154,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
       // Create a new AbortController
       controllerRef.current = new AbortController();
 
-      getStatus(typedValue, undefined, controllerRef.current.signal)
+      getStatus(searchTerm, undefined, controllerRef.current.signal)
         .then((result) => {
           setCurrentResult(result);
         })
@@ -165,11 +163,16 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
             console.error("An unexpected error occurred:", error);
           }
         });
-    } else {
-      setCurrentResult(null);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [typedValue]); // We won't add getStatus because this would cause an infinite loop
+    }, 300),
+    []
+  );
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value.toLowerCase();
+    setTypedValue(value);
+
+    debounceSearch(value);
+  }
 
   async function getStatus(
     name: string,
@@ -282,7 +285,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         id="outlined-basic"
         placeholder="Search your username"
         variant="outlined"
-        onChange={(e) => handleChange(e.target.value)}
+        onChange={handleChange}
         value={typedValue}
         error={isValid != true}
         onKeyDown={(ev) => onEnter(ev)}
