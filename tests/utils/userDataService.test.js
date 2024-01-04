@@ -2,11 +2,15 @@ import {
   generateSalt,
   generateSalts,
   computeMetadataHash,
+  getPfpFromFullId,
 } from "../../utils/userDataService";
 import crypto from "crypto";
 
 // Mock the crypto module
 global.crypto = crypto;
+
+const STARKNET_ID_URL = process.env.NEXT_PUBLIC_STARKNET_ID;
+global.fetch = jest.fn();
 
 describe("generateSalt function", () => {
   it("should return a string with 32 characters (16 bytes)", () => {
@@ -75,5 +79,29 @@ describe("computeMetadataHash function", () => {
     const result = await computeMetadataHash(email, taxState, salt);
 
     expect(result).toBe(expectedHash);
+  });
+});
+
+describe("getPfpFromFullId function", () => {
+  const defaultUrl = `${STARKNET_ID_URL}/api/identicons/`;
+
+  it("should return the image URL if pp_url is present", () => {
+    const identity = { id: "123", pp_url: "http://example.com/profile.jpg" };
+    expect(getPfpFromFullId(identity)).toBe("http://example.com/profile.jpg");
+  });
+
+  it("should return the default URL with identity id if pp_url is not present", () => {
+    const identity = { id: "123" };
+    expect(getPfpFromFullId(identity)).toBe(`${defaultUrl}123`);
+  });
+
+  it("should handle null pp_url", () => {
+    const identity = { id: "123", pp_url: null };
+    expect(getPfpFromFullId(identity)).toBe(`${defaultUrl}123`);
+  });
+
+  it("should handle empty pp_url", () => {
+    const identity = { id: "123", pp_url: "" };
+    expect(getPfpFromFullId(identity)).toBe(`${defaultUrl}123`);
   });
 });

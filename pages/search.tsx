@@ -64,7 +64,7 @@ const SearchPage: NextPage = () => {
 
     const fetchProfilePic = async () => {
       try {
-        const imgUrl = await identity.getProfilePic();
+        const imgUrl = await identity.getPfpFromVerifierData();
         setPpImageUrl(imgUrl);
       } catch (error) {
         setPpImageUrl("");
