@@ -1,7 +1,6 @@
 import React, {
   FunctionComponent,
   ReactNode,
-  useContext,
   useEffect,
   useState,
 } from "react";
@@ -15,10 +14,10 @@ import {
   timestampToReadableDate,
 } from "../../utils/dateService";
 import ArgentIcon from "../UI/iconsComponents/icons/argentIcon";
-import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import RenewalIcon from "../UI/iconsComponents/icons/renewalIcon";
 import SubscriptionTooltip from "./subscriptionTooltip";
 import { hexToDecimal } from "../../utils/feltService";
+import { getPfp } from "../../utils/userDataService";
 
 type IdentitiesGalleryV1Props = {
   identities: FullId[];
@@ -32,7 +31,6 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
   address,
 }) => {
   const router = useRouter();
-  const { getPfp } = useContext(StarknetIdJsContext);
   const [needAutoRenewal, setNeedAutoRenewal] = useState<string[]>();
 
   useEffect(() => {
@@ -72,7 +70,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
             <img
               width={150}
               height={150}
-              src={getPfp(identity.id)}
+              src={getPfp(identity)}
               alt="avatar"
               className="rounded-[20px]"
             />

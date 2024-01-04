@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import homeStyles from "../../styles/Home.module.css";
 import styles from "../../styles/components/identitiesV1.module.css";
 import { useRouter } from "next/router";
@@ -10,7 +10,6 @@ import { useAccount } from "@starknet-react/core";
 import IdentityPageSkeleton from "../../components/identities/skeletons/identityPageSkeleton";
 import UpdateProfilePic from "../../components/identities/updateProfilePic";
 import TxConfirmationModal from "../../components/UI/txConfirmationModal";
-import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import BackButton from "../../components/UI/backButton";
 import { Identity } from "../../utils/apiWrappers/identity";
 import { formatHexString } from "../../utils/stringService";
@@ -28,12 +27,30 @@ const TokenIdPage: NextPage = () => {
   const [isUpdatingPp, setIsUpdatingPp] = useState(false);
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [ppTxHash, setPpTxHash] = useState<string>();
-  const { getPfp } = useContext(StarknetIdJsContext);
+  const [ppImageUrl, setPpImageUrl] = useState("");
 
   useEffect(() => {
     if (!identity || !address) return;
     setIsOwner(identity.ownerAddress === formatHexString(address));
   }, [identity, address]);
+
+  useEffect(() => {
+    if (!identity) {
+      setPpImageUrl("");
+      return;
+    }
+
+    const fetchProfilePic = async () => {
+      try {
+        const imgUrl = await identity.getProfilePic();
+        setPpImageUrl(imgUrl);
+      } catch (error) {
+        setPpImageUrl("");
+      }
+    };
+
+    fetchProfilePic();
+  }, [identity]);
 
   const hideActionsHandler = (state: boolean) => {
     if (state == true) {
@@ -84,7 +101,7 @@ const TokenIdPage: NextPage = () => {
                     tokenId={tokenId}
                     isOwner={isOwner}
                     updateProfilePic={() => setIsUpdatingPp(true)}
-                    ppImageUrl={getPfp(tokenId)}
+                    ppImageUrl={ppImageUrl}
                   />
                   {!hideActions && (
                     <IdentityActions
