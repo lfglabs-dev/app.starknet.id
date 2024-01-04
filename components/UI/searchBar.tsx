@@ -6,7 +6,6 @@ import React, {
   FunctionComponent,
   useState,
   KeyboardEvent,
-  useCallback,
 } from "react";
 import { useRouter } from "next/router";
 import { TextField, styled } from "@mui/material";
@@ -18,7 +17,6 @@ import naming_abi from "../../abi/starknet/naming_abi.json";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import { isValidDomain, getDomainWithStark } from "../../utils/stringService";
 import { useIsValid } from "../../hooks/naming";
-import { debounce } from "../../utils/debounceService";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
@@ -94,6 +92,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   const router = useRouter();
   const resultsRef = useRef<HTMLDivElement>(null);
   const controllerRef = useRef<AbortController | null>(null);
+  const latestRequestRef = useRef<number>(0);
   const [typedValue, setTypedValue] = useState<string>("");
   const isValid = useIsValid(typedValue);
   const [currentResult, setCurrentResult] = useState<SearchResult | null>();
@@ -144,8 +143,13 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
     };
   }, []);
 
-  const debounceSearch = useCallback(
-    debounce((searchTerm: string) => {
+  function handleChange(value: string) {
+    latestRequestRef.current += 1;
+    setTypedValue(value.toLowerCase());
+  }
+
+  useEffect(() => {
+    if (typedValue) {
       // Cancel previous request
       if (controllerRef.current) {
         controllerRef.current.abort();
@@ -153,26 +157,24 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
 
       // Create a new AbortController
       controllerRef.current = new AbortController();
+      const currentRequest = latestRequestRef.current;
 
-      getStatus(searchTerm, undefined, controllerRef.current.signal)
+      getStatus(typedValue, undefined, controllerRef.current.signal)
         .then((result) => {
-          setCurrentResult(result);
+          if (currentRequest === latestRequestRef.current) {
+            setCurrentResult(result);
+          }
         })
         .catch((error) => {
           if (error.name !== "AbortError") {
             console.error("An unexpected error occurred:", error);
           }
         });
-    }, 150),
-    []
-  );
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const value = e.target.value.toLowerCase();
-    setTypedValue(value);
-
-    debounceSearch(value);
-  }
+    } else {
+      setCurrentResult(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typedValue]); // We won't add getStatus because this would cause an infinite loop
 
   async function getStatus(
     name: string,
@@ -285,7 +287,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         id="outlined-basic"
         placeholder="Search your username"
         variant="outlined"
-        onChange={handleChange}
+        onChange={(e) => handleChange(e.target.value)}
         value={typedValue}
         error={isValid != true}
         onKeyDown={(ev) => onEnter(ev)}
