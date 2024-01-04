@@ -17,7 +17,7 @@ import ArgentIcon from "../UI/iconsComponents/icons/argentIcon";
 import RenewalIcon from "../UI/iconsComponents/icons/renewalIcon";
 import SubscriptionTooltip from "./subscriptionTooltip";
 import { hexToDecimal } from "../../utils/feltService";
-import { getPfp } from "../../utils/userDataService";
+import { getPfpFromFullId } from "../../utils/userDataService";
 
 type IdentitiesGalleryV1Props = {
   identities: FullId[];
@@ -70,7 +70,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
             <img
               width={150}
               height={150}
-              src={getPfp(identity)}
+              src={getPfpFromFullId(identity)}
               alt="avatar"
               className="rounded-[20px]"
             />

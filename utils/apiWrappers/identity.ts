@@ -165,7 +165,7 @@ export class Identity {
     );
   }
 
-  async getProfilePic(): Promise<string> {
+  async getPfpFromVerifierData(): Promise<string> {
     const identiconsUrl = `${
       process.env.NEXT_PUBLIC_STARKNET_ID
     }/api/identicons/${Number(this.id)}`;
