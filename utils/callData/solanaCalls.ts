@@ -1,4 +1,4 @@
-import { Call } from "starknet";
+import { Call, shortString } from "starknet";
 
 function claimDomain(
   encodedDomain: string,
@@ -17,7 +17,11 @@ function setResolving(encodedDomain: string, targetAddr: string): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_SOL_SUBDOMAINS as string,
     entrypoint: "set_resolving",
-    calldata: [encodedDomain, "starknet", targetAddr],
+    calldata: [
+      encodedDomain,
+      shortString.encodeShortString("starknet"),
+      targetAddr,
+    ],
   };
 }
 
