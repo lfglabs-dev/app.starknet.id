@@ -117,6 +117,7 @@ const Identities: NextPage = () => {
               <IdentitiesGallery
                 identities={ownedIdentities}
                 externalDomains={externalDomains}
+                address={address}
               />
               <div className="w-fit block mx-auto px-4 mt-[33px]">
                 <ClickableAction

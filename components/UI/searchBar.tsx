@@ -92,6 +92,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   const router = useRouter();
   const resultsRef = useRef<HTMLDivElement>(null);
   const controllerRef = useRef<AbortController | null>(null);
+  const latestRequestRef = useRef<number>(0);
   const [typedValue, setTypedValue] = useState<string>("");
   const isValid = useIsValid(typedValue);
   const [currentResult, setCurrentResult] = useState<SearchResult | null>();
@@ -143,6 +144,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   }, []);
 
   function handleChange(value: string) {
+    latestRequestRef.current += 1;
     setTypedValue(value.toLowerCase());
   }
 
@@ -155,10 +157,13 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
 
       // Create a new AbortController
       controllerRef.current = new AbortController();
+      const currentRequest = latestRequestRef.current;
 
       getStatus(typedValue, undefined, controllerRef.current.signal)
         .then((result) => {
-          setCurrentResult(result);
+          if (currentRequest === latestRequestRef.current) {
+            setCurrentResult(result);
+          }
         })
         .catch((error) => {
           if (error.name !== "AbortError") {

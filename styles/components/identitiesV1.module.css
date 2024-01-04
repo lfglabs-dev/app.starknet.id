@@ -88,3 +88,33 @@
   justify-content: center;
   min-height: calc(100% - 12vh);
 }
+
+.identityInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.subscriptionChip {
+  display: flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  background: #FFE6CC;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+}
+
+.chipText {
+  color: #F57C00;
+  text-align: center;
+  font-family: "Poppins-Regular";
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+}
