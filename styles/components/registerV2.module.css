@@ -25,6 +25,15 @@
   background-color: #fff;
 }
 
+.price {
+  color: rgb(31 41 55);
+  font-size: 1.25rem /* 20px */;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.5rem /* 24px */;
+  white-space: nowrap;
+}
+
 .legend {
   color: #6d696a;
   /* Body/small/medium */
@@ -186,5 +195,32 @@
   .pricesSummary {
     flex-direction: column-reverse;
     gap: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .legend {
+    font-size: 12px;
+    letter-spacing: -0.3px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .legend {
+    font-size: 10px;
+    letter-spacing: -0.3px;
+  }
+  .price {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .legend {
+    font-size: 9px;
+    letter-spacing: -0.4px;
+  }
+  .price {
+    font-size: 0.8rem;
   }
 }

@@ -59,9 +59,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
     return (
       <div className="flex items-center justify-center">
-        <span className="text-gray-800 text-xl not-italic font-bold leading-6 whitespace-nowrap">
-          {priceToPay}
-        </span>
+        <span className={styles.price}>{priceToPay}</span>
         {isSwissResident ? (
           <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
         ) : null}
@@ -75,7 +73,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     const salesTaxInfo = salesTaxAmount
       ? ` (+ ${numberToFixedString(
           salesTaxAmount
-        )}$ worth of ETH for Swiss sales tax)`
+        )}$ worth of ETH for Swiss VAT)`
       : "";
 
     return displayPrice(
@@ -89,7 +87,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   function displaySwissdPrice(): ReactNode {
     const salesTaxAmount = salesTaxRate * usdRegistrationPrice;
     const salesTaxInfo = salesTaxAmount
-      ? ` (+ ${numberToFixedString(Number(salesTaxAmount))}$ for US sales tax)`
+      ? ` (+ ${numberToFixedString(Number(salesTaxAmount))}$ for US VAT)`
       : "";
 
     return displayPrice(
