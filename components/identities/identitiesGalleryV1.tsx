@@ -67,12 +67,9 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                 </Tooltip>
               </div>
             ) : null}
-            <img
-              width={150}
-              height={150}
-              src={getPfpFromFullId(identity)}
-              alt="avatar"
-              className="rounded-[20px]"
+            <div
+              className={styles.identityImg}
+              style={{ backgroundImage: `url(${getPfpFromFullId(identity)})` }}
             />
             <div className={styles.identityInfo}>
               <p className="font-bold font-quickZap">
