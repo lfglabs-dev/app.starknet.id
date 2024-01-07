@@ -20,12 +20,26 @@
   background: var(--background-light);
   box-shadow: var(--small-shadow);
   padding: 24px;
-  border: 2px solid transparent;
+  border: 1px solid var(--background-light);
+  transition: all 0.2s ease-in-out;
+}
+
+.identityImg {
+  border-radius: 20px;
+  width: 150px;
+  height: 150px;
+  background-size: 100%;
+  background-position: center;
+  transition: all 0.2s ease-in-out;
 }
 
 .imageGallery:hover {
+  border: 1px solid #eae0d5;
   box-shadow: var(--large-shadow);
-  border: 2px solid var(--primary);
+}
+
+.imageGallery:hover .identityImg {
+  background-size: 110%;
 }
 
 .expiryWarning {
@@ -105,12 +119,12 @@
   align-items: center;
   gap: 8px;
   border-radius: 8px;
-  background: #FFE6CC;
+  background: #ffe6cc;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
 }
 
 .chipText {
-  color: #F57C00;
+  color: #f57c00;
   text-align: center;
   font-family: "Poppins-Regular";
   font-size: 12px;
