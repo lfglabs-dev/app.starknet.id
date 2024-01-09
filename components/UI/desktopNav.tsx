@@ -33,7 +33,10 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
   return (
     <nav onClick={handleClick} className={styles.navContainer}>
       <div className={styles.columns}>
-        <div className={styles.column}>
+        <div className={styles.column} onClick={close}>
+          <Link href="/pfpcollections">
+            <li className={styles.burgerItem}>PFP collections</li>
+          </Link>
           <Link
             href={process.env.NEXT_PUBLIC_STARKNET_ID as string}
             target="_blank"
@@ -43,11 +46,11 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
           <Link href="https://www.starknet.id/pdfs/Terms.pdf" target="_blank">
             <li className={styles.burgerItem}>Term of use</li>
           </Link>
+        </div>
+        <div className={styles.column}>
           <Link href="https://docs.starknet.id/" target="_blank">
             <li className={styles.burgerItem}>Documentation</li>
           </Link>
-        </div>
-        <div className={styles.column}>
           <Link
             href={`${
               process.env.NEXT_PUBLIC_STARKNET_ID as string
