@@ -63,7 +63,7 @@
   }
   .gallery {
     margin: 0;
-    padding: 2rem 2rem;
+    padding: 2rem 1rem;
     width: calc(100% - 2rem);
     margin-left: 1rem;
     margin-bottom: 3rem;

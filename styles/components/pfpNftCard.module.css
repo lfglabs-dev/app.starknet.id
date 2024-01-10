@@ -25,14 +25,14 @@
   height: 200px;
   border-radius: 20px;
   object-fit: contain;
-  background-size: 264px auto;
+  background-size: 100% auto;
   background-position: center;
   transition: 0.2s ease-in-out;
   background-repeat: no-repeat;
 }
 
 .nftCard:hover .nftCardImg {
-  background-size: 290.4px auto;
+  background-size: 110% auto;
 }
 
 .nftCollectionName {
@@ -48,7 +48,6 @@
 @media (max-width: 768px) {
   .nftCard {
     width: 100%;
-    max-width: 296px;
     margin-left: auto;
     margin-right: auto;
   }

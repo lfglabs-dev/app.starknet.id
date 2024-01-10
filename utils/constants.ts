@@ -49,7 +49,7 @@ export const NftCollections = [
   {
     imageUri:
       "https://static.argent.net/unframed/images/0x012f8e318fe04a1fe8bffe005ea4bbd19cb77a656b4f42682aab8a0ed20702f0_image.jpg",
-    name: "Dream kitty",
+    name: "Stark Rock",
     externalLink:
       "https://unframed.co/collection/0x012f8e318fe04a1fe8bffe005ea4bbd19cb77a656b4f42682aab8a0ed20702f0",
   },
