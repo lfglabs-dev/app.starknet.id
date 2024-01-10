@@ -186,7 +186,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
       return {
         name,
         error: true,
-        message: valid + " is not a valid caracter",
+        message: valid + " is not a valid character",
         lastAccessed: lastAccessed ?? Date.now(),
       };
     } else if (is5LettersOnly && name.length < 5) {
