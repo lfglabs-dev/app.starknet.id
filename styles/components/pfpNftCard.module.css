@@ -1,0 +1,58 @@
+.nftCard {
+  display: flex;
+  padding: 1rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  border-radius: 20px;
+  background: var(--background-light);
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  width: 296px;
+  border: 1px solid var(--background-light);
+  transition: all 0.2s ease-in-out;
+  gap: 1rem;
+}
+
+.nftCard:hover {
+  border: 1px solid #eae0d5;
+  box-shadow: var(--large-shadow);
+}
+
+.nftCardImg {
+  width: 264px;
+  height: 200px;
+  border-radius: 20px;
+  object-fit: contain;
+  background-size: 100% auto;
+  background-position: center;
+  transition: 0.2s ease-in-out;
+  background-repeat: no-repeat;
+}
+
+.nftCard:hover .nftCardImg {
+  background-size: 110% auto;
+}
+
+.nftCollectionName {
+  color: var(--secondary);
+  font-family: "QuickZap";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 111.111% */
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .nftCard {
+    width: calc(100% - 2rem);
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .nftCardImg {
+    width: 100%;
+    aspect-ratio: 264 / 200;
+  }
+}

@@ -278,6 +278,11 @@ const Navbar: FunctionComponent = () => {
                         Domains
                       </li>
                     </Link>
+                    <Link href="/pfpcollections">
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
+                        PFP collections
+                      </li>
+                    </Link>
                     <Link
                       href={process.env.NEXT_PUBLIC_STARKNET_ID as string}
                       target="_blank"
