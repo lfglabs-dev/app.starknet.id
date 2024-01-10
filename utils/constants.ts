@@ -41,6 +41,24 @@ export const NftCollections = [
   },
 ];
 
+export const ourNfts = [
+  {
+    imageUri: "/pfpCollections/jungleVirtuosos.webp",
+    name: "Jungle Virtuosos Edition",
+    infoPage: "/pfpCollections/jungleVirtuosos",
+  },
+  {
+    imageUri: "/pfpCollections/cosmicCaricaturesSet.webp",
+    name: "Cosmic Caricatures Set",
+    infoPage: "/pfpCollections/cosmicCaricatures",
+  },
+  {
+    imageUri: "/pfpCollections/starknetQuest.webp",
+    name: "Starknet quest",
+    infoPage: "/pfpCollections/starknetQuest",
+  },
+];
+
 export enum NotificationType {
   TRANSACTION = "TRANSACTION",
 }
