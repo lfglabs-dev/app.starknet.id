@@ -212,13 +212,15 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     }
 
     // If the user choose to mint a new identity
+    let tokenIdToUse = tokenId;
     if (tokenId === 0) {
       calls.unshift(registrationCalls.mint(newTokenId)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+      tokenIdToUse = newTokenId;
     }
 
     // If the user do not have a main domain and the address match
     if (addressesMatch && !hasMainDomain) {
-      calls.push(registrationCalls.mainId(newTokenId));
+      calls.push(registrationCalls.mainId(tokenIdToUse));
     }
 
     // If the user has toggled autorenewal
