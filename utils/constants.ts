@@ -39,23 +39,30 @@ export const NftCollections = [
     externalLink:
       "https://unframed.co/collection/0x0727a63f78ee3f1bd18f78009067411ab369c31dece1ae22e16f567906409905",
   },
+  {
+    imageUri:
+      "https://argent.infura-ipfs.io/ipfs/bafybeichiahs2bqrc7ouxkadozavgndlwrrlyifybnvgtkbbeutxmm2n5u/image.jpeg",
+    name: "Dream kitty",
+    externalLink:
+      "https://unframed.co/collection/0x03859bf9178b48a4ba330d6872ab5a6d3895b64d6631197beefde6293bc172cd",
+  },
+  {
+    imageUri:
+      "https://static.argent.net/unframed/images/0x012f8e318fe04a1fe8bffe005ea4bbd19cb77a656b4f42682aab8a0ed20702f0_image.jpg",
+    name: "Dream kitty",
+    externalLink:
+      "https://unframed.co/collection/0x012f8e318fe04a1fe8bffe005ea4bbd19cb77a656b4f42682aab8a0ed20702f0",
+  },
 ];
 
 export const ourNfts = [
   {
-    imageUri: "/pfpCollections/jungleVirtuosos.webp",
-    name: "Jungle Virtuosos Edition",
-    infoPage: "/pfpCollections/jungleVirtuosos",
-  },
-  {
-    imageUri: "/pfpCollections/cosmicCaricaturesSet.webp",
-    name: "Cosmic Caricatures Set",
-    infoPage: "/pfpCollections/cosmicCaricatures",
-  },
-  {
     imageUri: "/pfpCollections/starknetQuest.webp",
     name: "Starknet quest",
-    infoPage: "/pfpCollections/starknetQuest",
+    infoPage:
+      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+        ? `https://goerli.starknet.quest/`
+        : "https://starknet.quest/",
   },
 ];
 

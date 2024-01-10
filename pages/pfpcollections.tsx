@@ -9,7 +9,7 @@ const PFPCollections: NextPage = () => {
     <div className={styles.container}>
       <div className={styles.gallery}>
         <section>
-          <p className={styles.subtitle}>Our NFT’s</p>
+          <p className={styles.subtitle}>Starknet ID Ecosystem</p>
           <h2 className={styles.title}>PFP collections</h2>
           <div className={styles.nfts}>
             {ourNfts.map((collection, index) => (
@@ -17,13 +17,13 @@ const PFPCollections: NextPage = () => {
                 key={index}
                 image={collection.imageUri}
                 name={collection.name}
-                onClick={() => window.open(collection.infoPage, "_self")}
+                onClick={() => window.open(collection.infoPage)}
               />
             ))}
           </div>
         </section>
         <section>
-          <p className={styles.subtitle}>Explore our selection</p>
+          <p className={styles.subtitle}>Overall Starknet Ecosystem</p>
           <h2 className={styles.title}>Our suggestions</h2>
           <div className={styles.nfts}>
             {NftCollections.map((collection, index) => (

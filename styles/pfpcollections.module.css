@@ -46,3 +46,27 @@
   flex-wrap: wrap;
   gap: 2rem;
 }
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 24px;
+    margin-bottom: 2rem;
+  }
+  .subtitle {
+    font-size: 14px;
+    font-weight: lighter;
+  }
+  .container {
+    max-width: 100%;
+    width: 100%;
+    padding-right: 0;
+  }
+  .gallery {
+    margin: 0;
+    padding: 2rem 2rem;
+    width: calc(100% - 2rem);
+    margin-left: 1rem;
+    margin-bottom: 3rem;
+    gap: 3rem;
+  }
+}

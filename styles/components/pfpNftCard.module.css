@@ -1,6 +1,6 @@
 .nftCard {
   display: flex;
-  padding: 16px;
+  padding: 1rem;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -12,7 +12,7 @@
   width: 296px;
   border: 1px solid var(--background-light);
   transition: all 0.2s ease-in-out;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .nftCard:hover {
@@ -25,14 +25,14 @@
   height: 200px;
   border-radius: 20px;
   object-fit: contain;
-  background-size: 100%;
+  background-size: 264px auto;
   background-position: center;
   transition: 0.2s ease-in-out;
   background-repeat: no-repeat;
 }
 
 .nftCard:hover .nftCardImg {
-  background-size: 110%;
+  background-size: 290.4px auto;
 }
 
 .nftCollectionName {
@@ -42,4 +42,18 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px; /* 111.111% */
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .nftCard {
+    width: 100%;
+    max-width: 296px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .nftCardImg {
+    width: 100%;
+    aspect-ratio: 264 / 200;
+  }
 }
