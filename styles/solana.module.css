@@ -30,7 +30,7 @@
   border-radius: 20px;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   max-height: 480px;
-  background: var(--background-paper, #FFF);
+  background: var(--background-paper, #fff);
 }
 
 .domainContainer {
@@ -40,7 +40,7 @@
   border-radius: 20px;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   max-height: 600px;
-  background: var(--background-paper, #FFF);
+  background: var(--background-paper, #fff);
   min-height: 270px;
 }
 
@@ -63,7 +63,7 @@
   gap: 16px;
   padding: 16px;
   border-radius: 12px;
-  background: var(--background-light, #FFFCF8);
+  background: var(--background-light, #fffcf8);
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
 }
 
@@ -151,7 +151,7 @@
   font-family: "QuickZap";
   font-size: 2.5rem;
   text-transform: uppercase;
-  color: var(--primary)
+  color: var(--primary);
 }
 
 .domainSkeleton {
@@ -182,7 +182,7 @@
 
 .domainActionsMenu {
   border-radius: 8px;
-  background: #FFF;
+  background: #fff;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
 }
 
@@ -196,11 +196,14 @@
   line-height: 20px; /* 142.857% */
 }
 
+.btnSkeleton {
+  border-radius: 500px;
+}
+
 @media (min-width: 768px) and (max-width: 1024px) {
   .bannerTitle {
     font-size: 2rem;
   }
-
 }
 
 @media (max-width: 768px) {

@@ -42,6 +42,7 @@ const Solana: NextPage = () => {
     calls: callData,
   });
   const [open, setOpen] = useState(true);
+  const [disableBtn, setDisableBtn] = useState<string>("");
 
   useEffect(() => {
     const currentDate = new Date();
@@ -91,7 +92,7 @@ const Solana: NextPage = () => {
   }, [selectedDomain, starknetAddress]);
 
   useEffect(() => {
-    if (!registerData?.transaction_hash) return;
+    if (!registerData?.transaction_hash || !selectedDomain) return;
     // posthog?.capture("register");
 
     if (selectedDomain !== undefined) {
@@ -118,6 +119,7 @@ const Solana: NextPage = () => {
 
   const generateSignature = async (solDomain: string) => {
     if (!signMessage) return;
+    setDisableBtn(solDomain);
     const maxValidity = parseInt(
       ((Date.now() + 60 * 60 * 1000) / 1000).toFixed(0)
     );
@@ -128,9 +130,13 @@ const Solana: NextPage = () => {
     const encoder = new TextEncoder();
     const uint8Array = encoder.encode(message);
 
-    signMessage(uint8Array).then((sig: Uint8Array) => {
-      generateStarkSig(solDomain, sig, maxValidity);
-    });
+    signMessage(uint8Array)
+      .then((sig: Uint8Array) => {
+        generateStarkSig(solDomain, sig, maxValidity);
+      })
+      .catch(() => {
+        setDisableBtn("");
+      });
   };
 
   const generateStarkSig = async (
@@ -160,9 +166,11 @@ const Solana: NextPage = () => {
           signature: res,
           sent: false,
         });
+        setDisableBtn("");
       })
       .catch((error) => {
         console.log("An error occured", error);
+        setDisableBtn("");
       });
   };
 
@@ -180,6 +188,8 @@ const Solana: NextPage = () => {
       ? true
       : false;
   };
+
+  console.log("selectedDomain", selectedDomain);
 
   return (
     <div className={styles.screen}>
@@ -288,6 +298,13 @@ const Solana: NextPage = () => {
                                   />
                                   <p>Received</p>
                                 </div>
+                              ) : disableBtn === name ? (
+                                <Skeleton
+                                  variant="rectangular"
+                                  className={styles.btnSkeleton}
+                                  height={48}
+                                  width={180}
+                                />
                               ) : (
                                 <Button onClick={() => generateSignature(name)}>
                                   Allow on Solana
