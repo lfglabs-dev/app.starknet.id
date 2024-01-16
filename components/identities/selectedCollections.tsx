@@ -16,9 +16,8 @@ const SelectedCollections: FunctionComponent = () => {
               key={index}
               onClick={() => window.open(collection.externalLink)}
             >
-              <img
-                src={collection.imageUri}
-                alt={`${collection.name} image`}
+              <div
+                style={{ backgroundImage: `url(${collection.imageUri})` }}
                 className={styles.nftCollectionImg}
               />
               <div className={styles.nftCollectionName}>{collection.name}</div>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../styles/components/modalMessage.module.css";
 import ppStyles from "../../styles/components/profilePic.module.css";
 import { FunctionComponent } from "react";
@@ -12,7 +12,6 @@ import { Call } from "starknet";
 import identityChangeCalls from "../../utils/callData/identityChangeCalls";
 import { hexToDecimal, toUint256 } from "../../utils/feltService";
 import { getImgUrl } from "../../utils/stringService";
-import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../utils/constants";
 
@@ -36,7 +35,6 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   const { writeAsync: execute, data: updateData } = useContractWrite({
     calls: callData,
   });
-  const { updateIdentityImg } = useContext(StarknetIdJsContext);
 
   useEffect(() => {
     if (!nftData) return;
@@ -64,7 +62,6 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
       },
     });
     setPfpTxHash(updateData.transaction_hash);
-    updateIdentityImg(tokenId, nftData.image_url as string);
     closeModal(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateData]); // We want to trigger this only when the tx passed
