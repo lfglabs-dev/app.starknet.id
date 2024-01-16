@@ -189,8 +189,6 @@ const Solana: NextPage = () => {
       : false;
   };
 
-  console.log("selectedDomain", selectedDomain);
-
   return (
     <div className={styles.screen}>
       {!open ? (
