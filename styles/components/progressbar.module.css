@@ -1,0 +1,39 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    position: relative;
+}
+
+.base_line {
+    position: absolute;
+    height: 3px;
+    background-color: #EAE0D5;
+    left: 8px;
+    right: 8px;
+}
+
+.colored_line {
+    position: absolute;
+    height: 3px;
+    background-color: #4CBD8E;
+    left: 8px;
+    right: 8px;
+    transition: all 0.5s ease-out;
+}
+
+.empty_milestone {
+    width: 32px;
+    height: 32px;
+    background-color: #EAE0D5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    box-shadow: var(--small-shadow);
+}
+
+.milestone {
+    z-index: 2;
+}

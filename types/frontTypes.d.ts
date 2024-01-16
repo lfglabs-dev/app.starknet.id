@@ -102,3 +102,15 @@ type TransactionData = {
     | "REJECTED"
     | "REVERTED";
 };
+
+type StarknetSig = {
+  r: string;
+  s: string;
+  max_validity: number;
+};
+
+type SnsDomainData = {
+  name: string;
+  signature: StarknetSig | undefined;
+  sent: boolean;
+};

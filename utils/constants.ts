@@ -85,6 +85,7 @@ export enum TransactionType {
   MAIN_DOMAIN = "MAIN_DOMAIN",
   SUBDOMAIN_CREATION = "SUBDOMAIN_CREATION",
   SET_PFP = "SET_PFP",
+  CLAIM_SOL = "CLAIM_SOL",
 }
 
 export const PENDING_TRANSACTION = "Transaction pending...";
@@ -105,6 +106,7 @@ export const notificationTitle: Record<TransactionType, string> = {
   [TransactionType.MAIN_DOMAIN]: "Main domain set",
   [TransactionType.SUBDOMAIN_CREATION]: "Subdomain created",
   [TransactionType.SET_PFP]: "New profile picture set",
+  [TransactionType.CLAIM_SOL]: "Claimed Solana subdomain on Starknet",
 };
 
 export const notificationLinkText: Record<NotificationType, string> = {

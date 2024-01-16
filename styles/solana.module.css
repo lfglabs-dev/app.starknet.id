@@ -1,0 +1,259 @@
+.screen {
+  height: 88vh;
+  position: relative;
+  margin-top: 12vh;
+}
+
+.wrapperScreen {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: calc(100% - 12vh);
+  padding: 2rem 0 0;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.banner {
+  display: flex;
+  width: 80%;
+  gap: 3rem;
+  border-radius: 20px;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  max-height: 480px;
+  background: var(--background-paper, #fff);
+}
+
+.domainContainer {
+  overflow: hidden;
+  padding: 2rem;
+  width: 90%;
+  border-radius: 20px;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  max-height: 600px;
+  background: var(--background-paper, #fff);
+  min-height: 270px;
+}
+
+.domainList {
+  display: flex;
+  flex-direction: row;
+  gap: 48px;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 64px 0 0 0;
+}
+
+.domainBox {
+  width: 100%;
+  max-width: calc(50% - 24px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--background-light, #fffcf8);
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+}
+
+.domainTitle {
+  position: relative;
+  width: 100%;
+}
+
+.domainName {
+  color: var(--secondary);
+  font-family: Poppins-Bold;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.domainSelect {
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.image {
+  border-radius: 20px;
+  width: 50%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: bottom center;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.progressBarContainer {
+  width: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+
+  color: var(--dark-content);
+  text-align: center;
+  font-family: Poppins-Bold;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 20px; /* 142.857% */
+}
+
+.connectButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 1rem;
+}
+
+.connectLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.banner_content {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 3rem;
+  text-align: left;
+}
+
+.bannerTitle {
+  font-family: "QuickZap";
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.domainSkeleton {
+  width: 100%;
+  max-width: calc(50% - 24px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  border-radius: 12px;
+}
+
+.receivedBtn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+
+  color: var(--dark-content);
+  font-family: "QuickZap";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 200% */
+}
+
+.domainActionsMenu {
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+}
+
+.menuItem {
+  color: var(--dark-secondary);
+  text-align: center;
+  font-family: "Poppins-Regular";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px; /* 142.857% */
+}
+
+.btnSkeleton {
+  border-radius: 500px;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .bannerTitle {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapperScreen {
+    margin-bottom: 64px;
+    height: auto;
+  }
+
+  .bannerTitle {
+    font-size: 2rem;
+  }
+
+  .banner {
+    flex-direction: column;
+    height: auto;
+    gap: 1rem;
+    max-height: none;
+  }
+
+  .banner_content {
+    text-align: center;
+  }
+
+  .image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+
+  .domainList {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .domainContainer {
+    min-height: 350px;
+  }
+
+  .buttonContainer {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 425px) {
+  .domainBox {
+    max-width: 100%;
+  }
+}
+
+@media (max-height: 600px) {
+  .wrapperScreen {
+    height: auto;
+  }
+}
