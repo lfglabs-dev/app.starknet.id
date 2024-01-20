@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { Checkbox } from "@mui/material";
 import styles from "../../styles/components/variants.module.css";
+import InputHelper from "../UI/inputHelper";
 
 type RegisterCheckboxes = {
   termsBox: boolean;
@@ -58,15 +59,18 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
           </p>
         </div>
         {!isArOnforced ? (
-          <div
-            className="flex items-center justify-left text-xs cursor-pointer"
-            onClick={onChangeRenewalBox}
-          >
-            <Checkbox checked={renewalBox} sx={{ padding: 0 }} />
-            <p className="ml-2 text-left">
-              Enable subscription and don&apos;t pay gas for your yearly renewal
-            </p>
-          </div>
+          <InputHelper helperText="Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year maximum (X ETH/year) and we'll cover the transaction fee for you!">
+            <div
+              className="flex items-center justify-left text-xs cursor-pointer"
+              onClick={onChangeRenewalBox}
+            >
+              <Checkbox checked={renewalBox} sx={{ padding: 0 }} />
+              <p className="ml-2 text-left flex items-center gap-2 relative">
+                Enable subscription and don&apos;t pay gas for your yearly
+                renewal
+              </p>
+            </div>
+          </InputHelper>
         ) : null}
       </div>
     </div>
