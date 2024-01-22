@@ -16,6 +16,7 @@ import VerifyFirstStep from "../components/verify/verifyFirstStep";
 import identityChangeCalls from "../utils/callData/identityChangeCalls";
 import { useNotificationManager } from "../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../utils/constants";
+import TxConfirmationModal from "../components/UI/txConfirmationModal";
 
 const Twitter: NextPage = () => {
   const router = useRouter();
@@ -25,6 +26,7 @@ const Twitter: NextPage = () => {
     SignRequestData | ErrorRequestData
   >();
   const { addTransaction } = useNotificationManager();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
@@ -112,38 +114,20 @@ const Twitter: NextPage = () => {
   }
 
   useEffect(() => {
-    if (twitterVerificationData?.transaction_hash) {
-      if (
-        transactionData?.status &&
-        !transactionError &&
-        !transactionData?.status.includes("ACCEPTED") &&
-        transactionData?.status !== "REJECTED" &&
-        transactionData?.status !== "REVERTED"
-      ) {
-        posthog?.capture("twitterVerificationTx");
-        addTransaction({
-          timestamp: Date.now(),
-          subtext: `Twitter verification on Starknet ID #${tokenId}`,
-          type: NotificationType.TRANSACTION,
-          data: {
-            type: TransactionType.VERIFIER_TWITTER,
-            hash: twitterVerificationData.transaction_hash,
-            status: "pending",
-          },
-        });
-        router.push(`/identities/${tokenId}`);
-      } else if (transactionError) {
-        setScreen("error");
-      }
-    }
-  }, [
-    twitterVerificationData,
-    transactionData,
-    transactionError,
-    addTransaction,
-    router,
-    tokenId,
-  ]);
+    if (!twitterVerificationData?.transaction_hash) return;
+    posthog?.capture("twitterVerificationTx");
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `Twitter verification on Starknet ID #${tokenId}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.VERIFIER_TWITTER,
+        hash: twitterVerificationData.transaction_hash,
+        status: "pending",
+      },
+    });
+    setIsTxModalOpen(true);
+  }, [twitterVerificationData?.transaction_hash]);
 
   //Screen management
   const [screen, setScreen] = useState<Screen>("verifyTwitter");
@@ -157,31 +141,46 @@ const Twitter: NextPage = () => {
 
   const errorScreen = isConnected && screen === "error";
 
+  const closeModal = () => {
+    setIsTxModalOpen(false);
+    router.push(`/identities/${tokenId}`);
+  };
+
   return (
-    <div className={homeStyles.screen}>
-      <div className={homeStyles.wrapperScreen}>
-        <div className={homeStyles.container}>
-          {screen === "verifyTwitter" &&
-            (!isConnected ? (
-              <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
-            ) : (
-              <VerifyFirstStep
-                onClick={verifyTwitter}
-                disabled={Boolean(!calls)}
-                buttonLabel="Verify my Twitter"
-                title="It's time to verify your twitter on chain !"
-                subtitle="Safeguard your account with our network verification page"
+    <>
+      <div className={homeStyles.screen}>
+        <div className={homeStyles.wrapperScreen}>
+          <div className={homeStyles.container}>
+            {screen === "verifyTwitter" &&
+              (!isConnected ? (
+                <h1 className="sm:text-5xl text-5xl">
+                  You need to connect anon
+                </h1>
+              ) : (
+                <VerifyFirstStep
+                  onClick={verifyTwitter}
+                  disabled={Boolean(!calls)}
+                  buttonLabel="Verify my Twitter"
+                  title="It's time to verify your twitter on chain !"
+                  subtitle="Safeguard your account with our network verification page"
+                />
+              ))}
+            {errorScreen && (
+              <ErrorScreen
+                onClick={() => router.push(`/identities/${tokenId}`)}
+                buttonText="Retry to verify"
               />
-            ))}
-          {errorScreen && (
-            <ErrorScreen
-              onClick={() => router.push(`/identities/${tokenId}`)}
-              buttonText="Retry to verify"
-            />
-          )}
+            )}
+          </div>
         </div>
       </div>
-    </div>
+      <TxConfirmationModal
+        txHash={twitterVerificationData?.transaction_hash}
+        isTxModalOpen={isTxModalOpen}
+        closeModal={closeModal}
+        title="Your Twitter verification is ongoing !"
+      />
+    </>
   );
 };
 

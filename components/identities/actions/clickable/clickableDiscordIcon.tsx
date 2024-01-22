@@ -49,7 +49,9 @@ const ClickableDiscordIcon: FunctionComponent<ClickableDiscordIconProps> = ({
       <Tooltip
         title={
           discordId
-            ? `Change your discord account from the account ${discordId} to another one`
+            ? `Change your discord account from the account ${Number(
+                discordId
+              )} to another one`
             : "Start Discord verification"
         }
         arrow

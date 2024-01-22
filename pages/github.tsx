@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
-import {
-  useAccount,
-  useContractWrite,
-  useWaitForTransaction,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ErrorScreen from "../components/UI/screens/errorScreen";
@@ -16,6 +12,7 @@ import VerifyFirstStep from "../components/verify/verifyFirstStep";
 import identityChangeCalls from "../utils/callData/identityChangeCalls";
 import { useNotificationManager } from "../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../utils/constants";
+import TxConfirmationModal from "../components/UI/txConfirmationModal";
 
 const Github: NextPage = () => {
   const router = useRouter();
@@ -25,6 +22,7 @@ const Github: NextPage = () => {
     SignRequestData | ErrorRequestData
   >();
   const { addTransaction } = useNotificationManager();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
@@ -99,49 +97,26 @@ const Github: NextPage = () => {
     error: githubVerificationError,
   } = useContractWrite({ calls: [calls as Call] });
 
-  const { data: transactionData, error: transactionError } =
-    useWaitForTransaction({
-      hash: githubVerificationData?.transaction_hash,
-      watch: true,
-    });
-
   function verifyGithub() {
     execute();
   }
 
   useEffect(() => {
-    if (githubVerificationData?.transaction_hash) {
-      if (
-        transactionData?.status &&
-        !transactionError &&
-        !transactionData?.status.includes("ACCEPTED") &&
-        transactionData?.status !== "REJECTED" &&
-        transactionData?.status !== "REVERTED"
-      ) {
-        posthog?.capture("githubVerificationTx");
-        addTransaction({
-          timestamp: Date.now(),
-          subtext: `Github verification on Starknet ID #${tokenId}`,
-          type: NotificationType.TRANSACTION,
-          data: {
-            type: TransactionType.VERIFIER_GITHUB,
-            hash: githubVerificationData.transaction_hash,
-            status: "pending",
-          },
-        });
-        router.push(`/identities/${tokenId}`);
-      } else if (transactionError) {
-        setScreen("error");
-      }
-    }
-  }, [
-    githubVerificationData,
-    transactionData,
-    transactionError,
-    addTransaction,
-    router,
-    tokenId,
-  ]);
+    if (!githubVerificationData?.transaction_hash) return;
+    posthog?.capture("githubVerificationTx");
+
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `Github verification on Starknet ID #${tokenId}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.VERIFIER_GITHUB,
+        hash: githubVerificationData.transaction_hash,
+        status: "pending",
+      },
+    });
+    setIsTxModalOpen(true);
+  }, [githubVerificationData?.transaction_hash]);
 
   //Screen management
   const [screen, setScreen] = useState<Screen>("verifyGithub");
@@ -155,31 +130,46 @@ const Github: NextPage = () => {
 
   const errorScreen = isConnected && screen === "error";
 
+  const closeModal = () => {
+    setIsTxModalOpen(false);
+    router.push(`/identities/${tokenId}`);
+  };
+
   return (
-    <div className={styles.screen}>
-      <div className={styles.wrapperScreen}>
-        <div className={styles.container}>
-          {screen === "verifyGithub" &&
-            (!isConnected ? (
-              <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
-            ) : (
-              <VerifyFirstStep
-                onClick={verifyGithub}
-                disabled={Boolean(!calls)}
-                buttonLabel="Verify my Github"
-                title="It's time to verify your github on chain !"
-                subtitle="Safeguard your account with our network verification page"
+    <>
+      <div className={styles.screen}>
+        <div className={styles.wrapperScreen}>
+          <div className={styles.container}>
+            {screen === "verifyGithub" &&
+              (!isConnected ? (
+                <h1 className="sm:text-5xl text-5xl">
+                  You need to connect anon
+                </h1>
+              ) : (
+                <VerifyFirstStep
+                  onClick={verifyGithub}
+                  disabled={Boolean(!calls)}
+                  buttonLabel="Verify my Github"
+                  title="It's time to verify your github on chain !"
+                  subtitle="Safeguard your account with our network verification page"
+                />
+              ))}
+            {errorScreen && (
+              <ErrorScreen
+                onClick={() => router.push(`/identities/${tokenId}`)}
+                buttonText="Retry to verify"
               />
-            ))}
-          {errorScreen && (
-            <ErrorScreen
-              onClick={() => router.push(`/identities/${tokenId}`)}
-              buttonText="Retry to verify"
-            />
-          )}
+            )}
+          </div>
         </div>
       </div>
-    </div>
+      <TxConfirmationModal
+        txHash={githubVerificationData?.transaction_hash}
+        isTxModalOpen={isTxModalOpen}
+        closeModal={closeModal}
+        title="Your Github verification is ongoing !"
+      />
+    </>
   );
 };
 
