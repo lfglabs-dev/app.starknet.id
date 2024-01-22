@@ -257,9 +257,8 @@ export async function generateSuggestedDomains(
       ? utils.encodeDomain(domains[i]).map((elem) => elem.toString())
       : [];
     const available =
-      Number(
-        (await contract?.call("domain_to_expiry", [encoded]))?.["expiry"]
-      ) < currentTimeStamp;
+      Number(await contract?.call("domain_to_expiry", [encoded])) <
+      currentTimeStamp;
     if (available) availableDomains.push(domains[i]);
     i++;
   }
