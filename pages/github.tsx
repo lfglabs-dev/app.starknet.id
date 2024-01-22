@@ -92,6 +92,8 @@ const Github: NextPage = () => {
       .then((data) => setSignRequestData(data));
   }, [code, tokenId]);
 
+  console.log("signRequestData", signRequestData);
+
   //Contract
   const {
     data: githubVerificationData,
@@ -108,6 +110,10 @@ const Github: NextPage = () => {
   function verifyGithub() {
     execute();
   }
+
+  console.log("githubVerificationData", githubVerificationData);
+  console.log("transactionData", transactionData);
+  console.log("calls", calls);
 
   useEffect(() => {
     if (githubVerificationData?.transaction_hash) {
