@@ -409,6 +409,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
             termsBox={termsBox}
             onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             renewalBox={renewalBox}
+            ethRegistrationPrice={price}
           />
           {address ? (
             <Button

@@ -343,6 +343,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
             onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             renewalBox={renewalBox}
             isArOnforced={isArOnforced}
+            ethRegistrationPrice={price}
           />
           {address ? (
             <Button

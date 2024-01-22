@@ -2,6 +2,7 @@ import React, { FunctionComponent } from "react";
 import { Checkbox } from "@mui/material";
 import styles from "../../styles/components/variants.module.css";
 import InputHelper from "../UI/inputHelper";
+import { gweiToEth } from "../../utils/feltService";
 
 type RegisterCheckboxes = {
   termsBox: boolean;
@@ -10,6 +11,7 @@ type RegisterCheckboxes = {
   onChangeRenewalBox: () => void;
   variant?: "default" | "white";
   isArOnforced?: boolean;
+  ethRegistrationPrice?: string;
 };
 
 const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
@@ -19,6 +21,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   renewalBox,
   variant = "default",
   isArOnforced,
+  ethRegistrationPrice = "X",
 }) => {
   return (
     <div className="w-full mb-3">
@@ -59,7 +62,11 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
           </p>
         </div>
         {!isArOnforced ? (
-          <InputHelper helperText="Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year maximum (X ETH/year) and we'll cover the transaction fee for you!">
+          <InputHelper
+            helperText={`Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year maximum (${gweiToEth(
+              ethRegistrationPrice
+            )} ETH/year) and we'll cover the transaction fee for you!`}
+          >
             <div
               className="flex items-center justify-left text-xs cursor-pointer"
               onClick={onChangeRenewalBox}
