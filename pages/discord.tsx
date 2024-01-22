@@ -124,7 +124,6 @@ const Discord: NextPage = () => {
       },
     });
     setIsTxModalOpen(true);
-    router.push(`/identities/${tokenId}`);
   }, [discordVerificationData?.transaction_hash]);
 
   //Screen management
