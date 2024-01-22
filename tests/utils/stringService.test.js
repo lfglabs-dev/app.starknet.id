@@ -571,7 +571,7 @@ describe("Should test getImgUrl function", () => {
 test("generateSuggestedDomains function", () => {
   const mockContract = {
     async call() {
-      return Promise.resolve({ expiry: Date.now() / 1000 - 1000 });
+      return Promise.resolve(Date.now() / 1000 - 1000);
     },
   };
 
