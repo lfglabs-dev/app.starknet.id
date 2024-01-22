@@ -28,7 +28,6 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
 }) => {
   const router = useRouter();
   const [githubUsername, setGithubUsername] = useState<string | undefined>();
-  console.log("githubid", githubId);
 
   useEffect(() => {
     if (githubId) {
