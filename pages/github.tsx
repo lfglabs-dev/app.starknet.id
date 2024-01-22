@@ -16,6 +16,7 @@ import VerifyFirstStep from "../components/verify/verifyFirstStep";
 import identityChangeCalls from "../utils/callData/identityChangeCalls";
 import { useNotificationManager } from "../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../utils/constants";
+import TxConfirmationModal from "../components/UI/txConfirmationModal";
 
 const Github: NextPage = () => {
   const router = useRouter();
@@ -25,6 +26,7 @@ const Github: NextPage = () => {
     SignRequestData | ErrorRequestData
   >();
   const { addTransaction } = useNotificationManager();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   console.log("isconnected", isConnected);
 
@@ -103,20 +105,34 @@ const Github: NextPage = () => {
     error: githubVerificationError,
   } = useContractWrite({ calls: [calls as Call] });
 
-  const { data: transactionData, error: transactionError } =
-    useWaitForTransaction({
-      hash: githubVerificationData?.transaction_hash,
-      watch: true,
-    });
+  // const { data: transactionData, error: transactionError } =
+  //   useWaitForTransaction({
+  //     hash: githubVerificationData?.transaction_hash,
+  //     watch: true,
+  //   });
 
   function verifyGithub() {
     execute();
   }
 
   console.log("githubVerificationData", githubVerificationData);
-  console.log("transactionData", transactionData);
-  console.log("transactionError", transactionError);
   console.log("calls", calls);
+
+  useEffect(() => {
+    if (!githubVerificationData?.transaction_hash) return;
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `Github verification on Starknet ID #${tokenId}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.VERIFIER_GITHUB,
+        hash: githubVerificationData.transaction_hash,
+        status: "pending",
+      },
+    });
+    router.push(`/identities/${tokenId}`);
+    setIsTxModalOpen(true);
+  }, [githubVerificationData?.transaction_hash]);
 
   // useEffect(() => {
   //   if (githubVerificationData?.transaction_hash) {
@@ -165,30 +181,40 @@ const Github: NextPage = () => {
   const errorScreen = isConnected && screen === "error";
 
   return (
-    <div className={styles.screen}>
-      <div className={styles.wrapperScreen}>
-        <div className={styles.container}>
-          {screen === "verifyGithub" &&
-            (!isConnected ? (
-              <h1 className="sm:text-5xl text-5xl">You need to connect anon</h1>
-            ) : (
-              <VerifyFirstStep
-                onClick={verifyGithub}
-                disabled={Boolean(!calls)}
-                buttonLabel="Verify my Github"
-                title="It's time to verify your github on chain !"
-                subtitle="Safeguard your account with our network verification page"
+    <>
+      <div className={styles.screen}>
+        <div className={styles.wrapperScreen}>
+          <div className={styles.container}>
+            {screen === "verifyGithub" &&
+              (!isConnected ? (
+                <h1 className="sm:text-5xl text-5xl">
+                  You need to connect anon
+                </h1>
+              ) : (
+                <VerifyFirstStep
+                  onClick={verifyGithub}
+                  disabled={Boolean(!calls)}
+                  buttonLabel="Verify my Github"
+                  title="It's time to verify your github on chain !"
+                  subtitle="Safeguard your account with our network verification page"
+                />
+              ))}
+            {errorScreen && (
+              <ErrorScreen
+                onClick={() => router.push(`/identities/${tokenId}`)}
+                buttonText="Retry to verify"
               />
-            ))}
-          {errorScreen && (
-            <ErrorScreen
-              onClick={() => router.push(`/identities/${tokenId}`)}
-              buttonText="Retry to verify"
-            />
-          )}
+            )}
+          </div>
         </div>
       </div>
-    </div>
+      <TxConfirmationModal
+        txHash={githubVerificationData?.transaction_hash}
+        isTxModalOpen={isTxModalOpen}
+        closeModal={() => setIsTxModalOpen(false)}
+        title="Your Github verification is ongoing !"
+      />
+    </>
   );
 };
 
