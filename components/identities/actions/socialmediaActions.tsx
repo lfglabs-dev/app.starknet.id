@@ -16,6 +16,8 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
   isOwner,
   identity,
 }) => {
+  console.log("identity", identity);
+  console.log("githubData", identity?.githubData);
   return (
     <>
       <div className="flex flex-row gap-3">

@@ -28,10 +28,11 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
 }) => {
   const router = useRouter();
   const [githubUsername, setGithubUsername] = useState<string | undefined>();
+  console.log("githubid", githubId);
 
   useEffect(() => {
     if (githubId) {
-      fetch(`https://api.github.com/user/${githubId}`)
+      fetch(`https://api.github.com/user/${Number(githubId)}`)
         .then((response) => response.json())
         // TO DO : Find how to import the github response type
         .then((data) => {
