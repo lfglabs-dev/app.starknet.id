@@ -26,6 +26,8 @@ const Github: NextPage = () => {
   >();
   const { addTransaction } = useNotificationManager();
 
+  console.log("isconnected", isConnected);
+
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
   const [calls, setCalls] = useState<Call | undefined>();
@@ -113,41 +115,42 @@ const Github: NextPage = () => {
 
   console.log("githubVerificationData", githubVerificationData);
   console.log("transactionData", transactionData);
+  console.log("transactionError", transactionError);
   console.log("calls", calls);
 
-  useEffect(() => {
-    if (githubVerificationData?.transaction_hash) {
-      if (
-        transactionData?.status &&
-        !transactionError &&
-        !transactionData?.status.includes("ACCEPTED") &&
-        transactionData?.status !== "REJECTED" &&
-        transactionData?.status !== "REVERTED"
-      ) {
-        posthog?.capture("githubVerificationTx");
-        addTransaction({
-          timestamp: Date.now(),
-          subtext: `Github verification on Starknet ID #${tokenId}`,
-          type: NotificationType.TRANSACTION,
-          data: {
-            type: TransactionType.VERIFIER_GITHUB,
-            hash: githubVerificationData.transaction_hash,
-            status: "pending",
-          },
-        });
-        router.push(`/identities/${tokenId}`);
-      } else if (transactionError) {
-        setScreen("error");
-      }
-    }
-  }, [
-    githubVerificationData,
-    transactionData,
-    transactionError,
-    addTransaction,
-    router,
-    tokenId,
-  ]);
+  // useEffect(() => {
+  //   if (githubVerificationData?.transaction_hash) {
+  //     if (
+  //       transactionData?.status &&
+  //       !transactionError &&
+  //       !transactionData?.status.includes("ACCEPTED") &&
+  //       transactionData?.status !== "REJECTED" &&
+  //       transactionData?.status !== "REVERTED"
+  //     ) {
+  //       posthog?.capture("githubVerificationTx");
+  //       addTransaction({
+  //         timestamp: Date.now(),
+  //         subtext: `Github verification on Starknet ID #${tokenId}`,
+  //         type: NotificationType.TRANSACTION,
+  //         data: {
+  //           type: TransactionType.VERIFIER_GITHUB,
+  //           hash: githubVerificationData.transaction_hash,
+  //           status: "pending",
+  //         },
+  //       });
+  //       router.push(`/identities/${tokenId}`);
+  //     } else if (transactionError) {
+  //       setScreen("error");
+  //     }
+  //   }
+  // }, [
+  //   githubVerificationData,
+  //   transactionData,
+  //   transactionError,
+  //   addTransaction,
+  //   router,
+  //   tokenId,
+  // ]);
 
   //Screen management
   const [screen, setScreen] = useState<Screen>("verifyGithub");
