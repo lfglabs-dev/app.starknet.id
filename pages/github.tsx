@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
-import {
-  useAccount,
-  useContractWrite,
-  useWaitForTransaction,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ErrorScreen from "../components/UI/screens/errorScreen";
@@ -27,8 +23,6 @@ const Github: NextPage = () => {
   >();
   const { addTransaction } = useNotificationManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-
-  console.log("isconnected", isConnected);
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
@@ -96,8 +90,6 @@ const Github: NextPage = () => {
       .then((data) => setSignRequestData(data));
   }, [code, tokenId]);
 
-  console.log("signRequestData", signRequestData);
-
   //Contract
   const {
     data: githubVerificationData,
@@ -105,21 +97,14 @@ const Github: NextPage = () => {
     error: githubVerificationError,
   } = useContractWrite({ calls: [calls as Call] });
 
-  // const { data: transactionData, error: transactionError } =
-  //   useWaitForTransaction({
-  //     hash: githubVerificationData?.transaction_hash,
-  //     watch: true,
-  //   });
-
   function verifyGithub() {
     execute();
   }
 
-  console.log("githubVerificationData", githubVerificationData);
-  console.log("calls", calls);
-
   useEffect(() => {
     if (!githubVerificationData?.transaction_hash) return;
+    posthog?.capture("githubVerificationTx");
+
     addTransaction({
       timestamp: Date.now(),
       subtext: `Github verification on Starknet ID #${tokenId}`,
@@ -130,43 +115,8 @@ const Github: NextPage = () => {
         status: "pending",
       },
     });
-    router.push(`/identities/${tokenId}`);
     setIsTxModalOpen(true);
   }, [githubVerificationData?.transaction_hash]);
-
-  // useEffect(() => {
-  //   if (githubVerificationData?.transaction_hash) {
-  //     if (
-  //       transactionData?.status &&
-  //       !transactionError &&
-  //       !transactionData?.status.includes("ACCEPTED") &&
-  //       transactionData?.status !== "REJECTED" &&
-  //       transactionData?.status !== "REVERTED"
-  //     ) {
-  //       posthog?.capture("githubVerificationTx");
-  //       addTransaction({
-  //         timestamp: Date.now(),
-  //         subtext: `Github verification on Starknet ID #${tokenId}`,
-  //         type: NotificationType.TRANSACTION,
-  //         data: {
-  //           type: TransactionType.VERIFIER_GITHUB,
-  //           hash: githubVerificationData.transaction_hash,
-  //           status: "pending",
-  //         },
-  //       });
-  //       router.push(`/identities/${tokenId}`);
-  //     } else if (transactionError) {
-  //       setScreen("error");
-  //     }
-  //   }
-  // }, [
-  //   githubVerificationData,
-  //   transactionData,
-  //   transactionError,
-  //   addTransaction,
-  //   router,
-  //   tokenId,
-  // ]);
 
   //Screen management
   const [screen, setScreen] = useState<Screen>("verifyGithub");
@@ -179,6 +129,11 @@ const Github: NextPage = () => {
   }, [githubVerificationError, signRequestData]);
 
   const errorScreen = isConnected && screen === "error";
+
+  const closeModal = () => {
+    setIsTxModalOpen(false);
+    router.push(`/identities/${tokenId}`);
+  };
 
   return (
     <>
@@ -211,7 +166,7 @@ const Github: NextPage = () => {
       <TxConfirmationModal
         txHash={githubVerificationData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
-        closeModal={() => setIsTxModalOpen(false)}
+        closeModal={closeModal}
         title="Your Github verification is ongoing !"
       />
     </>

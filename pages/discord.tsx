@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
-import {
-  useAccount,
-  useContractWrite,
-  useWaitForTransaction,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ErrorScreen from "../components/UI/screens/errorScreen";
@@ -15,6 +11,7 @@ import VerifyFirstStep from "../components/verify/verifyFirstStep";
 import identityChangeCalls from "../utils/callData/identityChangeCalls";
 import { useNotificationManager } from "../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../utils/constants";
+import TxConfirmationModal from "../components/UI/txConfirmationModal";
 
 export type Screen =
   | "verifyDiscord"
@@ -31,6 +28,7 @@ const Discord: NextPage = () => {
     DiscordSignRequestData | ErrorRequestData
   >();
   const { addTransaction } = useNotificationManager();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
@@ -107,49 +105,27 @@ const Discord: NextPage = () => {
     error: discordVerificationError,
   } = useContractWrite({ calls: [calls as Call] });
 
-  const { data: transactionData, error: transactionError } =
-    useWaitForTransaction({
-      hash: discordVerificationData?.transaction_hash,
-      watch: true,
-    });
-
   function verifyDiscord() {
     execute();
   }
 
   useEffect(() => {
-    if (discordVerificationData?.transaction_hash) {
-      if (
-        transactionData?.status &&
-        !transactionError &&
-        !transactionData?.status.includes("ACCEPTED") &&
-        transactionData?.status !== "REJECTED" &&
-        transactionData?.status !== "REVERTED"
-      ) {
-        posthog?.capture("discordVerificationTx");
-        addTransaction({
-          timestamp: Date.now(),
-          subtext: `Discord verification on Starknet ID #${tokenId}`,
-          type: NotificationType.TRANSACTION,
-          data: {
-            type: TransactionType.VERIFIER_DISCORD,
-            hash: discordVerificationData.transaction_hash,
-            status: "pending",
-          },
-        });
-        router.push(`/identities/${tokenId}`);
-      } else if (transactionError) {
-        setScreen("error");
-      }
-    }
-  }, [
-    discordVerificationData,
-    transactionData,
-    transactionError,
-    addTransaction,
-    router,
-    tokenId,
-  ]);
+    if (!discordVerificationData?.transaction_hash) return;
+    posthog?.capture("discordVerificationTx");
+
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `Discord verification on Starknet ID #${tokenId}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.VERIFIER_DISCORD,
+        hash: discordVerificationData.transaction_hash,
+        status: "pending",
+      },
+    });
+    setIsTxModalOpen(true);
+    router.push(`/identities/${tokenId}`);
+  }, [discordVerificationData?.transaction_hash]);
 
   //Screen management
   const [screen, setScreen] = useState<Screen>("verifyDiscord");
@@ -163,31 +139,44 @@ const Discord: NextPage = () => {
 
   const errorScreen = isConnected && screen === "error";
 
+  const closeModal = () => {
+    setIsTxModalOpen(false);
+    router.push(`/identities/${tokenId}`);
+  };
+
   return (
-    <div className={styles.screen}>
-      <div className={styles.wrapperScreen}>
-        <div className={styles.container}>
-          {screen === "verifyDiscord" &&
-            (!isConnected ? (
-              <h1 className="sm:text-5xl text-5xl">You need to connect !</h1>
-            ) : (
-              <VerifyFirstStep
-                onClick={verifyDiscord}
-                disabled={Boolean(!calls)}
-                buttonLabel="Verify my Discord"
-                title="It's time to verify your discord on chain !"
-                subtitle="Safeguard your account with our network verification page"
+    <>
+      <div className={styles.screen}>
+        <div className={styles.wrapperScreen}>
+          <div className={styles.container}>
+            {screen === "verifyDiscord" &&
+              (!isConnected ? (
+                <h1 className="sm:text-5xl text-5xl">You need to connect !</h1>
+              ) : (
+                <VerifyFirstStep
+                  onClick={verifyDiscord}
+                  disabled={Boolean(!calls)}
+                  buttonLabel="Verify my Discord"
+                  title="It's time to verify your discord on chain !"
+                  subtitle="Safeguard your account with our network verification page"
+                />
+              ))}
+            {errorScreen && (
+              <ErrorScreen
+                onClick={() => router.push(`/identities/${tokenId}`)}
+                buttonText="Retry to verify"
               />
-            ))}
-          {errorScreen && (
-            <ErrorScreen
-              onClick={() => router.push(`/identities/${tokenId}`)}
-              buttonText="Retry to verify"
-            />
-          )}
+            )}
+          </div>
         </div>
       </div>
-    </div>
+      <TxConfirmationModal
+        txHash={discordVerificationData?.transaction_hash}
+        isTxModalOpen={isTxModalOpen}
+        closeModal={closeModal}
+        title="Your Github verification is ongoing !"
+      />
+    </>
   );
 };
 
