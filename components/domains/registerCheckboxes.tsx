@@ -11,7 +11,7 @@ type RegisterCheckboxes = {
   onChangeRenewalBox: () => void;
   variant?: "default" | "white";
   isArOnforced?: boolean;
-  ethRegistrationPrice?: string;
+  ethRenewalPrice?: string;
 };
 
 const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
@@ -21,7 +21,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   renewalBox,
   variant = "default",
   isArOnforced,
-  ethRegistrationPrice = "X",
+  ethRenewalPrice = "X",
 }) => {
   return (
     <div className="w-full mb-3">
@@ -64,7 +64,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
         {!isArOnforced ? (
           <InputHelper
             helperText={`Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year maximum (${gweiToEth(
-              ethRegistrationPrice
+              ethRenewalPrice
             )} ETH/year) and we'll cover the transaction fee for you!`}
           >
             <div

@@ -54,6 +54,7 @@ const FreeRenewalPage: NextPage = () => {
             price={freeRenewalDiscount.offer.price}
             goBack={goBack}
             isArOnforced
+            renewPrice="0"
           />
         </div>
       ) : null}

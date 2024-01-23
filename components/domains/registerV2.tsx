@@ -62,6 +62,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
   const [price, setPrice] = useState<string>("");
+  const [renewPrice, setRenewPrice] = useState<string>("");
   const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
@@ -82,6 +83,13 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     abi: contract?.abi as Abi,
     functionName: "compute_buy_price",
     args: [encodedDomain, duration * 365],
+  });
+
+  const { data: renewPriceData, error: renewPriceError } = useContractRead({
+    address: contract?.address as string,
+    abi: contract?.abi as Abi,
+    functionName: "compute_renew_price",
+    args: [encodedDomain, 365],
   });
 
   const { account, address } = useAccount();
@@ -149,6 +157,12 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       setPrice((priceData?.["price"].low + high).toString(10));
     }
   }, [priceData, priceError, duration, domain]);
+
+  useEffect(() => {
+    if (renewPriceError || !renewPriceData) return;
+    const high = renewPriceData?.["price"].high << BigInt(128);
+    setRenewPrice((renewPriceData?.["price"].low + high).toString(10));
+  }, [renewPriceData, renewPriceError, duration, domain]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("");
@@ -409,7 +423,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
             termsBox={termsBox}
             onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             renewalBox={renewalBox}
-            ethRegistrationPrice={price}
+            ethRenewalPrice={renewPrice}
           />
           {address ? (
             <Button
