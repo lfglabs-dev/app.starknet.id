@@ -44,6 +44,7 @@ import {
   swissVatRate,
 } from "../../utils/constants";
 import useAllowanceCheck from "../../hooks/useAllowanceCheck";
+import { useRouter } from "next/router";
 
 type RegisterV2Props = {
   domain: string;
@@ -51,6 +52,7 @@ type RegisterV2Props = {
 };
 
 const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
+  const router = useRouter();
   const maxYearsToRegister = 25;
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -76,6 +78,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
+  const [redirect, setRedirect] = useState<number>(0);
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -242,6 +245,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // Merge and set the call data
     setCallData(calls);
+    setRedirect(tokenIdToUse);
   }, [
     tokenId,
     duration,
@@ -336,6 +340,11 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
   function changeTokenId(value: number): void {
     setTokenId(Number(value));
+  }
+
+  function closeModal(): void {
+    setIsTxModalOpen(false);
+    router.push(`/identities/${redirect}`);
   }
 
   return (
@@ -449,7 +458,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       <RegisterConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
-        closeModal={() => setIsTxModalOpen(false)}
+        closeModal={closeModal}
       />
       <Wallets
         closeWallet={() => setWalletModalOpen(false)}
