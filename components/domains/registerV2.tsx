@@ -78,7 +78,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
-  const [redirect, setRedirect] = useState<number>(0);
+  const [redirectTokenId, setRedirectTokenId] = useState<number>(0);
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -245,7 +245,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // Merge and set the call data
     setCallData(calls);
-    setRedirect(tokenIdToUse);
+    setRedirectTokenId(tokenIdToUse);
   }, [
     tokenId,
     duration,
@@ -344,7 +344,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
   function closeModal(): void {
     setIsTxModalOpen(false);
-    router.push(`/identities/${redirect}`);
+    router.push(`/identities/${redirectTokenId}`);
   }
 
   return (
