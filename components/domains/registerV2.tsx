@@ -85,13 +85,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     args: [encodedDomain, duration * 365],
   });
 
-  const { data: renewPriceData, error: renewPriceError } = useContractRead({
-    address: contract?.address as string,
-    abi: contract?.abi as Abi,
-    functionName: "compute_renew_price",
-    args: [encodedDomain, 365],
-  });
-
   const { account, address } = useAccount();
   const { data: userBalanceData, error: userBalanceDataError } = useBalance({
     address,
@@ -159,10 +152,16 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   }, [priceData, priceError, duration, domain]);
 
   useEffect(() => {
-    if (renewPriceError || !renewPriceData) return;
-    const high = renewPriceData?.["price"].high << BigInt(128);
-    setRenewPrice((renewPriceData?.["price"].low + high).toString(10));
-  }, [renewPriceData, renewPriceError, duration, domain]);
+    if (priceError || !priceData)
+      setRenewPrice(getPriceFromDomain(1, domain).toString());
+    else {
+      // Divide the priceData by the duration to get the renewal pricevvvvvvbv---666vjjj,nb,b nnb,;,,,cx,
+      const high = priceData?.["price"].high << BigInt(128);
+      const price = priceData?.["price"].low + high;
+      const renew = price / BigInt(duration);
+      setRenewPrice(renew.toString(10));
+    }
+  }, [priceData, priceError, domain]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("");
