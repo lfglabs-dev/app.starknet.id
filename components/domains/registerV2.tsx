@@ -155,7 +155,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     if (priceError || !priceData)
       setRenewPrice(getPriceFromDomain(1, domain).toString());
     else {
-      // Divide the priceData by the duration to get the renewal pricevvvvvvbv---666vjjj,nb,b nnb,;,,,cx,
+      // Divide the priceData by the duration to get the renewal price
       const high = priceData?.["price"].high << BigInt(128);
       const price = priceData?.["price"].low + high;
       const renew = price / BigInt(duration);
