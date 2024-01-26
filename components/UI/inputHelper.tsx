@@ -1,23 +1,13 @@
 import React, { FunctionComponent, ReactNode } from "react";
-import { Tooltip, TooltipProps, styled, tooltipClasses } from "@mui/material";
 import InfoIcon from "./iconsComponents/icons/infoIcon";
+import StyledToolTip from "./styledTooltip";
+import theme from "../../styles/theme";
 
 type InputHelperProps = {
   children: ReactNode;
   helperText?: string;
   error?: boolean;
 };
-
-const StyledToolTip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} arrow classes={{ popper: className }} />
-))(() => ({
-  [`& .${tooltipClasses.arrow}`]: {
-    color: "#454545",
-  },
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: "#454545",
-  },
-}));
 
 const InputHelper: FunctionComponent<InputHelperProps> = ({
   children,
@@ -34,7 +24,10 @@ const InputHelper: FunctionComponent<InputHelperProps> = ({
           placement="top"
         >
           <div className="absolute top-1/2 -translate-y-1/2 right-2 bg-white">
-            <InfoIcon width="28px" color={error ? "red" : "#454545"} />
+            <InfoIcon
+              width="28px"
+              color={error ? "red" : theme.palette.grey[800]}
+            />
           </div>
         </StyledToolTip>
       ) : null}

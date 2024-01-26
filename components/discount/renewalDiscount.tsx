@@ -51,12 +51,14 @@ type RenewalDiscountProps = {
   discountId: string;
   customMessage: string;
   price: string;
+  renewPrice: string;
   isArOnforced?: boolean;
 };
 
 const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   groups,
   price,
+  renewPrice,
   duration,
   discountId,
   customMessage,
@@ -343,6 +345,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
             onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             renewalBox={renewalBox}
             isArOnforced={isArOnforced}
+            ethRenewalPrice={renewPrice}
           />
           {address ? (
             <Button

@@ -64,6 +64,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
   const [price, setPrice] = useState<string>("");
+  const [renewPrice, setRenewPrice] = useState<string>("");
   const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
@@ -152,6 +153,18 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       setPrice((priceData?.["price"].low + high).toString(10));
     }
   }, [priceData, priceError, duration, domain]);
+
+  useEffect(() => {
+    if (priceError || !priceData)
+      setRenewPrice(getPriceFromDomain(1, domain).toString());
+    else {
+      // Divide the priceData by the duration to get the renewal price
+      const high = priceData?.["price"].high << BigInt(128);
+      const price = priceData?.["price"].low + high;
+      const renew = price / BigInt(duration);
+      setRenewPrice(renew.toString(10));
+    }
+  }, [priceData, priceError, domain]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("");
@@ -418,6 +431,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
             termsBox={termsBox}
             onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
             renewalBox={renewalBox}
+            ethRenewalPrice={renewPrice}
           />
           {address ? (
             <Button
