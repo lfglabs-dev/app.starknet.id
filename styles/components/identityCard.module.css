@@ -15,6 +15,7 @@
   align-items: center;
   overflow: hidden;
   width: 650px;
+  max-width: 650px;
   height: 350px;
   box-shadow: 0px 6px 80px rgba(64, 45, 40, 0.15);
   background: radial-gradient(
@@ -73,6 +74,7 @@
   background-color: var(--background);
   height: 83px;
   width: 650px;
+  max-width: 650px;
   border-width: 0px 6px 4px 1px;
   border-style: solid;
   border-color: var(--tertiary);
