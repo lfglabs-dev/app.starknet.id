@@ -28,7 +28,6 @@ const Solana: NextPage = () => {
   const { address: starknetAddress } = useAccount();
   const { publicKey: solPublicKey, signMessage } = useWallet();
   const { addTransaction } = useNotificationManager();
-  const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [snsDomains, setSnsDomains] = useState<string[]>([]);
   const [selectedDomain, setSelectedDomain] = useState<SnsDomainData>();

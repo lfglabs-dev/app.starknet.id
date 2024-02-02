@@ -68,7 +68,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     .map((element) => element.toString())[0];
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
-  // const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const { account, address } = useAccount();
   const { data: userBalanceData, error: userBalanceDataError } = useBalance({
