@@ -4,8 +4,7 @@ import Image from "next/image";
 import AffiliateImage from "../public/visuals/affiliate.webp";
 import Button from "../components/UI/button";
 import StarknetIcon from "../components/UI/iconsComponents/icons/starknetIcon";
-import Wallets from "../components/UI/wallets";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useConnect, useContractWrite } from "@starknet-react/core";
 import ProgressBar from "../components/UI/progressBar";
 import { NextPage } from "next";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
@@ -22,12 +21,13 @@ import DoneFilledIcon from "../components/UI/iconsComponents/icons/doneFilledIco
 import theme from "../styles/theme";
 import DomainActions from "../components/solana/domainActions";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
+import { useStarknetkitConnectModal } from "starknetkit";
+import { availableConnectors } from "./_app";
 
 const Solana: NextPage = () => {
   const { address: starknetAddress } = useAccount();
   const { publicKey: solPublicKey, signMessage } = useWallet();
   const { addTransaction } = useNotificationManager();
-  const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [snsDomains, setSnsDomains] = useState<string[]>([]);
   const [selectedDomain, setSelectedDomain] = useState<SnsDomainData>();
@@ -43,6 +43,10 @@ const Solana: NextPage = () => {
   });
   const [open, setOpen] = useState(true);
   const [disableBtn, setDisableBtn] = useState<string>("");
+  const { connectAsync } = useConnect();
+  const { starknetkitConnectModal } = useStarknetkitConnectModal({
+    connectors: availableConnectors,
+  });
 
   useEffect(() => {
     const currentDate = new Date();
@@ -189,6 +193,15 @@ const Solana: NextPage = () => {
       : false;
   };
 
+  const connectWallet = async () => {
+    const { connector } = await starknetkitConnectModal();
+    if (!connector) {
+      return;
+    }
+    await connectAsync({ connector });
+    localStorage.setItem("SID-connectedWallet", connector.id);
+  };
+
   return (
     <div className={styles.screen}>
       {!open ? (
@@ -217,7 +230,7 @@ const Solana: NextPage = () => {
                     elevate your digital identity with cross-chain domains !
                   </p>
                   <div className={styles.button_container}>
-                    <Button onClick={() => setWalletModalOpen(true)}>
+                    <Button onClick={connectWallet}>
                       <div className="flex flex-row gap-4 justify-center items-center">
                         <StarknetIcon width="28" color="" />
                         <p>Connect your Starknet wallet</p>
@@ -340,10 +353,6 @@ const Solana: NextPage = () => {
           </div>
         </div>
       )}
-      <Wallets
-        closeWallet={() => setWalletModalOpen(false)}
-        hasWallet={walletModalOpen}
-      />
       <TxConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}

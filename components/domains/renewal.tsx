@@ -16,7 +16,6 @@ import TextField from "../UI/textField";
 import SwissForm from "./swissForm";
 import { Divider } from "@mui/material";
 import RegisterSummary from "./registerSummary";
-import Wallets from "../UI/wallets";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
@@ -39,6 +38,7 @@ import { utils } from "starknetid.js";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import NumberTextField from "../UI/numberTextField";
 import useAllowanceCheck from "../../hooks/useAllowanceCheck";
+import ConnectButton from "../UI/connectButton";
 
 type RenewalProps = {
   groups: string[];
@@ -57,7 +57,6 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
-  const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
@@ -368,9 +367,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
                 : "Renew my domain(s)"}
             </Button>
           ) : (
-            <Button onClick={() => setWalletModalOpen(true)}>
-              Connect wallet
-            </Button>
+            <ConnectButton />
           )}
         </div>
       </div>
@@ -379,10 +376,6 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         txHash={renewData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
         closeModal={() => window.history.back()}
-      />
-      <Wallets
-        closeWallet={() => setWalletModalOpen(false)}
-        hasWallet={walletModalOpen}
       />
     </div>
   );

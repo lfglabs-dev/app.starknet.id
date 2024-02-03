@@ -13,7 +13,6 @@ import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
 import SwissForm from "./swissForm";
-import Wallets from "../UI/wallets";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
@@ -34,6 +33,7 @@ import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import useAllowanceCheck from "../../hooks/useAllowanceCheck";
+import ConnectButton from "../UI/connectButton";
 
 type SubscriptionProps = {
   groups: string[];
@@ -50,7 +50,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
-  const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
@@ -295,9 +294,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
                 : "Enable subscription"}
             </Button>
           ) : (
-            <Button onClick={() => setWalletModalOpen(true)}>
-              Connect wallet
-            </Button>
+            <ConnectButton />
           )}
         </div>
       </div>
@@ -306,10 +303,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         txHash={autorenewData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
         closeModal={() => window.history.back()}
-      />
-      <Wallets
-        closeWallet={() => setWalletModalOpen(false)}
-        hasWallet={walletModalOpen}
       />
     </div>
   );

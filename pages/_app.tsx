@@ -5,13 +5,10 @@ import Navbar from "../components/UI/navbar";
 import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
-import {
-  StarknetConfig,
-  argent,
-  braavos,
-  jsonRpcProvider,
-} from "@starknet-react/core";
+import { StarknetConfig, jsonRpcProvider } from "@starknet-react/core";
+import { InjectedConnector } from "starknetkit/injected";
 import { WebWalletConnector } from "starknetkit/webwallet";
+import { ArgentMobileConnector } from "starknetkit/argentMobile";
 import { Analytics } from "@vercel/analytics/react";
 import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
@@ -56,6 +53,18 @@ if (typeof window !== "undefined") {
   (window as any).posthog = posthog;
 }
 
+export const availableConnectors = [
+  new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
+  new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
+  new WebWalletConnector({
+    url:
+      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+        ? "https://web.hydrogen.argent47.net"
+        : "https://web.argent.xyz/",
+  }),
+  new ArgentMobileConnector(),
+];
+
 function MyApp({ Component, pageProps }: AppProps) {
   const chains = [
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? goerli : mainnet,
@@ -65,19 +74,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       nodeUrl: process.env.NEXT_PUBLIC_RPC_URL as string,
     }),
   });
-  const connectors = useMemo(
-    () => [
-      braavos(),
-      argent(),
-      new WebWalletConnector({
-        url:
-          process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-            ? "https://web.hydrogen.argent47.net"
-            : "https://web.argent.xyz/",
-      }),
-    ],
-    []
-  );
 
   const solNetwork = WalletAdapterNetwork.Mainnet;
   const endpoint = useMemo(() => clusterApiUrl(solNetwork), [solNetwork]);
@@ -112,7 +108,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               provider={providers}
               connectors={
                 addWalnutLogsToConnectors({
-                  connectors,
+                  connectors: availableConnectors,
                   apiKey: process.env.NEXT_PUBLIC_WALNUT_API_KEY as string,
                 }) as any
               }

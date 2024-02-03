@@ -19,7 +19,6 @@ import TextField from "../UI/textField";
 import { Divider } from "@mui/material";
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import RegisterSummary from "../domains/registerSummary";
-import Wallets from "../UI/wallets";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import SwissForm from "../domains/swissForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
@@ -32,6 +31,7 @@ import {
 } from "../../utils/constants";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import useAllowanceCheck from "../../hooks/useAllowanceCheck";
+import ConnectButton from "../UI/connectButton";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -68,7 +68,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     .map((element) => element.toString())[0];
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
-  const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const { account, address } = useAccount();
   const { data: userBalanceData, error: userBalanceDataError } = useBalance({
@@ -326,9 +325,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
                 : "Register my domain"}
             </Button>
           ) : (
-            <Button onClick={() => setWalletModalOpen(true)}>
-              Connect wallet
-            </Button>
+            <ConnectButton />
           )}
         </div>
       </div>
@@ -338,10 +335,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         isTxModalOpen={isTxModalOpen}
         closeModal={() => setIsTxModalOpen(false)}
         title="Your domain is on it's way !"
-      />
-      <Wallets
-        closeWallet={() => setWalletModalOpen(false)}
-        hasWallet={walletModalOpen}
       />
     </div>
   );
