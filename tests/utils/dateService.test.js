@@ -71,3 +71,52 @@ describe("isIdentityExpiringSoon", () => {
     expect(isIdentityExpiringSoon(identity)).toBe(true);
   });
 });
+
+describe("isIdentityExpired", () => {
+  const currentTime = Math.floor(Date.now() / 1000);
+
+  it("should return false if domain_expiry is null", () => {
+    const identity = {
+      id: "test-id",
+      domain: "ben.ben.stark",
+      domain_expiry: null,
+    };
+    expect(isIdentityExpiringSoon(identity)).toBe(false);
+  });
+
+  it("should return false if domain is empty", () => {
+    const identity = {
+      id: "test-id",
+      domain: "",
+      domain_expiry: currentTime + 60 * 60 * 24 * 30, // 30 days from now
+    };
+    expect(isIdentityExpiringSoon(identity)).toBe(false);
+  });
+
+  it("should return false if domain is not a Stark root domain", () => {
+    const identity = {
+      id: "test-id",
+      domain: "non-stark.example.stark",
+      domain_expiry: currentTime + 60 * 60 * 24 * 30, // 30 days from now
+    };
+    expect(isIdentityExpiringSoon(identity)).toBe(false);
+  });
+
+  it("should return false if domain expiry is more than 90 days away", () => {
+    const identity = {
+      id: "test-id",
+      domain: "ben.stark",
+      domain_expiry: currentTime + 60 * 60 * 24 * 120, // 120 days from now
+    };
+    expect(isIdentityExpiringSoon(identity)).toBe(false);
+  });
+
+  it("should return true if domain expiry is less than 30 days away", () => {
+    const identity = {
+      id: "test-id",
+      domain: "ben.stark",
+      domain_expiry: currentTime + 60 * 60 * 24 * 30, // 30 days from now
+    };
+    expect(isIdentityExpiringSoon(identity)).toBe(true);
+  });
+});

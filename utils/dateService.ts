@@ -23,3 +23,13 @@ export function isIdentityExpiringSoon(identity: FullId): boolean {
 
   return Boolean(currentTimestamp + threeMonths > identity.domain_expiry);
 }
+
+export function isIdentityExpired(identity: FullId): boolean {
+  if (!identity?.domain_expiry) return false;
+  if (!identity?.domain) return false;
+  if (!isStarkRootDomain(identity.domain)) return false;
+
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+
+  return Boolean(currentTimestamp > identity.domain_expiry);
+}
