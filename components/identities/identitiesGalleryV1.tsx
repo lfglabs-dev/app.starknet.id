@@ -10,6 +10,7 @@ import { getDomainKind, minifyDomain } from "../../utils/stringService";
 import ErrorIcon from "@mui/icons-material/Error";
 import { Tooltip } from "@mui/material";
 import {
+  isIdentityExpired,
   isIdentityExpiringSoon,
   timestampToReadableDate,
 } from "../../utils/dateService";
@@ -58,9 +59,13 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
             {isIdentityExpiringSoon(identity) ? (
               <div className={styles.expiryWarning}>
                 <Tooltip
-                  title={`Be careful, this domain will expire on ${timestampToReadableDate(
-                    identity?.domain_expiry ?? 0
-                  )}`}
+                  title={
+                    isIdentityExpired(identity)
+                      ? "This domain is expired"
+                      : `Be careful, this domain will expire on ${timestampToReadableDate(
+                          identity?.domain_expiry ?? 0
+                        )}`
+                  }
                   arrow
                 >
                   <ErrorIcon color="error" />
