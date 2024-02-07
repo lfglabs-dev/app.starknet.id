@@ -25,6 +25,7 @@ import { NotificationType, TransactionType } from "../../../utils/constants";
 import { posthog } from "posthog-js";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
+import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -192,18 +193,21 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   )
                 }
               />
-              {/* <ClickableAction
-                title="View on Aspect"
+              <ClickableAction
+                title="View on Pyramid"
                 icon={
-                  <AspectIcon width="25" color={theme.palette.secondary.main} />
+                  <PyramidIcon
+                    width="25"
+                    color={theme.palette.secondary.main}
+                  />
                 }
-                description="Check this identity on Aspect"
+                description="Check this identity on Pyramid"
                 onClick={() =>
                   window.open(
-                    `https://aspect.co/asset/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
+                    `https://pyramid.market/collection/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
                   )
                 }
-              /> */}
+              />
             </>
           )}
           {identity && isOwner && (
