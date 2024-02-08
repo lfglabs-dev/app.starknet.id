@@ -176,7 +176,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     <div className={styles.actionsContainer}>
       <>
         <div className={styles.identityActions}>
-          {identity && !isOwner && isIdentityADomain && (
+          {identity && (!isOwner || !address) && isIdentityADomain && (
             <>
               <ClickableAction
                 title="View on Unframed"
@@ -210,7 +210,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
               />
             </>
           )}
-          {identity && isOwner && (
+          {identity && isOwner && address && (
             <div className={styles.identityActions}>
               {callDataEncodedDomain[0] === 1 && !isAutoRenewalEnabled ? (
                 <ClickableAction
