@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 import { useAccount, useConnect, useContractWrite } from "@starknet-react/core";
@@ -30,11 +30,13 @@ const Identities: NextPage = () => {
   const { connectAsync } = useConnect();
 
   //Mint
-  const callData = {
-    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-    entrypoint: "mint",
-    calldata: [randomTokenId],
-  };
+  const callData = useMemo(() => {
+    return {
+      contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+      entrypoint: "mint",
+      calldata: [randomTokenId],
+    };
+  }, []);
   const { writeAsync: execute, data: mintData } = useContractWrite({
     calls: [callData],
   });
