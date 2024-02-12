@@ -65,7 +65,7 @@ const Wallets: FunctionComponent<WalletsProps> = ({
               <div className="mt-5 flex justify-center" key={connector.id}>
                 <Button onClick={() => connectWallet(connector)}>
                   <div className="flex justify-center items-center">
-                    <WalletIcons id={connector.id} />
+                    Icons id={connector.id} />
                     {connector.id === "braavos" || connector.id === "argentX"
                       ? `Connect ${connector.name}`
                       : "Login with Email"}

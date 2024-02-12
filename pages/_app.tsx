@@ -5,13 +5,10 @@ import Navbar from "../components/UI/navbar";
 import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
-import {
-  StarknetConfig,
-  alchemyProvider,
-  argent,
-  braavos,
-} from "@starknet-react/core";
+import { StarknetConfig, alchemyProvider } from "@starknet-react/core";
+import { InjectedConnector } from "starknetkit/injected";
 import { WebWalletConnector } from "starknetkit/webwallet";
+import { ArgentMobileConnector } from "starknetkit/argentMobile";
 import { Analytics } from "@vercel/analytics/react";
 import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
@@ -30,6 +27,18 @@ if (typeof window !== "undefined") {
   (window as any).posthog = posthog;
 }
 
+export const availableConnectors = [
+  new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
+  new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
+  new WebWalletConnector({
+    url:
+      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+        ? "https://web.hydrogen.argent47.net"
+        : "https://web.argent.xyz/",
+  }),
+  new ArgentMobileConnector(),
+];
+
 function MyApp({ Component, pageProps }: AppProps) {
   const chains = [
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? goerli : mainnet,
@@ -37,25 +46,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   const providers = alchemyProvider({
     apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string,
   });
-  const connectors = useMemo(
-    () => [
-      braavos(),
-      argent(),
-      new WebWalletConnector({
-        url:
-          process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-            ? "https://web.hydrogen.argent47.net"
-            : "https://web.argent.xyz/",
-      }),
-    ],
-    []
-  );
+
   return (
     <>
       <StarknetConfig
         chains={chains}
         provider={providers}
-        connectors={connectors as any}
+        connectors={availableConnectors}
         autoConnect
       >
         <StarknetIdJsProvider>

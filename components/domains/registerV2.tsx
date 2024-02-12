@@ -30,7 +30,6 @@ import SwissForm from "./swissForm";
 import { Divider } from "@mui/material";
 import NumberTextField from "../UI/numberTextField";
 import RegisterSummary from "./registerSummary";
-import Wallets from "../UI/wallets";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import { getPriceFromDomain } from "../../utils/priceService";
@@ -45,6 +44,7 @@ import {
   swissVatRate,
 } from "../../utils/constants";
 import { CDNImg } from "../cdn/image";
+import ConnectButton from "../UI/connectButton";
 
 type RegisterV2Props = {
   domain: string;
@@ -73,7 +73,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     .map((element) => element.toString())[0];
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [termsBox, setTermsBox] = useState<boolean>(true);
-  const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const [sponsor, setSponsor] = useState<string>("0");
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
@@ -421,9 +420,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
                 : "Register my domain"}
             </Button>
           ) : (
-            <Button onClick={() => setWalletModalOpen(true)}>
-              Connect wallet
-            </Button>
+            <ConnectButton />
           )}
         </div>
       </div>
@@ -432,10 +429,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
         closeModal={() => setIsTxModalOpen(false)}
-      />
-      <Wallets
-        closeWallet={() => setWalletModalOpen(false)}
-        hasWallet={walletModalOpen}
       />
     </div>
   );
