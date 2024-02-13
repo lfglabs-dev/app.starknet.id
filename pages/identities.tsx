@@ -13,7 +13,7 @@ import ClickableAction from "../components/UI/iconsComponents/clickableAction";
 import { useNotificationManager } from "../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../utils/constants";
 import { useStarknetkitConnectModal } from "starknetkit";
-import { availableConnectors } from "./_app";
+import { availableConnectors } from "../utils/connectors";
 
 const Identities: NextPage = () => {
   const { address } = useAccount();

@@ -6,9 +6,6 @@ import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
 import { StarknetConfig, jsonRpcProvider } from "@starknet-react/core";
-import { InjectedConnector } from "starknetkit/injected";
-import { WebWalletConnector } from "starknetkit/webwallet";
-import { ArgentMobileConnector } from "starknetkit/argentMobile";
 import { Analytics } from "@vercel/analytics/react";
 import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
@@ -40,6 +37,7 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+import { availableConnectors } from "../utils/connectors";
 require("@solana/wallet-adapter-react-ui/styles.css");
 
 if (typeof window !== "undefined") {
@@ -52,19 +50,6 @@ if (typeof window !== "undefined") {
   });
   (window as any).posthog = posthog;
 }
-
-export const availableConnectors = [
-  new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
-  new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
-  new InjectedConnector({ options: { id: "okwwallet", name: "OKX" } }),
-  new WebWalletConnector({
-    url:
-      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-        ? "https://web.hydrogen.argent47.net"
-        : "https://web.argent.xyz/",
-  }),
-  new ArgentMobileConnector(),
-];
 
 function MyApp({ Component, pageProps }: AppProps) {
   const chains = [

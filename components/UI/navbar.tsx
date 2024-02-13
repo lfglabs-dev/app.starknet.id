@@ -27,8 +27,8 @@ import DesktopNav from "./desktopNav";
 import CloseFilledIcon from "./iconsComponents/icons/closeFilledIcon";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import { StarkProfile } from "starknetid.js";
-import { availableConnectors } from "../../pages/_app";
 import { useStarknetkitConnectModal } from "starknetkit";
+import { availableConnectors } from "../../utils/connectors";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();

@@ -22,7 +22,7 @@ import theme from "../styles/theme";
 import DomainActions from "../components/solana/domainActions";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
 import { useStarknetkitConnectModal } from "starknetkit";
-import { availableConnectors } from "./_app";
+import { availableConnectors } from "../utils/connectors";
 
 const Solana: NextPage = () => {
   const { address: starknetAddress } = useAccount();

@@ -3,7 +3,7 @@ import { useConnect } from "@starknet-react/core";
 import Button from "./button";
 import { FunctionComponent } from "react";
 import { useStarknetkitConnectModal } from "starknetkit";
-import { availableConnectors } from "../../pages/_app";
+import { availableConnectors } from "../../utils/connectors";
 
 const ConnectButton: FunctionComponent = () => {
   const { connectAsync } = useConnect();
