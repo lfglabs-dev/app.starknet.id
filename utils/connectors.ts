@@ -2,7 +2,7 @@ import { InjectedConnector } from "starknetkit/injected";
 import { WebWalletConnector } from "starknetkit/webwallet";
 import { ArgentMobileConnector } from "starknetkit/argentMobile";
 
-const shouldAddOkx = process.env.REACT_APP_ADD_OKX === "true";
+const shouldAddOkx = process.env.NEXT_PUBLIC_IS_TESTNET === "true";
 
 export const availableConnectors = [
   new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
