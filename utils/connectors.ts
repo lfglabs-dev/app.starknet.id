@@ -8,7 +8,7 @@ export const availableConnectors = [
   new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
   new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
   ...(!isTestnet
-    ? [new InjectedConnector({ options: { id: "okwwallet", name: "OKX" } })]
+    ? [new InjectedConnector({ options: { id: "okxwallet", name: "OKX" } })]
     : []),
   new WebWalletConnector({
     url: isTestnet
