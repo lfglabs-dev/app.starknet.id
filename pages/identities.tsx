@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 import { useAccount, useConnect, useContractWrite } from "@starknet-react/core";
@@ -13,7 +13,7 @@ import ClickableAction from "../components/UI/iconsComponents/clickableAction";
 import { useNotificationManager } from "../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../utils/constants";
 import { useStarknetkitConnectModal } from "starknetkit";
-import { availableConnectors } from "./_app";
+import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
 
 const Identities: NextPage = () => {
   const { address } = useAccount();
@@ -24,6 +24,7 @@ const Identities: NextPage = () => {
   const router = useRouter();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const { addTransaction } = useNotificationManager();
+  const { availableConnectors } = useContext(StarknetIdJsContext);
   const { starknetkitConnectModal } = useStarknetkitConnectModal({
     connectors: availableConnectors,
   });

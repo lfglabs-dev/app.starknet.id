@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import Navbar from "../components/UI/navbar";
@@ -6,11 +6,11 @@ import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
 import { StarknetConfig, alchemyProvider } from "@starknet-react/core";
-import { InjectedConnector } from "starknetkit/injected";
-import { WebWalletConnector } from "starknetkit/webwallet";
-import { ArgentMobileConnector } from "starknetkit/argentMobile";
 import { Analytics } from "@vercel/analytics/react";
-import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
+import {
+  StarknetIdJsContext,
+  StarknetIdJsProvider,
+} from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
@@ -27,21 +27,6 @@ if (typeof window !== "undefined") {
   (window as any).posthog = posthog;
 }
 
-export const availableConnectors = [
-  new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
-  new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
-  new InjectedConnector({
-    options: { id: "okxwallet", name: "OKX" },
-  }),
-  new WebWalletConnector({
-    url:
-      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-        ? "https://web.hydrogen.argent47.net"
-        : "https://web.argent.xyz/",
-  }),
-  new ArgentMobileConnector(),
-];
-
 function MyApp({ Component, pageProps }: AppProps) {
   const chains = [
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? goerli : mainnet,
@@ -49,6 +34,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   const providers = alchemyProvider({
     apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string,
   });
+  const { availableConnectors } = useContext(StarknetIdJsContext);
 
   return (
     <>

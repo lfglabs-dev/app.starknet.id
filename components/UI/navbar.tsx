@@ -1,5 +1,10 @@
 import Link from "next/link";
-import React, { useState, useEffect, FunctionComponent } from "react";
+import React, {
+  useState,
+  useEffect,
+  FunctionComponent,
+  useContext,
+} from "react";
 import { AiOutlineClose, AiOutlineMenu } from "react-icons/ai";
 import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
@@ -20,8 +25,8 @@ import { useTheme } from "@mui/material/styles";
 import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
 import DesktopNav from "./desktopNav";
 import { CDNImg } from "../cdn/image";
-import { availableConnectors } from "../../pages/_app";
 import { useStarknetkitConnectModal } from "starknetkit";
+import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -39,6 +44,7 @@ const Navbar: FunctionComponent = () => {
   const [txLoading, setTxLoading] = useState<number>(0);
   const [showWallet, setShowWallet] = useState<boolean>(false);
   const { data: profile } = useStarkProfile({ address });
+  const { availableConnectors } = useContext(StarknetIdJsContext);
   const { starknetkitConnectModal } = useStarknetkitConnectModal({
     connectors: availableConnectors,
   });
@@ -46,18 +52,16 @@ const Navbar: FunctionComponent = () => {
   // Autoconnect
   useEffect(() => {
     const connectToStarknet = async () => {
-      if (!localStorage.getItem("SID-connectedWallet")) {
-        connectWallet();
-      } else {
+      if (localStorage.getItem("SID-connectedWallet")) {
         const connectordId = localStorage.getItem("SID-connectedWallet");
         const connector = availableConnectors.find(
           (item) => item.id === connectordId
         );
-        await connectAsync({ connector });
+        if (connector) await connectAsync({ connector });
       }
     };
     connectToStarknet();
-  }, []);
+  }, [availableConnectors]);
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
