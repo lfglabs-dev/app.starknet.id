@@ -65,6 +65,8 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
       });
   }, [address]);
 
+  // Check if OKX wallet is injected in the user browser, if so we'll add it in the list of connectors
+  // To remove once discovery links for OKX are added in get-starknet-core lib
   useMemo(() => {
     if (isTestnet) {
       setHasOKX(false);
