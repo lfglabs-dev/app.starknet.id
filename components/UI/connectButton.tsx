@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useConnect } from "@starknet-react/core";
 import Button from "./button";
 import { FunctionComponent } from "react";
 import { useStarknetkitConnectModal } from "starknetkit";
-import { availableConnectors } from "../../utils/connectors";
+import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 
 const ConnectButton: FunctionComponent = () => {
   const { connectAsync } = useConnect();
+  const { availableConnectors } = useContext(StarknetIdJsContext);
   const { starknetkitConnectModal } = useStarknetkitConnectModal({
     connectors: availableConnectors,
   });

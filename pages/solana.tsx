@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import styles from "../styles/solana.module.css";
 import Image from "next/image";
 import AffiliateImage from "../public/visuals/affiliate.webp";
@@ -22,7 +22,7 @@ import theme from "../styles/theme";
 import DomainActions from "../components/solana/domainActions";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
 import { useStarknetkitConnectModal } from "starknetkit";
-import { availableConnectors } from "../utils/connectors";
+import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
 
 const Solana: NextPage = () => {
   const { address: starknetAddress } = useAccount();
@@ -44,6 +44,7 @@ const Solana: NextPage = () => {
   const [open, setOpen] = useState(true);
   const [disableBtn, setDisableBtn] = useState<string>("");
   const { connectAsync } = useConnect();
+  const { availableConnectors } = useContext(StarknetIdJsContext);
   const { starknetkitConnectModal } = useStarknetkitConnectModal({
     connectors: availableConnectors,
   });

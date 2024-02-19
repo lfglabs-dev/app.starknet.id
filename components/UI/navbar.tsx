@@ -28,7 +28,6 @@ import CloseFilledIcon from "./iconsComponents/icons/closeFilledIcon";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import { StarkProfile } from "starknetid.js";
 import { useStarknetkitConnectModal } from "starknetkit";
-import { availableConnectors } from "../../utils/connectors";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -46,7 +45,8 @@ const Navbar: FunctionComponent = () => {
   const [txLoading, setTxLoading] = useState<number>(0);
   const [showWallet, setShowWallet] = useState<boolean>(false);
   const [profile, setProfile] = useState<StarkProfile | undefined>(undefined);
-  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
+  const { starknetIdNavigator, availableConnectors } =
+    useContext(StarknetIdJsContext);
   const { starknetkitConnectModal } = useStarknetkitConnectModal({
     connectors: availableConnectors,
   });
@@ -61,14 +61,12 @@ const Navbar: FunctionComponent = () => {
   // Autoconnect
   useEffect(() => {
     const connectToStarknet = async () => {
-      if (!localStorage.getItem("SID-connectedWallet")) {
-        connectWallet();
-      } else {
+      if (localStorage.getItem("SID-connectedWallet")) {
         const connectordId = localStorage.getItem("SID-connectedWallet");
         const connector = availableConnectors.find(
           (item) => item.id === connectordId
         );
-        await connectAsync({ connector });
+        if (connector) await connectAsync({ connector });
       }
     };
     connectToStarknet();

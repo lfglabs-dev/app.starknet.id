@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import Navbar from "../components/UI/navbar";
@@ -7,12 +7,18 @@ import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
 import { StarknetConfig, jsonRpcProvider } from "@starknet-react/core";
 import { Analytics } from "@vercel/analytics/react";
-import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
+import {
+  StarknetIdJsContext,
+  StarknetIdJsProvider,
+} from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
 import { Chain, goerli, mainnet } from "@starknet-react/chains";
 import { addWalnutLogsToConnectors } from "@walnuthq/sdk";
+import { InjectedConnector } from "starknetkit/injected";
+import { WebWalletConnector } from "starknetkit/webwallet";
+import { ArgentMobileConnector } from "starknetkit/argentMobile";
 // Solana
 import { clusterApiUrl } from "@solana/web3.js";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
@@ -37,7 +43,7 @@ import {
   WalletProvider,
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
-import { availableConnectors } from "../utils/connectors";
+import { constants } from "starknet";
 require("@solana/wallet-adapter-react-ui/styles.css");
 
 if (typeof window !== "undefined") {
@@ -60,6 +66,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       nodeUrl: process.env.NEXT_PUBLIC_RPC_URL as string,
     }),
   });
+  const { availableConnectors } = useContext(StarknetIdJsContext);
 
   const solNetwork = WalletAdapterNetwork.Mainnet;
   const endpoint = useMemo(() => clusterApiUrl(solNetwork), [solNetwork]);
