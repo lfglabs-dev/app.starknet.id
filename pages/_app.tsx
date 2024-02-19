@@ -1,19 +1,16 @@
-import React, { useMemo } from "react";
+import React, { useContext } from "react";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import Navbar from "../components/UI/navbar";
 import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
-import {
-  StarknetConfig,
-  alchemyProvider,
-  argent,
-  braavos,
-} from "@starknet-react/core";
-import { WebWalletConnector } from "starknetkit/webwallet";
+import { StarknetConfig, alchemyProvider } from "@starknet-react/core";
 import { Analytics } from "@vercel/analytics/react";
-import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
+import {
+  StarknetIdJsContext,
+  StarknetIdJsProvider,
+} from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
@@ -37,25 +34,14 @@ function MyApp({ Component, pageProps }: AppProps) {
   const providers = alchemyProvider({
     apiKey: process.env.NEXT_PUBLIC_ALCHEMY_KEY as string,
   });
-  const connectors = useMemo(
-    () => [
-      braavos(),
-      argent(),
-      new WebWalletConnector({
-        url:
-          process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-            ? "https://web.hydrogen.argent47.net"
-            : "https://web.argent.xyz/",
-      }),
-    ],
-    []
-  );
+  const { availableConnectors } = useContext(StarknetIdJsContext);
+
   return (
     <>
       <StarknetConfig
         chains={chains}
         provider={providers}
-        connectors={connectors as any}
+        connectors={availableConnectors}
         autoConnect
       >
         <StarknetIdJsProvider>

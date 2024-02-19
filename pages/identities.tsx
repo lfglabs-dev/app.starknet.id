@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useContext, useMemo } from "react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useConnect, useContractWrite } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
 import MintIcon from "../components/UI/iconsComponents/icons/mintIcon";
@@ -9,28 +9,35 @@ import { useRouter } from "next/router";
 import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/skeletons/identitiesSkeleton";
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
-import Wallets from "../components/UI/wallets";
 import ClickableAction from "../components/UI/iconsComponents/clickableAction";
 import { useNotificationManager } from "../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../utils/constants";
+import { useStarknetkitConnectModal } from "starknetkit";
+import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
 
 const Identities: NextPage = () => {
   const { address } = useAccount();
   const [loading, setLoading] = useState<boolean>(true);
   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
   const [externalDomains, setExternalDomains] = useState<string[]>([]);
-  const [walletModalOpen, setWalletModalOpen] = useState<boolean>(false);
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const router = useRouter();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const { addTransaction } = useNotificationManager();
+  const { availableConnectors } = useContext(StarknetIdJsContext);
+  const { starknetkitConnectModal } = useStarknetkitConnectModal({
+    connectors: availableConnectors,
+  });
+  const { connectAsync } = useConnect();
 
   //Mint
-  const callData = {
-    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
-    entrypoint: "mint",
-    calldata: [randomTokenId],
-  };
+  const callData = useMemo(() => {
+    return {
+      contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+      entrypoint: "mint",
+      calldata: [randomTokenId],
+    };
+  }, []);
   const { writeAsync: execute, data: mintData } = useContractWrite({
     calls: [callData],
   });
@@ -84,6 +91,15 @@ const Identities: NextPage = () => {
     execute();
   }
 
+  const connectWallet = async () => {
+    const { connector } = await starknetkitConnectModal();
+    if (!connector) {
+      return;
+    }
+    await connectAsync({ connector });
+    localStorage.setItem("SID-connectedWallet", connector.id);
+  };
+
   return (
     <>
       <div className={styles.containerGallery}>
@@ -105,9 +121,7 @@ const Identities: NextPage = () => {
                 <ClickableAction
                   title="ADD IDENTITIES"
                   icon={<MintIcon />}
-                  onClick={
-                    address ? () => mint() : () => setWalletModalOpen(true)
-                  }
+                  onClick={address ? () => mint() : () => connectWallet()}
                   width="auto"
                 />
               </div>
@@ -122,9 +136,7 @@ const Identities: NextPage = () => {
                 <ClickableAction
                   title="ADD IDENTITIES"
                   icon={<MintIcon />}
-                  onClick={
-                    address ? () => mint() : () => setWalletModalOpen(true)
-                  }
+                  onClick={address ? () => mint() : () => connectWallet()}
                   width="auto"
                 />
               </div>
@@ -137,11 +149,6 @@ const Identities: NextPage = () => {
         isTxModalOpen={isTxModalOpen}
         closeModal={() => setIsTxModalOpen(false)}
         title="Your identity NFT is on it's way !"
-      />
-
-      <Wallets
-        closeWallet={() => setWalletModalOpen(false)}
-        hasWallet={walletModalOpen}
       />
     </>
   );

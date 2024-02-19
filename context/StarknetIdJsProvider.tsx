@@ -5,6 +5,11 @@ import { Provider, constants } from "starknet";
 import { StarknetIdNavigator } from "starknetid.js";
 import { hexToDecimal } from "../utils/feltService";
 import { getImgUrl } from "../utils/stringService";
+import { getStarknet } from "get-starknet-core";
+import { WebWalletConnector } from "starknetkit/webwallet";
+import { ArgentMobileConnector } from "starknetkit/argentMobile";
+import { Connector } from "starknetkit";
+import { InjectedConnector } from "starknetkit/injected";
 
 type StarknetIdJsConfig = {
   starknetIdNavigator: StarknetIdNavigator | null;
@@ -12,6 +17,7 @@ type StarknetIdJsConfig = {
   identitiesTemp: FullId[];
   updateIdentityImg: (id: string, imgUrl: string) => void;
   getPfp: (id: string) => string;
+  availableConnectors: Connector[];
 };
 
 export const StarknetIdJsContext = createContext<StarknetIdJsConfig>({
@@ -21,6 +27,7 @@ export const StarknetIdJsContext = createContext<StarknetIdJsConfig>({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   updateIdentityImg: () => {},
   getPfp: () => "",
+  availableConnectors: [],
 });
 
 export const StarknetIdJsProvider: FunctionComponent<Context> = ({
@@ -28,6 +35,7 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
 }) => {
   const { address } = useAccount();
   const [identitiesTemp, setIdentities] = useState<FullId[]>([]);
+  const [hasOKX, setHasOKX] = useState<boolean>(false);
 
   const isTestnet = useMemo(() => {
     return process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? true : false;
@@ -73,6 +81,44 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
     });
   }, []);
 
+  // Check if OKX wallet is injected in the user browser, if so we'll add it in the list of connectors
+  // To remove once discovery links for OKX are added in get-starknet-core lib
+  useMemo(() => {
+    if (isTestnet) {
+      setHasOKX(false);
+      return;
+    }
+    const wallets = getStarknet();
+    wallets.getAvailableWallets().then((wallets) => {
+      if (wallets.filter((wallet) => wallet.name.includes("OKX")).length > 0) {
+        setHasOKX(true);
+      } else {
+        setHasOKX(false);
+      }
+    });
+  }, [isTestnet]);
+
+  const availableConnectors = useMemo(() => {
+    return [
+      new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
+      new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
+      ...(hasOKX
+        ? [new InjectedConnector({ options: { id: "okxwallet", name: "OKX" } })]
+        : []),
+      new WebWalletConnector({
+        url: isTestnet
+          ? "https://web.hydrogen.argent47.net"
+          : "https://web.argent.xyz/",
+      }),
+      new ArgentMobileConnector({
+        dappName: "Starknet ID",
+        url: process.env.NEXT_PUBLIC_APP_LINK as string,
+        chainId: constants.NetworkName.SN_MAIN,
+        icons: ["https://app.starknet.id/visuals/StarknetIdLogo.svg"],
+      }),
+    ];
+  }, [hasOKX]);
+
   const contextValues = useMemo(() => {
     const getPfp = (id: string): string => {
       const identity = identitiesTemp.filter(
@@ -88,8 +134,15 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
       identitiesTemp,
       updateIdentityImg,
       getPfp,
+      availableConnectors,
     };
-  }, [starknetIdNavigator, provider, identitiesTemp, updateIdentityImg]);
+  }, [
+    starknetIdNavigator,
+    provider,
+    identitiesTemp,
+    updateIdentityImg,
+    availableConnectors,
+  ]);
 
   return (
     <StarknetIdJsContext.Provider value={contextValues}>
