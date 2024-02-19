@@ -30,7 +30,9 @@ if (typeof window !== "undefined") {
 export const availableConnectors = [
   new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
   new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
-  new InjectedConnector({ options: { id: "okxwallet", name: "OKX" } }),
+  new InjectedConnector({
+    options: { id: "okxwallet", name: "OKX" },
+  }),
   new WebWalletConnector({
     url:
       process.env.NEXT_PUBLIC_IS_TESTNET === "true"
