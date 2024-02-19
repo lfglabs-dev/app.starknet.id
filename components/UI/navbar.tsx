@@ -65,24 +65,14 @@ const Navbar: FunctionComponent = () => {
     const connectToStarknet = async () => {
       if (localStorage.getItem("SID-connectedWallet")) {
         const connectordId = localStorage.getItem("SID-connectedWallet");
-
-        // For OKX Wallet, need to be removed once issue with starknetkit is fixed
-        if (connectordId === "okxwallet") {
-          const connector = new InjectedConnector({
-            options: { id: "okxwallet", name: "OKX" },
-          });
-          if (connector) await connectAsync({ connector });
-        } else {
-          // Other connectors
-          const connector = availableConnectors.find(
-            (item) => item.id === connectordId
-          );
-          if (connector) await connectAsync({ connector });
-        }
+        const connector = availableConnectors.find(
+          (item) => item.id === connectordId
+        );
+        if (connector) await connectAsync({ connector });
       }
     };
     connectToStarknet();
-  }, []);
+  }, [availableConnectors]);
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
