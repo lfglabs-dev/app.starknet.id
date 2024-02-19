@@ -27,7 +27,9 @@ import DesktopNav from "./desktopNav";
 import CloseFilledIcon from "./iconsComponents/icons/closeFilledIcon";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import { StarkProfile } from "starknetid.js";
-import { useStarknetkitConnectModal } from "starknetkit";
+import { Connector, useStarknetkitConnectModal } from "starknetkit";
+import { getStarknet } from "get-starknet-core";
+import { InjectedConnector } from "starknetkit/injected";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -63,10 +65,20 @@ const Navbar: FunctionComponent = () => {
     const connectToStarknet = async () => {
       if (localStorage.getItem("SID-connectedWallet")) {
         const connectordId = localStorage.getItem("SID-connectedWallet");
-        const connector = availableConnectors.find(
-          (item) => item.id === connectordId
-        );
-        if (connector) await connectAsync({ connector });
+
+        // For OKX Wallet, need to be removed once issue with starknetkit is fixed
+        if (connectordId === "okxwallet") {
+          const connector = new InjectedConnector({
+            options: { id: "okxwallet", name: "OKX" },
+          });
+          if (connector) await connectAsync({ connector });
+        } else {
+          // Other connectors
+          const connector = availableConnectors.find(
+            (item) => item.id === connectordId
+          );
+          if (connector) await connectAsync({ connector });
+        }
       }
     };
     connectToStarknet();
