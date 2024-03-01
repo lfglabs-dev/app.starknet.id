@@ -139,8 +139,8 @@
   display: flex;
   align-items: flex-start;
   gap: 4px;
-  border-radius: 51px;
-  background: var(--tertiary-300, #f5f0eb);
+  /* border-radius: 8px; */
+  /* background: var(--tertiary-300, #f5f0eb); */
   cursor: pointer;
 }
 

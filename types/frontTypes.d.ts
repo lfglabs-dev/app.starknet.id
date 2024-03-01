@@ -114,3 +114,5 @@ type SnsDomainData = {
   signature: StarknetSig | undefined;
   sent: boolean;
 };
+
+type TokenBalance = [CurrenciesType: string];

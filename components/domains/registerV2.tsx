@@ -38,6 +38,7 @@ import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
+  CurrenciesType,
   NotificationType,
   TransactionType,
   swissVatRate,
@@ -63,8 +64,9 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [duration, setDuration] = useState<number>(1);
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
-  const [price, setPrice] = useState<string>("");
+  const [price, setPrice] = useState<string>(""); // price in ETH
   const [renewPrice, setRenewPrice] = useState<string>("");
+  // const [currencyQuotes, setCurrencyQuotes] =
   const [balance, setBalance] = useState<string>("");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
@@ -79,6 +81,11 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
   const [redirectTokenId, setRedirectTokenId] = useState<number>(0);
+  //todo: chose the currency displayed on loading depending on what user has in his balance ?
+  const [currencyDisplayed, setIsCurrencyDisplayed] = useState<CurrenciesType>(
+    CurrenciesType.ETH
+  );
+  // todo multicall of balances
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -171,6 +178,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   }, [userBalanceData, userBalanceDataError]);
 
   useEffect(() => {
+    // todo: add support for other balances
     if (balance && price) {
       if (gweiToEth(balance) > gweiToEth(price)) {
         setInvalidBalance(false);
@@ -210,7 +218,9 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // Common calls
     const calls = [
+      //todo: approve for other currencies
       registrationCalls.approve(price),
+      // todo: update when the contract is updated to accept other currencies
       registrationCalls.buy(
         encodedDomain,
         tokenId === 0 ? newTokenId : tokenId,
@@ -220,6 +230,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         txMetadataHash
       ),
     ];
+
+    // buy, renewal
 
     // If the user is a US resident, we add the sales tax
     if (salesTaxRate) {
@@ -239,6 +251,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     }
 
     // If the user has toggled autorenewal
+    //todo : see how to handle this with other currencies
     if (renewalBox) {
       if (needsAllowance) {
         calls.push(autoRenewalCalls.approve());
@@ -323,6 +336,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   }, [registerData]); // We only need registerData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
   useEffect(() => {
+    // todo: make the calculation with the new currency
     if (!needMedadata && price) {
       setSalesTaxAmount(applyRateToBigInt(price, salesTaxRate));
     } else {

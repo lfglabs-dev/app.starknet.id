@@ -7,6 +7,8 @@ import React, {
 import styles from "../../styles/components/registerV2.module.css";
 import CurrencySwitcher from "./currencySwitcher";
 import { gweiToEth, numberToFixedString } from "../../utils/feltService";
+import { CurrenciesType } from "../../utils/constants";
+import CurrencyDropdown from "./currencyDropdown";
 
 type RegisterSummaryProps = {
   duration: number;
@@ -27,7 +29,12 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   isUsdPriceDisplayed = true,
   customMessage,
 }) => {
+  // todo: remove isEthPriceDisplayed
   const [isEthPriceDisplayed, setIsEthPriceDisplayed] = useState<boolean>(true);
+  // todo: move into parent
+  const [currencyDisplayed, setIsCurrencyDisplayed] = useState<CurrenciesType>(
+    CurrenciesType.ETH
+  );
   const [ethSwissdPrice, setEthSwissdPrice] = useState<number>(0);
   const [usdRegistrationPrice, setSwissdRegistrationPrice] =
     useState<number>(0);
@@ -98,6 +105,11 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     );
   }
 
+  function updateCurrencyDisplayed(currency: CurrenciesType) {
+    console.log("currency to display", currency);
+    setIsCurrencyDisplayed(currency);
+  }
+
   return (
     <div className={styles.pricesSummary}>
       <div className={styles.totalDue}>
@@ -106,16 +118,26 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           <p className={styles.legend}>
             {customMessage
               ? customMessage
-              : `for ${duration} ${duration === 1 ? "year" : "years"}`}
+              : `${Number(gweiToEth(ethRegistrationPrice))} ETH x ${duration} ${
+                  duration === 1 ? "year" : "years"
+                }`}
           </p>
           {isEthPriceDisplayed ? displayEthPrice() : displaySwissdPrice()}
         </div>
       </div>
       {isUsdPriceDisplayed ? (
-        <CurrencySwitcher
-          isEthPriceDisplayed={isEthPriceDisplayed}
-          onCurrencySwitch={() => setIsEthPriceDisplayed(!isEthPriceDisplayed)}
-        />
+        <>
+          {/* <CurrencySwitcher
+            isEthPriceDisplayed={isEthPriceDisplayed}
+            onCurrencySwitch={() =>
+              setIsEthPriceDisplayed(!isEthPriceDisplayed)
+            }
+          /> */}
+          <CurrencyDropdown
+            currencyDisplayed={currencyDisplayed}
+            onCurrencySwitch={updateCurrencyDisplayed}
+          />
+        </>
       ) : null}
     </div>
   );
