@@ -1,4 +1,4 @@
-import { NextPage } from "next";
+import React, { NextPage } from "next";
 import styles from "../../styles/components/newsletter.module.css";
 import Button from "../../components/UI/button";
 
