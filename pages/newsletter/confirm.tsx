@@ -21,8 +21,8 @@ const NewsletterConfirm: NextPage = () => {
             </h1>
             <p className="mt-4">
               Almost there! To ensure you receive our newsletters, please check
-              your email to confirm your subscription. Don't let vital updates
-              slip through – add us to your trusted senders
+              your email to confirm your subscription. Don&apos;t let vital
+              updates slip through – add us to your trusted senders
             </p>
             <div className="w-[244px] mt-12">
               <Button onClick={() => window.open("mailto:", "_self")}>
