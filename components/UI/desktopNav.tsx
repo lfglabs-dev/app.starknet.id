@@ -43,13 +43,8 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
           >
             <li className={styles.burgerItem}>Website</li>
           </Link>
-          <Link href="https://www.starknet.id/pdfs/Terms.pdf" target="_blank">
-            <li className={styles.burgerItem}>Term of use</li>
-          </Link>
-        </div>
-        <div className={styles.column}>
-          <Link href="https://docs.starknet.id/" target="_blank">
-            <li className={styles.burgerItem}>Documentation</li>
+          <Link href="/newsletter">
+            <li className={styles.burgerItem}>Newsletter</li>
           </Link>
           <Link
             href={`${
@@ -58,6 +53,14 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
             target="_blank"
           >
             <li className={styles.burgerItem}>Affiliation</li>
+          </Link>
+        </div>
+        <div className={styles.column}>
+          <Link href="https://docs.starknet.id/" target="_blank">
+            <li className={styles.burgerItem}>Documentation</li>
+          </Link>
+          <Link href="https://www.starknet.id/pdfs/Terms.pdf" target="_blank">
+            <li className={styles.burgerItem}>Term of use</li>
           </Link>
           <Link
             href="https://starknet.id/pdfs/PrivacyPolicy.pdf"
