@@ -3,19 +3,23 @@ import Image from "next/image";
 import styles from "../styles/components/newsletter.module.css";
 import Button from "../components/UI/button";
 import { useState } from "react";
+import { useAccount } from "@starknet-react/core";
 
 const NewsletterPage: NextPage = () => {
+  const { address } = useAccount();
   const [error, setError] = useState<string>("");
   const submitHandler = () => {
     const email = (document.getElementById("email") as HTMLInputElement).value;
-    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+    if (!email) {
+      setError("Please enter your email address.");
+      return;
+    }
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/newsletter_subscribe`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        meta_hash: "",
         email,
-        tax_state: "",
-        salt: "",
+        address: address || null,
       }),
     })
       .then((res) =>
