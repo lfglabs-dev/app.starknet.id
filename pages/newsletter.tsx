@@ -63,7 +63,7 @@ const NewsletterPage: NextPage = () => {
       </h1>
       <p className={styles.description}>
         Stay connected with the Starknet beat. Subscribe for direct updates on
-        pivotal airdrops, opportunities, and news. No noise, just news.
+        Starknet airdrops, opportunities, and news.
       </p>
       <section className={styles.form}>
         {error ? (
