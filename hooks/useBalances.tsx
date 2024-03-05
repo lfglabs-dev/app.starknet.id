@@ -2,32 +2,33 @@ import { useContractRead } from "@starknet-react/core";
 import { useMulticallContract } from "./contracts";
 import { Abi, CairoCustomEnum, Call, RawArgs, hash } from "starknet";
 import { useEffect, useState } from "react";
-import { CurrenciesContract, UINT_128_MAX } from "../utils/constants";
+import {
+  CurrenciesContract,
+  CurrenciesContractTestnet,
+  CurrenciesType,
+} from "../utils/constants";
+import { fromUint256 } from "../utils/feltService";
 
 export default function useBalances(address?: string) {
-  const [balances, setBalances] = useState<TokenBalance[]>([]);
+  const [balances, setBalances] = useState<TokenBalance>({});
   const [callData, setCallData] = useState<Call[]>([]);
-  // const [needsAllowance, setNeedsAllowance] = useState(false);
   const { contract: multicallContract } = useMulticallContract();
-  const { data: erc20AllowanceData, error: erc20AllowanceError } =
-    useContractRead({
-      address: multicallContract?.address as string,
-      abi: multicallContract?.abi as Abi,
-      functionName: "aggregate",
-      args: [
-        address as string,
-        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      ],
-    });
+  const { data: erc20BalanceData, error: erc20BalanceError } = useContractRead({
+    address: multicallContract?.address as string,
+    abi: multicallContract?.abi as Abi,
+    functionName: "aggregate",
+    args: callData,
+    watch: true,
+  });
 
-  useEffect(() => {
-    if (!address) {
-      setCallData([]);
-      return;
-    }
-    //
-    let currencies = Object.values(CurrenciesContract);
-    let calls = [];
+  const buildCalldata = () => {
+    let currencies = Object.values(
+      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+        ? CurrenciesContractTestnet
+        : CurrenciesContract
+    );
+    console.log("currencies", currencies);
+    let calls: MulticallCallData[] = [];
     currencies.forEach((currency) => {
       calls.push({
         execution: new CairoCustomEnum({
@@ -42,21 +43,31 @@ export default function useBalances(address?: string) {
         calldata: [new CairoCustomEnum({ Hardcoded: address })],
       });
     });
-    setCallData([calls as RawArgs]);
+    return [calls as RawArgs];
+  };
+
+  useEffect(() => {
+    if (!address) {
+      setCallData([]);
+      return;
+    }
+    const calldata = buildCalldata();
+    setCallData(calldata as Call[]);
   }, [address]);
 
-  // useEffect(() => {
-  //   if (
-  //     erc20AllowanceError ||
-  //     (erc20AllowanceData &&
-  //       erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
-  //       erc20AllowanceData["remaining"].high !== UINT_128_MAX)
-  //   ) {
-  //     setNeedsAllowance(true);
-  //   } else {
-  //     setNeedsAllowance(false);
-  //   }
-  // }, [erc20AllowanceData, erc20AllowanceError]);
+  useEffect(() => {
+    if (erc20BalanceError || !erc20BalanceData) return;
+    let currencies = Object.values(CurrenciesType);
+    let balanceEntries: TokenBalance = {};
+    currencies.forEach((currency, index) => {
+      let balance = fromUint256(
+        BigInt(erc20BalanceData[index][0]),
+        BigInt(erc20BalanceData[index][1])
+      );
+      balanceEntries[currency] = balance;
+    });
+    setBalances(balanceEntries);
+  }, [erc20BalanceData, erc20BalanceError]);
 
   return balances;
 }

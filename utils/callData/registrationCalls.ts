@@ -2,9 +2,9 @@ import { Call } from "starknet";
 import { numberToString } from "../stringService";
 import { hexToDecimal } from "../feltService";
 
-function approve(price: string): Call {
+function approve(price: string, erc20Address: string): Call {
   return {
-    contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
+    contractAddress: erc20Address,
     entrypoint: "approve",
     calldata: [process.env.NEXT_PUBLIC_NAMING_CONTRACT as string, price, 0],
   };
@@ -29,6 +29,36 @@ function buy(
       hexToDecimal(targetAddress),
       sponsor,
       metadata,
+    ],
+  };
+}
+
+function altcoinBuy(
+  encodedDomain: string,
+  tokenId: number,
+  targetAddress: string,
+  sponsor: string,
+  durationInYears: number,
+  metadata: string,
+  erc20Address: string,
+  quoteData: QuoteQueryData
+): Call {
+  return {
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+    entrypoint: "altcoin_buy",
+    calldata: [
+      numberToString(tokenId),
+      encodedDomain,
+      numberToString(durationInYears * 365),
+      0,
+      hexToDecimal(targetAddress),
+      sponsor,
+      metadata,
+      erc20Address,
+      quoteData.quote,
+      quoteData.max_validity,
+      quoteData.r,
+      quoteData.s,
     ],
   };
 }
@@ -127,6 +157,7 @@ function multiCallFreeRenewals(encodedDomains: string[]): Call[] {
 const registrationCalls = {
   approve,
   buy,
+  altcoinBuy,
   mainId,
   mint,
   buy_discounted,

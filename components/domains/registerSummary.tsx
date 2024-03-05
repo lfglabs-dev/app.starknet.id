@@ -5,7 +5,6 @@ import React, {
   useState,
 } from "react";
 import styles from "../../styles/components/registerV2.module.css";
-import CurrencySwitcher from "./currencySwitcher";
 import { gweiToEth, numberToFixedString } from "../../utils/feltService";
 import { CurrenciesType } from "../../utils/constants";
 import CurrencyDropdown from "./currencyDropdown";
@@ -13,31 +12,31 @@ import CurrencyDropdown from "./currencyDropdown";
 type RegisterSummaryProps = {
   duration: number;
   ethRegistrationPrice: string;
+  registrationPrice: string;
   renewalBox: boolean;
   salesTaxRate: number;
   isSwissResident: boolean;
-  isUsdPriceDisplayed?: boolean;
+  isTokenDropdownDisplayed?: boolean;
   customMessage?: string;
+  currencyDisplayed: CurrenciesType;
+  onCurrencySwitch: (type: CurrenciesType) => void;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   duration,
   ethRegistrationPrice,
+  registrationPrice,
   renewalBox,
   salesTaxRate,
   isSwissResident,
-  isUsdPriceDisplayed = true,
+  isTokenDropdownDisplayed = true,
   customMessage,
+  currencyDisplayed,
+  onCurrencySwitch,
 }) => {
-  // todo: remove isEthPriceDisplayed
-  const [isEthPriceDisplayed, setIsEthPriceDisplayed] = useState<boolean>(true);
-  // todo: move into parent
-  const [currencyDisplayed, setIsCurrencyDisplayed] = useState<CurrenciesType>(
-    CurrenciesType.ETH
-  );
-  const [ethSwissdPrice, setEthSwissdPrice] = useState<number>(0);
-  const [usdRegistrationPrice, setSwissdRegistrationPrice] =
-    useState<number>(0);
+  // const [isEthPriceDisplayed, setIsEthPriceDisplayed] = useState<boolean>(true);
+  const [ethUsdPrice, setEthUsdPrice] = useState<number>(0); // price of 1ETH in USD
+  const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<number>(0);
   const recurrence = renewalBox && duration === 1 ? "/year" : "";
   useEffect(() => {
     fetch(
@@ -45,23 +44,24 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     )
       .then((res) => res.json())
       .then((data) => {
-        setEthSwissdPrice(data?.ethereum?.usd);
+        console.log("data", data);
+        setEthUsdPrice(data?.ethereum?.usd);
       })
       .catch((err) => console.log("Coingecko API Error:", err));
   }, []);
 
   useEffect(() => {
-    function computeSwissdPrice() {
-      if (ethSwissdPrice) {
-        return ethSwissdPrice * Number(gweiToEth(ethRegistrationPrice));
+    function computeUsdPrice() {
+      if (ethUsdPrice) {
+        return parseFloat(
+          (ethUsdPrice * Number(gweiToEth(ethRegistrationPrice))).toFixed(2)
+        );
       }
       return 0;
     }
 
-    if (!isEthPriceDisplayed) {
-      setSwissdRegistrationPrice(computeSwissdPrice());
-    }
-  }, [ethRegistrationPrice, ethSwissdPrice, isEthPriceDisplayed]);
+    setUsdRegistrationPrice(computeUsdPrice());
+  }, [ethRegistrationPrice, ethUsdPrice]);
 
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
     return (
@@ -74,41 +74,41 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     );
   }
 
-  function displayEthPrice(): ReactNode {
-    const salesTaxAmount =
-      salesTaxRate * Number(gweiToEth(ethRegistrationPrice)) * ethSwissdPrice;
-    const salesTaxInfo = salesTaxAmount
+  function displayTokenPrice(): ReactNode {
+    const salesTaxAmountUsd =
+      salesTaxRate * Number(gweiToEth(ethRegistrationPrice)) * ethUsdPrice;
+    const salesTaxInfo = salesTaxAmountUsd
       ? ` (+ ${numberToFixedString(
-          salesTaxAmount
-        )}$ worth of ETH for Swiss VAT)`
+          salesTaxAmountUsd
+        )}$ worth of ${currencyDisplayed} for Swiss VAT)`
       : "";
 
     return displayPrice(
-      String(Number(gweiToEth(ethRegistrationPrice)))
-        .concat(" ETH ")
+      String(Number(gweiToEth(registrationPrice)))
+        .concat(` ${currencyDisplayed} `)
         .concat(recurrence),
       salesTaxInfo
     );
   }
 
-  function displaySwissdPrice(): ReactNode {
-    const salesTaxAmount = salesTaxRate * usdRegistrationPrice;
-    const salesTaxInfo = salesTaxAmount
-      ? ` (+ ${numberToFixedString(Number(salesTaxAmount))}$ for US VAT)`
-      : "";
+  // function displaySwissdPrice(): ReactNode {
+  //   const salesTaxAmount = salesTaxRate * usdRegistrationPrice;
+  //   const salesTaxInfo = salesTaxAmount
+  //     ? ` (+ ${numberToFixedString(Number(salesTaxAmount))}$ for US VAT)`
+  //     : "";
 
-    return displayPrice(
-      numberToFixedString(usdRegistrationPrice)
-        .concat(" $ ")
-        .concat(recurrence),
-      salesTaxInfo
-    );
-  }
+  //   return displayPrice(
+  //     numberToFixedString(usdRegistrationPrice)
+  //       .concat(" $ ")
+  //       .concat(recurrence),
+  //     salesTaxInfo
+  //   );
+  // }
 
-  function updateCurrencyDisplayed(currency: CurrenciesType) {
-    console.log("currency to display", currency);
-    setIsCurrencyDisplayed(currency);
-  }
+  // function updateCurrencyDisplayed(currency: CurrenciesType) {
+  //   console.log("currency to display", currency);
+  //   setIsCurrencyDisplayed(currency);
+  // }
 
   return (
     <div className={styles.pricesSummary}>
@@ -118,26 +118,17 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           <p className={styles.legend}>
             {customMessage
               ? customMessage
-              : `${Number(gweiToEth(ethRegistrationPrice))} ETH x ${duration} ${
-                  duration === 1 ? "year" : "years"
-                }`}
+              : `For ${duration} ${duration === 1 ? "year" : "years"}`}
           </p>
-          {isEthPriceDisplayed ? displayEthPrice() : displaySwissdPrice()}
+          {displayTokenPrice()}
+          <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
         </div>
       </div>
-      {isUsdPriceDisplayed ? (
-        <>
-          {/* <CurrencySwitcher
-            isEthPriceDisplayed={isEthPriceDisplayed}
-            onCurrencySwitch={() =>
-              setIsEthPriceDisplayed(!isEthPriceDisplayed)
-            }
-          /> */}
-          <CurrencyDropdown
-            currencyDisplayed={currencyDisplayed}
-            onCurrencySwitch={updateCurrencyDisplayed}
-          />
-        </>
+      {isTokenDropdownDisplayed ? (
+        <CurrencyDropdown
+          currencyDisplayed={currencyDisplayed}
+          onCurrencySwitch={onCurrencySwitch}
+        />
       ) : null}
     </div>
   );

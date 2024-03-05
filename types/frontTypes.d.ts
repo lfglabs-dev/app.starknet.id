@@ -115,4 +115,13 @@ type SnsDomainData = {
   sent: boolean;
 };
 
-type TokenBalance = [CurrenciesType: string];
+type TokenBalance = {
+  [key in CurrenciesType]: string;
+};
+
+type MulticallCallData = {
+  execution: CairoCustomEnum;
+  to: CairoCustomEnum;
+  selector: CairoCustomEnum;
+  calldata: CairoCustomEnum[];
+};

@@ -71,3 +71,10 @@ type StarkscanApiResult = {
   next_url?: string;
   remainder?: StarkscanNftProps[];
 };
+
+type QuoteQueryData = {
+  quote: number;
+  r: string;
+  s: string;
+  max_validity: number;
+};
