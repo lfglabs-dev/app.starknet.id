@@ -17,7 +17,7 @@ export const getDomainPriceAltcoin = (quote: string, priceInEth: string) => {
   const scaleFactor = new Big(10 ** 18);
 
   const price = priceBigInt
-    .div(quoteBigInt)
+    .mul(quoteBigInt)
     .mul(scaleFactor)
     .round(0)
     .toString();
