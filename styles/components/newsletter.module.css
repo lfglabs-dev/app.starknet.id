@@ -128,6 +128,7 @@
   max-width: calc(100vw - 2rem);
   width: 500px;
 }
+
 .errorMessage + input {
   border: 1px solid var(--negative);
 }

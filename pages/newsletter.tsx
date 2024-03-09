@@ -72,11 +72,11 @@ const NewsletterPage: NextPage = () => {
           <p className="mb-2 text-center">Your email address</p>
         )}
         <input
-          type="email"
           required
           className={styles.input}
           id="email"
           onChange={() => setError("")}
+          autoComplete="off"
         />
         <div className="w-fit block mx-auto">
           <Button onClick={submitHandler} disabled={!!error}>
