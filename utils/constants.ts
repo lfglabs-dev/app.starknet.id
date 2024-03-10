@@ -27,17 +27,18 @@ export const NftCollections = [
     externalLink: "https://briq.construction/product/ducks_everywhere",
   },
   {
-    imageUri: "https://assets.starkguardians.com/collection/1/1.png",
-    name: "StarkGuardians",
+    imageUri:
+      "https://storage.nfte.ai/asset/collection/featured/c6fc5552-1051-4f68-87c9-fcd6ddc1f026.jpeg",
+    name: "Blobert",
     externalLink:
-      "https://pyramid.market/collection/0x2d679a171589777bc996fb27767ff9a2e44c7e07967760dea3df31704ab398a",
+      "https://unframed.co/collection/0x00539f522b29ae9251dbf7443c7a950cf260372e69efab3710a11bf17a9599f1",
   },
   {
     imageUri:
-      "https://ipfs.io/ipfs/bafybeiftrkvqyh6fdnqxddml3awxdqanblufvzu4c6dy2gty3l7fexplqm/2.png",
-    name: "Starkpunk",
+      "https://static.argent.net/unframed/images/0x03ab1124ef9ec3a2f2b1d9838f9066f9a894483d40b33390dda8d85c01a315a3_full.png",
+    name: "Starkurabu",
     externalLink:
-      "https://unframed.co/collection/0x0727a63f78ee3f1bd18f78009067411ab369c31dece1ae22e16f567906409905",
+      "https://unframed.co/collection/0x03ab1124ef9ec3a2f2b1d9838f9066f9a894483d40b33390dda8d85c01a315a3",
   },
   {
     imageUri:
