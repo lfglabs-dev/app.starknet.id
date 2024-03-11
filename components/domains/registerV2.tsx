@@ -188,6 +188,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
   useEffect(() => {
     const referralData = localStorage.getItem("referralData");
+    console.log("chosing sponsor!");
     if (referralData) {
       const data = JSON.parse(referralData);
       if (data.sponsor && data?.expiry >= new Date().getTime()) {
@@ -214,7 +215,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       registrationCalls.buy(
         encodedDomain,
         tokenId === 0 ? newTokenId : tokenId,
-        targetAddress,
         sponsor,
         duration,
         txMetadataHash
