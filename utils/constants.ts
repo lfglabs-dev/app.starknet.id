@@ -30,29 +30,13 @@ export const NftCollections = [
     imageUri:
       "https://storage.nfte.ai/asset/collection/featured/c6fc5552-1051-4f68-87c9-fcd6ddc1f026.jpeg",
     name: "Blobert",
-    externalLink:
-      "https://unframed.co/collection/0x00539f522b29ae9251dbf7443c7a950cf260372e69efab3710a11bf17a9599f1",
+    externalLink: "https://element.market/collections/blobert",
   },
   {
     imageUri:
       "https://static.argent.net/unframed/images/0x03ab1124ef9ec3a2f2b1d9838f9066f9a894483d40b33390dda8d85c01a315a3_full.png",
     name: "Starkurabu",
-    externalLink:
-      "https://unframed.co/collection/0x03ab1124ef9ec3a2f2b1d9838f9066f9a894483d40b33390dda8d85c01a315a3",
-  },
-  {
-    imageUri:
-      "https://argent.infura-ipfs.io/ipfs/bafybeichiahs2bqrc7ouxkadozavgndlwrrlyifybnvgtkbbeutxmm2n5u/image.jpeg",
-    name: "Dream kitty",
-    externalLink:
-      "https://unframed.co/collection/0x03859bf9178b48a4ba330d6872ab5a6d3895b64d6631197beefde6293bc172cd",
-  },
-  {
-    imageUri:
-      "https://static.argent.net/unframed/images/0x012f8e318fe04a1fe8bffe005ea4bbd19cb77a656b4f42682aab8a0ed20702f0_image.jpg",
-    name: "Stark Rock",
-    externalLink:
-      "https://unframed.co/collection/0x012f8e318fe04a1fe8bffe005ea4bbd19cb77a656b4f42682aab8a0ed20702f0",
+    externalLink: "https://element.market/collections/starkurabu",
   },
 ];
 
