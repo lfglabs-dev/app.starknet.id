@@ -24,7 +24,8 @@ export const NftCollections = [
     imageUri:
       "https://api.briq.construction/v1/preview/starknet-mainnet/0x42f5fc1f7b1845b307807fa05672177c9c5483cd4b7cb847000000000000000.png",
     name: "Ducks everywhere",
-    externalLink: "https://briq.construction/product/ducks_everywhere",
+    externalLink:
+      "https://unframed.co/collection/0x04fa864a706e3403fd17ac8df307f22eafa21b778b73353abf69a622e47a2003",
   },
   {
     imageUri:
