@@ -62,7 +62,6 @@ type RegisterV2Props = {
 const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const router = useRouter();
   const maxYearsToRegister = 25;
-  const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
@@ -212,12 +211,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   }, [price, currencyDisplayed, balances]);
 
   useEffect(() => {
-    if (address) {
-      setTargetAddress(address);
-    }
-  }, [address]);
-
-  useEffect(() => {
     const referralData = localStorage.getItem("referralData");
     if (referralData) {
       const data = JSON.parse(referralData);
@@ -236,8 +229,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     const txMetadataHash = "0x" + metadataHash;
-    const addressesMatch =
-      hexToDecimal(address) === hexToDecimal(targetAddress);
 
     // Common calls
     const calls = [
@@ -249,7 +240,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         registrationCalls.buy(
           encodedDomain,
           tokenId === 0 ? newTokenId : tokenId,
-          targetAddress,
           sponsor,
           duration,
           txMetadataHash
@@ -260,7 +250,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         registrationCalls.altcoinBuy(
           encodedDomain,
           tokenId === 0 ? newTokenId : tokenId,
-          targetAddress,
           sponsor,
           duration,
           txMetadataHash,
@@ -282,8 +271,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       tokenIdToUse = newTokenId;
     }
 
-    // If the user do not have a main domain and the address match
-    if (addressesMatch && !hasMainDomain) {
+    // If the user do not have a main domain
+    if (!hasMainDomain) {
       calls.push(registrationCalls.mainId(tokenIdToUse));
     }
 
@@ -313,7 +302,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   }, [
     tokenId,
     duration,
-    targetAddress,
     price,
     encodedDomain,
     hasMainDomain,
@@ -412,10 +400,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     }
   };
 
-  function changeAddress(value: string): void {
-    isHexString(value) ? setTargetAddress(value) : null;
-  }
-
   function changeEmail(value: string): void {
     setEmail(value);
     setEmailError(isValidEmail(value) ? false : true);
@@ -465,14 +449,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
                 }
               />
             ) : null}
-            <TextField
-              helperText="The Starknet address the domain will resolve to."
-              label="Target address"
-              value={targetAddress ?? "0x.."}
-              onChange={(e) => changeAddress(e.target.value)}
-              color="secondary"
-              required
-            />
             <SelectIdentity tokenId={tokenId} changeTokenId={changeTokenId} />
             <NumberTextField
               value={duration}
@@ -525,7 +501,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
                 !account ||
                 !duration ||
                 duration < 1 ||
-                !targetAddress ||
                 invalidBalance ||
                 !termsBox ||
                 (needMedadata && emailError)

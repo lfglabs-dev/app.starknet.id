@@ -13,7 +13,6 @@ function approve(price: string, erc20Address: string): Call {
 function buy(
   encodedDomain: string,
   tokenId: number,
-  targetAddress: string,
   sponsor: string,
   durationInYears: number,
   metadata: string
@@ -22,12 +21,19 @@ function buy(
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "buy",
     calldata: [
+      // id
       numberToString(tokenId),
+      // domain
       encodedDomain,
+      // days
       numberToString(durationInYears * 365),
+      // resolver
       0,
-      hexToDecimal(targetAddress),
+      // sponsor
       sponsor,
+      // discount
+      0,
+      // metadata
       metadata,
     ],
   };
@@ -36,7 +42,6 @@ function buy(
 function altcoinBuy(
   encodedDomain: string,
   tokenId: number,
-  targetAddress: string,
   sponsor: string,
   durationInYears: number,
   metadata: string,
@@ -51,7 +56,6 @@ function altcoinBuy(
       encodedDomain,
       numberToString(durationInYears * 365),
       0,
-      hexToDecimal(targetAddress),
       sponsor,
       metadata,
       erc20Address,
