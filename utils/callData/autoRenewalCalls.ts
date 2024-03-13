@@ -1,6 +1,6 @@
 import { Call } from "starknet";
 
-function approve(): Call {
+function approve(erc20_contract: string): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
     entrypoint: "approve",
@@ -13,12 +13,13 @@ function approve(): Call {
 }
 
 function enableRenewal(
+  autoRenewalContract: string,
   encodedDomain: string,
   price: string,
   metahash: string
 ): Call {
   return {
-    contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+    contractAddress: autoRenewalContract,
     entrypoint: "enable_renewals",
     calldata: [
       encodedDomain.toString(),

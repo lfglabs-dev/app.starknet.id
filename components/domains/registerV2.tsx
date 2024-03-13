@@ -37,7 +37,8 @@ import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
-  CurrenciesContract,
+  AutoRenewalContracts,
+  ERC20Contract,
   CurrenciesType,
   NotificationType,
   TransactionType,
@@ -49,6 +50,7 @@ import ConnectButton from "../UI/connectButton";
 import useBalances from "../../hooks/useBalances";
 import {
   getDomainPriceAltcoin,
+  getLimitPriceRange,
   getTokenQuote,
 } from "../../utils/altcoinService";
 
@@ -106,7 +108,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     new Map()
   );
   const { addTransaction } = useNotificationManager();
-  const needsAllowance = useAllowanceCheck(address);
+  const needsAllowance = useAllowanceCheck(currencyDisplayed, address);
   const balances = useBalances(address); // fetch the user balances for all whitelisted tokens
 
   // on first load, we generate a salt
@@ -150,7 +152,18 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     })();
   }, [email, salt, renewalBox, isSwissResident]);
 
-  // todo: refetch new quote if the timestamp from quote is expired
+  // refetch new quote if the timestamp from quote is expired
+  setTimeout(() => {
+    if (!quoteData || currencyDisplayed === CurrenciesType.ETH) return;
+    if (quoteData.max_quote_validity >= new Date().getTime()) {
+      getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
+        setQuoteData(data);
+        // get domain price in altcoin
+        const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
+        setPrice(priceInAltcoin);
+      });
+    }
+  }, 15000);
 
   useEffect(() => {
     // if price query does not work we use the off-chain hardcoded price
@@ -163,15 +176,26 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   }, [priceData, priceError, duration, domain]);
 
   useEffect(() => {
-    //todo: update this to work with altcoins
-    if (priceError || !priceData)
-      setRenewPrice(getPriceFromDomain(1, domain).toString());
-    else {
-      // Divide the priceData by the duration to get the renewal price
-      const high = priceData?.["price"].high << BigInt(128);
-      const price = priceData?.["price"].low + high;
-      const renew = price / BigInt(duration);
-      setRenewPrice(renew.toString(10));
+    const getRenewalPriceETH = (): string => {
+      if (priceError || !priceData)
+        return getPriceFromDomain(1, domain).toString();
+      else {
+        // Divide the priceData by the duration to get the renewal price
+        const high = priceData?.["price"].high << BigInt(128);
+        const price = priceData?.["price"].low + high;
+        const renew = price / BigInt(duration);
+        return renew.toString(10);
+      }
+    };
+
+    if (currencyDisplayed === CurrenciesType.ETH) {
+      setRenewPrice(getRenewalPriceETH());
+    } else {
+      const priceInAltcoin = getDomainPriceAltcoin(
+        quoteData?.quote as string,
+        getRenewalPriceETH()
+      );
+      setRenewPrice(priceInAltcoin);
     }
   }, [priceData, priceError, domain]);
 
@@ -217,7 +241,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // Common calls
     const calls = [
-      registrationCalls.approve(price, CurrenciesContract[currencyDisplayed]),
+      registrationCalls.approve(price, ERC20Contract[currencyDisplayed]),
     ];
 
     if (currencyDisplayed === CurrenciesType.ETH) {
@@ -240,7 +264,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
           sponsor,
           duration,
           txMetadataHash,
-          CurrenciesContract[currencyDisplayed],
+          ERC20Contract[currencyDisplayed],
           quoteData as QuoteQueryData
         )
       );
@@ -264,18 +288,20 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     }
 
     // If the user has toggled autorenewal
-    //todo : update after we set the auto renewal contract for alt tokens
     if (renewalBox) {
       if (needsAllowance) {
-        calls.push(autoRenewalCalls.approve());
+        calls.push(autoRenewalCalls.approve(currencyDisplayed));
       }
-      const limitPrice = salesTaxAmount
-        ? (BigInt(salesTaxAmount) + BigInt(price)).toString()
-        : price;
+
+      const limitPrice = getLimitPriceRange(currencyDisplayed, BigInt(price));
+      const limitPriceWithTax = salesTaxAmount
+        ? BigInt(salesTaxAmount) + limitPrice
+        : limitPrice;
       calls.push(
         autoRenewalCalls.enableRenewal(
+          AutoRenewalContracts[currencyDisplayed],
           encodedDomain,
-          limitPrice,
+          limitPriceWithTax.toString(),
           txMetadataHash
         )
       );
@@ -377,7 +403,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       setQuoteData(null);
       setPrice(priceInEth);
     } else {
-      getTokenQuote(CurrenciesContract[currency]).then((data) => {
+      getTokenQuote(ERC20Contract[currency]).then((data) => {
         setQuoteData(data);
         // get domain price in altcoin
         const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);

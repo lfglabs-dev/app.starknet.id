@@ -1,4 +1,6 @@
 import Big from "big.js";
+import { CurrenciesRange, CurrenciesType } from "./constants";
+import { applyRateToBigInt } from "./feltService";
 
 export const getTokenQuote = async (tokenAddress: string) => {
   try {
@@ -23,4 +25,31 @@ export const getDomainPriceAltcoin = (quote: string, priceInEth: string) => {
     .toString();
 
   return price;
+};
+
+export const getLimitPriceRange = (
+  type: CurrenciesType,
+  price: bigint
+): bigint => {
+  switch (type) {
+    case CurrenciesType.ETH:
+      return price;
+    case CurrenciesType.STRK:
+      return (
+        price +
+        BigInt(applyRateToBigInt(price, parseFloat(CurrenciesRange.STRK)))
+      );
+    case CurrenciesType.USDC:
+      return (
+        price +
+        BigInt(applyRateToBigInt(price, parseFloat(CurrenciesRange.USDC)))
+      );
+    case CurrenciesType.USDT:
+      return (
+        price +
+        BigInt(applyRateToBigInt(price, parseFloat(CurrenciesRange.USDT)))
+      );
+    default:
+      return price;
+  }
 };

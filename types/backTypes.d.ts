@@ -73,8 +73,8 @@ type StarkscanApiResult = {
 };
 
 type QuoteQueryData = {
-  quote: number;
+  quote: string;
   r: string;
   s: string;
-  max_validity: number;
+  max_quote_validity: number;
 };

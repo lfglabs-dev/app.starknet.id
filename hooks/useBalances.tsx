@@ -3,8 +3,8 @@ import { useMulticallContract } from "./contracts";
 import { Abi, CairoCustomEnum, Call, RawArgs, hash } from "starknet";
 import { useEffect, useState } from "react";
 import {
-  CurrenciesContract,
-  CurrenciesContractTestnet,
+  ERC20Contract,
+  ERC20ContractTestnet,
   CurrenciesType,
 } from "../utils/constants";
 import { fromUint256 } from "../utils/feltService";
@@ -24,8 +24,8 @@ export default function useBalances(address?: string) {
   const buildCalldata = () => {
     let currencies = Object.values(
       process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-        ? CurrenciesContractTestnet
-        : CurrenciesContract
+        ? ERC20ContractTestnet
+        : ERC20Contract
     );
     console.log("currencies", currencies);
     let calls: MulticallCallData[] = [];

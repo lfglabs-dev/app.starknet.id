@@ -56,7 +56,7 @@ function altcoinBuy(
       metadata,
       erc20Address,
       quoteData.quote,
-      quoteData.max_validity,
+      quoteData.max_quote_validity,
       quoteData.r,
       quoteData.s,
     ],

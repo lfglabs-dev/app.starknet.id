@@ -2,20 +2,25 @@ import { useContractRead } from "@starknet-react/core";
 import { useEtherContract } from "./contracts";
 import { Abi } from "starknet";
 import { useEffect, useState } from "react";
-import { UINT_128_MAX } from "../utils/constants";
+import {
+  ERC20Contract,
+  CurrenciesType,
+  UINT_128_MAX,
+  AutoRenewalContracts,
+} from "../utils/constants";
 
-export default function useAllowanceCheck(address?: string) {
+export default function useAllowanceCheck(
+  erc20: CurrenciesType,
+  address?: string
+) {
   const [needsAllowance, setNeedsAllowance] = useState(false);
   const { contract: etherContract } = useEtherContract();
   const { data: erc20AllowanceData, error: erc20AllowanceError } =
     useContractRead({
-      address: etherContract?.address as string,
+      address: ERC20Contract[erc20],
       abi: etherContract?.abi as Abi,
       functionName: "allowance",
-      args: [
-        address as string,
-        process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
-      ],
+      args: [address as string, AutoRenewalContracts[erc20]],
     });
 
   useEffect(() => {
