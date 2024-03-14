@@ -68,7 +68,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       setCallData([
         {
           contractAddress: process.env
-            .NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+            .NEXT_PUBLIC_IDENTITY_CONTRACT as string,
           entrypoint: "mint",
           calldata: [numberToString(newTokenId)],
         },
