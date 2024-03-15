@@ -13,7 +13,7 @@ import { Abi } from "starknet";
 export function useStarknetIdContract() {
   return useContract({
     abi: starknet_id_abi as Abi,
-    address: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT,
+    address: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT,
   });
 }
 
