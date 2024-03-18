@@ -47,7 +47,7 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
     return new StarknetIdNavigator(
       provider,
       isTestnet
-        ? constants.StarknetChainId.SN_GOERLI
+        ? constants.StarknetChainId.SN_SEPOLIA
         : constants.StarknetChainId.SN_MAIN
     );
   }, [provider]);
