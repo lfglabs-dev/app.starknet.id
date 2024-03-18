@@ -82,7 +82,7 @@ const Navbar: FunctionComponent = () => {
     if (!isConnected || !account) return;
     account.getChainId().then((chainId) => {
       const isWrongNetwork =
-        (chainId === constants.StarknetChainId.SN_GOERLI &&
+        (chainId === constants.StarknetChainId.SN_SEPOLIA &&
           network === "mainnet") ||
         (chainId === constants.StarknetChainId.SN_MAIN &&
           network === "testnet");
