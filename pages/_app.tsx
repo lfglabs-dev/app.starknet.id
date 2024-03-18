@@ -14,7 +14,7 @@ import {
 import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
-import { Chain, goerli, mainnet } from "@starknet-react/chains";
+import { Chain, sepolia, mainnet } from "@starknet-react/chains";
 import { addWalnutLogsToConnectors } from "@walnuthq/sdk";
 import { InjectedConnector } from "starknetkit/injected";
 import { WebWalletConnector } from "starknetkit/webwallet";
@@ -59,7 +59,7 @@ if (typeof window !== "undefined") {
 
 function MyApp({ Component, pageProps }: AppProps) {
   const chains = [
-    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? goerli : mainnet,
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? sepolia : mainnet,
   ];
   const providers = jsonRpcProvider({
     rpc: (_chain: Chain) => ({

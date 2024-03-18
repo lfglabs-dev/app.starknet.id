@@ -47,7 +47,7 @@ export const ourNfts = [
     name: "Starknet quest",
     infoPage:
       process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-        ? `https://goerli.starknet.quest/`
+        ? `https://sepolia.starknet.quest/`
         : "https://starknet.quest/",
   },
 ];
