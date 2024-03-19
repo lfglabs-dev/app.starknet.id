@@ -11,6 +11,7 @@ import { useContractRead } from "@starknet-react/core";
 import { useNftPpVerifierContract } from "../../hooks/contracts";
 import { Abi } from "starknet";
 import { Identity } from "../../utils/apiWrappers/identity";
+import WarningMessage from "../UI/warningMessage";
 
 type UpdateProfilePicProps = {
   identity?: Identity;
@@ -101,21 +102,22 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
                 );
               })
             ) : (
-              <p className={styles.message}>
-                You don&apos;t own any whitelisted NFTs yet.{" "}
-              </p>
+              <div className="flex flex-col align-middle items-center">
+                <img src="/visuals/notFound.webp" alt="Not found" width={201} />
+                <WarningMessage>
+                  You don&apos;t own any whitelisted NFTs yet
+                </WarningMessage>
+              </div>
             )}
           </div>
-          <div>
-            {userNft && userNft.length > 0 ? (
-              <div className={styles.selectedCollections}>
-                <p className={styles.subtitle}>Get a new Profile Pic</p>
-                <h2 className={styles.title}>Our NFT Collections selection</h2>
-              </div>
-            ) : null}
+        </div>
+        {isLoading ? null : (
+          <div className={styles.gallery}>
+            <p className={styles.subtitle}>Get a new Profile Pic</p>
+            <h2 className={styles.title}>Our NFT Collections selection</h2>
             <SelectedCollections />
           </div>
-        </div>
+        )}
       </div>
       <ModalProfilePic
         isModalOpen={openModal}

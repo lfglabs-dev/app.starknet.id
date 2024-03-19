@@ -12,7 +12,7 @@ export function transfer(identity: Identity, target: string): Call[] {
   //   calldata: [...callDataEncodedDomain, hexToDecimal(targetAddress ?? "")],
   // },
   const transferCall = {
-    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+    contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
     entrypoint: "transferFrom",
     calldata: [identity.ownerAddress, target, identity.id, 0],
   };
@@ -50,7 +50,7 @@ export function setUserData(
   data: string
 ): Call {
   return {
-    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+    contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
     entrypoint: "set_user_data",
     calldata: [tokenId, field, data, 0],
   };
@@ -92,7 +92,7 @@ export function setAsMainId(
 
   // set as main id
   output.push({
-    contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+    contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
     entrypoint: "set_main_id",
     calldata: [identity.id as string],
   });

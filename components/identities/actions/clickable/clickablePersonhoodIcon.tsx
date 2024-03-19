@@ -221,7 +221,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
                       walletAddress={address}
                       starknetChainId={
                         network === "testnet"
-                          ? constants.StarknetChainId.SN_GOERLI
+                          ? constants.StarknetChainId.SN_SEPOLIA
                           : constants.StarknetChainId.SN_MAIN
                       }
                       chainType="STARKNET"

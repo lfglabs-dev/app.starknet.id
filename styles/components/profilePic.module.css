@@ -7,6 +7,7 @@
   margin: 12vh auto 0 auto;
   height: 100%;
   overflow-y: auto;
+  margin-bottom: 2rem;
 }
 
 .arrows {
@@ -54,7 +55,7 @@
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 32px;
+  gap: 1.5rem;
 }
 
 .nftImg {
@@ -147,15 +148,11 @@
   pointer-events: none;
 }
 
-.selectedCollections {
-  margin-top: 48px;
-}
-
 .nftCollectionWraper {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 48px;
+  gap: 1.5rem;
   margin: 48px 0;
   justify-content: center;
   flex-wrap: wrap;
@@ -163,17 +160,15 @@
 
 .nftCollectionCard {
   display: flex;
-  padding: 23px;
+  padding: 1rem;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  gap: 24px;
+  gap: 1rem;
   cursor: pointer;
-
   border-radius: 20px;
   background: var(--background-light);
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-  max-width: 240px;
+  max-width: 296px;
   border: 1px solid var(--background-light);
   transition: all 0.2s ease-in-out;
 }
@@ -184,8 +179,8 @@
 }
 
 .nftCollectionImg {
-  width: 180px !important;
-  height: 180px;
+  width: 264px !important;
+  height: 200px;
   width: 100%;
   border-radius: 20px;
   object-fit: contain;

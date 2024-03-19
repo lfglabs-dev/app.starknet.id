@@ -18,7 +18,7 @@ const SelectNetwork: FunctionComponent<SelectNetworkProps> = ({ network }) => {
   function changeTokenId(value: string): void {
     if (value != network) {
       if (value === "testnet") {
-        router.push("https://goerli.app.starknet.id" + router.asPath);
+        router.push("https://sepolia.app.starknet.id" + router.asPath);
       } else {
         router.push("https://app.starknet.id" + router.asPath);
       }

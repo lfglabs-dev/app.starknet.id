@@ -6,30 +6,15 @@ const PfpSkeleton: FunctionComponent = () => {
   return (
     <div className="flex flex-col gap-10">
       <div className={styles.nftSection}>
-        <Skeleton
-          variant="rounded"
-          width={180}
-          height={180}
-          className={styles.nftImg}
-        />
-        <Skeleton
-          variant="rounded"
-          width={180}
-          height={180}
-          className={styles.nftImg}
-        />
-        <Skeleton
-          variant="rounded"
-          width={180}
-          height={180}
-          className={styles.nftImg}
-        />
-        <Skeleton
-          variant="rounded"
-          width={180}
-          height={180}
-          className={styles.nftImg}
-        />
+        {[...Array(8)].map((_, index) => (
+          <Skeleton
+            key={index}
+            variant="rounded"
+            width={200}
+            height={200}
+            className={styles.nftImg}
+          />
+        ))}
       </div>
     </div>
   );

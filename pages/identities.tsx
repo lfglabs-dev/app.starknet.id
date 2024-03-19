@@ -33,7 +33,7 @@ const Identities: NextPage = () => {
   //Mint
   const callData = useMemo(() => {
     return {
-      contractAddress: process.env.NEXT_PUBLIC_STARKNETID_CONTRACT as string,
+      contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
       entrypoint: "mint",
       calldata: [randomTokenId],
     };

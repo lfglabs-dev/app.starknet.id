@@ -24,34 +24,20 @@ export const NftCollections = [
     imageUri:
       "https://api.briq.construction/v1/preview/starknet-mainnet/0x42f5fc1f7b1845b307807fa05672177c9c5483cd4b7cb847000000000000000.png",
     name: "Ducks everywhere",
-    externalLink: "https://briq.construction/product/ducks_everywhere",
-  },
-  {
-    imageUri: "https://assets.starkguardians.com/collection/1/1.png",
-    name: "StarkGuardians",
     externalLink:
-      "https://pyramid.market/collection/0x2d679a171589777bc996fb27767ff9a2e44c7e07967760dea3df31704ab398a",
+      "https://unframed.co/collection/0x04fa864a706e3403fd17ac8df307f22eafa21b778b73353abf69a622e47a2003",
   },
   {
     imageUri:
-      "https://ipfs.io/ipfs/bafybeiftrkvqyh6fdnqxddml3awxdqanblufvzu4c6dy2gty3l7fexplqm/2.png",
-    name: "Starkpunk",
-    externalLink:
-      "https://unframed.co/collection/0x0727a63f78ee3f1bd18f78009067411ab369c31dece1ae22e16f567906409905",
+      "https://storage.nfte.ai/asset/collection/featured/c6fc5552-1051-4f68-87c9-fcd6ddc1f026.jpeg",
+    name: "Blobert",
+    externalLink: "https://element.market/collections/blobert",
   },
   {
     imageUri:
-      "https://argent.infura-ipfs.io/ipfs/bafybeichiahs2bqrc7ouxkadozavgndlwrrlyifybnvgtkbbeutxmm2n5u/image.jpeg",
-    name: "Dream kitty",
-    externalLink:
-      "https://unframed.co/collection/0x03859bf9178b48a4ba330d6872ab5a6d3895b64d6631197beefde6293bc172cd",
-  },
-  {
-    imageUri:
-      "https://static.argent.net/unframed/images/0x012f8e318fe04a1fe8bffe005ea4bbd19cb77a656b4f42682aab8a0ed20702f0_image.jpg",
-    name: "Stark Rock",
-    externalLink:
-      "https://unframed.co/collection/0x012f8e318fe04a1fe8bffe005ea4bbd19cb77a656b4f42682aab8a0ed20702f0",
+      "https://static.argent.net/unframed/images/0x03ab1124ef9ec3a2f2b1d9838f9066f9a894483d40b33390dda8d85c01a315a3_full.png",
+    name: "Starkurabu",
+    externalLink: "https://element.market/collections/starkurabu",
   },
 ];
 
@@ -61,7 +47,7 @@ export const ourNfts = [
     name: "Starknet quest",
     infoPage:
       process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-        ? `https://goerli.starknet.quest/`
+        ? `https://sepolia.starknet.quest/`
         : "https://starknet.quest/",
   },
 ];
