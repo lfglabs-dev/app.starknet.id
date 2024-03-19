@@ -32,12 +32,18 @@ const AutoRenewalDomainsBox: FunctionComponent<AutoRenewalDomainsBoxProps> = ({
       )
         .then((response) => response.json())
         .then((data) => {
-          setOwnedDomains(data);
+          // Remove duplicates
+          const filteredData: string[] = Array.from(new Set(data));
+
+          setOwnedDomains(filteredData);
           setSelectedDomains(
-            data.reduce((acc: { [key: string]: boolean }, domain: string) => {
-              acc[domain] = true; // Initially set all to true. Adjust as needed.
-              return acc;
-            }, {})
+            filteredData.reduce(
+              (acc: { [key: string]: boolean }, domain: string) => {
+                acc[domain] = true; // Initially set all to true. Adjust as needed.
+                return acc;
+              },
+              {}
+            )
           );
           setIsLoading(false);
         });
