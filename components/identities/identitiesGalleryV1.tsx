@@ -42,7 +42,10 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        setNeedAutoRenewal(data);
+        // Remove duplicates
+        const filteredData: string[] = Array.from(new Set(data));
+
+        setNeedAutoRenewal(filteredData);
       });
   }, [address]);
 
