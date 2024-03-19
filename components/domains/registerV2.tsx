@@ -226,6 +226,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
   // Set Register Multicall
   useEffect(() => {
+    if (currencyDisplayed !== CurrenciesType.ETH && !quoteData) return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     const txMetadataHash = "0x" + metadataHash;

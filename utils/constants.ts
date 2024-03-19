@@ -102,41 +102,41 @@ export const notificationLinkText: Record<NotificationType, string> = {
 export enum CurrenciesType {
   ETH = "ETH",
   STRK = "STRK",
-  USDC = "USDC",
-  USDT = "USDT",
+  // USDC = "USDC",
+  // USDT = "USDT",
 }
 
 export enum CurrenciesIcon {
   ETH = "/currencies/eth.svg",
   STRK = "/currencies/strk.svg",
-  USDC = "/currencies/usdc.svg",
-  USDT = "/currencies/usdt.svg",
+  // USDC = "/currencies/usdc.svg",
+  // USDT = "/currencies/usdt.svg",
 }
 
 export enum CurrenciesRange {
   ETH = "0",
   STRK = "0.3",
-  USDC = "0.1",
-  USDT = "0.1",
+  // USDC = "0.1",
+  // USDT = "0.1",
 }
 
 export enum ERC20Contract {
   ETH = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
   STRK = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-  USDC = "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
-  USDT = "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8",
+  // USDC = "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8",
+  // USDT = "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8",
 }
 
 export enum ERC20ContractTestnet {
   ETH = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
   STRK = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-  USDC = "0x005a643907b9a4bc6a55e9069c4fd5fd1f5c79a22470690f75556c4736e34426",
-  USDT = "0x0386e8d061177f19b3b485c20e31137e6f6bc497cc635ccdfcab96fadf5add6a",
+  // USDC = "0x005a643907b9a4bc6a55e9069c4fd5fd1f5c79a22470690f75556c4736e34426",
+  // USDT = "0x0386e8d061177f19b3b485c20e31137e6f6bc497cc635ccdfcab96fadf5add6a",
 }
 
 export enum AutoRenewalContracts {
-  ETH = "0x07879a0d106d8e48751be4c01373e27bee0613afb0e5b8bbc569610fc0514a3a",
-  STRK = "0x0",
-  USDC = "0x0",
-  USDT = "0x0",
+  ETH = "0x020379Ba14750ECEE8dde204D0649808BCf6D32E9fDe81Ca952Ab0360cdC0937",
+  STRK = "0x078F63fcD145Ddc6ca932E562b466AFbfD7c9E882C9aa70f3e5b2ce05cD892eA",
+  // USDC = "0x0",
+  // USDT = "0x0",
 }

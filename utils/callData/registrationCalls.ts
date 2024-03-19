@@ -52,15 +52,27 @@ function altcoinBuy(
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "altcoin_buy",
     calldata: [
+      // id
       numberToString(tokenId),
+      // domain
       encodedDomain,
+      // days
       numberToString(durationInYears * 365),
+      // resolver
       0,
+      // sponsor
       sponsor,
+      // discount
+      0,
+      // metadata
       metadata,
+      // altcoin address
       erc20Address,
+      // quote
       quoteData.quote,
+      // max quote validity
       quoteData.max_quote_validity,
+      // signature
       quoteData.r,
       quoteData.s,
     ],

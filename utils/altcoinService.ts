@@ -20,7 +20,7 @@ export const getDomainPriceAltcoin = (quote: string, priceInEth: string) => {
 
   const price = priceBigInt
     .mul(quoteBigInt)
-    .mul(scaleFactor)
+    .div(scaleFactor)
     .round(0)
     .toString();
 
@@ -39,16 +39,16 @@ export const getLimitPriceRange = (
         price +
         BigInt(applyRateToBigInt(price, parseFloat(CurrenciesRange.STRK)))
       );
-    case CurrenciesType.USDC:
-      return (
-        price +
-        BigInt(applyRateToBigInt(price, parseFloat(CurrenciesRange.USDC)))
-      );
-    case CurrenciesType.USDT:
-      return (
-        price +
-        BigInt(applyRateToBigInt(price, parseFloat(CurrenciesRange.USDT)))
-      );
+    // case CurrenciesType.USDC:
+    //   return (
+    //     price +
+    //     BigInt(applyRateToBigInt(price, parseFloat(CurrenciesRange.USDC)))
+    //   );
+    // case CurrenciesType.USDT:
+    //   return (
+    //     price +
+    //     BigInt(applyRateToBigInt(price, parseFloat(CurrenciesRange.USDT)))
+    //   );
     default:
       return price;
   }
