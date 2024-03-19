@@ -2,7 +2,7 @@ import React from "react";
 import type { NextPage } from "next";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/search.module.css";
-import Renewal from "../components/domains/renewal";
+import Renewal from "../components/domains/Renewal.1";
 
 const RenewalPage: NextPage = () => {
   return (

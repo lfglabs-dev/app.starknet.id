@@ -14,9 +14,9 @@ const FreeRenewalPage: NextPage = () => {
     const currentDate = new Date();
     const timestamp = currentDate.getTime();
 
-    if (timestamp >= freeRenewalDiscount.expiry) {
-      setScreen(0);
-    }
+    // if (timestamp >= freeRenewalDiscount.expiry) {
+    //   setScreen(0);
+    // }
   }, []);
 
   function goBack() {
@@ -51,7 +51,7 @@ const FreeRenewalPage: NextPage = () => {
             duration={freeRenewalDiscount.offer.duration}
             discountId={freeRenewalDiscount.offer.discountId}
             customMessage={freeRenewalDiscount.offer.customMessage}
-            price={freeRenewalDiscount.offer.price}
+            priceInEth={freeRenewalDiscount.offer.price}
             goBack={goBack}
             isArOnforced
             renewPrice="0"

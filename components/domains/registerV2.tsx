@@ -11,14 +11,9 @@ import { utils } from "starknetid.js";
 import {
   getDomainWithStark,
   formatHexString,
-  isHexString,
   isValidEmail,
 } from "../../utils/stringService";
-import {
-  applyRateToBigInt,
-  gweiToEth,
-  hexToDecimal,
-} from "../../utils/feltService";
+import { applyRateToBigInt, gweiToEth } from "../../utils/feltService";
 import SelectIdentity from "./selectIdentity";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi, Call } from "starknet";
@@ -158,6 +153,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
         setQuoteData(data);
         // get domain price in altcoin
+        //todo : remove and add useEffect on this
         const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
         setPrice(priceInAltcoin);
       });

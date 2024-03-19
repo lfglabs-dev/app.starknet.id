@@ -29,6 +29,9 @@ import BackButton from "../UI/backButton";
 import { useRouter } from "next/router";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
+  AutoRenewalContracts,
+  CurrenciesType,
+  ERC20Contract,
   NotificationType,
   TransactionType,
   swissVatRate,
@@ -60,6 +63,9 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
+  const [currencyDisplayed, setCurrencyDisplayed] = useState<CurrenciesType>(
+    CurrenciesType.ETH
+  );
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
   const { address } = useAccount();
@@ -76,7 +82,7 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
   const router = useRouter();
   const [duration, setDuration] = useState<number>(1);
   const maxYearsToRegister = 25;
-  const needsAllowance = useAllowanceCheck(address);
+  const needsAllowance = useAllowanceCheck(currencyDisplayed, address);
 
   useEffect(() => {
     if (!address) return;
@@ -212,7 +218,7 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
   useEffect(() => {
     if (selectedDomains && metadataHash) {
       const calls = [
-        registrationCalls.approve(price),
+        registrationCalls.approve(price, ERC20Contract[currencyDisplayed]),
         ...registrationCalls.multiCallRenewal(
           selectedDomainsToEncodedArray(selectedDomains),
           duration,
@@ -227,7 +233,12 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
 
       if (renewalBox) {
         if (needsAllowance) {
-          calls.push(autoRenewalCalls.approve());
+          calls.push(
+            autoRenewalCalls.approve(
+              currencyDisplayed,
+              ERC20Contract[currencyDisplayed]
+            )
+          );
         }
 
         selectedDomainsToArray(selectedDomains).map((domain, index) => {
@@ -242,6 +253,7 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
             : price.toString();
           calls.push(
             autoRenewalCalls.enableRenewal(
+              AutoRenewalContracts[currencyDisplayed],
               encodedDomain,
               allowance,
               "0x" + metadataHash
@@ -271,6 +283,11 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
     if (isNaN(value) || value > maxYearsToRegister || value < 1) return;
     setDuration(value);
   }
+
+  const onCurrencySwitch = (currency: CurrenciesType) => {
+    // update currencyDisplayed
+    setCurrencyDisplayed(currency);
+  };
 
   return (
     <div className={styles.container}>
@@ -328,10 +345,13 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
         <div className={styles.summary}>
           <RegisterSummary
             ethRegistrationPrice={price}
+            registrationPrice={price}
             duration={duration}
             renewalBox={false}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
+            currencyDisplayed={currencyDisplayed}
+            onCurrencySwitch={onCurrencySwitch}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes

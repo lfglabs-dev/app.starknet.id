@@ -27,6 +27,15 @@ export const getDomainPriceAltcoin = (quote: string, priceInEth: string) => {
   return price;
 };
 
+export const getQuoteInWad = (quote: string) => {
+  const quoteBigInt = new Big(quote);
+  const scaleFactor = new Big(10 ** 18);
+
+  const res = quoteBigInt.mul(scaleFactor).round(0).toString();
+
+  return res;
+};
+
 export const getLimitPriceRange = (
   type: CurrenciesType,
   price: bigint

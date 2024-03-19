@@ -25,6 +25,9 @@ import BackButton from "../UI/backButton";
 import { useRouter } from "next/router";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
+  AutoRenewalContracts,
+  CurrenciesType,
+  ERC20Contract,
   NotificationType,
   TransactionType,
   swissVatRate,
@@ -34,6 +37,8 @@ import { utils } from "starknetid.js";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 import ConnectButton from "../UI/connectButton";
+import useBalances from "../../hooks/useBalances";
+import { getDomainPriceAltcoin } from "../../utils/altcoinService";
 
 type SubscriptionProps = {
   groups: string[];
@@ -46,7 +51,12 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [callData, setCallData] = useState<Call[]>([]);
-  const [price, setPrice] = useState<string>("");
+  const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH
+  const [price, setPrice] = useState<string>(""); // price in altcoin
+  const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
+  const [currencyDisplayed, setCurrencyDisplayed] = useState<CurrenciesType>(
+    CurrenciesType.ETH
+  );
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
@@ -64,7 +74,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
   const duration = 1;
-  const needsAllowance = useAllowanceCheck(address);
+  const needsAllowance = useAllowanceCheck(currencyDisplayed, address);
 
   useEffect(() => {
     if (!address) return;
@@ -158,13 +168,16 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
 
   useEffect(() => {
     if (!selectedDomains) return;
-    setPrice(
-      getPriceFromDomains(
-        selectedDomainsToArray(selectedDomains),
-        duration
-      ).toString()
+    const ethPriceDomains = getPriceFromDomains(
+      selectedDomainsToArray(selectedDomains),
+      duration
     );
-  }, [selectedDomains, duration]);
+    setPrice(ethPriceDomains.toString());
+    if (currencyDisplayed !== CurrenciesType.ETH && quoteData) {
+      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
+      setPrice(priceInAltcoin);
+    }
+  }, [selectedDomains, duration, quoteData]);
 
   useEffect(() => {
     if (!needMedadata && price) {
@@ -185,7 +198,12 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
       const calls = [];
 
       if (needsAllowance) {
-        calls.push(autoRenewalCalls.approve());
+        calls.push(
+          autoRenewalCalls.approve(
+            currencyDisplayed,
+            ERC20Contract[currencyDisplayed]
+          )
+        );
       }
 
       selectedDomainsToArray(selectedDomains).map((domain) => {
@@ -200,6 +218,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
           : price.toString();
         calls.push(
           autoRenewalCalls.enableRenewal(
+            AutoRenewalContracts[currencyDisplayed],
             encodedDomain,
             allowance,
             "0x" + metadataHash
@@ -270,6 +289,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
             renewalBox={false}
             isArOnforced={true}
           />
+          {/* // todo : add dropdown currencies */}
           {address ? (
             <Button
               onClick={() =>

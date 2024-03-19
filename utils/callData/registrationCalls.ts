@@ -1,6 +1,5 @@
 import { Call } from "starknet";
 import { numberToString } from "../stringService";
-import { hexToDecimal } from "../feltService";
 
 function approve(price: string, erc20Address: string): Call {
   return {
@@ -81,30 +80,6 @@ function altcoinBuy(
   };
 }
 
-//todo: remove this function
-function buy_discounted(
-  encodedDomain: string,
-  tokenId: number,
-  targetAddress: string,
-  duration: number,
-  discountId: string,
-  metadata: string
-): Call {
-  return {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "buy_discounted",
-    calldata: [
-      numberToString(tokenId),
-      encodedDomain,
-      numberToString(duration),
-      0,
-      hexToDecimal(targetAddress),
-      discountId,
-      metadata,
-    ],
-  };
-}
-
 function mint(tokenId: number): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
@@ -149,6 +124,33 @@ function renew(
   };
 }
 
+function altcoinRenew(
+  encodedDomain: string,
+  durationInYears: number,
+  metadataHash: string,
+  erc20Address: string,
+  quoteData: QuoteQueryData,
+  sponsor?: string,
+  discountId?: string
+): Call {
+  return {
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+    entrypoint: "altcoin_renew",
+    calldata: [
+      encodedDomain,
+      durationInYears * 365,
+      sponsor ?? 0,
+      discountId ?? 0,
+      "0x" + metadataHash,
+      erc20Address,
+      quoteData.quote,
+      quoteData.max_quote_validity,
+      quoteData.r,
+      quoteData.s,
+    ],
+  };
+}
+
 function freeRenewal(encodedDomain: string): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
@@ -169,6 +171,28 @@ function multiCallRenewal(
   );
 }
 
+function multiCallRenewalAltcoin(
+  encodedDomains: string[],
+  durationInYears: number,
+  metadataHash: string,
+  erc20Address: string,
+  quoteData: QuoteQueryData,
+  sponsor?: string,
+  discountId?: string
+): Call[] {
+  return encodedDomains.map((encodedDomain, index) =>
+    altcoinRenew(
+      encodedDomain,
+      durationInYears,
+      metadataHash,
+      erc20Address,
+      quoteData,
+      sponsor,
+      discountId
+    )
+  );
+}
+
 function multiCallFreeRenewals(encodedDomains: string[]): Call[] {
   return encodedDomains.map((encodedDomain) => freeRenewal(encodedDomain));
 }
@@ -179,10 +203,12 @@ const registrationCalls = {
   altcoinBuy,
   mainId,
   mint,
-  buy_discounted,
+  // buy_discounted,
   vatTransfer,
   renew,
+  altcoinRenew,
   multiCallRenewal,
+  multiCallRenewalAltcoin,
   freeRenewal,
   multiCallFreeRenewals,
 };

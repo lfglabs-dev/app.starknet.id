@@ -29,6 +29,9 @@ import BackButton from "../UI/backButton";
 import { useRouter } from "next/router";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
+  AutoRenewalContracts,
+  CurrenciesType,
+  ERC20Contract,
   NotificationType,
   TransactionType,
   swissVatRate,
@@ -39,6 +42,11 @@ import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import NumberTextField from "../UI/numberTextField";
 import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 import ConnectButton from "../UI/connectButton";
+import useBalances from "../../hooks/useBalances";
+import {
+  getDomainPriceAltcoin,
+  getTokenQuote,
+} from "../../utils/altcoinService";
 
 type RenewalProps = {
   groups: string[];
@@ -51,8 +59,12 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [callData, setCallData] = useState<Call[]>([]);
-  const [price, setPrice] = useState<string>("");
-  const [balance, setBalance] = useState<string>("");
+  const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH
+  const [price, setPrice] = useState<string>(""); // price in altcoin
+  const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
+  const [currencyDisplayed, setCurrencyDisplayed] = useState<CurrenciesType>(
+    CurrenciesType.ETH
+  );
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [termsBox, setTermsBox] = useState<boolean>(true);
@@ -63,10 +75,6 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
   const { address } = useAccount();
-  const { data: userBalanceData, error: userBalanceDataError } = useBalance({
-    address,
-    watch: true,
-  });
   const { writeAsync: execute, data: renewData } = useContractWrite({
     calls: callData,
   });
@@ -76,7 +84,21 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const router = useRouter();
   const [duration, setDuration] = useState<number>(1);
   const maxYearsToRegister = 25;
-  const needsAllowance = useAllowanceCheck(address);
+  const needsAllowance = useAllowanceCheck(currencyDisplayed, address);
+  const balances = useBalances(address); // fetch the user balances for all whitelisted tokens
+
+  // refetch new quote if the timestamp from quote is expired
+  setTimeout(() => {
+    if (!quoteData || currencyDisplayed === CurrenciesType.ETH) return;
+    if (quoteData.max_quote_validity >= new Date().getTime()) {
+      getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
+        setQuoteData(data);
+        // get domain price in altcoin
+        const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
+        setPrice(priceInAltcoin);
+      });
+    }
+  }, 15000);
 
   useEffect(() => {
     if (!address) return;
@@ -172,28 +194,38 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
 
   useEffect(() => {
     if (!selectedDomains) return;
-    setPrice(
+    setPriceInEth(
       getPriceFromDomains(
         selectedDomainsToArray(selectedDomains),
         duration
       ).toString()
     );
-  }, [selectedDomains, duration]);
+    if (currencyDisplayed !== CurrenciesType.ETH && quoteData) {
+      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
+      setPrice(priceInAltcoin);
+    }
+  }, [selectedDomains, duration, quoteData]);
 
   useEffect(() => {
-    if (userBalanceDataError || !userBalanceData) setBalance("");
-    else setBalance(userBalanceData.value.toString(10));
-  }, [userBalanceData, userBalanceDataError]);
+    if (currencyDisplayed === CurrenciesType.ETH) {
+      setPrice(priceInEth);
+    } else if (quoteData) {
+      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
+      setPrice(priceInAltcoin);
+    }
+  }, [priceInEth, quoteData]);
 
+  // we ensure user has enough balance of the token selected
   useEffect(() => {
-    if (balance && price) {
-      if (gweiToEth(balance) > gweiToEth(price)) {
+    if (balances && price && currencyDisplayed) {
+      const tokenBalance = balances[currencyDisplayed];
+      if (gweiToEth(tokenBalance) > gweiToEth(price)) {
         setInvalidBalance(false);
       } else {
         setInvalidBalance(true);
       }
     }
-  }, [balance, price]);
+  }, [price, currencyDisplayed, balances]);
 
   function changeEmail(value: string): void {
     setEmail(value);
@@ -215,15 +247,30 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   }, [isSwissResident, price, needMedadata, salesTaxRate]);
 
   useEffect(() => {
+    if (currencyDisplayed !== CurrenciesType.ETH && !quoteData) return;
     if (selectedDomains && metadataHash) {
       const calls = [
-        registrationCalls.approve(price),
-        ...registrationCalls.multiCallRenewal(
-          selectedDomainsToEncodedArray(selectedDomains),
-          duration,
-          metadataHash
-        ),
+        registrationCalls.approve(price, ERC20Contract[currencyDisplayed]),
       ];
+      if (currencyDisplayed === CurrenciesType.ETH) {
+        calls.push(
+          ...registrationCalls.multiCallRenewal(
+            selectedDomainsToEncodedArray(selectedDomains),
+            duration,
+            metadataHash
+          )
+        );
+      } else {
+        calls.push(
+          ...registrationCalls.multiCallRenewalAltcoin(
+            selectedDomainsToEncodedArray(selectedDomains),
+            duration,
+            metadataHash,
+            ERC20Contract[currencyDisplayed],
+            quoteData as QuoteQueryData
+          )
+        );
+      }
 
       // If the user is a US resident, we add the sales tax
       if (salesTaxRate) {
@@ -232,7 +279,12 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
 
       if (renewalBox) {
         if (needsAllowance) {
-          calls.push(autoRenewalCalls.approve());
+          calls.push(
+            autoRenewalCalls.approve(
+              currencyDisplayed,
+              ERC20Contract[currencyDisplayed]
+            )
+          );
         }
 
         selectedDomainsToArray(selectedDomains).map((domain, index) => {
@@ -247,6 +299,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
             : price.toString();
           calls.push(
             autoRenewalCalls.enableRenewal(
+              AutoRenewalContracts[currencyDisplayed],
               encodedDomain,
               allowance,
               "0x" + metadataHash
@@ -271,6 +324,24 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     if (isNaN(value) || value > maxYearsToRegister || value < 1) return;
     setDuration(value);
   }
+
+  const onCurrencySwitch = (currency: CurrenciesType) => {
+    // update currencyDisplayed
+    setCurrencyDisplayed(currency);
+
+    // get quote from server
+    if (currency === CurrenciesType.ETH) {
+      setQuoteData(null);
+      setPrice(priceInEth);
+    } else {
+      getTokenQuote(ERC20Contract[currency]).then((data) => {
+        setQuoteData(data);
+        // get domain price in altcoin
+        const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
+        setPrice(priceInAltcoin);
+      });
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -327,11 +398,14 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         </div>
         <div className={styles.summary}>
           <RegisterSummary
-            ethRegistrationPrice={price}
+            ethRegistrationPrice={priceInEth}
+            registrationPrice={price}
             duration={duration}
             renewalBox={renewalBox}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
+            currencyDisplayed={currencyDisplayed}
+            onCurrencySwitch={onCurrencySwitch}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
