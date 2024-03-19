@@ -6,14 +6,13 @@ import { ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material";
 type CurrencyDropdownProps = {
   onCurrencySwitch: (type: CurrenciesType) => void;
   currencyDisplayed: CurrenciesType;
-  //todo : lui passer ici les balances comme ça on affiche que celles où la balance > 0
-  // si balances est vide alors on prend toutes les currencies via la constante
 };
 
 const CurrencyDropdown: FunctionComponent<CurrencyDropdownProps> = ({
   currencyDisplayed,
   onCurrencySwitch,
 }) => {
+  console.log("currencyDisplayed", currencyDisplayed);
   return (
     <div className={styles.currencySwitcher}>
       <Select

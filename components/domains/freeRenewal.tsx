@@ -42,6 +42,11 @@ import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import NumberTextField from "../UI/numberTextField";
 import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 import ConnectButton from "../UI/connectButton";
+import {
+  getDomainPriceAltcoin,
+  getLimitPriceRange,
+  getTokenQuote,
+} from "../../utils/altcoinService";
 
 type FreeRenewalProps = {
   groups: string[];
@@ -235,22 +240,45 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
         if (needsAllowance) {
           calls.push(
             autoRenewalCalls.approve(
-              currencyDisplayed,
-              ERC20Contract[currencyDisplayed]
+              ERC20Contract[currencyDisplayed],
+              AutoRenewalContracts[currencyDisplayed]
             )
           );
+        }
+
+        let quote: string;
+        if (currencyDisplayed === CurrenciesType.ETH) {
+          quote = "1";
+        } else {
+          getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
+            quote = data.quote;
+          });
         }
 
         selectedDomainsToArray(selectedDomains).map((domain, index) => {
           const encodedDomain = utils
             .encodeDomain(domain)
             .map((element) => element.toString())[0];
-          const price = getPriceFromDomain(1, domain);
+          let domainPrice: string;
+          if (currencyDisplayed === CurrenciesType.ETH) {
+            domainPrice = getPriceFromDomain(1, domain).toString();
+          } else {
+            domainPrice = getDomainPriceAltcoin(
+              quote,
+              getPriceFromDomain(1, domain).toString()
+            );
+          }
+
+          const limitPrice = getLimitPriceRange(
+            currencyDisplayed,
+            BigInt(domainPrice)
+          );
           const allowance: string = salesTaxRate
             ? (
-                BigInt(price) + BigInt(applyRateToBigInt(price, salesTaxRate))
+                BigInt(limitPrice) +
+                BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
               ).toString()
-            : price.toString();
+            : limitPrice.toString();
           calls.push(
             autoRenewalCalls.enableRenewal(
               AutoRenewalContracts[currencyDisplayed],
@@ -272,6 +300,7 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
     salesTaxRate,
     duration,
     renewalBox,
+    currencyDisplayed,
   ]);
 
   function changeEmail(value: string): void {

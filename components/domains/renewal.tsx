@@ -45,6 +45,7 @@ import ConnectButton from "../UI/connectButton";
 import useBalances from "../../hooks/useBalances";
 import {
   getDomainPriceAltcoin,
+  getLimitPriceRange,
   getTokenQuote,
 } from "../../utils/altcoinService";
 
@@ -281,8 +282,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         if (needsAllowance) {
           calls.push(
             autoRenewalCalls.approve(
-              currencyDisplayed,
-              ERC20Contract[currencyDisplayed]
+              ERC20Contract[currencyDisplayed],
+              AutoRenewalContracts[currencyDisplayed]
             )
           );
         }
@@ -291,12 +292,28 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
           const encodedDomain = utils
             .encodeDomain(domain)
             .map((element) => element.toString())[0];
-          const price = getPriceFromDomain(1, domain);
+          let domainPrice: string;
+          if (currencyDisplayed === CurrenciesType.ETH) {
+            domainPrice = getPriceFromDomain(1, domain).toString();
+          } else {
+            if (!quoteData) return;
+            domainPrice = getDomainPriceAltcoin(
+              quoteData.quote,
+              getPriceFromDomain(1, domain).toString()
+            );
+          }
+
+          const limitPrice = getLimitPriceRange(
+            currencyDisplayed,
+            BigInt(domainPrice)
+          );
+
           const allowance: string = salesTaxRate
             ? (
-                BigInt(price) + BigInt(applyRateToBigInt(price, salesTaxRate))
+                BigInt(limitPrice) +
+                BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
               ).toString()
-            : price.toString();
+            : limitPrice.toString();
           calls.push(
             autoRenewalCalls.enableRenewal(
               AutoRenewalContracts[currencyDisplayed],
@@ -318,6 +335,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     salesTaxRate,
     duration,
     renewalBox,
+    currencyDisplayed,
+    quoteData,
   ]);
 
   function changeDuration(value: number): void {

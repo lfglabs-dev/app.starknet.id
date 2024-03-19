@@ -37,8 +37,12 @@ import { utils } from "starknetid.js";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 import ConnectButton from "../UI/connectButton";
-import useBalances from "../../hooks/useBalances";
-import { getDomainPriceAltcoin } from "../../utils/altcoinService";
+import {
+  getDomainPriceAltcoin,
+  getLimitPriceRange,
+  getTokenQuote,
+} from "../../utils/altcoinService";
+import CurrencyDropdown from "./currencyDropdown";
 
 type SubscriptionProps = {
   groups: string[];
@@ -166,18 +170,36 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     })();
   }, [email, salt, renewalBox, isSwissResident, needMedadata]);
 
+  // refetch new quote if the timestamp from quote is expired
+  setTimeout(() => {
+    if (!quoteData || currencyDisplayed === CurrenciesType.ETH) return;
+    if (quoteData.max_quote_validity >= new Date().getTime()) {
+      getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
+        setQuoteData(data);
+      });
+    }
+  }, 15000);
+
+  // if selectedDomains or duration have changed, we update priceInEth
   useEffect(() => {
     if (!selectedDomains) return;
-    const ethPriceDomains = getPriceFromDomains(
-      selectedDomainsToArray(selectedDomains),
-      duration
+    setPriceInEth(
+      getPriceFromDomains(
+        selectedDomainsToArray(selectedDomains),
+        duration
+      ).toString()
     );
-    setPrice(ethPriceDomains.toString());
-    if (currencyDisplayed !== CurrenciesType.ETH && quoteData) {
+  }, [selectedDomains, duration]);
+
+  // if priceInEth or quoteData have changed, we update the price in altcoin
+  useEffect(() => {
+    if (currencyDisplayed === CurrenciesType.ETH) {
+      setPrice(priceInEth);
+    } else if (quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
       setPrice(priceInAltcoin);
     }
-  }, [selectedDomains, duration, quoteData]);
+  }, [priceInEth, quoteData]);
 
   useEffect(() => {
     if (!needMedadata && price) {
@@ -200,8 +222,8 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
       if (needsAllowance) {
         calls.push(
           autoRenewalCalls.approve(
-            currencyDisplayed,
-            ERC20Contract[currencyDisplayed]
+            ERC20Contract[currencyDisplayed],
+            AutoRenewalContracts[currencyDisplayed]
           )
         );
       }
@@ -210,12 +232,28 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         const encodedDomain = utils
           .encodeDomain(domain)
           .map((element) => element.toString())[0];
-        const price = getPriceFromDomain(1, domain);
+
+        let domainPrice: string;
+        if (currencyDisplayed === CurrenciesType.ETH) {
+          domainPrice = getPriceFromDomain(1, domain).toString();
+        } else {
+          if (!quoteData) return;
+          domainPrice = getDomainPriceAltcoin(
+            quoteData.quote,
+            getPriceFromDomain(1, domain).toString()
+          );
+        }
+
+        const limitPrice = getLimitPriceRange(
+          currencyDisplayed,
+          BigInt(domainPrice)
+        );
         const allowance: string = salesTaxRate
           ? (
-              BigInt(price) + BigInt(applyRateToBigInt(price, salesTaxRate))
+              BigInt(limitPrice) +
+              BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
             ).toString()
-          : price.toString();
+          : limitPrice.toString();
         calls.push(
           autoRenewalCalls.enableRenewal(
             AutoRenewalContracts[currencyDisplayed],
@@ -234,12 +272,28 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     needsAllowance,
     metadataHash,
     salesTaxRate,
+    currencyDisplayed,
+    quoteData,
   ]);
 
   function changeEmail(value: string): void {
     setEmail(value);
     setEmailError(isValidEmail(value) ? false : true);
   }
+
+  const onCurrencySwitch = (currency: CurrenciesType) => {
+    // update currencyDisplayed
+    setCurrencyDisplayed(currency);
+    // get quote from server
+    if (currency === CurrenciesType.ETH) {
+      setQuoteData(null);
+      setPrice(priceInEth);
+    } else {
+      getTokenQuote(ERC20Contract[currency]).then((data) => {
+        setQuoteData(data);
+      });
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -282,6 +336,10 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
           </div>
         </div>
         <div className={styles.summary}>
+          <CurrencyDropdown
+            onCurrencySwitch={onCurrencySwitch}
+            currencyDisplayed={currencyDisplayed}
+          />
           <RegisterCheckboxes
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}

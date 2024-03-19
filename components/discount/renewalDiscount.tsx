@@ -49,6 +49,7 @@ import ConnectButton from "../UI/connectButton";
 import useBalances from "../../hooks/useBalances";
 import {
   getDomainPriceAltcoin,
+  getLimitPriceRange,
   getTokenQuote,
 } from "../../utils/altcoinService";
 
@@ -273,22 +274,38 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
         if (needsAllowance) {
           calls.unshift(
             autoRenewalCalls.approve(
-              currencyDisplayed,
-              ERC20Contract[currencyDisplayed]
+              ERC20Contract[currencyDisplayed],
+              AutoRenewalContracts[currencyDisplayed]
             )
           );
         }
 
         selectedDomainsToArray(selectedDomains).map((domain, index) => {
+          //todo: refactor this code because we have it several time > move into a util function
           const encodedDomain = utils
             .encodeDomain(domain)
             .map((element) => element.toString())[0];
-          const price = getPriceFromDomain(1, domain);
+          let domainPrice: string;
+          if (currencyDisplayed === CurrenciesType.ETH) {
+            domainPrice = getPriceFromDomain(1, domain).toString();
+          } else {
+            if (!quoteData) return;
+            domainPrice = getDomainPriceAltcoin(
+              quoteData.quote,
+              getPriceFromDomain(1, domain).toString()
+            );
+          }
+
+          const limitPrice = getLimitPriceRange(
+            currencyDisplayed,
+            BigInt(domainPrice)
+          );
           const allowance: string = salesTaxRate
             ? (
-                BigInt(price) + BigInt(applyRateToBigInt(price, salesTaxRate))
+                BigInt(limitPrice) +
+                BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
               ).toString()
-            : price.toString();
+            : limitPrice.toString();
           calls.unshift(
             autoRenewalCalls.enableRenewal(
               AutoRenewalContracts[currencyDisplayed],
@@ -312,6 +329,8 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     renewalBox,
     discountId,
     needMetadata,
+    quoteData,
+    currencyDisplayed,
   ]);
 
   const onCurrencySwitch = (currency: CurrenciesType) => {

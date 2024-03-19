@@ -38,6 +38,7 @@ import ConnectButton from "../UI/connectButton";
 import useBalances from "../../hooks/useBalances";
 import {
   getDomainPriceAltcoin,
+  getLimitPriceRange,
   getTokenQuote,
 } from "../../utils/altcoinService";
 
@@ -215,19 +216,23 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       if (needsAllowance) {
         calls.push(
           autoRenewalCalls.approve(
-            currencyDisplayed,
-            process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string
+            ERC20Contract[currencyDisplayed],
+            AutoRenewalContracts[currencyDisplayed]
           )
         );
       }
-      const limitPrice = salesTaxAmount
-        ? (BigInt(salesTaxAmount) + BigInt(price)).toString()
-        : price;
+      const limitPrice = getLimitPriceRange(currencyDisplayed, BigInt(price));
+      const allowance: string = salesTaxRate
+        ? (
+            BigInt(limitPrice) +
+            BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
+          ).toString()
+        : limitPrice.toString();
       calls.push(
         autoRenewalCalls.enableRenewal(
           AutoRenewalContracts[currencyDisplayed],
           encodedDomain,
-          limitPrice,
+          allowance,
           txMetadataHash
         )
       );
@@ -249,6 +254,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     salesTaxAmount,
     needsAllowance,
     discountId,
+    quoteData,
+    currencyDisplayed,
   ]);
 
   useEffect(() => {

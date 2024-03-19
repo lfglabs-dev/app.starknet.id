@@ -277,21 +277,24 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       if (needsAllowance) {
         calls.push(
           autoRenewalCalls.approve(
-            currencyDisplayed,
-            ERC20Contract[currencyDisplayed]
+            ERC20Contract[currencyDisplayed],
+            AutoRenewalContracts[currencyDisplayed]
           )
         );
       }
 
       const limitPrice = getLimitPriceRange(currencyDisplayed, BigInt(price));
-      const limitPriceWithTax = salesTaxAmount
-        ? BigInt(salesTaxAmount) + limitPrice
-        : limitPrice;
+      const allowance: string = salesTaxRate
+        ? (
+            BigInt(limitPrice) +
+            BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
+          ).toString()
+        : limitPrice.toString();
       calls.push(
         autoRenewalCalls.enableRenewal(
           AutoRenewalContracts[currencyDisplayed],
           encodedDomain,
-          limitPriceWithTax.toString(),
+          allowance,
           txMetadataHash
         )
       );
@@ -313,6 +316,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     renewalBox,
     salesTaxAmount,
     needsAllowance,
+    quoteData,
+    currencyDisplayed,
   ]);
 
   useEffect(() => {
