@@ -90,7 +90,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     address: contract?.address as string,
     abi: contract?.abi as Abi,
     functionName: "compute_buy_price",
-    args: [encodedDomain, duration * 365],
+    args: [domain.length, duration * 365],
   });
 
   const { account, address } = useAccount();
@@ -153,7 +153,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
         setQuoteData(data);
         // get domain price in altcoin
-        //todo : remove and add useEffect on this
         const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
         setPrice(priceInAltcoin);
       });
@@ -198,7 +197,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   useEffect(() => {
     if (balances && price && currencyDisplayed) {
       const tokenBalance = balances[currencyDisplayed];
-      if (gweiToEth(tokenBalance) > gweiToEth(price)) {
+      if (tokenBalance && BigInt(tokenBalance) >= BigInt(price)) {
         setInvalidBalance(false);
       } else {
         setInvalidBalance(true);

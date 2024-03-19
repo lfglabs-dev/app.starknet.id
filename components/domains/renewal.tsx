@@ -219,7 +219,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   useEffect(() => {
     if (balances && price && currencyDisplayed) {
       const tokenBalance = balances[currencyDisplayed];
-      if (gweiToEth(tokenBalance) > gweiToEth(price)) {
+      if (tokenBalance && BigInt(tokenBalance) >= BigInt(price)) {
         setInvalidBalance(false);
       } else {
         setInvalidBalance(true);
