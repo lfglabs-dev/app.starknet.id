@@ -12,7 +12,7 @@ import CurrencyDropdown from "./currencyDropdown";
 type RegisterSummaryProps = {
   duration: number;
   ethRegistrationPrice: string;
-  registrationPrice: string;
+  registrationPrice: string; // price in altcoin
   renewalBox: boolean;
   salesTaxRate: number;
   isSwissResident: boolean;

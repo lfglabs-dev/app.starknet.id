@@ -1,11 +1,11 @@
 import { Call } from "starknet";
 
-function approve(erc20_contract: string): Call {
+function approve(erc20_contract: string, renewal_contract: string): Call {
   return {
-    contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
+    contractAddress: erc20_contract,
     entrypoint: "approve",
     calldata: [
-      process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+      renewal_contract,
       "340282366920938463463374607431768211455",
       "340282366920938463463374607431768211455",
     ],

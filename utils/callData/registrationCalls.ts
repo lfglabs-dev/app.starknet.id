@@ -15,7 +15,8 @@ function buy(
   tokenId: number,
   sponsor: string,
   durationInYears: number,
-  metadata: string
+  metadata: string,
+  discountId?: string
 ): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
@@ -32,7 +33,7 @@ function buy(
       // sponsor
       sponsor,
       // discount
-      0,
+      discountId ?? 0,
       // metadata
       metadata,
     ],
@@ -46,7 +47,8 @@ function altcoinBuy(
   durationInYears: number,
   metadata: string,
   erc20Address: string,
-  quoteData: QuoteQueryData
+  quoteData: QuoteQueryData,
+  discountId?: string
 ): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
@@ -63,7 +65,7 @@ function altcoinBuy(
       // sponsor
       sponsor,
       // discount
-      0,
+      discountId ?? 0,
       // metadata
       metadata,
       // altcoin address
@@ -79,6 +81,7 @@ function altcoinBuy(
   };
 }
 
+//todo: remove this function
 function buy_discounted(
   encodedDomain: string,
   tokenId: number,

@@ -1,7 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useAccount, useBalance, useContractWrite } from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import { getDomainWithStark, isValidEmail } from "../../utils/stringService";
 import {
@@ -25,6 +25,9 @@ import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import BackButton from "../UI/backButton";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
+  AutoRenewalContracts,
+  CurrenciesType,
+  ERC20Contract,
   NotificationType,
   TransactionType,
   swissVatRate,
@@ -32,13 +35,18 @@ import {
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 import ConnectButton from "../UI/connectButton";
+import useBalances from "../../hooks/useBalances";
+import {
+  getDomainPriceAltcoin,
+  getTokenQuote,
+} from "../../utils/altcoinService";
 
 type RegisterDiscountProps = {
   domain: string;
   duration: number;
   discountId: string;
   customMessage: string;
-  price: string;
+  priceInEth: string;
   mailGroups: string[];
   goBack: () => void;
 };
@@ -48,7 +56,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   duration,
   discountId,
   customMessage,
-  price,
+  priceInEth,
   mailGroups,
   goBack,
 }) => {
@@ -59,7 +67,11 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [callData, setCallData] = useState<Call[]>([]);
-  const [balance, setBalance] = useState<string>("0");
+  const [price, setPrice] = useState<string>(priceInEth); // set to priceInEth at initialization and updated to altcoin if selected by user
+  const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
+  const [currencyDisplayed, setCurrencyDisplayed] = useState<CurrenciesType>(
+    CurrenciesType.ETH
+  );
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const [salt, setSalt] = useState<string | undefined>();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
@@ -70,10 +82,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const { account, address } = useAccount();
-  const { data: userBalanceData, error: userBalanceDataError } = useBalance({
-    address,
-    watch: true,
-  });
   const { writeAsync: execute, data: registerData } = useContractWrite({
     calls: callData,
   });
@@ -82,7 +90,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     new Map()
   );
   const { addTransaction } = useNotificationManager();
-  const needsAllowance = useAllowanceCheck(address);
+  const needsAllowance = useAllowanceCheck(currencyDisplayed, address);
+  const balances = useBalances(address); // fetch the user balances for all whitelisted tokens
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -105,20 +114,30 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     })();
   }, [email, isSwissResident, salt]);
 
-  useEffect(() => {
-    if (userBalanceDataError || !userBalanceData) setBalance("0");
-    else setBalance(userBalanceData.value.toString(10));
-  }, [userBalanceData, userBalanceDataError]);
+  // refetch new quote if the timestamp from quote is expired
+  setTimeout(() => {
+    if (!quoteData || currencyDisplayed === CurrenciesType.ETH) return;
+    if (quoteData.max_quote_validity >= new Date().getTime()) {
+      getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
+        setQuoteData(data);
+        // get domain price in altcoin
+        const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
+        setPrice(priceInAltcoin);
+      });
+    }
+  }, 15000);
 
+  // we ensure user has enough balance of the token selected
   useEffect(() => {
-    if (balance && price) {
-      if (gweiToEth(balance) > gweiToEth(price)) {
+    if (balances && price && currencyDisplayed) {
+      const tokenBalance = balances[currencyDisplayed];
+      if (gweiToEth(tokenBalance) > gweiToEth(price)) {
         setInvalidBalance(false);
       } else {
         setInvalidBalance(true);
       }
     }
-  }, [balance, price]);
+  }, [price, currencyDisplayed, balances]);
 
   useEffect(() => {
     if (address) {
@@ -143,6 +162,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
   // Set Register Multicall
   useEffect(() => {
+    if (currencyDisplayed !== CurrenciesType.ETH && !quoteData) return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     const txMetadataHash = "0x" + metadataHash;
@@ -151,16 +171,34 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
     // Common calls
     const calls = [
-      registrationCalls.approve(price),
-      registrationCalls.buy_discounted(
-        encodedDomain,
-        newTokenId,
-        targetAddress,
-        duration,
-        discountId,
-        txMetadataHash
-      ),
+      registrationCalls.approve(price, ERC20Contract[currencyDisplayed]),
     ];
+
+    if (currencyDisplayed === CurrenciesType.ETH) {
+      calls.push(
+        registrationCalls.buy(
+          encodedDomain,
+          newTokenId,
+          "0",
+          duration,
+          txMetadataHash,
+          discountId
+        )
+      );
+    } else {
+      calls.push(
+        registrationCalls.altcoinBuy(
+          encodedDomain,
+          newTokenId,
+          "0",
+          duration,
+          txMetadataHash,
+          ERC20Contract[currencyDisplayed],
+          quoteData as QuoteQueryData,
+          discountId
+        )
+      );
+    }
 
     // If the user is a US resident, we add the sales tax
     if (salesTaxRate) {
@@ -175,13 +213,19 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     // If the user has toggled autorenewal
     if (renewalBox) {
       if (needsAllowance) {
-        calls.push(autoRenewalCalls.approve());
+        calls.push(
+          autoRenewalCalls.approve(
+            currencyDisplayed,
+            process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string
+          )
+        );
       }
       const limitPrice = salesTaxAmount
         ? (BigInt(salesTaxAmount) + BigInt(price)).toString()
         : price;
       calls.push(
         autoRenewalCalls.enableRenewal(
+          AutoRenewalContracts[currencyDisplayed],
           encodedDomain,
           limitPrice,
           txMetadataHash
@@ -255,6 +299,24 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     }
   }, [isSwissResident, price]);
 
+  const onCurrencySwitch = (currency: CurrenciesType) => {
+    // update currencyDisplayed
+    setCurrencyDisplayed(currency);
+
+    // get quote from server
+    if (currency === CurrenciesType.ETH) {
+      setQuoteData(null);
+      setPrice(priceInEth);
+    } else {
+      getTokenQuote(ERC20Contract[currency]).then((data) => {
+        setQuoteData(data);
+        // get domain price in altcoin
+        const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
+        setPrice(priceInAltcoin);
+      });
+    }
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -283,11 +345,13 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         <div className={styles.summary}>
           <RegisterSummary
             ethRegistrationPrice={price}
+            registrationPrice={price}
             duration={Number(numberToFixedString(duration / 365))}
             renewalBox={false}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
-            isUsdPriceDisplayed={false}
+            currencyDisplayed={currencyDisplayed}
+            onCurrencySwitch={onCurrencySwitch}
             customMessage={customMessage}
           />
           <Divider className="w-full" />

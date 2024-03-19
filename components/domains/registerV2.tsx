@@ -280,7 +280,12 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     // If the user has toggled autorenewal
     if (renewalBox) {
       if (needsAllowance) {
-        calls.push(autoRenewalCalls.approve(currencyDisplayed));
+        calls.push(
+          autoRenewalCalls.approve(
+            currencyDisplayed,
+            ERC20Contract[currencyDisplayed]
+          )
+        );
       }
 
       const limitPrice = getLimitPriceRange(currencyDisplayed, BigInt(price));
