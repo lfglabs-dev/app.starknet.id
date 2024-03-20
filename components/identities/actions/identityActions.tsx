@@ -189,7 +189,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 description="Check this identity on Unframed"
                 onClick={() =>
                   window.open(
-                    `https://unframed.co/item/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
+                    `https://unframed.co/item/${process.env.NEXT_PUBLIC_IDENTITY_CONTRACT}/${tokenId}`
                   )
                 }
               />
@@ -204,7 +204,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 description="Check this identity on Pyramid"
                 onClick={() =>
                   window.open(
-                    `https://pyramid.market/collection/${process.env.NEXT_PUBLIC_STARKNETID_CONTRACT}/${tokenId}`
+                    `https://pyramid.market/collection/${process.env.NEXT_PUBLIC_IDENTITY_CONTRACT}/${tokenId}`
                   )
                 }
               />
