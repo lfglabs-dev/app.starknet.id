@@ -17,7 +17,6 @@ import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
   getPriceFromDomains,
-  getPriceFromDomain,
 } from "../../utils/priceService";
 import AutoRenewalDomainsBox from "./autoRenewalDomainsBox";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
@@ -38,8 +37,9 @@ import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 import ConnectButton from "../UI/connectButton";
 import {
+  getAutoRenewAllowance,
+  getDomainPrice,
   getDomainPriceAltcoin,
-  getLimitPriceRange,
   getTokenQuote,
 } from "../../utils/altcoinService";
 import CurrencyDropdown from "./currencyDropdown";
@@ -233,27 +233,17 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
           .encodeDomain(domain)
           .map((element) => element.toString())[0];
 
-        let domainPrice: string;
-        if (currencyDisplayed === CurrenciesType.ETH) {
-          domainPrice = getPriceFromDomain(1, domain).toString();
-        } else {
-          if (!quoteData) return;
-          domainPrice = getDomainPriceAltcoin(
-            quoteData.quote,
-            getPriceFromDomain(1, domain).toString()
-          );
-        }
-
-        const limitPrice = getLimitPriceRange(
+        const domainPrice = getDomainPrice(
+          domain,
           currencyDisplayed,
-          BigInt(domainPrice)
+          quoteData?.quote
         );
-        const allowance: string = salesTaxRate
-          ? (
-              BigInt(limitPrice) +
-              BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
-            ).toString()
-          : limitPrice.toString();
+        const allowance = getAutoRenewAllowance(
+          currencyDisplayed,
+          salesTaxRate,
+          domainPrice
+        );
+
         calls.push(
           autoRenewalCalls.enableRenewal(
             AutoRenewalContracts[currencyDisplayed],

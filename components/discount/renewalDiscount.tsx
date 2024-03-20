@@ -9,7 +9,6 @@ import {
   selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
 import {
-  gweiToEth,
   applyRateToBigInt,
   numberToFixedString,
 } from "../../utils/feltService";
@@ -23,10 +22,7 @@ import {
   computeMetadataHash,
   generateSalts,
 } from "../../utils/userDataService";
-import {
-  areDomainSelected,
-  getPriceFromDomain,
-} from "../../utils/priceService";
+import { areDomainSelected } from "../../utils/priceService";
 import RenewalDomainsBox from "../domains/renewalDomainsBox";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
@@ -48,8 +44,9 @@ import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 import ConnectButton from "../UI/connectButton";
 import useBalances from "../../hooks/useBalances";
 import {
+  getAutoRenewAllowance,
+  getDomainPrice,
   getDomainPriceAltcoin,
-  getLimitPriceRange,
   getTokenQuote,
 } from "../../utils/altcoinService";
 
@@ -281,31 +278,21 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
         }
 
         selectedDomainsToArray(selectedDomains).map((domain, index) => {
-          //todo: refactor this code because we have it several time > move into a util function
           const encodedDomain = utils
             .encodeDomain(domain)
             .map((element) => element.toString())[0];
-          let domainPrice: string;
-          if (currencyDisplayed === CurrenciesType.ETH) {
-            domainPrice = getPriceFromDomain(1, domain).toString();
-          } else {
-            if (!quoteData) return;
-            domainPrice = getDomainPriceAltcoin(
-              quoteData.quote,
-              getPriceFromDomain(1, domain).toString()
-            );
-          }
 
-          const limitPrice = getLimitPriceRange(
+          const domainPrice = getDomainPrice(
+            domain,
             currencyDisplayed,
-            BigInt(domainPrice)
+            quoteData?.quote
           );
-          const allowance: string = salesTaxRate
-            ? (
-                BigInt(limitPrice) +
-                BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
-              ).toString()
-            : limitPrice.toString();
+          const allowance = getAutoRenewAllowance(
+            currencyDisplayed,
+            salesTaxRate,
+            domainPrice
+          );
+
           calls.unshift(
             autoRenewalCalls.enableRenewal(
               AutoRenewalContracts[currencyDisplayed],
@@ -429,7 +416,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
               {!termsBox
                 ? "Please accept terms & policies"
                 : invalidBalance
-                ? "You don't have enough eth"
+                ? `You don't have enough ${currencyDisplayed}`
                 : !areDomainSelected(selectedDomains)
                 ? "Select a domain to renew"
                 : emailError && needMetadata

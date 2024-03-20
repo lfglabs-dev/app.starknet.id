@@ -44,6 +44,8 @@ import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 import ConnectButton from "../UI/connectButton";
 import useBalances from "../../hooks/useBalances";
 import {
+  getAutoRenewAllowance,
+  getDomainPrice,
   getDomainPriceAltcoin,
   getLimitPriceRange,
   getTokenQuote,
@@ -292,28 +294,18 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
           const encodedDomain = utils
             .encodeDomain(domain)
             .map((element) => element.toString())[0];
-          let domainPrice: string;
-          if (currencyDisplayed === CurrenciesType.ETH) {
-            domainPrice = getPriceFromDomain(1, domain).toString();
-          } else {
-            if (!quoteData) return;
-            domainPrice = getDomainPriceAltcoin(
-              quoteData.quote,
-              getPriceFromDomain(1, domain).toString()
-            );
-          }
 
-          const limitPrice = getLimitPriceRange(
+          const domainPrice = getDomainPrice(
+            domain,
             currencyDisplayed,
-            BigInt(domainPrice)
+            quoteData?.quote
+          );
+          const allowance = getAutoRenewAllowance(
+            currencyDisplayed,
+            salesTaxRate,
+            domainPrice
           );
 
-          const allowance: string = salesTaxRate
-            ? (
-                BigInt(limitPrice) +
-                BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
-              ).toString()
-            : limitPrice.toString();
           calls.push(
             autoRenewalCalls.enableRenewal(
               AutoRenewalContracts[currencyDisplayed],
@@ -452,7 +444,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
               {!termsBox
                 ? "Please accept terms & policies"
                 : invalidBalance
-                ? "You don't have enough eth"
+                ? `You don't have enough ${currencyDisplayed}`
                 : !areDomainSelected(selectedDomains)
                 ? "Select a domain to renew"
                 : needMedadata && emailError

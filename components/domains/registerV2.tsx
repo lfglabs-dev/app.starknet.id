@@ -44,6 +44,7 @@ import { useRouter } from "next/router";
 import ConnectButton from "../UI/connectButton";
 import useBalances from "../../hooks/useBalances";
 import {
+  getAutoRenewAllowance,
   getDomainPriceAltcoin,
   getLimitPriceRange,
   getTokenQuote,
@@ -283,13 +284,11 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         );
       }
 
-      const limitPrice = getLimitPriceRange(currencyDisplayed, BigInt(price));
-      const allowance: string = salesTaxRate
-        ? (
-            BigInt(limitPrice) +
-            BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
-          ).toString()
-        : limitPrice.toString();
+      const allowance = getAutoRenewAllowance(
+        currencyDisplayed,
+        salesTaxRate,
+        price
+      );
       calls.push(
         autoRenewalCalls.enableRenewal(
           AutoRenewalContracts[currencyDisplayed],

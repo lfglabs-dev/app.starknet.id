@@ -37,6 +37,7 @@ import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 import ConnectButton from "../UI/connectButton";
 import useBalances from "../../hooks/useBalances";
 import {
+  getAutoRenewAllowance,
   getDomainPriceAltcoin,
   getLimitPriceRange,
   getTokenQuote,
@@ -221,13 +222,12 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           )
         );
       }
-      const limitPrice = getLimitPriceRange(currencyDisplayed, BigInt(price));
-      const allowance: string = salesTaxRate
-        ? (
-            BigInt(limitPrice) +
-            BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
-          ).toString()
-        : limitPrice.toString();
+
+      const allowance = getAutoRenewAllowance(
+        currencyDisplayed,
+        salesTaxRate,
+        price
+      );
       calls.push(
         autoRenewalCalls.enableRenewal(
           AutoRenewalContracts[currencyDisplayed],
@@ -390,7 +390,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
               {!termsBox
                 ? "Please accept terms & policies"
                 : invalidBalance
-                ? "You don't have enough eth"
+                ? `You don't have enough ${currencyDisplayed}`
                 : emailError
                 ? "Enter a valid Email"
                 : "Register my domain"}

@@ -203,7 +203,6 @@ const registrationCalls = {
   altcoinBuy,
   mainId,
   mint,
-  // buy_discounted,
   vatTransfer,
   renew,
   altcoinRenew,

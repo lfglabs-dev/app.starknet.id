@@ -1,6 +1,7 @@
 import Big from "big.js";
 import { CurrenciesRange, CurrenciesType } from "./constants";
 import { applyRateToBigInt } from "./feltService";
+import { getPriceFromDomain } from "./priceService";
 
 export const getTokenQuote = async (tokenAddress: string) => {
   try {
@@ -61,4 +62,36 @@ export const getLimitPriceRange = (
     default:
       return price;
   }
+};
+
+export const getDomainPrice = (
+  domain: string,
+  currencyType: CurrenciesType,
+  quote?: string
+): string => {
+  if (currencyType === CurrenciesType.ETH) {
+    return getPriceFromDomain(1, domain).toString();
+  } else {
+    return getDomainPriceAltcoin(
+      quote as string,
+      getPriceFromDomain(1, domain).toString()
+    );
+  }
+};
+
+// function to compute the limit price for the auto renewal contract
+// depending on the token selected by the user
+export const getAutoRenewAllowance = (
+  currencyType: CurrenciesType,
+  salesTaxRate: number,
+  domainPrice: string
+): string => {
+  const limitPrice = getLimitPriceRange(currencyType, BigInt(domainPrice));
+  const allowance: string = salesTaxRate
+    ? (
+        BigInt(limitPrice) + BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
+      ).toString()
+    : limitPrice.toString();
+
+  return allowance;
 };
