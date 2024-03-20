@@ -55,6 +55,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   // AutoRenewals
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
+  const [autoRenewalContract, setAutoRenewalContract] = useState<string>("");
   const [allowance, setAllowance] = useState<string>("0");
   const [hasReverseAddressRecord, setHasReverseAddressRecord] =
     useState<boolean>(false);
@@ -118,6 +119,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         if (!data.error && data.enabled) {
           setIsAutoRenewalEnabled(true);
           setAllowance(BigInt(data.allowance).toString(10));
+          setAutoRenewalContract(
+            data.auto_renew_contract ?? process.env.NEXT_PUBLIC_RENEWAL_CONTRACT
+          );
         } else {
           setIsAutoRenewalEnabled(false);
         }
@@ -149,7 +153,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   useEffect(() => {
     if (isAutoRenewalEnabled) {
       setDisableRenewalCalldata(
-        autoRenewalCalls.disableRenewal(callDataEncodedDomain[1].toString())
+        autoRenewalCalls.disableRenewal(
+          autoRenewalContract,
+          callDataEncodedDomain[1].toString()
+        )
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

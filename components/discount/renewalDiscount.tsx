@@ -241,6 +241,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   }, [isSwissResident, price]);
 
   useEffect(() => {
+    if (currencyDisplayed !== CurrenciesType.ETH && !quoteData) return;
     if (selectedDomains && metadataHashes) {
       // If normal renewal
       // const calls = [

@@ -216,6 +216,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   }, [isSwissResident, price, needMedadata, salesTaxRate]);
 
   useEffect(() => {
+    if (currencyDisplayed !== CurrenciesType.ETH && !quoteData) return;
     if (selectedDomains && metadataHash) {
       const calls = [];
 

@@ -30,10 +30,13 @@ function enableRenewal(
   };
 }
 
-function disableRenewal(encodedDomain: string): Call[] {
+function disableRenewal(
+  autoRenewalContract: string,
+  encodedDomain: string
+): Call[] {
   return [
     {
-      contractAddress: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+      contractAddress: autoRenewalContract,
       entrypoint: "disable_renewals",
       calldata: [encodedDomain.toString()],
     },

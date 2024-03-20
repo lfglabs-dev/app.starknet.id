@@ -225,6 +225,7 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
   }, [isSwissResident, price, needMedadata, salesTaxRate]);
 
   useEffect(() => {
+    if (currencyDisplayed !== CurrenciesType.ETH && !quoteData) return;
     if (selectedDomains && metadataHash) {
       const calls = [
         registrationCalls.approve(price, ERC20Contract[currencyDisplayed]),
