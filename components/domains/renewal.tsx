@@ -230,11 +230,6 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     }
   }, [price, currencyDisplayed, balances]);
 
-  function changeEmail(value: string): void {
-    setEmail(value);
-    setEmailError(isValidEmail(value) ? false : true);
-  }
-
   useEffect(() => {
     if (!needMedadata && price) {
       setSalesTaxAmount(applyRateToBigInt(price, salesTaxRate));
@@ -334,6 +329,11 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   function changeDuration(value: number): void {
     if (isNaN(value) || value > maxYearsToRegister || value < 1) return;
     setDuration(value);
+  }
+
+  function changeEmail(value: string): void {
+    setEmail(value);
+    setEmailError(isValidEmail(value) ? false : true);
   }
 
   const onCurrencySwitch = (currency: CurrenciesType) => {

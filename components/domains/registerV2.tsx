@@ -13,7 +13,7 @@ import {
   formatHexString,
   isValidEmail,
 } from "../../utils/stringService";
-import { applyRateToBigInt, gweiToEth } from "../../utils/feltService";
+import { applyRateToBigInt } from "../../utils/feltService";
 import SelectIdentity from "./selectIdentity";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi, Call } from "starknet";
@@ -46,7 +46,6 @@ import useBalances from "../../hooks/useBalances";
 import {
   getAutoRenewAllowance,
   getDomainPriceAltcoin,
-  getLimitPriceRange,
   getTokenQuote,
 } from "../../utils/altcoinService";
 
@@ -381,11 +380,15 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     }
   }, [isSwissResident, price, needMedadata, salesTaxRate]);
 
+  // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
-    if (!quoteData) {
+    if (currencyDisplayed === CurrenciesType.ETH) {
       setPrice(priceInEth);
+    } else if (quoteData) {
+      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
+      setPrice(priceInAltcoin);
     }
-  }, [priceInEth]);
+  }, [priceInEth, quoteData]);
 
   const onCurrencySwitch = (currency: CurrenciesType) => {
     // update currencyDisplayed
@@ -394,13 +397,9 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     // get quote from server
     if (currency === CurrenciesType.ETH) {
       setQuoteData(null);
-      setPrice(priceInEth);
     } else {
       getTokenQuote(ERC20Contract[currency]).then((data) => {
         setQuoteData(data);
-        // get domain price in altcoin
-        const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
-        setPrice(priceInAltcoin);
       });
     }
   };
