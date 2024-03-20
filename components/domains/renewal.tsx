@@ -8,7 +8,7 @@ import {
   selectedDomainsToArray,
   selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
-import { gweiToEth, applyRateToBigInt } from "../../utils/feltService";
+import { applyRateToBigInt } from "../../utils/feltService";
 import { Call } from "starknet";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
@@ -20,7 +20,6 @@ import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
   getPriceFromDomains,
-  getPriceFromDomain,
 } from "../../utils/priceService";
 import RenewalDomainsBox from "./renewalDomainsBox";
 import registrationCalls from "../../utils/callData/registrationCalls";
@@ -47,7 +46,6 @@ import {
   getAutoRenewAllowance,
   getDomainPrice,
   getDomainPriceAltcoin,
-  getLimitPriceRange,
   getTokenQuote,
 } from "../../utils/altcoinService";
 

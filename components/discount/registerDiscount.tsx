@@ -6,7 +6,6 @@ import { utils } from "starknetid.js";
 import { getDomainWithStark, isValidEmail } from "../../utils/stringService";
 import {
   applyRateToBigInt,
-  gweiToEth,
   hexToDecimal,
   numberToFixedString,
 } from "../../utils/feltService";
@@ -39,7 +38,6 @@ import useBalances from "../../hooks/useBalances";
 import {
   getAutoRenewAllowance,
   getDomainPriceAltcoin,
-  getLimitPriceRange,
   getTokenQuote,
 } from "../../utils/altcoinService";
 
