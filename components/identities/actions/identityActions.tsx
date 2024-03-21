@@ -55,8 +55,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   // AutoRenewals
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
-  const [autoRenewalContract, setAutoRenewalContract] = useState<string>("");
-  const [allowance, setAllowance] = useState<string>("0");
+  const [autoRenewalData, setAutoRenewalData] = useState<RenewalData[]>([]);
   const [hasReverseAddressRecord, setHasReverseAddressRecord] =
     useState<boolean>(false);
   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
@@ -116,12 +115,15 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     )
       .then((response) => response.json())
       .then((data) => {
-        if (!data.error && data.enabled) {
-          setIsAutoRenewalEnabled(true);
-          setAllowance(BigInt(data.allowance).toString(10));
-          setAutoRenewalContract(
-            data.auto_renew_contract ?? process.env.NEXT_PUBLIC_RENEWAL_CONTRACT
-          );
+        if (!data.error && data.length > 0) {
+          // filter results to only show enabled renewals
+          const filteredData = data.filter((elem: RenewalData) => elem.enabled);
+          if (filteredData.length > 0) {
+            setIsAutoRenewalEnabled(true);
+            setAutoRenewalData(filteredData);
+          } else {
+            setIsAutoRenewalEnabled(false);
+          }
         } else {
           setIsAutoRenewalEnabled(false);
         }
@@ -152,15 +154,20 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   useEffect(() => {
     if (isAutoRenewalEnabled) {
-      setDisableRenewalCalldata(
-        autoRenewalCalls.disableRenewal(
-          autoRenewalContract,
-          callDataEncodedDomain[1].toString()
-        )
-      );
+      const disableCallData: Call[] = [];
+      autoRenewalData.forEach((renewalData) => {
+        disableCallData.push(
+          autoRenewalCalls.disableRenewal(
+            renewalData.auto_renew_contract ??
+              (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
+            callDataEncodedDomain[1].toString()
+          )
+        );
+      });
+      setDisableRenewalCalldata(disableCallData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allowance, isAutoRenewalEnabled]); // We don't add callDataEncodedDomain because it would create an infinite loop
+  }, [autoRenewalData, isAutoRenewalEnabled]); // We don't add callDataEncodedDomain because it would create an infinite loop
 
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;

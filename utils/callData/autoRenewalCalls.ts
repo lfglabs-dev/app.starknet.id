@@ -33,14 +33,12 @@ function enableRenewal(
 function disableRenewal(
   autoRenewalContract: string,
   encodedDomain: string
-): Call[] {
-  return [
-    {
-      contractAddress: autoRenewalContract,
-      entrypoint: "disable_renewals",
-      calldata: [encodedDomain.toString()],
-    },
-  ];
+): Call {
+  return {
+    contractAddress: autoRenewalContract,
+    entrypoint: "disable_renewals",
+    calldata: [encodedDomain.toString()],
+  };
 }
 
 const registrationCalls = {
