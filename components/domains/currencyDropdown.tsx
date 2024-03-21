@@ -12,13 +12,13 @@ const CurrencyDropdown: FunctionComponent<CurrencyDropdownProps> = ({
   currencyDisplayed,
   onCurrencySwitch,
 }) => {
-  console.log("currencyDisplayed", currencyDisplayed);
   return (
     <div className={styles.currencySwitcher}>
       <Select
         fullWidth
         value={currencyDisplayed}
         defaultValue={currencyDisplayed}
+        inputProps={{ MenuProps: { disableScrollLock: true } }}
         onChange={(e) => onCurrencySwitch(e.target.value as CurrenciesType)}
         style={{
           borderRadius: "8.983px",
