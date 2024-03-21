@@ -2,6 +2,7 @@ import Big from "big.js";
 import { CurrenciesRange, CurrenciesType } from "./constants";
 import { applyRateToBigInt } from "./feltService";
 import { getPriceFromDomain } from "./priceService";
+import { Result } from "starknet";
 
 export const getTokenQuote = async (tokenAddress: string) => {
   try {
@@ -61,6 +62,22 @@ export const getLimitPriceRange = (
     //   );
     default:
       return price;
+  }
+};
+
+export const getRenewalPriceETH = (
+  priceError: Error | null,
+  priceData: Result | undefined,
+  domain: string,
+  duration: number
+): string => {
+  if (priceError || !priceData) return getPriceFromDomain(1, domain).toString();
+  else {
+    // Divide the priceData by the duration to get the renewal price
+    const high = priceData?.["price"].high << BigInt(128);
+    const price = priceData?.["price"].low + high;
+    const renew = price / BigInt(duration);
+    return renew.toString(10);
   }
 };
 

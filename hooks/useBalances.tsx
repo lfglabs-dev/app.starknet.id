@@ -2,11 +2,7 @@ import { useContractRead } from "@starknet-react/core";
 import { useMulticallContract } from "./contracts";
 import { Abi, CairoCustomEnum, Call, RawArgs, hash } from "starknet";
 import { useEffect, useState } from "react";
-import {
-  ERC20Contract,
-  ERC20ContractTestnet,
-  CurrenciesType,
-} from "../utils/constants";
+import { ERC20Contract, CurrenciesType } from "../utils/constants";
 import { fromUint256 } from "../utils/feltService";
 
 export default function useBalances(address?: string) {
@@ -21,14 +17,9 @@ export default function useBalances(address?: string) {
     watch: true,
   });
 
-  const buildCalldata = () => {
-    let currencies = Object.values(
-      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-        ? ERC20ContractTestnet
-        : ERC20Contract
-    );
-    console.log("currencies", currencies);
-    let calls: MulticallCallData[] = [];
+  const balancesCallData = () => {
+    let currencies = Object.values(ERC20Contract);
+    const calls: MulticallCallData[] = [];
     currencies.forEach((currency) => {
       calls.push({
         execution: new CairoCustomEnum({
@@ -51,14 +42,14 @@ export default function useBalances(address?: string) {
       setCallData([]);
       return;
     }
-    const calldata = buildCalldata();
+    const calldata = balancesCallData();
     setCallData(calldata as Call[]);
   }, [address]);
 
   useEffect(() => {
     if (erc20BalanceError || !erc20BalanceData) return;
-    let currencies = Object.values(CurrenciesType);
-    let balanceEntries: TokenBalance = {};
+    const currencies = Object.values(CurrenciesType);
+    const balanceEntries: TokenBalance = {};
     currencies.forEach((currency, index) => {
       let balance = fromUint256(
         BigInt(erc20BalanceData[index][0]),

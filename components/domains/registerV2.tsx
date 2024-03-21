@@ -46,6 +46,7 @@ import useBalances from "../../hooks/useBalances";
 import {
   getAutoRenewAllowance,
   getDomainPriceAltcoin,
+  getRenewalPriceETH,
   getTokenQuote,
 } from "../../utils/altcoinService";
 
@@ -170,24 +171,18 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   }, [priceData, priceError, duration, domain]);
 
   useEffect(() => {
-    const getRenewalPriceETH = (): string => {
-      if (priceError || !priceData)
-        return getPriceFromDomain(1, domain).toString();
-      else {
-        // Divide the priceData by the duration to get the renewal price
-        const high = priceData?.["price"].high << BigInt(128);
-        const price = priceData?.["price"].low + high;
-        const renew = price / BigInt(duration);
-        return renew.toString(10);
-      }
-    };
-
+    const renewalPrice = getRenewalPriceETH(
+      priceError,
+      priceData,
+      domain,
+      duration
+    );
     if (currencyDisplayed === CurrenciesType.ETH) {
-      setRenewPrice(getRenewalPriceETH());
+      setRenewPrice(renewalPrice);
     } else {
       const priceInAltcoin = getDomainPriceAltcoin(
         quoteData?.quote as string,
-        getRenewalPriceETH()
+        renewalPrice
       );
       setRenewPrice(priceInAltcoin);
     }

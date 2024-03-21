@@ -127,16 +127,11 @@ export enum ERC20Contract {
   // USDT = "0x068f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8",
 }
 
-export enum ERC20ContractTestnet {
-  ETH = "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-  STRK = "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-  // USDC = "0x005a643907b9a4bc6a55e9069c4fd5fd1f5c79a22470690f75556c4736e34426",
-  // USDT = "0x0386e8d061177f19b3b485c20e31137e6f6bc497cc635ccdfcab96fadf5add6a",
-}
-
-export enum AutoRenewalContracts {
-  ETH = "0x020379Ba14750ECEE8dde204D0649808BCf6D32E9fDe81Ca952Ab0360cdC0937",
-  STRK = "0x078F63fcD145Ddc6ca932E562b466AFbfD7c9E882C9aa70f3e5b2ce05cD892eA",
+export const AutoRenewalContracts = {
+  ETH: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string,
+  STRK: process.env.NEXT_PUBLIC_RENEWAL_STRK_CONTRACT as string,
   // USDC = "0x0",
   // USDT = "0x0",
-}
+};
+export type AutoRenewalContracts =
+  (typeof AutoRenewalContracts)[keyof typeof AutoRenewalContracts];
