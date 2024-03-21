@@ -16,6 +16,8 @@ export const getTokenQuote = async (tokenAddress: string) => {
 };
 
 export const getDomainPriceAltcoin = (quote: string, priceInEth: string) => {
+  if (quote === "1") return priceInEth;
+
   const priceBigInt = new Big(priceInEth);
   const quoteBigInt = new Big(quote);
   const scaleFactor = new Big(10 ** 18);
@@ -27,15 +29,6 @@ export const getDomainPriceAltcoin = (quote: string, priceInEth: string) => {
     .toString();
 
   return price;
-};
-
-export const getQuoteInWad = (quote: string) => {
-  const quoteBigInt = new Big(quote);
-  const scaleFactor = new Big(10 ** 18);
-
-  const res = quoteBigInt.mul(scaleFactor).round(0).toString();
-
-  return res;
 };
 
 export const getLimitPriceRange = (
