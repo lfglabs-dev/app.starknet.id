@@ -8,7 +8,7 @@ import {
   selectedDomainsToArray,
   selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
-import { applyRateToBigInt } from "../../utils/feltService";
+import { applyRateToBigInt, hexToDecimal } from "../../utils/feltService";
 import { Call } from "starknet";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
@@ -75,6 +75,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
+  const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
   const { address } = useAccount();
   const { writeAsync: execute, data: renewData } = useContractWrite({
     calls: callData,
@@ -284,29 +285,32 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         }
 
         selectedDomainsToArray(selectedDomains).map((domain, index) => {
-          const encodedDomain = utils
-            .encodeDomain(domain)
-            .map((element) => element.toString())[0];
+          // we enable renewal only for the domains that are not already subscribed
+          if (nonSubscribedDomains?.includes(domain)) {
+            const encodedDomain = utils
+              .encodeDomain(domain)
+              .map((element) => element.toString())[0];
 
-          const domainPrice = getDomainPrice(
-            domain,
-            currencyDisplayed,
-            quoteData?.quote
-          );
-          const allowance = getAutoRenewAllowance(
-            currencyDisplayed,
-            salesTaxRate,
-            domainPrice
-          );
+            const domainPrice = getDomainPrice(
+              domain,
+              currencyDisplayed,
+              quoteData?.quote
+            );
+            const allowance = getAutoRenewAllowance(
+              currencyDisplayed,
+              salesTaxRate,
+              domainPrice
+            );
 
-          calls.push(
-            autoRenewalCalls.enableRenewal(
-              AutoRenewalContracts[currencyDisplayed],
-              encodedDomain,
-              allowance,
-              "0x" + metadataHash
-            )
-          );
+            calls.push(
+              autoRenewalCalls.enableRenewal(
+                AutoRenewalContracts[currencyDisplayed],
+                encodedDomain,
+                allowance,
+                "0x" + metadataHash
+              )
+            );
+          }
         });
       }
       setCallData(calls);
@@ -322,7 +326,23 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     renewalBox,
     currencyDisplayed,
     quoteData,
+    nonSubscribedDomains,
   ]);
+
+  // we get the list of domains that do not have a autorenewal already enabled
+  useEffect(() => {
+    if (address) {
+      fetch(
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
+        }/renewal/get_non_subscribed_domains?addr=${hexToDecimal(address)}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setNonSubscribedDomains(data);
+        });
+    }
+  }, [address, setSelectedDomains]);
 
   function changeDuration(value: number): void {
     if (isNaN(value) || value > maxYearsToRegister || value < 1) return;
