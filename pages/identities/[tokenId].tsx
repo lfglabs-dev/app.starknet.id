@@ -99,7 +99,7 @@ const TokenIdPage: NextPage = () => {
                     identity={identity}
                     tokenId={tokenId}
                     isOwner={isOwner}
-                    onEdit={() => setIsUpdatingPp(true)}
+                    onPPClick={() => setIsUpdatingPp(true)}
                     ppImageUrl={ppImageUrl}
                   />
                   {!hideActions && (
