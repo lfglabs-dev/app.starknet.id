@@ -83,7 +83,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     address: contract?.address as string,
     abi: contract?.abi as Abi,
     functionName: "compute_buy_price",
-    args: [encodedDomain, duration * 365],
+    args: [domain.length, duration * 365],
   });
 
   const { account, address } = useAccount();
