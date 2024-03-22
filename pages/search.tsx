@@ -89,6 +89,7 @@ const SearchPage: NextPage = () => {
             identity={identity}
             isOwner={isOwner}
             ppImageUrl={ppImageUrl}
+            onEdit={() => router.push(`/identities/${identity.id}`)}
           />
         ) : (
           <IdentityCardSkeleton />

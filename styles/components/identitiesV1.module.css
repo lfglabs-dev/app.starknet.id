@@ -132,3 +132,12 @@
   font-weight: 500;
   line-height: 16px;
 }
+
+.identitySkeleton {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3.5rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 13vh;
+}
