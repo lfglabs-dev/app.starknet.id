@@ -327,6 +327,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
           </div>
         </div>
         <div className={styles.summary}>
+          <p className={styles.legend}>Your subscription currency</p>
           <CurrencyDropdown
             onCurrencySwitch={onCurrencySwitch}
             currencyDisplayed={currencyDisplayed}
@@ -338,7 +339,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
             renewalBox={false}
             isArOnforced={true}
           />
-          {/* // todo : add dropdown currencies */}
           {address ? (
             <Button
               onClick={() =>
