@@ -72,6 +72,7 @@ const TokenIdPage: NextPage = () => {
           })
           .then((data: IdentityData) => {
             setIdentity(new Identity(data));
+            setIsIdentityADomain(true);
           })
           .catch(() => {
             setIsIdentityADomain(false);
