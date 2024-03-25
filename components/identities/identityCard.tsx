@@ -23,7 +23,7 @@ type IdentityCardProps = {
   identity?: Identity;
   tokenId: string;
   isOwner: boolean;
-  updateProfilePic?: () => void;
+  onPPClick?: () => void;
   ppImageUrl: string;
 };
 
@@ -31,7 +31,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   tokenId,
   identity,
   isOwner,
-  updateProfilePic,
+  onPPClick,
   ppImageUrl,
 }) => {
   const responsiveDomainOrId = identity?.domain
@@ -67,7 +67,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
               {isHovered && isOwner && !isMobile ? (
                 <div
                   className={styles.pfp}
-                  onClick={() => updateProfilePic && updateProfilePic()}
+                  onClick={() => onPPClick && onPPClick()}
                 >
                   <EditIcon width="28" color={theme.palette.secondary.main} />
                   <p>Edit your NFT</p>
@@ -93,7 +93,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                   {isOwner && isMobile ? (
                     <div
                       className={styles.mobilePfp}
-                      onClick={() => updateProfilePic && updateProfilePic()}
+                      onClick={() => onPPClick && onPPClick()}
                     >
                       <EditIcon
                         width="16"

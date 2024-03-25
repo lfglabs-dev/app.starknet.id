@@ -89,6 +89,9 @@ const SearchPage: NextPage = () => {
             identity={identity}
             isOwner={isOwner}
             ppImageUrl={ppImageUrl}
+            onPPClick={() =>
+              router.push(`/identities/${hexToDecimal(identity.id)}`)
+            }
           />
         ) : (
           <IdentityCardSkeleton />

@@ -15,8 +15,13 @@
     "jsx": "preserve",
     "incremental": true,
     "suppressImplicitAnyIndexErrors": true,
-    "ignoreDeprecations": "5.0"
+    "ignoreDeprecations": "5.0",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
+
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "jest.config.js"],
   "exclude": ["node_modules"]
 }

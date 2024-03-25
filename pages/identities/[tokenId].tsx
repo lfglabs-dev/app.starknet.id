@@ -72,7 +72,7 @@ const TokenIdPage: NextPage = () => {
           })
           .then((data: IdentityData) => {
             setIdentity(new Identity(data));
-            setIsIdentityADomain(Boolean(data?.domain));
+            setIsIdentityADomain(true);
           })
           .catch(() => {
             setIsIdentityADomain(false);
@@ -100,7 +100,7 @@ const TokenIdPage: NextPage = () => {
                     identity={identity}
                     tokenId={tokenId}
                     isOwner={isOwner}
-                    updateProfilePic={() => setIsUpdatingPp(true)}
+                    onPPClick={() => setIsUpdatingPp(true)}
                     ppImageUrl={ppImageUrl}
                   />
                   {!hideActions && (
