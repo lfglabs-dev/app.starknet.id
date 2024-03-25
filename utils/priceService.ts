@@ -3,8 +3,8 @@ import { getDomainLength } from "./stringService";
 export const PRICES = {
   ONE: BigInt("1068493150684932") * BigInt(365),
   TWO: BigInt("657534246575343") * BigInt(365),
-  THREE: BigInt("73000000000000000"), // 0.073 ETH per year
-  FOUR: BigInt("26999999999999990"), // 0.0028 ETH per year
+  THREE: BigInt("200000000000000") * BigInt(365),
+  FOUR: BigInt("73972602739726") * BigInt(365),
   FIVE: BigInt("24657534246575") * BigInt(365),
 };
 
