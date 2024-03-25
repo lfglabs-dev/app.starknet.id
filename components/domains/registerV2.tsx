@@ -12,14 +12,9 @@ import { utils } from "starknetid.js";
 import {
   getDomainWithStark,
   formatHexString,
-  isHexString,
   isValidEmail,
 } from "../../utils/stringService";
-import {
-  applyRateToBigInt,
-  gweiToEth,
-  hexToDecimal,
-} from "../../utils/feltService";
+import { applyRateToBigInt, gweiToEth } from "../../utils/feltService";
 import SelectIdentity from "./selectIdentity";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi, Call } from "starknet";
@@ -77,7 +72,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
-  const [redirectTokenId, setRedirectTokenId] = useState<number>(0);
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -140,7 +134,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         )
       );
     })();
-  }, [email, salt, renewalBox, isSwissResident]);
+  }, [email, salt, renewalBox, isSwissResident, needMedadata]);
 
   useEffect(() => {
     // if price query does not work we use the off-chain hardcoded price
@@ -162,7 +156,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       const renew = price / BigInt(duration);
       setRenewPrice(renew.toString(10));
     }
-  }, [priceData, priceError, domain]);
+  }, [priceData, priceError, domain, duration]);
 
   useEffect(() => {
     if (userBalanceDataError || !userBalanceData) setBalance("");
@@ -247,7 +241,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // Merge and set the call data
     setCallData(calls);
-    setRedirectTokenId(tokenIdToUse);
   }, [
     tokenId,
     duration,
