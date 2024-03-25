@@ -341,7 +341,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
   function closeModal(): void {
     setIsTxModalOpen(false);
-    router.push(`/identities/${redirectTokenId}`);
+    router.push(`/identities`);
   }
 
   return (
