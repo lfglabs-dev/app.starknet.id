@@ -26,9 +26,7 @@ function setResolving(encodedDomain: string, targetAddr: string): Call {
 }
 
 function setAsMainDomain(encodedDomain: string): Call {
-  // As we're not owner of .sol domain on testnet, we use .soldomain for testing purposes
-  const rootDomain =
-    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "57437602656154" : "16434";
+  const rootDomain = "16434"; // sol encoded
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_address_to_domain",

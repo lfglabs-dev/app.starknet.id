@@ -41,10 +41,8 @@ const DomainActions: FunctionComponent<DomainActionsProps> = ({ name }) => {
       calls: mainDomainCalldata,
     });
   const { contract } = useNamingContract();
-  const rootDomain =
-    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "soldomain" : "sol";
   const encodedDomain = utils
-    .encodeDomain(`${name}.${rootDomain}.stark`)
+    .encodeDomain(`${name}.sol.stark`)
     .map((x) => x.toString());
   const { data: resolveData, error: resolveError } = useContractRead({
     address: contract?.address as string,
