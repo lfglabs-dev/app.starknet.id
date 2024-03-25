@@ -34,7 +34,6 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   currencyDisplayed,
   onCurrencySwitch,
 }) => {
-  // const [isEthPriceDisplayed, setIsEthPriceDisplayed] = useState<boolean>(true);
   const [ethUsdPrice, setEthUsdPrice] = useState<number>(0); // price of 1ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<number>(0);
   const recurrence = renewalBox && duration === 1 ? "/year" : "";
@@ -84,31 +83,12 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       : "";
 
     return displayPrice(
-      String(Number(gweiToEth(registrationPrice)))
+      numberToFixedString(Number(gweiToEth(registrationPrice)), 3)
         .concat(` ${currencyDisplayed} `)
         .concat(recurrence),
       salesTaxInfo
     );
   }
-
-  // function displaySwissdPrice(): ReactNode {
-  //   const salesTaxAmount = salesTaxRate * usdRegistrationPrice;
-  //   const salesTaxInfo = salesTaxAmount
-  //     ? ` (+ ${numberToFixedString(Number(salesTaxAmount))}$ for US VAT)`
-  //     : "";
-
-  //   return displayPrice(
-  //     numberToFixedString(usdRegistrationPrice)
-  //       .concat(" $ ")
-  //       .concat(recurrence),
-  //     salesTaxInfo
-  //   );
-  // }
-
-  // function updateCurrencyDisplayed(currency: CurrenciesType) {
-  //   console.log("currency to display", currency);
-  //   setIsCurrencyDisplayed(currency);
-  // }
 
   return (
     <div className={styles.pricesSummary}>
