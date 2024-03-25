@@ -115,17 +115,36 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   }, [email, isSwissResident, salt]);
 
   // refetch new quote if the timestamp from quote is expired
-  setTimeout(() => {
-    if (!quoteData || currencyDisplayed === CurrenciesType.ETH) return;
-    if (quoteData.max_quote_validity >= new Date().getTime()) {
+  useEffect(() => {
+    const fetchQuote = () => {
       getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
         setQuoteData(data);
-        // get domain price in altcoin
-        const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
-        setPrice(priceInAltcoin);
       });
-    }
-  }, 15000);
+    };
+
+    const scheduleRefetch = () => {
+      const now = parseInt((new Date().getTime() / 1000).toFixed(0));
+      // Check if we need to refetch
+      if (!quoteData || currencyDisplayed === CurrenciesType.ETH) {
+        setQuoteData(null);
+        // we don't need to check for quote until currencyDisplayed is updated
+        return;
+      }
+
+      if (quoteData.max_quote_validity <= now) {
+        fetchQuote();
+      }
+
+      // Calculate the time until the next validity check
+      const timeUntilNextCheck = quoteData.max_quote_validity - now;
+      setTimeout(scheduleRefetch, Math.max(15000, timeUntilNextCheck * 100));
+    };
+
+    // Initial fetch
+    fetchQuote();
+    // Start the refetch scheduling
+    scheduleRefetch();
+  }, [currencyDisplayed, price, ERC20Contract]);
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
@@ -304,23 +323,14 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     }
   }, [isSwissResident, price]);
 
-  const onCurrencySwitch = (currency: CurrenciesType) => {
-    // update currencyDisplayed
-    setCurrencyDisplayed(currency);
-
-    // get quote from server
-    if (currency === CurrenciesType.ETH) {
-      setQuoteData(null);
+  useEffect(() => {
+    if (currencyDisplayed === CurrenciesType.ETH) {
       setPrice(priceInEth);
-    } else {
-      getTokenQuote(ERC20Contract[currency]).then((data) => {
-        setQuoteData(data);
-        // get domain price in altcoin
-        const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
-        setPrice(priceInAltcoin);
-      });
+    } else if (quoteData) {
+      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
+      setPrice(priceInAltcoin);
     }
-  };
+  }, [priceInEth, quoteData]);
 
   return (
     <div className={styles.container}>
@@ -356,7 +366,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
             currencyDisplayed={currencyDisplayed}
-            onCurrencySwitch={onCurrencySwitch}
+            onCurrencySwitch={setCurrencyDisplayed}
             customMessage={customMessage}
           />
           <Divider className="w-full" />

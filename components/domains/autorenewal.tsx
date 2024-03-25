@@ -171,14 +171,36 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   }, [email, salt, renewalBox, isSwissResident, needMedadata]);
 
   // refetch new quote if the timestamp from quote is expired
-  setTimeout(() => {
-    if (!quoteData || currencyDisplayed === CurrenciesType.ETH) return;
-    if (quoteData.max_quote_validity >= new Date().getTime()) {
+  useEffect(() => {
+    const fetchQuote = () => {
       getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
         setQuoteData(data);
       });
-    }
-  }, 15000);
+    };
+
+    const scheduleRefetch = () => {
+      const now = parseInt((new Date().getTime() / 1000).toFixed(0));
+      // Check if we need to refetch
+      if (!quoteData || currencyDisplayed === CurrenciesType.ETH) {
+        setQuoteData(null);
+        // we don't need to check for quote until currencyDisplayed is updated
+        return;
+      }
+
+      if (quoteData.max_quote_validity <= now) {
+        fetchQuote();
+      }
+
+      // Calculate the time until the next validity check
+      const timeUntilNextCheck = quoteData.max_quote_validity - now;
+      setTimeout(scheduleRefetch, Math.max(15000, timeUntilNextCheck * 100));
+    };
+
+    // Initial fetch
+    fetchQuote();
+    // Start the refetch scheduling
+    scheduleRefetch();
+  }, [currencyDisplayed, price, ERC20Contract]);
 
   // if selectedDomains or duration have changed, we update priceInEth
   useEffect(() => {
@@ -272,20 +294,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     setEmailError(isValidEmail(value) ? false : true);
   }
 
-  const onCurrencySwitch = (currency: CurrenciesType) => {
-    // update currencyDisplayed
-    setCurrencyDisplayed(currency);
-    // get quote from server
-    if (currency === CurrenciesType.ETH) {
-      setQuoteData(null);
-      setPrice(priceInEth);
-    } else {
-      getTokenQuote(ERC20Contract[currency]).then((data) => {
-        setQuoteData(data);
-      });
-    }
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -329,7 +337,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         <div className={styles.summary}>
           <p className={styles.legend}>Your subscription currency</p>
           <CurrencyDropdown
-            onCurrencySwitch={onCurrencySwitch}
+            onCurrencySwitch={setCurrencyDisplayed}
             currencyDisplayed={currencyDisplayed}
           />
           <RegisterCheckboxes

@@ -90,17 +90,36 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const balances = useBalances(address); // fetch the user balances for all whitelisted tokens
 
   // refetch new quote if the timestamp from quote is expired
-  setTimeout(() => {
-    if (!quoteData || currencyDisplayed === CurrenciesType.ETH) return;
-    if (quoteData.max_quote_validity >= new Date().getTime()) {
+  useEffect(() => {
+    const fetchQuote = () => {
       getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
         setQuoteData(data);
-        // get domain price in altcoin
-        const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
-        setPrice(priceInAltcoin);
       });
-    }
-  }, 15000);
+    };
+
+    const scheduleRefetch = () => {
+      const now = parseInt((new Date().getTime() / 1000).toFixed(0));
+      // Check if we need to refetch
+      if (!quoteData || currencyDisplayed === CurrenciesType.ETH) {
+        setQuoteData(null);
+        // we don't need to check for quote until currencyDisplayed is updated
+        return;
+      }
+
+      if (quoteData.max_quote_validity <= now) {
+        fetchQuote();
+      }
+
+      // Calculate the time until the next validity check
+      const timeUntilNextCheck = quoteData.max_quote_validity - now;
+      setTimeout(scheduleRefetch, Math.max(15000, timeUntilNextCheck * 100));
+    };
+
+    // Initial fetch
+    fetchQuote();
+    // Start the refetch scheduling
+    scheduleRefetch();
+  }, [currencyDisplayed, priceInEth, ERC20Contract]);
 
   useEffect(() => {
     if (!address) return;
@@ -208,6 +227,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     }
   }, [selectedDomains, duration, quoteData]);
 
+  // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
     if (currencyDisplayed === CurrenciesType.ETH) {
       setPrice(priceInEth);
@@ -354,24 +374,6 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     setEmailError(isValidEmail(value) ? false : true);
   }
 
-  const onCurrencySwitch = (currency: CurrenciesType) => {
-    // update currencyDisplayed
-    setCurrencyDisplayed(currency);
-
-    // get quote from server
-    if (currency === CurrenciesType.ETH) {
-      setQuoteData(null);
-      setPrice(priceInEth);
-    } else {
-      getTokenQuote(ERC20Contract[currency]).then((data) => {
-        setQuoteData(data);
-        // get domain price in altcoin
-        const priceInAltcoin = getDomainPriceAltcoin(data.quote, priceInEth);
-        setPrice(priceInAltcoin);
-      });
-    }
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -434,7 +436,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
             currencyDisplayed={currencyDisplayed}
-            onCurrencySwitch={onCurrencySwitch}
+            onCurrencySwitch={setCurrencyDisplayed}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
