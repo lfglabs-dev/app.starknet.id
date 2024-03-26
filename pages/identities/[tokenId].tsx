@@ -100,7 +100,7 @@ const TokenIdPage: NextPage = () => {
                     identity={identity}
                     tokenId={tokenId}
                     isOwner={isOwner}
-                    updateProfilePic={() => setIsUpdatingPp(true)}
+                    onPPClick={() => setIsUpdatingPp(true)}
                     ppImageUrl={ppImageUrl}
                   />
                   {!hideActions && (

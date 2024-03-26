@@ -29,7 +29,7 @@ export function setStarknetAddress(
   const output = [];
   // if that id was linked to a domain with a legacy address before, we remove it
   if (
-    domain !== undefined &&
+    domain &&
     domain.legacy_address !=
       "0x0000000000000000000000000000000000000000000000000000000000000000"
   ) {
