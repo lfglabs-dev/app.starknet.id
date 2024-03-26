@@ -56,6 +56,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
         fullWidth
         value={tokenId}
         defaultValue={ownedIdentities[0]}
+        inputProps={{ MenuProps: { disableScrollLock: true } }}
         onChange={(e) => changeTokenId(Number(e.target.value))}
         style={{
           borderRadius: "8.983px",
