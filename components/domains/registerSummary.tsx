@@ -8,6 +8,7 @@ import styles from "../../styles/components/registerV2.module.css";
 import { gweiToEth, numberToFixedString } from "../../utils/feltService";
 import { CurrencyType } from "../../utils/constants";
 import CurrencyDropdown from "./currencyDropdown";
+import { Skeleton } from "@mui/material";
 
 type RegisterSummaryProps = {
   duration: number;
@@ -20,6 +21,7 @@ type RegisterSummaryProps = {
   customMessage?: string;
   displayedCurrency: CurrencyType;
   onCurrencySwitch: (type: CurrencyType) => void;
+  loadingPrice?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -33,6 +35,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   customMessage,
   displayedCurrency,
   onCurrencySwitch,
+  loadingPrice,
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<number>(0); // price of 1ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<number>(0);
@@ -100,7 +103,11 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
               ? customMessage
               : `For ${duration} ${duration === 1 ? "year" : "years"}`}
           </p>
-          {displayTokenPrice()}
+          {loadingPrice ? (
+            <Skeleton variant="text" width="150px" height="24px" />
+          ) : (
+            displayTokenPrice()
+          )}
           <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
         </div>
       </div>

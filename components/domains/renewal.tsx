@@ -88,6 +88,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const maxYearsToRegister = 25;
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
+  const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
 
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
@@ -235,6 +236,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     } else if (quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
       setPrice(priceInAltcoin);
+      setLoadingPrice(false);
     }
   }, [priceInEth, quoteData, displayedCurrency]);
 
@@ -375,6 +377,11 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     setEmailError(isValidEmail(value) ? false : true);
   }
 
+  const onCurrencySwitch = (type: CurrencyType) => {
+    if (type !== CurrencyType.ETH) setLoadingPrice(true);
+    setDisplayedCurrency(type);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -437,7 +444,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
             displayedCurrency={displayedCurrency}
-            onCurrencySwitch={setDisplayedCurrency}
+            onCurrencySwitch={onCurrencySwitch}
+            loadingPrice={loadingPrice}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes

@@ -103,6 +103,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   const router = useRouter();
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
+  const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
 
   useEffect(() => {
     if (!renewData?.transaction_hash || !salts || !metadataHashes) return;
@@ -369,8 +370,14 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     } else if (quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
       setPrice(priceInAltcoin);
+      setLoadingPrice(false);
     }
   }, [priceInEth, quoteData, displayedCurrency]);
+
+  const onCurrencySwitch = (type: CurrencyType) => {
+    if (type !== CurrencyType.ETH) setLoadingPrice(true);
+    setDisplayedCurrency(type);
+  };
 
   return (
     <div className={styles.container}>
@@ -420,7 +427,8 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
             isSwissResident={isSwissResident}
             customMessage={customMessage}
             displayedCurrency={displayedCurrency}
-            onCurrencySwitch={setDisplayedCurrency}
+            onCurrencySwitch={onCurrencySwitch}
+            loadingPrice={loadingPrice}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes

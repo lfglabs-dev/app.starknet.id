@@ -86,6 +86,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
     CurrencyType.ETH
   );
+  const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -409,6 +410,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     } else if (quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
       setPrice(priceInAltcoin);
+      setLoadingPrice(false);
     }
   }, [priceInEth, quoteData, displayedCurrency]);
 
@@ -430,6 +432,11 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     setIsTxModalOpen(false);
     router.push(`/identities/${redirectTokenId}`);
   }
+
+  const onCurrencySwitch = (type: CurrencyType) => {
+    if (type !== CurrencyType.ETH) setLoadingPrice(true);
+    setDisplayedCurrency(type);
+  };
 
   return (
     <div className={styles.container}>
@@ -489,7 +496,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
             displayedCurrency={displayedCurrency}
-            onCurrencySwitch={setDisplayedCurrency}
+            onCurrencySwitch={onCurrencySwitch}
+            loadingPrice={loadingPrice}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes

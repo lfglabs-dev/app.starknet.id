@@ -92,6 +92,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const { addTransaction } = useNotificationManager();
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
+  const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -330,8 +331,14 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     } else if (quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
       setPrice(priceInAltcoin);
+      setLoadingPrice(false);
     }
   }, [priceInEth, quoteData, displayedCurrency]);
+
+  const onCurrencySwitch = (type: CurrencyType) => {
+    if (type !== CurrencyType.ETH) setLoadingPrice(true);
+    setDisplayedCurrency(type);
+  };
 
   return (
     <div className={styles.container}>
@@ -367,8 +374,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
             displayedCurrency={displayedCurrency}
-            onCurrencySwitch={setDisplayedCurrency}
+            onCurrencySwitch={onCurrencySwitch}
             customMessage={customMessage}
+            loadingPrice={loadingPrice}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
