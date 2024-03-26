@@ -13,7 +13,7 @@ import {
   formatHexString,
   isValidEmail,
 } from "../../utils/stringService";
-import { applyRateToBigInt } from "../../utils/feltService";
+import { applyRateToBigInt, gweiToEth } from "../../utils/feltService";
 import SelectIdentity from "./selectIdentity";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi, Call } from "starknet";
@@ -82,7 +82,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
-  const [redirectTokenId, setRedirectTokenId] = useState<number>(0);
   const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
     CurrencyType.ETH
   );
@@ -146,7 +145,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         )
       );
     })();
-  }, [email, salt, renewalBox, isSwissResident]);
+  }, [email, salt, renewalBox, isSwissResident, needMedadata]);
 
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
@@ -323,7 +322,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // Merge and set the call data
     setCallData(calls);
-    setRedirectTokenId(tokenIdToUse);
   }, [
     tokenId,
     duration,
@@ -430,7 +428,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
   function closeModal(): void {
     setIsTxModalOpen(false);
-    router.push(`/identities/${redirectTokenId}`);
+    router.push(`/identities`);
   }
 
   const onCurrencySwitch = (type: CurrencyType) => {

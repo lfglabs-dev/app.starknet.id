@@ -213,7 +213,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         )
       );
     })();
-  }, [email, salt, renewalBox, isSwissResident]);
+  }, [email, salt, renewalBox, isSwissResident, needMedadata]);
 
   useEffect(() => {
     if (!selectedDomains) return;
