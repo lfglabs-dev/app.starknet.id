@@ -199,7 +199,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     );
     if (displayedCurrency === CurrencyType.ETH) {
       setRenewPrice(renewalPrice);
-    } else {
+    } else if (quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(
         quoteData?.quote as string,
         renewalPrice
