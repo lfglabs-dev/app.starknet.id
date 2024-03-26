@@ -4,13 +4,13 @@ import { Abi } from "starknet";
 import { useEffect, useState } from "react";
 import {
   ERC20Contract,
-  CurrenciesType,
+  CurrencyType,
   UINT_128_MAX,
   AutoRenewalContracts,
 } from "../utils/constants";
 
 export default function useAllowanceCheck(
-  erc20: CurrenciesType,
+  erc20: CurrencyType,
   address?: string
 ) {
   const [needsAllowance, setNeedsAllowance] = useState(false);

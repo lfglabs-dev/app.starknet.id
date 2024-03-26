@@ -8,7 +8,7 @@ import {
 } from "../../utils/altcoinService";
 import { PRICES } from "../../utils/priceService";
 
-const CurrenciesType = {
+const CurrencyType = {
   ETH: "ETH",
   STRK: "STRK",
 };
@@ -37,7 +37,7 @@ describe("getDomainPriceAltcoin function", () => {
 
 describe("getLimitPriceRange function", () => {
   it("should return the same price for ETH type", () => {
-    expect(getLimitPriceRange(CurrenciesType.ETH, BigInt(1000))).toBe(
+    expect(getLimitPriceRange(CurrencyType.ETH, BigInt(1000))).toBe(
       BigInt(1000)
     );
   });
@@ -46,7 +46,7 @@ describe("getLimitPriceRange function", () => {
     const initialPrice = BigInt(1000);
     const expectedIncrease = BigInt(300); // 30% of 1000
     const expectedPrice = initialPrice + expectedIncrease;
-    expect(getLimitPriceRange(CurrenciesType.STRK, initialPrice)).toBe(
+    expect(getLimitPriceRange(CurrencyType.STRK, initialPrice)).toBe(
       expectedPrice
     );
   });
@@ -57,14 +57,14 @@ describe("getLimitPriceRange function", () => {
       const initialPrice = BigInt(1000);
       const expectedIncrease = BigInt(100); // 10% of 1000
       const expectedPrice = initialPrice + expectedIncrease;
-      expect(getLimitPriceRange(CurrenciesType.USDC, initialPrice)).toBe(expectedPrice);
+      expect(getLimitPriceRange(CurrencyType.USDC, initialPrice)).toBe(expectedPrice);
     });
   
     it("should increase the price by 10% for USDT type", () => {
       const initialPrice = BigInt(1000);
       const expectedIncrease = BigInt(100); // 10% of 1000
       const expectedPrice = initialPrice + expectedIncrease;
-      expect(getLimitPriceRange(CurrenciesType.USDT, initialPrice)).toBe(expectedPrice);
+      expect(getLimitPriceRange(CurrencyType.USDT, initialPrice)).toBe(expectedPrice);
     });
     */
 
@@ -77,7 +77,7 @@ describe("getLimitPriceRange function", () => {
     const largePrice = BigInt("1000000000000000000"); // 1e18
     const expectedIncrease = BigInt("300000000000000000"); // 30% of 1e18 for STRK
     const expectedPrice = largePrice + expectedIncrease;
-    expect(getLimitPriceRange(CurrenciesType.STRK, largePrice)).toBe(
+    expect(getLimitPriceRange(CurrencyType.STRK, largePrice)).toBe(
       expectedPrice
     );
   });
@@ -120,7 +120,7 @@ describe("getRenewalPriceETH", () => {
 describe("getDomainPrice", () => {
   it("returns price in ETH when currency type is ETH", () => {
     const domainPrice = PRICES.FIVE.toString();
-    const result = getDomainPrice("example.com", CurrenciesType.ETH);
+    const result = getDomainPrice("example.com", CurrencyType.ETH);
 
     expect(result).toBe(domainPrice);
   });
@@ -131,20 +131,20 @@ describe("getDomainPrice", () => {
     const domainPriceInETH = PRICES.FIVE.toString();
     const domainPriceSTRK = getDomainPriceAltcoin(domainPriceInETH, quote);
 
-    const result = getDomainPrice("example.com", CurrenciesType.STRK, quote);
+    const result = getDomainPrice("example.com", CurrencyType.STRK, quote);
     expect(result).toBe(domainPriceSTRK);
   });
 
   it("throws an error when quote is missing for non-ETH currency type", () => {
     expect(() => {
-      getDomainPrice("example.com", CurrenciesType.STRK);
+      getDomainPrice("example.com", CurrencyType.STRK);
     }).toThrow("[big.js] Invalid number");
   });
 });
 
 describe("getAutoRenewAllowance", () => {
   it("calculates allowance without sales tax when salesTaxRate is 0", () => {
-    const currencyType = CurrenciesType.ETH;
+    const currencyType = CurrencyType.ETH;
     const salesTaxRate = 0;
     const domainPrice = PRICES.FIVE.toString();
 
@@ -158,7 +158,7 @@ describe("getAutoRenewAllowance", () => {
   });
 
   it("calculates allowance with sales tax when salesTaxRate is provided", () => {
-    const currencyType = CurrenciesType.ETH;
+    const currencyType = CurrencyType.ETH;
     const salesTaxRate = 0.1; // 10%
     const domainPrice = "1000000000000000000"; // 1 ETH
     const limitPrice = BigInt(domainPrice);

@@ -99,7 +99,7 @@ export const notificationLinkText: Record<NotificationType, string> = {
   [NotificationType.TRANSACTION]: "See transaction",
 };
 
-export enum CurrenciesType {
+export enum CurrencyType {
   ETH = "ETH",
   STRK = "STRK",
   // USDC = "USDC",

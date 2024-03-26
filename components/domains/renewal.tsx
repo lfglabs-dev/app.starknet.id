@@ -29,7 +29,7 @@ import { useRouter } from "next/router";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
   AutoRenewalContracts,
-  CurrenciesType,
+  CurrencyType,
   ERC20Contract,
   NotificationType,
   TransactionType,
@@ -61,10 +61,10 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [callData, setCallData] = useState<Call[]>([]);
   const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH
-  const [price, setPrice] = useState<string>(""); // price in altcoin
+  const [price, setPrice] = useState<string>(""); // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
-  const [currencyDisplayed, setCurrencyDisplayed] = useState<CurrenciesType>(
-    CurrenciesType.ETH
+  const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
+    CurrencyType.ETH
   );
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
@@ -86,13 +86,13 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const router = useRouter();
   const [duration, setDuration] = useState<number>(1);
   const maxYearsToRegister = 25;
-  const needsAllowance = useAllowanceCheck(currencyDisplayed, address);
-  const balances = useBalances(address); // fetch the user balances for all whitelisted tokens
+  const needsAllowance = useAllowanceCheck(displayedCurrency, address);
+  const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
 
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
     const fetchQuote = () => {
-      getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
+      getTokenQuote(ERC20Contract[displayedCurrency]).then((data) => {
         setQuoteData(data);
       });
     };
@@ -100,9 +100,9 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     const scheduleRefetch = () => {
       const now = parseInt((new Date().getTime() / 1000).toFixed(0));
       // Check if we need to refetch
-      if (!quoteData || currencyDisplayed === CurrenciesType.ETH) {
+      if (!quoteData || displayedCurrency === CurrencyType.ETH) {
         setQuoteData(null);
-        // we don't need to check for quote until currencyDisplayed is updated
+        // we don't need to check for quote until displayedCurrency is updated
         return;
       }
 
@@ -119,7 +119,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     fetchQuote();
     // Start the refetch scheduling
     scheduleRefetch();
-  }, [currencyDisplayed, priceInEth, ERC20Contract]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayedCurrency, priceInEth]); // We don't add quoteData because it would create an infinite loop
 
   useEffect(() => {
     if (!address) return;
@@ -221,33 +222,33 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         duration
       ).toString()
     );
-    if (currencyDisplayed !== CurrenciesType.ETH && quoteData) {
+    if (displayedCurrency !== CurrencyType.ETH && quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
       setPrice(priceInAltcoin);
     }
-  }, [selectedDomains, duration, quoteData]);
+  }, [selectedDomains, duration, quoteData, displayedCurrency, priceInEth]);
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
-    if (currencyDisplayed === CurrenciesType.ETH) {
+    if (displayedCurrency === CurrencyType.ETH) {
       setPrice(priceInEth);
     } else if (quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
       setPrice(priceInAltcoin);
     }
-  }, [priceInEth, quoteData]);
+  }, [priceInEth, quoteData, displayedCurrency]);
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
-    if (balances && price && currencyDisplayed) {
-      const tokenBalance = balances[currencyDisplayed];
+    if (tokenBalances && price && displayedCurrency) {
+      const tokenBalance = tokenBalances[displayedCurrency];
       if (tokenBalance && BigInt(tokenBalance) >= BigInt(price)) {
         setInvalidBalance(false);
       } else {
         setInvalidBalance(true);
       }
     }
-  }, [price, currencyDisplayed, balances]);
+  }, [price, displayedCurrency, tokenBalances]);
 
   useEffect(() => {
     if (!needMedadata && price) {
@@ -264,12 +265,12 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   }, [isSwissResident, price, needMedadata, salesTaxRate]);
 
   useEffect(() => {
-    if (currencyDisplayed !== CurrenciesType.ETH && !quoteData) return;
+    if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
     if (selectedDomains && metadataHash) {
       const calls = [
-        registrationCalls.approve(price, ERC20Contract[currencyDisplayed]),
+        registrationCalls.approve(price, ERC20Contract[displayedCurrency]),
       ];
-      if (currencyDisplayed === CurrenciesType.ETH) {
+      if (displayedCurrency === CurrencyType.ETH) {
         calls.push(
           ...registrationCalls.multiCallRenewal(
             selectedDomainsToEncodedArray(selectedDomains),
@@ -283,13 +284,13 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
             selectedDomainsToEncodedArray(selectedDomains),
             duration,
             metadataHash,
-            ERC20Contract[currencyDisplayed],
+            ERC20Contract[displayedCurrency],
             quoteData as QuoteQueryData
           )
         );
       }
 
-      // If the user is a US resident, we add the sales tax
+      // If the user is a Swiss resident, we add the sales tax
       if (salesTaxRate) {
         calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
       }
@@ -298,13 +299,13 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         if (needsAllowance) {
           calls.push(
             autoRenewalCalls.approve(
-              ERC20Contract[currencyDisplayed],
-              AutoRenewalContracts[currencyDisplayed]
+              ERC20Contract[displayedCurrency],
+              AutoRenewalContracts[displayedCurrency]
             )
           );
         }
 
-        selectedDomainsToArray(selectedDomains).map((domain, index) => {
+        selectedDomainsToArray(selectedDomains).map((domain) => {
           // we enable renewal only for the domains that are not already subscribed
           if (nonSubscribedDomains?.includes(domain)) {
             const encodedDomain = utils
@@ -313,18 +314,18 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
 
             const domainPrice = getDomainPrice(
               domain,
-              currencyDisplayed,
+              displayedCurrency,
               quoteData?.quote
             );
             const allowance = getAutoRenewAllowance(
-              currencyDisplayed,
+              displayedCurrency,
               salesTaxRate,
               domainPrice
             );
 
             calls.push(
               autoRenewalCalls.enableRenewal(
-                AutoRenewalContracts[currencyDisplayed],
+                AutoRenewalContracts[displayedCurrency],
                 encodedDomain,
                 allowance,
                 "0x" + metadataHash
@@ -344,7 +345,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
     salesTaxRate,
     duration,
     renewalBox,
-    currencyDisplayed,
+    displayedCurrency,
     quoteData,
     nonSubscribedDomains,
   ]);
@@ -435,8 +436,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
             renewalBox={renewalBox}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
-            currencyDisplayed={currencyDisplayed}
-            onCurrencySwitch={setCurrencyDisplayed}
+            displayedCurrency={displayedCurrency}
+            onCurrencySwitch={setDisplayedCurrency}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
@@ -464,7 +465,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
               {!termsBox
                 ? "Please accept terms & policies"
                 : invalidBalance
-                ? `You don't have enough ${currencyDisplayed}`
+                ? `You don't have enough ${displayedCurrency}`
                 : !areDomainSelected(selectedDomains)
                 ? "Select a domain to renew"
                 : needMedadata && emailError

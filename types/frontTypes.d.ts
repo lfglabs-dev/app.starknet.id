@@ -116,7 +116,7 @@ type SnsDomainData = {
 };
 
 type TokenBalance = {
-  [key in CurrenciesType]: string;
+  [key in CurrencyType]: string;
 };
 
 type MulticallCallData = {

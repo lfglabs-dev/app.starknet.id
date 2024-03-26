@@ -1,45 +1,46 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/registerV2.module.css";
-import { CurrenciesIcon, CurrenciesType } from "../../utils/constants";
+import { CurrenciesIcon, CurrencyType } from "../../utils/constants";
 import { ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material";
 
 type CurrencyDropdownProps = {
-  onCurrencySwitch: (type: CurrenciesType) => void;
-  currencyDisplayed: CurrenciesType;
+  onCurrencySwitch: (type: CurrencyType) => void;
+  displayedCurrency: CurrencyType;
 };
 
 const CurrencyDropdown: FunctionComponent<CurrencyDropdownProps> = ({
-  currencyDisplayed,
+  displayedCurrency,
   onCurrencySwitch,
 }) => {
+  const selectStyle = {
+    "& .MuiSelect-select": {
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: "8px 16px",
+      gap: "8px",
+    },
+    "& .MuiListItemIcon-root": {
+      minWidth: "24px",
+    },
+    "& .css-10hburv-MuiTypography-root": {
+      fontFamily: "Poppins-Regular",
+    },
+  };
   return (
     <div className={styles.currencySwitcher}>
       <Select
         fullWidth
-        value={currencyDisplayed}
-        defaultValue={currencyDisplayed}
+        value={displayedCurrency}
+        defaultValue={displayedCurrency}
         inputProps={{ MenuProps: { disableScrollLock: true } }}
-        onChange={(e) => onCurrencySwitch(e.target.value as CurrenciesType)}
+        onChange={(e) => onCurrencySwitch(e.target.value as CurrencyType)}
         style={{
           borderRadius: "8.983px",
         }}
-        sx={{
-          "& .MuiSelect-select": {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "8px 16px",
-            gap: "8px",
-          },
-          "& .MuiListItemIcon-root": {
-            minWidth: "24px",
-          },
-          "& .css-10hburv-MuiTypography-root": {
-            fontFamily: "Poppins-Regular",
-          },
-        }}
+        sx={selectStyle}
       >
-        {Object.values(CurrenciesType).map((currency) => {
+        {Object.values(CurrencyType).map((currency) => {
           return (
             <MenuItem key={currency} value={currency}>
               <ListItemIcon>

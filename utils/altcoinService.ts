@@ -1,5 +1,5 @@
 import Big from "big.js";
-import { CurrenciesRange, CurrenciesType } from "./constants";
+import { CurrenciesRange, CurrencyType } from "./constants";
 import { applyRateToBigInt } from "./feltService";
 import { getPriceFromDomain } from "./priceService";
 import { Result } from "starknet";
@@ -32,23 +32,23 @@ export const getDomainPriceAltcoin = (quote: string, priceInEth: string) => {
 };
 
 export const getLimitPriceRange = (
-  type: CurrenciesType,
+  type: CurrencyType,
   price: bigint
 ): bigint => {
   switch (type) {
-    case CurrenciesType.ETH:
+    case CurrencyType.ETH:
       return price;
-    case CurrenciesType.STRK:
+    case CurrencyType.STRK:
       return (
         price +
         BigInt(applyRateToBigInt(price, parseFloat(CurrenciesRange.STRK)))
       );
-    // case CurrenciesType.USDC:
+    // case CurrencyType.USDC:
     //   return (
     //     price +
     //     BigInt(applyRateToBigInt(price, parseFloat(CurrenciesRange.USDC)))
     //   );
-    // case CurrenciesType.USDT:
+    // case CurrencyType.USDT:
     //   return (
     //     price +
     //     BigInt(applyRateToBigInt(price, parseFloat(CurrenciesRange.USDT)))
@@ -76,10 +76,10 @@ export const getRenewalPriceETH = (
 
 export const getDomainPrice = (
   domain: string,
-  currencyType: CurrenciesType,
+  currencyType: CurrencyType,
   quote?: string
 ): string => {
-  if (currencyType === CurrenciesType.ETH) {
+  if (currencyType === CurrencyType.ETH) {
     return getPriceFromDomain(1, domain).toString();
   } else {
     return getDomainPriceAltcoin(
@@ -92,7 +92,7 @@ export const getDomainPrice = (
 // function to compute the limit price for the auto renewal contract
 // depending on the token selected by the user
 export const getAutoRenewAllowance = (
-  currencyType: CurrenciesType,
+  currencyType: CurrencyType,
   salesTaxRate: number,
   domainPrice: string
 ): string => {

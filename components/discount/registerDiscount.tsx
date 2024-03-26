@@ -25,7 +25,7 @@ import BackButton from "../UI/backButton";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
   AutoRenewalContracts,
-  CurrenciesType,
+  CurrencyType,
   ERC20Contract,
   NotificationType,
   TransactionType,
@@ -69,8 +69,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [callData, setCallData] = useState<Call[]>([]);
   const [price, setPrice] = useState<string>(priceInEth); // set to priceInEth at initialization and updated to altcoin if selected by user
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
-  const [currencyDisplayed, setCurrencyDisplayed] = useState<CurrenciesType>(
-    CurrenciesType.ETH
+  const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
+    CurrencyType.ETH
   );
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const [salt, setSalt] = useState<string | undefined>();
@@ -90,8 +90,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     new Map()
   );
   const { addTransaction } = useNotificationManager();
-  const needsAllowance = useAllowanceCheck(currencyDisplayed, address);
-  const balances = useBalances(address); // fetch the user balances for all whitelisted tokens
+  const needsAllowance = useAllowanceCheck(displayedCurrency, address);
+  const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -117,7 +117,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
     const fetchQuote = () => {
-      getTokenQuote(ERC20Contract[currencyDisplayed]).then((data) => {
+      getTokenQuote(ERC20Contract[displayedCurrency]).then((data) => {
         setQuoteData(data);
       });
     };
@@ -125,9 +125,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     const scheduleRefetch = () => {
       const now = parseInt((new Date().getTime() / 1000).toFixed(0));
       // Check if we need to refetch
-      if (!quoteData || currencyDisplayed === CurrenciesType.ETH) {
+      if (!quoteData || displayedCurrency === CurrencyType.ETH) {
         setQuoteData(null);
-        // we don't need to check for quote until currencyDisplayed is updated
+        // we don't need to check for quote until displayedCurrency is updated
         return;
       }
 
@@ -144,19 +144,20 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     fetchQuote();
     // Start the refetch scheduling
     scheduleRefetch();
-  }, [currencyDisplayed, price, ERC20Contract]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayedCurrency, price]); // We don't add quoteData because it would create an infinite loop
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
-    if (balances && price && currencyDisplayed) {
-      const tokenBalance = balances[currencyDisplayed];
+    if (tokenBalances && price && displayedCurrency) {
+      const tokenBalance = tokenBalances[displayedCurrency];
       if (tokenBalance && BigInt(tokenBalance) >= BigInt(price)) {
         setInvalidBalance(false);
       } else {
         setInvalidBalance(true);
       }
     }
-  }, [price, currencyDisplayed, balances]);
+  }, [price, displayedCurrency, tokenBalances]);
 
   useEffect(() => {
     if (address) {
@@ -181,7 +182,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
   // Set Register Multicall
   useEffect(() => {
-    if (currencyDisplayed !== CurrenciesType.ETH && !quoteData) return;
+    if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     const txMetadataHash = "0x" + metadataHash;
@@ -190,10 +191,10 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
     // Common calls
     const calls = [
-      registrationCalls.approve(price, ERC20Contract[currencyDisplayed]),
+      registrationCalls.approve(price, ERC20Contract[displayedCurrency]),
     ];
 
-    if (currencyDisplayed === CurrenciesType.ETH) {
+    if (displayedCurrency === CurrencyType.ETH) {
       calls.push(
         registrationCalls.buy(
           encodedDomain,
@@ -212,14 +213,14 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           "0",
           duration,
           txMetadataHash,
-          ERC20Contract[currencyDisplayed],
+          ERC20Contract[displayedCurrency],
           quoteData as QuoteQueryData,
           discountId
         )
       );
     }
 
-    // If the user is a US resident, we add the sales tax
+    // If the user is a Swiss resident, we add the sales tax
     if (salesTaxRate) {
       calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
     }
@@ -234,20 +235,20 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       if (needsAllowance) {
         calls.push(
           autoRenewalCalls.approve(
-            ERC20Contract[currencyDisplayed],
-            AutoRenewalContracts[currencyDisplayed]
+            ERC20Contract[displayedCurrency],
+            AutoRenewalContracts[displayedCurrency]
           )
         );
       }
 
       const allowance = getAutoRenewAllowance(
-        currencyDisplayed,
+        displayedCurrency,
         salesTaxRate,
         price
       );
       calls.push(
         autoRenewalCalls.enableRenewal(
-          AutoRenewalContracts[currencyDisplayed],
+          AutoRenewalContracts[displayedCurrency],
           encodedDomain,
           allowance,
           txMetadataHash
@@ -272,7 +273,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     needsAllowance,
     discountId,
     quoteData,
-    currencyDisplayed,
+    displayedCurrency,
   ]);
 
   useEffect(() => {
@@ -324,13 +325,13 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   }, [isSwissResident, price]);
 
   useEffect(() => {
-    if (currencyDisplayed === CurrenciesType.ETH) {
+    if (displayedCurrency === CurrencyType.ETH) {
       setPrice(priceInEth);
     } else if (quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
       setPrice(priceInAltcoin);
     }
-  }, [priceInEth, quoteData]);
+  }, [priceInEth, quoteData, displayedCurrency]);
 
   return (
     <div className={styles.container}>
@@ -365,8 +366,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
             renewalBox={false}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
-            currencyDisplayed={currencyDisplayed}
-            onCurrencySwitch={setCurrencyDisplayed}
+            displayedCurrency={displayedCurrency}
+            onCurrencySwitch={setDisplayedCurrency}
             customMessage={customMessage}
           />
           <Divider className="w-full" />
@@ -398,7 +399,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
               {!termsBox
                 ? "Please accept terms & policies"
                 : invalidBalance
-                ? `You don't have enough ${currencyDisplayed}`
+                ? `You don't have enough ${displayedCurrency}`
                 : emailError
                 ? "Enter a valid Email"
                 : "Register my domain"}

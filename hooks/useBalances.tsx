@@ -2,7 +2,7 @@ import { useContractRead } from "@starknet-react/core";
 import { useMulticallContract } from "./contracts";
 import { Abi, CairoCustomEnum, Call, RawArgs, hash } from "starknet";
 import { useEffect, useState } from "react";
-import { ERC20Contract, CurrenciesType } from "../utils/constants";
+import { ERC20Contract, CurrencyType } from "../utils/constants";
 import { fromUint256 } from "../utils/feltService";
 
 export default function useBalances(address?: string) {
@@ -48,7 +48,7 @@ export default function useBalances(address?: string) {
 
   useEffect(() => {
     if (erc20BalanceError || !erc20BalanceData) return;
-    const currencies = Object.values(CurrenciesType);
+    const currencies = Object.values(CurrencyType);
     const balanceEntries: TokenBalance = {};
     currencies.forEach((currency, index) => {
       let balance = fromUint256(

@@ -6,20 +6,20 @@ import React, {
 } from "react";
 import styles from "../../styles/components/registerV2.module.css";
 import { gweiToEth, numberToFixedString } from "../../utils/feltService";
-import { CurrenciesType } from "../../utils/constants";
+import { CurrencyType } from "../../utils/constants";
 import CurrencyDropdown from "./currencyDropdown";
 
 type RegisterSummaryProps = {
   duration: number;
   ethRegistrationPrice: string;
-  registrationPrice: string; // price in altcoin
+  registrationPrice: string; // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   renewalBox: boolean;
   salesTaxRate: number;
   isSwissResident: boolean;
   isTokenDropdownDisplayed?: boolean;
   customMessage?: string;
-  currencyDisplayed: CurrenciesType;
-  onCurrencySwitch: (type: CurrenciesType) => void;
+  displayedCurrency: CurrencyType;
+  onCurrencySwitch: (type: CurrencyType) => void;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -31,7 +31,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   isSwissResident,
   isTokenDropdownDisplayed = true,
   customMessage,
-  currencyDisplayed,
+  displayedCurrency,
   onCurrencySwitch,
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<number>(0); // price of 1ETH in USD
@@ -79,12 +79,12 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     const salesTaxInfo = salesTaxAmountUsd
       ? ` (+ ${numberToFixedString(
           salesTaxAmountUsd
-        )}$ worth of ${currencyDisplayed} for Swiss VAT)`
+        )}$ worth of ${displayedCurrency} for Swiss VAT)`
       : "";
 
     return displayPrice(
       numberToFixedString(Number(gweiToEth(registrationPrice)), 3)
-        .concat(` ${currencyDisplayed} `)
+        .concat(` ${displayedCurrency} `)
         .concat(recurrence),
       salesTaxInfo
     );
@@ -106,7 +106,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       </div>
       {isTokenDropdownDisplayed ? (
         <CurrencyDropdown
-          currencyDisplayed={currencyDisplayed}
+          displayedCurrency={displayedCurrency}
           onCurrencySwitch={onCurrencySwitch}
         />
       ) : null}
