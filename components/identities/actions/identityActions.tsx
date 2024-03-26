@@ -158,6 +158,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       autoRenewalData.forEach((renewalData) => {
         disableCallData.push(
           autoRenewalCalls.disableRenewal(
+            // auto_renew_contract is defined only for altcoins, if undefined we use the ETH renewal contract address
             renewalData.auto_renew_contract ??
               (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
             callDataEncodedDomain[1].toString()

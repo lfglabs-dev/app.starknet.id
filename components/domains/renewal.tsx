@@ -61,7 +61,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [callData, setCallData] = useState<Call[]>([]);
   const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH
-  const [price, setPrice] = useState<string>(""); // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
+  const [price, setPrice] = useState<string>(""); // price in displayedCurrency
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
     CurrencyType.ETH
