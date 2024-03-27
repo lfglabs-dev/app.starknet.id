@@ -46,7 +46,6 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log("data", data);
         setEthUsdPrice(data?.ethereum?.usd);
       })
       .catch((err) => console.log("Coingecko API Error:", err));
