@@ -100,6 +100,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
 
     const scheduleRefetch = () => {
       const now = parseInt((new Date().getTime() / 1000).toFixed(0));
+      const timeLimit = now - 60; // 60 seconds
       // Check if we need to refetch
       if (!quoteData || displayedCurrency === CurrencyType.ETH) {
         setQuoteData(null);
@@ -107,12 +108,12 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
         return;
       }
 
-      if (quoteData.max_quote_validity <= now) {
+      if (quoteData.max_quote_validity <= timeLimit) {
         fetchQuote();
       }
 
       // Calculate the time until the next validity check
-      const timeUntilNextCheck = quoteData.max_quote_validity - now;
+      const timeUntilNextCheck = quoteData.max_quote_validity - timeLimit;
       setTimeout(scheduleRefetch, Math.max(15000, timeUntilNextCheck * 100));
     };
 
