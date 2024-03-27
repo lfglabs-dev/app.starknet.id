@@ -37,8 +37,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   onCurrencySwitch,
   loadingPrice,
 }) => {
-  const [ethUsdPrice, setEthUsdPrice] = useState<number>(0); // price of 1ETH in USD
-  const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<number>(0);
+  const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1ETH in USD
+  const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
   const recurrence = renewalBox && duration === 1 ? "/year" : "";
   useEffect(() => {
     fetch(
@@ -46,7 +46,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     )
       .then((res) => res.json())
       .then((data) => {
-        setEthUsdPrice(data?.ethereum?.usd);
+        console.log("Coingecko API Data:", data);
+        setEthUsdPrice(data?.ethereum?.usd.toString());
       })
       .catch((err) => console.log("Coingecko API Error:", err));
   }, []);
@@ -54,11 +55,11 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   useEffect(() => {
     function computeUsdPrice() {
       if (ethUsdPrice) {
-        return parseFloat(
-          (ethUsdPrice * Number(gweiToEth(ethRegistrationPrice))).toFixed(2)
-        );
+        return (
+          Number(ethUsdPrice) * Number(gweiToEth(ethRegistrationPrice))
+        ).toFixed(2);
       }
-      return 0;
+      return "0";
     }
 
     setUsdRegistrationPrice(computeUsdPrice());
@@ -77,7 +78,9 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 
   function displayTokenPrice(): ReactNode {
     const salesTaxAmountUsd =
-      salesTaxRate * Number(gweiToEth(ethRegistrationPrice)) * ethUsdPrice;
+      salesTaxRate *
+      Number(gweiToEth(ethRegistrationPrice)) *
+      Number(ethUsdPrice);
     const salesTaxInfo = salesTaxAmountUsd
       ? ` (+ ${numberToFixedString(
           salesTaxAmountUsd

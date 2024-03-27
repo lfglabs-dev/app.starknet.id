@@ -158,6 +158,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
     const fetchQuote = () => {
+      if (displayedCurrency === CurrencyType.ETH) return;
       getTokenQuote(ERC20Contract[displayedCurrency]).then((data) => {
         setQuoteData(data);
       });
