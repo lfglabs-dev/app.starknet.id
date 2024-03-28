@@ -4,7 +4,6 @@ import Button from "../UI/button";
 import { usePricingContract } from "../../hooks/contracts";
 import {
   useAccount,
-  useBalance,
   useContractRead,
   useContractWrite,
 } from "@starknet-react/core";
@@ -33,6 +32,9 @@ import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
+  AutoRenewalContracts,
+  ERC20Contract,
+  CurrencyType,
   NotificationType,
   TransactionType,
   swissVatRate,
@@ -40,6 +42,13 @@ import {
 import useAllowanceCheck from "../../hooks/useAllowanceCheck";
 import { useRouter } from "next/router";
 import ConnectButton from "../UI/connectButton";
+import useBalances from "../../hooks/useBalances";
+import {
+  getAutoRenewAllowance,
+  getDomainPriceAltcoin,
+  getRenewalPriceETH,
+  getTokenQuote,
+} from "../../utils/altcoinService";
 
 type RegisterV2Props = {
   domain: string;
@@ -57,9 +66,10 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [duration, setDuration] = useState<number>(1);
   const [tokenId, setTokenId] = useState<number>(0);
   const [callData, setCallData] = useState<Call[]>([]);
-  const [price, setPrice] = useState<string>("");
+  const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH
+  const [price, setPrice] = useState<string>(""); // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   const [renewPrice, setRenewPrice] = useState<string>("");
-  const [balance, setBalance] = useState<string>("");
+  const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const { contract } = usePricingContract();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
@@ -72,6 +82,10 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
+  const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
+    CurrencyType.ETH
+  );
+  const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
 
   const { data: priceData, error: priceError } = useContractRead({
     address: contract?.address as string,
@@ -81,10 +95,6 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   });
 
   const { account, address } = useAccount();
-  const { data: userBalanceData, error: userBalanceDataError } = useBalance({
-    address,
-    watch: true,
-  });
   const { writeAsync: execute, data: registerData } = useContractWrite({
     calls: callData,
   });
@@ -93,7 +103,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     new Map()
   );
   const { addTransaction } = useNotificationManager();
-  const needsAllowance = useAllowanceCheck(address);
+  const needsAllowance = useAllowanceCheck(displayedCurrency, address);
+  const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -136,42 +147,87 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     })();
   }, [email, salt, renewalBox, isSwissResident, needMedadata]);
 
+  // refetch new quote if the timestamp from quote is expired
+  useEffect(() => {
+    const fetchQuote = () => {
+      if (displayedCurrency === CurrencyType.ETH) return;
+      getTokenQuote(ERC20Contract[displayedCurrency]).then((data) => {
+        setQuoteData(data);
+      });
+    };
+
+    const scheduleRefetch = () => {
+      const now = parseInt((new Date().getTime() / 1000).toFixed(0));
+      const timeLimit = now - 60; // 60 seconds
+      // Check if we need to refetch
+      if (!quoteData || displayedCurrency === CurrencyType.ETH) {
+        setQuoteData(null);
+        // we don't need to check for quote until displayedCurrency is updated
+        return;
+      }
+
+      if (quoteData.max_quote_validity <= timeLimit) {
+        fetchQuote();
+      }
+
+      // Calculate the time until the next validity check
+      const timeUntilNextCheck = quoteData.max_quote_validity - timeLimit;
+      setTimeout(scheduleRefetch, Math.max(15000, timeUntilNextCheck * 100));
+    };
+
+    // Initial fetch
+    fetchQuote();
+    // Start the refetch scheduling
+    scheduleRefetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayedCurrency, priceInEth]); // We don't add quoteData because it would create an infinite loop
+
   useEffect(() => {
     // if price query does not work we use the off-chain hardcoded price
     if (priceError || !priceData)
-      setPrice(getPriceFromDomain(duration, domain).toString());
+      setPriceInEth(getPriceFromDomain(duration, domain).toString());
     else {
       const high = priceData?.["price"].high << BigInt(128);
-      setPrice((priceData?.["price"].low + high).toString(10));
+      setPriceInEth((priceData?.["price"].low + high).toString(10));
     }
   }, [priceData, priceError, duration, domain]);
 
   useEffect(() => {
-    if (priceError || !priceData)
-      setRenewPrice(getPriceFromDomain(1, domain).toString());
-    else {
-      // Divide the priceData by the duration to get the renewal price
-      const high = priceData?.["price"].high << BigInt(128);
-      const price = priceData?.["price"].low + high;
-      const renew = price / BigInt(duration);
-      setRenewPrice(renew.toString(10));
+    const renewalPrice = getRenewalPriceETH(
+      priceError,
+      priceData,
+      domain,
+      duration
+    );
+    if (displayedCurrency === CurrencyType.ETH) {
+      setRenewPrice(renewalPrice);
+    } else if (quoteData) {
+      const priceInAltcoin = getDomainPriceAltcoin(
+        quoteData?.quote as string,
+        renewalPrice
+      );
+      setRenewPrice(priceInAltcoin);
     }
-  }, [priceData, priceError, domain, duration]);
+  }, [
+    priceData,
+    priceError,
+    domain,
+    quoteData?.quote,
+    duration,
+    displayedCurrency,
+  ]);
 
+  // we ensure user has enough balance of the token selected
   useEffect(() => {
-    if (userBalanceDataError || !userBalanceData) setBalance("");
-    else setBalance(userBalanceData.value.toString(10));
-  }, [userBalanceData, userBalanceDataError]);
-
-  useEffect(() => {
-    if (balance && price) {
-      if (gweiToEth(balance) > gweiToEth(price)) {
+    if (tokenBalances && price && displayedCurrency) {
+      const tokenBalance = tokenBalances[displayedCurrency];
+      if (tokenBalance && BigInt(tokenBalance) >= BigInt(price)) {
         setInvalidBalance(false);
       } else {
         setInvalidBalance(true);
       }
     }
-  }, [balance, price]);
+  }, [price, displayedCurrency, tokenBalances]);
 
   useEffect(() => {
     const referralData = localStorage.getItem("referralData");
@@ -189,23 +245,41 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
   // Set Register Multicall
   useEffect(() => {
+    if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     const txMetadataHash = "0x" + metadataHash;
 
     // Common calls
     const calls = [
-      registrationCalls.approve(price),
-      registrationCalls.buy(
-        encodedDomain,
-        tokenId === 0 ? newTokenId : tokenId,
-        sponsor,
-        duration,
-        txMetadataHash
-      ),
+      registrationCalls.approve(price, ERC20Contract[displayedCurrency]),
     ];
 
-    // If the user is a US resident, we add the sales tax
+    if (displayedCurrency === CurrencyType.ETH) {
+      calls.push(
+        registrationCalls.buy(
+          encodedDomain,
+          tokenId === 0 ? newTokenId : tokenId,
+          sponsor,
+          duration,
+          txMetadataHash
+        )
+      );
+    } else {
+      calls.push(
+        registrationCalls.altcoinBuy(
+          encodedDomain,
+          tokenId === 0 ? newTokenId : tokenId,
+          sponsor,
+          duration,
+          txMetadataHash,
+          ERC20Contract[displayedCurrency],
+          quoteData as QuoteQueryData
+        )
+      );
+    }
+
+    // If the user is a Swiss resident, we add the sales tax
     if (salesTaxRate) {
       calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
     }
@@ -225,15 +299,24 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     // If the user has toggled autorenewal
     if (renewalBox) {
       if (needsAllowance) {
-        calls.push(autoRenewalCalls.approve());
+        calls.push(
+          autoRenewalCalls.approve(
+            ERC20Contract[displayedCurrency],
+            AutoRenewalContracts[displayedCurrency]
+          )
+        );
       }
-      const limitPrice = salesTaxAmount
-        ? (BigInt(salesTaxAmount) + BigInt(price)).toString()
-        : price;
+
+      const allowance = getAutoRenewAllowance(
+        displayedCurrency,
+        salesTaxRate,
+        price
+      );
       calls.push(
         autoRenewalCalls.enableRenewal(
+          AutoRenewalContracts[displayedCurrency],
           encodedDomain,
-          limitPrice,
+          allowance,
           txMetadataHash
         )
       );
@@ -254,6 +337,8 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     renewalBox,
     salesTaxAmount,
     needsAllowance,
+    quoteData,
+    displayedCurrency,
   ]);
 
   useEffect(() => {
@@ -318,6 +403,17 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     }
   }, [isSwissResident, price, needMedadata, salesTaxRate]);
 
+  // if priceInEth or quoteData have changed, we update the price in altcoin
+  useEffect(() => {
+    if (displayedCurrency === CurrencyType.ETH) {
+      setPrice(priceInEth);
+    } else if (quoteData) {
+      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
+      setPrice(priceInAltcoin);
+      setLoadingPrice(false);
+    }
+  }, [priceInEth, quoteData, displayedCurrency]);
+
   function changeEmail(value: string): void {
     setEmail(value);
     setEmailError(isValidEmail(value) ? false : true);
@@ -336,6 +432,11 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     setIsTxModalOpen(false);
     router.push(`/identities`);
   }
+
+  const onCurrencySwitch = (type: CurrencyType) => {
+    if (type !== CurrencyType.ETH) setLoadingPrice(true);
+    setDisplayedCurrency(type);
+  };
 
   return (
     <div className={styles.container}>
@@ -388,11 +489,15 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
         </div>
         <div className={styles.summary}>
           <RegisterSummary
-            ethRegistrationPrice={price}
+            ethRegistrationPrice={priceInEth}
+            registrationPrice={price}
             duration={duration}
             renewalBox={renewalBox}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
+            displayedCurrency={displayedCurrency}
+            onCurrencySwitch={onCurrencySwitch}
+            loadingPrice={loadingPrice}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
@@ -424,7 +529,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
               {!termsBox
                 ? "Please accept terms & policies"
                 : invalidBalance
-                ? "You don't have enough eth"
+                ? `You don't have enough ${displayedCurrency}`
                 : needMedadata && emailError
                 ? "Enter a valid Email"
                 : "Register my domain"}

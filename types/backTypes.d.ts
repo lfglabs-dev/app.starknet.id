@@ -71,3 +71,20 @@ type StarkscanApiResult = {
   next_url?: string;
   remainder?: StarkscanNftProps[];
 };
+
+type QuoteQueryData = {
+  quote: string;
+  r: string;
+  s: string;
+  max_quote_validity: number;
+};
+
+type RenewalData = {
+  domain: string;
+  renewer_address: string;
+  allowance: string;
+  enabled: boolean;
+  last_renewal: number;
+  meta_hash: string;
+  auto_renew_contract?: string;
+};

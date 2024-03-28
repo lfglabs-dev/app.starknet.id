@@ -30,7 +30,7 @@ const DiscountCheckoutScreen: FunctionComponent<
         duration={duration}
         discountId={discountId}
         customMessage={customMessage}
-        price={price}
+        priceInEth={price}
         mailGroups={[
           process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? "",
           mailGroupId,

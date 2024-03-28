@@ -35,7 +35,7 @@ const TxConfirmationModal: FunctionComponent<TxConfirmationModalProps> = ({
               window.open(
                 `https://${
                   process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-                    ? "testnet."
+                    ? "sepolia."
                     : ""
                 }starkscan.co/tx/${txHash}`
               )

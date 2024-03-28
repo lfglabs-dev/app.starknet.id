@@ -1,10 +1,9 @@
 import { Call } from "starknet";
 import { numberToString } from "../stringService";
-import { hexToDecimal } from "../feltService";
 
-function approve(price: string): Call {
+function approve(price: string, erc20Address: string): Call {
   return {
-    contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
+    contractAddress: erc20Address,
     entrypoint: "approve",
     calldata: [process.env.NEXT_PUBLIC_NAMING_CONTRACT as string, price, 0],
   };
@@ -15,7 +14,8 @@ function buy(
   tokenId: number,
   sponsor: string,
   durationInYears: number,
-  metadata: string
+  metadata: string,
+  discountId?: string
 ): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
@@ -32,32 +32,50 @@ function buy(
       // sponsor
       sponsor,
       // discount
-      0,
+      discountId ?? 0,
       // metadata
       metadata,
     ],
   };
 }
 
-function buy_discounted(
+function altcoinBuy(
   encodedDomain: string,
   tokenId: number,
-  targetAddress: string,
-  duration: number,
-  discountId: string,
-  metadata: string
+  sponsor: string,
+  durationInYears: number,
+  metadata: string,
+  erc20Address: string,
+  quoteData: QuoteQueryData,
+  discountId?: string
 ): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "buy_discounted",
+    entrypoint: "altcoin_buy",
     calldata: [
+      // id
       numberToString(tokenId),
+      // domain
       encodedDomain,
-      numberToString(duration),
+      // days
+      numberToString(durationInYears * 365),
+      // resolver
       0,
-      hexToDecimal(targetAddress),
-      discountId,
+      // sponsor
+      sponsor,
+      // discount
+      discountId ?? 0,
+      // metadata
       metadata,
+      // altcoin address
+      erc20Address,
+      // quote
+      quoteData.quote,
+      // max quote validity
+      quoteData.max_quote_validity,
+      // signature
+      quoteData.r,
+      quoteData.s,
     ],
   };
 }
@@ -106,6 +124,33 @@ function renew(
   };
 }
 
+function altcoinRenew(
+  encodedDomain: string,
+  durationInYears: number,
+  metadataHash: string,
+  erc20Address: string,
+  quoteData: QuoteQueryData,
+  sponsor?: string,
+  discountId?: string
+): Call {
+  return {
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+    entrypoint: "altcoin_renew",
+    calldata: [
+      encodedDomain,
+      durationInYears * 365,
+      sponsor ?? 0,
+      discountId ?? 0,
+      "0x" + metadataHash,
+      erc20Address,
+      quoteData.quote,
+      quoteData.max_quote_validity,
+      quoteData.r,
+      quoteData.s,
+    ],
+  };
+}
+
 function freeRenewal(encodedDomain: string): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
@@ -126,6 +171,28 @@ function multiCallRenewal(
   );
 }
 
+function multiCallRenewalAltcoin(
+  encodedDomains: string[],
+  durationInYears: number,
+  metadataHash: string,
+  erc20Address: string,
+  quoteData: QuoteQueryData,
+  sponsor?: string,
+  discountId?: string
+): Call[] {
+  return encodedDomains.map((encodedDomain, index) =>
+    altcoinRenew(
+      encodedDomain,
+      durationInYears,
+      metadataHash,
+      erc20Address,
+      quoteData,
+      sponsor,
+      discountId
+    )
+  );
+}
+
 function multiCallFreeRenewals(encodedDomains: string[]): Call[] {
   return encodedDomains.map((encodedDomain) => freeRenewal(encodedDomain));
 }
@@ -133,12 +200,14 @@ function multiCallFreeRenewals(encodedDomains: string[]): Call[] {
 const registrationCalls = {
   approve,
   buy,
+  altcoinBuy,
   mainId,
   mint,
-  buy_discounted,
   vatTransfer,
   renew,
+  altcoinRenew,
   multiCallRenewal,
+  multiCallRenewalAltcoin,
   freeRenewal,
   multiCallFreeRenewals,
 };

@@ -114,3 +114,14 @@ type SnsDomainData = {
   signature: StarknetSig | undefined;
   sent: boolean;
 };
+
+type TokenBalance = {
+  [key in CurrencyType]: string;
+};
+
+type MulticallCallData = {
+  execution: CairoCustomEnum;
+  to: CairoCustomEnum;
+  selector: CairoCustomEnum;
+  calldata: CairoCustomEnum[];
+};

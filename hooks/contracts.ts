@@ -8,6 +8,7 @@ import braavosNFT_abi from "../abi/starknet/braavosNFT_abi.json";
 import renewal_abi from "../abi/starknet/renewal.sierra.json";
 import nft_pp_verifier_abi from "../abi/starknet/nft_pp_verifier_abi.json";
 import sol_subdomain_abi from "../abi/starknet/sol_subdomain_abi.json";
+import multicall_abi from "../abi/starknet/multicall_abi.json";
 import { Abi } from "starknet";
 
 export function useStarknetIdContract() {
@@ -70,5 +71,12 @@ export function useSolSubdomainContract() {
   return useContract({
     abi: sol_subdomain_abi.abi as Abi,
     address: process.env.NEXT_PUBLIC_SOL_SUBDOMAINS,
+  });
+}
+
+export function useMulticallContract() {
+  return useContract({
+    abi: multicall_abi.abi as Abi,
+    address: process.env.NEXT_PUBLIC_MULTICALL_CONTRACT,
   });
 }

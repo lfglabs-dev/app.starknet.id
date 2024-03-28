@@ -5,32 +5,40 @@ import React, {
   useState,
 } from "react";
 import styles from "../../styles/components/registerV2.module.css";
-import CurrencySwitcher from "./currencySwitcher";
 import { gweiToEth, numberToFixedString } from "../../utils/feltService";
+import { CurrencyType } from "../../utils/constants";
+import CurrencyDropdown from "./currencyDropdown";
+import { Skeleton } from "@mui/material";
 
 type RegisterSummaryProps = {
   duration: number;
   ethRegistrationPrice: string;
+  registrationPrice: string; // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   renewalBox: boolean;
   salesTaxRate: number;
   isSwissResident: boolean;
-  isUsdPriceDisplayed?: boolean;
+  isTokenDropdownDisplayed?: boolean;
   customMessage?: string;
+  displayedCurrency: CurrencyType;
+  onCurrencySwitch: (type: CurrencyType) => void;
+  loadingPrice?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   duration,
   ethRegistrationPrice,
+  registrationPrice,
   renewalBox,
   salesTaxRate,
   isSwissResident,
-  isUsdPriceDisplayed = true,
+  isTokenDropdownDisplayed = true,
   customMessage,
+  displayedCurrency,
+  onCurrencySwitch,
+  loadingPrice,
 }) => {
-  const [isEthPriceDisplayed, setIsEthPriceDisplayed] = useState<boolean>(true);
-  const [ethSwissdPrice, setEthSwissdPrice] = useState<number>(0);
-  const [usdRegistrationPrice, setSwissdRegistrationPrice] =
-    useState<number>(0);
+  const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1ETH in USD
+  const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
   const recurrence = renewalBox && duration === 1 ? "/year" : "";
   useEffect(() => {
     fetch(
@@ -38,23 +46,24 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     )
       .then((res) => res.json())
       .then((data) => {
-        setEthSwissdPrice(data?.ethereum?.usd);
+        console.log("Coingecko API Data:", data);
+        setEthUsdPrice(data?.ethereum?.usd.toString());
       })
       .catch((err) => console.log("Coingecko API Error:", err));
   }, []);
 
   useEffect(() => {
-    function computeSwissdPrice() {
-      if (ethSwissdPrice) {
-        return ethSwissdPrice * Number(gweiToEth(ethRegistrationPrice));
+    function computeUsdPrice() {
+      if (ethUsdPrice) {
+        return (
+          Number(ethUsdPrice) * Number(gweiToEth(ethRegistrationPrice))
+        ).toFixed(2);
       }
-      return 0;
+      return "0";
     }
 
-    if (!isEthPriceDisplayed) {
-      setSwissdRegistrationPrice(computeSwissdPrice());
-    }
-  }, [ethRegistrationPrice, ethSwissdPrice, isEthPriceDisplayed]);
+    setUsdRegistrationPrice(computeUsdPrice());
+  }, [ethRegistrationPrice, ethUsdPrice]);
 
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
     return (
@@ -67,32 +76,20 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     );
   }
 
-  function displayEthPrice(): ReactNode {
-    const salesTaxAmount =
-      salesTaxRate * Number(gweiToEth(ethRegistrationPrice)) * ethSwissdPrice;
-    const salesTaxInfo = salesTaxAmount
+  function displayTokenPrice(): ReactNode {
+    const salesTaxAmountUsd =
+      salesTaxRate *
+      Number(gweiToEth(ethRegistrationPrice)) *
+      Number(ethUsdPrice);
+    const salesTaxInfo = salesTaxAmountUsd
       ? ` (+ ${numberToFixedString(
-          salesTaxAmount
-        )}$ worth of ETH for Swiss VAT)`
+          salesTaxAmountUsd
+        )}$ worth of ${displayedCurrency} for Swiss VAT)`
       : "";
 
     return displayPrice(
-      String(Number(gweiToEth(ethRegistrationPrice)))
-        .concat(" ETH ")
-        .concat(recurrence),
-      salesTaxInfo
-    );
-  }
-
-  function displaySwissdPrice(): ReactNode {
-    const salesTaxAmount = salesTaxRate * usdRegistrationPrice;
-    const salesTaxInfo = salesTaxAmount
-      ? ` (+ ${numberToFixedString(Number(salesTaxAmount))}$ for US VAT)`
-      : "";
-
-    return displayPrice(
-      numberToFixedString(usdRegistrationPrice)
-        .concat(" $ ")
+      numberToFixedString(Number(gweiToEth(registrationPrice)), 3)
+        .concat(` ${displayedCurrency} `)
         .concat(recurrence),
       salesTaxInfo
     );
@@ -106,15 +103,20 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           <p className={styles.legend}>
             {customMessage
               ? customMessage
-              : `for ${duration} ${duration === 1 ? "year" : "years"}`}
+              : `For ${duration} ${duration === 1 ? "year" : "years"}`}
           </p>
-          {isEthPriceDisplayed ? displayEthPrice() : displaySwissdPrice()}
+          {loadingPrice ? (
+            <Skeleton variant="text" width="150px" height="24px" />
+          ) : (
+            displayTokenPrice()
+          )}
+          <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
         </div>
       </div>
-      {isUsdPriceDisplayed ? (
-        <CurrencySwitcher
-          isEthPriceDisplayed={isEthPriceDisplayed}
-          onCurrencySwitch={() => setIsEthPriceDisplayed(!isEthPriceDisplayed)}
+      {isTokenDropdownDisplayed ? (
+        <CurrencyDropdown
+          displayedCurrency={displayedCurrency}
+          onCurrencySwitch={onCurrencySwitch}
         />
       ) : null}
     </div>
