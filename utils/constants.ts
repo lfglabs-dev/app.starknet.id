@@ -33,12 +33,6 @@ export const NftCollections = [
     name: "Blobert",
     externalLink: "https://element.market/collections/blobert",
   },
-  {
-    imageUri:
-      "https://static.argent.net/unframed/images/0x03ab1124ef9ec3a2f2b1d9838f9066f9a894483d40b33390dda8d85c01a315a3_full.png",
-    name: "Starkurabu",
-    externalLink: "https://element.market/collections/starkurabu",
-  },
 ];
 
 export const ourNfts = [
@@ -49,6 +43,15 @@ export const ourNfts = [
       process.env.NEXT_PUBLIC_IS_TESTNET === "true"
         ? `https://sepolia.starknet.quest/`
         : "https://starknet.quest/",
+  },
+  {
+    imageUri:
+      "https://static.argent.net/unframed/images/0x03ab1124ef9ec3a2f2b1d9838f9066f9a894483d40b33390dda8d85c01a315a3_full.png",
+    name: "Starkurabu",
+    infoPage:
+      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+        ? `https://sepolia.starkurabu.com/`
+        : "https://starkurabu.com/",
   },
 ];
 
