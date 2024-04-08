@@ -103,7 +103,9 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           <p className={styles.legend}>
             {customMessage
               ? customMessage
-              : `For ${duration} ${duration === 1 ? "year" : "years"}`}
+              : `${gweiToEth(ethRegistrationPrice)} ETH x ${duration} ${
+                  duration === 1 ? "year" : "years"
+                }`}
           </p>
           {loadingPrice ? (
             <Skeleton variant="text" width="150px" height="24px" />

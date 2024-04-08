@@ -12,6 +12,10 @@ type RegisterCheckboxes = {
   variant?: "default" | "white";
   isArOnforced?: boolean;
   ethRenewalPrice?: string;
+  showMainDomainBox?: boolean;
+  onChangeMainDomainBox?: () => void;
+  mainDomainBox?: boolean;
+  domain?: string;
 };
 
 const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
@@ -22,10 +26,14 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   variant = "default",
   isArOnforced,
   ethRenewalPrice = "X",
+  mainDomainBox,
+  onChangeMainDomainBox,
+  showMainDomainBox = false,
+  domain,
 }) => {
   return (
     <div className="w-full mb-3">
-      <div className="flex mt-2 flex-col gap-3">
+      <div className="flex flex-col gap-3">
         <div
           className="flex items-center justify-left text-xs mr-2 cursor-pointer"
           onClick={onChangeTermsBox}
@@ -72,12 +80,23 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
               onClick={onChangeRenewalBox}
             >
               <Checkbox checked={renewalBox} sx={{ padding: 0 }} />
-              <p className="ml-2 text-left flex items-center gap-2 relative">
+              <p className="ml-2 mr-10 text-left flex items-center gap-2 relative">
                 Enable subscription and don&apos;t pay gas for your yearly
                 renewal
               </p>
             </div>
           </InputHelper>
+        ) : null}
+        {showMainDomainBox ? (
+          <div
+            className="flex items-center justify-left text-xs cursor-pointer"
+            onClick={onChangeMainDomainBox}
+          >
+            <Checkbox checked={mainDomainBox} sx={{ padding: 0 }} />
+            <p className="ml-2 mr-10 text-left flex items-center gap-2 relative">
+              Set {domain ?? "your domain"} as your main domain
+            </p>
+          </div>
         ) : null}
       </div>
     </div>

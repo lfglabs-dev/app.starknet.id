@@ -123,7 +123,6 @@ const TokenIdPage: NextPage = () => {
         ) : (
           <UpdateProfilePic
             tokenId={tokenId}
-            identity={identity}
             back={() => setIsUpdatingPp(false)}
             openTxModal={() => setIsTxModalOpen(true)}
             setPfpTxHash={setPpTxHash}

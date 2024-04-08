@@ -9,7 +9,7 @@ import {
   getDomainWithoutStark,
   isStarkRootDomain,
 } from "../../utils/stringService";
-import RegisterV2 from "../../components/domains/registerV2";
+import RegisterV3 from "../../components/domains/registerV3";
 
 const RegistrationPage: NextPage = () => {
   const router = useRouter();
@@ -33,7 +33,7 @@ const RegistrationPage: NextPage = () => {
             showHistory={false}
           />
         </div>
-        <RegisterV2
+        <RegisterV3
           domain={getDomainWithoutStark(domain)}
           groups={[
             process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? "",

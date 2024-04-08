@@ -135,3 +135,13 @@ export const AutoRenewalContracts = {
 };
 export type AutoRenewalContracts =
   (typeof AutoRenewalContracts)[keyof typeof AutoRenewalContracts];
+
+export enum FormType {
+  REGISTER = "Your Registration",
+  RENEW = "Your Renewal",
+}
+
+// export enum FormType {
+//   REGISTER = "REGISTER",
+//   RENEW = "RENEWAL",
+// }
