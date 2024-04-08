@@ -34,6 +34,16 @@
   white-space: nowrap;
 }
 
+.priceCrossed {
+  font-size: 1.25rem /* 20px */;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.5rem /* 24px */;
+  white-space: nowrap;
+  color: #6d696a;
+  text-decoration: line-through;
+}
+
 .legend {
   color: #6d696a;
   /* Body/small/medium */

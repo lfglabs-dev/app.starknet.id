@@ -37,7 +37,6 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain, groups }) => {
 
   const goToNextStep = () => {
     if (currentStep === 1) {
-      console.log("userNft", userNft);
       if (userNft && userNft.length > 0) {
         goToStep(2);
       } else {

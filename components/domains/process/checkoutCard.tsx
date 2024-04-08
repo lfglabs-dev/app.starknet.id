@@ -2,7 +2,6 @@ import React, {
   FunctionComponent,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import styles from "../../../styles/components/registerV3.module.css";
@@ -22,7 +21,6 @@ import {
 import Button from "@/components/UI/button";
 import RegisterSummary from "../registerSummary";
 import { usePricingContract } from "@/hooks/contracts";
-import { useDisplayName } from "@/hooks/displayName.tsx";
 import { useNotificationManager } from "@/hooks/useNotificationManager";
 import useAllowanceCheck from "@/hooks/useAllowanceCheck";
 import useBalances from "@/hooks/useBalances";
@@ -35,7 +33,11 @@ import {
   getTokenQuote,
 } from "@/utils/altcoinService";
 import { getPriceFromDomain } from "@/utils/priceService";
-import { applyRateToBigInt } from "@/utils/feltService";
+import {
+  applyRateToBigInt,
+  hexToDecimal,
+  toUint256,
+} from "@/utils/feltService";
 import RegisterCheckboxes from "../registerCheckboxes";
 import { getDomainWithStark } from "@/utils/stringService";
 import { registrationDiscount } from "@/utils/discounts/registration";
@@ -43,6 +45,8 @@ import UpsellCard from "./upsellCard";
 import registrationCalls from "@/utils/callData/registrationCalls";
 import { utils } from "starknetid.js";
 import autoRenewalCalls from "@/utils/callData/autoRenewalCalls";
+import { useDomainFromAddress } from "@/hooks/naming";
+import identityChangeCalls from "@/utils/callData/identityChangeCalls";
 
 type CheckoutCardProps = {
   type: FormType;
@@ -52,9 +56,8 @@ type CheckoutCardProps = {
 const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
   const { account, address } = useAccount();
   const { formState, updateFormState } = useContext(FormContext);
-  const [priceFor1Y, setPriceFor1Y] = useState<string>(""); // price in ETH for one year
-  const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH for selected duration
-  const [price, setPrice] = useState<string>(""); // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
+  const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH for 1 year
+  const [price, setPrice] = useState<string>(""); // total price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   const [renewPrice, setRenewPrice] = useState<string>("");
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
@@ -62,7 +65,9 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
   const { contract } = usePricingContract();
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [termsBox, setTermsBox] = useState<boolean>(true);
-  const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");
+  const hasMainDomain = useDomainFromAddress(address ?? "").domain.endsWith(
+    ".stark"
+  );
   const [mainDomainBox, setMainDomainBox] = useState<boolean>(true);
   const [sponsor, setSponsor] = useState<string>("0");
   const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
@@ -81,13 +86,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
     address: contract?.address as string,
     abi: contract?.abi as Abi,
     functionName: "compute_buy_price",
-    args: [domain.length, formState.duration * 365],
+    args: [domain.length, 365],
   });
-
-  const finalDuration = useMemo(() => {
-    if (formState.isUpselled) return 3;
-    else return formState.duration;
-  }, [formState.isUpselled, formState.duration]);
 
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
@@ -127,13 +127,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
   useEffect(() => {
     // if price query does not work we use the off-chain hardcoded price
     if (priceError || !priceData)
-      setPriceInEth(getPriceFromDomain(formState.duration, domain).toString());
+      setPriceInEth(getPriceFromDomain(1, domain).toString());
     else {
       const high = priceData?.["price"].high << BigInt(128);
       setPriceInEth((priceData?.["price"].low + high).toString(10));
     }
-    setPriceFor1Y(getPriceFromDomain(1, domain).toString());
-  }, [priceData, priceError, formState.duration, domain]);
+  }, [priceData, priceError, domain]);
 
   useEffect(() => {
     const renewalPrice = getRenewalPriceETH(
@@ -205,16 +204,28 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
     formState.salesTaxRate,
   ]);
 
+  // todo: for setMainId : call addr_to_token_id and if there is one fetch id_to_data
+  useEffect(() => {}, [address]);
+
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
+    const _price = (
+      BigInt(priceInEth) * BigInt(formState.isUpselled ? 2 : formState.duration)
+    ).toString();
     if (displayedCurrency === CurrencyType.ETH) {
-      setPrice(priceInEth);
+      setPrice(_price);
     } else if (quoteData) {
-      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
+      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, _price);
       setPrice(priceInAltcoin);
       setLoadingPrice(false);
     }
-  }, [priceInEth, quoteData, displayedCurrency]);
+  }, [
+    priceInEth,
+    quoteData,
+    displayedCurrency,
+    formState.isUpselled,
+    formState.duration,
+  ]);
 
   // Set Register Multicall
   useEffect(() => {
@@ -225,6 +236,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
     const encodedDomain = utils
       .encodeDomain(domain)
       .map((element) => element.toString())[0];
+    const finalDuration = formState.isUpselled ? 3 : formState.duration;
 
     // Common calls
     const calls = [
@@ -267,9 +279,13 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
       tokenIdToUse = newTokenId;
     }
 
-    // If the user do not have a main domain
-    if (!hasMainDomain) {
-      calls.push(registrationCalls.mainId(tokenIdToUse));
+    if (mainDomainBox) {
+      if (!hasMainDomain) {
+        // If the user does not have a main domain
+        calls.push(registrationCalls.mainId(tokenIdToUse));
+      } else {
+        //todo: setHasMainDomain with the right checks
+      }
     }
 
     // If the user has toggled autorenewal
@@ -298,11 +314,25 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
       );
     }
 
+    if (formState.selectedPfp) {
+      const nftData = formState.selectedPfp;
+      const nft_id = toUint256(nftData.token_id);
+      calls.push(
+        identityChangeCalls.updateProfilePicture(
+          hexToDecimal(nftData.contract_address),
+          nft_id.low,
+          nft_id.high,
+          tokenIdToUse.toString()
+        )
+      );
+    }
+
     // Merge and set the call data
     setCallData(calls);
   }, [
     formState.tokenId,
-    finalDuration,
+    formState.isUpselled,
+    formState.duration,
     price,
     formState.selectedDomains,
     hasMainDomain,
@@ -311,10 +341,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
     formState.metadataHash,
     formState.salesTaxRate,
     renewalBox,
+    mainDomainBox,
     salesTaxAmount,
     needsAllowance,
     quoteData,
     displayedCurrency,
+    formState.selectedPfp,
   ]);
 
   //todo: add the fact of adding the query in tx manager + queries before redirecting to new page
@@ -325,9 +357,20 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
   };
 
   const onUpsellChoice = (enable: boolean) => {
-    // setIsUpselled(enable);
-    //todo : update everything else that we need for computing price etc.
     updateFormState({ isUpselled: enable });
+  };
+
+  const getDiscountedPrice = (): string => {
+    if (!formState.isUpselled) return "";
+    if (displayedCurrency === CurrencyType.ETH) {
+      return (BigInt(priceInEth) * BigInt(3)).toString();
+    } else if (quoteData) {
+      return getDomainPriceAltcoin(
+        quoteData?.quote as string,
+        (BigInt(priceInEth) * BigInt(3)).toString()
+      );
+    }
+    return "";
   };
 
   return (
@@ -340,15 +383,18 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
       <div className={styles.container}>
         <div className={styles.checkout}>
           <RegisterSummary
-            ethRegistrationPrice={priceInEth}
-            registrationPrice={price}
-            duration={formState.isUpselled ? 3 : formState.duration}
+            ethRegistrationPrice={priceInEth} // price in ETH for one year
+            registrationPrice={price} // registration price in displayedCurrency
+            duration={formState.isUpselled ? 2 : formState.duration}
             renewalBox={renewalBox}
             salesTaxRate={formState.salesTaxRate}
             isSwissResident={formState.isSwissResident}
             displayedCurrency={displayedCurrency}
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
+            isUpselled={formState.isUpselled}
+            discountedPrice={getDiscountedPrice()}
+            discountedDuration={3}
           />
           <Divider className="w-full" />
           <div className={styles.checkoutSummary}>
@@ -358,8 +404,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
               onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
               renewalBox={renewalBox}
               ethRenewalPrice={renewPrice}
-              // showMainDomainBox={hasMainDomain} // todo: uncomment this after testing
-              showMainDomainBox={true}
+              showMainDomainBox={hasMainDomain}
+              // showMainDomainBox={true}
               mainDomainBox={mainDomainBox}
               onChangeMainDomainBox={() => setMainDomainBox(!mainDomainBox)}
               domain={getDomainWithStark(domain)}
