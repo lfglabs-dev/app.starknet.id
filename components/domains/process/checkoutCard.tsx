@@ -52,7 +52,8 @@ type CheckoutCardProps = {
 const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
   const { account, address } = useAccount();
   const { formState, updateFormState } = useContext(FormContext);
-  const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH
+  const [priceFor1Y, setPriceFor1Y] = useState<string>(""); // price in ETH for one year
+  const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH for selected duration
   const [price, setPrice] = useState<string>(""); // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   const [renewPrice, setRenewPrice] = useState<string>("");
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
@@ -131,6 +132,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({ type }) => {
       const high = priceData?.["price"].high << BigInt(128);
       setPriceInEth((priceData?.["price"].low + high).toString(10));
     }
+    setPriceFor1Y(getPriceFromDomain(1, domain).toString());
   }, [priceData, priceError, formState.duration, domain]);
 
   useEffect(() => {

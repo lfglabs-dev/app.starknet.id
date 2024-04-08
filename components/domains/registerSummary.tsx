@@ -10,6 +10,12 @@ import { CurrencyType } from "../../utils/constants";
 import CurrencyDropdown from "./currencyDropdown";
 import { Skeleton } from "@mui/material";
 
+/**
+ * price en ETH pour un an
+ * if discount : prix pour 3 ans, prix actuel (2 ans)
+ * duration actuelle pour pouvoir calculer le prix en USD
+ */
+
 type RegisterSummaryProps = {
   duration: number;
   ethRegistrationPrice: string;

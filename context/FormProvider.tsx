@@ -1,7 +1,6 @@
 import { useAccount, useContractRead } from "@starknet-react/core";
 import React, { FunctionComponent, useState } from "react";
 import { createContext, useMemo } from "react";
-import { CurrencyType } from "@/utils/constants";
 import { computeMetadataHash, generateSalt } from "@/utils/userDataService";
 import { useNftPpVerifierContract } from "@/hooks/contracts";
 import { Abi } from "starknet";
