@@ -78,14 +78,6 @@ function mainId(tokenId: number): Call {
   };
 }
 
-function resetAddrToDomain(): Call {
-  return {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "reset_address_to_domain",
-    calldata: [],
-  };
-}
-
 function vatTransfer(amount: string): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
@@ -142,7 +134,6 @@ const registrationCalls = {
   approve,
   buy,
   mainId,
-  resetAddrToDomain,
   mint,
   buy_discounted,
   vatTransfer,
