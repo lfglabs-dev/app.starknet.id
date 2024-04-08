@@ -1,6 +1,10 @@
 import React, { useMemo } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import {
+  useAccount,
+  useContractRead,
+  useContractWrite,
+} from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
@@ -17,7 +21,7 @@ import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
 import TxConfirmationModal from "../../UI/txConfirmationModal";
 import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
 import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
-import { Call } from "starknet";
+import { Abi, Call } from "starknet";
 import { useRouter } from "next/router";
 import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
@@ -26,6 +30,7 @@ import { posthog } from "posthog-js";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
+import { useNamingContract } from "@/hooks/contracts";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -51,6 +56,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const { addTransaction } = useNotificationManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
+  const [isMainDomain, setIsMainDomain] = useState<boolean>(
+    identity ? identity.isMain : false
+  );
   const router = useRouter();
   // AutoRenewals
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
@@ -65,6 +73,22 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     useContractWrite({
       calls: disableRenewalCalldata,
     });
+
+  // check if address_to_domain matches the domain of the identity
+  // if not, show set as main domain button
+  const { contract } = useNamingContract();
+  const { data: addrToDomainData, error: addrToDomainError } = useContractRead({
+    address: contract?.address as string,
+    abi: contract?.abi as Abi,
+    functionName: "address_to_domain",
+    args: [address as string],
+  });
+
+  useEffect(() => {
+    if (!addrToDomainData || addrToDomainError) return;
+    const decodedDomain = utils.decodeDomain(addrToDomainData as bigint[]);
+    if (decodedDomain !== identity?.domain) setIsMainDomain(false);
+  }, [addrToDomainData, addrToDomainError]);
 
   const nextAutoRenew = useMemo(() => {
     const now = Math.floor(Date.now() / 1000);
@@ -178,8 +202,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [disableRenewalData]); // We want to execute this effect only once, when the transaction is sent
 
-  console.log("identity", identity);
-
   return (
     <div className={styles.actionsContainer}>
       <>
@@ -242,7 +264,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   onClick={() => router.push("/renewal")}
                 />
               ) : null}
-              {!identity.isMain && (
+              {!isMainDomain && (
                 <ClickableAction
                   title="Set as main domain"
                   description="Set this identity as your main id"
