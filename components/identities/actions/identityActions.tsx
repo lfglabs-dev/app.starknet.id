@@ -240,20 +240,20 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   onClick={() => router.push("/renewal")}
                 />
               ) : null}
-              {!identity.isMain && (
-                <ClickableAction
-                  title="Set as main domain"
-                  description="Set this identity as your main id"
-                  icon={
-                    <MainIcon
-                      width="23"
-                      firstColor={theme.palette.secondary.main}
-                      secondColor={theme.palette.secondary.main}
-                    />
-                  }
-                  onClick={() => setMainId()}
-                />
-              )}
+              {/* {!identity.isMain && ( */}
+              <ClickableAction
+                title="Set as main domain"
+                description="Set this identity as your main id"
+                icon={
+                  <MainIcon
+                    width="23"
+                    firstColor={theme.palette.secondary.main}
+                    secondColor={theme.palette.secondary.main}
+                  />
+                }
+                onClick={() => setMainId()}
+              />
+              {/* )} */}
               <ClickableAction
                 title="CHANGE DOMAIN TARGET"
                 description="Change target address"

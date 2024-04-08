@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { usePricingContract } from "../../hooks/contracts";
@@ -219,6 +219,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
 
     // If the user do not have a main domain
     if (!hasMainDomain) {
+      calls.push(registrationCalls.resetAddrToDomain());
       calls.push(registrationCalls.mainId(tokenIdToUse));
     }
 
