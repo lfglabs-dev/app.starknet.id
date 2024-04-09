@@ -47,6 +47,8 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
       selectedDomains: { [domain]: true },
       isUpselled: true,
       duration: 1,
+      tokenId: 0,
+      selectedPfp: undefined,
     });
   }, [domain]);
 
