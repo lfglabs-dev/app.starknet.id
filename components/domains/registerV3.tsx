@@ -67,6 +67,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain, groups }) => {
       {currentStep === 3 && (
         <CheckoutCard
           type={FormType.REGISTER}
+          groups={groups}
           discount={registrationDiscount}
         />
       )}

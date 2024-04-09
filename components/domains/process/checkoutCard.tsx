@@ -11,6 +11,8 @@ import {
   CurrencyType,
   ERC20Contract,
   FormType,
+  NotificationType,
+  TransactionType,
   swissVatRate,
 } from "@/utils/constants";
 import {
@@ -39,7 +41,7 @@ import {
   toUint256,
 } from "@/utils/feltService";
 import RegisterCheckboxes from "../registerCheckboxes";
-import { getDomainWithStark } from "@/utils/stringService";
+import { formatHexString, getDomainWithStark } from "@/utils/stringService";
 import {
   RegistrationDiscount,
   registrationDiscount,
@@ -50,15 +52,18 @@ import { utils } from "starknetid.js";
 import autoRenewalCalls from "@/utils/callData/autoRenewalCalls";
 import { useDomainFromAddress } from "@/hooks/naming";
 import identityChangeCalls from "@/utils/callData/identityChangeCalls";
+import posthog from "posthog-js";
 
 type CheckoutCardProps = {
   type: FormType;
+  groups: string[];
   discount: RegistrationDiscount;
 };
 
 const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   type,
   discount,
+  groups,
 }) => {
   const { account, address } = useAccount();
   const { formState, updateFormState } = useContext(FormContext);
@@ -83,12 +88,15 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
   const [hasReverseAddressRecord, setHasReverseAddressRecord] =
     useState<boolean>(false);
+  const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
+    new Map()
+  );
   const { addTransaction } = useNotificationManager();
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
   const [callData, setCallData] = useState<Call[]>([]);
   const [tokenIdRedirect, setTokenIdRedirect] = useState<string>("0");
-  const { writeAsync: execute, data: registerData } = useContractWrite({
+  const { writeAsync: execute, data: checkoutData } = useContractWrite({
     calls: callData,
   });
   const domain = Object.keys(formState.selectedDomains)[0];
@@ -297,7 +305,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           formState.tokenId === 0 ? newTokenId : formState.tokenId,
           sponsor,
           finalDuration,
-          txMetadataHash
+          txMetadataHash,
+          formState.isUpselled ? discount.upsell.discountId : "0"
         )
       );
     } else {
@@ -396,7 +405,59 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     formState.selectedPfp,
   ]);
 
-  //todo: add the fact of adding the query in tx manager + queries before redirecting to new page
+  // on execute transaction,
+  useEffect(() => {
+    if (!checkoutData?.transaction_hash || !formState.salt) return;
+
+    // track the registration event(s) for analytics
+    if (renewalBox) posthog?.capture("enable-ar-register");
+    if (type === FormType.REGISTER) posthog?.capture("register");
+    else if (type === FormType.RENEW) posthog?.capture("renewal from page");
+
+    // register the metadata to the sales manager db
+    if (formState.needMetadata) {
+      fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          meta_hash: formState.metadataHash,
+          email: formState.email,
+          tax_state: formState.isSwissResident ? "switzerland" : "none",
+          salt: formState.salt,
+        }),
+      })
+        .then((res) => res.json())
+        .catch((err) => console.log("Error on sending metadata:", err));
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tx_hash: formatHexString(checkoutData.transaction_hash),
+        groups: renewalBox ? groups : [groups[0]],
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) => console.log("Error on registering to email:", err));
+
+    addTransaction({
+      timestamp: Date.now(),
+      subtext:
+        type === FormType.REGISTER ? "Domain registration" : "Domain renewal",
+      type: NotificationType.TRANSACTION,
+      data: {
+        type:
+          type === FormType.REGISTER
+            ? TransactionType.BUY_DOMAIN
+            : TransactionType.RENEW_DOMAIN,
+        hash: checkoutData.transaction_hash,
+        status: "pending",
+      },
+    });
+    //todo: redirect to confirmation page
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkoutData]); // We only need registerData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
   const onCurrencySwitch = (type: CurrencyType) => {
     if (type !== CurrencyType.ETH) setLoadingPrice(true);
@@ -406,19 +467,6 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const onUpsellChoice = (enable: boolean) => {
     updateFormState({ isUpselled: enable });
   };
-
-  // const getDiscountedPrice = (): string => {
-  //   if (!formState.isUpselled) return "";
-  //   if (displayedCurrency === CurrencyType.ETH) {
-  //     return (BigInt(priceInEth) * BigInt(3)).toString();
-  //   } else if (quoteData) {
-  //     return getDomainPriceAltcoin(
-  //       quoteData?.quote as string,
-  //       (BigInt(priceInEth) * BigInt(3)).toString()
-  //     );
-  //   }
-  //   return "";
-  // };
 
   return (
     <>
@@ -458,15 +506,15 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
             />
             <div>
               <Button
-                onClick={
-                  () => console.log("execute tx")
-                  // execute().then(() => {
-                  //   setDomainsMinting((prev) =>
-                  //     new Map(prev).set(encodedDomain.toString(), true)
-                  //   );
-                  // })
+                onClick={() =>
+                  execute().then(() => {
+                    setDomainsMinting((prev) =>
+                      new Map(prev).set(domain.toString(), true)
+                    );
+                  })
                 }
                 disabled={
+                  (domainsMinting.get(domain) as boolean) ||
                   !account ||
                   !formState.duration ||
                   formState.duration < 1 ||
