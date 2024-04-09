@@ -8,6 +8,7 @@ import CheckoutCard from "./process/checkoutCard";
 import { useAccount } from "@starknet-react/core";
 import SelectPfp from "./process/selectPfp";
 import RegisterSteps from "./process/registerSteps";
+import { registrationDiscount } from "@/utils/discounts/registration";
 
 type RegisterV3Props = {
   domain: string;
@@ -27,8 +28,11 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain, groups }) => {
   }, [address]);
 
   useEffect(() => {
-    // Add domain in context
-    updateFormState({ selectedDomains: { [domain]: true } });
+    // Add domain in context and initialize the upsell state
+    updateFormState({
+      selectedDomains: { [domain]: true },
+      isUpselled: true,
+    });
   }, [domain]);
 
   const goToStep = (step: number) => {
@@ -60,7 +64,12 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain, groups }) => {
         />
       )}
       {currentStep === 2 && <SelectPfp goToNextStep={goToNextStep} />}
-      {currentStep === 3 && <CheckoutCard type={FormType.REGISTER} />}
+      {currentStep === 3 && (
+        <CheckoutCard
+          type={FormType.REGISTER}
+          discount={registrationDiscount}
+        />
+      )}
     </>
   );
 };

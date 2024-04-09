@@ -24,8 +24,8 @@ type RegisterSummaryProps = {
   onCurrencySwitch: (type: CurrencyType) => void;
   loadingPrice?: boolean;
   isUpselled?: boolean;
-  discountedPrice?: string;
-  discountedDuration?: number;
+  discountedPrice?: string; // price the user will pay after discount
+  discountedDuration?: number; // years the user will have the domain for after discount
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -115,8 +115,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 
     if (isUpselled && discountedPrice) {
       return displayDiscountedPrice(
-        numberToFixedString(Number(gweiToEth(discountedPrice)), 3),
-        numberToFixedString(Number(gweiToEth(registrationPrice)), 3)
+        numberToFixedString(Number(gweiToEth(registrationPrice)), 3),
+        numberToFixedString(Number(gweiToEth(discountedPrice)), 3)
           .concat(` ${displayedCurrency} `)
           .concat(recurrence),
         salesTaxInfo

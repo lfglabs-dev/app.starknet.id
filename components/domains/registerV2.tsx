@@ -13,7 +13,7 @@ import {
   formatHexString,
   isValidEmail,
 } from "../../utils/stringService";
-import { applyRateToBigInt, gweiToEth } from "../../utils/feltService";
+import { applyRateToBigInt } from "../../utils/feltService";
 import SelectIdentity from "./selectIdentity";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi, Call } from "starknet";

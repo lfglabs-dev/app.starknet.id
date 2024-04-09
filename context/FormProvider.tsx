@@ -42,7 +42,7 @@ const initialState: FormState = {
   selectedDomains: {},
   needMetadata: false,
   salesTaxRate: 0,
-  isUpselled: true,
+  isUpselled: false,
 };
 
 export const FormContext = createContext<FormConfig>({

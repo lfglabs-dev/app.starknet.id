@@ -197,6 +197,14 @@ function multiCallFreeRenewals(encodedDomains: string[]): Call[] {
   return encodedDomains.map((encodedDomain) => freeRenewal(encodedDomain));
 }
 
+function resetAddrToDomain(): Call {
+  return {
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+    entrypoint: "reset_address_to_domain",
+    calldata: [],
+  };
+}
+
 const registrationCalls = {
   approve,
   buy,
@@ -210,6 +218,7 @@ const registrationCalls = {
   multiCallRenewalAltcoin,
   freeRenewal,
   multiCallFreeRenewals,
+  resetAddrToDomain,
 };
 
 export default registrationCalls;
