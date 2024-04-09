@@ -34,37 +34,51 @@ const Confirmation: NextPage = () => {
   };
 
   return (
-    <div className={styles.container}>
-      <div>
-        <div className={styles.subtitle}>Referral</div>
-        <div className={styles.title}>
-          It&apos;s now time to earn
-          <br />
-          <span className={styles.highlight}>crypto!</span>
+    <>
+      <div className={styles.container}>
+        <div className={styles.balloon}>
+          <img alt="balloon" src="/register/balloon.webp" />
+        </div>
+        <div className={styles.coconut}>
+          <img alt="coconut" src="/register/coconut.webp" />
+        </div>
+        <div>
+          <div className={styles.subtitle}>Referral</div>
+          <div className={styles.title}>
+            It&apos;s now time to earn
+            <br />
+            <span className={styles.highlight}>crypto!</span>
+          </div>
+        </div>
+        <div>
+          <div>Refer your friends to Starknet ID and earn crypto ! </div>
+          <div className="font-extrabold">
+            Earn up to 10$ per friends with your referral link below.
+          </div>
+        </div>
+        <div className={styles.copyAddr} onClick={copyToClipboard}>
+          {`app.starknet.id/${minifyAddress(address)}`}
+          {!copied ? (
+            <CopyIcon width="25" color={theme.palette.secondary.main} />
+          ) : (
+            <DoneFilledIcon
+              width="25"
+              color="#fffcf8"
+              secondColor={theme.palette.primary.main}
+            />
+          )}
+        </div>
+        <div>
+          <Button onClick={redirect}>Go to your domain</Button>
         </div>
       </div>
-      <div>
-        <div>Refer your friends to Starknet ID and earn crypto ! </div>
-        <div className="font-extrabold">
-          Earn up to 10$ per friends with your referral link below.
-        </div>
+      <div className={styles.coconutLeft}>
+        <img alt="coconut" src="/register/coconutleft.webp" />
       </div>
-      <div className={styles.copyAddr} onClick={copyToClipboard}>
-        {`app.starknet.id/${minifyAddress(address)}`}
-        {!copied ? (
-          <CopyIcon width="25" color={theme.palette.secondary.main} />
-        ) : (
-          <DoneFilledIcon
-            width="25"
-            color="#fffcf8"
-            secondColor={theme.palette.primary.main}
-          />
-        )}
+      <div className={styles.coconutRight}>
+        <img alt="coconut" src="/register/coconutright.webp" />
       </div>
-      <div>
-        <Button onClick={redirect}>Go to your domain</Button>
-      </div>
-    </div>
+    </>
   );
 };
 
