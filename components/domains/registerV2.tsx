@@ -13,9 +13,8 @@ import {
   formatHexString,
   isValidEmail,
 } from "../../utils/stringService";
-import { applyRateToBigInt, gweiToEth } from "../../utils/feltService";
+import { applyRateToBigInt } from "../../utils/feltService";
 import SelectIdentity from "./selectIdentity";
-import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Abi, Call } from "starknet";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
@@ -49,6 +48,7 @@ import {
   getRenewalPriceETH,
   getTokenQuote,
 } from "../../utils/altcoinService";
+import { useDomainFromAddress } from "@/hooks/naming";
 
 type RegisterV2Props = {
   domain: string;
@@ -98,7 +98,9 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const { writeAsync: execute, data: registerData } = useContractWrite({
     calls: callData,
   });
-  const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");
+  const hasMainDomain = useDomainFromAddress(address ?? "").domain.endsWith(
+    ".stark"
+  );
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
