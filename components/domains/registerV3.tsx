@@ -23,7 +23,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
-  const { formState, updateFormState, userNft } = useContext(FormContext);
+  const { updateFormState, userNft } = useContext(FormContext);
 
   useEffect(() => {
     if (!address) setCurrentStep(1);
@@ -34,6 +34,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
     updateFormState({
       selectedDomains: { [domain]: true },
       isUpselled: true,
+      duration: 1,
     });
   }, [domain]);
 

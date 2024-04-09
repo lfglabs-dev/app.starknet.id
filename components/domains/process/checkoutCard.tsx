@@ -485,11 +485,13 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   return (
     <>
-      <UpsellCard
-        upsellData={registrationDiscount}
-        enabled={formState.isUpselled}
-        onUpsellChoice={onUpsellChoice}
-      />
+      {formState.duration === 1 ? (
+        <UpsellCard
+          upsellData={registrationDiscount}
+          enabled={formState.isUpselled}
+          onUpsellChoice={onUpsellChoice}
+        />
+      ) : null}
       <div className={styles.container}>
         <div className={styles.checkout}>
           <RegisterSummary

@@ -52,7 +52,10 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
 
   function changeDuration(value: number): void {
     if (isNaN(value) || value > maxYearsToRegister || value < 1) return;
-    updateFormState({ duration: value });
+    updateFormState({
+      duration: value,
+      isUpselled: value === 1 ? true : false,
+    });
   }
 
   return (
