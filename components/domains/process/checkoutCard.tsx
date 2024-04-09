@@ -53,6 +53,7 @@ import autoRenewalCalls from "@/utils/callData/autoRenewalCalls";
 import { useDomainFromAddress } from "@/hooks/naming";
 import identityChangeCalls from "@/utils/callData/identityChangeCalls";
 import posthog from "posthog-js";
+import { useRouter } from "next/router";
 
 type CheckoutCardProps = {
   type: FormType;
@@ -65,6 +66,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   discount,
   groups,
 }) => {
+  const router = useRouter();
   const { account, address } = useAccount();
   const { formState, updateFormState } = useContext(FormContext);
   const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH for 1 year
@@ -455,7 +457,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         status: "pending",
       },
     });
-    //todo: redirect to confirmation page
+
+    // Redirect to confirmation page
+    if (type === FormType.REGISTER)
+      router.push(`/confirmation?tokenId=${tokenIdRedirect}`);
+    else router.push(`/confirmation`);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkoutData]); // We only need registerData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
