@@ -30,7 +30,9 @@ import { Divider } from "@mui/material";
 import { Abi, Call } from "starknet";
 import {
   getAutoRenewAllowance,
+  getDomainPrice,
   getDomainPriceAltcoin,
+  getPriceForDuration,
   getRenewalPriceETH,
   getTokenQuote,
 } from "@/utils/altcoinService";
@@ -254,12 +256,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
-    const _price = (
-      BigInt(priceInEth) *
-      BigInt(
-        formState.isUpselled ? discount.upsell.duration : formState.duration
-      )
-    ).toString();
+    if (!priceInEth) return;
+    const _price = getPriceForDuration(
+      priceInEth,
+      formState.isUpselled ? discount.upsell.duration : formState.duration
+    );
     if (displayedCurrency === CurrencyType.ETH) {
       setPrice(_price);
     } else if (quoteData) {
@@ -293,11 +294,14 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     const encodedDomain = utils
       .encodeDomain(domain)
       .map((element) => element.toString())[0];
-    const finalDuration = formState.isUpselled ? 3 : formState.duration;
+    const finalDuration = formState.isUpselled
+      ? discount.upsell.duration
+      : formState.duration;
+    const priceToPay = formState.isUpselled ? discountedPrice : price;
 
     // Common calls
     const calls = [
-      registrationCalls.approve(price, ERC20Contract[displayedCurrency]),
+      registrationCalls.approve(priceToPay, ERC20Contract[displayedCurrency]),
     ];
 
     if (displayedCurrency === CurrencyType.ETH) {
@@ -320,7 +324,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           finalDuration,
           txMetadataHash,
           ERC20Contract[displayedCurrency],
-          quoteData as QuoteQueryData
+          quoteData as QuoteQueryData,
+          formState.isUpselled ? discount.upsell.discountId : "0"
         )
       );
     }
@@ -359,7 +364,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       const allowance = getAutoRenewAllowance(
         displayedCurrency,
         formState.salesTaxRate,
-        price
+        getDomainPrice(domain, displayedCurrency, quoteData?.quote)
       );
       calls.push(
         autoRenewalCalls.enableRenewal(

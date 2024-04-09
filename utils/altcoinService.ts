@@ -22,11 +22,21 @@ export const getDomainPriceAltcoin = (quote: string, priceInEth: string) => {
   const quoteBigInt = new Big(quote);
   const scaleFactor = new Big(10 ** 18);
 
-  const price = priceBigInt
-    .mul(quoteBigInt)
-    .div(scaleFactor)
-    .round(0)
-    .toString();
+  const price = priceBigInt.mul(quoteBigInt).div(scaleFactor).toFixed(0);
+
+  return price;
+};
+
+export const getPriceForDuration = (
+  priceFor1Y: string,
+  duration: number
+): string => {
+  if (duration === 1) return priceFor1Y;
+
+  const priceBigInt = new Big(priceFor1Y);
+  const durationBigInt = new Big(duration);
+
+  const price = priceBigInt.mul(durationBigInt).toFixed(0);
 
   return price;
 };

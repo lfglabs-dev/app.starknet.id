@@ -38,7 +38,7 @@ const Confirmation: NextPage = () => {
       <div>
         <div className={styles.subtitle}>Referral</div>
         <div className={styles.title}>
-          It's now time to earn
+          It&apos;s now time to earn
           <br />
           <span className={styles.highlight}>crypto!</span>
         </div>
