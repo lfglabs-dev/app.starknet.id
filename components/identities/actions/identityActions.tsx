@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useContext, useMemo } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import {
   useAccount,
@@ -31,6 +31,7 @@ import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
 import { useNamingContract } from "@/hooks/contracts";
+import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -60,6 +61,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     identity ? identity.isMain : false
   );
   const router = useRouter();
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   // AutoRenewals
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
@@ -76,19 +78,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   // check if address_to_domain matches the domain of the identity
   // if not, show set as main domain button
-  const { contract } = useNamingContract();
-  const { data: addrToDomainData, error: addrToDomainError } = useContractRead({
-    address: contract?.address as string,
-    abi: contract?.abi as Abi,
-    functionName: "address_to_domain",
-    args: [address as string],
-  });
-
   useEffect(() => {
-    if (!addrToDomainData || addrToDomainError) return;
-    const decodedDomain = utils.decodeDomain(addrToDomainData as bigint[]);
-    if (decodedDomain !== identity?.domain) setIsMainDomain(false);
-  }, [addrToDomainData, addrToDomainError]);
+    if (starknetIdNavigator !== null && address !== undefined) {
+      starknetIdNavigator.getStarkName(address).then((name: string) => {
+        if (name !== identity?.domain) setIsMainDomain(false);
+      });
+    }
+  }, [address]);
 
   const nextAutoRenew = useMemo(() => {
     const now = Math.floor(Date.now() / 1000);
