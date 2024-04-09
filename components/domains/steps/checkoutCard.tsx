@@ -15,39 +15,35 @@ import {
   TransactionType,
   swissVatRate,
 } from "@/utils/constants";
-import {
-  useAccount,
-  useContractRead,
-  useContractWrite,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import Button from "@/components/UI/button";
 import RegisterSummary from "../registerSummary";
-import { usePricingContract } from "@/hooks/contracts";
 import { useNotificationManager } from "@/hooks/useNotificationManager";
 import useAllowanceCheck from "@/hooks/useAllowanceCheck";
 import useBalances from "@/hooks/useBalances";
 import { Divider } from "@mui/material";
-import { Abi, Call } from "starknet";
+import { Call } from "starknet";
 import {
   getAutoRenewAllowance,
   getDomainPrice,
   getDomainPriceAltcoin,
   getPriceForDuration,
-  getRenewalPriceETH,
   getTokenQuote,
 } from "@/utils/altcoinService";
-import { getPriceFromDomain } from "@/utils/priceService";
+import { getPriceFromDomains } from "@/utils/priceService";
 import {
   applyRateToBigInt,
   hexToDecimal,
   toUint256,
 } from "@/utils/feltService";
 import RegisterCheckboxes from "../registerCheckboxes";
-import { formatHexString, getDomainWithStark } from "@/utils/stringService";
 import {
-  RegistrationDiscount,
-  registrationDiscount,
-} from "@/utils/discounts/registration";
+  formatHexString,
+  getDomainWithStark,
+  selectedDomainsToArray,
+  selectedDomainsToEncodedArray,
+} from "@/utils/stringService";
+import { registrationDiscount } from "@/utils/discounts/registration";
 import UpsellCard from "./upsellCard";
 import registrationCalls from "@/utils/callData/registrationCalls";
 import { utils } from "starknetid.js";
@@ -60,7 +56,7 @@ import { useRouter } from "next/router";
 type CheckoutCardProps = {
   type: FormType;
   groups: string[];
-  discount: RegistrationDiscount;
+  discount: Upsell;
 };
 
 const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
@@ -73,15 +69,13 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const { formState, updateFormState, clearForm } = useContext(FormContext);
   const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH for 1 year
   const [price, setPrice] = useState<string>(""); // total price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
-  const [renewPrice, setRenewPrice] = useState<string>("");
   const [discountedPrice, setDiscountedPrice] = useState<string>(""); // discounted price in displayedCurrency
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
-  const { contract } = usePricingContract();
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [termsBox, setTermsBox] = useState<boolean>(true);
-  const hasMainDomain = useDomainFromAddress(address ?? "").domain.endsWith(
+  const hasMainDomain = useDomainFromAddress(address ?? "")?.domain.endsWith(
     ".stark"
   );
   const [mainDomainBox, setMainDomainBox] = useState<boolean>(true);
@@ -92,9 +86,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
   const [hasReverseAddressRecord, setHasReverseAddressRecord] =
     useState<boolean>(false);
-  const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
-    new Map()
-  );
+  const [domainsMinting, setDomainsMinting] =
+    useState<Record<string, boolean>>();
   const { addTransaction } = useNotificationManager();
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
@@ -103,14 +96,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const { writeAsync: execute, data: checkoutData } = useContractWrite({
     calls: callData,
   });
-  const domain = Object.keys(formState.selectedDomains)[0];
-  // Fetch price of domain for a year
-  const { data: priceData, error: priceError } = useContractRead({
-    address: contract?.address as string,
-    abi: contract?.abi as Abi,
-    functionName: "compute_buy_price",
-    args: [domain.length, 365],
-  });
+  // Renewals
+  const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
 
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
@@ -148,55 +135,37 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   }, [displayedCurrency, priceInEth]); // We don't add quoteData because it would create an infinite loop
 
   useEffect(() => {
-    // if price query does not work we use the off-chain hardcoded price
-    if (priceError || !priceData)
-      setPriceInEth(getPriceFromDomain(1, domain).toString());
-    else {
-      const high = priceData?.["price"].high << BigInt(128);
-      setPriceInEth((priceData?.["price"].low + high).toString(10));
-    }
-  }, [priceData, priceError, domain]);
+    // get the price for domains for a year
+    if (!formState.selectedDomains) return;
+    setPriceInEth(
+      getPriceFromDomains(
+        selectedDomainsToArray(formState.selectedDomains),
+        1
+      ).toString()
+    );
+  }, [formState.selectedDomains, formState.duration]);
 
   useEffect(() => {
     // update discountedPrice based on isUpselled selected or not
     if (formState.isUpselled) {
       if (displayedCurrency === CurrencyType.ETH) {
         setDiscountedPrice(
-          (BigInt(priceInEth) * BigInt(discount.priceDuration)).toString()
+          (BigInt(priceInEth) * BigInt(discount.paidDuration)).toString()
         );
       } else if (quoteData) {
         const priceInAltcoin = getDomainPriceAltcoin(
           quoteData?.quote as string,
-          (BigInt(priceInEth) * BigInt(discount.priceDuration)).toString()
+          (BigInt(priceInEth) * BigInt(discount.paidDuration)).toString()
         );
         setDiscountedPrice(priceInAltcoin);
       }
     } else setDiscountedPrice("");
-  }, [priceInEth, formState.isUpselled, displayedCurrency, quoteData]);
-
-  useEffect(() => {
-    const renewalPrice = getRenewalPriceETH(
-      priceError,
-      priceData,
-      domain,
-      formState.duration
-    );
-    if (displayedCurrency === CurrencyType.ETH) {
-      setRenewPrice(renewalPrice);
-    } else if (quoteData) {
-      const priceInAltcoin = getDomainPriceAltcoin(
-        quoteData?.quote as string,
-        renewalPrice
-      );
-      setRenewPrice(priceInAltcoin);
-    }
   }, [
-    priceData,
-    priceError,
-    domain,
-    quoteData?.quote,
-    formState.duration,
+    priceInEth,
+    formState.isUpselled,
     displayedCurrency,
+    quoteData,
+    discount,
   ]);
 
   // we ensure user has enough balance of the token selected
@@ -230,7 +199,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     } else {
       setSponsor("0");
     }
-  }, [domain]);
+  }, [address, formState.selectedDomains]);
 
   useEffect(() => {
     const _price = formState.isUpselled ? discountedPrice : price;
@@ -259,13 +228,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     if (!priceInEth) return;
     const _price = getPriceForDuration(
       priceInEth,
-      formState.isUpselled ? discount.upsell.duration : formState.duration
+      formState.isUpselled ? discount.duration : formState.duration
     );
     if (displayedCurrency === CurrencyType.ETH) {
       setPrice(_price);
     } else if (quoteData) {
-      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, _price);
-      setPrice(priceInAltcoin);
+      setPrice(getDomainPriceAltcoin(quoteData.quote, _price));
       setLoadingPrice(false);
     }
   }, [
@@ -285,17 +253,35 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       });
   }, [address]);
 
+  // we get the list of domains that do not have a autorenewal already enabled
+  useEffect(() => {
+    if (type !== FormType.RENEW) return;
+    if (address) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_LINK}/renewal/get_non_subscribed_domains?addr=${address}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setNonSubscribedDomains(data);
+        });
+    }
+  }, [address, formState.selectedDomains, renewalBox]);
+
   // Set Register Multicall
   useEffect(() => {
-    if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
+    if (
+      (displayedCurrency !== CurrencyType.ETH && !quoteData) ||
+      type !== FormType.REGISTER
+    )
+      return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     const txMetadataHash = "0x" + formState.metadataHash;
     const encodedDomain = utils
-      .encodeDomain(domain)
+      .encodeDomain(Object.keys(formState.selectedDomains)[0])
       .map((element) => element.toString())[0];
     const finalDuration = formState.isUpselled
-      ? discount.upsell.duration
+      ? discount.duration
       : formState.duration;
     const priceToPay = formState.isUpselled ? discountedPrice : price;
 
@@ -312,7 +298,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           sponsor,
           finalDuration,
           txMetadataHash,
-          formState.isUpselled ? discount.upsell.discountId : "0"
+          formState.isUpselled ? discount.discountId : "0"
         )
       );
     } else {
@@ -325,7 +311,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           txMetadataHash,
           ERC20Contract[displayedCurrency],
           quoteData as QuoteQueryData,
-          formState.isUpselled ? discount.upsell.discountId : "0"
+          formState.isUpselled ? discount.discountId : "0"
         )
       );
     }
@@ -364,7 +350,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       const allowance = getAutoRenewAllowance(
         displayedCurrency,
         formState.salesTaxRate,
-        getDomainPrice(domain, displayedCurrency, quoteData?.quote)
+        getDomainPrice(
+          Object.keys(formState.selectedDomains)[0],
+          displayedCurrency,
+          quoteData?.quote
+        )
       );
       calls.push(
         autoRenewalCalls.enableRenewal(
@@ -386,6 +376,129 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           nft_id.low,
           nft_id.high,
           tokenIdToUse.toString()
+        )
+      );
+    }
+
+    // Merge and set the call data
+    setCallData(calls);
+  }, [
+    formState.tokenId,
+    formState.isUpselled,
+    formState.duration,
+    price,
+    formState.selectedDomains,
+    hasMainDomain,
+    address,
+    sponsor,
+    formState.metadataHash,
+    formState.salesTaxRate,
+    renewalBox,
+    mainDomainBox,
+    salesTaxAmount,
+    needsAllowance,
+    quoteData,
+    displayedCurrency,
+    formState.selectedPfp,
+  ]);
+
+  // Set Renewal Multicall
+  useEffect(() => {
+    if (type !== FormType.RENEW) return;
+    if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
+
+    // Variables
+    const txMetadataHash = "0x" + formState.metadataHash;
+    const finalDuration = formState.isUpselled
+      ? discount.duration
+      : formState.duration;
+    const priceToPay = formState.isUpselled ? discountedPrice : price;
+
+    // Common calls
+    const calls = [
+      registrationCalls.approve(priceToPay, ERC20Contract[displayedCurrency]),
+    ];
+
+    if (displayedCurrency === CurrencyType.ETH) {
+      calls.push(
+        ...registrationCalls.multiCallRenewal(
+          selectedDomainsToEncodedArray(formState.selectedDomains),
+          finalDuration,
+          txMetadataHash,
+          sponsor,
+          formState.isUpselled ? discount.discountId : "0"
+        )
+      );
+    } else {
+      calls.push(
+        ...registrationCalls.multiCallRenewalAltcoin(
+          selectedDomainsToEncodedArray(formState.selectedDomains),
+          finalDuration,
+          txMetadataHash,
+          ERC20Contract[displayedCurrency],
+          quoteData as QuoteQueryData,
+          sponsor,
+          formState.isUpselled ? discount.discountId : "0"
+        )
+      );
+    }
+
+    // If the user is a Swiss resident, we add the sales tax
+    if (formState.salesTaxRate) {
+      calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+    }
+
+    // If the user has toggled autorenewal
+    if (renewalBox) {
+      if (needsAllowance) {
+        calls.push(
+          autoRenewalCalls.approve(
+            ERC20Contract[displayedCurrency],
+            AutoRenewalContracts[displayedCurrency]
+          )
+        );
+      }
+
+      selectedDomainsToArray(formState.selectedDomains).map((domain) => {
+        // we enable renewal only for the domains that are not already subscribed
+        if (nonSubscribedDomains?.includes(domain)) {
+          const encodedDomain = utils
+            .encodeDomain(domain)
+            .map((element) => element.toString())[0];
+
+          const domainPrice = getDomainPrice(
+            domain,
+            displayedCurrency,
+            quoteData?.quote
+          );
+          const allowance = getAutoRenewAllowance(
+            displayedCurrency,
+            formState.salesTaxRate,
+            domainPrice
+          );
+
+          calls.push(
+            autoRenewalCalls.enableRenewal(
+              AutoRenewalContracts[displayedCurrency],
+              encodedDomain,
+              allowance,
+              txMetadataHash
+            )
+          );
+        }
+      });
+    }
+
+    // if the user has selected a profile picture
+    if (formState.selectedPfp) {
+      const nftData = formState.selectedPfp;
+      const nft_id = toUint256(nftData.token_id);
+      calls.push(
+        identityChangeCalls.updateProfilePicture(
+          hexToDecimal(nftData.contract_address),
+          nft_id.low,
+          nft_id.high,
+          formState.tokenId.toString()
         )
       );
     }
@@ -506,7 +619,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
             loadingPrice={loadingPrice}
             isUpselled={formState.isUpselled}
             discountedPrice={discountedPrice}
-            discountedDuration={discount.upsell.duration}
+            discountedDuration={discount.duration}
           />
           <Divider className="w-full" />
           <div className={styles.checkoutSummary}>
@@ -515,23 +628,25 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
               termsBox={termsBox}
               onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
               renewalBox={renewalBox}
-              ethRenewalPrice={renewPrice}
-              showMainDomainBox={hasMainDomain}
+              ethRenewalPrice={
+                type === FormType.REGISTER ? priceInEth : undefined
+              }
+              showMainDomainBox={type === FormType.REGISTER && hasMainDomain}
               mainDomainBox={mainDomainBox}
               onChangeMainDomainBox={() => setMainDomainBox(!mainDomainBox)}
-              domain={getDomainWithStark(domain)}
+              domain={getDomainWithStark(
+                Object.keys(formState.selectedDomains)[0]
+              )}
             />
             <div>
               <Button
                 onClick={() =>
                   execute().then(() => {
-                    setDomainsMinting((prev) =>
-                      new Map(prev).set(domain.toString(), true)
-                    );
+                    setDomainsMinting(formState.selectedDomains);
                   })
                 }
                 disabled={
-                  (domainsMinting.get(domain) as boolean) ||
+                  domainsMinting === formState.selectedDomains ||
                   !account ||
                   !formState.duration ||
                   formState.duration < 1 ||

@@ -119,7 +119,7 @@ function renew(
       durationInYears * 365,
       sponsor ?? 0,
       discountId ?? 0,
-      "0x" + metadataHash,
+      metadataHash,
     ],
   };
 }
@@ -141,7 +141,7 @@ function altcoinRenew(
       durationInYears * 365,
       sponsor ?? 0,
       discountId ?? 0,
-      "0x" + metadataHash,
+      metadataHash,
       erc20Address,
       quoteData.quote,
       quoteData.max_quote_validity,
@@ -166,7 +166,8 @@ function multiCallRenewal(
   sponsor?: string,
   discountId?: string
 ): Call[] {
-  return encodedDomains.map((encodedDomain, index) =>
+  console.log("durationInYears", durationInYears);
+  return encodedDomains.map((encodedDomain) =>
     renew(encodedDomain, durationInYears, metadataHash, sponsor, discountId)
   );
 }
@@ -180,7 +181,7 @@ function multiCallRenewalAltcoin(
   sponsor?: string,
   discountId?: string
 ): Call[] {
-  return encodedDomains.map((encodedDomain, index) =>
+  return encodedDomains.map((encodedDomain) =>
     altcoinRenew(
       encodedDomain,
       durationInYears,

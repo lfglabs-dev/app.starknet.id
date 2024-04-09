@@ -15,7 +15,6 @@ const SelectPfp: FunctionComponent<SelectPfpProps> = ({ goToNextStep }) => {
   );
 
   const selectPfp = (nft: StarkscanNftProps) => {
-    console.log("nft selected", nft);
     setSelectedPft(nft);
   };
 

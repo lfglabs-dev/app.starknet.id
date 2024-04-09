@@ -25,7 +25,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   renewalBox,
   variant = "default",
   isArOnforced,
-  ethRenewalPrice = "X",
+  ethRenewalPrice,
   mainDomainBox,
   onChangeMainDomainBox,
   showMainDomainBox = false,
@@ -71,9 +71,9 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
         </div>
         {!isArOnforced ? (
           <InputHelper
-            helperText={`Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year maximum (${gweiToEth(
-              ethRenewalPrice
-            )} ETH/year) and we'll cover the transaction fee for you!`}
+            helperText={`Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year maximum ${
+              ethRenewalPrice ? `(${gweiToEth(ethRenewalPrice)} ETH/year)` : ""
+            } and we'll cover the transaction fee for you!`}
           >
             <div
               className="flex items-center justify-left text-xs cursor-pointer"

@@ -130,7 +130,7 @@ function updateProfilePicture(
   return {
     contractAddress: process.env.NEXT_PUBLIC_NFT_PP_VERIFIER as string,
     entrypoint: "set_native_pp",
-    calldata: [nftContractAddress, nft_id_low, nft_id_high, parseInt(id)],
+    calldata: [nftContractAddress, nft_id_low, nft_id_high, id],
   };
 }
 

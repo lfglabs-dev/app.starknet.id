@@ -26,9 +26,7 @@ const RenewalDomainsBox: FunctionComponent<RenewalDomainsBoxProps> = ({
     if (address) {
       setIsLoading(true);
       fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_LINK
-        }/addr_to_full_ids?addr=${address}`
+        `${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_to_full_ids?addr=${address}`
       )
         .then((response) => response.json())
         .then((data) => {

@@ -1,19 +1,31 @@
 import React, { useContext } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import { FormContext } from "@/context/FormProvider";
-import UserInfoForm from "./process/userInfoForm";
+import UserInfoForm from "./steps/userInfoForm";
 import { FormType } from "@/utils/constants";
-import CheckoutCard from "./process/checkoutCard";
+import CheckoutCard from "./steps/checkoutCard";
 import { useAccount } from "@starknet-react/core";
-import SelectPfp from "./process/selectPfp";
-import RegisterSteps from "./process/registerSteps";
-import { registrationDiscount } from "@/utils/discounts/registration";
+import SelectPfp from "./steps/selectPfp";
+import RegisterSteps from "./steps/registerSteps";
 import SearchBar from "../UI/searchBar";
 
 type RegisterV3Props = {
   domain: string;
   groups: string[];
   setDomain: (domain: string) => void;
+};
+
+const discount: Upsell = {
+  duration: 3,
+  paidDuration: 2,
+  maxDuration: 1,
+  discountId: "0",
+  imageUrl: "/register/registerUpsell.webp",
+  title: {
+    desc: "Unlock Extended Domain",
+    catch: "3 Years for the Price of 2!",
+  },
+  desc: "Don't miss out on this one-time offer! This is your chance to secure extended benefits and ensure a lasting digital presence.",
 };
 
 const RegisterV3: FunctionComponent<RegisterV3Props> = ({
@@ -57,7 +69,11 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
   return (
     <>
       {currentStep > 1 ? (
-        <RegisterSteps currentStep={currentStep} setStep={goToStep} />
+        <RegisterSteps
+          currentStep={currentStep}
+          setStep={goToStep}
+          showPfp={userNft && userNft.length > 0}
+        />
       ) : (
         <div className="sm:w-2/5 w-4/5 mt-5 mb-5">
           <SearchBar
@@ -78,7 +94,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
         <CheckoutCard
           type={FormType.REGISTER}
           groups={groups}
-          discount={registrationDiscount}
+          discount={discount}
         />
       )}
     </>

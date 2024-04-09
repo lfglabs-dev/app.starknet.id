@@ -1,4 +1,9 @@
-import React, { FunctionComponent, useContext, useState } from "react";
+import React, {
+  FunctionComponent,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import styles from "../../../styles/components/registerV3.module.css";
 import { FormContext } from "@/context/FormProvider";
 import { FormType } from "@/utils/constants";
@@ -10,12 +15,13 @@ import NumberTextField from "@/components/UI/numberTextField";
 import { useAccount } from "@starknet-react/core";
 import ConnectButton from "@/components/UI/connectButton";
 import Button from "@/components/UI/button";
+import RenewalDomainsBox from "../renewalDomainsBox";
+import { areDomainSelected } from "@/utils/priceService";
 
 type UserInfoFormProps = {
   type: FormType;
   goToNextStep: () => void;
   imageUrl: string;
-  //todo do : option to get the back button
 };
 
 const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
@@ -28,6 +34,15 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   const { formState, updateFormState } = useContext(FormContext);
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
+  const [selectedDomains, setSelectedDomains] =
+    useState<Record<string, boolean>>();
+
+  console.log("formState", formState);
+
+  useEffect(() => {
+    if (type === FormType.REGISTER) return;
+    updateFormState({ selectedDomains });
+  }, [selectedDomains]);
 
   const getTitle = () => {
     switch (type) {
@@ -90,10 +105,12 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
                 }
               />
             ) : null}
-            <SelectIdentity
-              tokenId={formState.tokenId}
-              changeTokenId={changeTokenId}
-            />
+            {type === FormType.REGISTER ? (
+              <SelectIdentity
+                tokenId={formState.tokenId}
+                changeTokenId={changeTokenId}
+              />
+            ) : null}
             <NumberTextField
               value={formState.duration}
               label="Years to register (max 25 years)"
@@ -116,6 +133,13 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
               color="secondary"
               required
             />
+            {type === FormType.RENEW ? (
+              <RenewalDomainsBox
+                helperText="Check the box of the domains you want to renew"
+                setSelectedDomains={setSelectedDomains}
+                selectedDomains={formState.selectedDomains}
+              />
+            ) : null}
           </div>
         </div>
         <div className={styles.summary}>
@@ -126,11 +150,16 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
                 disabled={
                   !formState.duration ||
                   formState.duration < 1 ||
-                  (formState.needMetadata && emailError)
+                  (formState.needMetadata && emailError) ||
+                  (type === FormType.RENEW &&
+                    !areDomainSelected(formState.selectedDomains))
                 }
               >
                 {formState.needMetadata && emailError
                   ? "Enter a valid Email"
+                  : type === FormType.RENEW &&
+                    !areDomainSelected(formState.selectedDomains)
+                  ? "Select a domain to renew"
                   : "Next step"}
               </Button>
             ) : (
