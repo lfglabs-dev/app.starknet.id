@@ -18,7 +18,7 @@ type ErrorRequestData = {
 };
 
 type Status = "success" | "error";
-type DomainKind = "braavos" | "root" | "subdomain" | "none" | "xplorer";
+type DomainKind = "braavos" | "root" | "subdomain" | "none" | "xplorer" | "sol";
 type Context = { children: ReactNode };
 type ScreenState = "mint" | "loading" | "success" | "error";
 

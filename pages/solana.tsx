@@ -23,11 +23,13 @@ import DomainActions from "../components/solana/domainActions";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
 import { useStarknetkitConnectModal } from "starknetkit";
 import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
+import { useRouter } from "next/router";
 
 const Solana: NextPage = () => {
   const { address: starknetAddress } = useAccount();
   const { publicKey: solPublicKey, signMessage } = useWallet();
   const { addTransaction } = useNotificationManager();
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [snsDomains, setSnsDomains] = useState<string[]>([]);
   const [selectedDomain, setSelectedDomain] = useState<SnsDomainData>();
@@ -48,12 +50,13 @@ const Solana: NextPage = () => {
   const { starknetkitConnectModal } = useStarknetkitConnectModal({
     connectors: availableConnectors,
   });
+  const [redirect, setRedirect] = useState<string>("");
 
   useEffect(() => {
     const currentDate = new Date();
     const timestamp = currentDate.getTime();
 
-    if (timestamp >= 1706878847 * 1000) {
+    if (timestamp >= 1714051234 * 1000) {
       setOpen(false);
     }
   }, []);
@@ -119,6 +122,7 @@ const Solana: NextPage = () => {
       },
     });
     setIsTxModalOpen(true);
+    setRedirect(selectedDomain?.name);
     setSelectedDomain(undefined);
   }, [registerData?.transaction_hash]);
 
@@ -357,7 +361,10 @@ const Solana: NextPage = () => {
       <TxConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
-        closeModal={() => setIsTxModalOpen(false)}
+        closeModal={() => {
+          setIsTxModalOpen(false);
+          router.push(`/externaldomains/${redirect}.sol.stark`);
+        }}
         title="Your domain is on it's way !"
       />
     </div>

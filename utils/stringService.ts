@@ -124,6 +124,12 @@ export function isXplorerSubdomain(domain: string): boolean {
   return /^([a-z0-9-]){1,48}\.xplorer.stark$/.test(domain);
 }
 
+export function isSolSubdomain(domain: string): boolean {
+  if (!domain) return false;
+
+  return /^([a-z0-9-]){1,48}\.sol.stark$/.test(domain);
+}
+
 // eslint-disable-next-line @typescript-eslint/adjacent-overload-signatures
 export function isStarkRootDomain(domain?: string): boolean {
   if (!domain) return false;
@@ -147,6 +153,8 @@ export function getDomainKind(domain: string | undefined): DomainKind {
       return "braavos";
     } else if (isXplorerSubdomain(domain)) {
       return "xplorer";
+    } else if (isSolSubdomain(domain)) {
+      return "sol";
     } else {
       return "subdomain";
     }
