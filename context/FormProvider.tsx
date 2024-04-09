@@ -6,9 +6,6 @@ import { useNftPpVerifierContract } from "@/hooks/contracts";
 import { Abi } from "starknet";
 import { filterAssets, retrieveAssets } from "@/utils/nftService";
 
-//todo : clear context once funnel is done
-// or if the domain changes in the page register
-
 interface FormState {
   email: string;
   isSwissResident: boolean;
@@ -42,6 +39,7 @@ const initialState: FormState = {
   selectedDomains: {},
   needMetadata: false,
   salesTaxRate: 0,
+  selectedPfp: undefined,
   isUpselled: false,
 };
 
@@ -70,7 +68,14 @@ export const FormProvider: FunctionComponent<Context> = ({ children }) => {
   };
 
   const clearForm = () => {
-    setFormState((prevState) => ({ ...prevState, ...initialState }));
+    setFormState((prevState) => ({
+      ...prevState,
+      selectedDomains: {},
+      tokenId: 0,
+      duration: 1,
+      isUpselled: false,
+      selectedPfp: undefined,
+    }));
   };
 
   // Check if connected account has whitelisted NFTs

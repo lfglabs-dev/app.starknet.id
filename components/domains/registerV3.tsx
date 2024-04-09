@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import styles from "../../styles/components/registerV3.module.css";
 import { FormContext } from "@/context/FormProvider";
 import UserInfoForm from "./process/userInfoForm";
 import { FormType } from "@/utils/constants";
@@ -25,9 +24,6 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
   const { formState, updateFormState, userNft } = useContext(FormContext);
-
-  console.log("formState", formState);
-  console.log("userNft", userNft);
 
   useEffect(() => {
     if (!address) setCurrentStep(1);

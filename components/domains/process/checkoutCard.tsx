@@ -70,7 +70,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 }) => {
   const router = useRouter();
   const { account, address } = useAccount();
-  const { formState, updateFormState } = useContext(FormContext);
+  const { formState, updateFormState, clearForm } = useContext(FormContext);
   const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH for 1 year
   const [price, setPrice] = useState<string>(""); // total price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   const [renewPrice, setRenewPrice] = useState<string>("");
@@ -462,6 +462,9 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         status: "pending",
       },
     });
+
+    // clear context
+    clearForm();
 
     // Redirect to confirmation page
     if (type === FormType.REGISTER)
