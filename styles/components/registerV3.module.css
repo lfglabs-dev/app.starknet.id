@@ -174,7 +174,6 @@
 }
 
 .totalDueTitle {
-  /* Body/normal/bold */
   font-family: "Poppins-Bold";
   font-size: 20px;
   line-height: 24px; /* 120% */
@@ -298,12 +297,27 @@
     flex-direction: column-reverse;
     gap: 1.5rem;
   }
+
+  .pfpGallery {
+    margin: 10px;
+  }
+
+  .pfpBtns {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 100%;
+  }
 }
 
 @media screen and (max-width: 768px) {
   .legend {
     font-size: 12px;
     letter-spacing: -0.3px;
+  }
+
+  .progressStep p {
+    display: none;
   }
 }
 
