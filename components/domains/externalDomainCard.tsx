@@ -45,6 +45,8 @@ const ExternalDomainCard: FunctionComponent<ExternalDomainCardProps> = ({
               src={
                 domainKind === "braavos"
                   ? "/braavos/braavosLogoWithBackground.webp"
+                  : domainKind === "sol"
+                  ? "/solana/bonfida.webp"
                   : `${process.env.NEXT_PUBLIC_STARKNET_ID}/api/identicons/0`
               }
               height={150}

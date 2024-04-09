@@ -128,6 +128,22 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                   <ArgentIcon width={"118px"} color="#f36a3d" />
                 </div>
               );
+            case "sol":
+              return (
+                <div
+                  onClick={() => router.push(`/externaldomains/${domain}`)}
+                  className="bg-[#ffebd8] p-[16px] rounded-[16px]"
+                >
+                  <img
+                    width={150}
+                    height={150}
+                    src={"/solana/bonfida.webp"}
+                    alt="avatar"
+                    onClick={() => router.push(`/externaldomains/${domain}`)}
+                    className="rounded-[16px]"
+                  />
+                </div>
+              );
             default:
               return (
                 <img
