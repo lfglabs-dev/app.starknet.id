@@ -25,9 +25,9 @@ const RegistrationPage: NextPage = () => {
   }, [router]);
 
   return (
-    <FormProvider>
-      <div className={homeStyles.screen}>
-        <div className={styles.container}>
+    <div className={homeStyles.screen}>
+      <div className={styles.container}>
+        <FormProvider>
           <RegisterV3
             domain={getDomainWithoutStark(domain)}
             setDomain={setDomain}
@@ -36,9 +36,9 @@ const RegistrationPage: NextPage = () => {
               process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
             ]}
           />
-        </div>
+        </FormProvider>
       </div>
-    </FormProvider>
+    </div>
   );
 };
 
