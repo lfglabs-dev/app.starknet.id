@@ -51,7 +51,7 @@ const FreeRenewalPage: NextPage = () => {
             duration={freeRenewalDiscount.offer.duration}
             discountId={freeRenewalDiscount.offer.discountId}
             customMessage={freeRenewalDiscount.offer.customMessage}
-            priceInEth={freeRenewalDiscount.offer.price as string}
+            priceInEth={freeRenewalDiscount.offer.price}
             goBack={goBack}
             isArOnforced
             renewPrice="0"

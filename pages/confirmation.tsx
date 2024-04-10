@@ -26,8 +26,6 @@ const Confirmation: NextPage = () => {
     }, 1500);
   };
 
-  console.log("tokenId", tokenId);
-
   const redirect = () => {
     if (tokenId) router.push(`/identities/${tokenId}`);
     else router.push(`/identities`);
