@@ -140,8 +140,3 @@ export enum FormType {
   REGISTER = "Your Registration",
   RENEW = "Your Renewal",
 }
-
-// export enum FormType {
-//   REGISTER = "REGISTER",
-//   RENEW = "RENEWAL",
-// }
