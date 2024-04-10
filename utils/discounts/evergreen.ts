@@ -1,4 +1,4 @@
-export const renewalUpsell: Upsell = {
+export const renewal: Upsell = {
   duration: 3,
   paidDuration: 2,
   maxDuration: 1,
@@ -11,7 +11,7 @@ export const renewalUpsell: Upsell = {
   desc: "Don't miss out on this one-time offer! This is your chance to secure extended benefits and ensure a lasting digital presence.",
 };
 
-export const registrationUpsell: Upsell = {
+export const registration: Upsell = {
   duration: 3,
   paidDuration: 2,
   maxDuration: 1,
@@ -23,3 +23,10 @@ export const registrationUpsell: Upsell = {
   },
   desc: "Don't miss out on this one-time offer! This is your chance to secure extended benefits and ensure a lasting digital presence.",
 };
+
+const evergreenDiscounts = {
+  registration,
+  renewal,
+};
+
+export default evergreenDiscounts;

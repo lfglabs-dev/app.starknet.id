@@ -8,7 +8,7 @@ import UserInfoForm from "./steps/userInfoForm";
 import CheckoutCard from "./steps/checkoutCard";
 import SelectPfp from "./steps/selectPfp";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
-import { renewalUpsell } from "@/utils/discounts/evergreen";
+import evergreenDiscounts from "@/utils/discounts/evergreen";
 
 type RenewalProps = {
   groups: string[];
@@ -86,7 +86,7 @@ const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
         <CheckoutCard
           type={FormType.RENEW}
           groups={groups}
-          discount={renewalUpsell}
+          discount={evergreenDiscounts.renewal}
         />
       )}
     </>
