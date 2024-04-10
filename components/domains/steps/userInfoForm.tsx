@@ -131,7 +131,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
                 onChange={(e) => changeEmail(e.target.value)}
                 color="secondary"
                 error={emailError}
-                errorMessage={"Please enter a valid email address"}
+                errorMessage="Please enter a valid email address"
                 type="email"
               />
             ) : null}
