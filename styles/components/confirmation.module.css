@@ -34,7 +34,7 @@
 
 .copyAddr {
   background-color: #fffcf8;
-  width: 264px;
+  width: 320px;
   height: 40px;
   padding: 8px 16px;
   gap: 8px;
@@ -50,7 +50,6 @@
   bottom: -80px;
   width: 390px;
   overflow: hidden;
-  z-index: -1;
 }
 
 .coconutRight {
@@ -59,7 +58,6 @@
   bottom: -80px;
   width: 390px;
   overflow: hidden;
-  z-index: -1;
 }
 
 .balloon {
