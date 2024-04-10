@@ -90,7 +90,7 @@ const QuantumLeap: NextPage = () => {
           duration={getDuration()}
           discountId={getDiscountId()}
           customMessage={getCustomMessage()}
-          price={getPrice() as string}
+          price={getPrice()}
           goBack={goBack}
           mailGroupId={quantumLeapDiscount.discountMailGroupId}
         />
