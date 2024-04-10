@@ -130,18 +130,21 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     );
   }
 
+  function getMessage() {
+    if (customMessage) return customMessage;
+    else {
+      return `${gweiToEth(ethRegistrationPrice)} ETH x ${
+        isUpselled ? discountedDuration : duration
+      } ${isUpselled || duration > 1 ? "years" : "year"}`;
+    }
+  }
+
   return (
     <div className={styles.pricesSummary}>
       <div className={styles.totalDue}>
         <h4 className={styles.totalDueTitle}>Total due:</h4>
         <div className={styles.priceContainer}>
-          <p className={styles.legend}>
-            {customMessage
-              ? customMessage
-              : `${gweiToEth(ethRegistrationPrice)} ETH x ${
-                  isUpselled ? discountedDuration : duration
-                } ${isUpselled || duration > 1 ? "years" : "year"}`}
-          </p>
+          <p className={styles.legend}>{getMessage()}</p>
           {loadingPrice ? (
             <Skeleton variant="text" width="150px" height="24px" />
           ) : (

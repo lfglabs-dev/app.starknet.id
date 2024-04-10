@@ -76,7 +76,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
         <UserInfoForm
           type={FormType.REGISTER}
           goToNextStep={goToNextStep}
-          imageUrl="/visuals/registerV2.webp"
+          imageUrl="/visuals/register.webp"
         />
       )}
       {currentStep === 2 && <SelectPfp goToNextStep={goToNextStep} />}
