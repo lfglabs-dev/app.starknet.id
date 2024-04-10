@@ -42,17 +42,6 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
     updateFormState({ selectedDomains });
   }, [selectedDomains]);
 
-  const getTitle = () => {
-    switch (type) {
-      case FormType.REGISTER:
-        return getDomainWithStark(Object.keys(formState.selectedDomains)[0]);
-      case FormType.RENEW:
-        return "Renew Your domain(s)";
-      default:
-        return "";
-    }
-  };
-
   function changeEmail(value: string): void {
     setEmail(value);
     setEmailError(isValidEmail(value) ? false : true);
@@ -70,6 +59,34 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
       isUpselled: value === 1 ? true : false,
     });
   }
+
+  const getTitle = () => {
+    switch (type) {
+      case FormType.REGISTER:
+        return getDomainWithStark(Object.keys(formState.selectedDomains)[0]);
+      case FormType.RENEW:
+        return "Renew Your domain(s)";
+      default:
+        return "";
+    }
+  };
+
+  const getButtonText = (): string => {
+    return formState.needMetadata && emailError
+      ? "Enter a valid Email"
+      : type === FormType.RENEW && !areDomainSelected(formState.selectedDomains)
+      ? "Select a domain to renew"
+      : "Next step";
+  };
+
+  const isDisabled = (): boolean => {
+    return (
+      !formState.duration ||
+      formState.duration < 1 ||
+      (formState.needMetadata && emailError) ||
+      (type === FormType.RENEW && !areDomainSelected(formState.selectedDomains))
+    );
+  };
 
   return (
     <div className={styles.container}>
@@ -143,22 +160,8 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
         <div className={styles.summary}>
           <div>
             {address ? (
-              <Button
-                onClick={goToNextStep}
-                disabled={
-                  !formState.duration ||
-                  formState.duration < 1 ||
-                  (formState.needMetadata && emailError) ||
-                  (type === FormType.RENEW &&
-                    !areDomainSelected(formState.selectedDomains))
-                }
-              >
-                {formState.needMetadata && emailError
-                  ? "Enter a valid Email"
-                  : type === FormType.RENEW &&
-                    !areDomainSelected(formState.selectedDomains)
-                  ? "Select a domain to renew"
-                  : "Next step"}
+              <Button onClick={goToNextStep} disabled={isDisabled()}>
+                {getButtonText()}
               </Button>
             ) : (
               <ConnectButton />
