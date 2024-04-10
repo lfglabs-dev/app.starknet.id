@@ -275,7 +275,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-    const txMetadataHash = "0x" + formState.metadataHash;
+    const txMetadataHash = `0x${formState.metadataHash}` as HexString;
     const encodedDomain = utils
       .encodeDomain(Object.keys(formState.selectedDomains)[0])
       .map((element) => element.toString())[0];
@@ -360,7 +360,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           AutoRenewalContracts[displayedCurrency],
           encodedDomain,
           allowance,
-          txMetadataHash
+          `0x${formState.metadataHash}`
         )
       );
     }
@@ -407,11 +407,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
 
     // Variables
-    const txMetadataHash = "0x" + formState.metadataHash;
     const finalDuration = formState.isUpselled
       ? discount.duration
       : formState.duration;
     const priceToPay = formState.isUpselled ? discountedPrice : price;
+    const txMetadataHash = `0x${formState.metadataHash}` as HexString;
 
     // Common calls
     const calls = [

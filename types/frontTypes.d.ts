@@ -138,3 +138,5 @@ type Upsell = {
   };
   desc: string;
 };
+
+type HexString = `0x${string}`;

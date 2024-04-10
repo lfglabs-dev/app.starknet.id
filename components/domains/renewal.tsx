@@ -279,7 +279,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
           ...registrationCalls.multiCallRenewal(
             selectedDomainsToEncodedArray(selectedDomains),
             duration,
-            "0x" + metadataHash
+            `0x${metadataHash}`
           )
         );
       } else {
@@ -287,7 +287,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
           ...registrationCalls.multiCallRenewalAltcoin(
             selectedDomainsToEncodedArray(selectedDomains),
             duration,
-            "0x" + metadataHash,
+            `0x${metadataHash}`,
             ERC20Contract[displayedCurrency],
             quoteData as QuoteQueryData
           )

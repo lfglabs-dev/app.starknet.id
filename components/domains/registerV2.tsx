@@ -248,7 +248,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-    const txMetadataHash = "0x" + metadataHash;
+    const txMetadataHash = ("0x" + metadataHash) as HexString;
 
     // Common calls
     const calls = [

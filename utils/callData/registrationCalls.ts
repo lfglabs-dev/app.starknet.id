@@ -14,7 +14,7 @@ function buy(
   tokenId: number,
   sponsor: string,
   durationInYears: number,
-  metadata: string,
+  metadata: HexString,
   discountId?: string
 ): Call {
   return {
@@ -44,7 +44,7 @@ function altcoinBuy(
   tokenId: number,
   sponsor: string,
   durationInYears: number,
-  metadata: string,
+  metadata: HexString,
   erc20Address: string,
   quoteData: QuoteQueryData,
   discountId?: string
@@ -107,7 +107,7 @@ function vatTransfer(amount: string): Call {
 function renew(
   encodedDomain: string,
   durationInYears: number,
-  metadataHash: string,
+  metadataHash: HexString,
   sponsor?: string,
   discountId?: string
 ): Call {
@@ -127,7 +127,7 @@ function renew(
 function altcoinRenew(
   encodedDomain: string,
   durationInYears: number,
-  metadataHash: string,
+  metadataHash: HexString,
   erc20Address: string,
   quoteData: QuoteQueryData,
   sponsor?: string,
@@ -162,7 +162,7 @@ function freeRenewal(encodedDomain: string): Call {
 function multiCallRenewal(
   encodedDomains: string[],
   durationInYears: number,
-  metadataHash: string,
+  metadataHash: HexString,
   sponsor?: string,
   discountId?: string
 ): Call[] {
@@ -174,7 +174,7 @@ function multiCallRenewal(
 function multiCallRenewalAltcoin(
   encodedDomains: string[],
   durationInYears: number,
-  metadataHash: string,
+  metadataHash: HexString,
   erc20Address: string,
   quoteData: QuoteQueryData,
   sponsor?: string,
