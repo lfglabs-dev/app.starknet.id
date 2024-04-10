@@ -88,6 +88,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   const getTitle = () => {
     switch (type) {
       case FormType.REGISTER:
+        // Fetch the domain name from the selectedDomains object in context for the title of the section
         return getDomainWithStark(Object.keys(formState.selectedDomains)[0]);
       case FormType.RENEW:
         return "Renew Your domain(s)";
