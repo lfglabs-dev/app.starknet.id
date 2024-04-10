@@ -60,6 +60,18 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
     });
   }
 
+  function incrementDuration(): void {
+    if (formState.duration < maxYearsToRegister) {
+      changeDuration(formState.duration + 1);
+    }
+  }
+
+  function decrementDuration(): void {
+    if (formState.duration > 1) {
+      changeDuration(formState.duration - 1);
+    }
+  }
+
   const getTitle = () => {
     switch (type) {
       case FormType.REGISTER:
@@ -131,20 +143,8 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
               label="Years to register (max 25 years)"
               placeholder="years"
               onChange={(e) => changeDuration(Number(e.target.value))}
-              incrementValue={() =>
-                changeDuration(
-                  formState.duration < maxYearsToRegister
-                    ? formState.duration + 1
-                    : formState.duration
-                )
-              }
-              decrementValue={() =>
-                changeDuration(
-                  formState.duration > 1
-                    ? formState.duration - 1
-                    : formState.duration
-                )
-              }
+              incrementValue={incrementDuration}
+              decrementValue={decrementDuration}
               color="secondary"
               required
             />
