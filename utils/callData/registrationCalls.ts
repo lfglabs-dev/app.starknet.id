@@ -166,7 +166,6 @@ function multiCallRenewal(
   sponsor?: string,
   discountId?: string
 ): Call[] {
-  console.log("durationInYears", durationInYears);
   return encodedDomains.map((encodedDomain) =>
     renew(encodedDomain, durationInYears, metadataHash, sponsor, discountId)
   );

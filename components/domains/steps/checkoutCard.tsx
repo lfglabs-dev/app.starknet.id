@@ -43,7 +43,6 @@ import {
   selectedDomainsToArray,
   selectedDomainsToEncodedArray,
 } from "@/utils/stringService";
-import { registrationDiscount } from "@/utils/discounts/registration";
 import UpsellCard from "./upsellCard";
 import registrationCalls from "@/utils/callData/registrationCalls";
 import { utils } from "starknetid.js";
@@ -600,7 +599,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     <>
       {formState.duration === 1 ? (
         <UpsellCard
-          upsellData={registrationDiscount}
+          upsellData={discount}
           enabled={formState.isUpselled}
           onUpsellChoice={onUpsellChoice}
         />
