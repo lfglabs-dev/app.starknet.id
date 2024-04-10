@@ -55,7 +55,10 @@ const Confirmation: NextPage = () => {
           </div>
         </div>
         <div className={styles.copyAddr} onClick={copyToClipboard}>
-          {`app.starknet.id/${minifyAddress(address)}`}
+          {`${process.env.NEXT_PUBLIC_APP_LINK?.replace(
+            "https://",
+            ""
+          )}/${minifyAddress(address)}`}
           {!copied ? (
             <CopyIcon width="25" color={theme.palette.secondary.main} />
           ) : (
