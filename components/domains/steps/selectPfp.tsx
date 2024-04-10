@@ -9,7 +9,7 @@ type SelectPfpProps = {
 };
 
 const SelectPfp: FunctionComponent<SelectPfpProps> = ({ goToNextStep }) => {
-  const { updateFormState, formState } = useContext(FormContext);
+  const { updateFormState, formState, userNfts } = useContext(FormContext);
   const [selectedPfp, setSelectedPft] = useState<StarkscanNftProps | null>(
     formState.selectedPfp ?? null
   );
@@ -32,7 +32,11 @@ const SelectPfp: FunctionComponent<SelectPfpProps> = ({ goToNextStep }) => {
   return (
     <>
       <div className={styles.pfpGallery}>
-        <PfpGallery selectedPfp={selectedPfp} selectPfp={selectPfp} />
+        <PfpGallery
+          selectedPfp={selectedPfp}
+          selectPfp={selectPfp}
+          userNfts={userNfts as StarkscanNftProps[]}
+        />
         <div className={styles.pfpBtns}>
           <Button onClick={confirmPfp} disabled={selectedPfp === null}>
             Confirm profile picture

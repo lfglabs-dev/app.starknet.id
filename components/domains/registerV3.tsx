@@ -23,7 +23,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
-  const { updateFormState, userNft } = useContext(FormContext);
+  const { updateFormState, userNfts } = useContext(FormContext);
 
   useEffect(() => {
     if (!address) setCurrentStep(1);
@@ -46,7 +46,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 
   const goToNextStep = () => {
     if (currentStep === 1) {
-      if (userNft && userNft.length > 0) {
+      if (userNfts && userNfts.length > 0) {
         goToStep(2);
       } else {
         goToStep(3);
@@ -62,7 +62,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
         <RegisterSteps
           currentStep={currentStep}
           setStep={goToStep}
-          showPfp={userNft && userNft.length > 0}
+          showPfp={userNfts && userNfts.length > 0}
         />
       ) : (
         <div className="sm:w-2/5 w-4/5 mt-5 mb-5">

@@ -17,7 +17,7 @@ type RenewalProps = {
 const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
-  const { updateFormState, userNft } = useContext(FormContext);
+  const { updateFormState, userNfts } = useContext(FormContext);
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [showPfp, setShowPfp] = useState(false);
 
@@ -36,7 +36,7 @@ const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
   // check if user has a profile picture set on his main domain
   // if not, show the select pfp step and store his main id
   useEffect(() => {
-    if (!userNft || userNft.length === 0) {
+    if (!userNfts || userNfts.length === 0) {
       setShowPfp(false);
       return;
     }
@@ -52,7 +52,7 @@ const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
           });
         } else setShowPfp(false);
       });
-  }, [userNft, address]);
+  }, [userNfts, address]);
 
   const goToStep = (step: number) => {
     setCurrentStep(step);

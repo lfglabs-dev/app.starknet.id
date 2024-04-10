@@ -4,6 +4,8 @@ import ModalProfilePic from "../UI/modalProfilePic";
 import BackButton from "../UI/backButton";
 import SelectedCollections from "./selectedCollections";
 import PfpGallery from "./pfpGallery";
+import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
+import { useAccount } from "@starknet-react/core";
 
 type UpdateProfilePicProps = {
   tokenId: string;
@@ -18,6 +20,8 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   openTxModal,
   setPfpTxHash,
 }) => {
+  const { address } = useAccount();
+  const { userNfts, isLoading } = useWhitelistedNFTs(address as string);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [selectedPfp, setSelectedPfp] = useState<StarkscanNftProps | null>(
     null
@@ -43,7 +47,12 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
           <BackButton onClick={() => back()} />
         </div>
         <div className={styles.gallery}>
-          <PfpGallery selectPfp={selectPfp} selectedPfp={selectedPfp} />
+          <PfpGallery
+            selectPfp={selectPfp}
+            selectedPfp={selectedPfp}
+            userNfts={userNfts}
+            isLoading={isLoading}
+          />
         </div>
         <div className={styles.gallery}>
           <p className={styles.subtitle}>Get a new Profile Pic</p>

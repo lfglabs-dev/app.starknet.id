@@ -1,20 +1,23 @@
-import React, { FunctionComponent, useContext, useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import NftCard from "../UI/nftCard";
 import { debounce } from "../../utils/debounceService";
 import WarningMessage from "../UI/warningMessage";
-import { FormContext } from "@/context/FormProvider";
+import PfpSkeleton from "./skeletons/pfpSkeleton";
 
 type PfpGalleryProps = {
+  userNfts: StarkscanNftProps[];
+  isLoading?: boolean;
   selectPfp: (nft: StarkscanNftProps) => void;
   selectedPfp?: StarkscanNftProps | null;
 };
 
 const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
+  userNfts,
+  isLoading = false,
   selectPfp,
   selectedPfp,
 }) => {
-  const { userNft } = useContext(FormContext);
   const [isHovered, setIsHovered] = useState<string | null>(null);
 
   const handleMouseEnter = debounce((id: string) => setIsHovered(id), 50);
@@ -26,8 +29,10 @@ const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
         <p className={styles.subtitle}>Your NFTs</p>
         <h2 className={styles.title}>Choose your NFT Profile picture</h2>
         <div className={styles.nftSection}>
-          {userNft && userNft.length > 0 ? (
-            userNft.map((nft, index) => {
+          {isLoading ? (
+            <PfpSkeleton />
+          ) : userNfts && userNfts.length > 0 ? (
+            userNfts.map((nft, index) => {
               if (!nft.image_url) return null;
               return (
                 <div

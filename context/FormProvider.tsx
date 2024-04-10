@@ -1,10 +1,8 @@
-import { useAccount, useContractRead } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
 import React, { FunctionComponent, useState } from "react";
 import { createContext, useMemo } from "react";
 import { computeMetadataHash, generateSalt } from "@/utils/userDataService";
-import { useNftPpVerifierContract } from "@/hooks/contracts";
-import { Abi } from "starknet";
-import { filterAssets, retrieveAssets } from "@/utils/nftService";
+import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
 
 type FormState = {
   email: string;
@@ -28,7 +26,7 @@ type FormConfig = {
   formState: FormState;
   clearForm: () => void;
   updateFormState: (updates: Partial<FormState>) => void;
-  userNft?: StarkscanNftProps[];
+  userNfts?: StarkscanNftProps[];
 };
 
 const initialState: FormState = {
@@ -47,21 +45,12 @@ export const FormContext = createContext<FormConfig>({
   formState: initialState,
   clearForm: () => {},
   updateFormState: () => {},
-  // userNft: [],
 });
 
 export const FormProvider: FunctionComponent<Context> = ({ children }) => {
   const { address } = useAccount();
   const [formState, setFormState] = useState<FormState>(initialState);
-  const [userNft, setUserNft] = useState<StarkscanNftProps[]>([]);
-  // get whitelisted NFT contract addresses
-  const { contract } = useNftPpVerifierContract();
-  const { data: whitelistData, error: whitelistError } = useContractRead({
-    address: contract?.address as string,
-    abi: contract?.abi as Abi,
-    functionName: "get_whitelisted_contracts",
-    args: [],
-  });
+  const { userNfts } = useWhitelistedNFTs(address as string);
 
   const updateFormState = (updates: Partial<FormState>) => {
     setFormState((prevState) => ({ ...prevState, ...updates }));
@@ -77,25 +66,6 @@ export const FormProvider: FunctionComponent<Context> = ({ children }) => {
       selectedPfp: undefined,
     }));
   };
-
-  // Check if connected account has whitelisted NFTs
-  // We fetch nfts once for all the app
-  useMemo(() => {
-    if (!address || !whitelistData) {
-      setUserNft([]);
-      return;
-    }
-    retrieveAssets(
-      `${process.env.NEXT_PUBLIC_SERVER_LINK}/starkscan/fetch_nfts`,
-      address
-    )
-      .then((data) => {
-        setUserNft(filterAssets(data.data, whitelistData as bigint[]));
-      })
-      .catch(() => {
-        setUserNft([]);
-      });
-  }, [address, whitelistData, whitelistError]);
 
   // Handle metadataHash and salt
   useMemo(() => {
@@ -146,9 +116,9 @@ export const FormProvider: FunctionComponent<Context> = ({ children }) => {
       formState,
       updateFormState,
       clearForm,
-      userNft,
+      userNfts,
     };
-  }, [formState, updateFormState, clearForm, userNft]);
+  }, [formState, updateFormState, clearForm, userNfts]);
 
   return (
     <FormContext.Provider value={contextValues}>
