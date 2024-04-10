@@ -16,6 +16,8 @@ const RegisterSteps: FunctionComponent<registerStepsProps> = ({
   setStep,
   showPfp = true,
 }) => {
+  const grey = "#B0AEAE";
+
   return (
     <div className={styles.stepsContainer}>
       <div className={styles.progressSteps}>
@@ -27,7 +29,7 @@ const RegisterSteps: FunctionComponent<registerStepsProps> = ({
         >
           <ContactCardIcon
             width="30"
-            color={currentStep === 1 ? theme.palette.primary.main : "#B0AEAE"}
+            color={currentStep === 1 ? theme.palette.primary.main : grey}
           />
           <p>Domain</p>
         </div>
@@ -42,9 +44,7 @@ const RegisterSteps: FunctionComponent<registerStepsProps> = ({
             >
               <PfpIcon
                 width="30"
-                color={
-                  currentStep === 2 ? theme.palette.primary.main : "#B0AEAE"
-                }
+                color={currentStep === 2 ? theme.palette.primary.main : grey}
               />
               <p>PFP</p>
             </div>
@@ -59,7 +59,7 @@ const RegisterSteps: FunctionComponent<registerStepsProps> = ({
         >
           <CartIcon
             width="30"
-            color={currentStep === 3 ? theme.palette.primary.main : "#B0AEAE"}
+            color={currentStep === 3 ? theme.palette.primary.main : grey}
           />
           <p>Checkout</p>
         </div>

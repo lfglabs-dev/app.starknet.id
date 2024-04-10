@@ -94,7 +94,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
           >
             <Checkbox checked={mainDomainBox} sx={{ padding: 0 }} />
             <p className="ml-2 mr-10 text-left flex items-center gap-2 relative">
-              Set {domain ?? "your domain"} as your main domain
+              Set {domain ?? ""} as your main domain
             </p>
           </div>
         ) : null}
