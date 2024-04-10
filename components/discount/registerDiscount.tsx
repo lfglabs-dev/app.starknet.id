@@ -188,7 +188,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-    const txMetadataHash = "0x" + metadataHash;
+    const txMetadataHash = ("0x" + metadataHash) as HexString;
     const addressesMatch =
       hexToDecimal(address) === hexToDecimal(targetAddress);
 
