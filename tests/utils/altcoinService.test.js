@@ -5,6 +5,7 @@ import {
   getRenewalPriceETH,
   getDomainPrice,
   getAutoRenewAllowance,
+  getPriceForDuration,
 } from "../../utils/altcoinService";
 import { PRICES } from "../../utils/priceService";
 
@@ -173,5 +174,36 @@ describe("getAutoRenewAllowance", () => {
     );
 
     expect(result).toBe(expectedAllowance.toString());
+  });
+});
+
+describe("getPriceForDuration function", () => {
+  it("should correctly calculate domain price for valid inputs", () => {
+    expect(getPriceForDuration("1000000000000000000", 5)).toBe(
+      "5000000000000000000"
+    ); // 1 ETH for 5 years
+    expect(getPriceForDuration("500000000000000000", 10)).toBe(
+      "5000000000000000000"
+    ); // 0.5 ETH for 10 years
+    expect(getPriceForDuration("2000000000000000000", 2)).toBe(
+      "4000000000000000000"
+    ); // 2 ETH for 2 years
+  });
+
+  it("should handle edge cases gracefully", () => {
+    expect(getPriceForDuration("0", 10)).toBe("0"); // Zero priceFor1Y
+    expect(getPriceForDuration("1000000000000000000", 1)).toBe(
+      "1000000000000000000"
+    ); // Duration is 1
+    expect(getPriceForDuration("0", 0)).toBe("0"); // Zero priceFor1Y and zero duration
+  });
+
+  it("should return a rounded value correctly", () => {
+    expect(getPriceForDuration("1234567890000000000", 3)).toBe(
+      "3703703670000000000"
+    );
+    expect(getPriceForDuration("1234567890000000000", 4)).toBe(
+      "4938271560000000000"
+    );
   });
 });
