@@ -9,6 +9,7 @@ import {
   isStarkRootDomain,
 } from "../../utils/stringService";
 import RegisterV3 from "../../components/domains/registerV3";
+import { FormProvider } from "@/context/FormProvider";
 
 const RegistrationPage: NextPage = () => {
   const router = useRouter();
@@ -24,18 +25,20 @@ const RegistrationPage: NextPage = () => {
   }, [router]);
 
   return (
-    <div className={homeStyles.screen}>
-      <div className={styles.container}>
-        <RegisterV3
-          domain={getDomainWithoutStark(domain)}
-          setDomain={setDomain}
-          groups={[
-            process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? "",
-            process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
-          ]}
-        />
+    <FormProvider>
+      <div className={homeStyles.screen}>
+        <div className={styles.container}>
+          <RegisterV3
+            domain={getDomainWithoutStark(domain)}
+            setDomain={setDomain}
+            groups={[
+              process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? "",
+              process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
+            ]}
+          />
+        </div>
       </div>
-    </div>
+    </FormProvider>
   );
 };
 

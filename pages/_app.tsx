@@ -44,7 +44,6 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { constants } from "starknet";
-import { FormProvider } from "@/context/FormProvider";
 require("@solana/wallet-adapter-react-ui/styles.css");
 
 if (typeof window !== "undefined") {
@@ -109,23 +108,21 @@ function MyApp({ Component, pageProps }: AppProps) {
               autoConnect
             >
               <StarknetIdJsProvider>
-                <FormProvider>
-                  <ThemeProvider theme={theme}>
-                    <Head>
-                      <title>Starknet.id</title>
-                      <meta
-                        name="viewport"
-                        content="width=device-width, initial-scale=1"
-                      />
-                    </Head>
-                    <Navbar />
-                    <AcceptCookies message="We'd love to count you on our traffic stats to ensure you get the best experience on our website !" />
-                    <PostHogProvider client={posthog}>
-                      <Component {...pageProps} />
-                    </PostHogProvider>
-                  </ThemeProvider>
-                  <Analytics />
-                </FormProvider>
+                <ThemeProvider theme={theme}>
+                  <Head>
+                    <title>Starknet.id</title>
+                    <meta
+                      name="viewport"
+                      content="width=device-width, initial-scale=1"
+                    />
+                  </Head>
+                  <Navbar />
+                  <AcceptCookies message="We'd love to count you on our traffic stats to ensure you get the best experience on our website !" />
+                  <PostHogProvider client={posthog}>
+                    <Component {...pageProps} />
+                  </PostHogProvider>
+                </ThemeProvider>
+                <Analytics />
               </StarknetIdJsProvider>
             </StarknetConfig>
           </WalletModalProvider>

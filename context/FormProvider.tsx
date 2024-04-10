@@ -6,7 +6,7 @@ import { useNftPpVerifierContract } from "@/hooks/contracts";
 import { Abi } from "starknet";
 import { filterAssets, retrieveAssets } from "@/utils/nftService";
 
-interface FormState {
+type FormState = {
   email: string;
   isSwissResident: boolean;
   tokenId: number;
@@ -22,7 +22,7 @@ interface FormState {
   selectedPfp?: StarkscanNftProps;
   //upsell
   isUpselled: boolean;
-}
+};
 
 type FormConfig = {
   formState: FormState;
@@ -47,7 +47,7 @@ export const FormContext = createContext<FormConfig>({
   formState: initialState,
   clearForm: () => {},
   updateFormState: () => {},
-  userNft: [],
+  // userNft: [],
 });
 
 export const FormProvider: FunctionComponent<Context> = ({ children }) => {
