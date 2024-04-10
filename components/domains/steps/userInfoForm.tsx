@@ -43,8 +43,6 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
 
-  console.log("formState", formState);
-
   useEffect(() => {
     if (type === FormType.REGISTER) return;
     updateFormState({ selectedDomains });

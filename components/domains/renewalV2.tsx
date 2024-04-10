@@ -78,7 +78,7 @@ const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
         <UserInfoForm
           type={FormType.RENEW}
           goToNextStep={goToNextStep}
-          imageUrl="/visuals/registerV2.webp"
+          imageUrl="/visuals/register.webp"
         />
       )}
       {currentStep === 2 && <SelectPfp goToNextStep={goToNextStep} />}
