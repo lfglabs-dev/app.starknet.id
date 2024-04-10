@@ -24,6 +24,12 @@ type UserInfoFormProps = {
   imageUrl: string;
 };
 
+export enum IncrementType {
+  INCREMENT,
+  DECREMENT,
+  SET,
+}
+
 const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   type,
   goToNextStep,
@@ -36,6 +42,8 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   const [emailError, setEmailError] = useState<boolean>(true);
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
+
+  console.log("formState", formState);
 
   useEffect(() => {
     if (type === FormType.REGISTER) return;
@@ -52,24 +60,29 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
     updateFormState({ tokenId: value });
   }
 
-  function changeDuration(value: number): void {
-    if (isNaN(value) || value > maxYearsToRegister || value < 1) return;
+  function changeDuration(
+    type: IncrementType,
+    value: number = formState.duration
+  ): void {
+    let newValue = value;
+
+    switch (type) {
+      case IncrementType.INCREMENT:
+        newValue = value < maxYearsToRegister ? value + 1 : value;
+        break;
+      case IncrementType.DECREMENT:
+        newValue = value > 1 ? value - 1 : value;
+        break;
+      case IncrementType.SET:
+        break;
+    }
+
+    if (isNaN(newValue) || newValue > maxYearsToRegister || newValue < 1)
+      return;
     updateFormState({
-      duration: value,
-      isUpselled: value === 1 ? true : false,
+      duration: newValue,
+      isUpselled: newValue === 1 ? true : false,
     });
-  }
-
-  function incrementDuration(): void {
-    if (formState.duration < maxYearsToRegister) {
-      changeDuration(formState.duration + 1);
-    }
-  }
-
-  function decrementDuration(): void {
-    if (formState.duration > 1) {
-      changeDuration(formState.duration - 1);
-    }
   }
 
   const getTitle = () => {
@@ -142,9 +155,11 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
               value={formState.duration}
               label="Years to register (max 25 years)"
               placeholder="years"
-              onChange={(e) => changeDuration(Number(e.target.value))}
-              incrementValue={incrementDuration}
-              decrementValue={decrementDuration}
+              onChange={(e) =>
+                changeDuration(IncrementType.SET, Number(e.target.value))
+              }
+              incrementValue={() => changeDuration(IncrementType.INCREMENT)}
+              decrementValue={() => changeDuration(IncrementType.DECREMENT)}
               color="secondary"
               required
             />
