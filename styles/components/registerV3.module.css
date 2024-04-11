@@ -238,12 +238,9 @@
 
 .stepsContainer {
   width: 100%;
-  background-color: white;
-  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   display: flex;
   justify-content: space-around;
   padding: 24px;
-  margin-bottom: 1.25rem;
 }
 
 .progressSteps {
@@ -262,21 +259,26 @@
   text-align: center;
   gap: 5px;
   cursor: pointer;
-  color: var(--dark-content);
+  color: var(--secondary);
 }
 
 .activeStep {
   color: var(--primary);
   font-weight: 700;
   line-height: 20px;
+  font-family: "Poppins-Bold";
 }
 
 .progressLine {
   flex-grow: 1;
   height: 2px;
-  background-color: #d0d0d0;
+  background-color: #fff;
   position: relative;
   width: 50px;
+}
+
+.primaryBg {
+  background-color: var(--primary);
 }
 
 @media (max-width: 1084px) {

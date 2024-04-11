@@ -23,7 +23,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
-  const { updateFormState, userNfts } = useContext(FormContext);
+  const { updateFormState, userNfts, isLoadingNfts } = useContext(FormContext);
 
   useEffect(() => {
     if (!address) setCurrentStep(1);
@@ -63,6 +63,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
           currentStep={currentStep}
           setStep={goToStep}
           showPfp={userNfts && userNfts.length > 0}
+          isLoading={isLoadingNfts}
         />
       ) : (
         <div className="sm:w-2/5 w-4/5 mt-5 mb-5">

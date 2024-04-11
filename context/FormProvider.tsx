@@ -27,6 +27,7 @@ type FormConfig = {
   clearForm: () => void;
   updateFormState: (updates: Partial<FormState>) => void;
   userNfts?: StarkscanNftProps[];
+  isLoadingNfts?: boolean;
 };
 
 const initialState: FormState = {
@@ -50,7 +51,9 @@ export const FormContext = createContext<FormConfig>({
 export const FormProvider: FunctionComponent<Context> = ({ children }) => {
   const { address } = useAccount();
   const [formState, setFormState] = useState<FormState>(initialState);
-  const { userNfts } = useWhitelistedNFTs(address as string);
+  const { userNfts, isLoading: isLoadingNfts } = useWhitelistedNFTs(
+    address as string
+  );
 
   const updateFormState = (updates: Partial<FormState>) => {
     setFormState((prevState) => ({ ...prevState, ...updates }));
@@ -117,8 +120,9 @@ export const FormProvider: FunctionComponent<Context> = ({ children }) => {
       updateFormState,
       clearForm,
       userNfts,
+      isLoadingNfts,
     };
-  }, [formState, updateFormState, clearForm, userNfts]);
+  }, [formState, updateFormState, clearForm, userNfts, isLoadingNfts]);
 
   return (
     <FormContext.Provider value={contextValues}>
