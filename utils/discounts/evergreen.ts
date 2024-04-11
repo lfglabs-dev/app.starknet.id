@@ -3,7 +3,7 @@ export const renewal: Upsell = {
   paidDuration: 2,
   maxDuration: 1,
   discountId: "0",
-  imageUrl: "/register/registerUpsell.webp",
+  imageUrl: "/register/gift.webp",
   title: {
     desc: "Unlock Extended Domain",
     catch: "3 Years for the Price of 2!",
@@ -16,7 +16,7 @@ export const registration: Upsell = {
   paidDuration: 2,
   maxDuration: 1,
   discountId: "0",
-  imageUrl: "/register/registerUpsell.webp",
+  imageUrl: "/register/gift.webp",
   title: {
     desc: "Unlock Extended Domain",
     catch: "3 Years for the Price of 2!",

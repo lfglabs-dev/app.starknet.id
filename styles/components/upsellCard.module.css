@@ -30,9 +30,10 @@
 }
 
 .image {
-  width: 500px;
+  width: 390px;
   height: auto;
   object-fit: cover;
+  margin: auto;
   position: relative;
   z-index: -1;
   border-radius: 0rem 1rem 1rem 0rem;
