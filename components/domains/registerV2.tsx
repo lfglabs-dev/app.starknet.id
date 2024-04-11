@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { usePricingContract } from "../../hooks/contracts";
@@ -88,14 +88,17 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
   const { writeAsync: execute, data: registerData } = useContractWrite({
     calls: callData,
   });
-  const hasMainDomain = useDomainFromAddress(address ?? "").domain.endsWith(
-    ".stark"
-  );
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
   const { addTransaction } = useNotificationManager();
   const needsAllowance = useAllowanceCheck(address);
+  const mainDomain = useDomainFromAddress(address ?? "");
+
+  const hasMainDomain = useMemo(() => {
+    if (!mainDomain || !mainDomain.domain) return false;
+    return mainDomain.domain.endsWith(".stark");
+  }, [mainDomain]);
 
   // on first load, we generate a salt
   useEffect(() => {
