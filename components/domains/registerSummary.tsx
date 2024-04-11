@@ -77,7 +77,9 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
     return (
       <div className="flex items-center justify-center">
-        <span className={styles.price}>{priceToPay}</span>
+        <span className={styles.price}>
+          {priceToPay} {displayedCurrency} {recurrence}
+        </span>
         {isSwissResident ? (
           <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
         ) : null}
@@ -94,7 +96,9 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       <div className="flex items-center justify-center">
         <span className={styles.priceCrossed}>{price}</span>
         <ArrowRightIcon width="25" color="#454545" />
-        <span className={styles.price}>{priceDiscounted} 🔥</span>
+        <span className={styles.price}>
+          {priceDiscounted} {displayedCurrency} {recurrence} 🔥
+        </span>
         {isSwissResident ? (
           <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
         ) : null}
@@ -116,16 +120,12 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     if (isUpselled && discountedPrice) {
       return displayDiscountedPrice(
         numberToFixedString(Number(gweiToEth(registrationPrice)), 3),
-        numberToFixedString(Number(gweiToEth(discountedPrice)), 3)
-          .concat(` ${displayedCurrency} `)
-          .concat(recurrence),
+        numberToFixedString(Number(gweiToEth(discountedPrice)), 3),
         salesTaxInfo
       );
     }
     return displayPrice(
-      numberToFixedString(Number(gweiToEth(registrationPrice)), 3)
-        .concat(` ${displayedCurrency} `)
-        .concat(recurrence),
+      numberToFixedString(Number(gweiToEth(registrationPrice)), 3),
       salesTaxInfo
     );
   }
