@@ -66,11 +66,11 @@ export const getDomainData = (tokenId: string): IdentityData | undefined => {
   let existingData: IdentityData[] = existingDataRaw
     ? JSON.parse(existingDataRaw)
     : {};
-  // if data exists & creation_date is less than 1 hour old, use it
+  // if data exists & creation_date is less than 10mn ago, use it
   // else we will trust the indexer
   if (
     existingData[tokenId] &&
-    existingData[tokenId].creation_date < Date.now() + 3600000
+    existingData[tokenId].creation_date > Date.now() - 600000
   ) {
     return existingData[tokenId];
   }
