@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
+const { withAxiom } = require("next-axiom");
 
-module.exports = {
+module.exports = withAxiom({
   rewrites() {
     return {
       beforeFiles: [],
@@ -25,4 +26,4 @@ module.exports = {
     locales: ["en-US", "zh-CN"],
     defaultLocale: "en-US",
   },
-};
+});
