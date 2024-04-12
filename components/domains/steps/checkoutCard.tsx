@@ -51,6 +51,7 @@ import { useDomainFromAddress } from "@/hooks/naming";
 import identityChangeCalls from "@/utils/callData/identityChangeCalls";
 import posthog from "posthog-js";
 import { useRouter } from "next/router";
+import { formatDomainData } from "@/utils/cacheDomainData";
 
 type CheckoutCardProps = {
   type: FormType;
@@ -574,6 +575,18 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         status: "pending",
       },
     });
+
+    // if registration, store domain data in local storage to use it until it's indexed
+    if (type === FormType.REGISTER) {
+      formatDomainData(
+        tokenIdRedirect,
+        formatHexString(address as string),
+        getDomainWithStark(Object.keys(formState.selectedDomains)[0]),
+        formState.isUpselled ? discount.duration : formState.duration,
+        !hasMainDomain || mainDomainBox ? true : false,
+        formState.selectedPfp
+      );
+    }
 
     // clear context
     clearForm();
