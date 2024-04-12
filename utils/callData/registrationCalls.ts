@@ -14,7 +14,7 @@ function buy(
   tokenId: number,
   sponsor: string,
   durationInYears: number,
-  metadata: string,
+  metadata: HexString,
   discountId?: string
 ): Call {
   return {
@@ -44,7 +44,7 @@ function altcoinBuy(
   tokenId: number,
   sponsor: string,
   durationInYears: number,
-  metadata: string,
+  metadata: HexString,
   erc20Address: string,
   quoteData: QuoteQueryData,
   discountId?: string
@@ -107,7 +107,7 @@ function vatTransfer(amount: string): Call {
 function renew(
   encodedDomain: string,
   durationInYears: number,
-  metadataHash: string,
+  metadataHash: HexString,
   sponsor?: string,
   discountId?: string
 ): Call {
@@ -119,7 +119,7 @@ function renew(
       durationInYears * 365,
       sponsor ?? 0,
       discountId ?? 0,
-      "0x" + metadataHash,
+      metadataHash,
     ],
   };
 }
@@ -127,7 +127,7 @@ function renew(
 function altcoinRenew(
   encodedDomain: string,
   durationInYears: number,
-  metadataHash: string,
+  metadataHash: HexString,
   erc20Address: string,
   quoteData: QuoteQueryData,
   sponsor?: string,
@@ -141,7 +141,7 @@ function altcoinRenew(
       durationInYears * 365,
       sponsor ?? 0,
       discountId ?? 0,
-      "0x" + metadataHash,
+      metadataHash,
       erc20Address,
       quoteData.quote,
       quoteData.max_quote_validity,
@@ -162,11 +162,11 @@ function freeRenewal(encodedDomain: string): Call {
 function multiCallRenewal(
   encodedDomains: string[],
   durationInYears: number,
-  metadataHash: string,
+  metadataHash: HexString,
   sponsor?: string,
   discountId?: string
 ): Call[] {
-  return encodedDomains.map((encodedDomain, index) =>
+  return encodedDomains.map((encodedDomain) =>
     renew(encodedDomain, durationInYears, metadataHash, sponsor, discountId)
   );
 }
@@ -174,13 +174,13 @@ function multiCallRenewal(
 function multiCallRenewalAltcoin(
   encodedDomains: string[],
   durationInYears: number,
-  metadataHash: string,
+  metadataHash: HexString,
   erc20Address: string,
   quoteData: QuoteQueryData,
   sponsor?: string,
   discountId?: string
 ): Call[] {
-  return encodedDomains.map((encodedDomain, index) =>
+  return encodedDomains.map((encodedDomain) =>
     altcoinRenew(
       encodedDomain,
       durationInYears,
@@ -197,6 +197,14 @@ function multiCallFreeRenewals(encodedDomains: string[]): Call[] {
   return encodedDomains.map((encodedDomain) => freeRenewal(encodedDomain));
 }
 
+function resetAddrToDomain(): Call {
+  return {
+    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+    entrypoint: "reset_address_to_domain",
+    calldata: [],
+  };
+}
+
 const registrationCalls = {
   approve,
   buy,
@@ -210,6 +218,7 @@ const registrationCalls = {
   multiCallRenewalAltcoin,
   freeRenewal,
   multiCallFreeRenewals,
+  resetAddrToDomain,
 };
 
 export default registrationCalls;

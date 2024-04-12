@@ -279,7 +279,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
           ...registrationCalls.multiCallRenewal(
             selectedDomainsToEncodedArray(selectedDomains),
             duration,
-            metadataHash
+            `0x${metadataHash}`
           )
         );
       } else {
@@ -287,7 +287,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
           ...registrationCalls.multiCallRenewalAltcoin(
             selectedDomainsToEncodedArray(selectedDomains),
             duration,
-            metadataHash,
+            `0x${metadataHash}`,
             ERC20Contract[displayedCurrency],
             quoteData as QuoteQueryData
           )
@@ -487,7 +487,7 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
           )}
         </div>
       </div>
-      <img className={styles.image} src="/visuals/registerV2.webp" />
+      <img className={styles.image} src="/visuals/register.webp" />
       <RegisterConfirmationModal
         txHash={renewData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}

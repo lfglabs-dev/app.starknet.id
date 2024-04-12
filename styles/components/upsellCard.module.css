@@ -1,0 +1,132 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 1084px;
+  max-width: 100%;
+  background-color: white;
+  justify-content: space-between;
+  margin-bottom: 100px;
+  border-radius: 1rem;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  margin-bottom: 3rem;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+}
+
+.card {
+  display: flex;
+  width: 694px;
+  padding: 32px 0px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  flex-shrink: 0;
+  z-index: 1;
+  background-color: #fff;
+  padding: 64px 48px;
+}
+
+.image {
+  width: 390px;
+  height: auto;
+  object-fit: cover;
+  margin: auto;
+  position: relative;
+  z-index: -1;
+  border-radius: 0rem 1rem 1rem 0rem;
+}
+
+.title {
+  color: #402d28;
+  font-family: "QuickZap";
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 42px;
+}
+
+.catch {
+  color: var(--primary);
+  font-family: "QuickZap";
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 42px;
+}
+
+.desc {
+  margin-top: 24px;
+  text-align: left;
+  font-size: 16px;
+  color: var(--secondary);
+}
+
+.radioGroup {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+}
+
+@media (max-width: 1084px) {
+  .container {
+    max-width: 90%;
+    margin: 1rem;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    order: 2;
+    width: 100%;
+    padding: 32px 24px;
+  }
+
+  .image {
+    order: 1;
+    width: 100%;
+    height: 220px;
+    position: relative;
+    left: auto;
+    z-index: auto;
+    border-radius: 1rem 1rem 0 0;
+  }
+
+  .desc {
+    text-align: center;
+  }
+
+  .radioGroupContainer {
+    margin: 0 auto;
+  }
+
+  .radioGroup {
+    flex-direction: column;
+    gap: 0px;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .legend {
+    font-size: 12px;
+    letter-spacing: -0.3px;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .legend {
+    font-size: 10px;
+    letter-spacing: -0.3px;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .legend {
+    font-size: 9px;
+    letter-spacing: -0.4px;
+  }
+}

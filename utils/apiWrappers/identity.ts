@@ -189,7 +189,7 @@ export class Identity {
     try {
       const response = await fetch(
         `https://${
-          process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "api-testnet" : "api"
+          process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "api-sepolia" : "api"
         }.starkscan.co/api/v0/nft/${contractAddress}/${nftId}`,
         {
           method: "GET",

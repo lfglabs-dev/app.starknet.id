@@ -257,7 +257,7 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
         ...registrationCalls.multiCallRenewal(
           selectedDomainsToEncodedArray(selectedDomains),
           duration,
-          metadataHash
+          `0x${metadataHash}`
         ),
       ];
 

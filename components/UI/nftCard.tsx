@@ -1,15 +1,15 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import theme from "../../styles/theme";
-import AddIcon from "./iconsComponents/icons/addIcon";
-import { useMediaQuery } from "@mui/material";
 import { getImgUrl } from "../../utils/stringService";
+import DoneFilledIcon from "./iconsComponents/icons/doneFilledIcon";
 
 type NftCardProps = {
   image: string;
   name: string;
   selectPicture: () => void;
   isHovered: boolean;
+  isSelected?: boolean;
 };
 
 const NftCard: FunctionComponent<NftCardProps> = ({
@@ -17,24 +17,27 @@ const NftCard: FunctionComponent<NftCardProps> = ({
   name,
   selectPicture,
   isHovered,
+  isSelected,
 }) => {
-  const isMobile = useMediaQuery("(max-width:425px)");
-
   return (
     <div className={styles.nftCard}>
-      {!isHovered || isMobile ? (
-        <div
-          className={styles.nftImg}
-          onClick={() => isMobile && selectPicture()}
-        >
-          <img src={getImgUrl(image)} alt={`Image of ${name}`} />
-        </div>
-      ) : (
-        <div className={styles.nftHovered} onClick={selectPicture}>
-          <AddIcon width="28" color={theme.palette.secondary.main} />
-          <p>Add this NFT</p>
-        </div>
-      )}
+      <div
+        className={`${styles.nftImg} ${
+          isHovered || isSelected ? styles.nftImgSelected : ""
+        }`}
+        onClick={selectPicture}
+      >
+        {isHovered || isSelected ? (
+          <div className={styles.selectedIcon}>
+            <DoneFilledIcon
+              width="28"
+              color="#FFF"
+              secondColor={theme.palette.primary.main}
+            />
+          </div>
+        ) : null}
+        <img src={getImgUrl(image)} alt={`Image of ${name}`} />
+      </div>
     </div>
   );
 };

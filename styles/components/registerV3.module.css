@@ -1,0 +1,344 @@
+.container {
+  display: flex;
+  width: 1084px;
+  max-width: 100%;
+  background-color: white;
+  justify-content: space-between;
+  margin-bottom: 100px;
+  border-radius: 1rem;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  margin-bottom: 3rem;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
+}
+
+.card {
+  display: flex;
+  width: 694px;
+  padding: 32px 0px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 48px;
+  flex-shrink: 0;
+  z-index: 1;
+  background-color: #fff;
+}
+
+.price {
+  color: rgb(31 41 55);
+  font-size: 1.25rem /* 20px */;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.5rem /* 24px */;
+  white-space: nowrap;
+}
+
+.priceCrossed {
+  font-size: 1.25rem /* 20px */;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.5rem /* 24px */;
+  white-space: nowrap;
+  color: #6d696a;
+  text-decoration: line-through;
+}
+
+.legend {
+  color: #6d696a;
+  /* Body/small/medium */
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+}
+
+.domainsToRenew {
+  color: #6d696a;
+  /* Body/small/medium */
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px; /* 142.857% */
+}
+
+.renewalBox {
+  display: flex;
+  padding: 19.159px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 9.58px;
+  align-self: stretch;
+  border-radius: 7.983px;
+  border: 1.597px solid var(--content-400, #cdcccc);
+  background: var(--background-paper, #fff);
+
+  /* Small Shadow */
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+}
+
+.domain {
+  color: #454545;
+  /* Title/H3 */
+  font-family: "QuickZap";
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px; /* 106.667% */
+}
+
+.form {
+  display: flex;
+  padding: 0px 48px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+  align-self: stretch;
+}
+
+.summary {
+  display: flex;
+  padding: 24px 48px 0px 48px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  align-self: stretch;
+  border-top: 1px solid var(--content-400, #cdcccc);
+}
+
+.pfpGallery {
+  display: flex;
+  flex-direction: column;
+  margin: 0 40px 20px;
+  border-radius: 20px;
+  background: #fffcf8;
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  width: -webkit-fill-available;
+  padding: 32px 64px;
+  text-align: left;
+  gap: 48px;
+}
+
+.pfpBtns {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 300px;
+  margin: 0 auto;
+}
+
+.skipBtn {
+  text-align: center;
+  font-family: "QuickZap";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  color: #454545;
+  cursor: pointer;
+}
+
+.checkout {
+  display: flex;
+  width: 100%;
+  padding: 48px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 48px;
+  flex-shrink: 0;
+  z-index: 1;
+  background-color: #fff;
+}
+
+.checkoutSummary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.pricesSummary {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+  align-self: stretch;
+}
+
+.totalDue {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  flex: 1 0 0;
+}
+
+.totalDueTitle {
+  font-family: "Poppins-Bold";
+  font-size: 20px;
+  line-height: 24px; /* 120% */
+  letter-spacing: 0.2px;
+}
+
+.priceContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.image {
+  max-height: 1200px;
+  position: absolute;
+  left: 50%;
+  z-index: -1;
+  border-radius: 0rem 1rem 1rem 0rem;
+}
+
+.currencySwitcher {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.activeSwitch {
+  display: flex;
+  padding: 8px 20px;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: 52px;
+  background: var(--tertiary-600, #ccb297);
+  /* Small Shadow */
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+}
+
+.inactiveSwitch {
+  display: flex;
+  padding: 8px 20px;
+  align-items: flex-start;
+  gap: 10px;
+  border-radius: 52px;
+}
+
+.backArrow {
+  width: fit-content;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  font-family: "Poppins-Bold";
+  transition: 0.3s ease-in-out;
+}
+
+.backArrow:hover {
+  opacity: 0.7;
+}
+
+.stepsContainer {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  padding: 24px;
+}
+
+.progressSteps {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: center;
+  max-width: 600px;
+  gap: 10px;
+}
+
+.progressStep {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-align: center;
+  gap: 5px;
+  cursor: pointer;
+  color: var(--secondary);
+}
+
+.activeStep {
+  color: var(--primary);
+  font-weight: 700;
+  line-height: 20px;
+  font-family: "Poppins-Bold";
+}
+
+.progressLine {
+  flex-grow: 1;
+  height: 2px;
+  background-color: var(--secondary300);
+  position: relative;
+  width: 50px;
+}
+
+.primaryBg {
+  background-color: var(--primary);
+}
+
+@media (max-width: 1084px) {
+  .image {
+    visibility: hidden;
+  }
+
+  .container {
+    max-width: 90%;
+    margin: 1rem;
+  }
+
+  .card {
+    width: 100%;
+  }
+
+  .pricesSummary {
+    flex-direction: column-reverse;
+    gap: 1.5rem;
+  }
+
+  .pfpGallery {
+    margin: 10px;
+  }
+
+  .pfpBtns {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 100%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .legend {
+    font-size: 12px;
+    letter-spacing: -0.3px;
+  }
+
+  .progressStep p {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .legend {
+    font-size: 10px;
+    letter-spacing: -0.3px;
+  }
+  .price {
+    font-size: 1rem;
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .legend {
+    font-size: 9px;
+    letter-spacing: -0.4px;
+  }
+  .price {
+    font-size: 0.8rem;
+  }
+}

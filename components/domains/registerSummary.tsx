@@ -4,11 +4,12 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import styles from "../../styles/components/registerV2.module.css";
+import styles from "../../styles/components/registerV3.module.css";
 import { gweiToEth, numberToFixedString } from "../../utils/feltService";
 import { CurrencyType } from "../../utils/constants";
 import CurrencyDropdown from "./currencyDropdown";
 import { Skeleton } from "@mui/material";
+import ArrowRightIcon from "../UI/iconsComponents/icons/arrowRightIcon";
 
 type RegisterSummaryProps = {
   duration: number;
@@ -22,6 +23,9 @@ type RegisterSummaryProps = {
   displayedCurrency: CurrencyType;
   onCurrencySwitch: (type: CurrencyType) => void;
   loadingPrice?: boolean;
+  isUpselled?: boolean;
+  discountedPrice?: string; // price the user will pay after discount
+  discountedDuration?: number; // years the user will have the domain for after discount
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -36,6 +40,9 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   displayedCurrency,
   onCurrencySwitch,
   loadingPrice,
+  isUpselled = false,
+  discountedPrice,
+  discountedDuration,
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
@@ -56,19 +63,42 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     function computeUsdPrice() {
       if (ethUsdPrice) {
         return (
-          Number(ethUsdPrice) * Number(gweiToEth(ethRegistrationPrice))
+          Number(ethUsdPrice) *
+          Number(gweiToEth(ethRegistrationPrice)) *
+          duration
         ).toFixed(2);
       }
       return "0";
     }
 
     setUsdRegistrationPrice(computeUsdPrice());
-  }, [ethRegistrationPrice, ethUsdPrice]);
+  }, [ethRegistrationPrice, ethUsdPrice, duration]);
 
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
     return (
       <div className="flex items-center justify-center">
-        <span className={styles.price}>{priceToPay}</span>
+        <span className={styles.price}>
+          {priceToPay} {displayedCurrency} {recurrence}
+        </span>
+        {isSwissResident ? (
+          <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
+        ) : null}
+      </div>
+    );
+  }
+
+  function displayDiscountedPrice(
+    price: string,
+    priceDiscounted: string,
+    salesTaxInfo: string
+  ): ReactNode {
+    return (
+      <div className="flex items-center justify-center">
+        <span className={styles.priceCrossed}>{price}</span>
+        <ArrowRightIcon width="25" color="#454545" />
+        <span className={styles.price}>
+          {priceDiscounted} {displayedCurrency} {recurrence} 🔥
+        </span>
         {isSwissResident ? (
           <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
         ) : null}
@@ -87,12 +117,26 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
         )}$ worth of ${displayedCurrency} for Swiss VAT)`
       : "";
 
+    if (isUpselled && discountedPrice) {
+      return displayDiscountedPrice(
+        numberToFixedString(Number(gweiToEth(registrationPrice)), 3),
+        numberToFixedString(Number(gweiToEth(discountedPrice)), 3),
+        salesTaxInfo
+      );
+    }
     return displayPrice(
-      numberToFixedString(Number(gweiToEth(registrationPrice)), 3)
-        .concat(` ${displayedCurrency} `)
-        .concat(recurrence),
+      numberToFixedString(Number(gweiToEth(registrationPrice)), 3),
       salesTaxInfo
     );
+  }
+
+  function getMessage() {
+    if (customMessage) return customMessage;
+    else {
+      return `${gweiToEth(ethRegistrationPrice)} ETH x ${
+        isUpselled ? discountedDuration : duration
+      } ${isUpselled || duration > 1 ? "years" : "year"}`;
+    }
   }
 
   return (
@@ -100,11 +144,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       <div className={styles.totalDue}>
         <h4 className={styles.totalDueTitle}>Total due:</h4>
         <div className={styles.priceContainer}>
-          <p className={styles.legend}>
-            {customMessage
-              ? customMessage
-              : `For ${duration} ${duration === 1 ? "year" : "years"}`}
-          </p>
+          <p className={styles.legend}>{getMessage()}</p>
           {loadingPrice ? (
             <Skeleton variant="text" width="150px" height="24px" />
           ) : (
