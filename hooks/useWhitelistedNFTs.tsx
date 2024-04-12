@@ -29,7 +29,6 @@ export default function useWhitelistedNFTs(address: string) {
 
   useEffect(() => {
     if (!address || !whitelistedContracts) {
-      setUserNfts([]);
       return;
     }
     retrieveAssets(
@@ -42,6 +41,7 @@ export default function useWhitelistedNFTs(address: string) {
       })
       .catch(() => {
         setUserNfts([]);
+        setIsLoading(false);
       });
   }, [whitelistedContracts, address]);
 

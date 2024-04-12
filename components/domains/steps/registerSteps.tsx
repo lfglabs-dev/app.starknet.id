@@ -66,7 +66,11 @@ const RegisterSteps: FunctionComponent<registerStepsProps> = ({
                 secondColor={
                   currentStep >= 2 ? "#FFF" : theme.palette.secondary.main
                 }
-                color={currentStep >= 2 ? theme.palette.primary.main : "#FFF"}
+                color={
+                  currentStep >= 2
+                    ? theme.palette.primary.main
+                    : theme.palette.secondary.light
+                }
               />
               <p>PFP</p>
             </div>
@@ -86,9 +90,13 @@ const RegisterSteps: FunctionComponent<registerStepsProps> = ({
           <CartIcon
             width="30"
             secondColor={
-              currentStep >= 3 ? "none" : theme.palette.secondary.main
+              currentStep >= 3 ? "#FFF" : theme.palette.secondary.main
             }
-            color={currentStep >= 3 ? theme.palette.primary.main : "#FFF"}
+            color={
+              currentStep >= 3
+                ? theme.palette.primary.main
+                : theme.palette.secondary.light
+            }
           />
           <p>Checkout</p>
         </div>

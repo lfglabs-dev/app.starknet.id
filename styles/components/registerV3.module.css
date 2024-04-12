@@ -272,7 +272,7 @@
 .progressLine {
   flex-grow: 1;
   height: 2px;
-  background-color: #fff;
+  background-color: var(--secondary300);
   position: relative;
   width: 50px;
 }
