@@ -4,16 +4,16 @@ import styles from "../styles/components/newsletter.module.css";
 import Button from "../components/UI/button";
 import { useState } from "react";
 import { useAccount } from "@starknet-react/core";
+import { isValidEmail } from "../utils/stringService";
+import TextField from "../components/UI/textField";
 
 const NewsletterPage: NextPage = () => {
   const { address } = useAccount();
   const [error, setError] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+
   const submitHandler = () => {
-    const email = (document.getElementById("email") as HTMLInputElement).value;
-    if (!email) {
-      setError("Please enter your email address.");
-      return;
-    }
     fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/newsletter_subscribe`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -30,6 +30,11 @@ const NewsletterPage: NextPage = () => {
         console.log("Error on registering to email:", err);
       });
   };
+
+  function changeEmail(value: string): void {
+    setEmail(value);
+    setIsButtonDisabled(!isValidEmail(value));
+  }
 
   return (
     <div className={styles.page}>
@@ -57,29 +62,27 @@ const NewsletterPage: NextPage = () => {
       <div className={styles.tree2}>
         <Image src="/visuals/coconutTree2.webp" alt="coconut tree" fill />
       </div>
-      <p className={styles.subtitle}>Starknet news</p>
+      <p className={styles.subtitle}>Newsletter</p>
       <h1 className={styles.title}>
-        <strong>Subscribe</strong> to our Newsletter
+        The best <strong>Starknet opportunities</strong> in your inbox
       </h1>
       <p className={styles.description}>
-        Stay connected with the Starknet beat. Subscribe for direct updates on
-        Starknet airdrops, opportunities, and news.
+        Every two weeks, we send you exclusive insights into airdrops,
+        opportunities, and the latest news on Starknet.
       </p>
       <section className={styles.form}>
-        {error ? (
-          <p className={styles.errorMessage}>{error}</p>
-        ) : (
-          <p className="mb-2 text-center">Your email address</p>
-        )}
-        <input
-          required
-          className={styles.input}
-          id="email"
-          onChange={() => setError("")}
-          autoComplete="off"
+        <TextField
+          helperText="Your email stays private with us, always."
+          value={email}
+          label="Your email address"
+          onChange={(e) => changeEmail(e.target.value)}
+          color="secondary"
+          error={Boolean(error)}
+          errorMessage={error ?? "Please enter a valid email address"}
+          type="email"
         />
-        <div className="w-fit block mx-auto">
-          <Button onClick={submitHandler} disabled={!!error}>
+        <div className="w-fit block mx-auto mt-4">
+          <Button onClick={submitHandler} disabled={isButtonDisabled}>
             Subscribe
           </Button>
         </div>

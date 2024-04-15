@@ -74,7 +74,7 @@
 
   /* Title/H1 */
   font-family: "QuickZap";
-  font-size: 48px;
+  font-size: 45px;
   font-style: normal;
   font-weight: 400;
   line-height: 58px; /* 120.833% */
@@ -100,7 +100,9 @@
 }
 
 .form {
-  margin-top: 3rem;
+  margin-top: 1rem;
+  width: 30rem;
+  max-width: 90%;
 }
 
 .errorMessage {
@@ -181,5 +183,9 @@
     transform: rotate(-14.355deg);
     right: 25px;
     top: 80px;
+  }
+  .title {
+    font-size: 32px;
+    line-height: 42px;
   }
 }
