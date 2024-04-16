@@ -2,6 +2,7 @@ import React, {
   FunctionComponent,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import styles from "../../../styles/components/registerV3.module.css";
@@ -75,9 +76,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [termsBox, setTermsBox] = useState<boolean>(true);
-  const hasMainDomain = useDomainFromAddress(address ?? "")?.domain.endsWith(
-    ".stark"
-  );
+  const mainDomain = useDomainFromAddress(address ?? "");
   const [mainDomainBox, setMainDomainBox] = useState<boolean>(true);
   const [sponsor, setSponsor] = useState<string>("0");
   const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
@@ -98,6 +97,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   });
   // Renewals
   const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
+
+  const hasMainDomain = useMemo(() => {
+    if (!mainDomain || !mainDomain.domain) return false;
+    return mainDomain.domain.endsWith(".stark");
+  }, [mainDomain]);
 
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
