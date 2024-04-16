@@ -378,7 +378,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
           )}
         </div>
       </div>
-      <img className={styles.image} src="/visuals/registerV2.webp" />
+      <img className={styles.image} src="/visuals/register.webp" />
       <RegisterConfirmationModal
         txHash={autorenewData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}

@@ -429,7 +429,7 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
           )}
         </div>
       </div>
-      <img className={styles.image} src="/visuals/registerV2.webp" />
+      <img className={styles.image} src="/visuals/register.webp" />
       <RegisterConfirmationModal
         txHash={renewData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}

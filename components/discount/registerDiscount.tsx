@@ -419,7 +419,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           )}
         </div>
       </div>
-      <img className={styles.image} src="/visuals/registerV2.webp" />
+      <img className={styles.image} src="/visuals/register.webp" />
       <TxConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
