@@ -56,7 +56,7 @@ const Solana: NextPage = () => {
     const currentDate = new Date();
     const timestamp = currentDate.getTime();
 
-    if (timestamp >= 1714051234 * 1000) {
+    if (timestamp >= 1744724194 * 1000) {
       setOpen(false);
     }
   }, []);
