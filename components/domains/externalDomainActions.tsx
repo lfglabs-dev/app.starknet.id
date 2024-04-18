@@ -38,7 +38,10 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
   const set_address_to_domain_calls = {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_address_to_domain",
-    calldata: callDataEncodedDomain,
+    calldata:
+      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+        ? [...callDataEncodedDomain, 0]
+        : callDataEncodedDomain,
   };
   const { writeAsync: set_address_to_domain } = useContractWrite({
     calls: [set_address_to_domain_calls],
