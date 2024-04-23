@@ -3,6 +3,7 @@ import { Checkbox } from "@mui/material";
 import styles from "../../styles/components/variants.module.css";
 import InputHelper from "../UI/inputHelper";
 import { gweiToEth } from "../../utils/feltService";
+import { CurrencyType } from "@/utils/constants";
 
 type RegisterCheckboxes = {
   termsBox: boolean;
@@ -16,6 +17,8 @@ type RegisterCheckboxes = {
   onChangeMainDomainBox?: () => void;
   mainDomainBox?: boolean;
   domain?: string;
+  displayedCurrency?: CurrencyType;
+  maxPriceRange?: string;
 };
 
 const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
@@ -25,11 +28,12 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   renewalBox,
   variant = "default",
   isArOnforced,
-  ethRenewalPrice,
   mainDomainBox,
   onChangeMainDomainBox,
   showMainDomainBox = false,
   domain,
+  displayedCurrency = CurrencyType.ETH,
+  maxPriceRange,
 }) => {
   return (
     <div className="w-full mb-3">
@@ -71,8 +75,12 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
         </div>
         {!isArOnforced ? (
           <InputHelper
-            helperText={`Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year maximum ${
-              ethRenewalPrice ? `(${gweiToEth(ethRenewalPrice)} ETH/year)` : ""
+            helperText={`Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year ${
+              maxPriceRange
+                ? `(maximum ${Number(gweiToEth(maxPriceRange)).toFixed(
+                    3
+                  )} ${displayedCurrency}/year)`
+                : ""
             } and we'll cover the transaction fee for you!`}
           >
             <div
