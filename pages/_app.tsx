@@ -105,7 +105,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                   apiKey: process.env.NEXT_PUBLIC_WALNUT_API_KEY as string,
                 }) as any
               }
-              autoConnect
+              // autoConnect
             >
               <StarknetIdJsProvider>
                 <ThemeProvider theme={theme}>
