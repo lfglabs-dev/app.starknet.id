@@ -14,6 +14,7 @@ import {
   useAccount,
   useDisconnect,
   useStarkProfile,
+  InjectedConnector,
 } from "@starknet-react/core";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
@@ -29,7 +30,6 @@ import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import { StarkProfile } from "starknetid.js";
 import { Connector, useStarknetkitConnectModal } from "starknetkit";
 import { getStarknet } from "get-starknet-core";
-import { InjectedConnector } from "starknetkit/injected";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
