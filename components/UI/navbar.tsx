@@ -15,6 +15,7 @@ import {
   useDisconnect,
   useStarkProfile,
   InjectedConnector,
+  useProvider,
 } from "@starknet-react/core";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
@@ -29,6 +30,7 @@ import CloseFilledIcon from "./iconsComponents/icons/closeFilledIcon";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import { StarkProfile } from "starknetid.js";
 import { Connector, useStarknetkitConnectModal } from "starknetkit";
+import { InjectedConnector as InjectedConnectorSK } from "starknetkit/injected";
 import { getStarknet } from "get-starknet-core";
 
 const Navbar: FunctionComponent = () => {
@@ -36,6 +38,7 @@ const Navbar: FunctionComponent = () => {
   const [nav, setNav] = useState<boolean>(false);
   const [desktopNav, setDesktopNav] = useState<boolean>(false);
   const { address, account } = useAccount();
+  const { provider } = useProvider();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const { connectAsync } = useConnect();
@@ -70,13 +73,27 @@ const Navbar: FunctionComponent = () => {
         const connector = availableConnectors.find(
           (item) => item.id === connectordId
         );
-        console.log("try connect to connector", connector);
+        console.log("connector found", connector);
+        console.log(
+          "try connect to connector",
+          new InjectedConnector({
+            options: { id: connector?.id as string, name: connector?.name },
+          })
+        );
         if (connector)
-          await connectAsync({
-            connector: new InjectedConnector({
-              options: { id: connector.id, name: connector.name },
-            }),
-          });
+          try {
+            await connectAsync({
+              connector: new InjectedConnector({
+                options: { id: connector.id, name: connector.name },
+              }),
+            });
+          } catch (e) {
+            const secondConnector = new InjectedConnectorSK({
+              options: { id: connector.id, name: connector.name, provider },
+            });
+            console.log("try second connector", secondConnector);
+            await connectAsync({ connector: secondConnector });
+          }
       }
     };
     connectToStarknet();
