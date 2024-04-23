@@ -65,9 +65,12 @@ const Navbar: FunctionComponent = () => {
     const connectToStarknet = async () => {
       if (localStorage.getItem("SID-connectedWallet")) {
         const connectordId = localStorage.getItem("SID-connectedWallet");
+        console.log("availableConnectors", availableConnectors);
+        console.log("connectordId", connectordId);
         const connector = availableConnectors.find(
           (item) => item.id === connectordId
         );
+        console.log("try connect to connector", connector);
         if (connector) await connectAsync({ connector });
       }
     };
