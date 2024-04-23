@@ -252,7 +252,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   useEffect(() => {
     if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
-    let limitPrice = getAutoRenewAllowance(
+    const limitPrice = getAutoRenewAllowance(
       displayedCurrency,
       formState.salesTaxRate,
       getDomainPrice(
