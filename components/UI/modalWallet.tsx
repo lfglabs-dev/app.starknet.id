@@ -80,7 +80,9 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
               <ArgentIcon color={"#f36a3d"} width={"25px"} />
             )}
 
-            <p className="ml-2">Connected with &nbsp;{domain}&nbsp;</p>
+            <p className="ml-2">
+              Connected with &nbsp;{domain}&nbsp; {connector?.id}
+            </p>
           </div>
         </div>
         <div className="flex flex-row justify-around flex-wrap mb-3">
@@ -161,3 +163,8 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
   );
 };
 export default ModalWallet;
+function starknetkitConnectModal():
+  | { connector: any }
+  | PromiseLike<{ connector: any }> {
+  throw new Error("Function not implemented.");
+}

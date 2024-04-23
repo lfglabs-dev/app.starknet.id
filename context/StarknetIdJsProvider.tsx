@@ -30,6 +30,7 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
   const { address } = useAccount();
   const [identitiesTemp, setIdentities] = useState<FullId[]>([]);
   const [hasOKX, setHasOKX] = useState<boolean>(false);
+  const [hasBitget, setHasBitget] = useState<boolean>(false);
 
   const isTestnet = useMemo(() => {
     return process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? true : false;
@@ -70,6 +71,7 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
   useMemo(() => {
     if (isTestnet) {
       setHasOKX(false);
+      setHasBitget(false);
       return;
     }
     const wallets = getStarknet();
@@ -78,6 +80,11 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
         setHasOKX(true);
       } else {
         setHasOKX(false);
+      }
+      if (wallets.filter((wallet) => wallet.id === "bitkeep").length > 0) {
+        setHasBitget(true);
+      } else {
+        setHasBitget(false);
       }
     });
   }, [isTestnet]);
@@ -88,6 +95,13 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
       new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
       ...(hasOKX
         ? [new InjectedConnector({ options: { id: "okxwallet", name: "OKX" } })]
+        : []),
+      ...(hasBitget
+        ? [
+            new InjectedConnector({
+              options: { id: "bitkeep", name: "Bitget Wallet" },
+            }),
+          ]
         : []),
       new WebWalletConnector({
         url: isTestnet
@@ -101,7 +115,7 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
         icons: ["https://app.starknet.id/visuals/StarknetIdLogo.svg"],
       }),
     ];
-  }, [hasOKX]);
+  }, [hasOKX, hasBitget]);
 
   const contextValues = useMemo(() => {
     return {
