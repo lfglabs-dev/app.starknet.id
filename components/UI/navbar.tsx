@@ -71,7 +71,12 @@ const Navbar: FunctionComponent = () => {
           (item) => item.id === connectordId
         );
         console.log("try connect to connector", connector);
-        if (connector) await connectAsync({ connector });
+        if (connector)
+          await connectAsync({
+            connector: new InjectedConnector({
+              options: { id: connector.id, name: connector.name },
+            }),
+          });
       }
     };
     connectToStarknet();
