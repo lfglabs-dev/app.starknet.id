@@ -35,6 +35,15 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   displayedCurrency = CurrencyType.ETH,
   maxPriceRange,
 }) => {
+  const getHelperText = (): string => {
+    return `Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year ${
+      maxPriceRange
+        ? `(maximum ${Number(gweiToEth(maxPriceRange)).toFixed(
+            3
+          )} ${displayedCurrency}/year)`
+        : ""
+    } and we'll cover the transaction fee for you!`;
+  };
   return (
     <div className="w-full mb-3">
       <div className="flex flex-col gap-3">
@@ -74,15 +83,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
           </p>
         </div>
         {!isArOnforced ? (
-          <InputHelper
-            helperText={`Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year ${
-              maxPriceRange
-                ? `(maximum ${Number(gweiToEth(maxPriceRange)).toFixed(
-                    3
-                  )} ${displayedCurrency}/year)`
-                : ""
-            } and we'll cover the transaction fee for you!`}
-          >
+          <InputHelper helperText={getHelperText()}>
             <div
               className="flex items-center justify-left text-xs cursor-pointer"
               onClick={onChangeRenewalBox}
