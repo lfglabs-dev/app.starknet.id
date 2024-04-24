@@ -121,8 +121,17 @@
 .arrowDown {
   width: 25px;
   height: 25px;
-  background-color: green;
+  background-color: var(--primary600);
   border-radius: 100%;
+}
+
+.arrowDownIcon {
+  margin-top: 4px;
+  margin-left: 3px;
+}
+
+.arrowDown:hover {
+  background-color: var(--primary);
 }
 
 @media (max-width: 1024px) {

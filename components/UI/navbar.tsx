@@ -222,7 +222,7 @@ const Navbar: FunctionComponent = () => {
                           <ArrowDownIcon
                             width="18"
                             color="#FFF"
-                            className="mt-1 ml-1"
+                            className={connectStyles.arrowDownIcon}
                           />
                         </div>
                       ) : null}

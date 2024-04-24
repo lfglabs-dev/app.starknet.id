@@ -70,6 +70,10 @@
   background: var(--primary);
 }
 
+.primary:hover {
+  background: var(--primary600);
+}
+
 /* white */
 .white {
   color: var(--dark-content);
