@@ -118,7 +118,7 @@ export enum CurrenciesIcon {
 
 export enum CurrenciesRange {
   ETH = "0",
-  STRK = "0.3",
+  STRK = "1", // Covers a possible 50% increase in ETH/STRK price
   // USDC = "0.1",
   // USDT = "0.1",
 }
