@@ -8,13 +8,9 @@ import React, {
 import { AiOutlineMenu } from "react-icons/ai";
 import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
+import connectStyles from "../../styles/components/walletConnect.module.css";
 import Button from "./button";
-import {
-  useConnect,
-  useAccount,
-  useDisconnect,
-  useStarkProfile,
-} from "@starknet-react/core";
+import { useConnect, useAccount, useDisconnect } from "@starknet-react/core";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { useMediaQuery } from "@mui/material";
@@ -27,11 +23,14 @@ import DesktopNav from "./desktopNav";
 import CloseFilledIcon from "./iconsComponents/icons/closeFilledIcon";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import { StarkProfile } from "starknetid.js";
-import { Connector, useStarknetkitConnectModal } from "starknetkit";
-import { getStarknet } from "get-starknet-core";
-import { InjectedConnector } from "starknetkit/injected";
-import { getConnectors } from "@/utils/connectorWrapper";
+import { Connector } from "starknetkit";
+import {
+  getConnectorIcon,
+  getLastConnected,
+  getLastConnector,
+} from "@/utils/connectorWrapper";
 import WalletConnect from "./walletConnect";
+import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -49,15 +48,10 @@ const Navbar: FunctionComponent = () => {
   const [txLoading, setTxLoading] = useState<number>(0);
   const [showWallet, setShowWallet] = useState<boolean>(false);
   const [profile, setProfile] = useState<StarkProfile | undefined>(undefined);
-  const { starknetIdNavigator, availableConnectors } =
-    useContext(StarknetIdJsContext);
-  console.log("connectors", connectors);
-  const { starknetkitConnectModal } = useStarknetkitConnectModal({
-    connectors: getConnectors(),
-  });
-
-  // todo: testing WalletConnect modal
-  const [showWalletConnect, setShowWalletConnect] = useState<boolean>(false);
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
+  const [showWalletConnectModal, setShowWalletConnectModal] =
+    useState<boolean>(false);
+  const [lastConnector, setLastConnector] = useState<Connector | null>(null);
 
   // could be replaced by a useProfileData from starknet-react when updated
   useEffect(() => {
@@ -67,18 +61,13 @@ const Navbar: FunctionComponent = () => {
   }, [address]);
 
   // Autoconnect
-  // useEffect(() => {
-  //   const connectToStarknet = async () => {
-  //     if (localStorage.getItem("SID-connectedWallet")) {
-  //       const connectordId = localStorage.getItem("SID-connectedWallet");
-  //       const connector = availableConnectors.find(
-  //         (item) => item.id === connectordId
-  //       );
-  //       if (connector) await connectAsync({ connector });
-  //     }
-  //   };
-  //   connectToStarknet();
-  // }, [availableConnectors]);
+  useEffect(() => {
+    const connectToStarknet = async () => {
+      const connector = getLastConnected();
+      if (connector && connector.available()) await connectAsync({ connector });
+    };
+    connectToStarknet();
+  }, [connectors]);
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
@@ -96,22 +85,14 @@ const Navbar: FunctionComponent = () => {
     });
   }, [account, network, isConnected]);
 
-  const connectWallet = async () => {
-    // const connectors = getConnectors();
-    const { connector } = await starknetkitConnectModal();
-    // console.log("connectors", connectors);
-    // connectors.map((connector) => {
-    //   if (connector.available()) {
-    //     console.log("connector available", connector.id);
-    //   } else {
-    //     console.log("connector NOT available", connector.id);
-    //   }
-    // });
-    // if (!connector) {
-    //   return;
-    // }
-    // await connectAsync({ connector });
-    // localStorage.setItem("SID-connectedWallet", connector.id);
+  useEffect(() => {
+    setLastConnector(getLastConnector());
+  }, [isConnected]);
+
+  const connectWallet = async (connector: Connector) => {
+    await connectAsync({ connector });
+    localStorage.setItem("SID-connectedWallet", connector.id);
+    localStorage.setItem("SID-lastUsedConnector", connector.id);
   };
 
   function disconnectByClick(): void {
@@ -132,7 +113,7 @@ const Navbar: FunctionComponent = () => {
 
   function onTopButtonClick(): void {
     if (!isConnected) {
-      connectWallet();
+      setShowWalletConnectModal(true);
     } else {
       setShowWallet(true);
     }
@@ -184,8 +165,9 @@ const Navbar: FunctionComponent = () => {
                   onClick={
                     isConnected
                       ? () => setShowWallet(true)
-                      : () => setShowWalletConnect(true)
-                    // : () => connectWallet()
+                      : lastConnector
+                      ? () => connectWallet(lastConnector)
+                      : () => setShowWalletConnectModal(true)
                   }
                   variation={isConnected ? "white" : "primary"}
                 >
@@ -221,7 +203,30 @@ const Navbar: FunctionComponent = () => {
                       )}
                     </>
                   ) : (
-                    "connect"
+                    <div className={connectStyles.connectBtn}>
+                      {lastConnector ? (
+                        <img
+                          src={getConnectorIcon(lastConnector.id)}
+                          className={connectStyles.btnIcon}
+                        />
+                      ) : null}
+                      <p>connect</p>
+                      {lastConnector ? (
+                        <div
+                          className={connectStyles.arrowDown}
+                          onClick={(e) => {
+                            setShowWalletConnectModal(true);
+                            e.stopPropagation();
+                          }}
+                        >
+                          <ArrowDownIcon
+                            width="18"
+                            color="#FFF"
+                            className="mt-1 ml-1"
+                          />
+                        </div>
+                      ) : null}
+                    </div>
                   )}
                 </Button>
               </div>
@@ -375,9 +380,10 @@ const Navbar: FunctionComponent = () => {
         setTxLoading={setTxLoading}
       />
       <WalletConnect
-        closeModal={() => setShowWalletConnect(false)}
-        open={showWalletConnect}
+        closeModal={() => setShowWalletConnectModal(false)}
+        open={showWalletConnectModal}
         connectors={connectors as Connector[]}
+        connectWallet={connectWallet}
       />
     </>
   );

@@ -1,24 +1,32 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { Modal } from "@mui/material";
 import { Connector } from "starknetkit";
 import styles from "../../styles/components/walletConnect.module.css";
 import CloseIcon from "./iconsComponents/icons/closeIcon";
-import { getConnectorIcon, getConnectorName } from "@/utils/connectorWrapper";
+import {
+  getConnectorDiscovery,
+  getConnectorIcon,
+  getConnectorName,
+} from "@/utils/connectorWrapper";
 
 type WalletConnectProps = {
   closeModal: () => void;
   open: boolean;
   connectors: Connector[];
-  //   disconnectByClick: () => void;
+  connectWallet: (connector: Connector) => void;
 };
 
 const WalletConnect: FunctionComponent<WalletConnectProps> = ({
   closeModal,
   open,
   connectors,
-  //   disconnectByClick,
+  connectWallet,
 }) => {
-  console.log("connectors", connectors);
+  const connect = (connector: Connector) => {
+    connectWallet(connector);
+    closeModal();
+  };
+
   return (
     <Modal
       disableAutoFocus
@@ -26,23 +34,52 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
       onClose={closeModal}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      componentsProps={{
+        backdrop: {
+          sx: {
+            backdropFilter: "blur(4px)",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          },
+        },
+      }}
     >
       <div className={styles.menu}>
         <button className={styles.menu_close} onClick={closeModal}>
           <CloseIcon />
         </button>
         <div className={styles.modalContent}>
+          <div className={styles.modalTitle}>
+            <span>Connect to</span>
+            <p>Starknet ID</p>
+          </div>
           {connectors.map((connector: Connector) => {
-            if (connector.available()) {
-              return (
-                <div className={styles.wallet}>
-                  <img src={getConnectorIcon(connector.id)} />
-                  <p>{getConnectorName(connector.id)}</p>
-                  <div></div>
+            const isAvailable = connector.available();
+            return (
+              <div
+                key={connector.id}
+                className={styles.wallet}
+                onClick={
+                  isAvailable
+                    ? () => connect(connector)
+                    : () => window.open(getConnectorDiscovery(connector.id))
+                }
+              >
+                <img
+                  src={getConnectorIcon(connector.id)}
+                  className={styles.walletIcon}
+                />
+                <div className={styles.walletName}>
+                  <p>
+                    {!isAvailable ? "Install " : ""}
+                    {getConnectorName(connector.id)}
+                  </p>
+                  {connector.id === "argentWebWallet" ? (
+                    <span className={styles.legend}>Powered by Argent</span>
+                  ) : null}
                 </div>
-              );
-            }
-            return <div>not available : {connector.id}</div>;
+                <div></div>
+              </div>
+            );
           })}
         </div>
       </div>
