@@ -30,6 +30,8 @@ import { StarkProfile } from "starknetid.js";
 import { Connector, useStarknetkitConnectModal } from "starknetkit";
 import { getStarknet } from "get-starknet-core";
 import { InjectedConnector } from "starknetkit/injected";
+import { getConnectors } from "@/utils/connectorWrapper";
+import WalletConnect from "./walletConnect";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -38,7 +40,7 @@ const Navbar: FunctionComponent = () => {
   const { address, account } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
-  const { connectAsync } = useConnect();
+  const { connectAsync, connectors } = useConnect();
   const { disconnect } = useDisconnect();
   const isMobile = useMediaQuery("(max-width:425px)");
   const domainOrAddress = useDisplayName(address ?? "", isMobile);
@@ -49,9 +51,13 @@ const Navbar: FunctionComponent = () => {
   const [profile, setProfile] = useState<StarkProfile | undefined>(undefined);
   const { starknetIdNavigator, availableConnectors } =
     useContext(StarknetIdJsContext);
+  console.log("connectors", connectors);
   const { starknetkitConnectModal } = useStarknetkitConnectModal({
-    connectors: availableConnectors,
+    connectors: getConnectors(),
   });
+
+  // todo: testing WalletConnect modal
+  const [showWalletConnect, setShowWalletConnect] = useState<boolean>(false);
 
   // could be replaced by a useProfileData from starknet-react when updated
   useEffect(() => {
@@ -61,18 +67,18 @@ const Navbar: FunctionComponent = () => {
   }, [address]);
 
   // Autoconnect
-  useEffect(() => {
-    const connectToStarknet = async () => {
-      if (localStorage.getItem("SID-connectedWallet")) {
-        const connectordId = localStorage.getItem("SID-connectedWallet");
-        const connector = availableConnectors.find(
-          (item) => item.id === connectordId
-        );
-        if (connector) await connectAsync({ connector });
-      }
-    };
-    connectToStarknet();
-  }, [availableConnectors]);
+  // useEffect(() => {
+  //   const connectToStarknet = async () => {
+  //     if (localStorage.getItem("SID-connectedWallet")) {
+  //       const connectordId = localStorage.getItem("SID-connectedWallet");
+  //       const connector = availableConnectors.find(
+  //         (item) => item.id === connectordId
+  //       );
+  //       if (connector) await connectAsync({ connector });
+  //     }
+  //   };
+  //   connectToStarknet();
+  // }, [availableConnectors]);
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
@@ -91,12 +97,21 @@ const Navbar: FunctionComponent = () => {
   }, [account, network, isConnected]);
 
   const connectWallet = async () => {
+    // const connectors = getConnectors();
     const { connector } = await starknetkitConnectModal();
-    if (!connector) {
-      return;
-    }
-    await connectAsync({ connector });
-    localStorage.setItem("SID-connectedWallet", connector.id);
+    // console.log("connectors", connectors);
+    // connectors.map((connector) => {
+    //   if (connector.available()) {
+    //     console.log("connector available", connector.id);
+    //   } else {
+    //     console.log("connector NOT available", connector.id);
+    //   }
+    // });
+    // if (!connector) {
+    //   return;
+    // }
+    // await connectAsync({ connector });
+    // localStorage.setItem("SID-connectedWallet", connector.id);
   };
 
   function disconnectByClick(): void {
@@ -169,7 +184,8 @@ const Navbar: FunctionComponent = () => {
                   onClick={
                     isConnected
                       ? () => setShowWallet(true)
-                      : () => connectWallet()
+                      : () => setShowWalletConnect(true)
+                    // : () => connectWallet()
                   }
                   variation={isConnected ? "white" : "primary"}
                 >
@@ -357,6 +373,11 @@ const Navbar: FunctionComponent = () => {
         closeModal={() => setShowWallet(false)}
         disconnectByClick={disconnectByClick}
         setTxLoading={setTxLoading}
+      />
+      <WalletConnect
+        closeModal={() => setShowWalletConnect(false)}
+        open={showWalletConnect}
+        connectors={connectors as Connector[]}
       />
     </>
   );

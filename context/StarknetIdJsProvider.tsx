@@ -76,7 +76,7 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
     }
     const wallets = getStarknet();
     wallets.getAvailableWallets().then((wallets) => {
-      if (wallets.filter((wallet) => wallet.name.includes("OKX")).length > 0) {
+      if (wallets.filter((wallet) => wallet.id.includes("okx")).length > 0) {
         setHasOKX(true);
       } else {
         setHasOKX(false);
@@ -91,18 +91,21 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
 
   const availableConnectors = useMemo(() => {
     return [
-      new InjectedConnector({ options: { id: "braavos", name: "Braavos" } }),
-      new InjectedConnector({ options: { id: "argentX", name: "Argent X" } }),
-      ...(hasOKX
-        ? [new InjectedConnector({ options: { id: "okxwallet", name: "OKX" } })]
-        : []),
-      ...(hasBitget
-        ? [
-            new InjectedConnector({
-              options: { id: "bitkeep", name: "Bitget Wallet" },
-            }),
-          ]
-        : []),
+      new InjectedConnector({ options: { id: "braavos" } }),
+      new InjectedConnector({ options: { id: "argentX" } }),
+      // ...(hasOKX
+      // ? [
+      new InjectedConnector({ options: { id: "okxwallet" } }),
+      new InjectedConnector({ options: { id: "bitkeep" } }),
+      // ]
+      // : []),
+      // ...(hasBitget
+      //   ? [
+      //       new InjectedConnector({
+      //         options: { id: "bitkeep" },
+      //       }),
+      //     ]
+      //   : []),
       new WebWalletConnector({
         url: isTestnet
           ? "https://web.hydrogen.argent47.net"

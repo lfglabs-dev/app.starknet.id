@@ -44,6 +44,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { constants } from "starknet";
+import { getConnectors } from "@/utils/connectorWrapper";
 require("@solana/wallet-adapter-react-ui/styles.css");
 
 if (typeof window !== "undefined") {
@@ -66,7 +67,25 @@ function MyApp({ Component, pageProps }: AppProps) {
       nodeUrl: process.env.NEXT_PUBLIC_RPC_URL as string,
     }),
   });
-  const { availableConnectors } = useContext(StarknetIdJsContext);
+  // const { availableConnectors } = useContext(StarknetIdJsContext);
+  // const connectors = [
+  //   new InjectedConnector({ options: { id: "argentX" } }),
+  //   new InjectedConnector({ options: { id: "braavos" } }),
+  //   new InjectedConnector({ options: { id: "okxwallet" } }),
+  //   new InjectedConnector({ options: { id: "bitkeep" } }),
+  //   new ArgentMobileConnector({
+  //     dappName: "Starknet ID",
+  //     url: process.env.NEXT_PUBLIC_APP_LINK as string,
+  //     chainId: constants.NetworkName.SN_MAIN,
+  //     icons: ["https://app.starknet.id/visuals/StarknetIdLogo.svg"],
+  //   }),
+  //   new WebWalletConnector({
+  //     url:
+  //       process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+  //         ? "https://web.hydrogen.argent47.net"
+  //         : "https://web.argent.xyz/",
+  //   }),
+  // ];
 
   const solNetwork = WalletAdapterNetwork.Mainnet;
   const endpoint = useMemo(() => clusterApiUrl(solNetwork), [solNetwork]);
@@ -101,7 +120,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               provider={providers}
               connectors={
                 addWalnutLogsToConnectors({
-                  connectors: availableConnectors,
+                  connectors: getConnectors(),
                   apiKey: process.env.NEXT_PUBLIC_WALNUT_API_KEY as string,
                 }) as any
               }
