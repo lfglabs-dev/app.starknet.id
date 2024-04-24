@@ -6,7 +6,6 @@ import { WebWalletConnector } from "starknetkit/webwallet";
 import { getBrowser } from "./browserService";
 
 export const getConnectors = () => {
-  //todo: sort connectors by available and then not available at the end, and email at the end
   const connectors = [
     new InjectedConnector({ options: { id: "argentX" } }),
     new InjectedConnector({ options: { id: "braavos" } }),
@@ -27,6 +26,17 @@ export const getConnectors = () => {
   ];
 
   return connectors;
+};
+
+export const sortConnectors = (connectors: Connector[]) => {
+  const available: Connector[] = [];
+  const notAvailable: Connector[] = [];
+  connectors.forEach((connector) => {
+    if (connector.available()) available.push(connector);
+    else notAvailable.push(connector);
+  });
+
+  return available.concat(notAvailable);
 };
 
 export const getConnectorIcon = (id: string) => {

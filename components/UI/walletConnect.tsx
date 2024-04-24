@@ -7,6 +7,7 @@ import {
   getConnectorDiscovery,
   getConnectorIcon,
   getConnectorName,
+  sortConnectors,
 } from "@/utils/connectorWrapper";
 
 type WalletConnectProps = {
@@ -52,7 +53,7 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
             <span>Connect to</span>
             <p>Starknet ID</p>
           </div>
-          {connectors.map((connector: Connector) => {
+          {sortConnectors(connectors).map((connector: Connector) => {
             const isAvailable = connector.available();
             return (
               <div
