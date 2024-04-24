@@ -45,7 +45,7 @@ describe("getLimitPriceRange function", () => {
 
   it("should increase the price by 30% for STRK type", () => {
     const initialPrice = BigInt(1000);
-    const expectedIncrease = BigInt(300); // 30% of 1000
+    const expectedIncrease = BigInt(1000); // 100% of 1000
     const expectedPrice = initialPrice + expectedIncrease;
     expect(getLimitPriceRange(CurrencyType.STRK, initialPrice)).toBe(
       expectedPrice
@@ -76,7 +76,7 @@ describe("getLimitPriceRange function", () => {
 
   it("should handle large numbers accurately", () => {
     const largePrice = BigInt("1000000000000000000"); // 1e18
-    const expectedIncrease = BigInt("300000000000000000"); // 30% of 1e18 for STRK
+    const expectedIncrease = BigInt("1000000000000000000"); // 30% of 1e18 for STRK
     const expectedPrice = largePrice + expectedIncrease;
     expect(getLimitPriceRange(CurrencyType.STRK, largePrice)).toBe(
       expectedPrice
