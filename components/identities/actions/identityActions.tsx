@@ -30,7 +30,6 @@ import { posthog } from "posthog-js";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
-import { useNamingContract } from "@/hooks/contracts";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 
 type IdentityActionsProps = {
@@ -174,9 +173,18 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   useEffect(() => {
     if (isAutoRenewalEnabled) {
-      setDisableRenewalCalldata(
-        autoRenewalCalls.disableRenewal(callDataEncodedDomain[1].toString())
-      );
+      const disableCallData: Call[] = [];
+      autoRenewalData.forEach((renewalData) => {
+        disableCallData.push(
+          autoRenewalCalls.disableRenewal(
+            // auto_renew_contract is defined only for altcoins, if undefined we use the ETH renewal contract address
+            renewalData.auto_renew_contract ??
+              (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
+            callDataEncodedDomain[1].toString()
+          )
+        );
+      });
+      setDisableRenewalCalldata(disableCallData);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoRenewalData, isAutoRenewalEnabled]); // We don't add callDataEncodedDomain because it would create an infinite loop

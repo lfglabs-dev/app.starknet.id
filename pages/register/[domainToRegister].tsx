@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import homeStyles from "../../styles/Home.module.css";
 import styles from "../../styles/search.module.css";
-import SearchBar from "../../components/UI/searchBar";
 import {
   getDomainWithoutStark,
   isStarkRootDomain,
 } from "../../utils/stringService";
-import RegisterV2 from "../../components/domains/registerV2";
+import RegisterV3 from "../../components/domains/registerV3";
+import { FormProvider } from "@/context/FormProvider";
 
 const RegistrationPage: NextPage = () => {
   const router = useRouter();
@@ -27,19 +27,16 @@ const RegistrationPage: NextPage = () => {
   return (
     <div className={homeStyles.screen}>
       <div className={styles.container}>
-        <div className="sm:w-2/5 w-4/5 mt-5 mb-5">
-          <SearchBar
-            onChangeTypedValue={(typeValue: string) => setDomain(typeValue)}
-            showHistory={false}
+        <FormProvider>
+          <RegisterV3
+            domain={getDomainWithoutStark(domain)}
+            setDomain={setDomain}
+            groups={[
+              process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? "",
+              process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
+            ]}
           />
-        </div>
-        <RegisterV2
-          domain={getDomainWithoutStark(domain)}
-          groups={[
-            process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? "",
-            process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
-          ]}
-        />
+        </FormProvider>
       </div>
     </div>
   );

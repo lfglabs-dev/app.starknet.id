@@ -1,0 +1,93 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #454545;
+  gap: 24px;
+  text-align: center;
+  margin: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.title {
+  font-family: "QuickZap";
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 58px;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--secondary);
+}
+
+.highlight {
+  color: var(--primary);
+}
+
+.copyAddr {
+  background-color: #fffcf8;
+  width: 320px;
+  height: 40px;
+  padding: 8px 16px;
+  gap: 8px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 30px 0px #0000000f;
+  display: flex;
+  cursor: pointer;
+}
+
+.coconutLeft {
+  position: fixed;
+  left: -150px;
+  bottom: -80px;
+  width: 390px;
+  overflow: hidden;
+}
+
+.coconutRight {
+  position: fixed;
+  right: -150px;
+  bottom: -80px;
+  width: 390px;
+  overflow: hidden;
+}
+
+.balloon {
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  width: 115px;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.coconut {
+  position: fixed;
+  top: 320px;
+  right: 160px;
+  width: 55px;
+  overflow: hidden;
+  z-index: -1;
+}
+
+@media (max-width: 1084px) {
+  .coconutLeft,
+  .coconutRight,
+  .coconut {
+    display: none;
+  }
+
+  .balloon {
+    right: 0;
+    left: auto;
+    top: 70px;
+  }
+}

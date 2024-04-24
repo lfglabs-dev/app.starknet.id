@@ -38,6 +38,7 @@
   font-weight: 700;
   line-height: 20px; /* 142.857% */
   margin-bottom: 8px;
+  text-align: center;
 }
 
 .title {
@@ -48,6 +49,7 @@
   font-weight: 400;
   line-height: 32px; /* 106.667% */
   margin-bottom: 48px;
+  text-align: center;
 }
 
 .nftSection {
@@ -69,6 +71,8 @@
   align-items: center;
   cursor: pointer;
   z-index: 1;
+  border: 2px solid transparent;
+  position: relative;
 }
 
 .nftImg img {
@@ -77,12 +81,22 @@
   object-fit: cover;
 }
 
+.nftImgSelected {
+  border: 2px solid var(--primary);
+}
+
+.selectedIcon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
 .nftHovered {
   height: 180px;
   width: 180px;
   border-radius: 24px;
   border: 2px solid var(--primary);
-  background: #fff;
+  /* background: #fff; */
   cursor: pointer;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
 

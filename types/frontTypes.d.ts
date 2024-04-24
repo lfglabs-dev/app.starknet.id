@@ -18,7 +18,7 @@ type ErrorRequestData = {
 };
 
 type Status = "success" | "error";
-type DomainKind = "braavos" | "root" | "subdomain" | "none" | "xplorer";
+type DomainKind = "braavos" | "root" | "subdomain" | "none" | "xplorer" | "sol";
 type Context = { children: ReactNode };
 type ScreenState = "mint" | "loading" | "success" | "error";
 
@@ -114,3 +114,29 @@ type SnsDomainData = {
   signature: StarknetSig | undefined;
   sent: boolean;
 };
+
+type TokenBalance = {
+  [key in CurrencyType]: string;
+};
+
+type MulticallCallData = {
+  execution: CairoCustomEnum;
+  to: CairoCustomEnum;
+  selector: CairoCustomEnum;
+  calldata: CairoCustomEnum[];
+};
+
+type Upsell = {
+  duration: number; // duration you get
+  paidDuration: number; // duration you pay for
+  maxDuration: number; // if user selects a duration higer, upsell won't be applied
+  discountId: string;
+  imageUrl: string;
+  title: {
+    desc: string;
+    catch: string;
+  };
+  desc: string;
+};
+
+type HexString = `0x${string}`;

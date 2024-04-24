@@ -128,7 +128,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
                   <div className={styles.menu_tx} key={tx.data?.hash}>
                     <a
                       href={`https://${
-                        network === "testnet" ? "testnet." : ""
+                        network === "testnet" ? "sepolia." : ""
                       }starkscan.co/tx/${tx.data?.hash}`}
                       className={styles.tx_hash}
                       target="_blank"

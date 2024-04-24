@@ -13,6 +13,7 @@ import TxConfirmationModal from "../../components/UI/txConfirmationModal";
 import BackButton from "../../components/UI/backButton";
 import { Identity } from "../../utils/apiWrappers/identity";
 import { formatHexString } from "../../utils/stringService";
+import { getDomainData } from "@/utils/cacheDomainData";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -75,7 +76,14 @@ const TokenIdPage: NextPage = () => {
             setIsIdentityADomain(Boolean(data?.domain));
           })
           .catch(() => {
-            setIsIdentityADomain(false);
+            // Domain data might not be indexed yet, so we check local storage
+            const domainData = getDomainData(tokenId);
+            if (domainData) {
+              setIdentity(new Identity(domainData));
+              setIsIdentityADomain(Boolean(domainData?.domain));
+            } else {
+              setIsIdentityADomain(false);
+            }
           });
       refreshData();
       const timer = setInterval(() => refreshData(), 30e3);
@@ -123,7 +131,6 @@ const TokenIdPage: NextPage = () => {
         ) : (
           <UpdateProfilePic
             tokenId={tokenId}
-            identity={identity}
             back={() => setIsUpdatingPp(false)}
             openTxModal={() => setIsTxModalOpen(true)}
             setPfpTxHash={setPpTxHash}

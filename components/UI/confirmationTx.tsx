@@ -35,7 +35,7 @@ const ConfirmationTx: FunctionComponent<ConfirmationTxProps> = ({
           onClick={() =>
             window.open(
               `https://${
-                process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet." : ""
+                process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "sepolia." : ""
               }starkscan.co/tx/${txHash}`
             )
           }
