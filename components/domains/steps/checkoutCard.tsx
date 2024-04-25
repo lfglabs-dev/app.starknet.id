@@ -646,7 +646,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   return (
     <>
-      {formState.duration === 1 && discount.showCard ? (
+      {formState.duration === 1 ? (
         <UpsellCard
           upsellData={discount as Upsell}
           enabled={formState.isUpselled}
