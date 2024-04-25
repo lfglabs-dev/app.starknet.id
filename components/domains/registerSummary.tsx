@@ -117,17 +117,17 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
         )}$ worth of ${displayedCurrency} for Swiss VAT)`
       : "";
 
+    const registerPrice = Number(gweiToEth(registrationPrice));
+    const registerPriceStr =
+      registerPrice != 0 ? numberToFixedString(registerPrice, 3) : "0";
     if (isUpselled && discountedPrice) {
       return displayDiscountedPrice(
-        numberToFixedString(Number(gweiToEth(registrationPrice)), 3),
+        registerPriceStr,
         numberToFixedString(Number(gweiToEth(discountedPrice)), 3),
         salesTaxInfo
       );
     }
-    return displayPrice(
-      numberToFixedString(Number(gweiToEth(registrationPrice)), 3),
-      salesTaxInfo
-    );
+    return displayPrice(registerPriceStr, salesTaxInfo);
   }
 
   function getMessage() {

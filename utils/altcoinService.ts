@@ -1,8 +1,9 @@
 import Big from "big.js";
-import { CurrenciesRange, CurrencyType } from "./constants";
-import { applyRateToBigInt } from "./feltService";
+import { CurrenciesRange, CurrencyType, ERC20Contract } from "./constants";
+import { applyRateToBigInt, hexToDecimal } from "./feltService";
 import { getPriceFromDomain } from "./priceService";
 import { Result } from "starknet";
+import { error } from "console";
 
 export const getTokenQuote = async (tokenAddress: string) => {
   try {
@@ -114,4 +115,46 @@ export const getAutoRenewAllowance = (
     : limitPrice.toString();
 
   return allowance;
+};
+
+type AvnuQuote = {
+  address: string;
+  currentPrice: number;
+  decimals: number;
+};
+
+export const smartCurrencyChoosing = async (
+  tokenBalances: TokenBalance
+): Promise<CurrencyType> => {
+  let currency = CurrencyType.ETH;
+  if (tokenBalances.ETH && !tokenBalances.STRK) return CurrencyType.ETH;
+  if (!tokenBalances.ETH && tokenBalances.STRK) return CurrencyType.STRK;
+  if (!tokenBalances.ETH && !tokenBalances.STRK) return CurrencyType.STRK;
+
+  // query AVNU api to get STRK quote
+  const avnuQuoteDataRes = await fetch(
+    `${process.env.NEXT_PUBLIC_AVNU_API}/tokens/short?in=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7`
+  );
+  const avnuQuoteData = await avnuQuoteDataRes.json();
+
+  // compute STRK balance into ETH
+  const contractAddress = ERC20Contract[CurrencyType.STRK];
+  const quoteData = avnuQuoteData.find(
+    (data: AvnuQuote) =>
+      hexToDecimal(data.address) === hexToDecimal(contractAddress)
+  );
+  if (!quoteData) return currency;
+  const strkBalance = BigInt(tokenBalances.STRK);
+  const strkQuote = BigInt(
+    Math.round(quoteData.currentPrice * Math.pow(10, quoteData.decimals))
+  );
+  const strkConvertedBalance =
+    (strkBalance * strkQuote) / BigInt(Math.pow(10, quoteData.decimals));
+
+  if (BigInt(tokenBalances.ETH) * BigInt(3) < strkConvertedBalance) {
+    currency = CurrencyType.STRK;
+  } else {
+    currency = CurrencyType.ETH;
+  }
+  return currency;
 };

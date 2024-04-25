@@ -22,6 +22,8 @@ type UserInfoFormProps = {
   type: FormType;
   goToNextStep: () => void;
   imageUrl: string;
+  canUpdateDuration?: boolean;
+  minDuration?: number;
 };
 
 export enum IncrementType {
@@ -34,6 +36,8 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   type,
   goToNextStep,
   imageUrl,
+  canUpdateDuration = true,
+  minDuration = 1,
 }) => {
   const maxYearsToRegister = 25;
   const { address } = useAccount();
@@ -62,6 +66,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
     type: IncrementType,
     value: number = formState.duration
   ): void {
+    if (!canUpdateDuration) return;
     let newValue = value;
 
     switch (type) {
@@ -69,7 +74,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
         newValue = value < maxYearsToRegister ? value + 1 : value;
         break;
       case IncrementType.DECREMENT:
-        newValue = value > 1 ? value - 1 : value;
+        newValue = value > minDuration ? value - 1 : value;
         break;
       case IncrementType.SET:
         break;
@@ -79,7 +84,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
       return;
     updateFormState({
       duration: newValue,
-      isUpselled: newValue === 1 ? true : false,
+      isUpselled: newValue === minDuration ? true : false,
     });
   }
 
@@ -106,7 +111,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   const isDisabled = (): boolean => {
     return (
       !formState.duration ||
-      formState.duration < 1 ||
+      formState.duration < minDuration ||
       (formState.needMetadata && emailError) ||
       (type === FormType.RENEW && !areDomainSelected(formState.selectedDomains))
     );
@@ -150,18 +155,20 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
                 changeTokenId={changeTokenId}
               />
             ) : null}
-            <NumberTextField
-              value={formState.duration}
-              label="Years to register (max 25 years)"
-              placeholder="years"
-              onChange={(e) =>
-                changeDuration(IncrementType.SET, Number(e.target.value))
-              }
-              incrementValue={() => changeDuration(IncrementType.INCREMENT)}
-              decrementValue={() => changeDuration(IncrementType.DECREMENT)}
-              color="secondary"
-              required
-            />
+            {canUpdateDuration ? (
+              <NumberTextField
+                value={formState.duration}
+                label="Years to register (max 25 years)"
+                placeholder="years"
+                onChange={(e) =>
+                  changeDuration(IncrementType.SET, Number(e.target.value))
+                }
+                incrementValue={() => changeDuration(IncrementType.INCREMENT)}
+                decrementValue={() => changeDuration(IncrementType.DECREMENT)}
+                color="secondary"
+                required
+              />
+            ) : null}
             {type === FormType.RENEW ? (
               <RenewalDomainsBox
                 helperText="Check the box of the domains you want to renew"

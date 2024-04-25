@@ -1,4 +1,5 @@
 export const renewal: Upsell = {
+  showCard: true,
   duration: 3,
   paidDuration: 2,
   maxDuration: 1,
@@ -12,6 +13,7 @@ export const renewal: Upsell = {
 };
 
 export const registration: Upsell = {
+  showCard: true,
   duration: 3,
   paidDuration: 2,
   maxDuration: 1,

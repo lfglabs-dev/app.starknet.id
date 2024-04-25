@@ -28,9 +28,9 @@ import {
   getAutoRenewAllowance,
   getDomainPrice,
   getDomainPriceAltcoin,
-  getLimitPriceRange,
   getPriceForDuration,
   getTokenQuote,
+  smartCurrencyChoosing,
 } from "@/utils/altcoinService";
 import { getPriceFromDomains } from "@/utils/priceService";
 import {
@@ -92,6 +92,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const { addTransaction } = useNotificationManager();
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
+  const [hasChoseCurrency, setHasChoseCurrency] = useState<boolean>(false);
   const [callData, setCallData] = useState<Call[]>([]);
   const [tokenIdRedirect, setTokenIdRedirect] = useState<string>("0");
   const { writeAsync: execute, data: checkoutData } = useContractWrite({
@@ -173,6 +174,16 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     quoteData,
     discount,
   ]);
+
+  // we choose the currency based on the user balances
+  useEffect(() => {
+    if (tokenBalances && !hasChoseCurrency) {
+      smartCurrencyChoosing(tokenBalances).then((currency) => {
+        onCurrencySwitch(currency);
+        setHasChoseCurrency(true);
+      });
+    }
+  }, [tokenBalances]);
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
@@ -635,9 +646,9 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   return (
     <>
-      {formState.duration === 1 ? (
+      {formState.duration === 1 && discount.showCard ? (
         <UpsellCard
-          upsellData={discount}
+          upsellData={discount as Upsell}
           enabled={formState.isUpselled}
           onUpsellChoice={onUpsellChoice}
         />
