@@ -3,7 +3,6 @@ import { CurrenciesRange, CurrencyType, ERC20Contract } from "./constants";
 import { applyRateToBigInt, hexToDecimal } from "./feltService";
 import { getPriceFromDomain } from "./priceService";
 import { Result } from "starknet";
-import { error } from "console";
 
 export const getTokenQuote = async (tokenAddress: string) => {
   try {

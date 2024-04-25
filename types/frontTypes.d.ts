@@ -127,7 +127,6 @@ type MulticallCallData = {
 };
 
 type Upsell = {
-  showCard: boolean;
   duration: number; // duration you get
   paidDuration: number; // duration you pay for
   maxDuration: number; // if user selects a duration higer, upsell won't be applied
