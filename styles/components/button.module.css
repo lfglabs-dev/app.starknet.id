@@ -6,7 +6,6 @@
 .nq-button {
   position: relative;
   height: 3rem;
-  line-height: 2.5rem;
   color: var(--background);
   font-size: 1rem;
   font-weight: bold;
@@ -71,10 +70,14 @@
   background: var(--primary);
 }
 
+.primary:hover {
+  background: var(--primary600);
+}
+
 /* white */
 .white {
   color: var(--dark-content);
-  background: #FFFFFF;
+  background: #ffffff;
 }
 
 .nq-button::before {
@@ -93,6 +96,7 @@
   border: 2px solid var(--tertiary); /* Based on Nimiq Light Blue */
   border-radius: 500px;
   opacity: 0;
+  pointer-events: none;
 }
 
 .nq-button:focus,

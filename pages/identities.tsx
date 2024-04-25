@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
 import { useAccount, useConnect, useContractWrite } from "@starknet-react/core";
@@ -12,8 +12,8 @@ import TxConfirmationModal from "../components/UI/txConfirmationModal";
 import ClickableAction from "../components/UI/iconsComponents/clickableAction";
 import { useNotificationManager } from "../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../utils/constants";
-import { useStarknetkitConnectModal } from "starknetkit";
-import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
+import WalletConnect from "@/components/UI/walletConnect";
+import { Connector } from "starknetkit";
 
 const Identities: NextPage = () => {
   const { address } = useAccount();
@@ -24,11 +24,9 @@ const Identities: NextPage = () => {
   const router = useRouter();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const { addTransaction } = useNotificationManager();
-  const { availableConnectors } = useContext(StarknetIdJsContext);
-  const { starknetkitConnectModal } = useStarknetkitConnectModal({
-    connectors: availableConnectors,
-  });
-  const { connectAsync } = useConnect();
+  const { connectAsync, connectors } = useConnect();
+  const [showWalletConnectModal, setShowWalletConnectModal] =
+    useState<boolean>(false);
 
   //Mint
   const callData = useMemo(() => {
@@ -91,13 +89,10 @@ const Identities: NextPage = () => {
     execute();
   }
 
-  const connectWallet = async () => {
-    const { connector } = await starknetkitConnectModal();
-    if (!connector) {
-      return;
-    }
+  const connectWallet = async (connector: Connector) => {
     await connectAsync({ connector });
     localStorage.setItem("SID-connectedWallet", connector.id);
+    localStorage.setItem("SID-lastUsedConnector", connector.id);
   };
 
   return (
@@ -121,7 +116,11 @@ const Identities: NextPage = () => {
                 <ClickableAction
                   title="ADD IDENTITIES"
                   icon={<MintIcon />}
-                  onClick={address ? () => mint() : () => connectWallet()}
+                  onClick={
+                    address
+                      ? () => mint()
+                      : () => setShowWalletConnectModal(true)
+                  }
                   width="auto"
                 />
               </div>
@@ -137,7 +136,11 @@ const Identities: NextPage = () => {
                 <ClickableAction
                   title="ADD IDENTITIES"
                   icon={<MintIcon />}
-                  onClick={address ? () => mint() : () => connectWallet()}
+                  onClick={
+                    address
+                      ? () => mint()
+                      : () => setShowWalletConnectModal(true)
+                  }
                   width="auto"
                 />
               </div>
@@ -150,6 +153,12 @@ const Identities: NextPage = () => {
         isTxModalOpen={isTxModalOpen}
         closeModal={() => setIsTxModalOpen(false)}
         title="Your identity NFT is on it's way !"
+      />
+      <WalletConnect
+        closeModal={() => setShowWalletConnectModal(false)}
+        open={showWalletConnectModal}
+        connectors={connectors as Connector[]}
+        connectWallet={connectWallet}
       />
     </>
   );
