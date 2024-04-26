@@ -9,6 +9,7 @@ import theme from "../../styles/theme";
 import TransferIcon from "../UI/iconsComponents/icons/transferIcon";
 import { getDomainKind } from "@/utils/stringService";
 import ExternalDomainsTransferModal from "./externalDomainTransferModal";
+import { getResolverContract } from "@/utils/resolverService";
 
 type ExternalDomainActionsProps = {
   domain: string;
@@ -24,7 +25,7 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
   const { address } = useAccount();
   const [isOwner, setIsOwner] = useState<boolean>(false);
   const [isTransferFormOpen, setIsTransferFormOpen] = useState<boolean>(false);
-  const domainKind = getDomainKind(domain as string);
+  const domainKind = getDomainKind(domain);
 
   useEffect(() => {
     if (targetAddress === address) {
@@ -54,22 +55,6 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
 
   function setAddressToDomain(): void {
     set_address_to_domain();
-  }
-
-  function getResolverContract(): string {
-    return domainKind === "xplorer"
-      ? (process.env.NEXT_PUBLIC_XPLORER_RESOLVER_CONTRACT as string)
-      : domainKind === "braavos"
-      ? (process.env.NEXT_PUBLIC_BRAAVOS_RESOLVER_CONTRACT as string)
-      : "";
-  }
-
-  function getResolverName(domainKind: DomainKind): string | undefined {
-    return domainKind === "xplorer"
-      ? "Argent X"
-      : domainKind === "braavos"
-      ? "Braavos"
-      : undefined;
   }
 
   return (
@@ -111,10 +96,10 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
       <ExternalDomainsTransferModal
         domain={domain}
         domainEncoded={callDataEncodedDomain[1] as string}
-        resolverContract={getResolverContract()}
+        resolverContract={getResolverContract(domainKind)}
         handleClose={() => setIsTransferFormOpen(false)}
         isModalOpen={isTransferFormOpen}
-        domainKind={getResolverName(domainKind)}
+        domainKind={domainKind}
       />
     </>
   );

@@ -23,7 +23,7 @@ type ExternalDomainsTransferModalProps = {
   resolverContract: string;
   handleClose: () => void;
   isModalOpen: boolean;
-  domainKind?: string;
+  domainKind: DomainKind;
 };
 
 const ExternalDomainsTransferModal: FunctionComponent<
@@ -100,6 +100,14 @@ const ExternalDomainsTransferModal: FunctionComponent<
     handleClose();
   }
 
+  function getResolverCondition(domainKind: DomainKind): string | undefined {
+    return domainKind === "xplorer"
+      ? "You can only transfer your subdomain to a Argent X wallet"
+      : domainKind === "braavos"
+      ? "You can only transfer your subdomain to a Braavos wallet"
+      : undefined;
+  }
+
   return (
     <Modal
       disableAutoFocus
@@ -128,9 +136,9 @@ const ExternalDomainsTransferModal: FunctionComponent<
           <h2 className={styles.menu_title}>
             Transfer your domain to a different wallet
           </h2>
-          {domainKind ? (
+          {getResolverCondition(domainKind) ? (
             <p className="mt-5 text-center">
-              You can only transfer your subdomain to a {domainKind} wallet.
+              {getResolverCondition(domainKind)}
             </p>
           ) : null}
           <div className="mt-5 flex flex-col justify-center">
