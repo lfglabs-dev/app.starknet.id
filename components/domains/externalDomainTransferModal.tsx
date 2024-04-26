@@ -78,7 +78,7 @@ const ExternalDomainsTransferModal: FunctionComponent<
       subtext: `${domain} transfered`,
       type: NotificationType.TRANSACTION,
       data: {
-        type: TransactionType.TRANSFER_IDENTITY,
+        type: TransactionType.TRANSFER_EXTERNAL_DOMAIN,
         hash: transferData.transaction_hash,
         status: "pending",
       },
