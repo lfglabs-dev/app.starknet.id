@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import { useAccount, useContractWrite } from "@starknet-react/core";
 import styles from "../../styles/components/identityMenu.module.css";
@@ -8,7 +8,7 @@ import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import theme from "../../styles/theme";
 import TransferIcon from "../UI/iconsComponents/icons/transferIcon";
 import { getDomainKind } from "@/utils/stringService";
-import ExternalDomainsTransferModal from "./externalDomaintransferModal";
+import ExternalDomainsTransferModal from "./externalDomainTransferModal";
 
 type ExternalDomainActionsProps = {
   domain: string;
@@ -59,7 +59,17 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
   function getResolverContract(): string {
     return domainKind === "xplorer"
       ? (process.env.NEXT_PUBLIC_XPLORER_RESOLVER_CONTRACT as string)
+      : domainKind === "braavos"
+      ? (process.env.NEXT_PUBLIC_BRAAVOS_RESOLVER_CONTRACT as string)
       : "";
+  }
+
+  function getResolverName(domainKind: DomainKind): string | undefined {
+    return domainKind === "xplorer"
+      ? "Argent X"
+      : domainKind === "braavos"
+      ? "Braavos"
+      : undefined;
   }
 
   return (
@@ -81,19 +91,20 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
                 onClick={() => setAddressToDomain()}
               />
             )}
-            {isOwner && domainKind === "xplorer" && (
-              <ClickableAction
-                title="Transfer your domain"
-                description="Transfer your subdomain to another wallet"
-                icon={
-                  <TransferIcon
-                    width="25"
-                    color={theme.palette.secondary.main}
-                  />
-                }
-                onClick={() => setIsTransferFormOpen(true)}
-              />
-            )}
+            {isOwner &&
+              (domainKind === "xplorer" || domainKind === "braavos") && (
+                <ClickableAction
+                  title="Transfer your domain"
+                  description="Transfer your subdomain to another wallet"
+                  icon={
+                    <TransferIcon
+                      width="25"
+                      color={theme.palette.secondary.main}
+                    />
+                  }
+                  onClick={() => setIsTransferFormOpen(true)}
+                />
+              )}
           </div>
         </div>
       </div>
@@ -103,6 +114,7 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
         resolverContract={getResolverContract()}
         handleClose={() => setIsTransferFormOpen(false)}
         isModalOpen={isTransferFormOpen}
+        domainKind={getResolverName(domainKind)}
       />
     </>
   );

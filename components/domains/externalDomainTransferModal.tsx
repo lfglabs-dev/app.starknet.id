@@ -23,11 +23,18 @@ type ExternalDomainsTransferModalProps = {
   resolverContract: string;
   handleClose: () => void;
   isModalOpen: boolean;
+  domainKind?: string;
 };
 
 const ExternalDomainsTransferModal: FunctionComponent<
   ExternalDomainsTransferModalProps
-> = ({ domainEncoded, resolverContract, handleClose, isModalOpen }) => {
+> = ({
+  domainEncoded,
+  resolverContract,
+  handleClose,
+  isModalOpen,
+  domainKind,
+}) => {
   const router = useRouter();
   const { externalDomain: domain } = router.query;
   const [targetAddress, setTargetAddress] = useState<string>("");
@@ -121,6 +128,11 @@ const ExternalDomainsTransferModal: FunctionComponent<
           <h2 className={styles.menu_title}>
             Transfer your domain to a different wallet
           </h2>
+          {domainKind ? (
+            <p className="mt-5 text-center">
+              You can only transfer your subdomain to a {domainKind} wallet.
+            </p>
+          ) : null}
           <div className="mt-5 flex flex-col justify-center">
             <TextField
               label="To Address / SNS"
