@@ -28,6 +28,7 @@ import {
   getAutoRenewAllowance,
   getDomainPrice,
   getDomainPriceAltcoin,
+  getLimitPriceRange,
   getPriceForDuration,
   getTokenQuote,
 } from "@/utils/altcoinService";
@@ -71,6 +72,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH for 1 year
   const [price, setPrice] = useState<string>(""); // total price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   const [discountedPrice, setDiscountedPrice] = useState<string>(""); // discounted price in displayedCurrency
+  const [maxPriceRange, setMaxPriceRange] = useState<string>("0"); // max price range for the displayedCurrency that will be spent on yearly subscription
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
@@ -246,6 +248,25 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     displayedCurrency,
     formState.isUpselled,
     formState.duration,
+  ]);
+
+  useEffect(() => {
+    if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
+    const limitPrice = getAutoRenewAllowance(
+      displayedCurrency,
+      formState.salesTaxRate,
+      getDomainPrice(
+        Object.keys(formState.selectedDomains)[0],
+        displayedCurrency,
+        quoteData?.quote
+      )
+    );
+    setMaxPriceRange(limitPrice);
+  }, [
+    displayedCurrency,
+    formState.selectedDomains,
+    quoteData,
+    formState.salesTaxRate,
   ]);
 
   useEffect(() => {
@@ -653,6 +674,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
               domain={getDomainWithStark(
                 Object.keys(formState.selectedDomains)[0]
               )}
+              displayedCurrency={displayedCurrency}
+              maxPriceRange={maxPriceRange}
             />
             <div>
               <Button

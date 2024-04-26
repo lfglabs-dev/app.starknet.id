@@ -213,14 +213,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
       );
       setRenewPrice(priceInAltcoin);
     }
-  }, [
-    priceData,
-    priceError,
-    domain,
-    quoteData?.quote,
-    duration,
-    displayedCurrency,
-  ]);
+  }, [priceData, priceError, domain, quoteData, duration, displayedCurrency]);
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {

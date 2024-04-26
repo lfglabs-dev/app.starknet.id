@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/solana.module.css";
 import Image from "next/image";
 import AffiliateImage from "../public/visuals/affiliate.webp";
@@ -21,9 +21,9 @@ import DoneFilledIcon from "../components/UI/iconsComponents/icons/doneFilledIco
 import theme from "../styles/theme";
 import DomainActions from "../components/solana/domainActions";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
-import { useStarknetkitConnectModal } from "starknetkit";
-import { StarknetIdJsContext } from "../context/StarknetIdJsProvider";
+import { Connector } from "starknetkit";
 import { useRouter } from "next/router";
+import WalletConnect from "@/components/UI/walletConnect";
 
 const Solana: NextPage = () => {
   const { address: starknetAddress } = useAccount();
@@ -45,11 +45,9 @@ const Solana: NextPage = () => {
   });
   const [open, setOpen] = useState(true);
   const [disableBtn, setDisableBtn] = useState<string>("");
-  const { connectAsync } = useConnect();
-  const { availableConnectors } = useContext(StarknetIdJsContext);
-  const { starknetkitConnectModal } = useStarknetkitConnectModal({
-    connectors: availableConnectors,
-  });
+  const { connectAsync, connectors } = useConnect();
+  const [showWalletConnectModal, setShowWalletConnectModal] =
+    useState<boolean>(false);
   const [redirect, setRedirect] = useState<string>("");
 
   useEffect(() => {
@@ -198,13 +196,10 @@ const Solana: NextPage = () => {
       : false;
   };
 
-  const connectWallet = async () => {
-    const { connector } = await starknetkitConnectModal();
-    if (!connector) {
-      return;
-    }
+  const connectWallet = async (connector: Connector) => {
     await connectAsync({ connector });
     localStorage.setItem("SID-connectedWallet", connector.id);
+    localStorage.setItem("SID-lastUsedConnector", connector.id);
   };
 
   return (
@@ -235,7 +230,7 @@ const Solana: NextPage = () => {
                     elevate your digital identity with cross-chain domains !
                   </p>
                   <div className={styles.button_container}>
-                    <Button onClick={connectWallet}>
+                    <Button onClick={() => setShowWalletConnectModal(true)}>
                       <div className="flex flex-row gap-4 justify-center items-center">
                         <StarknetIcon width="28" color="" />
                         <p>Connect your Starknet wallet</p>
@@ -358,6 +353,12 @@ const Solana: NextPage = () => {
           </div>
         </div>
       )}
+      <WalletConnect
+        closeModal={() => setShowWalletConnectModal(false)}
+        open={showWalletConnectModal}
+        connectors={connectors as Connector[]}
+        connectWallet={connectWallet}
+      />
       <TxConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}

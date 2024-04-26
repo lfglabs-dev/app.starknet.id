@@ -1,26 +1,66 @@
-import React, { useContext } from "react";
-import { useConnect } from "@starknet-react/core";
+import React, { useEffect, useState } from "react";
+import { useAccount, useConnect } from "@starknet-react/core";
 import Button from "./button";
 import { FunctionComponent } from "react";
-import { useStarknetkitConnectModal } from "starknetkit";
-import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
+import { Connector } from "starknetkit";
+import WalletConnect from "./walletConnect";
+import styles from "../../styles/components/walletConnect.module.css";
+import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon";
+import { getConnectorIcon, getLastConnector } from "@/utils/connectorWrapper";
 
 const ConnectButton: FunctionComponent = () => {
-  const { connectAsync } = useConnect();
-  const { availableConnectors } = useContext(StarknetIdJsContext);
-  const { starknetkitConnectModal } = useStarknetkitConnectModal({
-    connectors: availableConnectors,
-  });
+  const { isConnected } = useAccount();
+  const { connectAsync, connectors } = useConnect();
+  const [showWalletConnectModal, setShowWalletConnectModal] =
+    useState<boolean>(false);
+  const [lastConnector, setLastConnector] = useState<Connector | null>(null);
 
-  const connectWallet = async () => {
-    const { connector } = await starknetkitConnectModal();
-    if (!connector) {
-      return;
-    }
+  useEffect(() => {
+    setLastConnector(getLastConnector());
+  }, [isConnected]);
+
+  const connectWallet = async (connector: Connector) => {
     await connectAsync({ connector });
     localStorage.setItem("SID-connectedWallet", connector.id);
   };
 
-  return <Button onClick={connectWallet}>Connect wallet</Button>;
+  return (
+    <>
+      <Button
+        onClick={
+          lastConnector
+            ? () => connectWallet(lastConnector)
+            : () => setShowWalletConnectModal(true)
+        }
+      >
+        <div className={styles.connectBtn}>
+          {lastConnector ? (
+            <img
+              src={getConnectorIcon(lastConnector.id)}
+              className={styles.btnIcon}
+            />
+          ) : null}
+          <p>Connect wallet</p>
+          {lastConnector ? (
+            <div
+              className={styles.arrowDown}
+              onClick={(e) => {
+                setShowWalletConnectModal(true);
+                e.stopPropagation();
+              }}
+            >
+              <ArrowDownIcon width="18" color="#FFF" className="mt-1 ml-1" />
+            </div>
+          ) : null}
+        </div>
+      </Button>
+      <WalletConnect
+        closeModal={() => setShowWalletConnectModal(false)}
+        open={showWalletConnectModal}
+        connectors={connectors as Connector[]}
+        connectWallet={connectWallet}
+      />
+    </>
+  );
 };
 export default ConnectButton;
