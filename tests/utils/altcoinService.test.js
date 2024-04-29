@@ -244,7 +244,11 @@ describe("fetchAvnuQuoteData function", () => {
   it("handles malformed JSON responses", async () => {
     fetch.mockResponseOnce("not json");
 
-    await expect(fetchAvnuQuoteData()).rejects.toThrow("not json");
+    await expect(fetchAvnuQuoteData()).rejects.toMatchObject({
+      name: "FetchError",
+      message: expect.stringContaining("Unexpected token 'o'"),
+      type: "invalid-json",
+    });
   });
 });
 
