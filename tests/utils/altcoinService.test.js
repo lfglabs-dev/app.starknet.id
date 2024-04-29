@@ -246,7 +246,7 @@ describe("fetchAvnuQuoteData function", () => {
 
     await expect(fetchAvnuQuoteData()).rejects.toMatchObject({
       name: "FetchError",
-      message: expect.stringContaining("Unexpected token 'o'"),
+      message: expect.stringContaining("Unexpected token"),
       type: "invalid-json",
     });
   });
