@@ -1,4 +1,7 @@
-import { getResolverContract } from "../../utils/resolverService";
+import {
+  getResolverContract,
+  getResolverCondition,
+} from "../../utils/resolverService";
 
 describe("getResolverContract function", () => {
   const originalEnv = process.env;
@@ -38,5 +41,26 @@ describe("getResolverContract function", () => {
 
   it('should return an empty string for "sol" domain kind', () => {
     expect(getResolverContract("sol")).toBe("");
+  });
+});
+
+describe("getResolverCondition", () => {
+  it("returns correct message for xplorer domain kind", () => {
+    const result = getResolverCondition("xplorer");
+    expect(result).toBe(
+      "You can only transfer your subdomain to a Argent X wallet"
+    );
+  });
+
+  it("returns correct message for braavos domain kind", () => {
+    const result = getResolverCondition("braavos");
+    expect(result).toBe(
+      "You can only transfer your subdomain to a Braavos wallet"
+    );
+  });
+
+  it("returns undefined for other domain kinds", () => {
+    const result = getResolverCondition("unknown");
+    expect(result).toBeUndefined();
   });
 });

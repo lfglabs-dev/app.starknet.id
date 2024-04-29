@@ -10,6 +10,7 @@ import TransferIcon from "../UI/iconsComponents/icons/transferIcon";
 import { getDomainKind } from "@/utils/stringService";
 import ExternalDomainsTransferModal from "./externalDomainTransferModal";
 import { getResolverContract } from "@/utils/resolverService";
+import resolverCalls from "@/utils/callData/resolverCalls";
 
 type ExternalDomainActionsProps = {
   domain: string;
@@ -41,16 +42,8 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
   });
 
   //Set as main domain execute
-  const set_address_to_domain_calls = {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "set_address_to_domain",
-    calldata:
-      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-        ? [...callDataEncodedDomain, 0]
-        : callDataEncodedDomain,
-  };
   const { writeAsync: set_address_to_domain } = useContractWrite({
-    calls: [set_address_to_domain_calls],
+    calls: [resolverCalls.setAddresstoDomain(callDataEncodedDomain)],
   });
 
   function setAddressToDomain(): void {

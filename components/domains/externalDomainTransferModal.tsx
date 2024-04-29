@@ -16,6 +16,8 @@ import ConfirmationTx from "../UI/confirmationTx";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../utils/constants";
 import { Call } from "starknet";
+import resolverCalls from "@/utils/callData/resolverCalls";
+import { getResolverCondition } from "@/utils/resolverService";
 
 type ExternalDomainsTransferModalProps = {
   domain: string;
@@ -50,11 +52,11 @@ const ExternalDomainsTransferModal: FunctionComponent<
 
   useEffect(() => {
     setCallData([
-      {
-        contractAddress: resolverContract,
-        entrypoint: "transfer_name",
-        calldata: [domainEncoded, targetAddress],
-      },
+      resolverCalls.transferName(
+        resolverContract,
+        domainEncoded,
+        targetAddress
+      ),
     ]);
   }, [domainEncoded, targetAddress, resolverContract]);
 
@@ -98,14 +100,6 @@ const ExternalDomainsTransferModal: FunctionComponent<
   function closeModal(): void {
     setIsTxSent(false);
     handleClose();
-  }
-
-  function getResolverCondition(domainKind: DomainKind): string | undefined {
-    return domainKind === "xplorer"
-      ? "You can only transfer your subdomain to a Argent X wallet"
-      : domainKind === "braavos"
-      ? "You can only transfer your subdomain to a Braavos wallet"
-      : undefined;
   }
 
   return (
