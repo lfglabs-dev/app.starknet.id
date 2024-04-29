@@ -106,19 +106,22 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
 
   useEffect(() => {
     if (!renewData?.transaction_hash || !salt || !metadataHash) return;
-    // register the metadata to the sales manager db
-    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        meta_hash: metadataHash,
-        email: email,
-        tax_state: isSwissResident ? "switzerland" : "none",
-        salt: salt,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.log("Error on sending metadata:", err));
+
+    if (needMetadata) {
+      // register the metadata to the sales manager db
+      fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          meta_hash: metadataHash,
+          email: email,
+          tax_state: isSwissResident ? "switzerland" : "none",
+          salt: salt,
+        }),
+      })
+        .then((res) => res.json())
+        .catch((err) => console.log("Error on sending metadata:", err));
+    }
 
     // Subscribe to auto renewal mailing list if renewal box is checked
     if (renewalBox) {

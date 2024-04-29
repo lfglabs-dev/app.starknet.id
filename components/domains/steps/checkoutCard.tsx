@@ -92,7 +92,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const { addTransaction } = useNotificationManager();
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
-  const [hasChoseCurrency, setHasChoseCurrency] = useState<boolean>(false);
+  const [hasChosenCurrency, setHasChosenCurrency] = useState<boolean>(false);
   const [callData, setCallData] = useState<Call[]>([]);
   const [tokenIdRedirect, setTokenIdRedirect] = useState<string>("0");
   const { writeAsync: execute, data: checkoutData } = useContractWrite({
@@ -177,10 +177,10 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   // we choose the currency based on the user balances
   useEffect(() => {
-    if (tokenBalances && !hasChoseCurrency) {
+    if (tokenBalances && !hasChosenCurrency) {
       smartCurrencyChoosing(tokenBalances).then((currency) => {
         onCurrencySwitch(currency);
-        setHasChoseCurrency(true);
+        setHasChosenCurrency(true);
       });
     }
   }, [tokenBalances]);

@@ -122,27 +122,32 @@ type AvnuQuote = {
   decimals: number;
 };
 
+export async function fetchAvnuQuoteData(): Promise<AvnuQuote[]> {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_AVNU_API}/tokens/short?in=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7`
+  );
+  return response.json();
+}
+
+// Determine the currency type based on token balances and STRK quote
 export const smartCurrencyChoosing = async (
   tokenBalances: TokenBalance
 ): Promise<CurrencyType> => {
-  let currency = CurrencyType.ETH;
+  // Early returns based on token presence
   if (tokenBalances.ETH && !tokenBalances.STRK) return CurrencyType.ETH;
-  if (!tokenBalances.ETH && tokenBalances.STRK) return CurrencyType.STRK;
-  if (!tokenBalances.ETH && !tokenBalances.STRK) return CurrencyType.STRK;
+  if (!tokenBalances.ETH) return CurrencyType.STRK;
 
-  // query AVNU api to get STRK quote
-  const avnuQuoteDataRes = await fetch(
-    `${process.env.NEXT_PUBLIC_AVNU_API}/tokens/short?in=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7`
-  );
-  const avnuQuoteData = await avnuQuoteDataRes.json();
-
-  // compute STRK balance into ETH
+  // Fetch data and find relevant quote
+  const avnuQuotes = await fetchAvnuQuoteData();
   const contractAddress = ERC20Contract[CurrencyType.STRK];
-  const quoteData = avnuQuoteData.find(
-    (data: AvnuQuote) =>
-      hexToDecimal(data.address) === hexToDecimal(contractAddress)
+  const quoteData = avnuQuotes.find(
+    (quote) => hexToDecimal(quote.address) === hexToDecimal(contractAddress)
   );
-  if (!quoteData) return currency;
+
+  // Fallback to ETH if no STRK quote data is found
+  if (!quoteData) return CurrencyType.ETH;
+
+  // Convert STRK balance to ETH equivalent
   const strkBalance = BigInt(tokenBalances.STRK);
   const strkQuote = BigInt(
     Math.round(quoteData.currentPrice * Math.pow(10, quoteData.decimals))
@@ -150,10 +155,8 @@ export const smartCurrencyChoosing = async (
   const strkConvertedBalance =
     (strkBalance * strkQuote) / BigInt(Math.pow(10, quoteData.decimals));
 
-  if (BigInt(tokenBalances.ETH) * BigInt(3) < strkConvertedBalance) {
-    currency = CurrencyType.STRK;
-  } else {
-    currency = CurrencyType.ETH;
-  }
-  return currency;
+  // Compare converted STRK balance to ETH balance
+  return BigInt(tokenBalances.ETH) * BigInt(3) < strkConvertedBalance
+    ? CurrencyType.STRK
+    : CurrencyType.ETH;
 };

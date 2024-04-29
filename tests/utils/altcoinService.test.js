@@ -6,8 +6,13 @@ import {
   getDomainPrice,
   getAutoRenewAllowance,
   getPriceForDuration,
+  fetchAvnuQuoteData,
+  smartCurrencyChoosing,
 } from "../../utils/altcoinService";
 import { PRICES } from "../../utils/priceService";
+import fetchMock from "jest-fetch-mock";
+
+fetchMock.enableMocks();
 
 const CurrencyType = {
   ETH: "ETH",
@@ -205,5 +210,98 @@ describe("getPriceForDuration function", () => {
     expect(getPriceForDuration("1234567890000000000", 4)).toBe(
       "4938271560000000000"
     );
+  });
+});
+
+describe("fetchAvnuQuoteData function", () => {
+  beforeEach(() => {
+    fetch.resetMocks();
+  });
+
+  it("fetches data successfully and returns the correct structure", async () => {
+    const mockData = [
+      { address: "0xExample1", currentPrice: 100, decimals: 18 },
+      { address: "0xExample2", currentPrice: 200, decimals: 18 },
+    ];
+    fetch.mockResolvedValueOnce({
+      json: () => Promise.resolve(mockData),
+    });
+
+    const data = await fetchAvnuQuoteData();
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledWith(
+      `${process.env.NEXT_PUBLIC_AVNU_API}/tokens/short?in=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7`
+    );
+    expect(data).toEqual(mockData);
+  });
+
+  it("handles non-200 responses", async () => {
+    fetch.mockReject(new Error("Failed to fetch"));
+
+    await expect(fetchAvnuQuoteData()).rejects.toThrow("Failed to fetch");
+  });
+
+  it("handles malformed JSON responses", async () => {
+    fetch.mockResponseOnce("not json");
+
+    await expect(fetchAvnuQuoteData()).rejects.toThrow("not json");
+  });
+});
+
+describe("smartCurrencyChoosing", () => {
+  beforeEach(() => {
+    fetch.resetMocks();
+  });
+
+  it("returns ETH when ETH is present and STRK is not", async () => {
+    fetch.mockResolvedValueOnce({
+      json: () => {
+        return Promise.resolve([]);
+      },
+    });
+    const tokenBalances = { ETH: "100", STRK: undefined };
+    const result = await smartCurrencyChoosing(tokenBalances);
+    expect(result).toEqual(CurrencyType.ETH);
+  });
+
+  it("returns STRK when no ETH balance is present", async () => {
+    fetch.mockResolvedValueOnce({
+      json: () => {
+        return Promise.resolve([]);
+      },
+    });
+    const tokenBalances = { ETH: undefined, STRK: "200" };
+    const result = await smartCurrencyChoosing(tokenBalances);
+    expect(result).toEqual(CurrencyType.STRK);
+  });
+
+  it("chooses STRK when converted STRK balance is greater than ETH balance", async () => {
+    fetch.mockResolvedValueOnce({
+      json: () => {
+        return Promise.resolve([
+          {
+            address:
+              "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+            currentPrice: 2,
+            decimals: 18,
+          },
+        ]);
+      },
+    });
+    const tokenBalances = { ETH: "1", STRK: "1000" };
+    const result = await smartCurrencyChoosing(tokenBalances);
+    expect(result).toEqual(CurrencyType.STRK);
+  });
+
+  it("falls back to ETH when no STRK quote data is found", async () => {
+    fetch.mockResolvedValueOnce({
+      json: () => {
+        return Promise.resolve([]);
+      },
+    });
+
+    const tokenBalances = { ETH: "1", STRK: "500" };
+    const result = await smartCurrencyChoosing(tokenBalances);
+    expect(result).toEqual(CurrencyType.ETH);
   });
 });
