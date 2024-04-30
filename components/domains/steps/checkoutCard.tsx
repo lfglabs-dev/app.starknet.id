@@ -67,9 +67,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   groups,
 }) => {
   const router = useRouter();
-  const address =
-    "0x061b6c0a78f9edf13cea17b50719f3344533fadd470b8cb29c2b4318014f52d3";
-  const { account } = useAccount();
+  const { account, address } = useAccount();
   const { formState, updateFormState, clearForm } = useContext(FormContext);
   const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH for 1 year
   const [price, setPrice] = useState<string>(""); // total price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
