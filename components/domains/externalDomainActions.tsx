@@ -6,6 +6,11 @@ import { utils } from "starknetid.js";
 import ClickableAction from "../UI/iconsComponents/clickableAction";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import theme from "../../styles/theme";
+import TransferIcon from "../UI/iconsComponents/icons/transferIcon";
+import { getDomainKind } from "@/utils/stringService";
+import ExternalDomainsTransferModal from "./externalDomainTransferModal";
+import { getResolverContract } from "@/utils/resolverService";
+import resolverCalls from "@/utils/callData/resolverCalls";
 
 type ExternalDomainActionsProps = {
   domain: string;
@@ -20,6 +25,8 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
 }) => {
   const { address } = useAccount();
   const [isOwner, setIsOwner] = useState<boolean>(false);
+  const [isTransferFormOpen, setIsTransferFormOpen] = useState<boolean>(false);
+  const domainKind = getDomainKind(domain);
 
   useEffect(() => {
     if (targetAddress === address) {
@@ -35,16 +42,8 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
   });
 
   //Set as main domain execute
-  const set_address_to_domain_calls = {
-    contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "set_address_to_domain",
-    calldata:
-      process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-        ? [...callDataEncodedDomain, 0]
-        : callDataEncodedDomain,
-  };
   const { writeAsync: set_address_to_domain } = useContractWrite({
-    calls: [set_address_to_domain_calls],
+    calls: [resolverCalls.setAddresstoDomain(callDataEncodedDomain)],
   });
 
   function setAddressToDomain(): void {
@@ -52,26 +51,50 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
   }
 
   return (
-    <div className={styles.actionsContainer}>
-      <div className="flex flex-col items-center justify-center">
-        {isOwner && !isMainDomain && (
+    <>
+      <div className={styles.actionsContainer}>
+        <div className="flex flex-col items-center justify-center">
           <div className="flex flex-col items-center justify-center">
-            <ClickableAction
-              title="Set as main domain"
-              description="Display this domain when connecting to dapps"
-              icon={
-                <MainIcon
-                  width="25"
-                  firstColor={theme.palette.secondary.main}
-                  secondColor={theme.palette.secondary.main}
+            {isOwner && !isMainDomain && (
+              <ClickableAction
+                title="Set as main domain"
+                description="Display this domain when connecting to dapps"
+                icon={
+                  <MainIcon
+                    width="25"
+                    firstColor={theme.palette.secondary.main}
+                    secondColor={theme.palette.secondary.main}
+                  />
+                }
+                onClick={() => setAddressToDomain()}
+              />
+            )}
+            {isOwner &&
+              (domainKind === "xplorer" || domainKind === "braavos") && (
+                <ClickableAction
+                  title="Transfer your domain"
+                  description="Transfer your subdomain to another wallet"
+                  icon={
+                    <TransferIcon
+                      width="25"
+                      color={theme.palette.secondary.main}
+                    />
+                  }
+                  onClick={() => setIsTransferFormOpen(true)}
                 />
-              }
-              onClick={() => setAddressToDomain()}
-            />
+              )}
           </div>
-        )}
+        </div>
       </div>
-    </div>
+      <ExternalDomainsTransferModal
+        domain={domain}
+        domainEncoded={callDataEncodedDomain[1] as string}
+        resolverContract={getResolverContract(domainKind)}
+        handleClose={() => setIsTransferFormOpen(false)}
+        isModalOpen={isTransferFormOpen}
+        domainKind={domainKind}
+      />
+    </>
   );
 };
 
