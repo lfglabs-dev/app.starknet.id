@@ -139,4 +139,17 @@ type Upsell = {
   desc: string;
 };
 
+type FreeRenewal = {
+  duration: number; // duration you get
+  paidDuration: number; // duration you pay for
+  maxDuration: number; // if user selects a duration higer, upsell won't be applied
+  discountId: string;
+  imageUrl: string;
+  title: {
+    desc: string;
+    catch: string;
+  };
+  desc: string;
+};
+
 type HexString = `0x${string}`;
