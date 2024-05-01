@@ -1,7 +1,7 @@
 import { getDomainLength } from "./stringService";
 
 export const PRICES = {
-  ONE: BigInt("534246575342466") * BigInt(365),
+  ONE: BigInt("801369863013699") * BigInt(365),
   TWO: BigInt("657534246575343") * BigInt(365),
   THREE: BigInt("160000000000000") * BigInt(365),
   FOUR: BigInt("36986301369863") * BigInt(365),
