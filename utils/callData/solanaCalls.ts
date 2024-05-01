@@ -27,10 +27,7 @@ function setResolving(encodedDomain: string, targetAddr: string): Call {
 
 function setAsMainDomain(encodedDomain: string): Call {
   const rootDomain = "16434"; // sol encoded
-  const calldata =
-    process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-      ? [2, encodedDomain, rootDomain, 0]
-      : [2, encodedDomain, rootDomain];
+  const calldata = [2, encodedDomain, rootDomain, 0]; // zero is hint argument
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_address_to_domain",
