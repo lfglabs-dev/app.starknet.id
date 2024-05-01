@@ -25,6 +25,11 @@ import { Connector } from "starknetkit";
 import { useRouter } from "next/router";
 import WalletConnect from "@/components/UI/walletConnect";
 
+export const solanaEndDates = {
+  solanaOnStarknet: process.env.NEXT_PUBLIC_SOLANA_ON_STARKNET_TIME, // Closing timestamp for the distribution of .sol.stark domains on Starknet
+  starknetOnSolana: process.env.NEXT_PUBLIC_STARKNET_ON_SOLANA_TIME, // Closing timestamp for the distribution of .stark.sol domains on solana
+};
+
 const Solana: NextPage = () => {
   const { address: starknetAddress } = useAccount();
   const { publicKey: solPublicKey, signMessage } = useWallet();
@@ -54,7 +59,7 @@ const Solana: NextPage = () => {
     const currentDate = new Date();
     const timestamp = currentDate.getTime();
 
-    if (timestamp >= 1744724194 * 1000) {
+    if (timestamp >= Number(solanaEndDates.solanaOnStarknet)) {
       setOpen(false);
     }
   }, []);
@@ -122,7 +127,8 @@ const Solana: NextPage = () => {
     setIsTxModalOpen(true);
     setRedirect(selectedDomain?.name);
     setSelectedDomain(undefined);
-  }, [registerData?.transaction_hash]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [registerData?.transaction_hash]); // We want to run this effect only when the transaction hash changes
 
   const generateSignature = async (solDomain: string) => {
     if (!signMessage) return;
