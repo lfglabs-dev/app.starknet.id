@@ -19,10 +19,7 @@ import TextField from "../UI/textField";
 import SwissForm from "../domains/swissForm";
 import { Divider } from "@mui/material";
 import RegisterSummary from "../domains/registerSummary";
-import {
-  computeMetadataHash,
-  generateSalts,
-} from "../../utils/userDataService";
+import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import { areDomainSelected } from "../../utils/priceService";
 import RenewalDomainsBox from "../domains/renewalDomainsBox";
 import registrationCalls from "../../utils/callData/registrationCalls";
@@ -49,6 +46,7 @@ import {
   getDomainPrice,
   getDomainPriceAltcoin,
   getTokenQuote,
+  smartCurrencyChoosing,
 } from "../../utils/altcoinService";
 
 type RenewalDiscountProps = {
@@ -87,8 +85,8 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
-  const [salts, setSalts] = useState<string[] | undefined>();
-  const [metadataHashes, setMetadataHashes] = useState<string[] | undefined>();
+  const [salt, setSalt] = useState<string | undefined>();
+  const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMetadata, setNeedMetadata] = useState<boolean>(false);
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
@@ -103,29 +101,27 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   const router = useRouter();
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
+  const [hasChoseCurrency, setHasChoseCurrency] = useState<boolean>(false);
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!renewData?.transaction_hash || !salts || !metadataHashes) return;
-    // register the metadata to the sales manager db
-    Promise.all(
-      salts.map((salt, index) =>
-        fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            meta_hash: metadataHashes[index],
-            email,
-            tax_state: isSwissResident ? "switzerland" : "none",
-            salt: salt,
-          }),
-        })
-      )
-    )
-      .then((responses) => Promise.all(responses.map((res) => res.json())))
-      .catch((error) => {
-        console.log("Error on sending metadata:", error);
-      });
+    if (!renewData?.transaction_hash || !salt || !metadataHash) return;
+
+    if (needMetadata) {
+      // register the metadata to the sales manager db
+      fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          meta_hash: metadataHash,
+          email: email,
+          tax_state: isSwissResident ? "switzerland" : "none",
+          salt: salt,
+        }),
+      })
+        .then((res) => res.json())
+        .catch((err) => console.log("Error on sending metadata:", err));
+    }
 
     // Subscribe to auto renewal mailing list if renewal box is checked
     if (renewalBox) {
@@ -192,10 +188,8 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
 
   // on first load, we generate a salt
   useEffect(() => {
-    if (!selectedDomains) return;
-
-    setSalts(generateSalts(selectedDomainsToArray(selectedDomains).length));
-  }, [selectedDomains]);
+    setSalt(generateSalt());
+  }, [address]);
 
   useEffect(() => {
     if (!address) return;
@@ -206,7 +200,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
       .then((data) => {
         if (data.meta_hash && parseInt(data.meta_hash) !== 0) {
           setNeedMetadata(false);
-          setMetadataHashes([data.meta_hash]);
+          setMetadataHash(data.meta_hash);
           data.tax_rate ? setSalesTaxRate(data.tax_rate) : setSalesTaxRate(0);
         } else {
           setNeedMetadata(true);
@@ -220,24 +214,34 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
 
   useEffect(() => {
     // salt must not be empty to preserve privacy
-    if (!salts || !needMetadata) return;
+    if (!salt || !needMetadata) return;
 
     const computeHashes = async () => {
-      const metaDataHashes = await Promise.all(
-        salts.map((salt) =>
-          computeMetadataHash(
-            email,
-            //groups, // default group for domain Owner
-            isSwissResident ? "switzerland" : "none",
-            salt
-          )
-        )
+      const hash = await computeMetadataHash(
+        email,
+        isSwissResident ? "switzerland" : "none",
+        salt
       );
-      setMetadataHashes(metaDataHashes);
+      setMetadataHash(hash);
     };
 
     computeHashes();
-  }, [email, salts, renewalBox, isSwissResident, needMetadata]);
+  }, [email, salt, renewalBox, isSwissResident, needMetadata]);
+
+  // we choose the currency based on the user balances
+  useEffect(() => {
+    if (
+      tokenBalances &&
+      Object.keys(tokenBalances).length > 0 &&
+      !hasChoseCurrency &&
+      priceInEth
+    ) {
+      smartCurrencyChoosing(tokenBalances, priceInEth).then((currency) => {
+        onCurrencySwitch(currency);
+        setHasChoseCurrency(true);
+      });
+    }
+  }, [tokenBalances, priceInEth]);
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
@@ -266,33 +270,17 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     }
   }, [isSwissResident, price]);
 
+  // build free renewal call
   useEffect(() => {
     if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
-    if (selectedDomains && metadataHashes) {
-      // If normal renewal
-      // const calls = [
-      //   registrationCalls.approve(price),
-      //   ...registrationCalls.multiCallRenewal(
-      //     selectedDomainsToEncodedArray(selectedDomains),
-      //     duration,
-      //     metadataHashes,
-      //     "0",
-      //     discountId
-      //   ),
-      // ];
-
-      // If free renewal
+    const txMetadataHash = `0x${metadataHash}` as HexString;
+    if (selectedDomains) {
+      // Free renewal
       const calls = [
         ...registrationCalls.multiCallFreeRenewals(
           selectedDomainsToEncodedArray(selectedDomains)
         ),
       ];
-
-      // NO VAT CAUSE It's free
-      // If the user is a Swiss resident, we add the sales tax
-      // if (salesTaxRate) {
-      //   calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
-      // }
 
       if (renewalBox) {
         if (needsAllowance) {
@@ -326,8 +314,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
                 AutoRenewalContracts[displayedCurrency],
                 encodedDomain,
                 allowance,
-                "0x" +
-                  (needMetadata ? metadataHashes[index] : metadataHashes[0])
+                txMetadataHash
               )
             );
           }
@@ -340,7 +327,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     price,
     salesTaxAmount,
     needsAllowance,
-    metadataHashes,
+    metadataHash,
     salesTaxRate,
     duration,
     renewalBox,

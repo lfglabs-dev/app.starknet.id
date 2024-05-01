@@ -22,6 +22,8 @@ type UserInfoFormProps = {
   type: FormType;
   goToNextStep: () => void;
   imageUrl: string;
+  canUpdateDuration?: boolean;
+  minDuration?: number;
 };
 
 export enum IncrementType {

@@ -28,9 +28,9 @@ import {
   getAutoRenewAllowance,
   getDomainPrice,
   getDomainPriceAltcoin,
-  getLimitPriceRange,
   getPriceForDuration,
   getTokenQuote,
+  smartCurrencyChoosing,
 } from "@/utils/altcoinService";
 import { getPriceFromDomains } from "@/utils/priceService";
 import {
@@ -92,6 +92,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const { addTransaction } = useNotificationManager();
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
+  const [hasChosenCurrency, setHasChosenCurrency] = useState<boolean>(false);
   const [callData, setCallData] = useState<Call[]>([]);
   const [tokenIdRedirect, setTokenIdRedirect] = useState<string>("0");
   const { writeAsync: execute, data: checkoutData } = useContractWrite({
@@ -173,6 +174,24 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     quoteData,
     discount,
   ]);
+
+  // we choose the currency based on the user balances
+  useEffect(() => {
+    if (
+      tokenBalances &&
+      Object.keys(tokenBalances).length > 0 &&
+      !hasChosenCurrency &&
+      priceInEth
+    ) {
+      const domainPrice = formState.isUpselled
+        ? (BigInt(priceInEth) * BigInt(discount.paidDuration)).toString()
+        : (BigInt(priceInEth) * BigInt(formState.duration)).toString();
+      smartCurrencyChoosing(tokenBalances, domainPrice).then((currency) => {
+        onCurrencySwitch(currency);
+        setHasChosenCurrency(true);
+      });
+    }
+  }, [tokenBalances, priceInEth, formState.isUpselled]);
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
@@ -637,7 +656,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     <>
       {formState.duration === 1 ? (
         <UpsellCard
-          upsellData={discount}
+          upsellData={discount as Upsell}
           enabled={formState.isUpselled}
           onUpsellChoice={onUpsellChoice}
         />

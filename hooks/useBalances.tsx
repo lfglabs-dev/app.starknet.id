@@ -1,6 +1,6 @@
 import { useContractRead } from "@starknet-react/core";
 import { useMulticallContract } from "./contracts";
-import { Abi, CairoCustomEnum, Call, RawArgs, hash } from "starknet";
+import { Abi, BlockTag, CairoCustomEnum, Call, RawArgs, hash } from "starknet";
 import { useEffect, useState } from "react";
 import { ERC20Contract, CurrencyType } from "../utils/constants";
 import { fromUint256 } from "../utils/feltService";
@@ -15,6 +15,7 @@ export default function useBalances(address?: string) {
     functionName: "aggregate",
     args: callData,
     watch: true,
+    blockIdentifier: BlockTag.pending,
   });
 
   const balancesCallData = () => {
