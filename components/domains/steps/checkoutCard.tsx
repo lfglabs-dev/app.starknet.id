@@ -180,14 +180,18 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     if (
       tokenBalances &&
       Object.keys(tokenBalances).length > 0 &&
-      !hasChosenCurrency
+      !hasChosenCurrency &&
+      priceInEth
     ) {
-      smartCurrencyChoosing(tokenBalances).then((currency) => {
+      const domainPrice = formState.isUpselled
+        ? (BigInt(priceInEth) * BigInt(discount.paidDuration)).toString()
+        : (BigInt(priceInEth) * BigInt(formState.duration)).toString();
+      smartCurrencyChoosing(tokenBalances, domainPrice).then((currency) => {
         onCurrencySwitch(currency);
         setHasChosenCurrency(true);
       });
     }
-  }, [tokenBalances]);
+  }, [tokenBalances, priceInEth, formState.isUpselled]);
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {

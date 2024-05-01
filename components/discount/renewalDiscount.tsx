@@ -230,13 +230,18 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
 
   // we choose the currency based on the user balances
   useEffect(() => {
-    if (tokenBalances && !hasChoseCurrency) {
-      smartCurrencyChoosing(tokenBalances).then((currency) => {
+    if (
+      tokenBalances &&
+      Object.keys(tokenBalances).length > 0 &&
+      !hasChoseCurrency &&
+      priceInEth
+    ) {
+      smartCurrencyChoosing(tokenBalances, priceInEth).then((currency) => {
         onCurrencySwitch(currency);
         setHasChoseCurrency(true);
       });
     }
-  }, [tokenBalances]);
+  }, [tokenBalances, priceInEth]);
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {

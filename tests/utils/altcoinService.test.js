@@ -308,4 +308,48 @@ describe("smartCurrencyChoosing", () => {
     const result = await smartCurrencyChoosing(tokenBalances);
     expect(result).toEqual(CurrencyType.ETH);
   });
+
+  it("chooses STRK when user has ETH but not enough to pay for domain", async () => {
+    fetch.mockResolvedValueOnce({
+      json: () => {
+        return Promise.resolve([
+          {
+            address:
+              "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+            currentPrice: 0.0004222825195146873,
+            decimals: 18,
+          },
+        ]);
+      },
+    });
+    const tokenBalances = {
+      ETH: "1000000000000000", // 0.001 ETH
+      STRK: "80000000000000000000", // 80 STRK = 0.034 ETH
+    };
+    const domainPrice = "8999999999999875"; // 0.009 ETH
+    const result = await smartCurrencyChoosing(tokenBalances, domainPrice);
+    expect(result).toEqual(CurrencyType.STRK);
+  });
+
+  it("chooses ETH when user has STRK but not enough to pay for domain", async () => {
+    fetch.mockResolvedValueOnce({
+      json: () => {
+        return Promise.resolve([
+          {
+            address:
+              "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
+            currentPrice: 0.0004222825195146873,
+            decimals: 18,
+          },
+        ]);
+      },
+    });
+    const tokenBalances = {
+      ETH: "100000000000000000", // 0.1 ETH
+      STRK: "3000000000000000000", // 3 STRK
+    };
+    const domainPrice = "8999999999999875"; // 0.009 ETH
+    const result = await smartCurrencyChoosing(tokenBalances, domainPrice);
+    expect(result).toEqual(CurrencyType.ETH);
+  });
 });
