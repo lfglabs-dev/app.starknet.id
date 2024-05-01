@@ -14,10 +14,7 @@ function transferName(
 
 function setAddresstoDomain(callDataEncodedDomain: (number | string)[]): Call {
   // todo: remove condition once new naming contract version has been updated on mainnet
-  const callData =
-    process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-      ? [...callDataEncodedDomain, 0] // hint argument for testnet
-      : callDataEncodedDomain;
+  const callData = [...callDataEncodedDomain, 0]; // zero is hint argument
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_address_to_domain",
