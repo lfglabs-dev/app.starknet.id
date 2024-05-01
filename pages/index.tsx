@@ -3,6 +3,8 @@ import type { NextPage } from "next";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/domain.module.css";
 import SearchBar from "../components/UI/searchBar";
+import NewsContainer from "@/components/UI/newsContainer";
+import { solanaEndDates } from "./solana";
 
 const Domain: NextPage = () => {
   return (
@@ -17,6 +19,14 @@ const Domain: NextPage = () => {
               </p>
             </div>
             <SearchBar showHistory />
+            <NewsContainer
+              title="Starknet x Solana"
+              desc="Stark domains holders can get a Solana domain for free !"
+              logo="/solana/bonfida.webp"
+              link="https://sns.id/starknet"
+              startDate={solanaEndDates.solanaOnStarknet}
+              endDate={solanaEndDates.starknetOnSolana}
+            />
           </div>
           <img
             src="/visuals/domainVisual.webp"

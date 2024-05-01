@@ -190,10 +190,78 @@
   background: #f5f0eb;
 }
 
+.newsContainer {
+  display: flex;
+  padding: 1rem;
+  gap: 1rem;
+  justify-content: space-between;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  background-color: white;
+  align-items: center;
+}
+
+.campaignInfo {
+  display: flex;
+  flex-direction: row;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  justify-content: space-between;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.newsTitle {
+  color: #454545;
+  /* Title/H3 */
+  font-family: "QuickZap";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px; /* 106.667% */
+}
+
+.newsCallToAction {
+  cursor: pointer;
+  display: flex;
+  -webkit-box-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition-property: all;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+  border-radius: 8px;
+  font-weight: 700;
+  border-width: 1px;
+  border-style: solid;
+  background: var(--primary300);
+  color: var(--primary);
+  border-color: transparent;
+  font-size: 1rem;
+  line-height: 1.25rem;
+  height: 3rem;
+  padding: 0px 1rem;
+  min-width: 10rem;
+}
+
 @media (max-width: 768px) {
   .subtitle {
     font-size: 24px;
   }
+  .newsContainer {
+    flex-direction: column;
+  }
+  .newsCallToAction {
+    width: 100%;
+  }
+
+  .newsTitle {
+    font-size: 17px;
+  }
+
   .suggestionCategory {
     margin: 0 1.5rem;
     max-width: calc(100% - 3rem);

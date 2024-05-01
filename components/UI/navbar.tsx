@@ -58,7 +58,7 @@ const Navbar: FunctionComponent = () => {
     if (starknetIdNavigator !== null && address !== undefined) {
       starknetIdNavigator.getProfileData(address).then(setProfile);
     }
-  }, [address]);
+  }, [address, starknetIdNavigator]);
 
   // Autoconnect
   useEffect(() => {
@@ -67,7 +67,7 @@ const Navbar: FunctionComponent = () => {
       if (connector && connector.available()) await connectAsync({ connector });
     };
     connectToStarknet();
-  }, [connectors]);
+  }, [connectAsync, connectors]);
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
