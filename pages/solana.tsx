@@ -136,7 +136,7 @@ const Solana: NextPage = () => {
   }, [registerData?.transaction_hash]); // We want to run this effect only when the transaction hash changes
 
   const generateSignature = async (solDomain: string) => {
-    if (!solPublicKey || !signTransaction) return;
+    if (!solPublicKey) return;
     setDisableBtn(solDomain);
     const maxValidity = parseInt(
       ((Date.now() + 60 * 60 * 1000) / 1000).toFixed(0)
