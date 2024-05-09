@@ -76,6 +76,7 @@ export enum TransactionType {
   SET_PFP = "SET_PFP",
   CLAIM_SOL = "CLAIM_SOL",
   TRANSFER_EXTERNAL_DOMAIN = "TRANSFER_EXTERNAL_DOMAIN",
+  SET_USER_DATA = "SET_USER_DATA",
 }
 
 export const PENDING_TRANSACTION = "Transaction pending...";
@@ -98,6 +99,7 @@ export const notificationTitle: Record<TransactionType, string> = {
   [TransactionType.SET_PFP]: "New profile picture set",
   [TransactionType.CLAIM_SOL]: "Claimed Solana subdomain on Starknet",
   [TransactionType.TRANSFER_EXTERNAL_DOMAIN]: "Subdomain transferred",
+  [TransactionType.SET_USER_DATA]: "Set user data",
 };
 
 export const notificationLinkText: Record<NotificationType, string> = {
@@ -144,4 +146,14 @@ export type AutoRenewalContracts =
 export enum FormType {
   REGISTER = "Your Registration",
   RENEW = "Your Renewal",
+}
+
+export enum EvmFieldsType {
+  EVM_ADDRESS = "evm-address",
+  ETHEREUM = "ethereum",
+}
+
+export enum EvmFieldsName {
+  "evm-address" = "EVM Address",
+  "ethereum" = "Ethereum",
 }
