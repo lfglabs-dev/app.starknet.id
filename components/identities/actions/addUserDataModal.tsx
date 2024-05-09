@@ -80,6 +80,7 @@ const AddUserDataModal: FunctionComponent<AddUserDataModalProps> = ({
     setField(value);
     const existingAddr = identity?.getUserData(value);
     if (existingAddr) setEvmAddress(existingAddr);
+    else setEvmAddress(identity?.getUserData("evm-address") ?? "");
   }
 
   function closeModal(): void {
