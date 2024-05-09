@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { useContractWrite } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { isHexString } from "../../../utils/stringService";
+import { formatHexString, isHexString } from "../../../utils/stringService";
 import styles from "../../../styles/components/modalMessage.module.css";
 import Button from "../../UI/button";
 import { hexToDecimal } from "../../../utils/feltService";
@@ -21,6 +21,7 @@ import {
 } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
+import { shortString } from "starknet";
 
 type AddUserDataModalProps = {
   handleClose: () => void;
@@ -34,7 +35,7 @@ const AddUserDataModal: FunctionComponent<AddUserDataModalProps> = ({
   identity,
 }) => {
   const [evmAddress, setEvmAddress] = useState<string>(
-    identity?.getUserData("evm-address") ?? ""
+    getUserData("evm-address") ?? ""
   );
   const [field, setField] = useState<EvmFields>("evm-address");
   const { addTransaction } = useNotificationManager();
@@ -45,7 +46,7 @@ const AddUserDataModal: FunctionComponent<AddUserDataModalProps> = ({
       ? [
           identityChangeCalls.setUserData(
             identity.id,
-            field,
+            shortString.encodeShortString(field),
             hexToDecimal(evmAddress)
           ),
         ]
@@ -78,9 +79,17 @@ const AddUserDataModal: FunctionComponent<AddUserDataModalProps> = ({
 
   function changeField(value: EvmFields): void {
     setField(value);
-    const existingAddr = identity?.getUserData(value);
+    const existingAddr = getUserData(value);
     if (existingAddr) setEvmAddress(existingAddr);
-    else setEvmAddress(identity?.getUserData("evm-address") ?? "");
+    else setEvmAddress(getUserData("evm-address") ?? "");
+  }
+
+  function getUserData(value: string): string | undefined {
+    const data = identity?.getUserData(
+      formatHexString(shortString.encodeShortString(value))
+    );
+    if (!data) return;
+    return "0x" + data.slice(2).replace(/^0+/, "");
   }
 
   function closeModal(): void {
