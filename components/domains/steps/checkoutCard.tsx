@@ -191,7 +191,14 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         setHasChosenCurrency(true);
       });
     }
-  }, [tokenBalances, priceInEth, formState.isUpselled]);
+  }, [
+    tokenBalances,
+    priceInEth,
+    formState.isUpselled,
+    hasChosenCurrency,
+    formState.duration,
+    discount.paidDuration,
+  ]);
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
@@ -246,6 +253,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     discountedPrice,
     formState.needMetadata,
     formState.salesTaxRate,
+    updateFormState,
   ]);
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
@@ -362,7 +370,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
     // If the user is a Swiss resident, we add the sales tax
     if (formState.salesTaxRate) {
-      calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+      calls.unshift(
+        registrationCalls.vatTransfer(
+          salesTaxAmount,
+          ERC20Contract[displayedCurrency]
+        )
+      ); // IMPORTANT: We use unshift to put the call at the beginning of the array
     }
 
     // If the user choose to mint a new identity
@@ -489,7 +502,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
     // If the user is a Swiss resident, we add the sales tax
     if (formState.salesTaxRate) {
-      calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+      calls.unshift(
+        registrationCalls.vatTransfer(
+          salesTaxAmount,
+          ERC20Contract[displayedCurrency]
+        )
+      ); // IMPORTANT: We use unshift to put the call at the beginning of the array
     }
 
     // If the user has toggled autorenewal
