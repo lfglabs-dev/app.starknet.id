@@ -96,9 +96,9 @@ function mainId(tokenId: number): Call {
   };
 }
 
-function vatTransfer(amount: string): Call {
+function vatTransfer(amount: string, erc20_contract: string): Call {
   return {
-    contractAddress: process.env.NEXT_PUBLIC_ETHER_CONTRACT as string,
+    contractAddress: erc20_contract,
     entrypoint: "transfer",
     calldata: [process.env.NEXT_PUBLIC_VAT_CONTRACT as string, amount, "0"],
   };

@@ -24,6 +24,11 @@ import DiscountEndScreen from "../components/discount/discountEndScreen";
 import { Connector } from "starknetkit";
 import { useRouter } from "next/router";
 import WalletConnect from "@/components/UI/walletConnect";
+import {
+  PublicKey,
+  Transaction,
+  TransactionInstruction,
+} from "@solana/web3.js";
 
 export const solanaEndDates = {
   solanaOnStarknet: process.env.NEXT_PUBLIC_SOLANA_ON_STARKNET_TIME, // Closing timestamp for the distribution of .sol.stark domains on Starknet
@@ -32,7 +37,7 @@ export const solanaEndDates = {
 
 const Solana: NextPage = () => {
   const { address: starknetAddress } = useAccount();
-  const { publicKey: solPublicKey, signMessage } = useWallet();
+  const { publicKey: solPublicKey, signMessage, signTransaction } = useWallet();
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -131,25 +136,78 @@ const Solana: NextPage = () => {
   }, [registerData?.transaction_hash]); // We want to run this effect only when the transaction hash changes
 
   const generateSignature = async (solDomain: string) => {
-    if (!signMessage) return;
+    if (!solPublicKey) return;
     setDisableBtn(solDomain);
     const maxValidity = parseInt(
       ((Date.now() + 60 * 60 * 1000) / 1000).toFixed(0)
     );
     const leading0Addr = "0x" + starknetAddress?.slice(2).padStart(64, "0");
     const message = `${solPublicKey} allow claiming ${solDomain}.sol on starknet on ${leading0Addr} at max validity timestamp ${maxValidity}`;
+    const uint8Array = new TextEncoder().encode(message);
 
-    // encode message to Uint8Array
-    const encoder = new TextEncoder();
-    const uint8Array = encoder.encode(message);
+    try {
+      // try signing the normal way
+      if (!signMessage) throw new Error("signMessage undefined");
+      signMessage(uint8Array)
+        .then((sig: Uint8Array) => {
+          generateStarkSig(solDomain, sig, maxValidity);
+        })
+        .catch(async (error) => {
+          console.log(
+            "Error while signing message, trying signing a transaction instead",
+            error
+          );
+          // try signing a transaction instead
+          await signWithLedger(solPublicKey, message, solDomain, maxValidity);
+        });
+    } catch (error) {
+      console.log(
+        "Error while signing message, trying signing a transaction instead",
+        error
+      );
+      // try signing a transaction instead
+      await signWithLedger(solPublicKey, message, solDomain, maxValidity);
+    }
+  };
 
-    signMessage(uint8Array)
-      .then((sig: Uint8Array) => {
-        generateStarkSig(solDomain, sig, maxValidity);
+  const signWithLedger = async (
+    solPublicKey: PublicKey,
+    message: string,
+    solDomain: string,
+    maxValidity: number
+  ) => {
+    if (!signTransaction) return;
+    // It's a Ledger so we sign a transaction instead
+    const transaction: Transaction = generateTx(solPublicKey, message);
+    const signedTx: Transaction | undefined = await signTransaction(
+      transaction
+    );
+    if (!signedTx) {
+      setDisableBtn("");
+      return;
+    }
+    const isVerified = signedTx.verifySignatures();
+    if (isVerified) {
+      const txSerialized = signedTx.serialize().toString("base64");
+      generateStarkSigLedger(solDomain, txSerialized, maxValidity);
+    } else {
+      console.log("Error while verifying transaction");
+      setDisableBtn("");
+    }
+  };
+
+  const generateTx = (wallet: PublicKey, message: string): Transaction => {
+    const tx = new Transaction();
+    tx.add(
+      new TransactionInstruction({
+        programId: wallet,
+        keys: [],
+        data: Buffer.from(message),
       })
-      .catch(() => {
-        setDisableBtn("");
-      });
+    );
+    tx.feePayer = wallet;
+    tx.recentBlockhash = `${wallet}`;
+    return tx;
   };
 
   const generateStarkSig = async (
@@ -172,6 +230,44 @@ const Solana: NextPage = () => {
       },
       body: data,
     })
+      .then((response) => response.json())
+      .then((res) => {
+        setSelectedDomain({
+          name: solDomain,
+          signature: res,
+          sent: false,
+        });
+        setDisableBtn("");
+      })
+      .catch((error) => {
+        console.log("An error occured", error);
+        setDisableBtn("");
+      });
+  };
+
+  const generateStarkSigLedger = async (
+    solDomain: string,
+    solTxSerialized: string,
+    maxValidity: number
+  ) => {
+    const sigQuery = {
+      source_domain: solDomain + ".sol",
+      target_address: starknetAddress,
+      serialized_tx: solTxSerialized,
+      max_validity: maxValidity,
+    };
+    const data = JSON.stringify(sigQuery);
+
+    fetch(
+      `${process.env.NEXT_PUBLIC_SERVER_LINK}/crosschain/solana/claim_ledger`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: data,
+      }
+    )
       .then((response) => response.json())
       .then((res) => {
         setSelectedDomain({
