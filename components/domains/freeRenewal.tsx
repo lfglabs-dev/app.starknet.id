@@ -263,7 +263,12 @@ const FreeRenewal: FunctionComponent<FreeRenewalProps> = ({ groups }) => {
 
       // If the user is a Swiss resident, we add the sales tax
       if (salesTaxRate) {
-        calls.unshift(registrationCalls.vatTransfer(salesTaxAmount)); // IMPORTANT: We use unshift to put the call at the beginning of the array
+        calls.unshift(
+          registrationCalls.vatTransfer(
+            salesTaxAmount,
+            ERC20Contract[displayedCurrency]
+          )
+        ); // IMPORTANT: We use unshift to put the call at the beginning of the array
       }
 
       if (renewalBox) {
