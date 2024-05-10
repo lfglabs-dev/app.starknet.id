@@ -151,11 +151,11 @@ function altcoinRenew(
   };
 }
 
-function freeRenewal(encodedDomain: string): Call {
+function freeRenewal(encodedDomain: string, ar_contract: string): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-    entrypoint: "renew_ar_discount",
-    calldata: [encodedDomain],
+    entrypoint: "ar_discount_renew",
+    calldata: [encodedDomain, ar_contract],
   };
 }
 
@@ -193,8 +193,13 @@ function multiCallRenewalAltcoin(
   );
 }
 
-function multiCallFreeRenewals(encodedDomains: string[]): Call[] {
-  return encodedDomains.map((encodedDomain) => freeRenewal(encodedDomain));
+function multiCallFreeRenewals(
+  encodedDomains: string[],
+  ar_contract: string
+): Call[] {
+  return encodedDomains.map((encodedDomain) =>
+    freeRenewal(encodedDomain, ar_contract)
+  );
 }
 
 function resetAddrToDomain(): Call {

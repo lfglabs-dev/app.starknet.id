@@ -241,7 +241,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
         setHasChoseCurrency(true);
       });
     }
-  }, [tokenBalances, priceInEth]);
+  }, [tokenBalances, priceInEth, hasChoseCurrency]);
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
@@ -278,7 +278,8 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
       // Free renewal
       const calls = [
         ...registrationCalls.multiCallFreeRenewals(
-          selectedDomainsToEncodedArray(selectedDomains)
+          selectedDomainsToEncodedArray(selectedDomains),
+          AutoRenewalContracts[displayedCurrency]
         ),
       ];
 
@@ -292,7 +293,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
           );
         }
 
-        selectedDomainsToArray(selectedDomains).map((domain, index) => {
+        selectedDomainsToArray(selectedDomains).map((domain) => {
           if (nonSubscribedDomains?.includes(domain)) {
             const encodedDomain = utils
               .encodeDomain(domain)
