@@ -677,6 +677,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           upsellData={discount as Upsell}
           enabled={formState.isUpselled}
           onUpsellChoice={onUpsellChoice}
+          invalidBalance={invalidBalance}
         />
       ) : null}
       <div className={styles.container}>

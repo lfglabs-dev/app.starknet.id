@@ -7,12 +7,14 @@ type UpsellCardProps = {
   upsellData: Upsell;
   enabled: boolean;
   onUpsellChoice: (isUpselled: boolean) => void;
+  invalidBalance: boolean;
 };
 
 const UpsellCard: FunctionComponent<UpsellCardProps> = ({
   upsellData,
   enabled,
   onUpsellChoice,
+  invalidBalance,
 }) => {
   return (
     <div className={styles.container}>
@@ -31,14 +33,14 @@ const UpsellCard: FunctionComponent<UpsellCardProps> = ({
         >
           <div className={styles.radioGroup}>
             <FormControlLabel
-              value={true}
+              value={!invalidBalance}
               control={<Radio />}
               label={
                 <p className={textFieldStyles.legend}>Yes, count me in!</p>
               }
             />
             <FormControlLabel
-              value={false}
+              value={invalidBalance}
               control={<Radio />}
               label={<p className={textFieldStyles.legend}>No, thanks!</p>}
             />
