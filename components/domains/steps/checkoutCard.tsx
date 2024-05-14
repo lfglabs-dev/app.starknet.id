@@ -54,6 +54,7 @@ import identityChangeCalls from "@/utils/callData/identityChangeCalls";
 import posthog from "posthog-js";
 import { useRouter } from "next/router";
 import { formatDomainData } from "@/utils/cacheDomainData";
+import ReduceDuration from "./reduceDuration";
 
 type CheckoutCardProps = {
   type: FormType;
@@ -98,6 +99,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const { writeAsync: execute, data: checkoutData } = useContractWrite({
     calls: callData,
   });
+  const [reducedDuration, setReducedDuration] = useState<number>(0); // reduced duration for the user to buy the domain
   // Renewals
   const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
 
@@ -664,11 +666,44 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const onCurrencySwitch = (type: CurrencyType) => {
     if (type !== CurrencyType.ETH) setLoadingPrice(true);
     setDisplayedCurrency(type);
+    setReducedDuration(0);
   };
 
   const onUpsellChoice = (enable: boolean) => {
     updateFormState({ isUpselled: enable });
   };
+
+  useEffect(() => {
+    const duration = formState.duration;
+    if (!invalidBalance || duration === 1 || !priceInEth) {
+      setReducedDuration(0);
+      return;
+    }
+    if (!priceInEth) return;
+    for (let newDuration = duration - 1; newDuration > 0; newDuration--) {
+      const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
+      let newPrice = priceInEth;
+      if (displayedCurrency !== CurrencyType.ETH && quoteData) {
+        newPrice = getDomainPriceAltcoin(quoteData.quote, newPriceInEth);
+      }
+
+      const balance = tokenBalances[displayedCurrency];
+      if (!balance) continue;
+      if (BigInt(balance) >= BigInt(newPrice)) {
+        setReducedDuration(newDuration);
+        break;
+      }
+    }
+  }, [
+    formState.duration,
+    invalidBalance,
+    discount.duration,
+    priceInEth,
+    formState.isUpselled,
+    tokenBalances,
+    displayedCurrency,
+    quoteData,
+  ]);
 
   return (
     <>
@@ -677,6 +712,13 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           upsellData={discount as Upsell}
           enabled={formState.isUpselled}
           onUpsellChoice={onUpsellChoice}
+        />
+      ) : null}
+      {invalidBalance && reducedDuration > 0 ? (
+        <ReduceDuration
+          newDuration={reducedDuration}
+          currentDuration={formState.duration}
+          updateFormState={updateFormState}
         />
       ) : null}
       <div className={styles.container}>
