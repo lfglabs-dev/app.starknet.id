@@ -15,28 +15,25 @@ type RegisterSummaryProps = {
   duration: number;
   ethRegistrationPrice: string;
   registrationPrice: string; // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
-  renewalBox: boolean;
+  renewalBox?: boolean;
   salesTaxRate: number;
   isSwissResident: boolean;
-  isTokenDropdownDisplayed?: boolean;
   customMessage?: string;
-  displayedCurrency: CurrencyType;
-  onCurrencySwitch: (type: CurrencyType) => void;
+  displayedCurrency: CurrencyType[];
+  onCurrencySwitch: (type: CurrencyType[]) => void;
   loadingPrice?: boolean;
   isUpselled?: boolean;
   discountedPrice?: string; // price the user will pay after discount
   discountedDuration?: number; // years the user will have the domain for after discount
-  isAllCurrencyAllowed?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   duration,
   ethRegistrationPrice,
   registrationPrice,
-  renewalBox,
+  renewalBox = true,
   salesTaxRate,
   isSwissResident,
-  isTokenDropdownDisplayed = true,
   customMessage,
   displayedCurrency,
   onCurrencySwitch,
@@ -44,7 +41,6 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   isUpselled = false,
   discountedPrice,
   discountedDuration,
-  isAllCurrencyAllowed = false,
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
@@ -60,6 +56,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       })
       .catch((err) => console.log("Coingecko API Error:", err));
   }, []);
+  const announcedCurrency =
+    displayedCurrency.length > 1 ? "ETH or STRK" : displayedCurrency;
 
   useEffect(() => {
     function computeUsdPrice() {
@@ -80,7 +78,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     return (
       <div className="flex items-center justify-center">
         <span className={styles.price}>
-          {priceToPay} {displayedCurrency} {recurrence}
+          {priceToPay} {announcedCurrency} {recurrence}
         </span>
         {isSwissResident ? (
           <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
@@ -99,7 +97,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
         <span className={styles.priceCrossed}>{price}</span>
         <ArrowRightIcon width="25" color="#454545" />
         <span className={styles.price}>
-          {priceDiscounted} {displayedCurrency} {recurrence} 🔥
+          {priceDiscounted} {announcedCurrency} {recurrence} 🔥
         </span>
         {isSwissResident ? (
           <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
@@ -116,7 +114,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     const salesTaxInfo = salesTaxAmountUsd
       ? ` (+ ${numberToFixedString(
           salesTaxAmountUsd
-        )}$ worth of ${displayedCurrency} for Swiss VAT)`
+        )}$ worth of ${announcedCurrency} for Swiss VAT)`
       : "";
 
     const registerPrice = Number(gweiToEth(registrationPrice));
@@ -155,13 +153,10 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
         </div>
       </div>
-      {isTokenDropdownDisplayed ? (
-        <CurrencyDropdown
-          isAllCurrencyAllowed={isAllCurrencyAllowed}
-          displayedCurrency={displayedCurrency}
-          onCurrencySwitch={onCurrencySwitch}
-        />
-      ) : null}
+      <CurrencyDropdown
+        displayedCurrency={displayedCurrency}
+        onCurrencySwitch={onCurrencySwitch}
+      />
     </div>
   );
 };

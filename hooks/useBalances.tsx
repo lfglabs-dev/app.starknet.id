@@ -52,11 +52,6 @@ export default function useBalances(address?: string) {
     const currencies = Object.values(CurrencyType);
     const balanceEntries: TokenBalance = {};
     currencies.forEach((currency, index) => {
-      // Skip setting balances if the currency is ALL
-      if (currency === CurrencyType["ALL CURRENCIES"]) {
-        return; // Skip the current iteration, effectively acts like a 'continue' in a forEach loop
-      }
-
       const balance = fromUint256(
         BigInt(erc20BalanceData[index][0]),
         BigInt(erc20BalanceData[index][1])

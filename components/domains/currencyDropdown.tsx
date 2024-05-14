@@ -1,18 +1,21 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/registerV2.module.css";
-import { CurrenciesIcon, CurrencyType } from "../../utils/constants";
+import {
+  CurrencyType,
+  PaymentCurrencyIcon,
+  PaymentCurrency,
+} from "../../utils/constants";
 import { ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material";
+import { areArraysEqual } from "@/utils/arrayService";
 
 type CurrencyDropdownProps = {
-  onCurrencySwitch: (type: CurrencyType) => void;
-  displayedCurrency: CurrencyType;
-  isAllCurrencyAllowed?: boolean;
+  onCurrencySwitch: (type: CurrencyType[]) => void;
+  displayedCurrency: CurrencyType[];
 };
 
 const CurrencyDropdown: FunctionComponent<CurrencyDropdownProps> = ({
   displayedCurrency,
   onCurrencySwitch,
-  isAllCurrencyAllowed = false,
 }) => {
   const selectStyle = {
     "& .MuiSelect-select": {
@@ -30,32 +33,48 @@ const CurrencyDropdown: FunctionComponent<CurrencyDropdownProps> = ({
     },
   };
 
+  function onPaymentCurrencyChange(PaymentCurrency: PaymentCurrency) {
+    if (PaymentCurrency === PaymentCurrency["ETH OR STRK"]) {
+      onCurrencySwitch([CurrencyType.ETH, CurrencyType.STRK]);
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      onCurrencySwitch([PaymentCurrency as any]); // as any is safe here cause we know the value is a CurrencyType
+    }
+  }
+
+  function getPaymentCurrency(displayedCurrency: CurrencyType[]) {
+    const areAllCurrenciesAccepted = areArraysEqual(displayedCurrency, [
+      CurrencyType.ETH,
+      CurrencyType.STRK,
+    ]);
+
+    return areAllCurrenciesAccepted
+      ? PaymentCurrency["ETH OR STRK"]
+      : displayedCurrency[0];
+  }
+
   return (
     <div className={styles.currencySwitcher}>
       <Select
         fullWidth
-        value={displayedCurrency}
-        defaultValue={displayedCurrency}
+        value={getPaymentCurrency(displayedCurrency)}
+        defaultValue={getPaymentCurrency(displayedCurrency)}
         inputProps={{ MenuProps: { disableScrollLock: true } }}
-        onChange={(e) => onCurrencySwitch(e.target.value as CurrencyType)}
+        onChange={(e) =>
+          onPaymentCurrencyChange(e.target.value as PaymentCurrency)
+        }
         style={{
           borderRadius: "8.983px",
         }}
         sx={selectStyle}
       >
-        {Object.values(CurrencyType).map((currency) => {
-          // Check if the choice ALL CURRENCIES is allowed
-          if (
-            !isAllCurrencyAllowed &&
-            currency === CurrencyType["ALL CURRENCIES"]
-          )
-            return;
+        {Object.values(PaymentCurrency).map((currency) => {
           return (
             <MenuItem key={currency} value={currency}>
               <ListItemIcon>
                 <img
-                  width={"20px"}
-                  src={`${CurrenciesIcon[currency]}`}
+                  width="20px"
+                  src={`${PaymentCurrencyIcon[currency]}`}
                   alt={`${currency} icon`}
                 />
               </ListItemIcon>

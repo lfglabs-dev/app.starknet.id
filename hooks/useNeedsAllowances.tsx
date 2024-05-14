@@ -9,18 +9,23 @@ import {
 } from "../utils/constants";
 import { fromUint256 } from "../utils/feltService";
 
-export default function useAllowances(address?: string) {
-  const [allowances, setAllowances] = useState<TokenBalance>({});
+export default function useNeedsAllowances(
+  address?: string
+): TokenNeedsAllowance {
+  const [needsAllowances, setNeedsAllowances] = useState<
+    Record<string, boolean>
+  >({});
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: multicallContract } = useMulticallContract();
-  const { data: erc20BalanceData, error: erc20BalanceError } = useContractRead({
-    address: multicallContract?.address as string,
-    abi: multicallContract?.abi as Abi,
-    functionName: "aggregate",
-    args: callData,
-    watch: true,
-    blockIdentifier: BlockTag.pending,
-  });
+  const { data: erc20AllowanceData, error: erc20AllowanceError } =
+    useContractRead({
+      address: multicallContract?.address as string,
+      abi: multicallContract?.abi as Abi,
+      functionName: "aggregate",
+      args: callData,
+      watch: true,
+      blockIdentifier: BlockTag.pending,
+    });
 
   useEffect(() => {
     const allowancesCallData = () => {
@@ -29,6 +34,7 @@ export default function useAllowances(address?: string) {
 
       const calls: MulticallCallData[] = [];
       currencyContracts.forEach((currency, index) => {
+        console.log("currencyNames[index]", currencyNames[index]);
         calls.push({
           execution: new CairoCustomEnum({
             Static: {},
@@ -40,10 +46,10 @@ export default function useAllowances(address?: string) {
             Hardcoded: hash.getSelectorFromName("allowance"),
           }),
           calldata: [
+            new CairoCustomEnum({ Hardcoded: address }), // owner
             new CairoCustomEnum({
               Hardcoded: AutoRenewalContracts[currencyNames[index]],
-            }), // owner
-            new CairoCustomEnum({ Hardcoded: address }), // spender
+            }), // spender
           ],
         });
       });
@@ -59,24 +65,18 @@ export default function useAllowances(address?: string) {
   }, [address]);
 
   useEffect(() => {
-    if (erc20BalanceError || !erc20BalanceData) return;
+    if (erc20AllowanceError || !erc20AllowanceData) return;
     const currencyNames = Object.values(CurrencyType);
-    const balanceEntries: TokenBalance = {};
+    const needsAllowancesEntries: Record<string, boolean> = {};
     currencyNames.forEach((currency, index) => {
-      // Skip setting allowances if the currency is ALL
-      if (currency === CurrencyType["ALL CURRENCIES"]) {
-        return; // Skip the current iteration, effectively acts like a 'continue' in a forEach loop
-      }
-
       const balance = fromUint256(
-        BigInt(erc20BalanceData[index][0]),
-        BigInt(erc20BalanceData[index][1])
+        BigInt(erc20AllowanceData[index][0]),
+        BigInt(erc20AllowanceData[index][1])
       );
-      balanceEntries[currency] = balance;
+      needsAllowancesEntries[currency] = balance === "0";
     });
-    setAllowances(balanceEntries);
-  }, [erc20BalanceData, erc20BalanceError]);
+    setNeedsAllowances(needsAllowancesEntries);
+  }, [erc20AllowanceData, erc20AllowanceError]);
 
-  console.log("allowances: ", allowances);
-  return allowances;
+  return needsAllowances;
 }

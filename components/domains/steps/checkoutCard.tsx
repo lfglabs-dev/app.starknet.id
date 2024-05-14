@@ -187,7 +187,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         ? (BigInt(priceInEth) * BigInt(discount.paidDuration)).toString()
         : (BigInt(priceInEth) * BigInt(formState.duration)).toString();
       smartCurrencyChoosing(tokenBalances, domainPrice).then((currency) => {
-        onCurrencySwitch(currency);
+        onCurrencySwitch([currency]);
         setHasChosenCurrency(true);
       });
     }
@@ -275,6 +275,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     displayedCurrency,
     formState.isUpselled,
     formState.duration,
+    discount.duration,
   ]);
 
   useEffect(() => {
@@ -317,7 +318,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           setNonSubscribedDomains(data);
         });
     }
-  }, [address, formState.selectedDomains, renewalBox]);
+  }, [address, formState.selectedDomains, renewalBox, type]);
 
   // Set Register Multicall
   useEffect(() => {
@@ -457,6 +458,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     quoteData,
     displayedCurrency,
     formState.selectedPfp,
+    type,
+    discount.duration,
+    discount.discountId,
+    discountedPrice,
+    hasReverseAddressRecord,
   ]);
 
   // Set Renewal Multicall
@@ -585,6 +591,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     quoteData,
     displayedCurrency,
     formState.selectedPfp,
+    type,
+    discount.duration,
+    discount.discountId,
+    discountedPrice,
+    nonSubscribedDomains,
   ]);
 
   // on execute transaction,
@@ -661,9 +672,9 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [checkoutData]); // We only need registerData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
-  const onCurrencySwitch = (type: CurrencyType) => {
-    if (type !== CurrencyType.ETH) setLoadingPrice(true);
-    setDisplayedCurrency(type);
+  const onCurrencySwitch = (type: CurrencyType[]) => {
+    if (type[0] !== CurrencyType.ETH) setLoadingPrice(true);
+    setDisplayedCurrency(type[0]);
   };
 
   const onUpsellChoice = (enable: boolean) => {
@@ -688,7 +699,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
             renewalBox={renewalBox}
             salesTaxRate={formState.salesTaxRate}
             isSwissResident={formState.isSwissResident}
-            displayedCurrency={displayedCurrency}
+            displayedCurrency={[displayedCurrency]}
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
             isUpselled={formState.isUpselled}

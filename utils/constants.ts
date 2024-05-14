@@ -109,15 +109,20 @@ export enum CurrencyType {
   STRK = "STRK",
   // USDC = "USDC",
   // USDT = "USDT",
-  "ALL CURRENCIES" = "ALL CURRENCIES",
 }
 
-export enum CurrenciesIcon {
+export enum PaymentCurrency {
+  ETH = "ETH",
+  STRK = "STRK",
+  "ETH OR STRK" = "ETH OR STRK",
+}
+
+export enum PaymentCurrencyIcon {
   ETH = "/currencies/eth.svg",
   STRK = "/currencies/strk.svg",
+  "ETH OR STRK" = "/currencies/strk&eth.svg",
   // USDC = "/currencies/usdc.svg",
   // USDT = "/currencies/usdt.svg",
-  "ALL CURRENCIES" = "/currencies/strk&eth.svg",
 }
 
 export enum CurrenciesRange {

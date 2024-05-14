@@ -38,18 +38,17 @@ import {
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
-import useAllowanceCheck from "../../hooks/useAllowanceCheck";
+import useNeedsAllowances from "../../hooks/useNeedsAllowances";
 import ConnectButton from "../UI/connectButton";
-import useBalances from "../../hooks/useBalances";
 import {
   getAutoRenewAllowance,
   getDomainPrice,
   getDomainPriceAltcoin,
   getTokenQuote,
-  smartCurrencyChoosing,
 } from "../../utils/altcoinService";
+import { areArraysEqual } from "@/utils/arrayService";
 
-type RenewalDiscountProps = {
+type FreeRenewalDiscountProps = {
   groups: string[];
   goBack: () => void;
   duration: number;
@@ -57,10 +56,9 @@ type RenewalDiscountProps = {
   customMessage: string;
   priceInEth: string;
   renewPrice: string;
-  isArOnforced?: boolean;
 };
 
-const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
+const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
   groups,
   priceInEth,
   renewPrice,
@@ -68,7 +66,6 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   discountId,
   customMessage,
   goBack,
-  isArOnforced = false,
 }) => {
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
@@ -76,15 +73,13 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [callData, setCallData] = useState<Call[]>([]);
-  const [price, setPrice] = useState<string>(priceInEth); // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
+  const [price, setPrice] = useState<string>(priceInEth);
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
-  const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
-    CurrencyType.ETH
-  );
-  const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
+  const [displayedCurrencies, setDisplayedCurrencies] = useState<
+    CurrencyType[]
+  >([CurrencyType.ETH, CurrencyType.STRK]);
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [termsBox, setTermsBox] = useState<boolean>(true);
-  const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMetadata, setNeedMetadata] = useState<boolean>(false);
@@ -99,9 +94,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     useState<Record<string, boolean>>();
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
-  const needsAllowance = useAllowanceCheck(displayedCurrency, address);
-  const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
-  const [hasChoseCurrency, setHasChoseCurrency] = useState<boolean>(false);
+  const needsAllowances = useNeedsAllowances(address);
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
 
   useEffect(() => {
@@ -124,18 +117,16 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     }
 
     // Subscribe to auto renewal mailing list if renewal box is checked
-    if (renewalBox) {
-      fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tx_hash: formatHexString(renewData.transaction_hash),
-          groups,
-        }),
-      })
-        .then((res) => res.json())
-        .catch((err) => console.log("Error on registering to email:", err));
-    }
+    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tx_hash: formatHexString(renewData.transaction_hash),
+        groups,
+      }),
+    })
+      .then((res) => res.json())
+      .catch((err) => console.log("Error on registering to email:", err));
 
     addTransaction({
       timestamp: Date.now(),
@@ -153,9 +144,19 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
 
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
+    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
+      CurrencyType.ETH,
+    ]);
+    const contractToQuote =
+      displayedCurrencies.length > 1
+        ? ERC20Contract.STRK
+        : ERC20Contract[displayedCurrencies[0]];
+
     const fetchQuote = () => {
-      if (displayedCurrency === CurrencyType.ETH) return;
-      getTokenQuote(ERC20Contract[displayedCurrency]).then((data) => {
+      if (isCurrencyETH) return;
+
+      // TO DO - Create getTokenQuotes get all token quotes in the case of ALL CURRENCIES token type
+      getTokenQuote(contractToQuote).then((data) => {
         setQuoteData(data);
       });
     };
@@ -164,9 +165,9 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
       const now = parseInt((new Date().getTime() / 1000).toFixed(0));
       const timeLimit = now - 60; // 60 seconds
       // Check if we need to refetch
-      if (!quoteData || displayedCurrency === CurrencyType.ETH) {
+      if (!quoteData || isCurrencyETH) {
         setQuoteData(null);
-        // we don't need to check for quote until displayedCurrency is updated
+        // we don't need to check for quote until displayedCurrencies is updated
         return;
       }
 
@@ -184,7 +185,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     // Start the refetch scheduling
     scheduleRefetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayedCurrency, price]); // We don't add quoteData because it would create an infinite loop
+  }, [displayedCurrencies, price]); // We don't add quoteData because it would create an infinite loop
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -226,34 +227,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     };
 
     computeHashes();
-  }, [email, salt, renewalBox, isSwissResident, needMetadata]);
-
-  // we choose the currency based on the user balances
-  useEffect(() => {
-    if (
-      tokenBalances &&
-      Object.keys(tokenBalances).length > 0 &&
-      !hasChoseCurrency &&
-      priceInEth
-    ) {
-      smartCurrencyChoosing(tokenBalances, priceInEth).then((currency) => {
-        onCurrencySwitch([currency]);
-        setHasChoseCurrency(true);
-      });
-    }
-  }, [tokenBalances, priceInEth, hasChoseCurrency]);
-
-  // we ensure user has enough balance of the token selected
-  useEffect(() => {
-    if (tokenBalances && price && displayedCurrency) {
-      const tokenBalance = tokenBalances[displayedCurrency];
-      if (tokenBalance && BigInt(tokenBalance) >= BigInt(price)) {
-        setInvalidBalance(false);
-      } else {
-        setInvalidBalance(true);
-      }
-    }
-  }, [price, displayedCurrency, tokenBalances]);
+  }, [email, salt, isSwissResident, needMetadata]);
 
   function changeEmail(value: string): void {
     setEmail(value);
@@ -272,27 +246,32 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
 
   // build free renewal call
   useEffect(() => {
-    if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
+    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
+      CurrencyType.ETH,
+    ]);
+
+    if (!isCurrencyETH && !quoteData) return;
     const txMetadataHash = `0x${metadataHash}` as HexString;
     if (selectedDomains) {
       // Free renewal
       const calls = [
         ...registrationCalls.multiCallFreeRenewals(
           selectedDomainsToEncodedArray(selectedDomains),
-          AutoRenewalContracts[displayedCurrency]
+          AutoRenewalContracts[0] // By Default we use ETH AR contract
         ),
       ];
 
-      if (renewalBox) {
-        if (needsAllowance) {
+      displayedCurrencies.map((currency) => {
+        // Add ERC20 allowance for all currencies if needed
+        if (needsAllowances[currency]) {
           calls.unshift(
             autoRenewalCalls.approve(
-              ERC20Contract[displayedCurrency],
-              AutoRenewalContracts[displayedCurrency]
+              ERC20Contract[currency],
+              AutoRenewalContracts[currency]
             )
           );
         }
-
+        // Add AutoRenewal calls for all currencies
         selectedDomainsToArray(selectedDomains).map((domain) => {
           if (nonSubscribedDomains?.includes(domain)) {
             const encodedDomain = utils
@@ -301,18 +280,18 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
 
             const domainPrice = getDomainPrice(
               domain,
-              displayedCurrency,
+              currency,
               quoteData?.quote
             );
             const allowance = getAutoRenewAllowance(
-              displayedCurrency,
+              currency,
               salesTaxRate,
               domainPrice
             );
 
             calls.unshift(
               autoRenewalCalls.enableRenewal(
-                AutoRenewalContracts[displayedCurrency],
+                AutoRenewalContracts[currency],
                 encodedDomain,
                 allowance,
                 txMetadataHash
@@ -320,22 +299,23 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
             );
           }
         });
-      }
+      });
+
+      console.log("calls", calls);
       setCallData(calls);
     }
   }, [
     selectedDomains,
     price,
     salesTaxAmount,
-    needsAllowance,
+    needsAllowances,
     metadataHash,
     salesTaxRate,
     duration,
-    renewalBox,
     discountId,
     needMetadata,
     quoteData,
-    displayedCurrency,
+    displayedCurrencies,
     nonSubscribedDomains,
   ]);
 
@@ -355,18 +335,26 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   }, [address, setSelectedDomains]);
 
   useEffect(() => {
-    if (displayedCurrency === CurrencyType.ETH) {
+    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
+      CurrencyType.ETH,
+    ]);
+
+    if (isCurrencyETH) {
       setPrice(priceInEth);
     } else if (quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
       setPrice(priceInAltcoin);
       setLoadingPrice(false);
     }
-  }, [priceInEth, quoteData, displayedCurrency]);
+  }, [priceInEth, quoteData, displayedCurrencies]);
 
-  const onCurrencySwitch = (type: CurrencyType[]) => {
-    if (type[0] !== CurrencyType.ETH) setLoadingPrice(true);
-    setDisplayedCurrency(type[0]);
+  const onCurrencySwitch = (currency: CurrencyType[]) => {
+    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
+      CurrencyType.ETH,
+    ]);
+
+    if (!isCurrencyETH) setLoadingPrice(true);
+    setDisplayedCurrencies(currency as CurrencyType[]);
   };
 
   return (
@@ -412,11 +400,10 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
             ethRegistrationPrice={priceInEth}
             registrationPrice={price}
             duration={Number(numberToFixedString(duration / 365))}
-            renewalBox={renewalBox}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
             customMessage={customMessage}
-            displayedCurrency={[displayedCurrency]}
+            displayedCurrency={displayedCurrencies}
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
           />
@@ -424,22 +411,20 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
           <RegisterCheckboxes
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
-            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
-            renewalBox={renewalBox}
-            isArOnforced={isArOnforced}
+            isArOnforced={true}
             ethRenewalPrice={renewPrice}
           />
           {address ? (
             <Button
-              onClick={() =>
+              onClick={() => {
+                console.log("callData", callData);
                 execute().then(() => {
                   setDomainsMinting(selectedDomains);
-                })
-              }
+                });
+              }}
               disabled={
                 domainsMinting === selectedDomains ||
                 !address ||
-                invalidBalance ||
                 !termsBox ||
                 (emailError && needMetadata) ||
                 !areDomainSelected(selectedDomains)
@@ -447,8 +432,6 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
             >
               {!termsBox
                 ? "Please accept terms & policies"
-                : invalidBalance
-                ? `You don't have enough ${displayedCurrency}`
                 : !areDomainSelected(selectedDomains)
                 ? "Select a domain to renew"
                 : emailError && needMetadata
@@ -470,4 +453,4 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   );
 };
 
-export default RenewalDiscount;
+export default FreeRenewalDiscount;

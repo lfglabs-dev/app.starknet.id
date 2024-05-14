@@ -436,9 +436,9 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
     router.push(`/identities`);
   }
 
-  const onCurrencySwitch = (type: CurrencyType) => {
-    if (type !== CurrencyType.ETH) setLoadingPrice(true);
-    setDisplayedCurrency(type);
+  const onCurrencySwitch = (type: CurrencyType[]) => {
+    if (type[0] !== CurrencyType.ETH) setLoadingPrice(true);
+    setDisplayedCurrency(type[0]);
   };
 
   return (
@@ -498,7 +498,7 @@ const RegisterV2: FunctionComponent<RegisterV2Props> = ({ domain, groups }) => {
             renewalBox={renewalBox}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
-            displayedCurrency={displayedCurrency}
+            displayedCurrency={[displayedCurrency]}
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
           />
