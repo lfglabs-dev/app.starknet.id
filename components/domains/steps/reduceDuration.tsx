@@ -31,7 +31,7 @@ const ReduceDuration: FunctionComponent<UpsellCardProps> = ({
           </Button>
         </div>
       </div>
-      <img className={styles.image} src="/visuals/errorIlluTransparent.Webp" />
+      <img className={styles.image} src="/visuals/errorIlluTransparent.webp" />
     </div>
   );
 };
