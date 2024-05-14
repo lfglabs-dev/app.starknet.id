@@ -1,13 +1,15 @@
 import styles from "../../../styles/components/upsellCard.module.css";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import textFieldStyles from "../../../styles/components/textField.module.css";
+import { CurrencyType } from "@/utils/constants";
 
 type UpsellCardProps = {
   upsellData: Upsell;
   enabled: boolean;
   onUpsellChoice: (isUpselled: boolean) => void;
   invalidBalance: boolean;
+  displayedCurrency: CurrencyType;
 };
 
 const UpsellCard: FunctionComponent<UpsellCardProps> = ({
@@ -15,7 +17,25 @@ const UpsellCard: FunctionComponent<UpsellCardProps> = ({
   enabled,
   onUpsellChoice,
   invalidBalance,
+  displayedCurrency,
 }) => {
+  const [isUserChoice, setIsUserChoice] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsUserChoice(false);
+  }, [displayedCurrency]);
+
+  useEffect(() => {
+    if (isUserChoice) return;
+    if (enabled && invalidBalance) onUpsellChoice(false);
+    if (!enabled && !invalidBalance) onUpsellChoice(true);
+  }, [isUserChoice, invalidBalance]);
+
+  const handleUpsellChoice = () => {
+    onUpsellChoice(!enabled);
+    setIsUserChoice(true);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -28,20 +48,20 @@ const UpsellCard: FunctionComponent<UpsellCardProps> = ({
           aria-labelledby="demo-controlled-radio-buttons-group"
           name="controlled-radio-buttons-group"
           value={enabled}
-          onChange={() => onUpsellChoice(!enabled)}
+          onChange={handleUpsellChoice}
           className={styles.radioGroupContainer}
         >
           <div className={styles.radioGroup}>
             <FormControlLabel
-              value={!invalidBalance}
               control={<Radio />}
+              value={true}
               label={
                 <p className={textFieldStyles.legend}>Yes, count me in!</p>
               }
             />
             <FormControlLabel
-              value={invalidBalance}
               control={<Radio />}
+              value={false}
               label={<p className={textFieldStyles.legend}>No, thanks!</p>}
             />
           </div>

@@ -98,6 +98,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const { writeAsync: execute, data: checkoutData } = useContractWrite({
     calls: callData,
   });
+
   // Renewals
   const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
 
@@ -678,6 +679,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           enabled={formState.isUpselled}
           onUpsellChoice={onUpsellChoice}
           invalidBalance={invalidBalance}
+          displayedCurrency={displayedCurrency}
         />
       ) : null}
       <div className={styles.container}>
