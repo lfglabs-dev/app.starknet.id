@@ -95,8 +95,9 @@ const Navbar: FunctionComponent = () => {
       localStorage.setItem("SID-connectedWallet", connector.id);
       localStorage.setItem("SID-lastUsedConnector", connector.id);
     } catch (e) {
-      console.log(e);
-      connectWallet(connector);
+      // Restart the connection if there is an error except if the user has rejected the connection
+      console.error(e);
+      if (e.name !== "UserRejectedRequestError") connectWallet(connector);
     }
   };
 
