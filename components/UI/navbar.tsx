@@ -90,9 +90,14 @@ const Navbar: FunctionComponent = () => {
   }, [isConnected]);
 
   const connectWallet = async (connector: Connector) => {
-    await connectAsync({ connector });
-    localStorage.setItem("SID-connectedWallet", connector.id);
-    localStorage.setItem("SID-lastUsedConnector", connector.id);
+    try {
+      await connectAsync({ connector });
+      localStorage.setItem("SID-connectedWallet", connector.id);
+      localStorage.setItem("SID-lastUsedConnector", connector.id);
+    } catch (e) {
+      console.log(e);
+      connectWallet(connector);
+    }
   };
 
   function disconnectByClick(): void {
