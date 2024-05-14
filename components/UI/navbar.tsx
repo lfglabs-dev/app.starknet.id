@@ -64,7 +64,7 @@ const Navbar: FunctionComponent = () => {
   useEffect(() => {
     const connectToStarknet = async () => {
       const connector = getLastConnected();
-      if (connector && connector.available()) await connectAsync({ connector });
+      if (connector && connector.available()) await connectWallet(connector);
     };
     connectToStarknet();
   }, [connectAsync, connectors]);
