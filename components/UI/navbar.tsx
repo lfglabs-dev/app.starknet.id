@@ -97,7 +97,8 @@ const Navbar: FunctionComponent = () => {
     } catch (e) {
       // Restart the connection if there is an error except if the user has rejected the connection
       console.error(e);
-      if (e.name !== "UserRejectedRequestError") connectWallet(connector);
+      const error = e as Error;
+      if (error.name !== "UserRejectedRequestError") connectWallet(connector);
     }
   };
 
