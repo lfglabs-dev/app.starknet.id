@@ -38,7 +38,7 @@ import {
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
-import useAllowanceCheck from "../../hooks/useAllowanceCheck";
+import useAllowances from "../../hooks/useAllowances";
 import ConnectButton from "../UI/connectButton";
 import useBalances from "../../hooks/useBalances";
 import {
@@ -46,7 +46,6 @@ import {
   getDomainPrice,
   getDomainPriceAltcoin,
   getTokenQuote,
-  smartCurrencyChoosing,
 } from "../../utils/altcoinService";
 
 type RenewalDiscountProps = {
@@ -79,7 +78,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   const [price, setPrice] = useState<string>(priceInEth); // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
-    CurrencyType.ETH
+    CurrencyType["ALL CURRENCIES"]
   );
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
@@ -99,9 +98,8 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     useState<Record<string, boolean>>();
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
-  const needsAllowance = useAllowanceCheck(displayedCurrency, address);
+  const needsAllowance = useAllowances(address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
-  const [hasChoseCurrency, setHasChoseCurrency] = useState<boolean>(false);
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
 
   useEffect(() => {
@@ -154,7 +152,11 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
     const fetchQuote = () => {
-      if (displayedCurrency === CurrencyType.ETH) return;
+      if (
+        displayedCurrency === CurrencyType.ETH ||
+        displayedCurrency === CurrencyType["ALL CURRENCIES"]
+      )
+        return;
       getTokenQuote(ERC20Contract[displayedCurrency]).then((data) => {
         setQuoteData(data);
       });
@@ -228,24 +230,14 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     computeHashes();
   }, [email, salt, renewalBox, isSwissResident, needMetadata]);
 
-  // we choose the currency based on the user balances
+  // we ensure user has enough balance of the token selected
   useEffect(() => {
     if (
       tokenBalances &&
-      Object.keys(tokenBalances).length > 0 &&
-      !hasChoseCurrency &&
-      priceInEth
+      price &&
+      displayedCurrency &&
+      displayedCurrency != CurrencyType["ALL CURRENCIES"]
     ) {
-      smartCurrencyChoosing(tokenBalances, priceInEth).then((currency) => {
-        onCurrencySwitch(currency);
-        setHasChoseCurrency(true);
-      });
-    }
-  }, [tokenBalances, priceInEth, hasChoseCurrency]);
-
-  // we ensure user has enough balance of the token selected
-  useEffect(() => {
-    if (tokenBalances && price && displayedCurrency) {
       const tokenBalance = tokenBalances[displayedCurrency];
       if (tokenBalance && BigInt(tokenBalance) >= BigInt(price)) {
         setInvalidBalance(false);
@@ -419,6 +411,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
             displayedCurrency={displayedCurrency}
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
+            isAllCurrencyAllowed={true}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes

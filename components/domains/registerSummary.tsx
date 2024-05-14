@@ -26,6 +26,7 @@ type RegisterSummaryProps = {
   isUpselled?: boolean;
   discountedPrice?: string; // price the user will pay after discount
   discountedDuration?: number; // years the user will have the domain for after discount
+  isAllCurrencyAllowed?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -43,6 +44,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   isUpselled = false,
   discountedPrice,
   discountedDuration,
+  isAllCurrencyAllowed = false,
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
@@ -155,6 +157,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       </div>
       {isTokenDropdownDisplayed ? (
         <CurrencyDropdown
+          isAllCurrencyAllowed={isAllCurrencyAllowed}
           displayedCurrency={displayedCurrency}
           onCurrencySwitch={onCurrencySwitch}
         />

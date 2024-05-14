@@ -2,11 +2,15 @@ import { useContractRead } from "@starknet-react/core";
 import { useMulticallContract } from "./contracts";
 import { Abi, BlockTag, CairoCustomEnum, Call, RawArgs, hash } from "starknet";
 import { useEffect, useState } from "react";
-import { ERC20Contract, CurrencyType } from "../utils/constants";
+import {
+  ERC20Contract,
+  CurrencyType,
+  AutoRenewalContracts,
+} from "../utils/constants";
 import { fromUint256 } from "../utils/feltService";
 
-export default function useBalances(address?: string) {
-  const [balances, setBalances] = useState<TokenBalance>({});
+export default function useAllowances(address?: string) {
+  const [allowances, setAllowances] = useState<TokenBalance>({});
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: multicallContract } = useMulticallContract();
   const { data: erc20BalanceData, error: erc20BalanceError } = useContractRead({
@@ -19,10 +23,12 @@ export default function useBalances(address?: string) {
   });
 
   useEffect(() => {
-    const balancesCallData = () => {
-      const currencies = Object.values(ERC20Contract);
+    const allowancesCallData = () => {
+      const currencyContracts = Object.values(ERC20Contract);
+      const currencyNames = Object.values(CurrencyType);
+
       const calls: MulticallCallData[] = [];
-      currencies.forEach((currency) => {
+      currencyContracts.forEach((currency, index) => {
         calls.push({
           execution: new CairoCustomEnum({
             Static: {},
@@ -31,9 +37,14 @@ export default function useBalances(address?: string) {
             Hardcoded: currency,
           }),
           selector: new CairoCustomEnum({
-            Hardcoded: hash.getSelectorFromName("balance_of"),
+            Hardcoded: hash.getSelectorFromName("allowance"),
           }),
-          calldata: [new CairoCustomEnum({ Hardcoded: address })],
+          calldata: [
+            new CairoCustomEnum({
+              Hardcoded: AutoRenewalContracts[currencyNames[index]],
+            }), // owner
+            new CairoCustomEnum({ Hardcoded: address }), // spender
+          ],
         });
       });
       return [calls as RawArgs];
@@ -43,16 +54,16 @@ export default function useBalances(address?: string) {
       setCallData([]);
       return;
     }
-    const calldata = balancesCallData();
+    const calldata = allowancesCallData();
     setCallData(calldata as Call[]);
   }, [address]);
 
   useEffect(() => {
     if (erc20BalanceError || !erc20BalanceData) return;
-    const currencies = Object.values(CurrencyType);
+    const currencyNames = Object.values(CurrencyType);
     const balanceEntries: TokenBalance = {};
-    currencies.forEach((currency, index) => {
-      // Skip setting balances if the currency is ALL
+    currencyNames.forEach((currency, index) => {
+      // Skip setting allowances if the currency is ALL
       if (currency === CurrencyType["ALL CURRENCIES"]) {
         return; // Skip the current iteration, effectively acts like a 'continue' in a forEach loop
       }
@@ -63,8 +74,9 @@ export default function useBalances(address?: string) {
       );
       balanceEntries[currency] = balance;
     });
-    setBalances(balanceEntries);
+    setAllowances(balanceEntries);
   }, [erc20BalanceData, erc20BalanceError]);
 
-  return balances;
+  console.log("allowances: ", allowances);
+  return allowances;
 }

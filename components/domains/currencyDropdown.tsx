@@ -6,11 +6,13 @@ import { ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material";
 type CurrencyDropdownProps = {
   onCurrencySwitch: (type: CurrencyType) => void;
   displayedCurrency: CurrencyType;
+  isAllCurrencyAllowed?: boolean;
 };
 
 const CurrencyDropdown: FunctionComponent<CurrencyDropdownProps> = ({
   displayedCurrency,
   onCurrencySwitch,
+  isAllCurrencyAllowed = false,
 }) => {
   const selectStyle = {
     "& .MuiSelect-select": {
@@ -27,6 +29,7 @@ const CurrencyDropdown: FunctionComponent<CurrencyDropdownProps> = ({
       fontFamily: "Poppins-Regular",
     },
   };
+
   return (
     <div className={styles.currencySwitcher}>
       <Select
@@ -41,6 +44,12 @@ const CurrencyDropdown: FunctionComponent<CurrencyDropdownProps> = ({
         sx={selectStyle}
       >
         {Object.values(CurrencyType).map((currency) => {
+          // Check if the choice ALL CURRENCIES is allowed
+          if (
+            !isAllCurrencyAllowed &&
+            currency === CurrencyType["ALL CURRENCIES"]
+          )
+            return;
           return (
             <MenuItem key={currency} value={currency}>
               <ListItemIcon>
