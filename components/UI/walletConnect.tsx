@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Modal } from "@mui/material";
+import { Modal, useMediaQuery } from "@mui/material";
 import { Connector } from "starknetkit";
 import styles from "../../styles/components/walletConnect.module.css";
 import CloseIcon from "./iconsComponents/icons/closeIcon";
@@ -27,6 +27,12 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
     connectWallet(connector);
     closeModal();
   };
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
+  const filterConnectors = (connectors: Connector[]) => {
+    if (!isMobile) return connectors;
+    return connectors.filter((connector) => connector.id !== "argentMobile");
+  };
 
   return (
     <Modal
@@ -53,35 +59,39 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
             <span>Connect to</span>
             <p>Starknet ID</p>
           </div>
-          {sortConnectors(connectors).map((connector: Connector) => {
-            const isAvailable = connector.available();
-            return (
-              <div
-                key={connector.id}
-                className={styles.wallet}
-                onClick={
-                  isAvailable
-                    ? () => connect(connector)
-                    : () => window.open(getConnectorDiscovery(connector.id))
-                }
-              >
-                <img
-                  src={getConnectorIcon(connector.id)}
-                  className={styles.walletIcon}
-                />
-                <div className={styles.walletName}>
-                  <p>
-                    {!isAvailable ? "Install " : ""}
-                    {getConnectorName(connector.id)}
-                  </p>
-                  {connector.id === "argentWebWallet" ? (
-                    <span className={styles.legend}>Powered by Argent</span>
-                  ) : null}
+          {sortConnectors(filterConnectors(connectors)).map(
+            (connector: Connector) => {
+              const isAvailable = connector.available();
+              return (
+                <div
+                  key={connector.id}
+                  className={styles.wallet}
+                  onClick={
+                    isAvailable
+                      ? () => connect(connector)
+                      : () => window.open(getConnectorDiscovery(connector.id))
+                  }
+                >
+                  <img
+                    src={getConnectorIcon(connector.id)}
+                    className={styles.walletIcon}
+                  />
+                  <div className={styles.walletName}>
+                    <p>
+                      {!isAvailable ? "Install " : ""}
+                      {connector.id === "argentX" && isMobile
+                        ? "Argent"
+                        : getConnectorName(connector.id)}
+                    </p>
+                    {connector.id === "argentWebWallet" ? (
+                      <span className={styles.legend}>Powered by Argent</span>
+                    ) : null}
+                  </div>
+                  <div></div>
                 </div>
-                <div></div>
-              </div>
-            );
-          })}
+              );
+            }
+          )}
         </div>
       </div>
     </Modal>
