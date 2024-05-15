@@ -709,7 +709,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       for (const token of tokens) {
         for (
           let newDuration = duration;
-          newDuration > solutionFoundWithCurrentToken;
+          newDuration - 1 > solutionFoundWithCurrentToken;
           newDuration--
         ) {
           const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
