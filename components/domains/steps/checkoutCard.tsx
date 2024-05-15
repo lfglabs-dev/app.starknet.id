@@ -87,7 +87,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
     CurrencyType.ETH
   );
-  const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
+  const [loadingPrice, setLoadingPrice] = useState<boolean>(true);
   const [hasReverseAddressRecord, setHasReverseAddressRecord] =
     useState<boolean>(false);
   const [domainsMinting, setDomainsMinting] =
@@ -209,6 +209,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   useEffect(() => {
     if (tokenBalances && price && displayedCurrency && !loadingPrice) {
       const tokenBalance = tokenBalances[displayedCurrency];
+      if (!tokenBalance) return;
       const _price = formState.isUpselled ? discountedPrice : price;
       if (tokenBalance && BigInt(tokenBalance) >= BigInt(_price))
         setInvalidBalance(false);
@@ -262,7 +263,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
-    if (!priceInEth) return setLoadingPrice(false);
+    if (!priceInEth) return;
     const _price = getPriceForDuration(
       priceInEth,
       formState.isUpselled ? discount.duration : formState.duration
@@ -667,10 +668,10 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   }, [checkoutData]); // We only need registerData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
   const onCurrencySwitch = (type: CurrencyType) => {
+    setLoadingPrice(true);
     setDisplayedCurrency(type);
     setReducedDuration(0);
     setHasUserSelectedOffer(false);
-    setLoadingPrice(true);
   };
 
   const onUpsellChoice = (enable: boolean) => {
@@ -716,6 +717,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           invalidBalance={invalidBalance}
           hasUserSelectedOffer={hasUserSelectedOffer}
           setHasUserSelectedOffer={setHasUserSelectedOffer}
+          loadingPrice={loadingPrice}
         />
       ) : null}
       {invalidBalance && reducedDuration > 0 ? (
