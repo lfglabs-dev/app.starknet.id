@@ -262,7 +262,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
-    if (!priceInEth) return;
+    if (!priceInEth) return setLoadingPrice(false);
     const _price = getPriceForDuration(
       priceInEth,
       formState.isUpselled ? discount.duration : formState.duration
@@ -667,7 +667,6 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   }, [checkoutData]); // We only need registerData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
   const onCurrencySwitch = (type: CurrencyType) => {
-    if (type !== CurrencyType.ETH) setLoadingPrice(true);
     setDisplayedCurrency(type);
     setReducedDuration(0);
     setHasUserSelectedOffer(false);
