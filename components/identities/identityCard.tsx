@@ -11,7 +11,6 @@ import SocialMediaActions from "./actions/socialmediaActions";
 import { Skeleton, Tooltip, useMediaQuery } from "@mui/material";
 import Notification from "../UI/notification";
 import CalendarIcon from "../UI/iconsComponents/icons/calendarValidateIcon";
-import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
 import theme from "../../styles/theme";
 import { timestampToReadableDate } from "../../utils/dateService";
 import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
@@ -37,7 +36,6 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   onPPClick,
   ppImageUrl,
 }) => {
-  console.log("identity.domain", identity?.domain);
   const responsiveDomainOrId = identity?.domain
     ? shortenDomain(identity.domain, 25)
     : `SID: ${tokenId}`;
@@ -132,9 +130,6 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           </div>
           <div>
             <div className="flex flex-row items-center justify-center gap-5 mb-5">
-              {!isMobile ? (
-                <img src="/icons/starknet.svg" width="40px" />
-              ) : null}
               <div className="flex flex-col">
                 {identity?.targetAddress ? (
                   <>
@@ -161,9 +156,6 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                       </div>
                     </div>
                     <div className="flex flex-row items-center justify-center">
-                      {isMobile ? (
-                        <img src="/icons/starknet.svg" width="30px" />
-                      ) : null}
                       <div className={styles.starknetAddr}>
                         <h1 className={styles.domain}>
                           {responsiveDomainOrId}

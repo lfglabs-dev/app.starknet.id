@@ -1,10 +1,4 @@
-import {
-  ListItemText,
-  MenuItem,
-  Modal,
-  Select,
-  TextField,
-} from "@mui/material";
+import { Modal, TextField } from "@mui/material";
 import { useContractWrite } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { isHexString } from "../../../utils/stringService";
@@ -13,12 +7,7 @@ import Button from "../../UI/button";
 import { hexToDecimal } from "../../../utils/feltService";
 import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
-import {
-  EvmFieldsName,
-  EvmFieldsType,
-  NotificationType,
-  TransactionType,
-} from "../../../utils/constants";
+import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import { shortString } from "starknet";
@@ -37,7 +26,6 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
   const [evmAddress, setEvmAddress] = useState<string>(
     identity?.getUserDataWithField("evm-address") ?? ""
   );
-  const [field, setField] = useState<EvmFields>("evm-address");
   const { addTransaction } = useNotificationManager();
   const [isTxSent, setIsTxSent] = useState(false);
 
@@ -46,7 +34,7 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
       ? [
           identityChangeCalls.setUserData(
             identity.id,
-            shortString.encodeShortString(field),
+            shortString.encodeShortString("evm-address"),
             hexToDecimal(evmAddress)
           ),
         ]
@@ -55,11 +43,9 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
 
   useEffect(() => {
     if (!userData?.transaction_hash) return;
-    console.log("field", field);
-    console.log("evmAddress added", evmAddress);
     addTransaction({
       timestamp: Date.now(),
-      subtext: `${field} update for ${identity?.domain}`,
+      subtext: `EVM addressed updated for ${identity?.domain}`,
       type: NotificationType.TRANSACTION,
       data: {
         type: TransactionType.SET_USER_DATA,
@@ -77,13 +63,6 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
 
   function changeAddress(value: string): void {
     isHexString(value) ? setEvmAddress(value) : null;
-  }
-
-  function changeField(value: EvmFields): void {
-    setField(value);
-    const existingAddr = identity?.getUserDataWithField(value);
-    if (existingAddr) setEvmAddress(existingAddr);
-    else setEvmAddress(identity?.getUserDataWithField("evm-address") ?? "");
   }
 
   function closeModal(): void {
@@ -136,27 +115,6 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
             <p className={styles.menu_subtitle}>Add a EVM address for</p>
             <p className={styles.menu_title}>{identity?.domain}</p>
             <div className="mt-5 flex flex-col justify-center">
-              <div className="">
-                <Select
-                  fullWidth
-                  value={field}
-                  defaultValue={field}
-                  inputProps={{ MenuProps: { disableScrollLock: true } }}
-                  onChange={(e) => changeField(e.target.value as EvmFields)}
-                  style={{
-                    borderRadius: "8.983px",
-                  }}
-                  sx={selectStyle}
-                >
-                  {Object.values(EvmFieldsType).map((evmField) => {
-                    return (
-                      <MenuItem key={evmField} value={evmField}>
-                        <ListItemText primary={EvmFieldsName[evmField]} />
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-              </div>
               <div className="mt-5">
                 <TextField
                   helperText="You need to copy paste a wallet address or it won't work"
@@ -172,10 +130,7 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
               </div>
               <div className="mt-5 flex justify-center">
                 <div>
-                  <Button
-                    disabled={!evmAddress || !field}
-                    onClick={() => setUserData()}
-                  >
+                  <Button disabled={!evmAddress} onClick={() => setUserData()}>
                     Set EVM address
                   </Button>
                 </div>

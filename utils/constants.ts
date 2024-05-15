@@ -147,21 +147,3 @@ export enum FormType {
   REGISTER = "Your Registration",
   RENEW = "Your Renewal",
 }
-
-export enum EvmFieldsType {
-  EVM_ADDRESS = "evm-address",
-  ETHEREUM = "ethereum",
-  ARBITRUM = "arbitrum",
-  BASE = "base",
-  OPTIMISM = "optimism",
-  POLYGON = "polygon",
-}
-
-export enum EvmFieldsName {
-  "evm-address" = "EVM Address",
-  "ethereum" = "Ethereum",
-  "arbitrum" = "Arbitrum",
-  "base" = "Base",
-  "optimism" = "Ethereum",
-  "polygon" = "Polygon",
-}
