@@ -45,13 +45,13 @@ const ReduceDuration: FunctionComponent<UpsellCardProps> = ({
         </div>
         <div className="flex flex-wrap gap-4">
           {newDuration > 0 ? (
-            <div>
+            <div className="w-full sm:w-fit">
               <Button onClick={handleSwitchDuration}>
                 Switch to {newDuration} year{newDuration > 1 && "s"}
               </Button>
             </div>
           ) : null}
-          <div>
+          <div className="w-full sm:w-fit">
             {betterReducedDuration ? (
               <Button onClick={handleSwitchBetterDuration}>
                 Switch to {reducedDurationToken} ({betterReducedDuration} year
