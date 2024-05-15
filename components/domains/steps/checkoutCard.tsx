@@ -707,8 +707,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     );
     (async () => {
       for (const token of tokens) {
-        for (let newDuration = duration; newDuration > 0; newDuration--) {
-          if (newDuration <= solutionFoundWithCurrentToken) break;
+        for (
+          let newDuration = duration;
+          newDuration > solutionFoundWithCurrentToken;
+          newDuration--
+        ) {
           const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
           let newPrice = newPriceInEth;
           if (token !== CurrencyType.ETH) {
