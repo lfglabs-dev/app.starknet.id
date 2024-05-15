@@ -7,30 +7,18 @@ type ReduceDurationProps = {
   currentDuration: number;
   newDuration: number;
   updateFormState: ({ duration }: { duration: number }) => void;
-  reducedDurationToken: CurrencyType | null;
-  setDisplayedCurrency: (currency: CurrencyType) => void;
   displayCurrency: CurrencyType;
-  betterReducedDuration: number;
 };
 
 const ReduceDuration: FunctionComponent<ReduceDurationProps> = ({
   currentDuration,
   newDuration,
   updateFormState,
-  reducedDurationToken,
-  setDisplayedCurrency,
   displayCurrency,
-  betterReducedDuration,
 }) => {
   const handleSwitchDuration = () => {
     updateFormState({ duration: newDuration });
   };
-
-  const handleSwitchBetterDuration = () => {
-    updateFormState({ duration: betterReducedDuration });
-    if (reducedDurationToken) setDisplayedCurrency(reducedDurationToken);
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -40,26 +28,13 @@ const ReduceDuration: FunctionComponent<ReduceDurationProps> = ({
             Looks like you&apos;ve got grand plans! But it seems you don&apos;t
             have enough {displayCurrency} to grab this domain for{" "}
             {currentDuration} years. No worries, let&apos;s make it happen! How
-            about we tweak some settings to make it work?
+            about we reduce the duration to {newDuration} years?
           </p>
         </div>
-        <div>
-          {betterReducedDuration && betterReducedDuration > newDuration ? (
-            <Button onClick={handleSwitchBetterDuration}>
-              Switch to {reducedDurationToken}{" "}
-              {currentDuration === betterReducedDuration
-                ? ""
-                : `(${betterReducedDuration} year${
-                    betterReducedDuration > 1 && "s"
-                  })`}
-            </Button>
-          ) : (
-            <div className="w-full sm:w-fit">
-              <Button onClick={handleSwitchDuration}>
-                Switch to {newDuration} year{newDuration > 1 && "s"}
-              </Button>
-            </div>
-          )}
+        <div className="w-full sm:w-fit">
+          <Button onClick={handleSwitchDuration}>
+            Switch to {newDuration} year{newDuration > 1 && "s"}
+          </Button>
         </div>
       </div>
       <img className={styles.image} src="/visuals/errorIlluTransparent.webp" />
