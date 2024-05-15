@@ -100,6 +100,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     calls: callData,
   });
   const [reducedDuration, setReducedDuration] = useState<number>(0); // reduced duration for the user to buy the domain
+  const [reducedDurationToken, setReducedDurationToken] =
+    useState<CurrencyType | null>(null);
   // Renewals
   const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
 
@@ -667,6 +669,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     if (type !== CurrencyType.ETH) setLoadingPrice(true);
     setDisplayedCurrency(type);
     setReducedDuration(0);
+    setReducedDurationToken(null);
   };
 
   const onUpsellChoice = (enable: boolean) => {
@@ -677,23 +680,45 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     const duration = formState.duration;
     if (!invalidBalance || duration === 1 || !priceInEth) {
       setReducedDuration(0);
+      setReducedDurationToken(null);
       return;
     }
-    if (!priceInEth) return;
     for (let newDuration = duration - 1; newDuration > 0; newDuration--) {
       const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
-      let newPrice = priceInEth;
-      if (displayedCurrency !== CurrencyType.ETH && quoteData) {
+      let newPrice = newPriceInEth;
+      if (displayedCurrency !== CurrencyType.ETH && quoteData)
         newPrice = getDomainPriceAltcoin(quoteData.quote, newPriceInEth);
-      }
-
       const balance = tokenBalances[displayedCurrency];
       if (!balance) continue;
       if (BigInt(balance) >= BigInt(newPrice)) {
         setReducedDuration(newDuration);
-        break;
+        return;
       }
     }
+    // If we reach this point, the user doesn't have enough balance for any duration
+    // Try again but with other tokens than the displayed one
+    const tokens = Object.keys(tokenBalances).filter(
+      (token) => token !== displayedCurrency
+    );
+    (async () => {
+      for (const token of tokens) {
+        for (let newDuration = duration; newDuration > 0; newDuration--) {
+          const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
+          let newPrice = newPriceInEth;
+          if (token !== CurrencyType.ETH) {
+            const quoteData = await getTokenQuote(ERC20Contract[token]);
+            newPrice = getDomainPriceAltcoin(quoteData.quote, newPriceInEth);
+          }
+          const balance = tokenBalances[token];
+          if (!balance) continue;
+          if (BigInt(balance) >= BigInt(newPrice)) {
+            setReducedDuration(newDuration);
+            setReducedDurationToken(token as CurrencyType);
+            return;
+          }
+        }
+      }
+    })();
   }, [
     formState.duration,
     invalidBalance,
@@ -714,11 +739,14 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           onUpsellChoice={onUpsellChoice}
         />
       ) : null}
-      {invalidBalance && reducedDuration > 0 ? (
+      {reducedDuration > 0 ? (
         <ReduceDuration
           newDuration={reducedDuration}
           currentDuration={formState.duration}
           updateFormState={updateFormState}
+          reducedDurationToken={reducedDurationToken}
+          setDisplayedCurrency={setDisplayedCurrency}
+          displayCurrency={displayedCurrency}
         />
       ) : null}
       <div className={styles.container}>
