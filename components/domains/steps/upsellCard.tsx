@@ -1,15 +1,14 @@
 import styles from "../../../styles/components/upsellCard.module.css";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import textFieldStyles from "../../../styles/components/textField.module.css";
-import { CurrencyType } from "@/utils/constants";
-
 type UpsellCardProps = {
   upsellData: Upsell;
   enabled: boolean;
   onUpsellChoice: (isUpselled: boolean) => void;
   invalidBalance: boolean;
-  displayedCurrency: CurrencyType;
+  hasUserSelectedOffer: boolean;
+  setHasUserSelectedOffer: (hasUserSelectedOffer: boolean) => void;
 };
 
 const UpsellCard: FunctionComponent<UpsellCardProps> = ({
@@ -17,23 +16,21 @@ const UpsellCard: FunctionComponent<UpsellCardProps> = ({
   enabled,
   onUpsellChoice,
   invalidBalance,
-  displayedCurrency,
+  hasUserSelectedOffer,
+  setHasUserSelectedOffer,
 }) => {
-  const [isUserChoice, setIsUserChoice] = useState<boolean>(false);
-
   useEffect(() => {
-    setIsUserChoice(false);
-  }, [displayedCurrency]);
-
-  useEffect(() => {
-    if (isUserChoice) return;
-    if (enabled && invalidBalance) onUpsellChoice(false);
+    if (hasUserSelectedOffer) return;
+    if (enabled && invalidBalance) {
+      onUpsellChoice(false);
+      setHasUserSelectedOffer(true);
+    }
     if (!enabled && !invalidBalance) onUpsellChoice(true);
-  }, [isUserChoice, invalidBalance]);
+  }, [hasUserSelectedOffer, invalidBalance, enabled]);
 
   const handleUpsellChoice = () => {
     onUpsellChoice(!enabled);
-    setIsUserChoice(true);
+    setHasUserSelectedOffer(true);
   };
 
   return (
