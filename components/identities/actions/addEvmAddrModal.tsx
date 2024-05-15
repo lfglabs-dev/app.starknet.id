@@ -13,7 +13,7 @@ import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import { shortString } from "starknet";
 
 type AddEvmAddrModalProps = {
-  handleClose: () => void;
+  handleClose: (showNotif: boolean) => void;
   isModalOpen: boolean;
   identity?: Identity;
 };
@@ -106,9 +106,9 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
     }
   }
 
-  function closeModal(): void {
+  function closeModal(showNotif: boolean): void {
     setIsTxSent(false);
-    handleClose();
+    handleClose(showNotif);
   }
 
   return (
@@ -122,12 +122,15 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
       <>
         {isTxSent ? (
           <ConfirmationTx
-            closeModal={closeModal}
+            closeModal={() => closeModal(true)}
             txHash={userData?.transaction_hash}
           />
         ) : (
           <div className={styles.menu}>
-            <button className={styles.menu_close} onClick={closeModal}>
+            <button
+              className={styles.menu_close}
+              onClick={() => closeModal(false)}
+            >
               <svg viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"

@@ -2,6 +2,7 @@ import React, { FunctionComponent, useState } from "react";
 import styles from "../../styles/components/identityCard.module.css";
 import {
   convertNumberToFixedLengthString,
+  getDomainWithoutStark,
   getEnsFromStark,
   minifyAddress,
   shortenDomain,
@@ -58,12 +59,14 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   const handleMouseEnter = debounce(() => setIsHovered(true), 50);
   const handleMouseLeave = debounce(() => setIsHovered(false), 50);
 
-  const closeModal = () => {
-    setAddrAdded(true);
+  const closeModal = (showNotif: boolean) => {
     setOpenModal(false);
-    setTimeout(() => {
-      setAddrAdded(false);
-    }, 1500);
+    if (showNotif) {
+      setAddrAdded(true);
+      setTimeout(() => {
+        setAddrAdded(false);
+      }, 1500);
+    }
   };
 
   return (
@@ -182,8 +185,25 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                   onClick={() => setOpenModal(true)}
                 >
                   <img className={styles.evmIcon} src="/icons/ens.svg" />
-                  <h2>{getEnsFromStark(identity.domain)}</h2>
-                  <EditIcon width="16" color={theme.palette.secondary.main} />
+                  <h2
+                    onClick={() =>
+                      window.open(
+                        `https://app.ens.domains/${getDomainWithoutStark(
+                          identity?.domain
+                        )}.snid.eth`
+                      )
+                    }
+                  >
+                    {getEnsFromStark(identity.domain)}
+                  </h2>
+                  <Tooltip title="Edit" arrow>
+                    <div>
+                      <EditIcon
+                        width="16"
+                        color={theme.palette.secondary.main}
+                      />
+                    </div>
+                  </Tooltip>
                 </div>
               ) : (
                 <div
@@ -242,7 +262,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
       </div>
 
       <AddEvmAddrModal
-        handleClose={closeModal}
+        handleClose={(showNotif) => closeModal(showNotif)}
         isModalOpen={openModal}
         identity={identity}
       />
