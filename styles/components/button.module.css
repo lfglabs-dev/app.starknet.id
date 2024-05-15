@@ -74,6 +74,10 @@
   background: var(--primary600);
 }
 
+.primary:disabled:hover {
+  background: #cdcccc;
+}
+
 /* white */
 .white {
   color: var(--dark-content);
