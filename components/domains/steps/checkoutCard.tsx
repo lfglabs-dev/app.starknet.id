@@ -766,17 +766,6 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           betterReducedDuration={betterReducedDuration}
         />
       ) : null}
-      {invalidBalance && (reducedDuration > 0 || betterReducedDuration > 0) ? (
-        <ReduceDuration
-          newDuration={reducedDuration}
-          currentDuration={formState.duration}
-          updateFormState={updateFormState}
-          reducedDurationToken={reducedDurationToken}
-          setDisplayedCurrency={setDisplayedCurrency}
-          displayCurrency={displayedCurrency}
-          betterReducedDuration={betterReducedDuration}
-        />
-      ) : null}
       <div className={styles.container}>
         <div className={styles.checkout}>
           <RegisterSummary

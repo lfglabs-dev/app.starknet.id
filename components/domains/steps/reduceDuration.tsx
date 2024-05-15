@@ -40,14 +40,18 @@ const ReduceDuration: FunctionComponent<ReduceDurationProps> = ({
             Looks like you&apos;ve got grand plans! But it seems you don&apos;t
             have enough {displayCurrency} to grab this domain for{" "}
             {currentDuration} years. No worries, let&apos;s make it happen! How
-            about we go for a shorter period instead?
+            about we tweak some settings to make it work?
           </p>
         </div>
         <div>
           {betterReducedDuration && betterReducedDuration > newDuration ? (
             <Button onClick={handleSwitchBetterDuration}>
-              Switch to {reducedDurationToken} ({betterReducedDuration} year
-              {betterReducedDuration > 1 && "s"})
+              Switch to {reducedDurationToken}{" "}
+              {currentDuration === betterReducedDuration
+                ? ""
+                : `(${betterReducedDuration} year${
+                    betterReducedDuration > 1 && "s"
+                  })`}
             </Button>
           ) : (
             <div className="w-full sm:w-fit">
