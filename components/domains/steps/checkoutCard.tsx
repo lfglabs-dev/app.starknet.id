@@ -102,6 +102,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const [reducedDuration, setReducedDuration] = useState<number>(0); // reduced duration for the user to buy the domain
   const [reducedDurationToken, setReducedDurationToken] =
     useState<CurrencyType | null>(null);
+  const [betterReducedDuration, setBetterReducedDuration] = useState<number>(0);
   // Renewals
   const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
 
@@ -670,6 +671,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     setDisplayedCurrency(type);
     setReducedDuration(0);
     setReducedDurationToken(null);
+    setBetterReducedDuration(0);
   };
 
   const onUpsellChoice = (enable: boolean) => {
@@ -678,11 +680,13 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   useEffect(() => {
     const duration = formState.duration;
-    if (!invalidBalance || duration === 1 || !priceInEth) {
+    if (!invalidBalance || !priceInEth) {
       setReducedDuration(0);
       setReducedDurationToken(null);
+      setBetterReducedDuration(0);
       return;
     }
+    let solutionFoundWithCurrentToken = 0;
     for (let newDuration = duration - 1; newDuration > 0; newDuration--) {
       const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
       let newPrice = newPriceInEth;
@@ -692,7 +696,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       if (!balance) continue;
       if (BigInt(balance) >= BigInt(newPrice)) {
         setReducedDuration(newDuration);
-        return;
+        solutionFoundWithCurrentToken = newDuration;
+        break;
       }
     }
     // If we reach this point, the user doesn't have enough balance for any duration
@@ -703,6 +708,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     (async () => {
       for (const token of tokens) {
         for (let newDuration = duration; newDuration > 0; newDuration--) {
+          if (newDuration <= solutionFoundWithCurrentToken) break;
           const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
           let newPrice = newPriceInEth;
           if (token !== CurrencyType.ETH) {
@@ -712,7 +718,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           const balance = tokenBalances[token];
           if (!balance) continue;
           if (BigInt(balance) >= BigInt(newPrice)) {
-            setReducedDuration(newDuration);
+            setBetterReducedDuration(newDuration);
             setReducedDurationToken(token as CurrencyType);
             return;
           }
@@ -739,7 +745,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           onUpsellChoice={onUpsellChoice}
         />
       ) : null}
-      {reducedDuration > 0 ? (
+      {invalidBalance && (reducedDuration > 0 || betterReducedDuration > 0) ? (
         <ReduceDuration
           newDuration={reducedDuration}
           currentDuration={formState.duration}
@@ -747,6 +753,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           reducedDurationToken={reducedDurationToken}
           setDisplayedCurrency={setDisplayedCurrency}
           displayCurrency={displayedCurrency}
+          betterReducedDuration={betterReducedDuration}
         />
       ) : null}
       <div className={styles.container}>

@@ -10,6 +10,7 @@ type UpsellCardProps = {
   reducedDurationToken: CurrencyType | null;
   setDisplayedCurrency: (currency: CurrencyType) => void;
   displayCurrency: CurrencyType;
+  betterReducedDuration: number;
 };
 
 const ReduceDuration: FunctionComponent<UpsellCardProps> = ({
@@ -19,42 +20,45 @@ const ReduceDuration: FunctionComponent<UpsellCardProps> = ({
   reducedDurationToken,
   setDisplayedCurrency,
   displayCurrency,
+  betterReducedDuration,
 }) => {
   const handleSwitchDuration = () => {
     updateFormState({ duration: newDuration });
+  };
+
+  const handleSwitchBetterDuration = () => {
+    updateFormState({ duration: betterReducedDuration });
     if (reducedDurationToken) setDisplayedCurrency(reducedDurationToken);
   };
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <div className="flex flex-col items-start gap-1 self-stretch">
           <p className={styles.title}>Dreaming Big? </p>
-          {currentDuration !== newDuration ? (
-            <p className={styles.desc}>
-              Looks like you&apos;ve got grand plans! But it seems you
-              don&apos;t have enough tokens to grab this domain for{" "}
-              {currentDuration} years. No worries, let&apos;s make it happen!
-              How about we go for a shorter period instead?
-            </p>
-          ) : (
-            <p className={styles.desc}>
-              Looks like you&apos;ve got grand plans! But it seems you
-              don&apos;t have enough {displayCurrency} to grab this domain. No
-              worries, let&apos;s make it happen!
-            </p>
-          )}
+          <p className={styles.desc}>
+            Looks like you&apos;ve got grand plans! But it seems you don&apos;t
+            have enough {displayCurrency} to grab this domain for{" "}
+            {currentDuration} years. No worries, let&apos;s make it happen! How
+            about we go for a shorter period instead?
+          </p>
         </div>
-        <div>
-          <Button onClick={handleSwitchDuration}>
-            {currentDuration !== newDuration ? (
-              <>
-                Switch to {newDuration} year{newDuration > 1 && "s"}{" "}
-                {reducedDurationToken ? `(${reducedDurationToken})` : ""}
-              </>
-            ) : (
-              <>Switch to {reducedDurationToken}</>
-            )}
-          </Button>
+        <div className="flex flex-wrap gap-4">
+          {newDuration > 0 ? (
+            <div>
+              <Button onClick={handleSwitchDuration}>
+                Switch to {newDuration} year{newDuration > 1 && "s"}
+              </Button>
+            </div>
+          ) : null}
+          <div>
+            {betterReducedDuration ? (
+              <Button onClick={handleSwitchBetterDuration}>
+                Switch to {reducedDurationToken} ({betterReducedDuration} year
+                {betterReducedDuration > 1 && "s"})
+              </Button>
+            ) : null}
+          </div>
         </div>
       </div>
       <img className={styles.image} src="/visuals/errorIlluTransparent.webp" />
