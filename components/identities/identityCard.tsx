@@ -2,6 +2,7 @@ import React, { FunctionComponent, useState } from "react";
 import styles from "../../styles/components/identityCard.module.css";
 import {
   convertNumberToFixedLengthString,
+  getEnsFromStark,
   minifyAddress,
   shortenDomain,
 } from "../../utils/stringService";
@@ -18,6 +19,8 @@ import CopyIcon from "../UI/iconsComponents/icons/copyIcon";
 import EditIcon from "../UI/iconsComponents/icons/editIcon";
 import { debounce } from "../../utils/debounceService";
 import { Identity } from "../../utils/apiWrappers/identity";
+import PlusIcon from "../UI/iconsComponents/icons/plusIcon";
+import AddEvmAddrModal from "./actions/addEvmAddrModal";
 
 type IdentityCardProps = {
   identity?: Identity;
@@ -34,18 +37,21 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   onPPClick,
   ppImageUrl,
 }) => {
+  console.log("identity.domain", identity?.domain);
   const responsiveDomainOrId = identity?.domain
     ? shortenDomain(identity.domain, 25)
     : `SID: ${tokenId}`;
   const [copied, setCopied] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const isMobile = useMediaQuery("(max-width:425px)");
+  const evmAddress = identity?.getUserDataWithField("evm-address") ?? undefined;
+  const [openModal, setOpenModal] = useState(false);
+  const [addrAdded, setAddrAdded] = useState(false);
+  const isMobile = useMediaQuery("(max-width:1124px)");
 
-  const copyToClipboard = () => {
-    // if not addr, returns early
-    if (!identity?.targetAddress) return;
+  const copyToClipboard = (copiedAddr: string | undefined) => {
+    if (!copiedAddr) return;
     setCopied(true);
-    navigator.clipboard.writeText(identity.targetAddress);
+    navigator.clipboard.writeText(copiedAddr);
     setTimeout(() => {
       setCopied(false);
     }, 1500);
@@ -53,6 +59,14 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
 
   const handleMouseEnter = debounce(() => setIsHovered(true), 50);
   const handleMouseLeave = debounce(() => setIsHovered(false), 50);
+
+  const closeModal = () => {
+    setAddrAdded(true);
+    setOpenModal(false);
+    setTimeout(() => {
+      setAddrAdded(false);
+    }, 1500);
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -117,41 +131,74 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
             ) : null}
           </div>
           <div>
-            <div className="flex flex-row items-center justify-center">
-              <h1 className={styles.domain}>{responsiveDomainOrId}</h1>
-              {identity && identity.isMain && (
-                <div className="ml-2">
-                  <MainIcon
-                    width="30"
-                    firstColor={theme.palette.primary.main}
-                    secondColor={theme.palette.primary.main}
-                  />
-                </div>
-              )}
+            <div className="flex flex-row items-center justify-center gap-5 mb-5">
+              {!isMobile ? <StarknetIcon width="40px" color="" /> : null}
+              <div className="flex flex-col">
+                {identity?.targetAddress ? (
+                  <>
+                    <div className={styles.addressBar}>
+                      <h2>{minifyAddress(identity.targetAddress)}</h2>
+                      <div className="cursor-pointer ml-3">
+                        {!copied ? (
+                          <Tooltip title="Copy" arrow>
+                            <div
+                              className={styles.contentCopy}
+                              onClick={() =>
+                                copyToClipboard(identity?.targetAddress)
+                              }
+                            >
+                              <CopyIcon width="20" color={"currentColor"} />
+                            </div>
+                          </Tooltip>
+                        ) : (
+                          <DoneIcon
+                            color={theme.palette.primary.main}
+                            width="20"
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-row items-center justify-center">
+                      {isMobile ? <StarknetIcon width="30px" color="" /> : null}
+                      <div className={styles.starknetAddr}>
+                        <h1 className={styles.domain}>
+                          {responsiveDomainOrId}
+                        </h1>
+                        {identity && identity.isMain && (
+                          <div className="ml-2">
+                            <MainIcon
+                              width="20"
+                              firstColor={theme.palette.primary.main}
+                              secondColor={theme.palette.primary.main}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : null}
+              </div>
             </div>
-            {identity?.targetAddress ? (
-              <>
-                <div className={styles.addressBar}>
-                  <StarknetIcon width="32px" color="" />
-                  <h2 className="ml-3 text-xl">
-                    {minifyAddress(identity.targetAddress)}
-                  </h2>
-                  <div className="cursor-pointer ml-3">
-                    {!copied ? (
-                      <Tooltip title="Copy" arrow>
-                        <div
-                          className={styles.contentCopy}
-                          onClick={() => copyToClipboard()}
-                        >
-                          <CopyIcon width="25" color={"currentColor"} />
-                        </div>
-                      </Tooltip>
-                    ) : (
-                      <DoneIcon color={theme.palette.primary.main} width="25" />
-                    )}
-                  </div>
+            {identity?.domain ? (
+              evmAddress ? (
+                <div
+                  className={styles.evmAddr}
+                  onClick={() => setOpenModal(true)}
+                >
+                  <img className={styles.evmIcon} src="/icons/ens.svg" />
+                  <h2>{getEnsFromStark(identity.domain)}</h2>
+                  <EditIcon width="16" color={theme.palette.secondary.main} />
                 </div>
-              </>
+              ) : (
+                <div
+                  className={styles.evmAddrBtn}
+                  onClick={() => setOpenModal(true)}
+                >
+                  <img className={styles.evmIcon} src="/icons/ens.svg" />
+                  <h2>Add EVM address</h2>
+                  <PlusIcon width="12" color={theme.palette.secondary.main} />
+                </div>
+              )
             ) : null}
             <div className=" lg:mt-6 mt-2 flex lg:justify-start justify-center lg:items-start items-center">
               <div className={styles.socialmediaActions}>
@@ -198,8 +245,17 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
         </svg>
       </div>
 
+      <AddEvmAddrModal
+        handleClose={closeModal}
+        isModalOpen={openModal}
+        identity={identity}
+      />
+
       <Notification visible={copied} severity="success">
         <>&nbsp;Address copied !</>
+      </Notification>
+      <Notification visible={addrAdded} severity="success">
+        <>&nbsp;Your address was added!</>
       </Notification>
     </div>
   );

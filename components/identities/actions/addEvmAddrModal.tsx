@@ -7,8 +7,8 @@ import {
 } from "@mui/material";
 import { useContractWrite } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { formatHexString, isHexString } from "../../../utils/stringService";
-import styles from "../../../styles/components/modalMessage.module.css";
+import { isHexString } from "../../../utils/stringService";
+import styles from "../../../styles/components/evmModalMessage.module.css";
 import Button from "../../UI/button";
 import { hexToDecimal } from "../../../utils/feltService";
 import ConfirmationTx from "../../UI/confirmationTx";
@@ -23,19 +23,19 @@ import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import { shortString } from "starknet";
 
-type AddUserDataModalProps = {
+type AddEvmAddrModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
   identity?: Identity;
 };
 
-const AddUserDataModal: FunctionComponent<AddUserDataModalProps> = ({
+const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
   handleClose,
   isModalOpen,
   identity,
 }) => {
   const [evmAddress, setEvmAddress] = useState<string>(
-    getUserData("evm-address") ?? ""
+    identity?.getUserDataWithField("evm-address") ?? ""
   );
   const [field, setField] = useState<EvmFields>("evm-address");
   const { addTransaction } = useNotificationManager();
@@ -55,6 +55,8 @@ const AddUserDataModal: FunctionComponent<AddUserDataModalProps> = ({
 
   useEffect(() => {
     if (!userData?.transaction_hash) return;
+    console.log("field", field);
+    console.log("evmAddress added", evmAddress);
     addTransaction({
       timestamp: Date.now(),
       subtext: `${field} update for ${identity?.domain}`,
@@ -79,17 +81,9 @@ const AddUserDataModal: FunctionComponent<AddUserDataModalProps> = ({
 
   function changeField(value: EvmFields): void {
     setField(value);
-    const existingAddr = getUserData(value);
+    const existingAddr = identity?.getUserDataWithField(value);
     if (existingAddr) setEvmAddress(existingAddr);
-    else setEvmAddress(getUserData("evm-address") ?? "");
-  }
-
-  function getUserData(value: string): string | undefined {
-    const data = identity?.getUserData(
-      formatHexString(shortString.encodeShortString(value))
-    );
-    if (!data) return;
-    return "0x" + data.slice(2).replace(/^0+/, "");
+    else setEvmAddress(identity?.getUserDataWithField("evm-address") ?? "");
   }
 
   function closeModal(): void {
@@ -102,7 +96,7 @@ const AddUserDataModal: FunctionComponent<AddUserDataModalProps> = ({
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      padding: "8px 16px",
+      padding: "12px 16px",
       gap: "8px",
     },
     "& .MuiListItemIcon-root": {
@@ -139,23 +133,10 @@ const AddUserDataModal: FunctionComponent<AddUserDataModalProps> = ({
                 ></path>
               </svg>
             </button>
-            <p className={styles.menu_title}>
-              Add a EVM address for {identity?.domain}
-            </p>
+            <p className={styles.menu_subtitle}>Add a EVM address for</p>
+            <p className={styles.menu_title}>{identity?.domain}</p>
             <div className="mt-5 flex flex-col justify-center">
-              <p>
-                You can add an EVM address which will resolve{" "}
-                <strong>
-                  {identity?.domain?.replace(".stark", ".starknetid.eth")}
-                </strong>{" "}
-                to this address. You can specify one address for all EVM
-                networks. Or specify a specific address for each network.
-              </p>
-              <p className="mt-1">
-                If not specific network is specified the{" "}
-                <strong>evm-address</strong> field will be used.
-              </p>
-              <div className="mt-5">
+              <div className="">
                 <Select
                   fullWidth
                   value={field}
@@ -190,12 +171,32 @@ const AddUserDataModal: FunctionComponent<AddUserDataModalProps> = ({
                 />
               </div>
               <div className="mt-5 flex justify-center">
-                <Button
-                  disabled={!evmAddress || !field}
-                  onClick={() => setUserData()}
-                >
-                  Set EVM address
-                </Button>
+                <div>
+                  <Button
+                    disabled={!evmAddress || !field}
+                    onClick={() => setUserData()}
+                  >
+                    Set EVM address
+                  </Button>
+                </div>
+              </div>
+              <div className={styles.infoCard}>
+                <div>
+                  <h3 className={styles.cardTitle}>
+                    Why Add an EVM Address to Your Starknet Domain?
+                  </h3>
+                  <p className={styles.cardDesc}>
+                    By adding an EVM address to your Starknet domain, you
+                    enhance its functionality and connectivity. Your Starknet
+                    domain automatically comes with an associated ENS subdomain,
+                    simplifying ENS management. Configure your EVM address in
+                    your preferred wallet for seamless integration.
+                  </p>
+                </div>
+                <img
+                  src="/visuals/ecosystemMap.webp"
+                  className={styles.cardImg}
+                />
               </div>
             </div>
           </div>
@@ -205,4 +206,4 @@ const AddUserDataModal: FunctionComponent<AddUserDataModalProps> = ({
   );
 };
 
-export default AddUserDataModal;
+export default AddEvmAddrModal;

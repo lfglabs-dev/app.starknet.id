@@ -27,7 +27,6 @@ import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
-import AddUserDataModal from "./addUserDataModal";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -46,7 +45,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 }) => {
   const [isAddressFormOpen, setIsAddressFormOpen] = useState<boolean>(false);
   const [isTransferFormOpen, setIsTransferFormOpen] = useState<boolean>(false);
-  const [isUserDataFormOpen, setIsUserDataFormOpen] = useState<boolean>(false);
   const [isSubdomainFormOpen, setIsSubdomainFormOpen] =
     useState<boolean>(false);
   const { address } = useAccount();
@@ -288,19 +286,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 }
                 onClick={() => setIsAddressFormOpen(true)}
               />
-              {identity?.domain ? (
-                <ClickableAction
-                  title="ADD EVM ADDRESS"
-                  description="Add your EVM address to this domain"
-                  icon={
-                    <SignsIcon
-                      width="25"
-                      color={theme.palette.secondary.main}
-                    />
-                  }
-                  onClick={() => setIsUserDataFormOpen(true)}
-                />
-              ) : null}
 
               {viewMoreClicked ? (
                 <>
@@ -377,11 +362,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           isTxModalOpen={isTxModalOpen}
           closeModal={() => setIsTxModalOpen(false)}
           title="Your Transaction is on it's way !"
-        />
-        <AddUserDataModal
-          handleClose={() => setIsUserDataFormOpen(false)}
-          isModalOpen={isUserDataFormOpen}
-          identity={identity}
         />
       </>
     </div>

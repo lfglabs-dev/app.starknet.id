@@ -327,3 +327,11 @@ export function generateSuggestedNames(name: string): string[] {
   }
   return suggestedNames;
 }
+
+export function getEnsFromStark(
+  domain?: string,
+  characterToBreak: number = 25
+): string {
+  if (!domain) return "";
+  return shortenDomain(domain.replace(".stark", ".snid.eth"), characterToBreak);
+}

@@ -1,3 +1,4 @@
+import { shortString } from "starknet";
 import { fromUint256, hexToDecimal } from "../feltService";
 import { formatHexString, getImgUrl } from "../stringService";
 import {
@@ -205,5 +206,13 @@ export class Identity {
     } catch (error) {
       return identiconsUrl;
     }
+  }
+
+  getUserDataWithField(field: string): string | undefined {
+    const data = this.getUserData(
+      formatHexString(shortString.encodeShortString(field))
+    );
+    if (!data) return;
+    return "0x" + data.slice(2).replace(/^0+/, "");
   }
 }
