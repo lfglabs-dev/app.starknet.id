@@ -81,6 +81,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const mainDomain = useDomainFromAddress(address ?? "");
   const [mainDomainBox, setMainDomainBox] = useState<boolean>(true);
   const [sponsor, setSponsor] = useState<string>("0");
+  const [hasUserSelectedOffer, setHasUserSelectedOffer] =
+    useState<boolean>(false);
   const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
     CurrencyType.ETH
   );
@@ -98,6 +100,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const { writeAsync: execute, data: checkoutData } = useContractWrite({
     calls: callData,
   });
+
   // Renewals
   const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
 
@@ -202,14 +205,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
-    if (tokenBalances && price && displayedCurrency) {
+    if (tokenBalances && price && displayedCurrency && !loadingPrice) {
       const tokenBalance = tokenBalances[displayedCurrency];
       const _price = formState.isUpselled ? discountedPrice : price;
-      if (tokenBalance && BigInt(tokenBalance) >= BigInt(_price)) {
+      if (tokenBalance && BigInt(tokenBalance) >= BigInt(_price))
         setInvalidBalance(false);
-      } else {
-        setInvalidBalance(true);
-      }
+      else setInvalidBalance(true);
     }
   }, [
     price,
@@ -217,6 +218,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     formState.isUpselled,
     displayedCurrency,
     tokenBalances,
+    loadingPrice,
   ]);
 
   useEffect(() => {
@@ -267,14 +269,15 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       setPrice(_price);
     } else if (quoteData) {
       setPrice(getDomainPriceAltcoin(quoteData.quote, _price));
-      setLoadingPrice(false);
     }
+    setLoadingPrice(false);
   }, [
     priceInEth,
     quoteData,
     displayedCurrency,
     formState.isUpselled,
     formState.duration,
+    discount.duration,
   ]);
 
   useEffect(() => {
@@ -664,6 +667,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const onCurrencySwitch = (type: CurrencyType) => {
     if (type !== CurrencyType.ETH) setLoadingPrice(true);
     setDisplayedCurrency(type);
+    setHasUserSelectedOffer(false);
+    setLoadingPrice(true);
   };
 
   const onUpsellChoice = (enable: boolean) => {
@@ -677,6 +682,9 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           upsellData={discount as Upsell}
           enabled={formState.isUpselled}
           onUpsellChoice={onUpsellChoice}
+          invalidBalance={invalidBalance}
+          hasUserSelectedOffer={hasUserSelectedOffer}
+          setHasUserSelectedOffer={setHasUserSelectedOffer}
         />
       ) : null}
       <div className={styles.container}>
