@@ -700,18 +700,17 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         break;
       }
     }
-    // If we reach this point, the user doesn't have enough balance for any duration
-    // Try again but with other tokens than the displayed one
+    // We search if a better solution exists with another token
     const tokens = Object.keys(tokenBalances).filter(
       (token) => token !== displayedCurrency
     );
     (async () => {
-      for (const token of tokens) {
-        for (
-          let newDuration = duration;
-          newDuration > solutionFoundWithCurrentToken;
-          newDuration--
-        ) {
+      for (
+        let newDuration = duration;
+        newDuration > solutionFoundWithCurrentToken;
+        newDuration--
+      ) {
+        for (const token of tokens) {
           const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
           let newPrice = newPriceInEth;
           if (token !== CurrencyType.ETH) {

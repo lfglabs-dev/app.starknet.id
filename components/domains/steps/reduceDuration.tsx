@@ -3,7 +3,7 @@ import styles from "../../../styles/components/upsellCard.module.css";
 import React, { FunctionComponent } from "react";
 import { CurrencyType } from "@/utils/constants";
 
-type UpsellCardProps = {
+type ReduceDurationProps = {
   currentDuration: number;
   newDuration: number;
   updateFormState: ({ duration }: { duration: number }) => void;
@@ -13,7 +13,7 @@ type UpsellCardProps = {
   betterReducedDuration: number;
 };
 
-const ReduceDuration: FunctionComponent<UpsellCardProps> = ({
+const ReduceDuration: FunctionComponent<ReduceDurationProps> = ({
   currentDuration,
   newDuration,
   updateFormState,
