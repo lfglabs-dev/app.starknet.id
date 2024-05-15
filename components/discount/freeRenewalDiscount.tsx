@@ -257,7 +257,7 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
       const calls = [
         ...registrationCalls.multiCallFreeRenewals(
           selectedDomainsToEncodedArray(selectedDomains),
-          AutoRenewalContracts[0] // By Default we use ETH AR contract
+          AutoRenewalContracts[displayedCurrencies[0]] // If we have multiple currencies, we use the first one (which is ETH)
         ),
       ];
 
@@ -300,8 +300,6 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
           }
         });
       });
-
-      console.log("calls", calls);
       setCallData(calls);
     }
   }, [
@@ -341,6 +339,7 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
 
     if (isCurrencyETH) {
       setPrice(priceInEth);
+      setLoadingPrice(false);
     } else if (quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
       setPrice(priceInAltcoin);
@@ -349,11 +348,6 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
   }, [priceInEth, quoteData, displayedCurrencies]);
 
   const onCurrencySwitch = (currency: CurrencyType[]) => {
-    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
-      CurrencyType.ETH,
-    ]);
-
-    if (!isCurrencyETH) setLoadingPrice(true);
     setDisplayedCurrencies(currency as CurrencyType[]);
   };
 
@@ -417,7 +411,6 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
           {address ? (
             <Button
               onClick={() => {
-                console.log("callData", callData);
                 execute().then(() => {
                   setDomainsMinting(selectedDomains);
                 });
