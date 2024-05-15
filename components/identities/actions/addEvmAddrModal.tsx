@@ -23,22 +23,26 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
   isModalOpen,
   identity,
 }) => {
-  const [evmAddress, setEvmAddress] = useState<string>(
-    identity?.getUserDataWithField("evm-address") ?? ""
+  const [evmAddress, setEvmAddress] = useState<string | undefined>(
+    identity?.getUserDataWithField("evm-address")
   );
+  const [fieldInput, setFieldInput] = useState<string>(evmAddress ?? "");
   const { addTransaction } = useNotificationManager();
   const [isTxSent, setIsTxSent] = useState(false);
+  const [isValid, setIsValid] = useState(true);
+  const [message, setMessage] = useState<string | undefined>(undefined);
 
   const { writeAsync: set_user_data, data: userData } = useContractWrite({
-    calls: identity
-      ? [
-          identityChangeCalls.setUserData(
-            identity.id,
-            shortString.encodeShortString("evm-address"),
-            hexToDecimal(evmAddress)
-          ),
-        ]
-      : [],
+    calls:
+      identity && isValid
+        ? [
+            identityChangeCalls.setUserData(
+              identity.id,
+              shortString.encodeShortString("evm-address"),
+              hexToDecimal(evmAddress)
+            ),
+          ]
+        : [],
   });
 
   useEffect(() => {
@@ -62,29 +66,50 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
   }
 
   function changeAddress(value: string): void {
-    isHexString(value) ? setEvmAddress(value) : null;
+    setFieldInput(value);
+    isValidAddress(value);
+  }
+
+  function isValidAddress(addressOrName: string): void {
+    if (addressOrName.endsWith(".eth")) {
+      // we fetch the address from ENS
+      fetch(`https://enstate.rs/n/${addressOrName}`)
+        .then((res) => {
+          res.json().then((data) => {
+            console.log(data);
+            if (data.address) {
+              setEvmAddress(data.address);
+              setMessage(`Resolving to ${data.address}`);
+              setIsValid(true);
+            } else {
+              setEvmAddress(undefined);
+              setMessage("Invalid ENS name");
+              setIsValid(false);
+            }
+          });
+        })
+        .catch(() => {
+          setEvmAddress(undefined);
+          setIsValid(false);
+          setMessage("ENS name not found");
+        });
+    } else {
+      if (isHexString(addressOrName)) {
+        setEvmAddress(addressOrName);
+        setIsValid(true);
+        setMessage(undefined);
+      } else {
+        setEvmAddress(undefined);
+        setIsValid(false);
+        setMessage("Invalid address");
+      }
+    }
   }
 
   function closeModal(): void {
     setIsTxSent(false);
     handleClose();
   }
-
-  const selectStyle = {
-    "& .MuiSelect-select": {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      padding: "12px 16px",
-      gap: "8px",
-    },
-    "& .MuiListItemIcon-root": {
-      minWidth: "24px",
-    },
-    "& .css-10hburv-MuiTypography-root": {
-      fontFamily: "Poppins-Regular",
-    },
-  };
 
   return (
     <Modal
@@ -117,20 +142,26 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
             <div className="mt-5 flex flex-col justify-center">
               <div className="mt-5">
                 <TextField
-                  helperText="You need to copy paste a wallet address or it won't work"
+                  helperText={
+                    message ?? "Add your EVM address or your ENS name"
+                  }
                   fullWidth
                   label="new address"
                   id="outlined-basic"
-                  value={evmAddress}
+                  value={fieldInput ?? ""}
                   variant="outlined"
                   onChange={(e) => changeAddress(e.target.value)}
                   color="secondary"
                   required
+                  error={!isValid}
                 />
               </div>
               <div className="mt-5 flex justify-center">
                 <div>
-                  <Button disabled={!evmAddress} onClick={() => setUserData()}>
+                  <Button
+                    disabled={!evmAddress || !isValid}
+                    onClick={() => setUserData()}
+                  >
                     Set EVM address
                   </Button>
                 </div>
