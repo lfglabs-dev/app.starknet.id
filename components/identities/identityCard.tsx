@@ -132,7 +132,9 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           </div>
           <div>
             <div className="flex flex-row items-center justify-center gap-5 mb-5">
-              {!isMobile ? <StarknetIcon width="40px" color="" /> : null}
+              {!isMobile ? (
+                <img src="/icons/starknet.svg" width="40px" />
+              ) : null}
               <div className="flex flex-col">
                 {identity?.targetAddress ? (
                   <>
@@ -159,7 +161,9 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                       </div>
                     </div>
                     <div className="flex flex-row items-center justify-center">
-                      {isMobile ? <StarknetIcon width="30px" color="" /> : null}
+                      {isMobile ? (
+                        <img src="/icons/starknet.svg" width="30px" />
+                      ) : null}
                       <div className={styles.starknetAddr}>
                         <h1 className={styles.domain}>
                           {responsiveDomainOrId}
