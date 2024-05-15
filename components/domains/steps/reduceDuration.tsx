@@ -44,7 +44,7 @@ const ReduceDuration: FunctionComponent<ReduceDurationProps> = ({
           </p>
         </div>
         <div>
-          {betterReducedDuration ? (
+          {betterReducedDuration && betterReducedDuration > newDuration ? (
             <Button onClick={handleSwitchBetterDuration}>
               Switch to {reducedDurationToken} ({betterReducedDuration} year
               {betterReducedDuration > 1 && "s"})
