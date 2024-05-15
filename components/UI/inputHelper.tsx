@@ -23,7 +23,7 @@ const InputHelper: FunctionComponent<InputHelperProps> = ({
           title={helperText}
           placement="top"
         >
-          <div className="absolute top-1/2 -translate-y-1/2 right-2 bg-white">
+          <div className="absolute top-1/2 -translate-y-1/2 right-2">
             <InfoIcon
               width="28px"
               color={error ? "red" : theme.palette.grey[800]}
