@@ -7,20 +7,18 @@ import {
   minifyAddress,
   shortenDomain,
 } from "../../utils/stringService";
-import MainIcon from "../UI/iconsComponents/icons/mainIcon";
 import SocialMediaActions from "./actions/socialmediaActions";
 import { Skeleton, Tooltip, useMediaQuery } from "@mui/material";
 import Notification from "../UI/notification";
 import CalendarIcon from "../UI/iconsComponents/icons/calendarValidateIcon";
 import theme from "../../styles/theme";
 import { timestampToReadableDate } from "../../utils/dateService";
-import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
-import CopyIcon from "../UI/iconsComponents/icons/copyIcon";
 import EditIcon from "../UI/iconsComponents/icons/editIcon";
 import { debounce } from "../../utils/debounceService";
 import { Identity } from "../../utils/apiWrappers/identity";
 import PlusIcon from "../UI/iconsComponents/icons/plusIcon";
 import AddEvmAddrModal from "./actions/addEvmAddrModal";
+import CopyContent from "../UI/copyContent";
 
 type IdentityCardProps = {
   identity?: Identity;
@@ -40,21 +38,10 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   const responsiveDomainOrId = identity?.domain
     ? shortenDomain(identity.domain, 25)
     : `SID: ${tokenId}`;
-  const [copied, setCopied] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const evmAddress = identity?.getUserDataWithField("evm-address") ?? undefined;
   const [openModal, setOpenModal] = useState(false);
   const [addrAdded, setAddrAdded] = useState(false);
   const isMobile = useMediaQuery("(max-width:1124px)");
-
-  const copyToClipboard = (copiedAddr: string | undefined) => {
-    if (!copiedAddr) return;
-    setCopied(true);
-    navigator.clipboard.writeText(copiedAddr);
-    setTimeout(() => {
-      setCopied(false);
-    }, 1500);
-  };
 
   const handleMouseEnter = debounce(() => setIsHovered(true), 50);
   const handleMouseLeave = debounce(() => setIsHovered(false), 50);
@@ -138,40 +125,16 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                   <>
                     <div className={styles.addressBar}>
                       <h2>{minifyAddress(identity.targetAddress)}</h2>
-                      <div className="cursor-pointer ml-3">
-                        {!copied ? (
-                          <Tooltip title="Copy" arrow>
-                            <div
-                              className={styles.contentCopy}
-                              onClick={() =>
-                                copyToClipboard(identity?.targetAddress)
-                              }
-                            >
-                              <CopyIcon width="20" color={"currentColor"} />
-                            </div>
-                          </Tooltip>
-                        ) : (
-                          <DoneIcon
-                            color={theme.palette.primary.main}
-                            width="20"
-                          />
-                        )}
-                      </div>
+                      <CopyContent
+                        value={identity?.targetAddress}
+                        className="cursor-pointer ml-3"
+                      />
                     </div>
                     <div className="flex flex-row items-center justify-center">
                       <div className={styles.starknetAddr}>
                         <h1 className={styles.domain}>
                           {responsiveDomainOrId}
                         </h1>
-                        {identity && identity.isMain && (
-                          <div className="ml-2">
-                            <MainIcon
-                              width="20"
-                              firstColor={theme.palette.primary.main}
-                              secondColor={theme.palette.primary.main}
-                            />
-                          </div>
-                        )}
                       </div>
                     </div>
                   </>
@@ -179,7 +142,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
               </div>
             </div>
             {identity?.domain ? (
-              evmAddress ? (
+              identity?.evmAddress ? (
                 <div
                   className={styles.evmAddr}
                   onClick={() => setOpenModal(true)}
@@ -196,7 +159,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                   >
                     {getEnsFromStark(identity.domain)}
                   </h2>
-                  <Tooltip title="Edit" arrow>
+                  <Tooltip title="Edit your EVM address" arrow>
                     <div>
                       <EditIcon
                         width="16"
@@ -267,9 +230,6 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
         identity={identity}
       />
 
-      <Notification visible={copied} severity="success">
-        <>&nbsp;Address copied !</>
-      </Notification>
       <Notification visible={addrAdded} severity="success">
         <>&nbsp;Your address was added!</>
       </Notification>

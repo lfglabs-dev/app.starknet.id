@@ -8,6 +8,7 @@ export const GITHUB = getFormattedField("github");
 export const PROOF_OF_PERSONHOOD = getFormattedField("proof_of_personhood");
 export const NFT_PP_CONTRACT = getFormattedField("nft_pp_contract");
 export const NFT_PP_ID = getFormattedField("nft_pp_id");
+export const EVM_ADDRESS = getFormattedField("evm-address");
 
 function getFormattedField(field: string): string {
   return formatHexString(stringToHex(field));

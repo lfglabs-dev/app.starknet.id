@@ -1,7 +1,11 @@
-import { Modal, TextField } from "@mui/material";
+import {
+  CircularProgress,
+  InputAdornment,
+  Modal,
+  TextField,
+} from "@mui/material";
 import { useContractWrite } from "@starknet-react/core";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import { isHexString } from "../../../utils/stringService";
+import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import styles from "../../../styles/components/evmModalMessage.module.css";
 import Button from "../../UI/button";
 import { hexToDecimal } from "../../../utils/feltService";
@@ -11,6 +15,8 @@ import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import { shortString } from "starknet";
+import { isValidEns } from "@/utils/evmService";
+import { ethers } from "ethers";
 
 type AddEvmAddrModalProps = {
   handleClose: (showNotif: boolean) => void;
@@ -24,13 +30,15 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
   identity,
 }) => {
   const [evmAddress, setEvmAddress] = useState<string | undefined>(
-    identity?.getUserDataWithField("evm-address")
+    identity?.evmAddress
   );
   const [fieldInput, setFieldInput] = useState<string>(evmAddress ?? "");
   const { addTransaction } = useNotificationManager();
   const [isTxSent, setIsTxSent] = useState(false);
   const [isValid, setIsValid] = useState(true);
   const [message, setMessage] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const { writeAsync: set_user_data, data: userData } = useContractWrite({
     calls:
@@ -67,42 +75,56 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
 
   function changeAddress(value: string): void {
     setFieldInput(value);
-    isValidAddress(value);
+    isValidAddrOrName(value);
   }
 
-  function isValidAddress(addressOrName: string): void {
-    if (addressOrName.endsWith(".eth")) {
-      // we fetch the address from ENS
-      fetch(`https://enstate.rs/n/${addressOrName}`)
-        .then((res) => {
-          res.json().then((data) => {
-            console.log(data);
-            if (data.address) {
-              setEvmAddress(data.address);
-              setMessage(`Resolving to ${data.address}`);
-              setIsValid(true);
-            } else {
-              setEvmAddress(undefined);
-              setMessage("Invalid ENS name");
-              setIsValid(false);
-            }
-          });
+  function isValidAddrOrName(addressOrName: string): void {
+    setLoading(true);
+
+    // Cancel the previous request if it's still pending
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Create a new AbortController for the new request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
+    if (isValidEns(addressOrName)) {
+      fetch(`https://enstate.rs/n/${addressOrName}`, {
+        signal: abortController.signal,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.address) {
+            setEvmAddress(data.address);
+            setMessage(`Resolving to ${data.address}`);
+            setIsValid(true);
+          } else {
+            setEvmAddress(undefined);
+            setMessage("Invalid ENS name");
+            setIsValid(false);
+          }
+          setLoading(false);
         })
-        .catch(() => {
+        .catch((error) => {
+          // Request was aborted
+          if (error.name === "AbortError") return;
           setEvmAddress(undefined);
           setIsValid(false);
-          setMessage("ENS name not found");
+          setMessage("Invalid address or ENS");
+          setLoading(false);
         });
+    } else if (ethers.isAddress(addressOrName)) {
+      setEvmAddress(addressOrName);
+      setIsValid(true);
+      setMessage(undefined);
+      setLoading(false);
     } else {
-      if (isHexString(addressOrName)) {
-        setEvmAddress(addressOrName);
-        setIsValid(true);
-        setMessage(undefined);
-      } else {
-        setEvmAddress(undefined);
-        setIsValid(false);
-        setMessage("Invalid address");
-      }
+      setEvmAddress(undefined);
+      setIsValid(false);
+      setMessage("Invalid address or ENS");
+      setLoading(false);
     }
   }
 
@@ -115,7 +137,7 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={closeModal}
+      onClose={() => closeModal(false)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -149,7 +171,7 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
                     message ?? "Add your EVM address or your ENS name"
                   }
                   fullWidth
-                  label="new address"
+                  label="Your EVM Address"
                   id="outlined-basic"
                   value={fieldInput ?? ""}
                   variant="outlined"
@@ -157,6 +179,13 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
                   color="secondary"
                   required
                   error={!isValid}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {loading && <CircularProgress size={24} />}
+                      </InputAdornment>
+                    ),
+                  }}
                 />
               </div>
               <div className="mt-5 flex justify-center">
@@ -177,9 +206,8 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
                   <p className={styles.cardDesc}>
                     By adding an EVM address to your Starknet domain, you
                     enhance its functionality and connectivity. Your Starknet
-                    domain automatically comes with an associated ENS subdomain,
-                    simplifying ENS management. Configure your EVM address in
-                    your preferred wallet for seamless integration.
+                    domain automatically comes with an associated ENS subdomain
+                    connected to all EVM chains and Rollups!
                   </p>
                 </div>
                 <img

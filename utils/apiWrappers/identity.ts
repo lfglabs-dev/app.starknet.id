@@ -9,6 +9,7 @@ import {
   TWITTER,
   NFT_PP_CONTRACT,
   NFT_PP_ID,
+  EVM_ADDRESS,
 } from "../verifierFields";
 
 export class Identity {
@@ -208,10 +209,8 @@ export class Identity {
     }
   }
 
-  getUserDataWithField(field: string): string | undefined {
-    const data = this.getUserData(
-      formatHexString(shortString.encodeShortString(field))
-    );
+  get evmAddress(): string | undefined {
+    const data = this.getUserData(EVM_ADDRESS);
     if (!data) return;
     return "0x" + data.slice(2).replace(/^0+/, "");
   }

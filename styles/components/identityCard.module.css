@@ -209,6 +209,10 @@
   margin-bottom: 0;
 }
 
+.evmAddr:hover {
+  text-decoration: underline;
+}
+
 .evmAddrBtn {
   display: flex;
   flex-direction: row;
