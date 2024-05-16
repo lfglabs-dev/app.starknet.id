@@ -88,7 +88,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
     CurrencyType.ETH
   );
-  const [loadingPrice, setLoadingPrice] = useState<boolean>(true);
+  const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
+  const [reloadingPrice, setReloadingPrice] = useState<boolean>(false); // used to know if the user changes the currency
   const [hasReverseAddressRecord, setHasReverseAddressRecord] =
     useState<boolean>(false);
   const [domainsMinting, setDomainsMinting] =
@@ -208,8 +209,13 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
-    if (!priceInEth) return setInvalidBalance(false);
-    if (tokenBalances && price && displayedCurrency && !loadingPrice) {
+    if (
+      tokenBalances &&
+      price &&
+      displayedCurrency &&
+      !loadingPrice &&
+      !reloadingPrice
+    ) {
       const tokenBalance = tokenBalances[displayedCurrency];
       if (!tokenBalance) return;
       const _price = formState.isUpselled ? discountedPrice : price;
@@ -224,7 +230,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     displayedCurrency,
     tokenBalances,
     loadingPrice,
-    priceInEth,
+    reloadingPrice,
   ]);
 
   useEffect(() => {
@@ -265,7 +271,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
-    if (!priceInEth) return setLoadingPrice(false);
+    if (!priceInEth) return;
     const _price = getPriceForDuration(
       priceInEth,
       formState.isUpselled ? discount.duration : formState.duration
@@ -276,6 +282,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       setPrice(getDomainPriceAltcoin(quoteData.quote, _price));
     }
     setLoadingPrice(false);
+    if (reloadingPrice) setReloadingPrice(false);
   }, [
     priceInEth,
     quoteData,
@@ -283,6 +290,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     formState.isUpselled,
     formState.duration,
     discount.duration,
+    reloadingPrice,
   ]);
 
   useEffect(() => {
@@ -680,7 +688,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   }, [checkoutData]); // We only need registerData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
   const onCurrencySwitch = (type: CurrencyType) => {
-    setLoadingPrice(true);
+    setReloadingPrice(true);
+    if (type !== CurrencyType.ETH) setLoadingPrice(true);
     setDisplayedCurrency(type);
     setReducedDuration(0);
     setHasUserSelectedOffer(false);
