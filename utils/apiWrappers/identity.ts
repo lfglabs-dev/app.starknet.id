@@ -212,6 +212,11 @@ export class Identity {
   get evmAddress(): string | undefined {
     const data = this.getUserData(EVM_ADDRESS);
     if (!data) return;
-    return "0x" + data.slice(2).replace(/^0+/, "");
+    try {
+      return "0x" + data.slice(2).replace(/^0+/, "");
+    } catch (error) {
+      console.error("Invalid EVM address format:", error);
+      return undefined;
+    }
   }
 }
