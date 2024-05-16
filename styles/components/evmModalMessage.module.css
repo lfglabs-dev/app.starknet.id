@@ -85,7 +85,25 @@
   max-width: 250px;
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 850px) {
+  .menu {
+    width: 600px;
+    padding: 30px;
+  }
+
+  .menu_title {
+    font-size: 21px;
+    margin: -7px -2px 2px;
+  }
+
+  .infoCard {
+    flex-direction: column;
+    padding: 24px;
+    align-items: center;
+  }
+}
+
+@media (max-width: 625px) {
   .menu {
     width: 320px;
     padding: 30px;

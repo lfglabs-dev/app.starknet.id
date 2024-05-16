@@ -207,10 +207,17 @@
   font-size: 13px;
   color: #454545;
   margin-bottom: 0;
+  background-color: var(--background);
+  padding: 4px;
+  border-radius: 8px;
+  width: fit-content;
 }
 
-.evmAddr:hover {
-  text-decoration: underline;
+.evmName {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
 }
 
 .evmAddrBtn {

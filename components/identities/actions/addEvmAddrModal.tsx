@@ -170,7 +170,7 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
                 ></path>
               </svg>
             </button>
-            <p className={styles.menu_subtitle}>Add a EVM address for</p>
+            <p className={styles.menu_subtitle}>Add an EVM address for</p>
             <p className={styles.menu_title}>{identity?.domain}</p>
             <div className="mt-5 flex flex-col justify-center">
               <div className="mt-5">
@@ -219,7 +219,7 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
                   </p>
                 </div>
                 <img
-                  src="/visuals/ecosystemMap.webp"
+                  src="/visuals/ecosystemMap.svg"
                   className={styles.cardImg}
                 />
               </div>

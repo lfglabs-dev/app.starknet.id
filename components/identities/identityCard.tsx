@@ -143,24 +143,42 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
             </div>
             {identity?.domain ? (
               identity?.evmAddress ? (
-                <div
-                  className={styles.evmAddr}
-                  onClick={() => setOpenModal(true)}
-                >
-                  <img className={styles.evmIcon} src="/icons/ens.svg" />
-                  <h2
-                    onClick={() =>
-                      window.open(
-                        `https://app.ens.domains/${getDomainWithoutStark(
-                          identity?.domain
-                        )}.snid.eth`
-                      )
-                    }
+                <div className={styles.evmAddr}>
+                  <Tooltip
+                    title="Go to your ENS domain"
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          bgcolor: "#454545",
+                        },
+                      },
+                    }}
                   >
-                    {getEnsFromStark(identity.domain)}
-                  </h2>
-                  <Tooltip title="Edit your EVM address" arrow>
-                    <div>
+                    <div
+                      className={styles.evmName}
+                      onClick={() =>
+                        window.open(
+                          `https://app.ens.domains/${getDomainWithoutStark(
+                            identity?.domain
+                          )}.snid.eth`
+                        )
+                      }
+                    >
+                      <img className={styles.evmIcon} src="/icons/ens.svg" />
+                      <h2>{getEnsFromStark(identity.domain)}</h2>
+                    </div>
+                  </Tooltip>
+                  <Tooltip
+                    title="Edit your EVM address"
+                    componentsProps={{
+                      tooltip: {
+                        sx: {
+                          bgcolor: "#454545",
+                        },
+                      },
+                    }}
+                  >
+                    <div onClick={() => setOpenModal(true)}>
                       <EditIcon
                         width="16"
                         color={theme.palette.secondary.main}

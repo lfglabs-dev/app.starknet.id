@@ -8,7 +8,7 @@ import Notification from "./notification";
 import { useCopyToClipboard } from "@/hooks/useCopy";
 
 type CopyContentProps = {
-  value: string | undefined;
+  value?: string;
   className?: string;
 };
 
