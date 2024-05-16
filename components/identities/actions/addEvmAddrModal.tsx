@@ -54,14 +54,6 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
   });
 
   useEffect(() => {
-    // Reset the input field when the modal is closed
-    setEvmAddress(identity?.evmAddress);
-    setFieldInput(identity?.evmAddress ?? "");
-    setIsValid(true);
-    setMessage(undefined);
-  }, [isModalOpen]);
-
-  useEffect(() => {
     if (!userData?.transaction_hash) return;
     addTransaction({
       timestamp: Date.now(),
@@ -138,6 +130,10 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
 
   function closeModal(showNotif: boolean): void {
     setIsTxSent(false);
+    setEvmAddress(identity?.evmAddress);
+    setFieldInput(identity?.evmAddress ?? "");
+    setIsValid(true);
+    setMessage(undefined);
     handleClose(showNotif);
   }
 
