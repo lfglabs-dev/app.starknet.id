@@ -69,8 +69,12 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userData]); // We want to execute this only once when the tx is sent
 
-  function setUserData(): void {
-    set_user_data();
+  async function setUserData(): Promise<void> {
+    try {
+      await set_user_data();
+    } catch (error) {
+      console.error("Failed to set user data:", error);
+    }
   }
 
   function changeAddress(value: string): void {
