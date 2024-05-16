@@ -333,5 +333,5 @@ export function getEnsFromStark(
   characterToBreak: number = 25
 ): string {
   if (!domain) return "";
-  return shortenDomain(domain.replace(".stark", ".snid.eth"), characterToBreak);
+  return shortenDomain(domain.endsWith(".stark") ? domain.replace(".stark", ".snid.eth") : domain, characterToBreak);
 }
