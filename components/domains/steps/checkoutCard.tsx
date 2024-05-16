@@ -1,5 +1,6 @@
 import React, {
   FunctionComponent,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -258,7 +259,6 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     discountedPrice,
     formState.needMetadata,
     formState.salesTaxRate,
-    updateFormState,
   ]);
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
@@ -323,7 +323,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           setNonSubscribedDomains(data);
         });
     }
-  }, [address, formState.selectedDomains, renewalBox]);
+  }, [address, formState.selectedDomains, renewalBox, type]);
 
   // Set Register Multicall
   useEffect(() => {
@@ -463,6 +463,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     quoteData,
     displayedCurrency,
     formState.selectedPfp,
+    discount.discountId,
+    discount.duration,
+    discountedPrice,
+    hasReverseAddressRecord,
+    type,
   ]);
 
   // Set Renewal Multicall
@@ -591,6 +596,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     quoteData,
     displayedCurrency,
     formState.selectedPfp,
+    discount.discountId,
+    discount.duration,
+    discountedPrice,
+    nonSubscribedDomains,
+    type,
   ]);
 
   // on execute transaction,
@@ -674,9 +684,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     setHasUserSelectedOffer(false);
   };
 
-  const onUpsellChoice = (enable: boolean) => {
-    updateFormState({ isUpselled: enable });
-  };
+  const onUpsellChoice = useCallback(
+    (enable: boolean) => {
+      updateFormState({ isUpselled: enable });
+    },
+    [updateFormState]
+  );
 
   useEffect(() => {
     const duration = formState.duration;

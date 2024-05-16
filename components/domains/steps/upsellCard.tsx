@@ -34,6 +34,7 @@ const UpsellCard: FunctionComponent<UpsellCardProps> = ({
     enabled,
     setHasUserSelectedOffer,
     loadingPrice,
+    onUpsellChoice,
   ]);
 
   const handleUpsellChoice = () => {
