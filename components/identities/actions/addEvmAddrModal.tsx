@@ -15,7 +15,7 @@ import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import { shortString } from "starknet";
-import { isValidEns } from "@/utils/evmService";
+import { isValidEns } from "@/utils/ensService";
 import { ethers } from "ethers";
 
 type AddEvmAddrModalProps = {

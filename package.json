@@ -22,7 +22,7 @@
     "@solana/wallet-adapter-wallets": "^0.19.23",
     "@solana/web3.js": "^1.87.6",
     "@starknet-react/chains": "^0.1.6",
-    "@starknet-react/core": "^2.2.4",
+    "@starknet-react/core": "^2.8.0",
     "@vercel/analytics": "^0.1.5",
     "@walnuthq/sdk": "^1.1.10",
     "axios": "^1.4.0",

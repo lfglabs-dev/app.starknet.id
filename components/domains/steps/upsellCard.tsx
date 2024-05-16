@@ -1,19 +1,38 @@
 import styles from "../../../styles/components/upsellCard.module.css";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import textFieldStyles from "../../../styles/components/textField.module.css";
-
 type UpsellCardProps = {
   upsellData: Upsell;
   enabled: boolean;
   onUpsellChoice: (isUpselled: boolean) => void;
+  invalidBalance: boolean;
+  hasUserSelectedOffer: boolean;
+  setHasUserSelectedOffer: (hasUserSelectedOffer: boolean) => void;
 };
 
 const UpsellCard: FunctionComponent<UpsellCardProps> = ({
   upsellData,
   enabled,
   onUpsellChoice,
+  invalidBalance,
+  hasUserSelectedOffer,
+  setHasUserSelectedOffer,
 }) => {
+  useEffect(() => {
+    if (hasUserSelectedOffer) return;
+    if (enabled && invalidBalance) {
+      onUpsellChoice(false);
+      setHasUserSelectedOffer(true);
+    }
+    if (!enabled && !invalidBalance) onUpsellChoice(true);
+  }, [hasUserSelectedOffer, invalidBalance, enabled]);
+
+  const handleUpsellChoice = () => {
+    onUpsellChoice(!enabled);
+    setHasUserSelectedOffer(true);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -26,20 +45,20 @@ const UpsellCard: FunctionComponent<UpsellCardProps> = ({
           aria-labelledby="demo-controlled-radio-buttons-group"
           name="controlled-radio-buttons-group"
           value={enabled}
-          onChange={() => onUpsellChoice(!enabled)}
+          onChange={handleUpsellChoice}
           className={styles.radioGroupContainer}
         >
           <div className={styles.radioGroup}>
             <FormControlLabel
-              value={true}
               control={<Radio />}
+              value={true}
               label={
                 <p className={textFieldStyles.legend}>Yes, count me in!</p>
               }
             />
             <FormControlLabel
-              value={false}
               control={<Radio />}
+              value={false}
               label={<p className={textFieldStyles.legend}>No, thanks!</p>}
             />
           </div>
