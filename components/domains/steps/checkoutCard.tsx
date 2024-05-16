@@ -208,6 +208,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
+    if (!priceInEth) return setInvalidBalance(false);
     if (tokenBalances && price && displayedCurrency && !loadingPrice) {
       const tokenBalance = tokenBalances[displayedCurrency];
       if (!tokenBalance) return;
@@ -223,6 +224,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     displayedCurrency,
     tokenBalances,
     loadingPrice,
+    priceInEth,
   ]);
 
   useEffect(() => {
@@ -263,7 +265,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
-    if (!priceInEth) return;
+    if (!priceInEth) return setLoadingPrice(false);
     const _price = getPriceForDuration(
       priceInEth,
       formState.isUpselled ? discount.duration : formState.duration
