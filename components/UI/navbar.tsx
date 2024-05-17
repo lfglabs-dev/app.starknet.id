@@ -64,7 +64,7 @@ const Navbar: FunctionComponent = () => {
   useEffect(() => {
     const connectToStarknet = async () => {
       const connector = getLastConnected();
-      if (connector && connector.available()) await connectAsync({ connector });
+      if (connector && connector.available()) await connectWallet(connector);
     };
     connectToStarknet();
   }, [connectAsync, connectors]);
@@ -90,9 +90,16 @@ const Navbar: FunctionComponent = () => {
   }, [isConnected]);
 
   const connectWallet = async (connector: Connector) => {
-    await connectAsync({ connector });
-    localStorage.setItem("SID-connectedWallet", connector.id);
-    localStorage.setItem("SID-lastUsedConnector", connector.id);
+    try {
+      await connectAsync({ connector });
+      localStorage.setItem("SID-connectedWallet", connector.id);
+      localStorage.setItem("SID-lastUsedConnector", connector.id);
+    } catch (e) {
+      // Restart the connection if there is an error except if the user has rejected the connection
+      console.error(e);
+      const error = e as Error;
+      if (error.name !== "UserRejectedRequestError") connectWallet(connector);
+    }
   };
 
   function disconnectByClick(): void {
