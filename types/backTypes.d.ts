@@ -99,7 +99,7 @@ type Subscription = {
 
 type SubscriptionInfos = {
   [key: string]: {
-    eth_subscriptions: Subscription[];
+    eth_subscriptions: Subscription[] | null;
     altcoin_subscriptions: Subscription[] | null;
   };
 };
