@@ -43,7 +43,6 @@ import {
   getTokenQuote,
 } from "../../utils/altcoinService";
 import CurrencyDropdown from "./currencyDropdown";
-import { areArraysEqual } from "@/utils/arrayService";
 
 type SubscriptionProps = {
   groups: string[];
@@ -57,11 +56,11 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [callData, setCallData] = useState<Call[]>([]);
   const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH
-  const [price, setPrice] = useState<string>(""); // price in displayedCurrencies, set to priceInEth on first load as ETH is the default currency
+  const [price, setPrice] = useState<string>(""); // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
-  const [displayedCurrencies, setDisplayedCurrencies] = useState<
-    CurrencyType[]
-  >([CurrencyType.ETH]);
+  const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
+    CurrencyType.ETH
+  );
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
@@ -79,7 +78,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
   const duration = 1;
-  const needsAllowance = useAllowanceCheck(displayedCurrencies[0], address);
+  const needsAllowance = useAllowanceCheck(displayedCurrency, address);
 
   useEffect(() => {
     if (!address) return;
@@ -173,12 +172,9 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
 
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
-    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
-      CurrencyType.ETH,
-    ]);
     const fetchQuote = () => {
-      if (isCurrencyETH) return;
-      getTokenQuote(ERC20Contract[displayedCurrencies[0]]).then((data) => {
+      if (displayedCurrency === CurrencyType.ETH) return;
+      getTokenQuote(ERC20Contract[displayedCurrency]).then((data) => {
         setQuoteData(data);
       });
     };
@@ -187,9 +183,9 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
       const now = parseInt((new Date().getTime() / 1000).toFixed(0));
       const timeLimit = now - 60; // 60 seconds
       // Check if we need to refetch
-      if (!quoteData || isCurrencyETH) {
+      if (!quoteData || displayedCurrency === CurrencyType.ETH) {
         setQuoteData(null);
-        // we don't need to check for quote until displayedCurrencies is updated
+        // we don't need to check for quote until displayedCurrency is updated
         return;
       }
 
@@ -207,7 +203,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     // Start the refetch scheduling
     scheduleRefetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayedCurrencies, price]); // We don't add quoteData because it would create an infinite loop
+  }, [displayedCurrency, price]); // We don't add quoteData because it would create an infinite loop
 
   // if selectedDomains or duration have changed, we update priceInEth
   useEffect(() => {
@@ -222,16 +218,13 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
-    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
-      CurrencyType.ETH,
-    ]);
-    if (isCurrencyETH) {
+    if (displayedCurrency === CurrencyType.ETH) {
       setPrice(priceInEth);
     } else if (quoteData) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
       setPrice(priceInAltcoin);
     }
-  }, [priceInEth, quoteData, displayedCurrencies]);
+  }, [priceInEth, quoteData, displayedCurrency]);
 
   useEffect(() => {
     if (!needMedadata && price) {
@@ -248,18 +241,15 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   }, [isSwissResident, price, needMedadata, salesTaxRate]);
 
   useEffect(() => {
-    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
-      CurrencyType.ETH,
-    ]);
-    if (!isCurrencyETH && !quoteData) return;
+    if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
     if (selectedDomains && metadataHash) {
       const calls = [];
 
       if (needsAllowance) {
         calls.push(
           autoRenewalCalls.approve(
-            ERC20Contract[displayedCurrencies[0]],
-            AutoRenewalContracts[displayedCurrencies[0]]
+            ERC20Contract[displayedCurrency],
+            AutoRenewalContracts[displayedCurrency]
           )
         );
       }
@@ -271,18 +261,18 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
 
         const domainPrice = getDomainPrice(
           domain,
-          displayedCurrencies[0],
+          displayedCurrency,
           quoteData?.quote
         );
         const allowance = getAutoRenewAllowance(
-          displayedCurrencies[0],
+          displayedCurrency,
           salesTaxRate,
           domainPrice
         );
 
         calls.push(
           autoRenewalCalls.enableRenewal(
-            AutoRenewalContracts[displayedCurrencies[0]],
+            AutoRenewalContracts[displayedCurrency],
             encodedDomain,
             allowance,
             "0x" + metadataHash
@@ -298,7 +288,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     needsAllowance,
     metadataHash,
     salesTaxRate,
-    displayedCurrencies,
+    displayedCurrency,
     quoteData,
   ]);
 
@@ -350,8 +340,8 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         <div className={styles.summary}>
           <p className={styles.legend}>Your subscription currency</p>
           <CurrencyDropdown
-            onCurrencySwitch={setDisplayedCurrencies}
-            displayedCurrency={displayedCurrencies}
+            onCurrencySwitch={setDisplayedCurrency}
+            displayedCurrency={displayedCurrency}
           />
           <RegisterCheckboxes
             onChangeTermsBox={() => setTermsBox(!termsBox)}

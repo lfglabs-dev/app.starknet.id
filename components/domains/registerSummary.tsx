@@ -10,6 +10,7 @@ import { CurrencyType } from "../../utils/constants";
 import CurrencyDropdown from "./currencyDropdown";
 import { Skeleton } from "@mui/material";
 import ArrowRightIcon from "../UI/iconsComponents/icons/arrowRightIcon";
+import ArCurrencyDropdown from "./arCurrencyDropdown";
 
 type RegisterSummaryProps = {
   duration: number;
@@ -19,12 +20,15 @@ type RegisterSummaryProps = {
   salesTaxRate: number;
   isSwissResident: boolean;
   customMessage?: string;
-  displayedCurrency: CurrencyType[];
-  onCurrencySwitch: (type: CurrencyType[]) => void;
+  displayedCurrency: CurrencyType[] | CurrencyType;
+  onCurrencySwitch:
+    | ((type: CurrencyType[]) => void)
+    | ((type: CurrencyType) => void);
   loadingPrice?: boolean;
   isUpselled?: boolean;
   discountedPrice?: string; // price the user will pay after discount
   discountedDuration?: number; // years the user will have the domain for after discount
+  areArCurrenciesEnabled?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -41,6 +45,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   isUpselled = false,
   discountedPrice,
   discountedDuration,
+  areArCurrenciesEnabled = false,
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
@@ -153,10 +158,17 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
         </div>
       </div>
-      <CurrencyDropdown
-        displayedCurrency={displayedCurrency}
-        onCurrencySwitch={onCurrencySwitch}
-      />
+      {areArCurrenciesEnabled ? (
+        <ArCurrencyDropdown
+          displayedCurrency={displayedCurrency as CurrencyType[]} // as CurrencyType[] is safe here cause we know the value is a CurrencyType[]
+          onCurrencySwitch={onCurrencySwitch as (type: CurrencyType[]) => void}
+        />
+      ) : (
+        <CurrencyDropdown
+          displayedCurrency={displayedCurrency as CurrencyType} // as CurrencyType is safe here cause we know the value is a CurrencyType
+          onCurrencySwitch={onCurrencySwitch as (type: CurrencyType) => void}
+        />
+      )}
     </div>
   );
 };

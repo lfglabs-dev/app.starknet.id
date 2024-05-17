@@ -237,7 +237,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
       priceInEth
     ) {
       smartCurrencyChoosing(tokenBalances, priceInEth).then((currency) => {
-        onCurrencySwitch([currency]);
+        onCurrencySwitch(currency);
         setHasChoseCurrency(true);
       });
     }
@@ -364,9 +364,9 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     }
   }, [priceInEth, quoteData, displayedCurrency]);
 
-  const onCurrencySwitch = (type: CurrencyType[]) => {
-    if (type[0] !== CurrencyType.ETH) setLoadingPrice(true);
-    setDisplayedCurrency(type[0]);
+  const onCurrencySwitch = (type: CurrencyType) => {
+    if (type !== CurrencyType.ETH) setLoadingPrice(true);
+    setDisplayedCurrency(type);
   };
 
   return (
@@ -416,7 +416,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
             customMessage={customMessage}
-            displayedCurrency={[displayedCurrency]}
+            displayedCurrency={displayedCurrency}
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
           />

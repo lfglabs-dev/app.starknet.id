@@ -88,3 +88,18 @@ type RenewalData = {
   meta_hash: string;
   auto_renew_contract?: string;
 };
+
+type Subscription = {
+  enabled: boolean;
+  allowance: string;
+  renewer_address: string;
+  auto_renew_contract: AutoRenewalContracts | null;
+  token: ERC20Contract;
+};
+
+type SubscriptionInfos = {
+  [key: string]: {
+    eth_subscriptions: Subscription[];
+    altcoin_subscriptions: Subscription[] | null;
+  };
+};

@@ -34,7 +34,6 @@ export default function useNeedsAllowances(
 
       const calls: MulticallCallData[] = [];
       currencyContracts.forEach((currency, index) => {
-        console.log("currencyNames[index]", currencyNames[index]);
         calls.push({
           execution: new CairoCustomEnum({
             Static: {},

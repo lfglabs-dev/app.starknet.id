@@ -342,9 +342,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     }
   }, [priceInEth, quoteData, displayedCurrency]);
 
-  const onCurrencySwitch = (type: CurrencyType[]) => {
-    if (type[0] !== CurrencyType.ETH) setLoadingPrice(true);
-    setDisplayedCurrency(type[0]);
+  const onCurrencySwitch = (type: CurrencyType) => {
+    if (type !== CurrencyType.ETH) setLoadingPrice(true);
+    setDisplayedCurrency(type);
   };
 
   return (
@@ -380,7 +380,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
             renewalBox={false}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
-            displayedCurrency={[displayedCurrency]}
+            displayedCurrency={displayedCurrency}
             onCurrencySwitch={onCurrencySwitch}
             customMessage={customMessage}
             loadingPrice={loadingPrice}

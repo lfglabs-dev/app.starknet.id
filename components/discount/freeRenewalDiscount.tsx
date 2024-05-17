@@ -10,7 +10,6 @@ import {
 } from "../../utils/stringService";
 import {
   applyRateToBigInt,
-  hexToDecimal,
   numberToFixedString,
 } from "../../utils/feltService";
 import { Call } from "starknet";
@@ -38,7 +37,7 @@ import {
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
-import useNeedsAllowances from "../../hooks/useNeedsAllowances";
+import useNeedsAllowances from "../../hooks/useNeedAllowances";
 import ConnectButton from "../UI/connectButton";
 import {
   getAutoRenewAllowance,
@@ -47,6 +46,7 @@ import {
   getTokenQuote,
 } from "../../utils/altcoinService";
 import { areArraysEqual } from "@/utils/arrayService";
+import useNeedSubscription from "@/hooks/useNeedSubscription";
 
 type FreeRenewalDiscountProps = {
   groups: string[];
@@ -85,7 +85,6 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
   const [needMetadata, setNeedMetadata] = useState<boolean>(false);
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
-  const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
   const { address } = useAccount();
   const { writeAsync: execute, data: renewData } = useContractWrite({
     calls: callData,
@@ -94,8 +93,9 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
     useState<Record<string, boolean>>();
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
-  const needsAllowances = useNeedsAllowances(address);
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
+  const needsAllowances = useNeedsAllowances(address);
+  const needSubscription = useNeedSubscription(address);
 
   useEffect(() => {
     if (!renewData?.transaction_hash || !salt || !metadataHash) return;
@@ -153,7 +153,7 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
         : ERC20Contract[displayedCurrencies[0]];
 
     const fetchQuote = () => {
-      if (isCurrencyETH) return;
+      if (isCurrencyETH || !contractToQuote) return;
 
       // TO DO - Create getTokenQuotes get all token quotes in the case of ALL CURRENCIES token type
       getTokenQuote(contractToQuote).then((data) => {
@@ -273,7 +273,7 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
         }
         // Add AutoRenewal calls for all currencies
         selectedDomainsToArray(selectedDomains).map((domain) => {
-          if (nonSubscribedDomains?.includes(domain)) {
+          if (needSubscription && needSubscription[domain]?.[currency]) {
             const encodedDomain = utils
               .encodeDomain(domain)
               .map((element) => element.toString())[0];
@@ -314,23 +314,8 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
     needMetadata,
     quoteData,
     displayedCurrencies,
-    nonSubscribedDomains,
+    needSubscription,
   ]);
-
-  // we get the list of domains that do not have a autorenewal already enabled
-  useEffect(() => {
-    if (address) {
-      fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_LINK
-        }/renewal/get_non_subscribed_domains?addr=${hexToDecimal(address)}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          setNonSubscribedDomains(data);
-        });
-    }
-  }, [address, setSelectedDomains]);
 
   useEffect(() => {
     const isCurrencyETH = areArraysEqual(displayedCurrencies, [
@@ -400,6 +385,7 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
             displayedCurrency={displayedCurrencies}
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
+            areArCurrenciesEnabled
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
