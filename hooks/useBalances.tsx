@@ -18,27 +18,27 @@ export default function useBalances(address?: string) {
     blockIdentifier: BlockTag.pending,
   });
 
-  const balancesCallData = () => {
-    let currencies = Object.values(ERC20Contract);
-    const calls: MulticallCallData[] = [];
-    currencies.forEach((currency) => {
-      calls.push({
-        execution: new CairoCustomEnum({
-          Static: {},
-        }),
-        to: new CairoCustomEnum({
-          Hardcoded: currency,
-        }),
-        selector: new CairoCustomEnum({
-          Hardcoded: hash.getSelectorFromName("balance_of"),
-        }),
-        calldata: [new CairoCustomEnum({ Hardcoded: address })],
-      });
-    });
-    return [calls as RawArgs];
-  };
-
   useEffect(() => {
+    const balancesCallData = () => {
+      const currencies = Object.values(ERC20Contract);
+      const calls: MulticallCallData[] = [];
+      currencies.forEach((currency) => {
+        calls.push({
+          execution: new CairoCustomEnum({
+            Static: {},
+          }),
+          to: new CairoCustomEnum({
+            Hardcoded: currency,
+          }),
+          selector: new CairoCustomEnum({
+            Hardcoded: hash.getSelectorFromName("balance_of"),
+          }),
+          calldata: [new CairoCustomEnum({ Hardcoded: address })],
+        });
+      });
+      return [calls as RawArgs];
+    };
+
     if (!address) {
       setCallData([]);
       return;
@@ -52,7 +52,7 @@ export default function useBalances(address?: string) {
     const currencies = Object.values(CurrencyType);
     const balanceEntries: TokenBalance = {};
     currencies.forEach((currency, index) => {
-      let balance = fromUint256(
+      const balance = fromUint256(
         BigInt(erc20BalanceData[index][0]),
         BigInt(erc20BalanceData[index][1])
       );

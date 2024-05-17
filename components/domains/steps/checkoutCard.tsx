@@ -320,7 +320,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           setNonSubscribedDomains(data);
         });
     }
-  }, [address, formState.selectedDomains, renewalBox]);
+  }, [address, formState.selectedDomains, renewalBox, type]);
 
   // Set Register Multicall
   useEffect(() => {
@@ -460,6 +460,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     quoteData,
     displayedCurrency,
     formState.selectedPfp,
+    type,
+    discount.duration,
+    discount.discountId,
+    discountedPrice,
+    hasReverseAddressRecord,
   ]);
 
   // Set Renewal Multicall
@@ -588,6 +593,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     quoteData,
     displayedCurrency,
     formState.selectedPfp,
+    type,
+    discount.duration,
+    discount.discountId,
+    discountedPrice,
+    nonSubscribedDomains,
   ]);
 
   // on execute transaction,

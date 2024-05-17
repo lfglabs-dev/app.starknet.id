@@ -120,6 +120,20 @@ export enum CurrenciesIcon {
   // USDT = "/currencies/usdt.svg",
 }
 
+export enum ArCurrency {
+  ETH = "ETH",
+  STRK = "STRK",
+  "ETH OR STRK" = "ETH OR STRK",
+}
+
+export enum ArCurrencyIcon {
+  ETH = "/currencies/eth.svg",
+  STRK = "/currencies/strk.svg",
+  "ETH OR STRK" = "/currencies/strk&eth.svg",
+  // USDC = "/currencies/usdc.svg",
+  // USDT = "/currencies/usdt.svg",
+}
+
 export enum CurrenciesRange {
   ETH = "0",
   STRK = "1", // Covers a possible 50% increase in ETH/STRK price

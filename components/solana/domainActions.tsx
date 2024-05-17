@@ -44,7 +44,7 @@ const DomainActions: FunctionComponent<DomainActionsProps> = ({ name }) => {
   const encodedDomain = utils
     .encodeDomain(`${name}.sol.stark`)
     .map((x) => x.toString());
-  const { data: resolveData, error: resolveError } = useContractRead({
+  const { data: resolveData } = useContractRead({
     address: contract?.address as string,
     abi: contract?.abi as Abi,
     functionName: "domain_to_address",
@@ -77,7 +77,7 @@ const DomainActions: FunctionComponent<DomainActionsProps> = ({ name }) => {
   const prevOpen = useRef(open);
   useEffect(() => {
     if (prevOpen.current === true && open === false) {
-      anchorRef.current!.focus();
+      anchorRef.current?.focus();
     }
 
     prevOpen.current = open;

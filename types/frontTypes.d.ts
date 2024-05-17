@@ -119,6 +119,18 @@ type TokenBalance = {
   [key in CurrencyType]: string;
 };
 
+type TokenAllowance = {
+  [key in CurrencyType]: string;
+};
+
+type TokenNeedsAllowance = {
+  [key in CurrencyType]: boolean;
+};
+
+type NeedSubscription = {
+  [key in string]: TokenNeedsAllowance;
+};
+
 type MulticallCallData = {
   execution: CairoCustomEnum;
   to: CairoCustomEnum;
