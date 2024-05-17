@@ -35,11 +35,10 @@ const ArCurrencyDropdown: FunctionComponent<ArCurrencyDropdownProps> = ({
   };
 
   function onArCurrencyChange(ArCurrency: ArCurrency) {
-    if (ArCurrency === ArCurrency["ETH OR STRK"]) {
+    if ("ETH OR STRK" === ArCurrency) {
       onCurrencySwitch([CurrencyType.ETH, CurrencyType.STRK]);
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onCurrencySwitch([ArCurrency as any]); // as any is safe here cause we know the value is a CurrencyType
+      onCurrencySwitch([ArCurrency as unknown as CurrencyType]); // Safe here cause we know the value is a CurrencyType
     }
   }
 
