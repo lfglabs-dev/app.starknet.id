@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 import { hexToDecimal } from "@/utils/feltService";
-import {
-  fetchNonSubscribedDomains,
-  processSubscriptionData,
-} from "@/utils/subscriptionService";
+import { processSubscriptionData } from "@/utils/subscriptionService";
 
 export default function useNeedSubscription(
   address?: string
@@ -24,17 +21,6 @@ export default function useNeedSubscription(
           const processedData = processSubscriptionData(data);
           setNeedSubscription(processedData);
         });
-    }
-  }, [address]);
-
-  useEffect(() => {
-    if (address) {
-      fetchNonSubscribedDomains(address).then((data) => {
-        setNeedSubscription((prevState) => ({
-          ...prevState,
-          ...data,
-        }));
-      });
     }
   }, [address]);
 
