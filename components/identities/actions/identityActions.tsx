@@ -1,10 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import {
-  useAccount,
-  useContractRead,
-  useContractWrite,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
@@ -21,7 +17,7 @@ import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
 import TxConfirmationModal from "../../UI/txConfirmationModal";
 import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
 import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
-import { Abi, Call } from "starknet";
+import { Call } from "starknet";
 import { useRouter } from "next/router";
 import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";

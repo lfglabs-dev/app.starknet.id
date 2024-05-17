@@ -153,3 +153,11 @@ type FreeRenewal = {
 };
 
 type HexString = `0x${string}`;
+
+type EvmFields =
+  | "evm-address"
+  | "ethereum"
+  | "base"
+  | "arbitrum"
+  | "optimism"
+  | "polygon";

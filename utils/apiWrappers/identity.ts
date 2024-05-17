@@ -1,3 +1,4 @@
+import { shortString } from "starknet";
 import { fromUint256, hexToDecimal } from "../feltService";
 import { formatHexString, getImgUrl } from "../stringService";
 import {
@@ -8,6 +9,7 @@ import {
   TWITTER,
   NFT_PP_CONTRACT,
   NFT_PP_ID,
+  EVM_ADDRESS,
 } from "../verifierFields";
 
 export class Identity {
@@ -204,6 +206,17 @@ export class Identity {
       return getImgUrl(data.image_url);
     } catch (error) {
       return identiconsUrl;
+    }
+  }
+
+  get evmAddress(): string | undefined {
+    const data = this.getUserData(EVM_ADDRESS);
+    if (!data) return;
+    try {
+      return "0x" + data.slice(2).replace(/^0+/, "");
+    } catch (error) {
+      console.error("Invalid EVM address format:", error);
+      return undefined;
     }
   }
 }

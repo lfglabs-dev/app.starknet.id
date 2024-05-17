@@ -33,6 +33,18 @@ describe("Should test Identity object", () => {
     const identity = new Identity(getSampleData2());
     expect(identity.isMain).toEqual(false);
   });
+
+  it("Should get the evm address of the user", () => {
+    const identity = new Identity(getSampleData1());
+    expect(identity.evmAddress).toEqual(
+      "0x9524f1f9f002a7fe810d47c940eb7d34668023d7"
+    );
+  });
+
+  it("Should return undefined if evm address was not set", () => {
+    const identity = new Identity(getSampleData2());
+    expect(identity.evmAddress).toEqual(undefined);
+  });
 });
 
 function getSampleData1(): IdentityData {
@@ -59,6 +71,11 @@ function getSampleData1(): IdentityData {
         field:
           "0x0000000000000000000000000000000000000000000000000000000000000001",
         data: "0x0000000000000000000000000000000000000000000000000000000000000001",
+      },
+      {
+        field:
+          "0x00000000000000000000000000000000000000000065766d2d61646472657373",
+        data: "0x0000000000000000000000009524f1f9f002a7fe810d47c940eb7d34668023d7",
       },
     ],
     verifier_data: [
