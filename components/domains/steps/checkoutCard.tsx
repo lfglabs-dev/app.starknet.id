@@ -690,7 +690,6 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const onCurrencySwitch = (type: CurrencyType) => {
     setReloadingPrice(true);
     if (type !== CurrencyType.ETH) setLoadingPrice(true);
-    console.log("Currency switch", type);
     setReducedDuration(0);
     setDisplayedCurrency(type);
     setHasUserSelectedOffer(false);
@@ -705,31 +704,25 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   useEffect(() => {
     const duration = formState.duration;
-    console.log(reducedDuration);
     if (!invalidBalance || !priceInEth) {
-      console.log(
-        "Invalid balance or priceInEth not set",
-        invalidBalance,
-        priceInEth
-      );
       if (!reducedDuration) setReducedDuration(0);
       return;
     }
-    console.log("=== Valid ===");
+    let found = false;
     for (let newDuration = duration - 1; newDuration > 0; newDuration--) {
       const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
       let newPrice = newPriceInEth;
       if (displayedCurrency !== CurrencyType.ETH && quoteData)
         newPrice = getDomainPriceAltcoin(quoteData.quote, newPriceInEth);
       const balance = tokenBalances[displayedCurrency];
-      console.log("Balance", balance, newPriceInEth, newPrice, newDuration);
       if (!balance) continue;
       if (BigInt(balance) >= BigInt(newPrice)) {
-        console.log("Reduced duration", newDuration);
         if (reducedDuration !== newDuration) setReducedDuration(newDuration);
+        found = true;
         break;
       }
     }
+    if (!found && reducedDuration) setReducedDuration(0);
   }, [
     formState.duration,
     invalidBalance,
@@ -755,7 +748,9 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           loadingPrice={loadingPrice}
         />
       ) : null}
-      {reducedDuration > 0 && invalidBalance ? (
+      {reducedDuration > 0 &&
+      invalidBalance &&
+      reducedDuration !== formState.duration ? (
         <ReduceDuration
           newDuration={reducedDuration}
           currentDuration={formState.duration}
