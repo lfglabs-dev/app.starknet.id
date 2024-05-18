@@ -1,5 +1,6 @@
 import React, {
   FunctionComponent,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -54,6 +55,7 @@ import identityChangeCalls from "@/utils/callData/identityChangeCalls";
 import posthog from "posthog-js";
 import { useRouter } from "next/router";
 import { formatDomainData } from "@/utils/cacheDomainData";
+import ReduceDuration from "./reduceDuration";
 
 type CheckoutCardProps = {
   type: FormType;
@@ -87,6 +89,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     CurrencyType.ETH
   );
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
+  const [reloadingPrice, setReloadingPrice] = useState<boolean>(false); // used to know if the user changes the currency
   const [hasReverseAddressRecord, setHasReverseAddressRecord] =
     useState<boolean>(false);
   const [domainsMinting, setDomainsMinting] =
@@ -100,6 +103,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const { writeAsync: execute, data: checkoutData } = useContractWrite({
     calls: callData,
   });
+  const [reducedDuration, setReducedDuration] = useState<number>(0); // reduced duration for the user to buy the domain
 
   // Renewals
   const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
@@ -205,8 +209,15 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
-    if (tokenBalances && price && displayedCurrency && !loadingPrice) {
+    if (
+      tokenBalances &&
+      price &&
+      displayedCurrency &&
+      !loadingPrice &&
+      !reloadingPrice
+    ) {
       const tokenBalance = tokenBalances[displayedCurrency];
+      if (!tokenBalance) return;
       const _price = formState.isUpselled ? discountedPrice : price;
       if (tokenBalance && BigInt(tokenBalance) >= BigInt(_price))
         setInvalidBalance(false);
@@ -219,6 +230,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     displayedCurrency,
     tokenBalances,
     loadingPrice,
+    reloadingPrice,
   ]);
 
   useEffect(() => {
@@ -255,7 +267,6 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     discountedPrice,
     formState.needMetadata,
     formState.salesTaxRate,
-    updateFormState,
   ]);
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
@@ -271,6 +282,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       setPrice(getDomainPriceAltcoin(quoteData.quote, _price));
     }
     setLoadingPrice(false);
+    if (reloadingPrice) setReloadingPrice(false);
   }, [
     priceInEth,
     quoteData,
@@ -278,6 +290,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     formState.isUpselled,
     formState.duration,
     discount.duration,
+    reloadingPrice,
   ]);
 
   useEffect(() => {
@@ -675,15 +688,52 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   }, [checkoutData]); // We only need registerData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
   const onCurrencySwitch = (type: CurrencyType) => {
+    setReloadingPrice(true);
     if (type !== CurrencyType.ETH) setLoadingPrice(true);
+    setReducedDuration(0);
     setDisplayedCurrency(type);
     setHasUserSelectedOffer(false);
-    setLoadingPrice(true);
   };
 
-  const onUpsellChoice = (enable: boolean) => {
-    updateFormState({ isUpselled: enable });
-  };
+  const onUpsellChoice = useCallback(
+    (enable: boolean) => {
+      updateFormState({ isUpselled: enable });
+    },
+    [updateFormState]
+  );
+
+  useEffect(() => {
+    const duration = formState.duration;
+    if (!invalidBalance || !priceInEth) {
+      if (!reducedDuration) setReducedDuration(0);
+      return;
+    }
+    let found = false;
+    for (let newDuration = duration - 1; newDuration > 0; newDuration--) {
+      const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
+      let newPrice = newPriceInEth;
+      if (displayedCurrency !== CurrencyType.ETH && quoteData)
+        newPrice = getDomainPriceAltcoin(quoteData.quote, newPriceInEth);
+      const balance = tokenBalances[displayedCurrency];
+      if (!balance) continue;
+      if (BigInt(balance) >= BigInt(newPrice)) {
+        if (reducedDuration !== newDuration) setReducedDuration(newDuration);
+        found = true;
+        break;
+      }
+    }
+    if (!found && reducedDuration) setReducedDuration(0);
+  }, [
+    formState.duration,
+    invalidBalance,
+    discount.duration,
+    priceInEth,
+    formState.isUpselled,
+    tokenBalances,
+    displayedCurrency,
+    quoteData,
+    reducedDuration,
+  ]);
 
   return (
     <>
@@ -695,8 +745,20 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           invalidBalance={invalidBalance}
           hasUserSelectedOffer={hasUserSelectedOffer}
           setHasUserSelectedOffer={setHasUserSelectedOffer}
+          loadingPrice={loadingPrice}
         />
       ) : null}
+      {reducedDuration > 0 &&
+      invalidBalance &&
+      reducedDuration !== formState.duration ? (
+        <ReduceDuration
+          newDuration={reducedDuration}
+          currentDuration={formState.duration}
+          updateFormState={updateFormState}
+          displayCurrency={displayedCurrency}
+        />
+      ) : null}
+
       <div className={styles.container}>
         <div className={styles.checkout}>
           <RegisterSummary

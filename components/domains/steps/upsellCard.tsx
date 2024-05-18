@@ -9,6 +9,7 @@ type UpsellCardProps = {
   invalidBalance: boolean;
   hasUserSelectedOffer: boolean;
   setHasUserSelectedOffer: (hasUserSelectedOffer: boolean) => void;
+  loadingPrice: boolean;
 };
 
 const UpsellCard: FunctionComponent<UpsellCardProps> = ({
@@ -18,15 +19,23 @@ const UpsellCard: FunctionComponent<UpsellCardProps> = ({
   invalidBalance,
   hasUserSelectedOffer,
   setHasUserSelectedOffer,
+  loadingPrice,
 }) => {
   useEffect(() => {
-    if (hasUserSelectedOffer) return;
+    if (hasUserSelectedOffer || loadingPrice) return;
     if (enabled && invalidBalance) {
       onUpsellChoice(false);
       setHasUserSelectedOffer(true);
     }
     if (!enabled && !invalidBalance) onUpsellChoice(true);
-  }, [hasUserSelectedOffer, invalidBalance, enabled]);
+  }, [
+    hasUserSelectedOffer,
+    invalidBalance,
+    enabled,
+    setHasUserSelectedOffer,
+    loadingPrice,
+    onUpsellChoice,
+  ]);
 
   const handleUpsellChoice = () => {
     onUpsellChoice(!enabled);
