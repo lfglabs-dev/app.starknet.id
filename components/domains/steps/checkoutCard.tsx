@@ -705,15 +705,22 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   useEffect(() => {
     const duration = formState.duration;
     if (!invalidBalance || !priceInEth) {
+      console.log(
+        "Invalid balance or priceInEth not set",
+        invalidBalance,
+        priceInEth
+      );
       setReducedDuration(0);
       return;
     }
+    console.log("=== Valid ===");
     for (let newDuration = duration - 1; newDuration > 0; newDuration--) {
       const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
       let newPrice = newPriceInEth;
       if (displayedCurrency !== CurrencyType.ETH && quoteData)
         newPrice = getDomainPriceAltcoin(quoteData.quote, newPriceInEth);
       const balance = tokenBalances[displayedCurrency];
+      console.log("Balance", balance, newPriceInEth, newPrice, balance);
       if (!balance) continue;
       if (BigInt(balance) >= BigInt(newPrice)) {
         setReducedDuration(newDuration);
@@ -744,14 +751,14 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           loadingPrice={loadingPrice}
         />
       ) : null}
-      {invalidBalance && reducedDuration > 0 ? (
-        <ReduceDuration
-          newDuration={reducedDuration}
-          currentDuration={formState.duration}
-          updateFormState={updateFormState}
-          displayCurrency={displayedCurrency}
-        />
-      ) : null}
+
+      <ReduceDuration
+        newDuration={reducedDuration}
+        currentDuration={formState.duration}
+        updateFormState={updateFormState}
+        displayCurrency={displayedCurrency}
+      />
+
       <div className={styles.container}>
         <div className={styles.checkout}>
           <RegisterSummary
