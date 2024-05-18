@@ -76,6 +76,7 @@ export enum TransactionType {
   SET_PFP = "SET_PFP",
   CLAIM_SOL = "CLAIM_SOL",
   TRANSFER_EXTERNAL_DOMAIN = "TRANSFER_EXTERNAL_DOMAIN",
+  SET_USER_DATA = "SET_USER_DATA",
 }
 
 export const PENDING_TRANSACTION = "Transaction pending...";
@@ -98,6 +99,7 @@ export const notificationTitle: Record<TransactionType, string> = {
   [TransactionType.SET_PFP]: "New profile picture set",
   [TransactionType.CLAIM_SOL]: "Claimed Solana subdomain on Starknet",
   [TransactionType.TRANSFER_EXTERNAL_DOMAIN]: "Subdomain transferred",
+  [TransactionType.SET_USER_DATA]: "Set user data",
 };
 
 export const notificationLinkText: Record<NotificationType, string> = {
@@ -114,6 +116,20 @@ export enum CurrencyType {
 export enum CurrenciesIcon {
   ETH = "/currencies/eth.svg",
   STRK = "/currencies/strk.svg",
+  // USDC = "/currencies/usdc.svg",
+  // USDT = "/currencies/usdt.svg",
+}
+
+export enum ArCurrency {
+  ETH = "ETH",
+  STRK = "STRK",
+  "ETH OR STRK" = "ETH OR STRK",
+}
+
+export enum ArCurrencyIcon {
+  ETH = "/currencies/eth.svg",
+  STRK = "/currencies/strk.svg",
+  "ETH OR STRK" = "/currencies/strk&eth.svg",
   // USDC = "/currencies/usdc.svg",
   // USDT = "/currencies/usdt.svg",
 }

@@ -473,11 +473,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     quoteData,
     displayedCurrency,
     formState.selectedPfp,
-    discount.discountId,
+    type,
     discount.duration,
+    discount.discountId,
     discountedPrice,
     hasReverseAddressRecord,
-    type,
   ]);
 
   // Set Renewal Multicall
@@ -606,11 +606,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     quoteData,
     displayedCurrency,
     formState.selectedPfp,
-    discount.discountId,
+    type,
     discount.duration,
+    discount.discountId,
     discountedPrice,
     nonSubscribedDomains,
-    type,
   ]);
 
   // on execute transaction,

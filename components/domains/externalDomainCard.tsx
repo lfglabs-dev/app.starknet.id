@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/externalDomainCard.module.css";
 import {
   getDomainKind,
@@ -6,12 +6,9 @@ import {
   shortenDomain,
 } from "../../utils/stringService";
 import MainIcon from "../UI/iconsComponents/icons/mainIcon";
-import { Tooltip } from "@mui/material";
-import Notification from "../UI/notification";
 import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
 import theme from "../../styles/theme";
-import CopyIcon from "../UI/iconsComponents/icons/copyIcon";
-import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
+import CopyContent from "../UI/copyContent";
 
 type ExternalDomainCardProps = {
   domain: string;
@@ -25,16 +22,7 @@ const ExternalDomainCard: FunctionComponent<ExternalDomainCardProps> = ({
   isMainDomain,
 }) => {
   const responsiveDomain = shortenDomain(domain as string);
-  const [copied, setCopied] = useState(false);
   const domainKind = getDomainKind(domain as string);
-
-  const copyToClipboard = () => {
-    setCopied(true);
-    navigator.clipboard.writeText(targetAddress ?? "");
-    setTimeout(() => {
-      setCopied(false);
-    }, 1500);
-  };
 
   return (
     <div className={styles.wrapper}>
@@ -71,28 +59,14 @@ const ExternalDomainCard: FunctionComponent<ExternalDomainCardProps> = ({
             <div className="flex flex-row lg:mt-6 mt-2">
               <StarknetIcon width="32px" color="" />
               <h2 className="ml-3 text-xl">{minifyAddress(targetAddress)}</h2>
-              <div className="cursor-pointer ml-3">
-                {!copied ? (
-                  <Tooltip title="Copy" arrow>
-                    <div
-                      className={styles.contentCopy}
-                      onClick={() => copyToClipboard()}
-                    >
-                      <CopyIcon width="25" color={"currentColor"} />
-                    </div>
-                  </Tooltip>
-                ) : (
-                  <DoneIcon color={theme.palette.primary.main} width="25" />
-                )}
-              </div>
+              <CopyContent
+                value={targetAddress}
+                className="cursor-pointer ml-3"
+              />
             </div>
           </div>
         </div>
       </div>
-
-      <Notification visible={copied} severity="success">
-        <>&nbsp;Address copied !</>
-      </Notification>
     </div>
   );
 };

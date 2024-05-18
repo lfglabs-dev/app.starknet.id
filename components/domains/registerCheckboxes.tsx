@@ -7,9 +7,9 @@ import { CurrencyType } from "@/utils/constants";
 
 type RegisterCheckboxes = {
   termsBox: boolean;
-  renewalBox: boolean;
+  renewalBox?: boolean;
   onChangeTermsBox: () => void;
-  onChangeRenewalBox: () => void;
+  onChangeRenewalBox?: () => void;
   variant?: "default" | "white";
   isArOnforced?: boolean;
   ethRenewalPrice?: string;

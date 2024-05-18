@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import styles from "../../styles/components/walletMessage.module.css";
 import { FunctionComponent } from "react";
 import { Modal } from "@mui/material";
@@ -11,6 +11,7 @@ import ExitIcon from "./iconsComponents/icons/exitIcon";
 import CopyIcon from "./iconsComponents/icons/copyIcon";
 import DoneIcon from "./iconsComponents/icons/doneIcon";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
+import { useCopyToClipboard } from "@/hooks/useCopy";
 
 type ModalWalletProps = {
   closeModal: () => void;
@@ -28,7 +29,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
   setTxLoading,
 }) => {
   const { address, connector } = useAccount();
-  const [copied, setCopied] = useState(false);
+  const { copied, copyToClipboard } = useCopyToClipboard();
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   // Argent web wallet is detectable only like this
@@ -46,15 +47,6 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
       );
     }
   }, [notifications, setTxLoading]);
-
-  const copyToClipboard = () => {
-    if (!address) return;
-    setCopied(true);
-    navigator.clipboard.writeText(address);
-    setTimeout(() => {
-      setCopied(false);
-    }, 1500);
-  };
 
   return (
     <Modal
@@ -91,7 +83,7 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
             width="auto"
           />
           <ClickableAction
-            onClick={copyToClipboard}
+            onClick={() => copyToClipboard(address)}
             icon={
               copied ? (
                 <DoneIcon width="25" color={theme.palette.primary.main} />
