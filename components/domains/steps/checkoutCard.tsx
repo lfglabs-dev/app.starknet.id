@@ -690,6 +690,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const onCurrencySwitch = (type: CurrencyType) => {
     setReloadingPrice(true);
     if (type !== CurrencyType.ETH) setLoadingPrice(true);
+    console.log("Currency switch", type);
     setReducedDuration(0);
     setDisplayedCurrency(type);
     setHasUserSelectedOffer(false);
