@@ -720,9 +720,10 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       if (displayedCurrency !== CurrencyType.ETH && quoteData)
         newPrice = getDomainPriceAltcoin(quoteData.quote, newPriceInEth);
       const balance = tokenBalances[displayedCurrency];
-      console.log("Balance", balance, newPriceInEth, newPrice, balance);
+      console.log("Balance", balance, newPriceInEth, newPrice, newDuration);
       if (!balance) continue;
       if (BigInt(balance) >= BigInt(newPrice)) {
+        console.log("Reduced duration", newDuration);
         setReducedDuration(newDuration);
         break;
       }
@@ -751,13 +752,14 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           loadingPrice={loadingPrice}
         />
       ) : null}
-
-      <ReduceDuration
-        newDuration={reducedDuration}
-        currentDuration={formState.duration}
-        updateFormState={updateFormState}
-        displayCurrency={displayedCurrency}
-      />
+      {reducedDuration > 0 && invalidBalance ? (
+        <ReduceDuration
+          newDuration={reducedDuration}
+          currentDuration={formState.duration}
+          updateFormState={updateFormState}
+          displayCurrency={displayedCurrency}
+        />
+      ) : null}
 
       <div className={styles.container}>
         <div className={styles.checkout}>
