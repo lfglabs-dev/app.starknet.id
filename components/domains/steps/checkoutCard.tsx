@@ -705,13 +705,14 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   useEffect(() => {
     const duration = formState.duration;
+    console.log(reducedDuration);
     if (!invalidBalance || !priceInEth) {
       console.log(
         "Invalid balance or priceInEth not set",
         invalidBalance,
         priceInEth
       );
-      setReducedDuration(0);
+      if (!reducedDuration) setReducedDuration(0);
       return;
     }
     console.log("=== Valid ===");
@@ -725,7 +726,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       if (!balance) continue;
       if (BigInt(balance) >= BigInt(newPrice)) {
         console.log("Reduced duration", newDuration);
-        setReducedDuration(newDuration);
+        if (reducedDuration !== newDuration) setReducedDuration(newDuration);
         break;
       }
     }
@@ -738,6 +739,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     tokenBalances,
     displayedCurrency,
     quoteData,
+    reducedDuration,
   ]);
 
   return (
