@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { NextPage } from "next";
 import { useAccount } from "@starknet-react/core";
 import { useRouter } from "next/router";
@@ -8,23 +8,13 @@ import { minifyAddress } from "@/utils/stringService";
 import theme from "@/styles/theme";
 import CopyIcon from "@/components/UI/iconsComponents/icons/copyIcon";
 import DoneFilledIcon from "@/components/UI/iconsComponents/icons/doneFilledIcon";
+import { useCopyToClipboard } from "@/hooks/useCopy";
 
 const Confirmation: NextPage = () => {
   const router = useRouter();
   const { address } = useAccount();
   const tokenId: string = router.query.tokenId as string;
-  const [copied, setCopied] = useState(false);
-
-  const copyToClipboard = () => {
-    if (!address) return;
-    setCopied(true);
-    navigator.clipboard.writeText(
-      `${process.env.NEXT_PUBLIC_APP_LINK}?sponsor=${address}`
-    );
-    setTimeout(() => {
-      setCopied(false);
-    }, 1500);
-  };
+  const { copied, copyToClipboard } = useCopyToClipboard();
 
   const redirect = () => {
     if (tokenId) router.push(`/identities/${tokenId}`);
@@ -54,7 +44,14 @@ const Confirmation: NextPage = () => {
             Earn up to 10$ per friends with your referral link below.
           </div>
         </div>
-        <div className={styles.copyAddr} onClick={copyToClipboard}>
+        <div
+          className={styles.copyAddr}
+          onClick={() =>
+            copyToClipboard(
+              `${process.env.NEXT_PUBLIC_APP_LINK}?sponsor=${address}`
+            )
+          }
+        >
           {`${process.env.NEXT_PUBLIC_APP_LINK?.replace(
             "https://",
             ""

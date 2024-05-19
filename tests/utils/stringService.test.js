@@ -31,6 +31,7 @@ import {
   getDomainWithStarks,
   generateSuggestedNames,
   generateSuggestedDomains,
+  getEnsFromStark,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -611,5 +612,25 @@ describe("generateSuggestedNames function", () => {
       expect(typeof suggestedNames[i]).toBe("string");
     }
     expect(suggestedNames.length).toBeGreaterThan(0);
+  });
+});
+
+describe("Should test getEnsDomain function", () => {
+  it("Should return the same domain with .snid.eth if the length is less than the default characterToBreak", () => {
+    expect(getEnsFromStark("example.stark")).toEqual("example.snid.eth");
+  });
+
+  it("Should return the shortened domain if the length is greater than the default characterToBreak", () => {
+    expect(getEnsFromStark("averylongdomainnametoshorten.stark", 15)).toEqual(
+      "aver...eth"
+    );
+  });
+
+  it("Should return an empty string if the domain is undefined", () => {
+    expect(getEnsFromStark(undefined)).toEqual("");
+  });
+
+  it("Should return an empty string if the domain is an empty string", () => {
+    expect(getEnsFromStark("")).toEqual("");
   });
 });

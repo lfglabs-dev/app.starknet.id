@@ -1,0 +1,121 @@
+.menu {
+  position: absolute;
+  background-color: var(--background);
+  align-self: center;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 20px;
+  padding: 45px;
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+}
+
+.blackFilter {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.192);
+  z-index: auto;
+}
+
+.menu_close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 22px;
+  stroke: black;
+  cursor: pointer;
+  transition: 0.3s;
+  background-color: transparent;
+  border: none;
+}
+
+.menu_close:hover {
+  stroke: rgb(124, 124, 124);
+}
+
+.menu_title {
+  color: #454545;
+  font-family: "QuickZap";
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.menu_subtitle {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 20px;
+  text-align: center;
+}
+
+.infoCard {
+  display: flex;
+  flex-direction: row;
+  padding: 24px;
+  padding: 40px 48px;
+  gap: 48px;
+  border-radius: 20px;
+  background: var(--background-light);
+  box-shadow: 0px 2px 30px 0px #0000000f;
+  margin-top: 24px;
+}
+
+.cardTitle {
+  color: #454545;
+  font-family: "QuickZap";
+  font-size: 21px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.cardDesc {
+  color: #8c8989;
+  font-size: 12px;
+}
+
+.cardImg {
+  width: 100%;
+  height: auto;
+  max-width: 250px;
+}
+
+@media (max-width: 850px) {
+  .menu {
+    width: 600px;
+    padding: 30px;
+  }
+
+  .menu_title {
+    font-size: 21px;
+    margin: -7px -2px 2px;
+  }
+
+  .infoCard {
+    flex-direction: column;
+    padding: 24px;
+    align-items: center;
+  }
+}
+
+@media (max-width: 625px) {
+  .menu {
+    width: 320px;
+    padding: 30px;
+  }
+
+  .menu_title {
+    font-size: 21px;
+    margin: -7px -2px 2px;
+  }
+
+  .infoCard {
+    flex-direction: column;
+    padding: 24px;
+  }
+}
