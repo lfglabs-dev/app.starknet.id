@@ -47,10 +47,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   return (
     <div className="w-full mb-3">
       <div className="flex flex-col gap-3">
-        <div
-          className="flex items-center justify-left text-xs mr-2 cursor-pointer"
-          onClick={onChangeTermsBox}
-        >
+        <div className="flex items-center justify-left text-xs mr-2">
           <Checkbox
             checked={termsBox}
             className={
@@ -58,9 +55,12 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
                 ? styles.whiteCheckbox
                 : styles.defaultCheckbox
             }
+            onClick={onChangeTermsBox}
           />
           <p className="ml-2 text-left">
-            Accept{" "}
+            <span className="cursor-pointer" onClick={onChangeTermsBox}>
+              Accept
+            </span>{" "}
             <a
               className="underline"
               href={process.env.NEXT_PUBLIC_STARKNET_ID + "/pdfs/Terms.pdf"}
@@ -97,12 +97,16 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
           </InputHelper>
         ) : null}
         {showMainDomainBox ? (
-          <div
-            className="flex items-center justify-left text-xs cursor-pointer"
-            onClick={onChangeMainDomainBox}
-          >
-            <Checkbox checked={mainDomainBox} sx={{ padding: 0 }} />
-            <p className="ml-2 mr-10 text-left flex items-center gap-2 relative">
+          <div className="flex items-center justify-left text-xs">
+            <Checkbox
+              checked={mainDomainBox}
+              sx={{ padding: 0 }}
+              onClick={onChangeMainDomainBox}
+            />
+            <p
+              className="ml-2 mr-10 text-left flex items-center gap-2 relative cursor-pointer"
+              onClick={onChangeMainDomainBox}
+            >
               Set {domain ?? ""} as your main domain
             </p>
           </div>
