@@ -402,32 +402,34 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
             isArOnforced={true}
             ethRenewalPrice={renewPrice}
           />
-          {address ? (
-            <Button
-              onClick={() => {
-                execute().then(() => {
-                  setDomainsMinting(selectedDomains);
-                });
-              }}
-              disabled={
-                domainsMinting === selectedDomains ||
-                !address ||
-                !termsBox ||
-                (emailError && needMetadata) ||
-                !areDomainSelected(selectedDomains)
-              }
-            >
-              {!termsBox
-                ? "Please accept terms & policies"
-                : !areDomainSelected(selectedDomains)
-                ? "Select a domain to renew"
-                : emailError && needMetadata
-                ? "Enter a valid Email"
-                : "Renew my domain(s)"}
-            </Button>
-          ) : (
-            <ConnectButton />
-          )}
+          <div>
+            {address ? (
+              <Button
+                onClick={() => {
+                  execute().then(() => {
+                    setDomainsMinting(selectedDomains);
+                  });
+                }}
+                disabled={
+                  domainsMinting === selectedDomains ||
+                  !address ||
+                  !termsBox ||
+                  (emailError && needMetadata) ||
+                  !areDomainSelected(selectedDomains)
+                }
+              >
+                {!termsBox
+                  ? "Please accept terms & policies"
+                  : !areDomainSelected(selectedDomains)
+                  ? "Select a domain to renew"
+                  : emailError && needMetadata
+                  ? "Enter a valid Email"
+                  : "Renew my domain(s)"}
+              </Button>
+            ) : (
+              <ConnectButton />
+            )}
+          </div>
         </div>
       </div>
       <img className={styles.image} src="/visuals/register.webp" />
