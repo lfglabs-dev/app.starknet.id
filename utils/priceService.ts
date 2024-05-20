@@ -1,3 +1,4 @@
+import { gweiToEth } from "./feltService";
 import { getDomainLength } from "./stringService";
 
 export const PRICES = {
@@ -45,4 +46,19 @@ export function areDomainSelected(
   if (!selectedDomains) return false;
 
   return Object.values(selectedDomains).some((isSelected) => isSelected);
+}
+
+export function getTotalYearlyPrice(
+  selectedDomains: Record<string, boolean> | undefined
+): string {
+  if (!selectedDomains) return "0";
+
+  return gweiToEth(
+    String(
+      getPriceFromDomains(
+        Object.keys(selectedDomains).filter((key) => selectedDomains[key]),
+        1
+      )
+    )
+  );
 }

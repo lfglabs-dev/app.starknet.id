@@ -88,7 +88,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         return "Next today";
       } else {
         return (
-          "Next on " + timestampToReadableDate(identity?.domainExpiry - 2592000)
+          "Next payment on " +
+          timestampToReadableDate(identity?.domainExpiry - 2592000)
         );
       }
     }
