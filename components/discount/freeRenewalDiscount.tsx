@@ -19,7 +19,10 @@ import SwissForm from "../domains/swissForm";
 import { Divider } from "@mui/material";
 import RegisterSummary from "../domains/registerSummary";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
-import { areDomainSelected } from "../../utils/priceService";
+import {
+  areDomainSelected,
+  getTotalYearlyPrice,
+} from "../../utils/priceService";
 import RenewalDomainsBox from "../domains/renewalDomainsBox";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
@@ -83,6 +86,7 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMetadata, setNeedMetadata] = useState<boolean>(false);
+  const [potentialPrice, setPotentialPrice] = useState<string>("0");
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
   const { address } = useAccount();
@@ -96,6 +100,10 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
   const needsAllowances = useNeedsAllowances(address);
   const needSubscription = useNeedSubscription(address);
+
+  useEffect(() => {
+    setPotentialPrice(getTotalYearlyPrice(selectedDomains));
+  }, [selectedDomains, setPotentialPrice]);
 
   useEffect(() => {
     if (!renewData?.transaction_hash || !salt || !metadataHash) return;
@@ -381,7 +389,7 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
             duration={Number(numberToFixedString(duration / 365))}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
-            customMessage={customMessage}
+            customMessage={`${customMessage} and then ${potentialPrice} ETH per year`}
             displayedCurrency={displayedCurrencies}
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
@@ -394,32 +402,34 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
             isArOnforced={true}
             ethRenewalPrice={renewPrice}
           />
-          {address ? (
-            <Button
-              onClick={() => {
-                execute().then(() => {
-                  setDomainsMinting(selectedDomains);
-                });
-              }}
-              disabled={
-                domainsMinting === selectedDomains ||
-                !address ||
-                !termsBox ||
-                (emailError && needMetadata) ||
-                !areDomainSelected(selectedDomains)
-              }
-            >
-              {!termsBox
-                ? "Please accept terms & policies"
-                : !areDomainSelected(selectedDomains)
-                ? "Select a domain to renew"
-                : emailError && needMetadata
-                ? "Enter a valid Email"
-                : "Renew my domain(s)"}
-            </Button>
-          ) : (
-            <ConnectButton />
-          )}
+          <div>
+            {address ? (
+              <Button
+                onClick={() => {
+                  execute().then(() => {
+                    setDomainsMinting(selectedDomains);
+                  });
+                }}
+                disabled={
+                  domainsMinting === selectedDomains ||
+                  !address ||
+                  !termsBox ||
+                  (emailError && needMetadata) ||
+                  !areDomainSelected(selectedDomains)
+                }
+              >
+                {!termsBox
+                  ? "Please accept terms & policies"
+                  : !areDomainSelected(selectedDomains)
+                  ? "Select a domain to renew"
+                  : emailError && needMetadata
+                  ? "Enter a valid Email"
+                  : "Renew my domain(s)"}
+              </Button>
+            ) : (
+              <ConnectButton />
+            )}
+          </div>
         </div>
       </div>
       <img className={styles.image} src="/visuals/register.webp" />

@@ -14,7 +14,7 @@ export const freeRenewalDiscount: FreeRenewalDiscount = {
   discountMailGroupId: "106085143136961963",
   offer: {
     duration: 90, // in days
-    customMessage: "3 months (with Free Renewal discount)",
+    customMessage: "3 months free",
     discountId: "X", // No need
     price: "0",
     desc: "Get a free 3-months renewal for all your .STARK domains.",
