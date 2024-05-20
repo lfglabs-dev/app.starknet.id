@@ -5,8 +5,10 @@ import {
   getPriceFromDomain,
   getPriceFromDomains,
   areDomainSelected,
+  getTotalYearlyPrice,
 } from "../../utils/priceService";
 import { generateString } from "../../utils/stringService";
+import { gweiToEth } from "../../utils/feltService";
 
 describe("Should test price service file", () => {
   it("Test getPriceFromDomain functions with different domains", () => {
@@ -51,7 +53,7 @@ describe("getPriceFromDomains function", () => {
   });
 
   it("should return zero if no domains are provided", () => {
-    const domains = [];
+    const domains: string[] = [];
     const duration = 1;
 
     const expectedPrice = BigInt(0);
@@ -108,5 +110,42 @@ describe("areDomainSelected function", () => {
   it("should return false if argument is undefined", () => {
     const input = undefined;
     expect(areDomainSelected(input)).toBe(false);
+  });
+});
+
+describe("getTotalYearlyPrice function", () => {
+  it("should return the total yearly price for selected domains", () => {
+    const selectedDomains = {
+      "fricoben.stark": true,
+      "fricobens.stark": true,
+      "lili.stark": false,
+      "allerpsg.stark": true,
+    };
+
+    const expectedPrice = gweiToEth(
+      String(
+        getPriceFromDomains(
+          ["fricoben.stark", "fricobens.stark", "allerpsg.stark"],
+          1
+        )
+      )
+    );
+
+    expect(getTotalYearlyPrice(selectedDomains)).toEqual(expectedPrice);
+  });
+
+  it("should return '0' if no domains are selected", () => {
+    const selectedDomains = {
+      "fricoben.stark": false,
+      "fricobens.stark": false,
+      "lili.stark": false,
+      "allerpsg.stark": false,
+    };
+
+    expect(getTotalYearlyPrice(selectedDomains)).toEqual("0");
+  });
+
+  it("should return '0' if selectedDomains is undefined", () => {
+    expect(getTotalYearlyPrice(undefined)).toEqual("0");
   });
 });
