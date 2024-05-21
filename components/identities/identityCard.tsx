@@ -178,7 +178,10 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                       },
                     }}
                   >
-                    <div onClick={() => setOpenModal(true)}>
+                    <div
+                      onClick={() => setOpenModal(true)}
+                      className={styles.editIcon}
+                    >
                       <EditIcon
                         width="16"
                         color={theme.palette.secondary.main}
