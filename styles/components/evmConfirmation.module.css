@@ -1,0 +1,161 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: #454545;
+  gap: 24px;
+  text-align: center;
+  margin: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.subtitle {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.title {
+  font-family: "QuickZap";
+  font-size: 48px;
+  font-weight: 400;
+  line-height: 58px;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--secondary);
+  max-width: 1000px;
+}
+
+.description {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 28px;
+  letter-spacing: 0.01em;
+  text-align: center;
+  max-width: 600px;
+  font-family: "Poppins-Regular";
+}
+
+.highlight {
+  color: var(--primary);
+}
+
+.strong {
+  font-family: "Poppins-Bold";
+}
+
+.backButton {
+  font-family: "QuickZap";
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 24px;
+  cursor: pointer;
+}
+
+.coconutLeft {
+  position: fixed;
+  left: -150px;
+  bottom: -80px;
+  width: 390px;
+  overflow: hidden;
+}
+
+.coconutRight {
+  position: fixed;
+  right: -150px;
+  bottom: -80px;
+  width: 390px;
+  overflow: hidden;
+}
+
+.discord {
+  position: fixed;
+  top: 100px;
+  left: 100px;
+  width: 115px;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.twitter {
+  position: fixed;
+  top: 260px;
+  left: 160px;
+  width: 55px;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.github {
+  position: fixed;
+  top: 340px;
+  left: 110px;
+  width: 55px;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.profile {
+  position: fixed;
+  top: 460px;
+  left: 200px;
+  width: 55px;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.metamask {
+  position: fixed;
+  bottom: 220px;
+  right: 150px;
+  width: 130px;
+  overflow: hidden;
+}
+
+@media (max-width: 1084px) {
+  .container {
+    padding: 0 12px;
+    margin-top: 60px;
+  }
+  .title {
+    font-size: 30px;
+    line-height: 46px;
+  }
+  .coconutLeft,
+  .coconutRight {
+    display: none;
+  }
+
+  .discord {
+    top: 70px;
+    right: 10px;
+    left: auto;
+    width: 70px;
+  }
+
+  .twitter {
+    top: 200px;
+    left: 0;
+  }
+
+  .github {
+    top: 50vh;
+    right: -30px;
+    left: auto;
+  }
+
+  .profile {
+    top: auto;
+    bottom: 50px;
+    right: auto;
+    left: 40px;
+  }
+
+  .metamask {
+    bottom: -25px;
+    right: -25px;
+  }
+}
