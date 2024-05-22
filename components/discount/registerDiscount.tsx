@@ -40,6 +40,15 @@ import {
   getDomainPriceAltcoin,
   getTokenQuote,
 } from "../../utils/altcoinService";
+import { getFreeDomain } from "@/utils/campaignService";
+
+export type GetCustomCalls = (
+  newTokenId: number,
+  encodedDomain: string,
+  signature: string[],
+  coupon: string,
+  txMetadataHash: HexString
+) => Call[];
 
 type RegisterDiscountProps = {
   domain: string;
@@ -52,6 +61,7 @@ type RegisterDiscountProps = {
   couponCode?: boolean;
   couponHelper?: string;
   banner?: string;
+  getCustomCalls?: GetCustomCalls;
 };
 
 const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
@@ -65,6 +75,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   couponCode,
   couponHelper,
   banner = "/visuals/register.webp",
+  getCustomCalls,
 }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -96,7 +107,10 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     new Map()
   );
   const [coupon, setCoupon] = useState<string>("");
-  const [couponError, setCouponError] = useState<boolean>(true);
+  const [lastSuccessCoupon, setLastSuccessCoupon] = useState<string>("");
+  const [couponError, setCouponError] = useState<string>("");
+  const [signature, setSignature] = useState<string[]>(["", ""]);
+  const [loadingCoupon, setLoadingCoupon] = useState<boolean>(false);
   const { addTransaction } = useNotificationManager();
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
@@ -200,6 +214,17 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     const addressesMatch =
       hexToDecimal(address) === hexToDecimal(targetAddress);
 
+    if (getCustomCalls)
+      return setCallData(
+        getCustomCalls(
+          newTokenId,
+          encodedDomain,
+          signature,
+          coupon,
+          txMetadataHash
+        )
+      );
+
     // Common calls
     const calls = [
       registrationCalls.approve(price, ERC20Contract[displayedCurrency]),
@@ -290,6 +315,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     discountId,
     quoteData,
     displayedCurrency,
+    coupon,
+    signature,
+    getCustomCalls,
   ]);
 
   useEffect(() => {
@@ -332,8 +360,31 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
   function changeCoupon(value: string): void {
     setCoupon(value);
-    setCouponError(value.length === 0);
+    setLoadingCoupon(true);
   }
+
+  useEffect(() => {
+    if (!coupon) {
+      setCouponError("Please enter a coupon code");
+      setLoadingCoupon(false);
+      return;
+    }
+    if (coupon === lastSuccessCoupon) {
+      setCouponError("");
+      setLoadingCoupon(false);
+      return;
+    }
+    if (!address) return;
+    getFreeDomain(address, `${domain}.stark`, coupon).then((res) => {
+      if (res.error) setCouponError(res.error);
+      else {
+        setSignature([res.r, res.s]);
+        setLastSuccessCoupon(coupon);
+        setCouponError("");
+      }
+      setLoadingCoupon(false);
+    });
+  }, [coupon, domain, address, lastSuccessCoupon]);
 
   useEffect(() => {
     if (isSwissResident) {
@@ -392,8 +443,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
                 value={coupon}
                 onChange={(e) => changeCoupon(e.target.value)}
                 color="secondary"
-                error={couponError}
-                errorMessage="A coupon code is required to proceed"
+                error={Boolean(couponError)}
+                errorMessage={couponError}
               />
             ) : null}
           </div>
@@ -436,7 +487,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
                 invalidBalance ||
                 !termsBox ||
                 emailError ||
-                couponError
+                Boolean(couponError) ||
+                loadingCoupon
               }
             >
               {!termsBox

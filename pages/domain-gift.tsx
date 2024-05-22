@@ -7,6 +7,7 @@ import DiscountCheckoutScreen from "../components/discount/discountCheckoutScree
 // Create a new discount in utils to create a new discount campaign
 import { domainGift } from "../utils/discounts/domainGift";
 import DiscountOfferScreenVariant from "@/components/discount/discountOfferScreenVariant";
+import { GetCustomCalls } from "@/components/discount/registerDiscount";
 
 const DomainGift: NextPage = () => {
   const [searchResult, setSearchResult] = useState<SearchResult | undefined>();
@@ -22,6 +23,28 @@ const DomainGift: NextPage = () => {
   function goBack() {
     setScreen(screen - 1);
   }
+
+  const getCustomCalls: GetCustomCalls = (
+    newTokenId,
+    encodedDomain,
+    signature,
+    coupon,
+    txMetadataHash
+  ) => {
+    return [
+      {
+        contractAddress: process.env.NEXT_PUBLIC_DOMAIN_GIFT_CONTRACT as string,
+        entrypoint: "get_free_domain",
+        calldata: [
+          newTokenId,
+          encodedDomain,
+          signature,
+          coupon,
+          txMetadataHash,
+        ].flat(),
+      },
+    ];
+  };
 
   return (
     <div className={homeStyles.screen}>
@@ -53,6 +76,7 @@ const DomainGift: NextPage = () => {
           couponCode={domainGift.offer.couponCode}
           couponHelper={domainGift.offer.couponHelper}
           banner={domainGift.image}
+          getCustomCalls={getCustomCalls}
         />
       ) : null}
     </div>
