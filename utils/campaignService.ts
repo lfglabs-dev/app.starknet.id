@@ -18,7 +18,7 @@ export const getFreeDomain = async (
     }
     return res.json();
   } catch (e) {
-    console.log("Error getting free domain: ", e);
+    console.error("Error getting free domain:", { error: e, addr, domain, code });
     return { error: e };
   }
 };
