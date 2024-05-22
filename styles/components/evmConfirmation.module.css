@@ -3,7 +3,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: calc(100vh - 80px);
   color: #454545;
   gap: 24px;
   text-align: center;
