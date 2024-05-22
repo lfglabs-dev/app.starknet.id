@@ -213,8 +213,9 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
                   create a personalized ENS domain{" "}
                   {getDomainWithoutStark(identity?.domain)}.snid.eth. This
                   domain can be used across all EVM chains and rollups !
-                  Additionally, you'll update your ENS profile with your PFP,
-                  GitHub, Twitter, and other verified Starknet ID information!
+                  Additionally, you&apos;ll update your ENS profile with your
+                  PFP, GitHub, Twitter, and other verified Starknet ID
+                  information!
                 </p>
               </div>
               <img src="/visuals/ecosystemMap.svg" className={styles.cardImg} />
