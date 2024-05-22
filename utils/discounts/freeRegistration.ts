@@ -1,5 +1,5 @@
 // Discount details to fill in case of a duplicate of this page
-type DomainGift = {
+type FreeRegistration = {
   expiry: number;
   image: string;
   name: string;
@@ -7,7 +7,7 @@ type DomainGift = {
   offer: Discount;
 };
 
-export const domainGift: DomainGift = {
+export const freeRegistration: FreeRegistration = {
   name: "Domain Gift",
   image: "/register/gift.webp",
   expiry: 1726382280 * 1000, // timestamp in ms

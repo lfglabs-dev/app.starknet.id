@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/discount.module.css";
-import RegisterDiscount, { GetCustomCalls } from "./registerDiscount";
+import RegisterDiscount from "./registerDiscount";
 
 type DiscountCheckoutScreenProps = {
   domain: string;
@@ -13,7 +13,6 @@ type DiscountCheckoutScreenProps = {
   couponCode?: boolean;
   couponHelper?: string;
   banner?: string;
-  getCustomCalls?: GetCustomCalls;
 };
 
 const DiscountCheckoutScreen: FunctionComponent<
@@ -29,7 +28,6 @@ const DiscountCheckoutScreen: FunctionComponent<
   couponCode,
   couponHelper,
   banner,
-  getCustomCalls,
 }) => {
   return (
     <div className={styles.container}>
@@ -47,7 +45,6 @@ const DiscountCheckoutScreen: FunctionComponent<
         couponCode={couponCode}
         couponHelper={couponHelper}
         banner={banner}
-        getCustomCalls={getCustomCalls}
       />
     </div>
   );

@@ -42,14 +42,6 @@ import {
 } from "../../utils/altcoinService";
 import { getFreeDomain } from "@/utils/campaignService";
 
-export type GetCustomCalls = (
-  newTokenId: number,
-  encodedDomain: string,
-  signature: string[],
-  coupon: string,
-  txMetadataHash: HexString
-) => Call[];
-
 type RegisterDiscountProps = {
   domain: string;
   duration: number;
@@ -61,7 +53,6 @@ type RegisterDiscountProps = {
   couponCode?: boolean;
   couponHelper?: string;
   banner?: string;
-  getCustomCalls?: GetCustomCalls;
 };
 
 const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
@@ -75,7 +66,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   couponCode,
   couponHelper,
   banner = "/visuals/register.webp",
-  getCustomCalls,
 }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -214,15 +204,15 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     const addressesMatch =
       hexToDecimal(address) === hexToDecimal(targetAddress);
 
-    if (getCustomCalls) {
-      const customCalls = getCustomCalls(
+    if (coupon) {
+      const freeRegisterCalls = registrationCalls.getFreeRegistrationCalls(
         newTokenId,
         encodedDomain,
         signature,
         coupon,
         txMetadataHash
       );
-      return setCallData(customCalls);
+      return setCallData(freeRegisterCalls);
     }
 
     // Common calls
@@ -317,7 +307,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     displayedCurrency,
     coupon,
     signature,
-    getCustomCalls,
   ]);
 
   useEffect(() => {
