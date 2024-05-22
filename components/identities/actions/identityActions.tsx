@@ -83,13 +83,14 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   const nextAutoRenew = useMemo(() => {
     const now = Math.floor(Date.now() / 1000);
+    const monthInSeconds = 60 * 60 * 24 * 30;
     if (identity?.domainExpiry) {
-      if (identity?.domainExpiry + 2592000 < now) {
+      if (identity?.domainExpiry + monthInSeconds < now) {
         return "Next today";
       } else {
         return (
           "Next payment on " +
-          timestampToReadableDate(identity?.domainExpiry - 2592000)
+          timestampToReadableDate(identity?.domainExpiry - monthInSeconds)
         );
       }
     }
