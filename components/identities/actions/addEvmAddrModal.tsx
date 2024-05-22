@@ -40,6 +40,7 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
   const [message, setMessage] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const [isSendingTx, setIsSendingTx] = useState(false);
 
   const { writeAsync: set_user_data, data: userData } = useContractWrite({
     calls:
@@ -77,8 +78,10 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
 
   async function setUserData(): Promise<void> {
     try {
+      setIsSendingTx(true);
       await set_user_data();
     } catch (error) {
+      setIsSendingTx(false);
       console.error("Failed to set user data:", error);
     }
   }
@@ -138,19 +141,21 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
     }
   }
 
-  function closeModal(showNotif: boolean): void {
+  function closeModal(showNotif: boolean, canClose: boolean = true): void {
+    if (!canClose) return;
     setEvmAddress(identity?.evmAddress);
     setFieldInput(identity?.evmAddress ?? "");
     setIsValid(true);
     setMessage(undefined);
     handleClose(showNotif);
+    setIsSendingTx(false);
   }
 
   return (
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={() => closeModal(false)}
+      onClose={() => closeModal(false, !isSendingTx)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
