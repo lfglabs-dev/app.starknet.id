@@ -49,6 +49,9 @@ type RegisterDiscountProps = {
   priceInEth: string;
   mailGroups: string[];
   goBack: () => void;
+  couponCode?: boolean;
+  couponHelper?: string;
+  banner?: string;
 };
 
 const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
@@ -59,6 +62,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   priceInEth,
   mailGroups,
   goBack,
+  couponCode,
+  couponHelper,
+  banner = "/visuals/register.webp",
 }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -89,6 +95,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
+  const [coupon, setCoupon] = useState<string>("");
+  const [couponError, setCouponError] = useState<boolean>(true);
   const { addTransaction } = useNotificationManager();
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
@@ -322,6 +330,11 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     setEmailError(isValidEmail(value) ? false : true);
   }
 
+  function changeCoupon(value: string): void {
+    setCoupon(value);
+    setCouponError(value.length === 0);
+  }
+
   useEffect(() => {
     if (isSwissResident) {
       setSalesTaxRate(swissVatRate);
@@ -347,6 +360,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     setDisplayedCurrency(type);
   };
 
+  const isFree = priceInEth === "0";
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -370,6 +385,17 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
               isSwissResident={isSwissResident}
               onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
             />
+            {couponCode ? (
+              <TextField
+                helperText={couponHelper}
+                label="Coupon code"
+                value={coupon}
+                onChange={(e) => changeCoupon(e.target.value)}
+                color="secondary"
+                error={couponError}
+                errorMessage="A coupon code is required to proceed"
+              />
+            ) : null}
           </div>
         </div>
         <div className={styles.summary}>
@@ -384,6 +410,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
             onCurrencySwitch={onCurrencySwitch}
             customMessage={customMessage}
             loadingPrice={loadingPrice}
+            isFree={isFree}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
@@ -408,7 +435,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
                 !targetAddress ||
                 invalidBalance ||
                 !termsBox ||
-                emailError
+                emailError ||
+                couponError
               }
             >
               {!termsBox
@@ -417,6 +445,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
                 ? `You don't have enough ${displayedCurrency}`
                 : emailError
                 ? "Enter a valid Email"
+                : couponError
+                ? "Enter a valid Coupon"
                 : "Register my domain"}
             </Button>
           ) : (
@@ -424,7 +454,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           )}
         </div>
       </div>
-      <img className={styles.image} src="/visuals/register.webp" />
+      <img className={styles.image} src={banner} />
       <TxConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}

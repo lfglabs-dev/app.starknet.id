@@ -10,6 +10,9 @@ type DiscountCheckoutScreenProps = {
   price: string;
   goBack: () => void;
   mailGroupId: string;
+  couponCode?: boolean;
+  couponHelper?: string;
+  banner?: string;
 };
 
 const DiscountCheckoutScreen: FunctionComponent<
@@ -22,6 +25,9 @@ const DiscountCheckoutScreen: FunctionComponent<
   price,
   goBack,
   mailGroupId,
+  couponCode,
+  couponHelper,
+  banner,
 }) => {
   return (
     <div className={styles.container}>
@@ -36,6 +42,9 @@ const DiscountCheckoutScreen: FunctionComponent<
           mailGroupId,
         ]} // Second group is the special group for discount group
         goBack={goBack}
+        couponCode={couponCode}
+        couponHelper={couponHelper}
+        banner={banner}
       />
     </div>
   );

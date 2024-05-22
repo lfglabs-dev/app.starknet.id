@@ -1,4 +1,13 @@
-.container {
+.wrapperScreen {
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+  justify-content: center;
+  height: calc(100% - 12vh);
+}
+
+.container,
+.containerVariant {
   display: flex;
   align-items: center;
   gap: 24px;
@@ -6,16 +15,22 @@
 }
 
 .upsellIllustration,
-.illustration {
+.illustration,
+.illustrationVariant {
   width: 450px;
   align-self: stretch;
+}
+
+.illustrationVariant {
+  width: 520px;
 }
 
 .upsellIllustration {
   width: 400px;
 }
 
-.illustrationContainer {
+.illustrationContainer,
+.illustrationContainerVariant {
   display: flex;
   position: relative;
   flex-direction: column;
@@ -31,12 +46,34 @@
   line-height: 20px;
 }
 
+.descriptionVariant {
+  color: var(--content-500);
+
+  /* Body Text/ Medium/ Medium */
+  font-family: "DM Sans";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 28px; /* 175% */
+  letter-spacing: -0.32px;
+  max-width: 487px;
+}
+
 .title {
   font-family: "QuickZap";
   font-size: 3.5rem;
   color: var(--secondary);
   text-shadow: 1px 1px var(--tertiary);
   text-transform: uppercase;
+}
+
+.titleVariant {
+  color: var(--content-500);
+  font-family: "QuickZap";
+  font-size: 43px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 58px; /* 134.884% */
 }
 
 .upsellContainer {
@@ -80,13 +117,52 @@
   opacity: 0.7;
 }
 
+.searchBarVariant {
+  width: 500px;
+  max-width: 100%;
+}
+
 @media (max-width: 1024px) {
   .illustrationContainer {
     display: none;
   }
 
+  .wrapperScreen {
+    justify-content: start;
+    padding-top: 3rem;
+  }
+
+  .containerVariant {
+    flex-direction: column-reverse;
+    justify-content: start;
+    padding-bottom: 6rem;
+  }
+
+  .illustrationContainerVariant {
+    width: 100%;
+    height: 100%;
+  }
+
+  .illustrationVariant {
+    margin: 0 auto;
+  }
+
   .title {
     font-size: 2.5rem;
     text-align: center;
+  }
+
+  .titleVariant {
+    font-size: 1.5rem;
+    line-height: 28px;
+  }
+
+  .descriptionVariant {
+    text-align: center;
+    font-size: 14px;
+    line-height: 20px;
+  }
+  .searchBarVariant {
+    width: 100%;
   }
 }
