@@ -96,7 +96,6 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     handleClose();
   }
 
-  console.log("isSendingTx", isSendingTx);
 
   return (
     <Modal
