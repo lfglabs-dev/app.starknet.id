@@ -214,16 +214,16 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     const addressesMatch =
       hexToDecimal(address) === hexToDecimal(targetAddress);
 
-    if (getCustomCalls)
-      return setCallData(
-        getCustomCalls(
-          newTokenId,
-          encodedDomain,
-          signature,
-          coupon,
-          txMetadataHash
-        )
+    if (getCustomCalls) {
+      const customCalls = getCustomCalls(
+        newTokenId,
+        encodedDomain,
+        signature,
+        coupon,
+        txMetadataHash
       );
+      return setCallData(customCalls);
+    }
 
     // Common calls
     const calls = [
