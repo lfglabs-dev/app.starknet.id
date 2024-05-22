@@ -141,13 +141,14 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
     }
   }
 
-  function closeModal(showNotif: boolean): void {
+  function closeModal(showNotif: boolean, canClose = true): void {
+    if (!canClose) return;
     setEvmAddress(identity?.evmAddress);
     setFieldInput(identity?.evmAddress ?? "");
     setIsValid(true);
     setMessage(undefined);
-    handleClose(showNotif);
     setIsSendingTx(false);
+    handleClose(showNotif);
   }
 
   return (

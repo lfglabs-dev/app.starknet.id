@@ -39,6 +39,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       calls: callData,
     });
   const [isTxSent, setIsTxSent] = useState(false);
+  const [isSendingTx, setIsSendingTx] = useState(false);
 
   function changeTokenId(value: number): void {
     setTargetTokenId(value);
@@ -67,8 +68,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
     } else {
       setCallData([
         {
-          contractAddress: process.env
-            .NEXT_PUBLIC_IDENTITY_CONTRACT as string,
+          contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
           entrypoint: "mint",
           calldata: [numberToString(newTokenId)],
         },
@@ -99,11 +99,24 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       },
     });
     setIsTxSent(true);
+    setIsSendingTx(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transferDomainData]); // We want to call this only once when the transaction is sent
 
-  function closeModal(): void {
+  async function transferDomain(): Promise<void> {
+    try {
+      setIsSendingTx(true);
+      transfer_domain();
+    } catch (error) {
+      setIsSendingTx(false);
+      console.error("Failed to transfer domain:", error);
+    }
+  }
+
+  function closeModal(canClose = true): void {
+    if (!canClose) return;
     setIsTxSent(false);
+    setIsSendingTx(false);
     handleClose();
   }
 
@@ -111,7 +124,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={closeModal}
+      onClose={() => closeModal(!isSendingTx)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -122,7 +135,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
         />
       ) : (
         <div className={styles.menu}>
-          <button className={styles.menu_close} onClick={closeModal}>
+          <button className={styles.menu_close} onClick={() => closeModal()}>
             <svg viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
@@ -163,7 +176,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
                 disabled={
                   Boolean(!subdomain) || typeof isDomainValid === "string"
                 }
-                onClick={() => transfer_domain()}
+                onClick={transferDomain}
               >
                 Create subdomain
               </Button>
