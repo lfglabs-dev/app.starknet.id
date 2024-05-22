@@ -32,7 +32,7 @@ const DiscountOfferScreenVariant: FunctionComponent<
             <p className={styles.descriptionVariant}>{desc}</p>
           </div>
           <div className={styles.searchBarVariant}>
-            <SearchBar onSearch={onSearch} showHistory={false} />
+            <SearchBar onSearch={onSearch} showHistory={false} is5LettersOnly />
           </div>
         </div>
         <div className={styles.illustrationContainerVariant}>
