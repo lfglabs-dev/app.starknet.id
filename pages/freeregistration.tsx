@@ -21,9 +21,7 @@ const FreeRegistration: NextPage = () => {
     if (timestamp >= freeRegistration.expiry) setScreen(0);
   }, []);
 
-  function goBack() {
-    setScreen(screen - 1);
-  }
+  const goBack = () => setScreen(screen - 1);
 
   return (
     <div className={homeStyles.screen}>
