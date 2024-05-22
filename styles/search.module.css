@@ -247,6 +247,13 @@
   min-width: 10rem;
 }
 
+.newsCallToAction:hover {
+  border-radius: 8px;
+  background: #b3e3cf;
+  /* X-Large Shadow */
+  box-shadow: 0px 6px 50px 0px rgba(0, 0, 0, 0.18);
+}
+
 @media (max-width: 768px) {
   .subtitle {
     font-size: 24px;
