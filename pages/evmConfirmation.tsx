@@ -17,6 +17,7 @@ const EvmConfirmation: NextPage = () => {
   const redirectEns = () => {
     if (domain) window.open(`https://app.ens.domains/${domain}.snid.eth`);
     else window.open(`https://app.ens.domains`);
+    redirect();
   };
 
   return (
@@ -44,7 +45,7 @@ const EvmConfirmation: NextPage = () => {
           <div className={styles.description}>
             Your EVM address has been successfully linked to{" "}
             <span className={styles.strong}>{domain}.snid.eth</span>. All EVM
-            tabs in ENS now reflect this address. Additionally, we&apos;ve
+            records in ENS now reflect this address. Additionally, we&apos;ve
             updated your profile with your{" "}
             <span className={styles.strong}>PFP, GitHub, Twitter</span>, and
             other verified Starknet ID information

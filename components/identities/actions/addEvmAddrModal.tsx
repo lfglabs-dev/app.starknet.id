@@ -70,7 +70,7 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
     router.push(
       `/evmConfirmation?domain=${getDomainWithoutStark(
         identity?.domain
-      )}&tokenId=${identity?.id}`
+      )}&tokenId=${hexToDecimal(identity?.id)}`
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userData]); // We want to execute this only once when the tx is sent
@@ -209,10 +209,12 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
                   Why Add an EVM Address to Your Starknet Domain?
                 </h3>
                 <p className={styles.cardDesc}>
-                  By adding an EVM address to your Starknet domain, you enhance
-                  its functionality and connectivity. Your Starknet domain
-                  automatically comes with an associated ENS subdomain connected
-                  to all EVM chains and Rollups!
+                  By adding an EVM address to your Starknet domain, you can
+                  create a personalized ENS domain{" "}
+                  {getDomainWithoutStark(identity?.domain)}.snid.eth. This
+                  domain can be used across all EVM chains and rollups !
+                  Additionally, you'll update your ENS profile with your PFP,
+                  GitHub, Twitter, and other verified Starknet ID information!
                 </p>
               </div>
               <img src="/visuals/ecosystemMap.svg" className={styles.cardImg} />
