@@ -83,7 +83,7 @@ const RegisterFree: FunctionComponent<RegisterFreeProps> = ({
   useEffect(() => {
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-    const txMetadataHash = ("0x" + metadataHash) as HexString;
+    const txMetadataHash = `0x${metadataHash}` as HexString;
 
     const freeRegisterCalls = registrationCalls.getFreeRegistrationCalls(
       newTokenId,
