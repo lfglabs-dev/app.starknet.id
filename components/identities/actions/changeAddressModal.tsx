@@ -30,6 +30,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   const [targetAddress, setTargetAddress] = useState<string>("");
   const { addTransaction } = useNotificationManager();
   const [isTxSent, setIsTxSent] = useState(false);
+  const [isSendingTx, setIsSendingTx] = useState(false);
 
   const { writeAsync: set_domain_to_address, data: domainToAddressData } =
     useContractWrite({
@@ -55,19 +56,28 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
       },
     });
     setIsTxSent(true);
+    setIsSendingTx(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domainToAddressData]); // We want to execute this only once when the tx is sent
 
-  function setDomainToAddress(): void {
-    set_domain_to_address();
+  async function setDomainToAddress(): Promise<void> {
+    try {
+      setIsSendingTx(true);
+      await set_domain_to_address();
+    } catch (error) {
+      setIsSendingTx(false);
+      console.error("Failed to set domain to address:", error);
+    }
   }
 
   function changeAddress(value: string): void {
     isHexString(value) ? setTargetAddress(value) : null;
   }
 
-  function closeModal(): void {
+  function closeModal(canClose = true): void {
+    if (!canClose) return;
     setIsTxSent(false);
+    setIsSendingTx(false);
     handleClose();
   }
 
@@ -75,7 +85,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={closeModal}
+      onClose={() => closeModal(!isSendingTx)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -87,7 +97,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
           />
         ) : (
           <div className={styles.menu}>
-            <button className={styles.menu_close} onClick={closeModal}>
+            <button className={styles.menu_close} onClick={() => closeModal()}>
               <svg viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"

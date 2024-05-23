@@ -36,6 +36,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   const [addressInput, setAddressInput] = useState<string>("");
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [isTxSent, setIsTxSent] = useState(false);
+  const [isSendingTx, setIsSendingTx] = useState(false);
 
   const { writeAsync: transfer_identity_and_set_domain, data: transferData } =
     useContractWrite({
@@ -57,6 +58,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
       },
     });
     setIsTxSent(true);
+    setIsSendingTx(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transferData]); // We want to call this only once when the transaction is sent
 
@@ -73,16 +75,24 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     }
   }, [addressInput, starknetIdNavigator]);
 
-  function transferIdentityAndSetDomain(): void {
-    transfer_identity_and_set_domain();
+  async function transferIdentityAndSetDomain(): Promise<void> {
+    try {
+      setIsSendingTx(true);
+      await transfer_identity_and_set_domain();
+    } catch (error) {
+      setIsSendingTx(false);
+      console.error("Failed to transfer identity and set domain:", error);
+    }
   }
 
   function changeAddress(value: string): void {
     setAddressInput(value);
   }
 
-  function closeModal(): void {
+  function closeModal(canClose = true): void {
+    if (!canClose) return;
     setIsTxSent(false);
+    setIsSendingTx(false);
     handleClose();
   }
 
@@ -90,7 +100,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={closeModal}
+      onClose={() => closeModal(!isSendingTx)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -101,7 +111,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
         />
       ) : (
         <div className={styles.menu}>
-          <button className={styles.menu_close} onClick={closeModal}>
+          <button className={styles.menu_close} onClick={() => closeModal()}>
             <svg viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
