@@ -78,7 +78,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   async function transferIdentityAndSetDomain(): Promise<void> {
     try {
       setIsSendingTx(true);
-      transfer_identity_and_set_domain();
+      await transfer_identity_and_set_domain();
     } catch (error) {
       setIsSendingTx(false);
       console.error("Failed to transfer identity and set domain:", error);
@@ -95,7 +95,6 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     setIsSendingTx(false);
     handleClose();
   }
-
 
   return (
     <Modal

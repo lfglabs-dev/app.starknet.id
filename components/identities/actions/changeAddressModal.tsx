@@ -63,7 +63,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   async function setDomainToAddress(): Promise<void> {
     try {
       setIsSendingTx(true);
-      set_domain_to_address();
+      await set_domain_to_address();
     } catch (error) {
       setIsSendingTx(false);
       console.error("Failed to set domain to address:", error);

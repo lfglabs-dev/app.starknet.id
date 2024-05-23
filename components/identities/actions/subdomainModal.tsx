@@ -106,7 +106,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   async function transferDomain(): Promise<void> {
     try {
       setIsSendingTx(true);
-      transfer_domain();
+      await transfer_domain();
     } catch (error) {
       setIsSendingTx(false);
       console.error("Failed to transfer domain:", error);
