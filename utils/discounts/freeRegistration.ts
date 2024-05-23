@@ -17,7 +17,7 @@ export const freeRegistration: FreeRegistration = {
     customMessage: "3 months",
     discountId: "X",
     price: "0",
-    desc: "Activate your exclusive Starknet domain coupon during 48 hours and secure your place in the Starknet ecosystem. Don't miss out on this limited-time offer!",
+    desc: "Unlock your .stark domain for free and secure your Starknet profile!",
     title: {
       desc: "Get your",
       catch: "FREE .STARK",
@@ -26,6 +26,6 @@ export const freeRegistration: FreeRegistration = {
     image: "/visuals/gift.webp",
     couponCode: true,
     couponHelper:
-      "A unique and valid registration coupon code is required to claim your free domain. You can request it directly from the Starknet ID team.",
+      "A unique and valid registration coupon code is required to claim your free domain.",
   },
 };

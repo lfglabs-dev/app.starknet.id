@@ -14,14 +14,14 @@ import ArCurrencyDropdown from "./arCurrencyDropdown";
 
 type RegisterSummaryProps = {
   duration: number;
-  ethRegistrationPrice: string;
-  registrationPrice: string; // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
+  ethRegistrationPrice?: string;
+  registrationPrice?: string; // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   renewalBox?: boolean;
-  salesTaxRate: number;
-  isSwissResident: boolean;
+  salesTaxRate?: number;
+  isSwissResident?: boolean;
   customMessage?: string;
-  displayedCurrency: CurrencyType[] | CurrencyType;
-  onCurrencySwitch:
+  displayedCurrency?: CurrencyType[] | CurrencyType;
+  onCurrencySwitch?:
     | ((type: CurrencyType[]) => void)
     | ((type: CurrencyType) => void);
   loadingPrice?: boolean;
@@ -63,12 +63,16 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       })
       .catch((err) => console.log("Coingecko API Error:", err));
   }, []);
-  const announcedCurrency =
-    displayedCurrency.length > 1 ? "ETH or STRK" : displayedCurrency;
+
+  const announcedCurrency = displayedCurrency
+    ? displayedCurrency.length > 1
+      ? "ETH or STRK"
+      : displayedCurrency
+    : "ETH";
 
   useEffect(() => {
     function computeUsdPrice() {
-      if (ethUsdPrice) {
+      if (ethUsdPrice && ethRegistrationPrice) {
         return (
           Number(ethUsdPrice) *
           Number(gweiToEth(ethRegistrationPrice)) *
@@ -114,6 +118,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function displayTokenPrice(): ReactNode {
+    if (!ethRegistrationPrice || !salesTaxRate || !registrationPrice)
+      return null;
     const salesTaxAmountUsd =
       salesTaxRate *
       Number(gweiToEth(ethRegistrationPrice)) *
@@ -138,6 +144,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function getMessage() {
+    if (isFree) return "3 months";
+    if (!ethRegistrationPrice) return "0";
     if (customMessage) return customMessage;
     else {
       return `${gweiToEth(ethRegistrationPrice)} ETH x ${

@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react";
 import { Checkbox } from "@mui/material";
-import styles from "../../styles/components/variants.module.css";
 import InputHelper from "../UI/inputHelper";
 import { gweiToEth } from "../../utils/feltService";
 import { CurrencyType } from "@/utils/constants";
+import TermCheckbox from "./termCheckbox";
 
 type RegisterCheckboxes = {
   termsBox: boolean;
@@ -47,41 +47,11 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   return (
     <div className="w-full mb-3">
       <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-left text-xs mr-2">
-          <Checkbox
-            checked={termsBox}
-            className={
-              variant === "white"
-                ? styles.whiteCheckbox
-                : styles.defaultCheckbox
-            }
-            onClick={onChangeTermsBox}
-          />
-          <p className="ml-2 text-left">
-            <span className="cursor-pointer" onClick={onChangeTermsBox}>
-              Accept
-            </span>{" "}
-            <a
-              className="underline"
-              href={process.env.NEXT_PUBLIC_STARKNET_ID + "/pdfs/Terms.pdf"}
-              target="_blank"
-              rel="noreferrer"
-            >
-              terms
-            </a>{" "}
-            &{" "}
-            <a
-              className="underline"
-              href={
-                process.env.NEXT_PUBLIC_STARKNET_ID + "/pdfs/PrivacyPolicy.pdf"
-              }
-              target="_blank"
-              rel="noreferrer"
-            >
-              policies
-            </a>
-          </p>
-        </div>
+        <TermCheckbox
+          checked={termsBox}
+          onChange={onChangeTermsBox}
+          variant={variant}
+        />
         {!isArOnforced ? (
           <InputHelper helperText={getHelperText()}>
             <div

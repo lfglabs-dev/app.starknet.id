@@ -40,7 +40,6 @@ import {
   getDomainPriceAltcoin,
   getTokenQuote,
 } from "../../utils/altcoinService";
-import { getFreeDomain } from "@/utils/campaignService";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -50,9 +49,6 @@ type RegisterDiscountProps = {
   priceInEth: string;
   mailGroups: string[];
   goBack: () => void;
-  couponCode?: boolean;
-  couponHelper?: string;
-  banner?: string;
 };
 
 const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
@@ -63,9 +59,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   priceInEth,
   mailGroups,
   goBack,
-  couponCode,
-  couponHelper,
-  banner = "/visuals/register.webp",
 }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -96,11 +89,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
-  const [coupon, setCoupon] = useState<string>("");
-  const [lastSuccessCoupon, setLastSuccessCoupon] = useState<string>("");
-  const [couponError, setCouponError] = useState<string>("");
-  const [signature, setSignature] = useState<string[]>(["", ""]);
-  const [loadingCoupon, setLoadingCoupon] = useState<boolean>(false);
   const { addTransaction } = useNotificationManager();
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
@@ -204,17 +192,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     const addressesMatch =
       hexToDecimal(address) === hexToDecimal(targetAddress);
 
-    if (coupon) {
-      const freeRegisterCalls = registrationCalls.getFreeRegistrationCalls(
-        newTokenId,
-        encodedDomain,
-        signature,
-        coupon,
-        txMetadataHash
-      );
-      return setCallData(freeRegisterCalls);
-    }
-
     // Common calls
     const calls = [
       registrationCalls.approve(price, ERC20Contract[displayedCurrency]),
@@ -305,8 +282,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     discountId,
     quoteData,
     displayedCurrency,
-    coupon,
-    signature,
   ]);
 
   useEffect(() => {
@@ -347,34 +322,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     setEmailError(isValidEmail(value) ? false : true);
   }
 
-  function changeCoupon(value: string): void {
-    setCoupon(value);
-    setLoadingCoupon(true);
-  }
-
-  useEffect(() => {
-    if (!coupon) {
-      setCouponError("Please enter a coupon code");
-      setLoadingCoupon(false);
-      return;
-    }
-    if (coupon === lastSuccessCoupon) {
-      setCouponError("");
-      setLoadingCoupon(false);
-      return;
-    }
-    if (!address) return;
-    getFreeDomain(address, `${domain}.stark`, coupon).then((res) => {
-      if (res.error) setCouponError(res.error);
-      else {
-        setSignature([res.r, res.s]);
-        setLastSuccessCoupon(coupon);
-        setCouponError("");
-      }
-      setLoadingCoupon(false);
-    });
-  }, [coupon, domain, address, lastSuccessCoupon]);
-
   useEffect(() => {
     if (isSwissResident) {
       setSalesTaxRate(swissVatRate);
@@ -400,8 +347,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     setDisplayedCurrency(type);
   };
 
-  const isFree = priceInEth === "0";
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -425,17 +370,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
               isSwissResident={isSwissResident}
               onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
             />
-            {couponCode ? (
-              <TextField
-                helperText={couponHelper}
-                label="Coupon code"
-                value={coupon}
-                onChange={(e) => changeCoupon(e.target.value)}
-                color="secondary"
-                error={Boolean(couponError)}
-                errorMessage={couponError}
-              />
-            ) : null}
           </div>
         </div>
         <div className={styles.summary}>
@@ -450,7 +384,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
             onCurrencySwitch={onCurrencySwitch}
             customMessage={customMessage}
             loadingPrice={loadingPrice}
-            isFree={isFree}
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
@@ -475,9 +408,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
                 !targetAddress ||
                 invalidBalance ||
                 !termsBox ||
-                emailError ||
-                Boolean(couponError) ||
-                loadingCoupon
+                emailError
               }
             >
               {!termsBox
@@ -486,8 +417,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
                 ? `You don't have enough ${displayedCurrency}`
                 : emailError
                 ? "Enter a valid Email"
-                : couponError
-                ? "Enter a valid Coupon"
                 : "Register my domain"}
             </Button>
           ) : (
@@ -495,7 +424,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           )}
         </div>
       </div>
-      <img className={styles.image} src={banner} />
+      <img className={styles.image} src="/visuals/register.webp" />
       <TxConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
