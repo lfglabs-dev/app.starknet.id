@@ -205,7 +205,7 @@ const RegisterFree: FunctionComponent<RegisterFreeProps> = ({
           )}
         </div>
       </div>
-      <img className={styles.image} src={banner} />
+      <img className={styles.image} src={banner} alt="Banner image" />
       <TxConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
