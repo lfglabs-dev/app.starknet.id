@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { useAccount } from "@starknet-react/core";
-import DomainCheckboxes from "./domainCheckboxes";
+import DomainCheckboxes from "@/components/domains/domainCheckboxes";
 import { fullIdsToDomains } from "@/utils/subscriptionService";
 
 type RenewalDomainsBoxProps = {

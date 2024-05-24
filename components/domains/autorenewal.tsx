@@ -299,7 +299,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
                 AutoRenewalContracts[currency],
                 encodedDomain,
                 allowance,
-                "0x" + metadataHash
+                `0x${metadataHash}`
               )
             );
           }
@@ -360,7 +360,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
             <AutoRenewalDomainsBox
               needSubscription={needSubscription}
               isLoading={needSubscriptionLoading}
-              helperText="Check the box of the domains you want to renew"
+              helperText="Check the box of the domains you want to subscribe"
               setSelectedDomains={setSelectedDomains}
               selectedDomains={selectedDomains}
             />
@@ -399,7 +399,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
               {!termsBox
                 ? "Please accept terms & policies"
                 : !areDomainSelected(selectedDomains)
-                ? "Select a domain to renew"
+                ? "Select a domain to subscribe"
                 : needMedadata && emailError
                 ? "Enter a valid Email"
                 : "Enable subscription"}

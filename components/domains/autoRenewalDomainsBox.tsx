@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { getNonSubscribedDomains } from "@/utils/subscriptionService";
-import DomainCheckboxes from "./domainCheckboxes";
+import DomainCheckboxes from "@/components/domains/domainCheckboxes";
 
 type AutoRenewalDomainsBoxProps = {
   helperText: string;
@@ -29,13 +29,7 @@ const AutoRenewalDomainsBox: FunctionComponent<AutoRenewalDomainsBoxProps> = ({
     setNonSubscribedDomains(nonSubscribedDomains);
     // Initially set all checkboxes to true
     setSelectedDomains(
-      nonSubscribedDomains.reduce(
-        (acc: { [key: string]: boolean }, domain: string) => {
-          acc[domain] = true; // Initially set all to true. Adjust as needed.
-          return acc;
-        },
-        {}
-      )
+      Object.fromEntries(nonSubscribedDomains.map((domain) => [domain, true]))
     );
   }, [needSubscription, setSelectedDomains]);
 
@@ -46,6 +40,7 @@ const AutoRenewalDomainsBox: FunctionComponent<AutoRenewalDomainsBoxProps> = ({
       isLoading={isLoading}
       selectedDomains={selectedDomains}
       helperText={helperText}
+      noDomainText="You don't have any domain to subscribe or you're not connected to your wallet"
     />
   );
 };

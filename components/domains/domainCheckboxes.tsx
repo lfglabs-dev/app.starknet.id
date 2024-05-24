@@ -11,6 +11,7 @@ type DomainCheckboxes = {
   isLoading: boolean;
   domains: string[];
   selectedDomains?: Record<string, boolean>;
+  noDomainText?: string;
 };
 
 const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
@@ -19,6 +20,7 @@ const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
   selectedDomains,
   isLoading,
   domains,
+  noDomainText = "You don't have any domain to renew or you're not connected to your wallet",
 }) => {
   const handleCheckboxChange = (domain: string) => {
     setSelectedDomains((prevState) => ({
@@ -45,13 +47,10 @@ const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
       </div>
       <div className={styles.renewalBox}>
         {domains.length === 0 ? (
-          <p className={styles.legend}>
-            You don&apos;t have any domain to renew or you&apos;re not connected
-            to your wallet
-          </p>
+          <p className={styles.legend}>{noDomainText}</p>
         ) : (
-          domains.map((domain, index) => (
-            <div key={index} className="flex items-center gap-1">
+          domains.map((domain) => (
+            <div key={domain} className="flex items-center gap-1">
               <p className={styles.domainsToRenew}>{domain}</p>
               <Checkbox
                 checked={Boolean(selectedDomains?.[domain])}
