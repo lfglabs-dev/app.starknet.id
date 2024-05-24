@@ -7,8 +7,10 @@
   transform: translate(-50%, -50%);
   border-radius: 20px;
   padding: 45px;
-  width: 600px;
+  width: 700px;
+  min-height: 400px;
   display: flex;
+  justify-content: center;
   flex-direction: column;
   z-index: 1000;
 }
@@ -23,8 +25,8 @@
 
 .menu_close {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 15px;
+  right: 15px;
   width: 22px;
   stroke: black;
   cursor: pointer;
@@ -43,12 +45,14 @@
   font-size: 21px;
   font-weight: bold;
   text-align: center;
+  z-index: 1000;
 }
 
 @media (max-width: 1024px) {
   .menu {
     width: 320px;
     padding: 30px;
+    height: auto;
   }
 
   .menu_title {
