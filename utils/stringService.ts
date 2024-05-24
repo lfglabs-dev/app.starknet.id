@@ -330,8 +330,11 @@ export function generateSuggestedNames(name: string): string[] {
 
 export function getEnsFromStark(
   domain?: string,
-  characterToBreak: number = 25
+  characterToBreak = 25
 ): string {
   if (!domain) return "";
-  return shortenDomain(domain.endsWith(".stark") ? domain.replace(".stark", ".snid.eth") : domain, characterToBreak);
+  return shortenDomain(
+    domain.endsWith(".stark") ? domain.replace(".stark", ".snid.eth") : domain,
+    characterToBreak
+  );
 }
