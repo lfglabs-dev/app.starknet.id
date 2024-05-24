@@ -57,7 +57,6 @@ const RegisterFree: FunctionComponent<RegisterFreeProps> = ({
     new Map()
   );
   const [coupon, setCoupon] = useState<string>("");
-  const [lastSuccessCoupon, setLastSuccessCoupon] = useState<string>("");
   const [couponError, setCouponError] = useState<string>("");
   const [signature, setSignature] = useState<string[]>(["", ""]);
   const [loadingCoupon, setLoadingCoupon] = useState<boolean>(false);
@@ -123,22 +122,33 @@ const RegisterFree: FunctionComponent<RegisterFreeProps> = ({
       setLoadingCoupon(false);
       return;
     }
+    const lastSuccessCoupon = localStorage.getItem("lastSuccessCoupon");
     if (coupon === lastSuccessCoupon) {
       setCouponError("");
       setLoadingCoupon(false);
+      const signature = JSON.parse(
+        localStorage.getItem("couponSignature") as string
+      );
+      setSignature(signature);
       return;
     }
     if (!address) return;
     getFreeDomain(address, `${domain}.stark`, coupon).then((res) => {
-      if (res.error) setCouponError(JSON.stringify(res.error));
+      if (res.error)
+        setCouponError(
+          typeof res.error === "string" ? res.error : JSON.stringify(res.error)
+        );
       else {
-        setSignature([res.r, res.s]);
-        setLastSuccessCoupon(coupon);
+        const signature = [res.r, res.s];
+        setSignature(signature);
         setCouponError("");
+        // Write in local storage
+        localStorage.setItem("lastSuccessCoupon", coupon);
+        localStorage.setItem("couponSignature", JSON.stringify(signature));
       }
       setLoadingCoupon(false);
     });
-  }, [coupon, domain, address, lastSuccessCoupon]);
+  }, [coupon, domain, address]);
 
   return (
     <div className={styles.container}>
