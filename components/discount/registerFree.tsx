@@ -1,5 +1,7 @@
 import React from "react";
-import { FunctionComponent, useEffect, useState } from "react";
+import type { FunctionComponent } from "react";
+import { useEffect, useState } from "react";
+import type { Call } from "starknet";
 import Button from "../UI/button";
 import { useAccount, useContractWrite } from "@starknet-react/core";
 import { utils } from "starknetid.js";
