@@ -7,7 +7,6 @@ import { useAccount, useContractWrite } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import { getDomainWithStark } from "../../utils/stringService";
 import { numberToFixedString } from "../../utils/feltService";
-import { Call } from "starknet";
 import { posthog } from "posthog-js";
 import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
