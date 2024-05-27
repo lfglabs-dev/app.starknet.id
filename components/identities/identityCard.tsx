@@ -4,6 +4,7 @@ import {
   convertNumberToFixedLengthString,
   getDomainWithoutStark,
   getEnsFromStark,
+  minifyAddress,
   shortenDomain,
 } from "../../utils/stringService";
 import SocialMediaActions from "./actions/socialmediaActions";
@@ -17,6 +18,7 @@ import { debounce } from "../../utils/debounceService";
 import { Identity } from "../../utils/apiWrappers/identity";
 import PlusIcon from "../UI/iconsComponents/icons/plusIcon";
 import AddEvmAddrModal from "./actions/addEvmAddrModal";
+import CopyContent from "../UI/copyContent";
 
 type IdentityCardProps = {
   identity?: Identity;
@@ -121,6 +123,15 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
               <div className="flex flex-col">
                 {identity?.targetAddress ? (
                   <>
+                    {identity?.domain ? (
+                      <div className={styles.addressBar}>
+                        <h2>{minifyAddress(identity.targetAddress)}</h2>
+                        <CopyContent
+                          value={identity?.targetAddress}
+                          className="cursor-pointer ml-3"
+                        />
+                      </div>
+                    ) : null}
                     <div className="flex flex-row items-center justify-center">
                       <div className={styles.starknetAddr}>
                         <h1 className={styles.domain}>
