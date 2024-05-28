@@ -2,9 +2,15 @@ import { useState, useEffect } from "react";
 import { hexToDecimal } from "@/utils/feltService";
 import { processSubscriptionData } from "@/utils/subscriptionService";
 
+type UseNeedSubscriptionResult = {
+  needSubscription: NeedSubscription;
+  isLoading: boolean;
+  noDomainToSubscribe: boolean;
+};
+
 export default function useNeedSubscription(
   address?: string
-): NeedSubscription {
+): UseNeedSubscriptionResult {
   const [needSubscription, setNeedSubscription] = useState<NeedSubscription>(
     {}
   );
@@ -24,5 +30,9 @@ export default function useNeedSubscription(
     }
   }, [address]);
 
-  return needSubscription;
+  return {
+    needSubscription,
+    isLoading: !needSubscription,
+    noDomainToSubscribe: Object.keys(needSubscription).length === 0,
+  };
 }
