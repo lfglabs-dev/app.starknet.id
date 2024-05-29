@@ -1,16 +1,14 @@
-import { Modal, TextField } from "@mui/material";
-import { useAccount, useContractWrite } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
+import { TextField } from "@mui/material";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import { useIsValid } from "../../../hooks/naming";
-import styles from "../../../styles/components/modalMessage.module.css";
 import { numberToString } from "../../../utils/stringService";
 import SelectIdentity from "../../domains/selectIdentity";
-import Button from "../../UI/button";
 import { utils } from "starknetid.js";
-import ConfirmationTx from "../../UI/confirmationTx";
 import { Call } from "starknet";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
+import TransactionModal from "@/components/UI/transactionModal";
 
 type SubdomainModalProps = {
   handleClose: () => void;
@@ -26,7 +24,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   domain,
 }) => {
   const [targetTokenId, setTargetTokenId] = useState<number>(0);
-  const [subdomain, setSubdomain] = useState<string>();
+  const [subdomain, setSubdomain] = useState<string>("");
   const encodedSubdomain: string = utils
     .encodeDomain(subdomain)[0]
     .toString(10);
@@ -39,6 +37,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       calls: callData,
     });
   const [isTxSent, setIsTxSent] = useState(false);
+  const [isSendingTx, setIsSendingTx] = useState(false);
 
   function changeTokenId(value: number): void {
     setTargetTokenId(value);
@@ -51,7 +50,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   useEffect(() => {
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
 
-    if (targetTokenId != 0) {
+    if (targetTokenId !== 0) {
       setCallData([
         {
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
@@ -67,8 +66,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
     } else {
       setCallData([
         {
-          contractAddress: process.env
-            .NEXT_PUBLIC_IDENTITY_CONTRACT as string,
+          contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
           entrypoint: "mint",
           calldata: [numberToString(newTokenId)],
         },
@@ -99,79 +97,63 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       },
     });
     setIsTxSent(true);
+    setIsSendingTx(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transferDomainData]); // We want to call this only once when the transaction is sent
+  }, [transferDomainData]);
 
-  function closeModal(): void {
-    setIsTxSent(false);
-    handleClose();
+  async function transferDomain(): Promise<void> {
+    try {
+      setIsSendingTx(true);
+      await transfer_domain();
+    } catch (error) {
+      setIsSendingTx(false);
+      console.error("Failed to transfer domain:", error);
+    }
   }
 
-  return (
-    <Modal
-      disableAutoFocus
-      open={isModalOpen}
-      onClose={closeModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      {isTxSent ? (
-        <ConfirmationTx
-          closeModal={closeModal}
-          txHash={transferDomainData?.transaction_hash}
+  const modalContent = (
+    <>
+      <p className="mt-5">
+        As you own {domain} you can create a subdomain of it using this form.
+        This subdomain won&apos;t have any expiry date but the owner of the
+        parent domain will always be able to redeem it.
+      </p>
+      <div className="mt-5 flex flex-col justify-center">
+        <TextField
+          fullWidth
+          id="outlined-basic"
+          label={
+            isDomainValid !== true
+              ? `"${isDomainValid}" is not a valid character`
+              : "Subdomain"
+          }
+          placeholder="Subdomain"
+          variant="outlined"
+          onChange={(e) => changeSubdomain(e.target.value)}
+          color="secondary"
+          required
+          error={isDomainValid !== true}
         />
-      ) : (
-        <div className={styles.menu}>
-          <button className={styles.menu_close} onClick={closeModal}>
-            <svg viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-          </button>
-          <h2 className={styles.menu_title}>Create a subdomain of {domain}</h2>
-          <p className="mt-5">
-            As you own {domain} you can create a subdomain of it using this
-            form. This subdomain won&apos;t have any expiry date but the owner
-            of the parent domain will always be able to redeem it.
-          </p>
-          <div className="mt-5 flex flex-col justify-center">
-            <TextField
-              fullWidth
-              id="outlined-basic"
-              label={
-                isDomainValid != true
-                  ? `"${isDomainValid}" is not a valid character`
-                  : "Subdomain"
-              }
-              placeholder="Subdomain"
-              variant="outlined"
-              onChange={(e) => changeSubdomain(e.target.value)}
-              color="secondary"
-              required
-              error={isDomainValid != true}
-            />
-            <SelectIdentity
-              tokenId={targetTokenId}
-              changeTokenId={changeTokenId}
-            />
-            <div className="mt-5 flex justify-center">
-              <Button
-                disabled={
-                  Boolean(!subdomain) || typeof isDomainValid === "string"
-                }
-                onClick={() => transfer_domain()}
-              >
-                Create subdomain
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-    </Modal>
+        <SelectIdentity tokenId={targetTokenId} changeTokenId={changeTokenId} />
+      </div>
+    </>
+  );
+
+  return (
+    <TransactionModal
+      title={`Create a subdomain of ${domain}`}
+      modalContent={modalContent}
+      handleClose={handleClose}
+      isModalOpen={isModalOpen}
+      isTxSent={isTxSent}
+      isSendingTx={isSendingTx}
+      setIsSendingTx={setIsSendingTx}
+      setIsTxSent={setIsTxSent}
+      sendTransaction={transferDomain}
+      transactionHash={transferDomainData?.transaction_hash}
+      isButtonDisabled={!subdomain || typeof isDomainValid === "string"}
+      buttonCta="Create subdomain"
+    />
   );
 };
 

@@ -1,4 +1,5 @@
 import { CurrencyType, ERC20Contract } from "../utils/constants";
+import { isStarkRootDomain } from "./stringService";
 
 // Processes subscription data to determine if tokens need allowances
 export function processSubscriptionData(
@@ -55,4 +56,20 @@ export function processSubscriptionData(
     newNeedSubscription[key] = tokenNeedsAllowance;
   });
   return newNeedSubscription;
+}
+
+export function getNonSubscribedDomains(data: NeedSubscription): string[] {
+  const result: string[] = [];
+  for (const domain in data) {
+    if (Object.values(data[domain]).some((value) => value)) {
+      result.push(domain);
+    }
+  }
+  return result;
+}
+
+export function fullIdsToDomains(fullIds: FullId[]): string[] {
+  return fullIds
+    .filter((identity: FullId) => isStarkRootDomain(identity.domain))
+    .map((identity: FullId) => identity.domain);
 }

@@ -123,13 +123,15 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
               <div className="flex flex-col">
                 {identity?.targetAddress ? (
                   <>
-                    <div className={styles.addressBar}>
-                      <h2>{minifyAddress(identity.targetAddress)}</h2>
-                      <CopyContent
-                        value={identity?.targetAddress}
-                        className="cursor-pointer ml-3"
-                      />
-                    </div>
+                    {identity?.domain ? (
+                      <div className={styles.addressBar}>
+                        <h2>{minifyAddress(identity.targetAddress)}</h2>
+                        <CopyContent
+                          value={identity?.targetAddress}
+                          className="cursor-pointer ml-3"
+                        />
+                      </div>
+                    ) : null}
                     <div className="flex flex-row items-center justify-center">
                       <div className={styles.starknetAddr}>
                         <h1 className={styles.domain}>
@@ -178,7 +180,10 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                       },
                     }}
                   >
-                    <div onClick={() => setOpenModal(true)}>
+                    <div
+                      onClick={() => setOpenModal(true)}
+                      className={styles.editIcon}
+                    >
                       <EditIcon
                         width="16"
                         color={theme.palette.secondary.main}

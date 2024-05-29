@@ -1,22 +1,20 @@
-import { InputAdornment, Modal, TextField } from "@mui/material";
-import { useContractWrite } from "@starknet-react/core";
-import { useRouter } from "next/router";
 import React, {
   FunctionComponent,
   useState,
   useEffect,
   useContext,
 } from "react";
-import styles from "../../../styles/components/modalMessage.module.css";
+import { TextField, InputAdornment } from "@mui/material";
+import { useContractWrite } from "@starknet-react/core";
+import { useRouter } from "next/router";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
-import Button from "../../UI/button";
 import { utils } from "starknetid.js";
 import { StarknetIdJsContext } from "../../../context/StarknetIdJsProvider";
-import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
+import TransactionModal from "@/components/UI/transactionModal";
 
 type TransferFormModalProps = {
   identity: Identity | undefined;
@@ -36,6 +34,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   const [addressInput, setAddressInput] = useState<string>("");
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [isTxSent, setIsTxSent] = useState(false);
+  const [isSendingTx, setIsSendingTx] = useState(false);
 
   const { writeAsync: transfer_identity_and_set_domain, data: transferData } =
     useContractWrite({
@@ -48,7 +47,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     if (!transferData?.transaction_hash) return;
     addTransaction({
       timestamp: Date.now(),
-      subtext: `Identity ${tokenId} transfered`,
+      subtext: `Identity ${tokenId} transferred`,
       type: NotificationType.TRANSACTION,
       data: {
         type: TransactionType.TRANSFER_IDENTITY,
@@ -57,8 +56,9 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
       },
     });
     setIsTxSent(true);
+    setIsSendingTx(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transferData]); // We want to call this only once when the transaction is sent
+  }, [transferData]);
 
   useEffect(() => {
     if (isHexString(addressInput)) {
@@ -73,84 +73,66 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
     }
   }, [addressInput, starknetIdNavigator]);
 
-  function transferIdentityAndSetDomain(): void {
-    transfer_identity_and_set_domain();
+  async function transferIdentityAndSetDomain(): Promise<void> {
+    try {
+      setIsSendingTx(true);
+      await transfer_identity_and_set_domain();
+    } catch (error) {
+      setIsSendingTx(false);
+      console.error("Failed to transfer identity and set domain:", error);
+    }
   }
 
   function changeAddress(value: string): void {
     setAddressInput(value);
   }
 
-  function closeModal(): void {
-    setIsTxSent(false);
-    handleClose();
-  }
+  const modalContent = (
+    <>
+      <p className="mt-5">
+        An Identity is an NFT that everyone can mint for free that permits
+        linking different types of data to it (Social Media, stark domain ...).
+        This form enables you to send this identity to another wallet.
+      </p>
+      <div className="mt-5 flex flex-col justify-center">
+        <TextField
+          label="To Address / SNS"
+          id="outlined-end-adornment"
+          fullWidth
+          value={addressInput}
+          variant="outlined"
+          onChange={(e) => changeAddress(e.target.value)}
+          color="secondary"
+          required
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                {targetAddress && utils.isStarkDomain(addressInput)
+                  ? `(${minifyAddress(targetAddress)})`
+                  : ""}
+              </InputAdornment>
+            ),
+          }}
+        />
+      </div>
+    </>
+  );
 
   return (
-    <Modal
-      disableAutoFocus
-      open={isModalOpen}
-      onClose={closeModal}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      {isTxSent ? (
-        <ConfirmationTx
-          closeModal={closeModal}
-          txHash={transferData?.transaction_hash}
-        />
-      ) : (
-        <div className={styles.menu}>
-          <button className={styles.menu_close} onClick={closeModal}>
-            <svg viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
-          </button>
-          <h2 className={styles.menu_title}>
-            Transfer your identity NFT to a different wallet
-          </h2>
-          <p className="mt-5">
-            An Identity is an NFT that everyone can mint for free that permits
-            to link different types of data to it (Social Media, stark domain
-            ...). This form enables you to send this identity to another wallet.
-          </p>
-          <div className="mt-5 flex flex-col justify-center">
-            <TextField
-              label="To Address / SNS"
-              id="outlined-end-adornment"
-              fullWidth
-              value={addressInput}
-              variant="outlined"
-              onChange={(e) => changeAddress(e.target.value)}
-              color="secondary"
-              required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    {targetAddress && utils.isStarkDomain(addressInput)
-                      ? "(" + minifyAddress(targetAddress) + ")"
-                      : ""}
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <div className="mt-5 flex justify-center">
-              <Button
-                disabled={!targetAddress}
-                onClick={() => transferIdentityAndSetDomain()}
-              >
-                Send domain
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-    </Modal>
+    <TransactionModal
+      title="Transfer your identity NFT to a different wallet"
+      modalContent={modalContent}
+      handleClose={handleClose}
+      isModalOpen={isModalOpen}
+      isTxSent={isTxSent}
+      isSendingTx={isSendingTx}
+      setIsSendingTx={setIsSendingTx}
+      setIsTxSent={setIsTxSent}
+      sendTransaction={transferIdentityAndSetDomain}
+      transactionHash={transferData?.transaction_hash}
+      isButtonDisabled={!targetAddress}
+      buttonCta="Send domain"
+    />
   );
 };
 

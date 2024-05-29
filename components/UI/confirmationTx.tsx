@@ -29,7 +29,7 @@ const ConfirmationTx: FunctionComponent<ConfirmationTxProps> = ({
         Your Transaction is on it&apos;s way !
       </p>
       <div className="mt-7 flex flex-col items-center justify-center text-center">
-        <Lottie className="w-52" animationData={verifiedLottie} loop={false} />{" "}
+        <Lottie className="w-48" animationData={verifiedLottie} loop={false} />{" "}
         <p
           className="text-sm underline cursor-pointer"
           onClick={() =>

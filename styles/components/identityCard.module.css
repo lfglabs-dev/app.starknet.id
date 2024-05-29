@@ -259,7 +259,18 @@
   height: 20px;
 }
 
-@media (min-width: 1024px) {
+.editIcon {
+  border-radius: 0.25rem;
+  padding: 2px;
+  transition: 0.1s;
+}
+
+.evmAddr:hover .editIcon {
+  background-color: var(--light-tertiary);
+}
+
+.editIcon:hover {
+  background-color: transparent !important;
 }
 
 @media (max-width: 1124px) {
