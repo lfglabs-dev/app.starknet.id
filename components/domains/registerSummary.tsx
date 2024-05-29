@@ -64,11 +64,10 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       .catch((err) => console.log("Coingecko API Error:", err));
   }, []);
 
-  const announcedCurrency = displayedCurrency
-    ? displayedCurrency.length > 1
+  const announcedCurrency =
+    Array.isArray(displayedCurrency) && displayedCurrency.length > 1
       ? "ETH or STRK"
-      : displayedCurrency
-    : "ETH";
+      : displayedCurrency;
 
   useEffect(() => {
     function computeUsdPrice() {

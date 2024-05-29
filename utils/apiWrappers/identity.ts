@@ -180,7 +180,7 @@ export class Identity {
     const id = this.getExtendedVerifierData(
       formatHexString(process.env.NEXT_PUBLIC_NFT_PP_VERIFIER as string),
       NFT_PP_ID
-    )?.map((hex) => BigInt(parseInt(hex, 16)));
+    )?.map((hex) => BigInt(hex));
 
     if (!id || !contractAddress || Number(contractAddress) === 0)
       return identiconsUrl;

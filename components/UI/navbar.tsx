@@ -31,6 +31,7 @@ import {
 } from "@/utils/connectorWrapper";
 import WalletConnect from "./walletConnect";
 import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon";
+import errorLottie from "../../public/visuals/errorLottie.json";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -60,6 +61,19 @@ const Navbar: FunctionComponent = () => {
     }
   }, [address, starknetIdNavigator]);
 
+  const connectWallet = async (connector: Connector) => {
+    try {
+      await connectAsync({ connector });
+      localStorage.setItem("SID-connectedWallet", connector.id);
+      localStorage.setItem("SID-lastUsedConnector", connector.id);
+    } catch (e) {
+      // Restart the connection if there is an error except if the user has rejected the connection
+      console.error(e);
+      const error = e as Error;
+      if (error.name !== "UserRejectedRequestError") connectWallet(connector);
+    }
+  };
+
   // Autoconnect
   useEffect(() => {
     const connectToStarknet = async () => {
@@ -67,7 +81,8 @@ const Navbar: FunctionComponent = () => {
       if (connector && connector.available()) await connectWallet(connector);
     };
     connectToStarknet();
-  }, [connectAsync, connectors]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connectAsync, connectors]); // Disable to make sure it only runs once
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
@@ -88,19 +103,6 @@ const Navbar: FunctionComponent = () => {
   useEffect(() => {
     setLastConnector(getLastConnector());
   }, [isConnected]);
-
-  const connectWallet = async (connector: Connector) => {
-    try {
-      await connectAsync({ connector });
-      localStorage.setItem("SID-connectedWallet", connector.id);
-      localStorage.setItem("SID-lastUsedConnector", connector.id);
-    } catch (e) {
-      // Restart the connection if there is an error except if the user has rejected the connection
-      console.error(e);
-      const error = e as Error;
-      if (error.name !== "UserRejectedRequestError") connectWallet(connector);
-    }
-  };
 
   function disconnectByClick(): void {
     disconnect();
@@ -366,18 +368,19 @@ const Navbar: FunctionComponent = () => {
         title={"Wrong network"}
         closeModal={() => setIsWrongNetwork(false)}
         message={
-          <div className="mt-3 flex flex-col items-center justify-center text-center">
+          <div className="mt-3 flex flex-col items-center justify-center text-center mx-3">
             <p>
               This app only supports Starknet {network}, you have to change your
               network to be able use it.
             </p>
-            <div className="mt-3">
+            <div className="mt-5">
               <Button onClick={() => disconnectByClick()}>
                 {`Disconnect`}
               </Button>
             </div>
           </div>
         }
+        lottie={errorLottie}
       />
       <ModalWallet
         domain={domainOrAddress}

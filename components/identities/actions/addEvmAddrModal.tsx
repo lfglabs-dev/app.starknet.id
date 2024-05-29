@@ -9,7 +9,6 @@ import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import styles from "../../../styles/components/evmModalMessage.module.css";
 import Button from "../../UI/button";
 import { hexToDecimal } from "../../../utils/feltService";
-import ConfirmationTx from "../../UI/confirmationTx";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
@@ -17,6 +16,8 @@ import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import { shortString } from "starknet";
 import { isValidEns } from "@/utils/ensService";
 import { ethers } from "ethers";
+import { useRouter } from "next/router";
+import { getDomainWithoutStark } from "@/utils/stringService";
 
 type AddEvmAddrModalProps = {
   handleClose: (showNotif: boolean) => void;
@@ -29,16 +30,17 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
   isModalOpen,
   identity,
 }) => {
+  const router = useRouter();
   const [evmAddress, setEvmAddress] = useState<string | undefined>(
     identity?.evmAddress
   );
   const [fieldInput, setFieldInput] = useState<string>(evmAddress ?? "");
   const { addTransaction } = useNotificationManager();
-  const [isTxSent, setIsTxSent] = useState(false);
   const [isValid, setIsValid] = useState(true);
   const [message, setMessage] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const [isSendingTx, setIsSendingTx] = useState(false);
 
   const { writeAsync: set_user_data, data: userData } = useContractWrite({
     calls:
@@ -65,14 +67,21 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
         status: "pending",
       },
     });
-    setIsTxSent(true);
+    // redirect to confirmation page
+    router.push(
+      `/evmConfirmation?domain=${getDomainWithoutStark(
+        identity?.domain
+      )}&tokenId=${hexToDecimal(identity?.id)}`
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userData]); // We want to execute this only once when the tx is sent
 
   async function setUserData(): Promise<void> {
     try {
+      setIsSendingTx(true);
       await set_user_data();
     } catch (error) {
+      setIsSendingTx(false);
       console.error("Failed to set user data:", error);
     }
   }
@@ -132,12 +141,13 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
     }
   }
 
-  function closeModal(showNotif: boolean): void {
-    setIsTxSent(false);
+  function closeModal(showNotif: boolean, canClose = true): void {
+    if (!canClose) return;
     setEvmAddress(identity?.evmAddress);
     setFieldInput(identity?.evmAddress ?? "");
     setIsValid(true);
     setMessage(undefined);
+    setIsSendingTx(false);
     handleClose(showNotif);
   }
 
@@ -145,87 +155,78 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={() => closeModal(false)}
+      onClose={() => closeModal(false, !isSendingTx)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <>
-        {isTxSent ? (
-          <ConfirmationTx
-            closeModal={() => closeModal(true)}
-            txHash={userData?.transaction_hash}
-          />
-        ) : (
-          <div className={styles.menu}>
-            <button
-              className={styles.menu_close}
-              onClick={() => closeModal(false)}
-            >
-              <svg viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            </button>
-            <p className={styles.menu_subtitle}>Add an EVM address for</p>
-            <p className={styles.menu_title}>{identity?.domain}</p>
-            <div className="mt-5 flex flex-col justify-center">
-              <div className="mt-5">
-                <TextField
-                  helperText={
-                    message ?? "Add your EVM address or your ENS name"
-                  }
-                  fullWidth
-                  label="Your EVM Address"
-                  id="outlined-basic"
-                  value={fieldInput ?? ""}
-                  variant="outlined"
-                  onChange={(e) => changeAddress(e.target.value)}
-                  color="secondary"
-                  required
-                  error={!isValid}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {loading && <CircularProgress size={24} />}
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </div>
-              <div className="mt-5 flex justify-center">
-                <div>
-                  <Button
-                    disabled={!evmAddress || !isValid}
-                    onClick={() => setUserData()}
-                  >
-                    Set EVM address
-                  </Button>
-                </div>
-              </div>
-              <div className={styles.infoCard}>
-                <div>
-                  <h3 className={styles.cardTitle}>
-                    Why Add an EVM Address to Your Starknet Domain?
-                  </h3>
-                  <p className={styles.cardDesc}>
-                    By adding an EVM address to your Starknet domain, you
-                    enhance its functionality and connectivity. Your Starknet
-                    domain automatically comes with an associated ENS subdomain
-                    connected to all EVM chains and Rollups!
-                  </p>
-                </div>
-                <img
-                  src="/visuals/ecosystemMap.svg"
-                  className={styles.cardImg}
-                />
+        <div className={styles.menu}>
+          <button
+            className={styles.menu_close}
+            onClick={() => closeModal(false)}
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+          <p className={styles.menu_subtitle}>Add an EVM address for</p>
+          <p className={styles.menu_title}>{identity?.domain}</p>
+          <div className="mt-5 flex flex-col justify-center">
+            <div className="mt-5">
+              <TextField
+                helperText={message ?? "Add your EVM address or your ENS name"}
+                fullWidth
+                label="Your EVM Address"
+                id="outlined-basic"
+                value={fieldInput ?? ""}
+                variant="outlined"
+                onChange={(e) => changeAddress(e.target.value)}
+                color="secondary"
+                required
+                error={!isValid}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {loading && <CircularProgress size={24} />}
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </div>
+            <div className="mt-5 flex justify-center">
+              <div>
+                <Button
+                  disabled={!evmAddress || !isValid}
+                  onClick={() => setUserData()}
+                >
+                  Set EVM address
+                </Button>
               </div>
             </div>
+            <div className={styles.infoCard}>
+              <div>
+                <h3 className={styles.cardTitle}>
+                  Why Add an EVM Address to Your Starknet Domain?
+                </h3>
+                <p className={styles.cardDesc}>
+                  By adding an EVM address to your Starknet domain, you can
+                  create a personalized ENS domain{" "}
+                  {getDomainWithoutStark(identity?.domain)}.snid.eth. This
+                  domain can be used across all EVM chains and rollups !
+                  Additionally, you&apos;ll update your ENS profile with your
+                  PFP, GitHub, Twitter, and other verified Starknet ID
+                  information!
+                </p>
+              </div>
+              <img src="/visuals/ecosystemMap.svg" className={styles.cardImg} />
+            </div>
           </div>
-        )}
+        </div>
       </>
     </Modal>
   );
