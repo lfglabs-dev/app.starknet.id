@@ -14,9 +14,11 @@ export default function useNeedSubscription(
   const [needSubscription, setNeedSubscription] = useState<NeedSubscription>(
     {}
   );
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (address) {
+      setIsLoading(true);
       fetch(
         `${
           process.env.NEXT_PUBLIC_SERVER_LINK
@@ -26,13 +28,17 @@ export default function useNeedSubscription(
         .then((data: SubscriptionInfos) => {
           const processedData = processSubscriptionData(data);
           setNeedSubscription(processedData);
+          setIsLoading(false);
         });
+    } else {
+      setNeedSubscription({});
+      setIsLoading(false);
     }
   }, [address]);
 
   return {
     needSubscription,
-    isLoading: !needSubscription,
+    isLoading,
     noDomainToSubscribe: Object.keys(needSubscription).length === 0,
   };
 }
