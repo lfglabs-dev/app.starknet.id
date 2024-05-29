@@ -31,6 +31,7 @@ import {
 } from "@/utils/connectorWrapper";
 import WalletConnect from "./walletConnect";
 import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon";
+import errorLottie from "../../public/visuals/errorLottie.json";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -379,6 +380,7 @@ const Navbar: FunctionComponent = () => {
             </div>
           </div>
         }
+        lottie={errorLottie}
       />
       <ModalWallet
         domain={domainOrAddress}

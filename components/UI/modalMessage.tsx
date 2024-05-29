@@ -2,7 +2,6 @@ import React from "react";
 import styles from "../../styles/components/modalMessage.module.css";
 import { FunctionComponent, ReactNode } from "react";
 import { Modal } from "@mui/material";
-import errorLottie from "../../public/visuals/errorLottie.json";
 import Lottie from "lottie-react";
 
 type ModalMessageProps = {
@@ -10,6 +9,7 @@ type ModalMessageProps = {
   message: ReactNode;
   closeModal: () => void;
   open: boolean;
+  lottie?: unknown; // Lottie doesn't have a special type
 };
 
 const ModalMessage: FunctionComponent<ModalMessageProps> = ({
@@ -17,6 +17,7 @@ const ModalMessage: FunctionComponent<ModalMessageProps> = ({
   message,
   closeModal,
   open,
+  lottie,
 }) => {
   return (
     <Modal
@@ -38,9 +39,12 @@ const ModalMessage: FunctionComponent<ModalMessageProps> = ({
           </svg>
         </button>
         <p className={styles.menu_title}>{title}</p>
-        <div className="flex flex-col items-center justify-center sm:-mb-20 sm:-mt-20 -mb-8 -mt-8">
-          <Lottie className="w-68" animationData={errorLottie} loop={false} />
-        </div>
+        {lottie ? (
+          <div className="flex flex-col items-center justify-center sm:-mb-20 sm:-mt-20 -mb-8 -mt-8">
+            <Lottie className="w-68" animationData={lottie} loop={false} />
+          </div>
+        ) : null}
+
         {message}
       </div>
     </Modal>
