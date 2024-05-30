@@ -214,20 +214,13 @@ export const getFreeRegistrationCalls = (
   newTokenId: number,
   encodedDomain: string,
   signature: string[],
-  coupon: string,
   txMetadataHash: string
 ) => {
   return [
     {
       contractAddress: process.env.NEXT_PUBLIC_DOMAIN_GIFT_CONTRACT as string,
       entrypoint: "get_free_domain",
-      calldata: [
-        newTokenId,
-        encodedDomain,
-        signature,
-        coupon,
-        txMetadataHash,
-      ].flat(),
+      calldata: [newTokenId, encodedDomain, signature, txMetadataHash].flat(),
     },
   ];
 };

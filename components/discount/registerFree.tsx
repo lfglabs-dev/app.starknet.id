@@ -89,11 +89,10 @@ const RegisterFree: FunctionComponent<RegisterFreeProps> = ({
       newTokenId,
       encodedDomain,
       signature,
-      coupon,
       txMetadataHash
     );
     return setCallData(freeRegisterCalls);
-  }, [metadataHash, encodedDomain, coupon, signature]);
+  }, [metadataHash, encodedDomain, signature]);
 
   function changeCoupon(value: string): void {
     setCoupon(value);

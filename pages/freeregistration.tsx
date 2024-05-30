@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/discount.module.css";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
-// Create a new discount in utils to create a new discount campaign
+
 import { freeRegistration } from "../utils/discounts/freeRegistration";
 import FreeRegisterDiscount from "@/components/discount/freeRegisterDiscount";
 import RegisterFree from "@/components/discount/registerFree";
