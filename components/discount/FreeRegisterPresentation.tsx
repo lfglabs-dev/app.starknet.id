@@ -1,4 +1,5 @@
-import React, { FunctionComponent } from "react";
+import React from "react";
+import type { FunctionComponent } from "react";
 import styles from "../../styles/discount.module.css";
 import SearchBar from "../UI/searchBar";
 import Timer from "../UI/timer";
