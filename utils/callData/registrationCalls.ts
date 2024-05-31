@@ -217,6 +217,7 @@ export const getFreeRegistrationCalls = (
   txMetadataHash: string
 ) => {
   return [
+    mint(newTokenId),
     {
       contractAddress: process.env.NEXT_PUBLIC_DOMAIN_GIFT_CONTRACT as string,
       entrypoint: "get_free_domain",
