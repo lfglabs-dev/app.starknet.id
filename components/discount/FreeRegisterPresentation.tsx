@@ -36,7 +36,7 @@ const FreeRegisterPresentation: FunctionComponent<
           </div>
         </div>
         <div className={styles.illustrationContainerVariant}>
-          <img src={image} className={styles.illustrationVariant} />
+          <img src={image} className={styles.illustrationVariant} alt="Registration illustration" />
           <Timer expiry={expiry} fixed />
         </div>
       </div>
