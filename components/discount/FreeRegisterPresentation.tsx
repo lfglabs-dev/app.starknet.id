@@ -3,7 +3,7 @@ import styles from "../../styles/discount.module.css";
 import SearchBar from "../UI/searchBar";
 import Timer from "../UI/timer";
 
-type FreeRegisterDiscountProps = {
+type FreeRegisterPresentationProps = {
   setSearchResult: (searchResult: SearchResult) => void;
   setScreen: (screen: number) => void;
   title: { desc: string; catch: string; descAfter?: string };
@@ -12,14 +12,9 @@ type FreeRegisterDiscountProps = {
   expiry: number;
 };
 
-const FreeRegisterDiscount: FunctionComponent<FreeRegisterDiscountProps> = ({
-  setSearchResult,
-  setScreen,
-  title,
-  desc,
-  image,
-  expiry,
-}) => {
+const FreeRegisterPresentation: FunctionComponent<
+  FreeRegisterPresentationProps
+> = ({ setSearchResult, setScreen, title, desc, image, expiry }) => {
   function onSearch(searchResult: SearchResult) {
     setSearchResult(searchResult);
     setScreen(2);
@@ -49,4 +44,4 @@ const FreeRegisterDiscount: FunctionComponent<FreeRegisterDiscountProps> = ({
   );
 };
 
-export default FreeRegisterDiscount;
+export default FreeRegisterPresentation;

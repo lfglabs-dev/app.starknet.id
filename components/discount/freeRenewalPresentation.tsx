@@ -4,7 +4,7 @@ import homeStyles from "../../styles/Home.module.css";
 import Timer from "../UI/timer";
 import Button from "../UI/button";
 
-type DiscountRenewalScreenProps = {
+type FreeRenewalPresentationProps = {
   title: { desc: string; catch: string };
   desc: string;
   image: string;
@@ -12,13 +12,9 @@ type DiscountRenewalScreenProps = {
   setScreen: (screen: number) => void;
 };
 
-const DiscountRenewalScreen: FunctionComponent<DiscountRenewalScreenProps> = ({
-  title,
-  desc,
-  image,
-  expiry,
-  setScreen,
-}) => {
+const FreeRenewalPresentation: FunctionComponent<
+  FreeRenewalPresentationProps
+> = ({ title, desc, image, expiry, setScreen }) => {
   return (
     <div className={homeStyles.wrapperScreen}>
       <div className={styles.container}>
@@ -42,4 +38,4 @@ const DiscountRenewalScreen: FunctionComponent<DiscountRenewalScreenProps> = ({
   );
 };
 
-export default DiscountRenewalScreen;
+export default FreeRenewalPresentation;

@@ -51,7 +51,7 @@ import {
 import { areArraysEqual } from "@/utils/arrayService";
 import useNeedSubscription from "@/hooks/useNeedSubscription";
 
-type FreeRenewalDiscountProps = {
+type FreeRenewalCheckoutProps = {
   groups: string[];
   goBack: () => void;
   duration: number;
@@ -61,7 +61,7 @@ type FreeRenewalDiscountProps = {
   renewPrice: string;
 };
 
-const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
+const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   groups,
   priceInEth,
   renewPrice,
@@ -442,4 +442,4 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
   );
 };
 
-export default FreeRenewalDiscount;
+export default FreeRenewalCheckout;

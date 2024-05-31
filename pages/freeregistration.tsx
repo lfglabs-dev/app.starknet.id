@@ -5,8 +5,8 @@ import styles from "../styles/discount.module.css";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
 
 import { freeRegistration } from "../utils/discounts/freeRegistration";
-import FreeRegisterDiscount from "@/components/discount/freeRegisterDiscount";
-import RegisterFree from "@/components/discount/registerFree";
+import FreeRegisterPresentation from "@/components/discount/FreeRegisterPresentation";
+import FreeRegisterCheckout from "@/components/discount/registerFree";
 
 const FreeRegistration: NextPage = () => {
   const [searchResult, setSearchResult] = useState<SearchResult | undefined>();
@@ -30,7 +30,7 @@ const FreeRegistration: NextPage = () => {
         />
       ) : null}
       {screen === 1 ? (
-        <FreeRegisterDiscount
+        <FreeRegisterPresentation
           title={freeRegistration.offer.title}
           desc={freeRegistration.offer.desc}
           image={freeRegistration.offer.image ?? freeRegistration.image}
@@ -41,7 +41,7 @@ const FreeRegistration: NextPage = () => {
       ) : null}
       {screen === 2 ? (
         <div className={styles.container}>
-          <RegisterFree
+          <FreeRegisterCheckout
             domain={searchResult?.name ?? ""}
             duration={freeRegistration.offer.duration}
             customMessage={freeRegistration.offer.customMessage}

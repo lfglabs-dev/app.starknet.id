@@ -22,7 +22,7 @@ import ConnectButton from "../UI/connectButton";
 import { getFreeDomain } from "@/utils/campaignService";
 import TermCheckbox from "../domains/termCheckbox";
 
-type RegisterFreeProps = {
+type FreeRegisterCheckoutProps = {
   domain: string;
   duration: number;
   customMessage: string;
@@ -32,7 +32,7 @@ type RegisterFreeProps = {
   banner: string;
 };
 
-const RegisterFree: FunctionComponent<RegisterFreeProps> = ({
+const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   domain,
   duration,
   customMessage,
@@ -150,6 +150,13 @@ const RegisterFree: FunctionComponent<RegisterFreeProps> = ({
     });
   }, [coupon, domain, address]);
 
+  const handleRegister = () =>
+    execute().then(() =>
+      setDomainsMinting((prev) =>
+        new Map(prev).set(encodedDomain.toString(), true)
+      )
+    );
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -187,13 +194,7 @@ const RegisterFree: FunctionComponent<RegisterFreeProps> = ({
           />
           {address ? (
             <Button
-              onClick={() =>
-                execute().then(() =>
-                  setDomainsMinting((prev) =>
-                    new Map(prev).set(encodedDomain.toString(), true)
-                  )
-                )
-              }
+              onClick={handleRegister}
               disabled={
                 (domainsMinting.get(encodedDomain) as boolean) ||
                 !account ||
@@ -226,4 +227,4 @@ const RegisterFree: FunctionComponent<RegisterFreeProps> = ({
   );
 };
 
-export default RegisterFree;
+export default FreeRegisterCheckout;
