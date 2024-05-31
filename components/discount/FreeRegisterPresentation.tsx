@@ -28,7 +28,7 @@ const FreeRegisterPresentation: FunctionComponent<
           <div className="flex flex-col lg:items-start items-center text-center sm:text-start gap-3">
             <h1 className={styles.titleVariant}>
               {title.desc} <span className="text-primary">{title.catch}</span>
-              {title.descAfter && " " + title.descAfter}
+              {title.descAfter && ` ${title.descAfter}`}
             </h1>
             <p className={styles.descriptionVariant}>{desc}</p>
           </div>
