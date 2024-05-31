@@ -216,7 +216,12 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
           )}
         </div>
       </div>
-      <img className={styles.image} src={banner} alt="Banner image" />
+      <div
+        className={styles.image}
+        style={{
+          backgroundImage: `url(${banner})`,
+        }}
+      />
       <TxConfirmationModal
         txHash={registerData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}

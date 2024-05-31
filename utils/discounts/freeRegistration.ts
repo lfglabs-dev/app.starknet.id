@@ -9,7 +9,7 @@ type FreeRegistration = {
 
 export const freeRegistration: FreeRegistration = {
   name: "Domain Gift",
-  image: "/register/gift.webp",
+  image: "/register/giftmini.webp",
   expiry: 1726382280 * 1000, // timestamp in ms
   discountMailGroupId: "X",
   offer: {
