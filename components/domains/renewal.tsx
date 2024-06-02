@@ -68,8 +68,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
   );
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-  const [termsBox, setTermsBox] = useState<boolean>(true);
-  const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  const [termsBox, setTermsBox] = useState<boolean>(false);
+  const [renewalBox, setRenewalBox] = useState<boolean>(false);
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
