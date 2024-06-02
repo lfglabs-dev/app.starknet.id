@@ -271,7 +271,8 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
           calls.push(
             autoRenewalCalls.approve(
               ERC20Contract[currency],
-              AutoRenewalContracts[currency]
+              AutoRenewalContracts[currency],
+              price
             )
           );
         }

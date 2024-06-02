@@ -275,7 +275,8 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
           calls.unshift(
             autoRenewalCalls.approve(
               ERC20Contract[currency],
-              AutoRenewalContracts[currency]
+              AutoRenewalContracts[currency],
+              price
             )
           );
         }

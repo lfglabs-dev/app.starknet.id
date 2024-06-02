@@ -1,14 +1,15 @@
 import { Call } from "starknet";
 
-function approve(erc20_contract: string, renewal_contract: string): Call {
+function approve(
+  erc20Contract: string,
+  renewalContract: string,
+  erc20Price: string
+): Call {
+  const amountToApprove = erc20Price.concat("0");
   return {
-    contractAddress: erc20_contract,
+    contractAddress: erc20Contract,
     entrypoint: "approve",
-    calldata: [
-      renewal_contract,
-      "340282366920938463463374607431768211455",
-      "340282366920938463463374607431768211455",
-    ],
+    calldata: [renewalContract, amountToApprove, "0"],
   };
 }
 

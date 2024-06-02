@@ -309,7 +309,8 @@ const Renewal: FunctionComponent<RenewalProps> = ({ groups }) => {
           calls.push(
             autoRenewalCalls.approve(
               ERC20Contract[displayedCurrency],
-              AutoRenewalContracts[displayedCurrency]
+              AutoRenewalContracts[displayedCurrency],
+              price
             )
           );
         }

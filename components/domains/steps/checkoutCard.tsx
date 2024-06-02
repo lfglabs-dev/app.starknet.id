@@ -415,7 +415,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         calls.push(
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
-            AutoRenewalContracts[displayedCurrency]
+            AutoRenewalContracts[displayedCurrency],
+            priceToPay
           )
         );
       }
@@ -537,7 +538,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         calls.push(
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
-            AutoRenewalContracts[displayedCurrency]
+            AutoRenewalContracts[displayedCurrency],
+            priceToPay
           )
         );
       }
