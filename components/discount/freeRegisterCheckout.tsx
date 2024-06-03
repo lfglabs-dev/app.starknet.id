@@ -8,7 +8,6 @@ import { utils } from "starknetid.js";
 import { getDomainWithStark } from "../../utils/stringService";
 import { numberToFixedString } from "../../utils/feltService";
 import { posthog } from "posthog-js";
-import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
 import { Divider } from "@mui/material";
@@ -21,6 +20,7 @@ import { NotificationType, TransactionType } from "../../utils/constants";
 import ConnectButton from "../UI/connectButton";
 import { getFreeDomain } from "@/utils/campaignService";
 import TermCheckbox from "../domains/termCheckbox";
+import { useRouter } from "next/router";
 
 type FreeRegisterCheckoutProps = {
   domain: string;
@@ -44,7 +44,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [callData, setCallData] = useState<Call[]>([]);
   const [salt, setSalt] = useState<string | undefined>();
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
@@ -57,7 +56,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
-  const { router } = useRouter();
+  const router = useRouter();
+  const [tokenId, setTokenId] = useState<number>(0);
   const [coupon, setCoupon] = useState<string>("");
   const [couponError, setCouponError] = useState<string>("");
   const [signature, setSignature] = useState<string[]>(["", ""]);
@@ -84,6 +84,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   useEffect(() => {
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
+    setTokenId(newTokenId);
     const txMetadataHash = `0x${metadataHash}` as HexString;
 
     const freeRegisterCalls = registrationCalls.getFreeRegistrationCalls(
@@ -114,9 +115,9 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       },
     });
 
-    setIsTxModalOpen(true);
+    router.push(`/confirmation?tokenId=${tokenId}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [registerData]);
+  }, [registerData, tokenId]);
 
   useEffect(() => {
     if (!coupon) {
@@ -223,12 +224,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
         style={{
           backgroundImage: `url(${banner})`,
         }}
-      />
-      <TxConfirmationModal
-        txHash={registerData?.transaction_hash}
-        isTxModalOpen={isTxModalOpen}
-        closeModal={() => setIsTxModalOpen(false)}
-        title="Your domain is on it's way !"
       />
     </div>
   );
