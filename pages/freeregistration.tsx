@@ -5,8 +5,8 @@ import styles from "../styles/discount.module.css";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
 
 import { freeRegistration } from "../utils/discounts/freeRegistration";
-import FreeRegisterPresentation from "@/components/discount/FreeRegisterPresentation";
-import FreeRegisterCheckout from "@/components/discount/registerFree";
+import FreeRegisterPresentation from "@/components/discount/freeRegisterPresentation";
+import FreeRegisterCheckout from "@/components/discount/freeRegisterCheckout";
 
 const FreeRegistration: NextPage = () => {
   const [searchResult, setSearchResult] = useState<SearchResult | undefined>();

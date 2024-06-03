@@ -57,6 +57,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
+  const { router } = useRouter();
   const [coupon, setCoupon] = useState<string>("");
   const [couponError, setCouponError] = useState<string>("");
   const [signature, setSignature] = useState<string[]>(["", ""]);
@@ -112,6 +113,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
         status: "pending",
       },
     });
+
     setIsTxModalOpen(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerData]);
