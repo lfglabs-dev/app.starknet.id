@@ -412,11 +412,14 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     // If the user has toggled autorenewal
     if (renewalBox) {
       if (needsAllowance) {
+        const amountToApprove = String(
+          Number(price) / (discountedPrice ? 3 : formState.duration)
+        );
         calls.push(
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
             AutoRenewalContracts[displayedCurrency],
-            priceToPay
+            amountToApprove
           )
         );
       }
@@ -535,11 +538,14 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     // If the user has toggled autorenewal
     if (renewalBox) {
       if (needsAllowance) {
+        const amountToApprove = String(
+          Number(price) / (discountedPrice ? 3 : formState.duration)
+        );
         calls.push(
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
             AutoRenewalContracts[displayedCurrency],
-            priceToPay
+            amountToApprove
           )
         );
       }

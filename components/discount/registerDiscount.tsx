@@ -245,7 +245,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
             AutoRenewalContracts[displayedCurrency],
-            price
+            String(Number(price) / duration)
           )
         );
       }

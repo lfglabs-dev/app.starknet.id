@@ -272,11 +272,13 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
       displayedCurrencies.map((currency) => {
         // Add ERC20 allowance for all currencies if needed
         if (needsAllowances[currency]) {
+          const priceToApprove =
+            currency === CurrencyType.ETH ? priceInEth : price;
           calls.unshift(
             autoRenewalCalls.approve(
               ERC20Contract[currency],
               AutoRenewalContracts[currency],
-              price
+              priceToApprove
             )
           );
         }

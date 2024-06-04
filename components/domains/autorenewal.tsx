@@ -268,11 +268,14 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
       displayedCurrencies.map((currency) => {
         // Add ERC20 allowance for all currencies if needed
         if (needsAllowance[currency]) {
+          const priceToApprove =
+            currency === CurrencyType.ETH ? priceInEth : price;
+
           calls.push(
             autoRenewalCalls.approve(
               ERC20Contract[currency],
               AutoRenewalContracts[currency],
-              price
+              priceToApprove
             )
           );
         }
