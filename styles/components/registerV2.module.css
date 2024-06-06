@@ -130,9 +130,13 @@
 .image {
   max-height: 1200px;
   position: absolute;
-  left: 50%;
+  right: 0;
   z-index: -1;
   border-radius: 0rem 1rem 1rem 0rem;
+  background-position: center center;
+  background-size: cover;
+  min-width: 390px;
+  height: 100%;
 }
 
 .currencySwitcher {
