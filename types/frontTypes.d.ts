@@ -56,8 +56,10 @@ type Discount = {
   discountId: string;
   price: string;
   desc: string;
-  title: { desc: string; catch: string };
+  title: { desc: string; catch: string; descAfter?: string };
   image?: string;
+  couponCode?: boolean;
+  couponHelper?: string;
 };
 
 type SignRequestData = {

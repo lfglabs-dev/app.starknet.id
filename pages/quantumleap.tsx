@@ -4,10 +4,11 @@ import homeStyles from "../styles/Home.module.css";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
 import DiscountOfferScreen from "../components/discount/discountOfferScreen";
 import DiscountUpsellScreen from "../components/discount/discountUpsellScreen";
-import DiscountCheckoutScreen from "../components/discount/discountCheckoutScreen";
+import styles from "../styles/discount.module.css";
 
 // Create a new discount in utils to create a new discount campaign
 import { quantumLeapDiscount } from "../utils/discounts/quantumLeap";
+import RegisterDiscount from "@/components/discount/registerDiscount";
 
 const QuantumLeap: NextPage = () => {
   const [searchResult, setSearchResult] = useState<SearchResult | undefined>();
@@ -85,15 +86,20 @@ const QuantumLeap: NextPage = () => {
         />
       ) : null}
       {screen === 3 ? (
-        <DiscountCheckoutScreen
-          domain={searchResult?.name ?? ""}
-          duration={getDuration()}
-          discountId={getDiscountId()}
-          customMessage={getCustomMessage()}
-          price={getPrice()}
-          goBack={goBack}
-          mailGroupId={quantumLeapDiscount.discountMailGroupId}
-        />
+        <div className={styles.container}>
+          <RegisterDiscount
+            domain={searchResult?.name ?? ""}
+            duration={getDuration()}
+            discountId={getDiscountId()}
+            customMessage={getCustomMessage()}
+            priceInEth={getPrice()}
+            goBack={goBack}
+            mailGroups={[
+              process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? "",
+              quantumLeapDiscount.discountMailGroupId,
+            ]}
+          />
+        </div>
       ) : null}
     </div>
   );

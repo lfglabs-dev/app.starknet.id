@@ -4,8 +4,8 @@ import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/search.module.css";
 import { freeRenewalDiscount } from "../utils/discounts/freeRenewal";
 import DiscountEndScreen from "../components/discount/discountEndScreen";
-import DiscountRenewalScreen from "../components/discount/discountRenewalScreen";
-import FreeRenewalDiscount from "../components/discount/freeRenewalDiscount";
+import FreeRenewalPresentation from "@/components/discount/freeRenewalPresentation";
+import FreeRenewalCheckout from "@/components/discount/freeRenewalDiscount";
 
 const FreeRenewalPage: NextPage = () => {
   const [screen, setScreen] = useState<number>(1);
@@ -33,7 +33,7 @@ const FreeRenewalPage: NextPage = () => {
       ) : null}
 
       {screen === 1 ? (
-        <DiscountRenewalScreen
+        <FreeRenewalPresentation
           title={freeRenewalDiscount.offer.title}
           desc={freeRenewalDiscount.offer.desc}
           image={freeRenewalDiscount.image}
@@ -43,7 +43,7 @@ const FreeRenewalPage: NextPage = () => {
       ) : null}
       {screen === 2 ? (
         <div className={styles.container}>
-          <FreeRenewalDiscount
+          <FreeRenewalCheckout
             groups={[
               process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
               freeRenewalDiscount.discountMailGroupId,

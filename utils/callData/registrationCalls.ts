@@ -210,6 +210,22 @@ function resetAddrToDomain(): Call {
   };
 }
 
+export const getFreeRegistrationCalls = (
+  newTokenId: number,
+  encodedDomain: string,
+  signature: string[],
+  txMetadataHash: string
+) => {
+  return [
+    mint(newTokenId),
+    {
+      contractAddress: process.env.NEXT_PUBLIC_DOMAIN_GIFT_CONTRACT as string,
+      entrypoint: "get_free_domain",
+      calldata: [newTokenId, encodedDomain, signature, txMetadataHash].flat(),
+    },
+  ];
+};
+
 const registrationCalls = {
   approve,
   buy,
@@ -224,6 +240,7 @@ const registrationCalls = {
   freeRenewal,
   multiCallFreeRenewals,
   resetAddrToDomain,
+  getFreeRegistrationCalls,
 };
 
 export default registrationCalls;
