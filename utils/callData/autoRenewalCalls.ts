@@ -5,7 +5,7 @@ function approve(
   renewalContract: string,
   erc20Price: string
 ): Call {
-  const amountToApprove = erc20Price.concat("0");
+  const amountToApprove = erc20Price.concat("0"); // multiply by 10 to approve 10 years
   return {
     contractAddress: erc20Contract,
     entrypoint: "approve",
