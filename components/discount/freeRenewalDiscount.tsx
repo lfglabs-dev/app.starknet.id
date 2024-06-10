@@ -51,7 +51,7 @@ import {
 import { areArraysEqual } from "@/utils/arrayService";
 import useNeedSubscription from "@/hooks/useNeedSubscription";
 
-type FreeRenewalDiscountProps = {
+type FreeRenewalCheckoutProps = {
   groups: string[];
   goBack: () => void;
   duration: number;
@@ -61,7 +61,7 @@ type FreeRenewalDiscountProps = {
   renewPrice: string;
 };
 
-const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
+const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   groups,
   priceInEth,
   renewPrice,
@@ -272,10 +272,13 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
       displayedCurrencies.map((currency) => {
         // Add ERC20 allowance for all currencies if needed
         if (needsAllowances[currency]) {
+          const priceToApprove =
+            currency === CurrencyType.ETH ? priceInEth : price;
           calls.unshift(
             autoRenewalCalls.approve(
               ERC20Contract[currency],
-              AutoRenewalContracts[currency]
+              AutoRenewalContracts[currency],
+              priceToApprove
             )
           );
         }
@@ -442,4 +445,4 @@ const FreeRenewalDiscount: FunctionComponent<FreeRenewalDiscountProps> = ({
   );
 };
 
-export default FreeRenewalDiscount;
+export default FreeRenewalCheckout;

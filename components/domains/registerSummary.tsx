@@ -14,14 +14,14 @@ import ArCurrencyDropdown from "./arCurrencyDropdown";
 
 type RegisterSummaryProps = {
   duration: number;
-  ethRegistrationPrice: string;
-  registrationPrice: string; // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
+  ethRegistrationPrice?: string;
+  registrationPrice?: string; // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   renewalBox?: boolean;
-  salesTaxRate: number;
-  isSwissResident: boolean;
+  salesTaxRate?: number;
+  isSwissResident?: boolean;
   customMessage?: string;
-  displayedCurrency: CurrencyType[] | CurrencyType;
-  onCurrencySwitch:
+  displayedCurrency?: CurrencyType[] | CurrencyType;
+  onCurrencySwitch?:
     | ((type: CurrencyType[]) => void)
     | ((type: CurrencyType) => void);
   loadingPrice?: boolean;
@@ -29,6 +29,7 @@ type RegisterSummaryProps = {
   discountedPrice?: string; // price the user will pay after discount
   discountedDuration?: number; // years the user will have the domain for after discount
   areArCurrenciesEnabled?: boolean;
+  isFree?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -46,6 +47,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   discountedPrice,
   discountedDuration,
   areArCurrenciesEnabled = false,
+  isFree = false,
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
@@ -69,7 +71,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 
   useEffect(() => {
     function computeUsdPrice() {
-      if (ethUsdPrice) {
+      if (ethUsdPrice && ethRegistrationPrice) {
         return (
           Number(ethUsdPrice) *
           Number(gweiToEth(ethRegistrationPrice)) *
@@ -115,6 +117,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function displayTokenPrice(): ReactNode {
+    if (!ethRegistrationPrice || !salesTaxRate || !registrationPrice)
+      return null;
     const salesTaxAmountUsd =
       salesTaxRate *
       Number(gweiToEth(ethRegistrationPrice)) *
@@ -139,6 +143,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function getMessage() {
+    if (isFree) return "3 months";
+    if (!ethRegistrationPrice) return "0";
     if (customMessage) return customMessage;
     else {
       return `${gweiToEth(ethRegistrationPrice)} ETH x ${
@@ -153,15 +159,21 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
         <h4 className={styles.totalDueTitle}>Total due:</h4>
         <div className={styles.priceContainer}>
           <p className={styles.legend}>{getMessage()}</p>
-          {loadingPrice ? (
-            <Skeleton variant="text" width="150px" height="24px" />
+          {isFree ? (
+            "Free"
           ) : (
-            displayTokenPrice()
+            <>
+              {loadingPrice ? (
+                <Skeleton variant="text" width="150px" height="24px" />
+              ) : (
+                displayTokenPrice()
+              )}
+              <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
+            </>
           )}
-          <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
         </div>
       </div>
-      {areArCurrenciesEnabled ? (
+      {isFree ? null : areArCurrenciesEnabled ? (
         <ArCurrencyDropdown
           displayedCurrency={displayedCurrency as CurrencyType[]} // as CurrencyType[] is safe here cause we know the value is a CurrencyType[]
           onCurrencySwitch={onCurrencySwitch as (type: CurrencyType[]) => void}
