@@ -79,7 +79,7 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
                   <div className={styles.walletName}>
                     <p>
                       {!isAvailable ? "Install " : ""}
-                      {connector.id === "argentX" && isMobile
+                      {connector.id === "argentMobile" && isMobile
                         ? "Argent"
                         : getConnectorName(connector.id)}
                     </p>
