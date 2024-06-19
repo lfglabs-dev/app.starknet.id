@@ -57,7 +57,11 @@ const AddEvmAction: FunctionComponent<AddEvmActionProps> = ({
                   )
                 }
               >
-                <img className={styles.evmIcon} src="/icons/ens.svg" />
+                <img
+                  className={styles.evmIcon}
+                  src="/icons/ens.svg"
+                  alt="ENS Icon"
+                />
                 <h2>{getEnsFromStark(identity.domain)}</h2>
               </div>
             </Tooltip>
@@ -83,7 +87,11 @@ const AddEvmAction: FunctionComponent<AddEvmActionProps> = ({
           </div>
         ) : isOwner ? (
           <div className={styles.evmAddrBtn} onClick={() => setOpenModal(true)}>
-            <img className={styles.evmIcon} src="/icons/ens.svg" />
+            <img
+              className={styles.evmIcon}
+              src="/icons/ens.svg"
+              alt="ENS Icon"
+            />
             <h2>Add EVM address</h2>
             <PlusIcon width="12" color={theme.palette.secondary.main} />
           </div>

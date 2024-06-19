@@ -25,9 +25,9 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
             isOwner={isOwner}
             width="24"
             tokenId={tokenId}
-            needUpdate={
-              identity?.oldTwitterData && !identity?.twitterData ? true : false
-            }
+            needUpdate={Boolean(
+              identity?.oldTwitterData && !identity?.twitterData
+            )}
             twitterId={identity?.twitterData ?? identity?.oldTwitterData}
             domain={identity?.domain}
           />
@@ -35,9 +35,9 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
             isOwner={isOwner}
             width="28"
             tokenId={tokenId}
-            needUpdate={
-              identity?.oldDiscordData && !identity?.discordData ? true : false
-            }
+            needUpdate={Boolean(
+              identity?.oldDiscordData && !identity?.discordData
+            )}
             discordId={identity?.discordData ?? identity?.oldDiscordData}
             domain={identity?.domain}
           />
@@ -45,9 +45,9 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
             isOwner={isOwner}
             width="24"
             tokenId={tokenId}
-            needUpdate={
-              identity?.oldGithubData && !identity?.githubData ? true : false
-            }
+            needUpdate={Boolean(
+              identity?.oldGithubData && !identity?.githubData
+            )}
             githubId={identity?.githubData ?? identity?.oldGithubData}
             domain={identity?.domain}
           />
