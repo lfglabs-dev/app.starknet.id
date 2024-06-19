@@ -6,6 +6,7 @@ import {
   getPriceFromDomains,
   areDomainSelected,
   getTotalYearlyPrice,
+  getYearlyPrice,
 } from "../../utils/priceService";
 import { generateString } from "../../utils/stringService";
 import { gweiToEth } from "../../utils/feltService";
@@ -147,5 +148,24 @@ describe("getTotalYearlyPrice function", () => {
 
   it("should return '0' if selectedDomains is undefined", () => {
     expect(getTotalYearlyPrice(undefined)).toEqual("0");
+  });
+});
+
+describe("getYearlyPrice function", () => {
+  it("should return the yearly price in ETH for a given domain", () => {
+    const domain = "example.stark";
+    const expectedPrice = gweiToEth(String(getPriceFromDomain(1, domain)));
+    expect(getYearlyPrice(domain)).toEqual(expectedPrice);
+  });
+
+  it("should return '0' if the domain is an empty string", () => {
+    const domain = "";
+    expect(getYearlyPrice(domain)).toEqual("0");
+  });
+
+  it("should return the yearly price in ETH for another domain", () => {
+    const domain = "test.stark";
+    const expectedPrice = gweiToEth(String(getPriceFromDomain(1, domain)));
+    expect(getYearlyPrice(domain)).toEqual(expectedPrice);
   });
 });
