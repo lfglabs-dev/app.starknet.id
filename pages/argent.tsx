@@ -10,10 +10,12 @@ import RegisterDiscount from "@/components/discount/registerDiscount";
 import styles from "../styles/discount.module.css";
 import { useAccount, useConnect } from "@starknet-react/core";
 import ConnectButton from "@/components/UI/connectButton";
+import ArgentIcon from "@/components/UI/iconsComponents/icons/argentIcon";
 
 const Argent: NextPage = () => {
   const [searchResult, setSearchResult] = useState<SearchResult | undefined>();
   const [screen, setScreen] = useState<number>(1);
+  const [isArgent, setIsArgent] = useState(true);
   const { account } = useAccount();
   const connector = useConnect();
 
@@ -26,9 +28,16 @@ const Argent: NextPage = () => {
     }
   }, []);
 
-  const isArgent = ["Argent X", "Argent (mobile)"].includes(
-    connector.connector?.name ?? ""
-  );
+  useEffect(() => {
+    if (
+      !connector?.connector ||
+      !["Argent X", "Argent (mobile)"].includes(connector.connector?.name)
+    ) {
+      setIsArgent(false);
+      return;
+    }
+    setIsArgent(true);
+  }, [connector]);
 
   function goBack() {
     setScreen(screen - 1);
@@ -48,13 +57,18 @@ const Argent: NextPage = () => {
     <div className={homeStyles.screen}>
       {!isArgent || !account ? (
         <div className="flex flex-col items-center justify-center h-full">
+          <div className="mb-10">
+            <ArgentIcon width="150px" color="#FF875B" />
+          </div>
           <div className={styles.title}>Connect Argent wallet</div>
           <div className={styles.description}>
             To access this discount, you need to connect an Argent wallet.
           </div>
-          <div className="flex items-center mt-3">
-            <ConnectButton />
-          </div>
+          {!account ? (
+            <div className="flex items-center mt-3">
+              <ConnectButton />
+            </div>
+          ) : null}
         </div>
       ) : (
         <>

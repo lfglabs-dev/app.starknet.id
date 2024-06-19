@@ -40,6 +40,7 @@ import {
   getDomainPriceAltcoin,
   getTokenQuote,
 } from "../../utils/altcoinService";
+import { getPriceFromDomain } from "@/utils/priceService";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -79,7 +80,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
   const [termsBox, setTermsBox] = useState<boolean>(true);
-  const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  const [renewalBox, setRenewalBox] = useState<boolean>(false);
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const { account, address } = useAccount();
   const { writeAsync: execute, data: registerData } = useContractWrite({
@@ -195,6 +196,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     // Common calls
     const calls = [
       registrationCalls.approve(price, ERC20Contract[displayedCurrency]),
+      registrationCalls.mint(newTokenId),
     ];
 
     if (displayedCurrency === CurrencyType.ETH) {
@@ -245,7 +247,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
             AutoRenewalContracts[displayedCurrency],
-            String(Number(price) / duration)
+            String(getPriceFromDomain(1, domain))
           )
         );
       }
@@ -377,7 +379,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           <RegisterSummary
             ethRegistrationPrice={price}
             registrationPrice={price}
-            duration={Number(numberToFixedString(duration / 365))}
+            duration={duration}
             renewalBox={false}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}

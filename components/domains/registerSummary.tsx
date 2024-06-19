@@ -127,7 +127,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 
     const registerPrice = Number(gweiToEth(registrationPrice));
     const registerPriceStr =
-      registerPrice != 0 ? numberToFixedString(registerPrice, 3) : "0";
+      registerPrice != 0 ? numberToFixedString(registerPrice, 4) : "0";
     if (isUpselled && discountedPrice) {
       return displayDiscountedPrice(
         registerPriceStr,
