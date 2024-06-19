@@ -44,7 +44,6 @@ const FreeRegistration: NextPage = () => {
           <FreeRegisterCheckout
             domain={searchResult?.name ?? ""}
             duration={freeRegistration.offer.duration}
-            customMessage={freeRegistration.offer.customMessage}
             goBack={goBack}
             couponCode={freeRegistration.offer.couponCode}
             couponHelper={freeRegistration.offer.couponHelper}

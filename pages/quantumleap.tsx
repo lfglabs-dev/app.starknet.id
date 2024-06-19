@@ -91,7 +91,7 @@ const QuantumLeap: NextPage = () => {
             domain={searchResult?.name ?? ""}
             duration={getDuration()}
             discountId={getDiscountId()}
-            customMessage={getCustomMessage()}
+            customMessage={getCustomMessage() as string}
             priceInEth={getPrice()}
             goBack={goBack}
             mailGroups={[
