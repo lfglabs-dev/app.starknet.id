@@ -19,13 +19,13 @@ import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import { getDomainWithoutStark } from "@/utils/stringService";
 
-type AddEvmAddrModalProps = {
+type AddEvmModalProps = {
   handleClose: (showNotif: boolean) => void;
   isModalOpen: boolean;
   identity?: Identity;
 };
 
-const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
+const AddEvmModal: FunctionComponent<AddEvmModalProps> = ({
   handleClose,
   isModalOpen,
   identity,
@@ -232,4 +232,4 @@ const AddEvmAddrModal: FunctionComponent<AddEvmAddrModalProps> = ({
   );
 };
 
-export default AddEvmAddrModal;
+export default AddEvmModal;

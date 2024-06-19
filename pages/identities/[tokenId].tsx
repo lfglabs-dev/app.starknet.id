@@ -31,7 +31,10 @@ const TokenIdPage: NextPage = () => {
   const [ppImageUrl, setPpImageUrl] = useState("");
 
   useEffect(() => {
-    if (!identity || !address) return;
+    if (!identity || !address) {
+      setIsOwner(false);
+      return;
+    }
     setIsOwner(identity.ownerAddress === formatHexString(address));
   }, [identity, address]);
 

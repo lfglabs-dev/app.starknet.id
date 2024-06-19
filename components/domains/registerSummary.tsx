@@ -14,10 +14,10 @@ import ArCurrencyDropdown from "./arCurrencyDropdown";
 
 type RegisterSummaryProps = {
   duration: number;
-  ethRegistrationPrice?: string;
-  registrationPrice?: string; // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
+  ethRegistrationPrice: string;
+  registrationPrice: string; // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
   renewalBox?: boolean;
-  salesTaxRate?: number;
+  salesTaxRate: number;
   isSwissResident?: boolean;
   customMessage?: string;
   displayedCurrency?: CurrencyType[] | CurrencyType;
@@ -117,8 +117,6 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function displayTokenPrice(): ReactNode {
-    if (!ethRegistrationPrice || !salesTaxRate || !registrationPrice)
-      return null;
     const salesTaxAmountUsd =
       salesTaxRate *
       Number(gweiToEth(ethRegistrationPrice)) *
@@ -161,16 +159,12 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           <p className={styles.legend}>{getMessage()}</p>
           {isFree ? (
             "Free"
+          ) : loadingPrice ? (
+            <Skeleton variant="text" width="150px" height="24px" />
           ) : (
-            <>
-              {loadingPrice ? (
-                <Skeleton variant="text" width="150px" height="24px" />
-              ) : (
-                displayTokenPrice()
-              )}
-              <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
-            </>
+            displayTokenPrice()
           )}
+          <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
         </div>
       </div>
       {isFree ? null : areArCurrenciesEnabled ? (

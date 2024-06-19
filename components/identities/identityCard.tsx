@@ -2,23 +2,19 @@ import React, { FunctionComponent, useState } from "react";
 import styles from "../../styles/components/identityCard.module.css";
 import {
   convertNumberToFixedLengthString,
-  getDomainWithoutStark,
-  getEnsFromStark,
   minifyAddress,
   shortenDomain,
 } from "../../utils/stringService";
 import SocialMediaActions from "./actions/socialmediaActions";
 import { Skeleton, Tooltip, useMediaQuery } from "@mui/material";
-import Notification from "../UI/notification";
 import CalendarIcon from "../UI/iconsComponents/icons/calendarValidateIcon";
 import theme from "../../styles/theme";
 import { timestampToReadableDate } from "../../utils/dateService";
 import EditIcon from "../UI/iconsComponents/icons/editIcon";
 import { debounce } from "../../utils/debounceService";
 import { Identity } from "../../utils/apiWrappers/identity";
-import PlusIcon from "../UI/iconsComponents/icons/plusIcon";
-import AddEvmAddrModal from "./actions/addEvmAddrModal";
 import CopyContent from "../UI/copyContent";
+import AddEvmAction from "./actions/addEvmAction";
 
 type IdentityCardProps = {
   identity?: Identity;
@@ -39,22 +35,9 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
     ? shortenDomain(identity.domain, 25)
     : `SID: ${tokenId}`;
   const [isHovered, setIsHovered] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
-  const [addrAdded, setAddrAdded] = useState(false);
   const isMobile = useMediaQuery("(max-width:1124px)");
-
   const handleMouseEnter = debounce(() => setIsHovered(true), 50);
   const handleMouseLeave = debounce(() => setIsHovered(false), 50);
-
-  const closeModal = (showNotif: boolean) => {
-    setOpenModal(false);
-    if (showNotif) {
-      setAddrAdded(true);
-      setTimeout(() => {
-        setAddrAdded(false);
-      }, 1500);
-    }
-  };
 
   return (
     <div className={styles.wrapper}>
@@ -143,74 +126,13 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 ) : null}
               </div>
             </div>
-            {identity?.domain ? (
-              identity?.evmAddress ? (
-                <div className={styles.evmAddr}>
-                  <Tooltip
-                    title="Go to your ENS domain"
-                    componentsProps={{
-                      tooltip: {
-                        sx: {
-                          bgcolor: "#454545",
-                        },
-                      },
-                    }}
-                  >
-                    <div
-                      className={styles.evmName}
-                      onClick={() =>
-                        window.open(
-                          `https://app.ens.domains/${getDomainWithoutStark(
-                            identity?.domain
-                          )}.snid.eth`
-                        )
-                      }
-                    >
-                      <img className={styles.evmIcon} src="/icons/ens.svg" />
-                      <h2>{getEnsFromStark(identity.domain)}</h2>
-                    </div>
-                  </Tooltip>
-                  <Tooltip
-                    title="Edit your EVM address"
-                    componentsProps={{
-                      tooltip: {
-                        sx: {
-                          bgcolor: "#454545",
-                        },
-                      },
-                    }}
-                  >
-                    <div
-                      onClick={() => setOpenModal(true)}
-                      className={styles.editIcon}
-                    >
-                      <EditIcon
-                        width="16"
-                        color={theme.palette.secondary.main}
-                      />
-                    </div>
-                  </Tooltip>
-                </div>
-              ) : (
-                <div
-                  className={styles.evmAddrBtn}
-                  onClick={() => setOpenModal(true)}
-                >
-                  <img className={styles.evmIcon} src="/icons/ens.svg" />
-                  <h2>Add EVM address</h2>
-                  <PlusIcon width="12" color={theme.palette.secondary.main} />
-                </div>
-              )
-            ) : null}
-            <div className=" lg:mt-6 mt-2 flex lg:justify-start justify-center lg:items-start items-center">
-              <div className={styles.socialmediaActions}>
-                <SocialMediaActions
-                  identity={identity}
-                  isOwner={isOwner}
-                  tokenId={tokenId}
-                />
-              </div>
-            </div>
+
+            <AddEvmAction identity={identity} isOwner={isOwner} />
+            <SocialMediaActions
+              identity={identity}
+              isOwner={isOwner}
+              tokenId={tokenId}
+            />
             <img
               alt="leaf"
               src="/leaves/new/leavesGroup01.svg"
@@ -246,16 +168,6 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           <rect width="380" height="6" rx="3" fill="#EAE0D5" />
         </svg>
       </div>
-
-      <AddEvmAddrModal
-        handleClose={(showNotif) => closeModal(showNotif)}
-        isModalOpen={openModal}
-        identity={identity}
-      />
-
-      <Notification visible={addrAdded} severity="success">
-        <>&nbsp;Your address was added!</>
-      </Notification>
     </div>
   );
 };
