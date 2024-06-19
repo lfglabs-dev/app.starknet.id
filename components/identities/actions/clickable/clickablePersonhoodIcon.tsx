@@ -94,7 +94,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
       })
       .catch((error) =>
         console.log(
-          "An error occured while initializing a new Anima session",
+          "An error occurred while initializing a new Anima session",
           error
         )
       );
@@ -132,7 +132,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
         );
       })
       .catch((error) =>
-        console.log("An error occured while fetching signture", error)
+        console.log("An error occurred while fetching signture", error)
       );
   };
 
