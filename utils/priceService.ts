@@ -48,6 +48,12 @@ export function areDomainSelected(
   return Object.values(selectedDomains).some((isSelected) => isSelected);
 }
 
+export function getYearlyPrice(domain: string): string {
+  if (!domain) return "0";
+
+  return gweiToEth(String(getPriceFromDomain(1, domain)));
+}
+
 export function getTotalYearlyPrice(
   selectedDomains: Record<string, boolean> | undefined
 ): string {

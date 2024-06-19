@@ -14,7 +14,6 @@ export const freeRegistration: FreeRegistration = {
   discountMailGroupId: "X",
   offer: {
     duration: 90, // in days
-    customMessage: "3 months",
     discountId: "X",
     price: "0",
     desc: "Unlock your .stark domain for free and secure your Starknet profile!",

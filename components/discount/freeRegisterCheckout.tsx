@@ -6,12 +6,10 @@ import Button from "../UI/button";
 import { useAccount, useContractWrite } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import { getDomainWithStark } from "../../utils/stringService";
-import { numberToFixedString } from "../../utils/feltService";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
 import { Divider } from "@mui/material";
-import RegisterSummary from "../domains/registerSummary";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import BackButton from "../UI/backButton";
@@ -21,11 +19,11 @@ import ConnectButton from "../UI/connectButton";
 import { getFreeDomain } from "@/utils/campaignService";
 import TermCheckbox from "../domains/termCheckbox";
 import { useRouter } from "next/router";
+import FreeRegisterSummary from "./freeRegisterSummary";
 
 type FreeRegisterCheckoutProps = {
   domain: string;
   duration: number;
-  customMessage: string;
   goBack: () => void;
   couponCode?: boolean;
   couponHelper?: string;
@@ -35,7 +33,6 @@ type FreeRegisterCheckoutProps = {
 const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   domain,
   duration,
-  customMessage,
   goBack,
   couponCode,
   couponHelper,
@@ -184,12 +181,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
           </div>
         </div>
         <div className={styles.summary}>
-          <RegisterSummary
-            duration={Number(numberToFixedString(duration / 365))}
-            renewalBox={false}
-            customMessage={customMessage}
-            isFree={true}
-          />
+          <FreeRegisterSummary duration={duration} domain={domain} />
           <Divider className="w-full" />
           <TermCheckbox
             checked={termsBox}
