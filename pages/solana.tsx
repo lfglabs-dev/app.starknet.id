@@ -86,7 +86,7 @@ const Solana: NextPage = () => {
         setHasLoadedSolDomain(true);
       })
       .catch((error) => {
-        console.log("An error occured while fetching user SNS domains", error);
+        console.log("An error occurred while fetching user SNS domains", error);
         setSnsDomains([]);
         setHasLoadedSolDomain(true);
       });
@@ -240,7 +240,7 @@ const Solana: NextPage = () => {
         setDisableBtn("");
       })
       .catch((error) => {
-        console.log("An error occured", error);
+        console.log("An error occurred", error);
         setDisableBtn("");
       });
   };
@@ -278,7 +278,7 @@ const Solana: NextPage = () => {
         setDisableBtn("");
       })
       .catch((error) => {
-        console.log("An error occured", error);
+        console.log("An error occurred", error);
         setDisableBtn("");
       });
   };

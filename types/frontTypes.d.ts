@@ -143,7 +143,7 @@ type MulticallCallData = {
 type Upsell = {
   duration: number; // duration you get
   paidDuration: number; // duration you pay for
-  maxDuration: number; // if user selects a duration higer, upsell won't be applied
+  maxDuration: number; // if user selects a duration higher, upsell won't be applied
   discountId: string;
   imageUrl: string;
   title: {
@@ -156,7 +156,7 @@ type Upsell = {
 type FreeRenewal = {
   duration: number; // duration you get
   paidDuration: number; // duration you pay for
-  maxDuration: number; // if user selects a duration higer, upsell won't be applied
+  maxDuration: number; // if user selects a duration higher, upsell won't be applied
   discountId: string;
   imageUrl: string;
   title: {

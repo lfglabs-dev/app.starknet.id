@@ -46,7 +46,7 @@ export default async function handler(
           })
           .catch((error) => {
             console.log(
-              "An error occured while initializing a new Anima session",
+              "An error occurred while initializing a new Anima session",
               error
             );
             res.status(404).json(error);
@@ -55,7 +55,7 @@ export default async function handler(
     })
     .catch((error) => {
       console.log(
-        "An error occured while fetching existing Anima session",
+        "An error occurred while fetching existing Anima session",
         error
       );
       res.status(404).json(error);
