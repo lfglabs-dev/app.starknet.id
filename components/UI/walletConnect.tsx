@@ -48,14 +48,14 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
   };
 
   const tryConnect = (connector: Connector, isAvailable: boolean) => {
-    if (
+    if (isAvailable) {
+      connect(connector);
+    } else if (
       isMobile &&
       connector.id === "braavos" &&
       router.pathname.includes(process.env.NEXT_PUBLIC_APP_LINK as string)
     ) {
       openBraavosMobile();
-    } else if (isAvailable) {
-      connect(connector);
     } else {
       window.open(getConnectorDiscovery(connector.id));
     }
