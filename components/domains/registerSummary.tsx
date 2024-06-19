@@ -29,7 +29,6 @@ type RegisterSummaryProps = {
   discountedPrice?: string; // price the user will pay after discount
   discountedDuration?: number; // years the user will have the domain for after discount
   areArCurrenciesEnabled?: boolean;
-  isFree?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -47,7 +46,6 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   discountedPrice,
   discountedDuration,
   areArCurrenciesEnabled = false,
-  isFree = false,
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
@@ -141,7 +139,6 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function getMessage() {
-    if (isFree) return "3 months";
     if (!ethRegistrationPrice) return "0";
     if (customMessage) return customMessage;
     else {
@@ -157,9 +154,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
         <h4 className={styles.totalDueTitle}>Total due:</h4>
         <div className={styles.priceContainer}>
           <p className={styles.legend}>{getMessage()}</p>
-          {isFree ? (
-            "Free"
-          ) : loadingPrice ? (
+          {loadingPrice ? (
             <Skeleton variant="text" width="150px" height="24px" />
           ) : (
             displayTokenPrice()
@@ -167,7 +162,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
         </div>
       </div>
-      {isFree ? null : areArCurrenciesEnabled ? (
+      {areArCurrenciesEnabled ? (
         <ArCurrencyDropdown
           displayedCurrency={displayedCurrency as CurrencyType[]} // as CurrencyType[] is safe here cause we know the value is a CurrencyType[]
           onCurrencySwitch={onCurrencySwitch as (type: CurrencyType[]) => void}
