@@ -48,10 +48,10 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
   };
 
   const tryConnect = (connector: Connector, isAvailable: boolean) => {
-    if (isMobile && connector.id === "braavos") {
-      openBraavosMobile();
-    } else if (isAvailable) {
+    if (isAvailable) {
       connect(connector);
+    } else if (isMobile && connector.id === "braavos") {
+      openBraavosMobile();
     } else {
       window.open(getConnectorDiscovery(connector.id));
     }
