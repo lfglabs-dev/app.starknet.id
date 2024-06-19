@@ -31,7 +31,7 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
 
   const filterConnectors = (connectors: Connector[]) => {
     if (!isMobile) return connectors;
-    return connectors.filter((connector) => connector.id !== "argentMobile");
+    return connectors.filter((connector) => connector.id !== "argentX");
   };
 
   return (
