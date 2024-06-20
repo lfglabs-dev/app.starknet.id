@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from "react";
+import React, { useContext } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import { FormContext } from "@/context/FormProvider";
 import UserInfoForm from "./steps/userInfoForm";
@@ -29,7 +29,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
     if (!address) setCurrentStep(1);
   }, [address]);
 
-  useCallback(() => {
+  useEffect(() => {
     // Add domain in context and initialize the upsell state
     updateFormState({
       selectedDomains: { [domain]: true },
