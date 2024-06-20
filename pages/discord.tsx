@@ -124,7 +124,8 @@ const Discord: NextPage = () => {
       },
     });
     setIsTxModalOpen(true);
-  }, [discordVerificationData?.transaction_hash]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [discordVerificationData?.transaction_hash]); // We want this to run only when the tx is sent
 
   //Screen management
   const [screen, setScreen] = useState<Screen>("verifyDiscord");

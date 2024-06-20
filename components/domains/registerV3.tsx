@@ -38,7 +38,8 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
       tokenId: 0,
       selectedPfp: undefined,
     });
-  }, [domain]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [domain]); // Don't call updateFromState on every render
 
   const goToStep = (step: number) => {
     setCurrentStep(step);

@@ -318,6 +318,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
     quoteData,
     displayedCurrencies,
     needSubscription,
+    priceInEth,
   ]);
 
 

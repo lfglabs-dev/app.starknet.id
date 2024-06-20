@@ -79,7 +79,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         if (name !== identity?.domain) setIsMainDomain(false);
       });
     }
-  }, [address]);
+  }, [address, identity, starknetIdNavigator]);
 
   const nextAutoRenew = useMemo(() => {
     const now = Math.floor(Date.now() / 1000);

@@ -81,7 +81,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       new TrustWalletAdapter(),
       new NightlyWalletAdapter(),
     ],
-    [solNetwork]
+    []
   );
 
   return (
