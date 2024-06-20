@@ -59,7 +59,8 @@ const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
           setIsLoading(false);
         }
       });
-  }, [userNfts, address, isLoadingNfts, starknetIdNavigator, updateFormState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userNfts, address, isLoadingNfts, starknetIdNavigator]); // Don't call updateFromState on every render
 
   const goToStep = (step: number) => {
     setCurrentStep(step);

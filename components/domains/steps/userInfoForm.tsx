@@ -48,7 +48,8 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   useEffect(() => {
     if (type === FormType.REGISTER) return;
     updateFormState({ selectedDomains });
-  }, [selectedDomains, type, updateFormState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedDomains, type]); // Don't call updateFromState on every render
 
   function changeEmail(value: string): void {
     setEmail(value);
