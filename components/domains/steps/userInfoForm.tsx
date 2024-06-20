@@ -48,7 +48,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   useEffect(() => {
     if (type === FormType.REGISTER) return;
     updateFormState({ selectedDomains });
-  }, [selectedDomains]);
+  }, [selectedDomains, type, updateFormState]);
 
   function changeEmail(value: string): void {
     setEmail(value);

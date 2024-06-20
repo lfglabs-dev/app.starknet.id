@@ -116,7 +116,8 @@ const Github: NextPage = () => {
       },
     });
     setIsTxModalOpen(true);
-  }, [githubVerificationData?.transaction_hash]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [githubVerificationData?.transaction_hash]); // We want this to run only when the tx is sent
 
   //Screen management
   const [screen, setScreen] = useState<Screen>("verifyGithub");

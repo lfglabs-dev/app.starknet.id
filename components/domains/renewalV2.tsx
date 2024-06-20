@@ -32,7 +32,7 @@ const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
       isUpselled: true,
       duration: 1,
     });
-  }, [address]);
+  }, [address, updateFormState]);
 
   // check if user has a profile picture set on his main domain
   // if not, show the select pfp step and store his main id
@@ -59,7 +59,7 @@ const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
           setIsLoading(false);
         }
       });
-  }, [userNfts, address, isLoadingNfts]);
+  }, [userNfts, address, isLoadingNfts, starknetIdNavigator, updateFormState]);
 
   const goToStep = (step: number) => {
     setCurrentStep(step);

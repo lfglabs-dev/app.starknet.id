@@ -38,7 +38,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
       tokenId: 0,
       selectedPfp: undefined,
     });
-  }, [domain]);
+  }, [domain, updateFormState]);
 
   const goToStep = (step: number) => {
     setCurrentStep(step);

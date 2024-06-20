@@ -267,6 +267,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     discountedPrice,
     formState.needMetadata,
     formState.salesTaxRate,
+    updateFormState,
   ]);
 
   // if priceInEth or quoteData have changed, we update the price in altcoin

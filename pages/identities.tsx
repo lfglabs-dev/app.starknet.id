@@ -35,7 +35,7 @@ const Identities: NextPage = () => {
       entrypoint: "mint",
       calldata: [randomTokenId],
     };
-  }, []);
+  }, [randomTokenId]);
   const { writeAsync: execute, data: mintData } = useContractWrite({
     calls: [callData],
   });
