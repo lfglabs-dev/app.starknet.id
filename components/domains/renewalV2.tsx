@@ -32,7 +32,8 @@ const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
       isUpselled: true,
       duration: 1,
     });
-  }, [address, updateFormState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address]); // Don't call updateFromState on every render
 
   // check if user has a profile picture set on his main domain
   // if not, show the select pfp step and store his main id
