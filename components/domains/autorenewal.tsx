@@ -321,6 +321,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     displayedCurrencies,
     quoteData,
     needSubscription,
+    priceInEth,
   ]);
 
   function changeEmail(value: string): void {

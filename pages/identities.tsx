@@ -35,7 +35,8 @@ const Identities: NextPage = () => {
       entrypoint: "mint",
       calldata: [randomTokenId],
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // We want this to run only once
   const { writeAsync: execute, data: mintData } = useContractWrite({
     calls: [callData],
   });
