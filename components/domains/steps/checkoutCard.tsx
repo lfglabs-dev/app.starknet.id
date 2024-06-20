@@ -260,6 +260,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         setSalesTaxAmount("");
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     formState.isSwissResident,
     price,
@@ -267,7 +268,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     discountedPrice,
     formState.needMetadata,
     formState.salesTaxRate,
-  ]);
+  ]); // Don't call updateFromState on every render
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {

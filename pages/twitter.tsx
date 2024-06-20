@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import homeStyles from "../styles/Home.module.css";
-import {
-  useAccount,
-  useContractWrite,
-  useWaitForTransaction,
-} from "@starknet-react/core";
+import { useAccount, useContractWrite } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ErrorScreen from "../components/UI/screens/errorScreen";
@@ -103,12 +99,6 @@ const Twitter: NextPage = () => {
     error: twitterVerificationError,
   } = useContractWrite({ calls: [calls as Call] });
 
-  const { data: transactionData, error: transactionError } =
-    useWaitForTransaction({
-      hash: twitterVerificationData?.transaction_hash,
-      watch: true,
-    });
-
   function verifyTwitter() {
     execute();
   }
@@ -127,7 +117,8 @@ const Twitter: NextPage = () => {
       },
     });
     setIsTxModalOpen(true);
-  }, [twitterVerificationData?.transaction_hash]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [twitterVerificationData?.transaction_hash]); // We want this to run only when the tx is sent
 
   //Screen management
   const [screen, setScreen] = useState<Screen>("verifyTwitter");

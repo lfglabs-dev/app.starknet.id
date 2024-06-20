@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import pyramidSVG from "../../../../public/icons/pyramidIcon.svg";
 import Image from "next/image";
 
-const PyramidIcon: FunctionComponent<IconProps> = ({ width, color }) => {
+const PyramidIcon: FunctionComponent<IconProps> = ({ width }) => {
   return (
     <Image
       src={pyramidSVG}
