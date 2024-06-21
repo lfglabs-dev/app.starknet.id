@@ -57,7 +57,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [callData, setCallData] = useState<Call[]>([]);
-  const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH
+  const [priceInEth, setPriceInEth] = useState<bigint>(); // price in ETH
   const [price, setPrice] = useState<string>(""); // price in displayedCurrencies, set to priceInEth on first load as ETH is the default currency
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [displayedCurrencies, setDisplayedCurrencies] = useState<
@@ -79,7 +79,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     useState<Record<string, boolean>>();
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
-  const duration = 1;
+  const duration = 365;
   const needsAllowance = useNeedsAllowances(address);
   const { needSubscription, isLoading: needSubscriptionLoading } =
     useNeedSubscription(address);
@@ -222,10 +222,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   useEffect(() => {
     if (!selectedDomains) return;
     setPriceInEth(
-      getPriceFromDomains(
-        selectedDomainsToArray(selectedDomains),
-        duration
-      ).toString()
+      getPriceFromDomains(selectedDomainsToArray(selectedDomains), duration)
     );
   }, [selectedDomains, duration]);
 
@@ -235,10 +232,10 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
       CurrencyType.ETH,
     ]);
     if (isCurrencyETH) {
-      setPrice(priceInEth);
+      setPrice(priceInEth ? priceInEth.toString() : "");
     } else if (quoteData && priceInEth) {
       const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
-      setPrice(priceInAltcoin);
+      setPrice(priceInAltcoin ? priceInAltcoin.toString() : "");
     }
   }, [priceInEth, quoteData, displayedCurrencies]);
 
@@ -269,13 +266,13 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         // Add ERC20 allowance for all currencies if needed
         if (needsAllowance[currency]) {
           const priceToApprove =
-            currency === CurrencyType.ETH ? priceInEth : price;
+            currency === CurrencyType.ETH ? priceInEth?.toString() : price;
 
           calls.push(
             autoRenewalCalls.approve(
               ERC20Contract[currency],
               AutoRenewalContracts[currency],
-              priceToApprove
+              priceToApprove ?? "0"
             )
           );
         }

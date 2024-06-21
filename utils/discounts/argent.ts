@@ -1,6 +1,6 @@
 export const argentDiscount = {
   offer: {
-    duration: 0.246, // 90 days in years
+    durationInDays: 90,
     customMessage: "3 months (with Argent discount)",
     discountId: "0x617267656e745f6f6e655f646f6c6c6172",
     price: "599178082191783",

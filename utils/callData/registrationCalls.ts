@@ -13,7 +13,7 @@ function buy(
   encodedDomain: string,
   tokenId: number,
   sponsor: string,
-  durationInYears: number,
+  durationInDays: number,
   metadata: HexString,
   discountId?: string
 ): Call {
@@ -26,7 +26,7 @@ function buy(
       // domain
       encodedDomain,
       // days
-      numberToString(durationInYears * 365),
+      numberToString(durationInDays),
       // resolver
       0,
       // sponsor
@@ -43,7 +43,7 @@ function altcoinBuy(
   encodedDomain: string,
   tokenId: number,
   sponsor: string,
-  durationInYears: number,
+  durationInDays: number,
   metadata: HexString,
   erc20Address: string,
   quoteData: QuoteQueryData,
@@ -58,7 +58,7 @@ function altcoinBuy(
       // domain
       encodedDomain,
       // days
-      numberToString(durationInYears * 365),
+      numberToString(durationInDays),
       // resolver
       0,
       // sponsor
@@ -106,7 +106,7 @@ function vatTransfer(amount: string, erc20_contract: string): Call {
 
 function renew(
   encodedDomain: string,
-  durationInYears: number,
+  durationInDays: number,
   metadataHash: HexString,
   sponsor?: string,
   discountId?: string
@@ -116,7 +116,7 @@ function renew(
     entrypoint: "renew",
     calldata: [
       encodedDomain,
-      durationInYears * 365,
+      durationInDays,
       sponsor ?? 0,
       discountId ?? 0,
       metadataHash,
@@ -126,7 +126,7 @@ function renew(
 
 function altcoinRenew(
   encodedDomain: string,
-  durationInYears: number,
+  durationInDays: number,
   metadataHash: HexString,
   erc20Address: string,
   quoteData: QuoteQueryData,
@@ -138,7 +138,7 @@ function altcoinRenew(
     entrypoint: "altcoin_renew",
     calldata: [
       encodedDomain,
-      durationInYears * 365,
+      durationInDays,
       sponsor ?? 0,
       discountId ?? 0,
       metadataHash,
@@ -161,19 +161,19 @@ function freeRenewal(encodedDomain: string, ar_contract: string): Call {
 
 function multiCallRenewal(
   encodedDomains: string[],
-  durationInYears: number,
+  durationInDays: number,
   metadataHash: HexString,
   sponsor?: string,
   discountId?: string
 ): Call[] {
   return encodedDomains.map((encodedDomain) =>
-    renew(encodedDomain, durationInYears, metadataHash, sponsor, discountId)
+    renew(encodedDomain, durationInDays, metadataHash, sponsor, discountId)
   );
 }
 
 function multiCallRenewalAltcoin(
   encodedDomains: string[],
-  durationInYears: number,
+  durationInDays: number,
   metadataHash: HexString,
   erc20Address: string,
   quoteData: QuoteQueryData,
@@ -183,7 +183,7 @@ function multiCallRenewalAltcoin(
   return encodedDomains.map((encodedDomain) =>
     altcoinRenew(
       encodedDomain,
-      durationInYears,
+      durationInDays,
       metadataHash,
       erc20Address,
       quoteData,

@@ -31,8 +31,8 @@ const QuantumLeap: NextPage = () => {
 
   function getDuration() {
     return isUpselled
-      ? quantumLeapDiscount.upsell.duration
-      : quantumLeapDiscount.offer.duration;
+      ? quantumLeapDiscount.upsell.durationInDays
+      : quantumLeapDiscount.offer.durationInDays;
   }
 
   function getDiscountId() {
@@ -89,7 +89,7 @@ const QuantumLeap: NextPage = () => {
         <div className={styles.container}>
           <RegisterDiscount
             domain={searchResult?.name ?? ""}
-            duration={getDuration()}
+            durationInDays={getDuration()}
             discountId={getDiscountId()}
             customMessage={getCustomMessage() as string}
             priceInEth={getPrice()}

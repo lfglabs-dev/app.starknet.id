@@ -15,28 +15,12 @@ export const getTokenQuote = async (tokenAddress: string) => {
   }
 };
 
-export const getDomainPriceAltcoin = (quote: string, priceInEth: string) => {
+export const getDomainPriceAltcoin = (quote: string, priceInEth: bigint) => {
   if (quote === "1") return priceInEth;
 
-  const priceBigInt = new Big(priceInEth);
-  const quoteBigInt = new Big(quote);
-  const scaleFactor = new Big(10 ** 18);
-
-  const price = priceBigInt.mul(quoteBigInt).div(scaleFactor).toFixed(0);
-
-  return price;
-};
-
-export const getPriceForDuration = (
-  priceFor1Y: string,
-  duration: number
-): string => {
-  if (duration === 1) return priceFor1Y;
-
-  const priceBigInt = new Big(priceFor1Y);
-  const durationBigInt = new Big(duration);
-
-  const price = priceBigInt.mul(durationBigInt).toFixed(0);
+  const quoteBigInt = BigInt(quote);
+  const scaleFactor = BigInt(10 ** 18);
+  const price = priceInEth * (quoteBigInt / scaleFactor);
 
   return price;
 };
@@ -94,8 +78,8 @@ export const getDomainPrice = (
   } else {
     return getDomainPriceAltcoin(
       quote as string,
-      getPriceFromDomain(1, domain).toString()
-    );
+      getPriceFromDomain(1, domain)
+    ).toString();
   }
 };
 

@@ -4,20 +4,20 @@ import React, { FunctionComponent } from "react";
 import { CurrencyType } from "@/utils/constants";
 
 type ReduceDurationProps = {
-  currentDuration: number;
-  newDuration: number;
-  updateFormState: ({ duration }: { duration: number }) => void;
+  currentDurationInYears: number;
+  newDurationInYears: number;
+  updateFormState: ({ durationInYears }: { durationInYears: number }) => void;
   displayCurrency: CurrencyType;
 };
 
 const ReduceDuration: FunctionComponent<ReduceDurationProps> = ({
-  currentDuration,
-  newDuration,
+  currentDurationInYears,
+  newDurationInYears,
   updateFormState,
   displayCurrency,
 }) => {
   const handleSwitchDuration = () => {
-    updateFormState({ duration: newDuration });
+    updateFormState({ durationInYears: newDurationInYears });
   };
   return (
     <div className={styles.container}>
@@ -27,13 +27,14 @@ const ReduceDuration: FunctionComponent<ReduceDurationProps> = ({
           <p className={styles.desc}>
             Looks like you&apos;ve got grand plans! But it seems you don&apos;t
             have enough {displayCurrency} to grab this domain for{" "}
-            {currentDuration} years. No worries, let&apos;s make it happen! How
-            about we reduce the duration to {newDuration} years?
+            {currentDurationInYears} years. No worries, let&apos;s make it
+            happen! How about we reduce the duration to {newDurationInYears}{" "}
+            years?
           </p>
         </div>
         <div className="w-full sm:w-fit">
           <Button onClick={handleSwitchDuration}>
-            Switch to {newDuration} year{newDuration > 1 && "s"}
+            Switch to {newDurationInYears} year{newDurationInYears > 1 && "s"}
           </Button>
         </div>
       </div>

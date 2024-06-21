@@ -29,7 +29,6 @@ import {
   getAutoRenewAllowance,
   getDomainPrice,
   getDomainPriceAltcoin,
-  getPriceForDuration,
   getTokenQuote,
   smartCurrencyChoosing,
 } from "@/utils/altcoinService";
@@ -71,9 +70,20 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const router = useRouter();
   const { account, address } = useAccount();
   const { formState, updateFormState, clearForm } = useContext(FormContext);
-  const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH for 1 year
-  const [price, setPrice] = useState<string>(""); // total price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
-  const [discountedPrice, setDiscountedPrice] = useState<string>(""); // discounted price in displayedCurrency
+  const paidDuration = BigInt(
+    formState.isUpselled
+      ? discount.paidDurationInDays
+      : formState.durationInYears * 365
+  );
+  const finalDuration = BigInt(
+    formState.isUpselled ? discount.durationInDays : paidDuration
+  );
+  // total price before discount quoted in ETH
+  const [dailyPriceInEth, setdailyPriceInEth] = useState<bigint>();
+  // total price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
+  const [dailyPrice, setDailyPrice] = useState<bigint>();
+  // price paid by the user including discount
+  const [discountedPrice, setDiscountedPrice] = useState<bigint>();
   const [maxPriceRange, setMaxPriceRange] = useState<string>("0"); // max price range for the displayedCurrency that will be spent on yearly subscription
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
@@ -146,41 +156,15 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     // Start the refetch scheduling
     scheduleRefetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayedCurrency, priceInEth]); // We don't add quoteData because it would create an infinite loop
+  }, [displayedCurrency]); // We don't add quoteData because it would create an infinite loop
 
   useEffect(() => {
     // get the price for domains for a year
     if (!formState.selectedDomains) return;
-    setPriceInEth(
-      getPriceFromDomains(
-        selectedDomainsToArray(formState.selectedDomains),
-        1
-      ).toString()
+    setdailyPriceInEth(
+      getPriceFromDomains(selectedDomainsToArray(formState.selectedDomains), 1)
     );
-  }, [formState.selectedDomains, formState.duration]);
-
-  useEffect(() => {
-    // update discountedPrice based on isUpselled selected or not
-    if (formState.isUpselled) {
-      if (displayedCurrency === CurrencyType.ETH) {
-        setDiscountedPrice(
-          (BigInt(priceInEth) * BigInt(discount.paidDuration)).toString()
-        );
-      } else if (quoteData) {
-        const priceInAltcoin = getDomainPriceAltcoin(
-          quoteData?.quote as string,
-          (BigInt(priceInEth) * BigInt(discount.paidDuration)).toString()
-        );
-        setDiscountedPrice(priceInAltcoin);
-      }
-    } else setDiscountedPrice("");
-  }, [
-    priceInEth,
-    formState.isUpselled,
-    displayedCurrency,
-    quoteData,
-    discount,
-  ]);
+  }, [formState.selectedDomains, formState.durationInYears]);
 
   // we choose the currency based on the user balances
   useEffect(() => {
@@ -188,44 +172,48 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       tokenBalances &&
       Object.keys(tokenBalances).length > 0 &&
       !hasChosenCurrency &&
-      priceInEth
+      dailyPriceInEth
     ) {
-      const domainPrice = formState.isUpselled
-        ? (BigInt(priceInEth) * BigInt(discount.paidDuration)).toString()
-        : (BigInt(priceInEth) * BigInt(formState.duration)).toString();
-      smartCurrencyChoosing(tokenBalances, domainPrice).then((currency) => {
+      const ethDomainPrice = (dailyPriceInEth * paidDuration).toString();
+      smartCurrencyChoosing(tokenBalances, ethDomainPrice).then((currency) => {
         onCurrencySwitch(currency);
         setHasChosenCurrency(true);
       });
     }
   }, [
     tokenBalances,
-    priceInEth,
+    dailyPriceInEth,
     formState.isUpselled,
     hasChosenCurrency,
-    formState.duration,
-    discount.paidDuration,
+    formState.durationInYears,
+    discount.paidDurationInDays,
   ]);
 
   // we ensure user has enough balance of the token selected
   useEffect(() => {
     if (
       tokenBalances &&
-      price &&
+      dailyPrice &&
       displayedCurrency &&
       !loadingPrice &&
       !reloadingPrice
     ) {
       const tokenBalance = tokenBalances[displayedCurrency];
+      console.log("balances:", tokenBalances, tokenBalance, discountedPrice);
+
       if (!tokenBalance) return;
-      const _price = formState.isUpselled ? discountedPrice : price;
-      if (tokenBalance && BigInt(tokenBalance) >= BigInt(_price))
+      if (
+        tokenBalance &&
+        discountedPrice &&
+        BigInt(tokenBalance) >= discountedPrice
+      ) {
         setInvalidBalance(false);
-      else setInvalidBalance(true);
+      } else {
+        setInvalidBalance(true);
+      }
     }
   }, [
-    price,
-    discountedPrice,
+    dailyPrice,
     formState.isUpselled,
     displayedCurrency,
     tokenBalances,
@@ -248,13 +236,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   }, [address, formState.selectedDomains]);
 
   useEffect(() => {
-    const _price = formState.isUpselled ? discountedPrice : price;
-    if (!formState.needMetadata && _price) {
-      setSalesTaxAmount(applyRateToBigInt(_price, formState.salesTaxRate));
+    if (!formState.needMetadata && dailyPrice) {
+      setSalesTaxAmount(applyRateToBigInt(dailyPrice, formState.salesTaxRate));
     } else {
-      if (formState.isSwissResident) {
+      if (formState.isSwissResident && dailyPrice) {
         updateFormState({ salesTaxRate: swissVatRate });
-        setSalesTaxAmount(applyRateToBigInt(_price, swissVatRate));
+        setSalesTaxAmount(applyRateToBigInt(dailyPrice, swissVatRate));
       } else {
         updateFormState({ salesTaxRate: 0 });
         setSalesTaxAmount("");
@@ -262,36 +249,37 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     }
   }, [
     formState.isSwissResident,
-    price,
+    dailyPrice,
     formState.isUpselled,
-    discountedPrice,
     formState.needMetadata,
     formState.salesTaxRate,
   ]);
 
-  // if priceInEth or quoteData have changed, we update the price in altcoin
+  // if dailyPriceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
-    if (!priceInEth) return;
-    const _price = getPriceForDuration(
-      priceInEth,
-      formState.isUpselled ? discount.duration : formState.duration
-    );
+    if (!dailyPriceInEth) return;
     if (displayedCurrency === CurrencyType.ETH) {
-      setPrice(_price);
+      setDailyPrice(dailyPriceInEth);
     } else if (quoteData) {
-      setPrice(getDomainPriceAltcoin(quoteData.quote, _price));
+      setDailyPrice(getDomainPriceAltcoin(quoteData.quote, dailyPriceInEth));
     }
     setLoadingPrice(false);
     if (reloadingPrice) setReloadingPrice(false);
   }, [
-    priceInEth,
+    dailyPriceInEth,
     quoteData,
     displayedCurrency,
     formState.isUpselled,
-    formState.duration,
-    discount.duration,
+    formState.durationInYears,
+    discount.durationInDays,
     reloadingPrice,
   ]);
+
+  useEffect(() => {
+    setDiscountedPrice(
+      dailyPrice ? dailyPrice * BigInt(paidDuration) : undefined
+    );
+  }, [dailyPrice, formState.isUpselled]);
 
   useEffect(() => {
     if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
@@ -349,13 +337,15 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       .encodeDomain(Object.keys(formState.selectedDomains)[0])
       .map((element) => element.toString())[0];
     const finalDuration = formState.isUpselled
-      ? discount.duration
-      : formState.duration;
-    const priceToPay = formState.isUpselled ? discountedPrice : price;
+      ? discount.durationInDays
+      : formState.durationInYears * 365;
 
     // Common calls
     const calls = [
-      registrationCalls.approve(priceToPay, ERC20Contract[displayedCurrency]),
+      registrationCalls.approve(
+        discountedPrice ? discountedPrice.toString() : "0",
+        ERC20Contract[displayedCurrency]
+      ),
     ];
 
     if (displayedCurrency === CurrencyType.ETH) {
@@ -412,14 +402,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     // If the user has toggled autorenewal
     if (renewalBox) {
       if (needsAllowance) {
-        const amountToApprove = String(
-          Number(price) / (discountedPrice ? 3 : formState.duration)
-        );
         calls.push(
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
             AutoRenewalContracts[displayedCurrency],
-            amountToApprove
+            dailyPrice ? (dailyPrice * BigInt(365 * 10)).toString() : "0"
           )
         );
       }
@@ -462,8 +449,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   }, [
     formState.tokenId,
     formState.isUpselled,
-    formState.duration,
-    price,
+    formState.durationInYears,
+    dailyPrice,
     formState.selectedDomains,
     hasMainDomain,
     address,
@@ -478,9 +465,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     displayedCurrency,
     formState.selectedPfp,
     type,
-    discount.duration,
+    discount.durationInDays,
     discount.discountId,
-    discountedPrice,
     hasReverseAddressRecord,
   ]);
 
@@ -490,22 +476,21 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
 
     // Variables
-    const finalDuration = formState.isUpselled
-      ? discount.duration
-      : formState.duration;
-    const priceToPay = formState.isUpselled ? discountedPrice : price;
     const txMetadataHash = `0x${formState.metadataHash}` as HexString;
 
     // Common calls
     const calls = [
-      registrationCalls.approve(priceToPay, ERC20Contract[displayedCurrency]),
+      registrationCalls.approve(
+        discountedPrice ? discountedPrice.toString() : "0",
+        ERC20Contract[displayedCurrency]
+      ),
     ];
 
     if (displayedCurrency === CurrencyType.ETH) {
       calls.push(
         ...registrationCalls.multiCallRenewal(
           selectedDomainsToEncodedArray(formState.selectedDomains),
-          finalDuration,
+          Number(finalDuration.toString()),
           txMetadataHash,
           sponsor,
           formState.isUpselled ? discount.discountId : "0"
@@ -515,7 +500,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       calls.push(
         ...registrationCalls.multiCallRenewalAltcoin(
           selectedDomainsToEncodedArray(formState.selectedDomains),
-          finalDuration,
+          Number(finalDuration.toString()),
           txMetadataHash,
           ERC20Contract[displayedCurrency],
           quoteData as QuoteQueryData,
@@ -538,14 +523,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     // If the user has toggled autorenewal
     if (renewalBox) {
       if (needsAllowance) {
-        const amountToApprove = String(
-          Number(price) / (discountedPrice ? 3 : formState.duration)
-        );
         calls.push(
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
             AutoRenewalContracts[displayedCurrency],
-            amountToApprove
+            // we approve for 10 years
+            dailyPrice ? (dailyPrice * BigInt(365 * 10)).toString() : "0"
           )
         );
       }
@@ -599,8 +582,9 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   }, [
     formState.tokenId,
     formState.isUpselled,
-    formState.duration,
-    price,
+    formState.durationInYears,
+    discountedPrice,
+    dailyPrice,
     formState.selectedDomains,
     hasMainDomain,
     address,
@@ -615,9 +599,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     displayedCurrency,
     formState.selectedPfp,
     type,
-    discount.duration,
+    discount.durationInDays,
     discount.discountId,
-    discountedPrice,
     nonSubscribedDomains,
   ]);
 
@@ -678,7 +661,9 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         tokenIdRedirect,
         formatHexString(address as string),
         getDomainWithStark(Object.keys(formState.selectedDomains)[0]),
-        formState.isUpselled ? discount.duration : formState.duration,
+        formState.isUpselled
+          ? discount.durationInDays
+          : formState.durationInYears * 365,
         !hasMainDomain || mainDomainBox ? true : false,
         formState.selectedPfp
       );
@@ -711,31 +696,37 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   );
 
   useEffect(() => {
-    const duration = formState.duration;
-    if (!invalidBalance || !priceInEth) {
+    const durationInYears = formState.durationInYears;
+    if (!invalidBalance || !dailyPriceInEth) {
       if (!reducedDuration) setReducedDuration(0);
       return;
     }
     let found = false;
-    for (let newDuration = duration - 1; newDuration > 0; newDuration--) {
-      const newPriceInEth = getPriceForDuration(priceInEth, newDuration);
-      let newPrice = newPriceInEth;
-      if (displayedCurrency !== CurrencyType.ETH && quoteData)
-        newPrice = getDomainPriceAltcoin(quoteData.quote, newPriceInEth);
+    for (
+      let newDurationInYears = durationInYears - 1;
+      newDurationInYears > 0;
+      newDurationInYears--
+    ) {
+      let newPrice =
+        displayedCurrency !== CurrencyType.ETH && quoteData
+          ? getDomainPriceAltcoin(quoteData.quote, dailyPriceInEth)
+          : dailyPriceInEth;
+
       const balance = tokenBalances[displayedCurrency];
       if (!balance) continue;
-      if (BigInt(balance) >= BigInt(newPrice)) {
-        if (reducedDuration !== newDuration) setReducedDuration(newDuration);
+      if (BigInt(balance) >= newPrice) {
+        if (reducedDuration !== newDurationInYears * 365)
+          setReducedDuration(newDurationInYears * 365);
         found = true;
         break;
       }
     }
     if (!found && reducedDuration) setReducedDuration(0);
   }, [
-    formState.duration,
+    formState.durationInYears,
     invalidBalance,
-    discount.duration,
-    priceInEth,
+    discount.durationInDays,
+    dailyPriceInEth,
     formState.isUpselled,
     tokenBalances,
     displayedCurrency,
@@ -745,7 +736,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   return (
     <>
-      {formState.duration === 1 ? (
+      {formState.durationInYears === 1 ? (
         <UpsellCard
           upsellData={discount as Upsell}
           enabled={formState.isUpselled}
@@ -758,10 +749,10 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       ) : null}
       {reducedDuration > 0 &&
       invalidBalance &&
-      reducedDuration !== formState.duration ? (
+      reducedDuration !== formState.durationInYears * 365 ? (
         <ReduceDuration
-          newDuration={reducedDuration}
-          currentDuration={formState.duration}
+          newDurationInYears={reducedDuration}
+          currentDurationInYears={formState.durationInYears}
           updateFormState={updateFormState}
           displayCurrency={displayedCurrency}
         />
@@ -770,9 +761,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       <div className={styles.container}>
         <div className={styles.checkout}>
           <RegisterSummary
-            ethRegistrationPrice={priceInEth} // price in ETH for one year
-            registrationPrice={price} // registration price in displayedCurrency
-            duration={formState.isUpselled ? 2 : formState.duration}
+            dailyPriceInEth={dailyPriceInEth} // price in ETH for one year
+            dailyPrice={dailyPrice} // registration price in displayedCurrency
+            discountedPrice={discountedPrice}
+            durationInDays={
+              365 * (formState.isUpselled ? 2 : formState.durationInYears)
+            }
             renewalBox={renewalBox}
             salesTaxRate={formState.salesTaxRate}
             isSwissResident={formState.isSwissResident}
@@ -780,8 +774,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
             isUpselled={formState.isUpselled}
-            discountedPrice={discountedPrice}
-            discountedDuration={discount.duration}
+            discountedDuration={discount.durationInDays}
           />
           <Divider className="w-full" />
           <div className={styles.checkoutSummary}>
@@ -790,9 +783,6 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
               termsBox={termsBox}
               onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
               renewalBox={renewalBox}
-              ethRenewalPrice={
-                type === FormType.REGISTER ? priceInEth : undefined
-              }
               showMainDomainBox={type === FormType.REGISTER && hasMainDomain}
               mainDomainBox={mainDomainBox}
               onChangeMainDomainBox={() => setMainDomainBox(!mainDomainBox)}
@@ -812,8 +802,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
                 disabled={
                   domainsMinting === formState.selectedDomains ||
                   !account ||
-                  !formState.duration ||
-                  formState.duration < 1 ||
+                  !formState.durationInYears ||
+                  formState.durationInYears < 1 ||
                   invalidBalance ||
                   !termsBox
                 }

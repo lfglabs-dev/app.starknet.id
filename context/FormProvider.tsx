@@ -8,7 +8,7 @@ type FormState = {
   email: string;
   isSwissResident: boolean;
   tokenId: number;
-  duration: number;
+  durationInYears: number;
   selectedDomains: Record<string, boolean>;
   // metadata
   salt?: string;
@@ -34,7 +34,7 @@ const initialState: FormState = {
   email: "",
   isSwissResident: false,
   tokenId: 0,
-  duration: 1,
+  durationInYears: 1,
   selectedDomains: {},
   needMetadata: false,
   salesTaxRate: 0,

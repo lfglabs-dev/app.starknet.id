@@ -3,9 +3,8 @@ import { Call } from "starknet";
 function approve(
   erc20Contract: string,
   renewalContract: string,
-  erc20Price: string
+  amountToApprove: string
 ): Call {
-  const amountToApprove = erc20Price.concat("0"); // multiply by 10 to approve 10 years
   return {
     contractAddress: erc20Contract,
     entrypoint: "approve",

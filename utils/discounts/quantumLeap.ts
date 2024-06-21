@@ -10,7 +10,7 @@ type QuantumLeapDiscount = {
 
 export const quantumLeapDiscount: QuantumLeapDiscount = {
   offer: {
-    duration: 81, // in days
+    durationInDays: 81, // in days
     customMessage: "3 months (with Quantum Leap discount)",
     discountId: "1",
     price: "599178082191783",
@@ -19,7 +19,7 @@ export const quantumLeapDiscount: QuantumLeapDiscount = {
     image: "/quantumleap/quantumLeapAstro.webp",
   },
   upsell: {
-    duration: 1095, // in days
+    durationInDays: 1095, // in days
     customMessage: "3 years (with Quantum Leap discount)",
     discountId: "2",
     price: "18899999999999739",

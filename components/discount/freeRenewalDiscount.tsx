@@ -54,7 +54,7 @@ import useNeedSubscription from "@/hooks/useNeedSubscription";
 type FreeRenewalCheckoutProps = {
   groups: string[];
   goBack: () => void;
-  duration: number;
+  durationInDays: number;
   discountId: string;
   customMessage: string;
   priceInEth: string;
@@ -65,7 +65,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   groups,
   priceInEth,
   renewPrice,
-  duration,
+  durationInDays,
   discountId,
   customMessage,
   goBack,
@@ -320,7 +320,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
     needsAllowances,
     metadataHash,
     salesTaxRate,
-    duration,
+    durationInDays,
     discountId,
     needMetadata,
     quoteData,
@@ -389,7 +389,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
           <RegisterSummary
             ethRegistrationPrice={priceInEth}
             registrationPrice={price}
-            duration={Number(numberToFixedString(duration / 365))}
+            durationInDays={durationInDays}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
             customMessage={`${customMessage} and then ${potentialPrice} ETH per year`}

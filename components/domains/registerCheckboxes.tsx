@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { Checkbox } from "@mui/material";
 import InputHelper from "../UI/inputHelper";
-import { gweiToEth } from "../../utils/feltService";
+import { weiToEth } from "../../utils/feltService";
 import { CurrencyType } from "@/utils/constants";
 import TermCheckbox from "./termCheckbox";
 
@@ -12,7 +12,6 @@ type RegisterCheckboxes = {
   onChangeRenewalBox?: () => void;
   variant?: "default" | "white";
   isArOnforced?: boolean;
-  ethRenewalPrice?: string;
   showMainDomainBox?: boolean;
   onChangeMainDomainBox?: () => void;
   mainDomainBox?: boolean;
@@ -38,7 +37,7 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   const getHelperText = (): string => {
     return `Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year ${
       maxPriceRange
-        ? `(maximum ${Number(gweiToEth(maxPriceRange)).toFixed(
+        ? `(maximum ${Number(weiToEth(maxPriceRange)).toFixed(
             3
           )} ${displayedCurrency}/year)`
         : ""

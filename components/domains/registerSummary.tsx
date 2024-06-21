@@ -5,7 +5,7 @@ import React, {
   useState,
 } from "react";
 import styles from "../../styles/components/registerV3.module.css";
-import { gweiToEth, numberToFixedString } from "../../utils/feltService";
+import { weiToEth, numberToFixedString } from "../../utils/feltService";
 import { CurrencyType } from "../../utils/constants";
 import CurrencyDropdown from "./currencyDropdown";
 import { Skeleton } from "@mui/material";
@@ -13,9 +13,13 @@ import ArrowRightIcon from "../UI/iconsComponents/icons/arrowRightIcon";
 import ArCurrencyDropdown from "./arCurrencyDropdown";
 
 type RegisterSummaryProps = {
-  duration: number;
-  ethRegistrationPrice: string;
-  registrationPrice: string; // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
+  // duration paid by the user
+  durationInDays: number;
+  // years the user will have the domain for after discount
+  discountedDuration?: number;
+  dailyPriceInEth?: bigint;
+  dailyPrice?: bigint;
+  discountedPrice?: bigint;
   renewalBox?: boolean;
   salesTaxRate: number;
   isSwissResident?: boolean;
@@ -26,15 +30,14 @@ type RegisterSummaryProps = {
     | ((type: CurrencyType) => void);
   loadingPrice?: boolean;
   isUpselled?: boolean;
-  discountedPrice?: string; // price the user will pay after discount
-  discountedDuration?: number; // years the user will have the domain for after discount
   areArCurrenciesEnabled?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
-  duration,
-  ethRegistrationPrice,
-  registrationPrice,
+  durationInDays,
+  dailyPriceInEth,
+  dailyPrice,
+  discountedPrice,
   renewalBox = true,
   salesTaxRate,
   isSwissResident,
@@ -43,21 +46,19 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   onCurrencySwitch,
   loadingPrice,
   isUpselled = false,
-  discountedPrice,
   discountedDuration,
   areArCurrenciesEnabled = false,
 }) => {
-  const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1ETH in USD
-  const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
-  const recurrence = renewalBox && duration === 1 ? "/year" : "";
+  const [ethUsdPrice, setEthUsdPrice] = useState<number>(0); // price of 1ETH in USD
+  const [usdFinalPrice, setUsdFinalPrice] = useState<string>("0");
+  const recurrence = renewalBox && durationInDays === 365 ? "/year" : "";
   useEffect(() => {
     fetch(
       "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
     )
       .then((res) => res.json())
       .then((data) => {
-        console.log("Coingecko API Data:", data);
-        setEthUsdPrice(data?.ethereum?.usd.toString());
+        setEthUsdPrice(Number(data?.ethereum?.usd));
       })
       .catch((err) => console.log("Coingecko API Error:", err));
   }, []);
@@ -66,21 +67,28 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     Array.isArray(displayedCurrency) && displayedCurrency.length > 1
       ? "ETH or STRK"
       : displayedCurrency;
-
   useEffect(() => {
-    function computeUsdPrice() {
-      if (ethUsdPrice && ethRegistrationPrice) {
+    setUsdFinalPrice(() => {
+      if (ethUsdPrice && dailyPriceInEth) {
         return (
-          Number(ethUsdPrice) *
-          Number(gweiToEth(ethRegistrationPrice)) *
-          duration
+          ethUsdPrice *
+          Number(
+            weiToEth(
+              isUpselled && discountedPrice
+                ? discountedPrice
+                : dailyPriceInEth *
+                    BigInt(
+                      isUpselled && discountedDuration
+                        ? discountedDuration
+                        : durationInDays
+                    )
+            )
+          )
         ).toFixed(2);
       }
       return "0";
-    }
-
-    setUsdRegistrationPrice(computeUsdPrice());
-  }, [ethRegistrationPrice, ethUsdPrice, duration]);
+    });
+  }, [dailyPriceInEth, ethUsdPrice]);
 
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
     return (
@@ -115,36 +123,47 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function displayTokenPrice(): ReactNode {
-    const salesTaxAmountUsd =
-      salesTaxRate *
-      Number(gweiToEth(ethRegistrationPrice)) *
-      Number(ethUsdPrice);
+    const salesTaxAmountUsd = dailyPriceInEth
+      ? salesTaxRate * Number(weiToEth(dailyPriceInEth)) * Number(ethUsdPrice)
+      : 0;
     const salesTaxInfo = salesTaxAmountUsd
       ? ` (+ ${numberToFixedString(
           salesTaxAmountUsd
         )}$ worth of ${announcedCurrency} for Swiss VAT)`
       : "";
 
-    const registerPrice = Number(gweiToEth(registrationPrice));
-    const registerPriceStr =
+    const registerPrice = Number(
+      weiToEth(
+        BigInt(
+          isUpselled && discountedDuration ? discountedDuration : durationInDays
+        ) * (dailyPrice ? dailyPrice : BigInt(0))
+      )
+    );
+    const discountedRegisterPrice = Number(
+      weiToEth(discountedPrice ? discountedPrice : BigInt(0))
+    );
+    const displayedNormalPrice =
       registerPrice != 0 ? numberToFixedString(registerPrice, 4) : "0";
-    if (isUpselled && discountedPrice) {
+
+    if (isUpselled) {
       return displayDiscountedPrice(
-        registerPriceStr,
-        numberToFixedString(Number(gweiToEth(discountedPrice)), 3),
+        displayedNormalPrice,
+        discountedRegisterPrice != 0
+          ? numberToFixedString(discountedRegisterPrice, 4)
+          : "0",
         salesTaxInfo
       );
     }
-    return displayPrice(registerPriceStr, salesTaxInfo);
+    return displayPrice(displayedNormalPrice, salesTaxInfo);
   }
 
   function getMessage() {
-    if (!ethRegistrationPrice) return "0";
+    if (!dailyPriceInEth) return "0";
     if (customMessage) return customMessage;
     else {
-      return `${gweiToEth(ethRegistrationPrice)} ETH x ${
-        isUpselled ? discountedDuration : duration
-      } ${isUpselled || duration > 1 ? "years" : "year"}`;
+      return `${weiToEth(dailyPriceInEth * BigInt(365))} ETH x ${Math.floor(
+        ((isUpselled ? discountedDuration : durationInDays) as number) / 365
+      )} ${isUpselled || durationInDays / 365 >= 2 ? "years" : "year"}`;
     }
   }
 
@@ -159,7 +178,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           ) : (
             displayTokenPrice()
           )}
-          <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
+          <p className={styles.legend}>≈ ${usdFinalPrice}</p>
         </div>
       </div>
       {areArCurrenciesEnabled ? (

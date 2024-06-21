@@ -34,7 +34,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
     updateFormState({
       selectedDomains: { [domain]: true },
       isUpselled: true,
-      duration: 1,
+      durationInYears: 1,
       tokenId: 0,
       selectedPfp: undefined,
     });

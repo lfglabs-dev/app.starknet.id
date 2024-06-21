@@ -30,7 +30,7 @@ const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
     // Initialize the upsell state
     updateFormState({
       isUpselled: true,
-      duration: 1,
+      durationInYears: 1,
     });
   }, [address]);
 

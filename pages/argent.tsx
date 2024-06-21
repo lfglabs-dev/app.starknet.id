@@ -92,7 +92,7 @@ const Argent: NextPage = () => {
             <div className={styles.container}>
               <RegisterDiscount
                 domain={searchResult?.name ?? ""}
-                duration={argentDiscount.offer.duration}
+                durationInDays={argentDiscount.offer.durationInDays}
                 discountId={argentDiscount.offer.discountId}
                 customMessage={argentDiscount.offer.customMessage}
                 goBack={goBack}
