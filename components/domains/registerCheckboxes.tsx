@@ -46,25 +46,6 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   return (
     <div className="w-full mb-3">
       <div className="flex flex-col gap-3">
-        <TermCheckbox
-          checked={termsBox}
-          onChange={onChangeTermsBox}
-          variant={variant}
-        />
-        {!isArOnforced ? (
-          <InputHelper helperText={getHelperText()}>
-            <div
-              className="flex items-center justify-left text-xs cursor-pointer"
-              onClick={onChangeRenewalBox}
-            >
-              <Checkbox checked={renewalBox} sx={{ padding: 0 }} />
-              <p className="ml-2 mr-10 text-left flex items-center gap-2 relative">
-                Enable subscription and don&apos;t pay gas for your yearly
-                renewal
-              </p>
-            </div>
-          </InputHelper>
-        ) : null}
         {showMainDomainBox ? (
           <div className="flex items-center justify-left text-xs">
             <Checkbox
@@ -80,6 +61,25 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
             </p>
           </div>
         ) : null}
+        {!isArOnforced ? (
+          <InputHelper helperText={getHelperText()}>
+            <div
+              className="flex items-center justify-left text-xs cursor-pointer"
+              onClick={onChangeRenewalBox}
+            >
+              <Checkbox checked={renewalBox} sx={{ padding: 0 }} />
+              <p className="ml-2 mr-10 text-left flex items-center gap-2 relative">
+                Enable subscription and don&apos;t pay gas for your yearly
+                renewal
+              </p>
+            </div>
+          </InputHelper>
+        ) : null}
+        <TermCheckbox
+          checked={termsBox}
+          onChange={onChangeTermsBox}
+          variant={variant}
+        />
       </div>
     </div>
   );

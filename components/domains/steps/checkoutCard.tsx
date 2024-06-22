@@ -100,7 +100,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     useState<bigint>();
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
-  const [renewalBox, setRenewalBox] = useState<boolean>(false);
+  const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [termsBox, setTermsBox] = useState<boolean>(false);
   const mainDomain = useDomainFromAddress(address ?? "");
   const [mainDomainBox, setMainDomainBox] = useState<boolean>(true);
