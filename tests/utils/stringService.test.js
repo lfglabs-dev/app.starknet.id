@@ -13,6 +13,7 @@ import {
   generateString,
   isStarkDomain,
   numberToString,
+  numberToStringHex,
   isBraavosSubdomain,
   isXplorerSubdomain,
   isSolSubdomain,
@@ -264,6 +265,26 @@ describe("numberToString", () => {
   it("Should converts a negative number to its decimal string representation", () => {
     const result = numberToString(-456);
     expect(result).toEqual("-456");
+  });
+});
+
+describe("numberToStringHex", () => {
+  it("Should returns an empty string if the element is undefined", () => {
+    const result = numberToStringHex(undefined);
+    const result2 = numberToStringHex(0);
+
+    expect(result).toEqual("");
+    expect(result2).toEqual("0x0");
+  });
+
+  it("Should converts a number to its hexadecimal string representation", () => {
+    const result = numberToStringHex(123);
+    expect(result).toEqual("0x7b");
+  });
+
+  it("Should converts a negative number to its hexadecimal string representation", () => {
+    const result = numberToStringHex(-456);
+    expect(result).toEqual("-0x1c8");
   });
 });
 

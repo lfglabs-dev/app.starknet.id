@@ -1,5 +1,5 @@
 import { Call } from "starknet";
-import { numberToString } from "../stringService";
+import { numberToString, numberToStringHex } from "../stringService";
 
 function approve(price: string, erc20Address: string): Call {
   return {
@@ -84,7 +84,7 @@ function mint(tokenId: number): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
     entrypoint: "mint",
-    calldata: [numberToString(tokenId)],
+    calldata: [numberToStringHex(tokenId)],
   };
 }
 
@@ -221,7 +221,12 @@ export const getFreeRegistrationCalls = (
     {
       contractAddress: process.env.NEXT_PUBLIC_DOMAIN_GIFT_CONTRACT as string,
       entrypoint: "get_free_domain",
-      calldata: [newTokenId, encodedDomain, signature, txMetadataHash].flat(),
+      calldata: [
+        numberToStringHex(newTokenId),
+        numberToStringHex(encodedDomain),
+        signature.map((s) => numberToStringHex(s)),
+        txMetadataHash,
+      ].flat(),
     },
   ];
 };

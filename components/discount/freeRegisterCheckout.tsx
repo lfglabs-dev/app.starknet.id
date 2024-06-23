@@ -1,9 +1,7 @@
-import React from "react";
+import React, { useCallback } from "react";
 import type { FunctionComponent } from "react";
 import { useEffect, useState } from "react";
-import type { Call } from "starknet";
 import Button from "../UI/button";
-import { useAccount, useContractWrite } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import { getDomainWithStark } from "../../utils/stringService";
 import { posthog } from "posthog-js";
@@ -20,6 +18,32 @@ import { getFreeDomain } from "@/utils/campaignService";
 import TermCheckbox from "../domains/termCheckbox";
 import { useRouter } from "next/router";
 import FreeRegisterSummary from "./freeRegisterSummary";
+import {
+  fetchAccountCompatibility,
+  fetchAccountsRewards,
+  GaslessCompatibility,
+  GaslessOptions,
+  PaymasterReward,
+  SEPOLIA_BASE_URL,
+  executeCalls,
+  getGasFeesInGasToken,
+  GasTokenPrice,
+  fetchGasTokenPrices,
+  fetchGaslessStatus,
+  BASE_URL,
+} from "@avnu/gasless-sdk";
+import {
+  useAccount,
+  useContractWrite,
+  useProvider,
+} from "@starknet-react/core";
+import {
+  AccountInterface,
+  Call,
+  EstimateFeeResponse,
+  stark,
+  transaction,
+} from "starknet";
 
 type FreeRegisterCheckoutProps = {
   domain: string;
@@ -30,6 +54,11 @@ type FreeRegisterCheckoutProps = {
   banner: string;
 };
 
+const options: GaslessOptions = {
+  baseUrl:
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? SEPOLIA_BASE_URL : BASE_URL,
+};
+
 const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   domain,
   duration,
@@ -38,9 +67,13 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   couponHelper,
   banner,
 }) => {
+  const [paymasterRewards, setPaymasterRewards] = useState<PaymasterReward[]>(
+    []
+  );
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [callData, setCallData] = useState<Call[]>([]);
   const [salt, setSalt] = useState<string | undefined>();
+  const [gasTokenPrice, setGasTokenPrice] = useState<GasTokenPrice>();
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
@@ -59,7 +92,95 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [couponError, setCouponError] = useState<string>("");
   const [signature, setSignature] = useState<string[]>(["", ""]);
   const [loadingCoupon, setLoadingCoupon] = useState<boolean>(false);
+  const [gaslessAPIAvailable, setGaslessAPIAvailable] = useState<boolean>(true);
+  const [gaslessCompatibility, setGaslessCompatibility] =
+    useState<GaslessCompatibility>();
+  const [gasTokenPrices, setGasTokenPrices] = useState<GasTokenPrice[]>([]);
+  const [maxGasTokenAmount, setMaxGasTokenAmount] = useState<bigint>();
   const { addTransaction } = useNotificationManager();
+  const { provider } = useProvider();
+
+  useEffect(() => {
+    setGasTokenPrice(gasTokenPrices[0]);
+  }, [gasTokenPrices]);
+
+  const gaslessEnabled =
+    gaslessCompatibility?.isCompatible && paymasterRewards.length > 0;
+
+  useEffect(() => {
+    fetchGaslessStatus(options).then((res) => {
+      setGaslessAPIAvailable(res.status);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!account || !gaslessAPIAvailable) return;
+    fetchAccountCompatibility(account.address, options).then(
+      setGaslessCompatibility
+    );
+    fetchAccountsRewards(account.address, {
+      ...options,
+      protocol: "gasless-sdk",
+    }).then(setPaymasterRewards);
+  }, [account, gaslessAPIAvailable]);
+
+  const estimateCalls = useCallback(
+    async (
+      account: AccountInterface,
+      calls: Call[]
+    ): Promise<EstimateFeeResponse> => {
+      const contractVersion = await provider.getContractVersion(
+        account.address
+      );
+      const nonce = await provider.getNonceForAddress(account.address);
+      const details = stark.v3Details({ skipValidate: true });
+      const invocation = {
+        ...details,
+        contractAddress: account.address,
+        calldata: transaction.getExecuteCalldata(calls, contractVersion.cairo),
+        signature: [],
+      };
+      return provider.getInvokeEstimateFee(
+        { ...invocation },
+        { ...details, nonce },
+        "pending",
+        true
+      );
+    },
+    [provider]
+  );
+
+  useEffect(() => {
+    fetchGasTokenPrices(options).then(setGasTokenPrices);
+  }, []);
+
+  useEffect(() => {
+    if (
+      !account ||
+      !gasTokenPrice ||
+      !gaslessCompatibility ||
+      !gaslessAPIAvailable
+    )
+      return;
+    estimateCalls(account, callData).then((fees) => {
+      const estimatedGasFeesInGasToken = getGasFeesInGasToken(
+        BigInt(fees.overall_fee),
+        gasTokenPrice,
+        BigInt(fees.gas_price),
+        BigInt(fees.data_gas_price ?? "0x1"),
+        gaslessCompatibility.gasConsumedOverhead,
+        gaslessCompatibility.dataGasConsumedOverhead
+      );
+      setMaxGasTokenAmount(estimatedGasFeesInGasToken * BigInt(2));
+    });
+  }, [
+    callData,
+    account,
+    gasTokenPrice,
+    gaslessCompatibility,
+    estimateCalls,
+    gaslessAPIAvailable,
+  ]);
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -150,12 +271,28 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     });
   }, [coupon, domain, address]);
 
-  const handleRegister = () =>
-    execute().then(() =>
+  const handleRegister = () => {
+    if (!account) return;
+    const then = () =>
       setDomainsMinting((prev) =>
         new Map(prev).set(encodedDomain.toString(), true)
+      );
+    if (gaslessEnabled) {
+      executeCalls(
+        account,
+        callData,
+        {
+          gasTokenAddress: gasTokenPrice?.tokenAddress,
+          maxGasTokenAmount,
+        },
+        options
       )
-    );
+        .then(then)
+        .catch((error) => {
+          console.error("Error when executing with Paymaster:", error);
+        });
+    } else execute().then(then);
+  };
 
   return (
     <div className={styles.container}>
@@ -181,7 +318,14 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
           </div>
         </div>
         <div className={styles.summary}>
-          <FreeRegisterSummary duration={duration} domain={domain} />
+          <FreeRegisterSummary
+            duration={duration}
+            domain={domain}
+            gasless={gaslessEnabled}
+            gasTokenPrices={gasTokenPrices}
+            gasTokenPrice={gasTokenPrice}
+            setGasTokenPrice={setGasTokenPrice}
+          />
           <Divider className="w-full" />
           <TermCheckbox
             checked={termsBox}
