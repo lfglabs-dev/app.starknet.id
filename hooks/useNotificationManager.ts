@@ -27,18 +27,15 @@ export function useNotificationManager() {
         const data = await provider.getTransactionReceipt(transaction.hash);
         const updatedTransactions = [...notifications];
 
-        if (data?.status === "REJECTED" || data?.status === "REVERTED") {
+        if (data.isRejected() || data.isReverted()) {
           updatedTransactions[index].data.status = "error";
           updatedTransactions[index].data.txStatus = "REJECTED";
           setNotifications(updatedTransactions);
         } else if (
-          data?.status === "ACCEPTED_ON_L2" ||
-          data?.status === "ACCEPTED_ON_L1" ||
           data?.finality_status === "ACCEPTED_ON_L2" ||
           data?.finality_status === "ACCEPTED_ON_L1"
         ) {
-          updatedTransactions[index].data.txStatus =
-            data?.status ?? data?.finality_status;
+          updatedTransactions[index].data.txStatus = data?.finality_status;
           updatedTransactions[index].data.status = "success";
           setNotifications(updatedTransactions);
         }

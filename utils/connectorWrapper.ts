@@ -1,4 +1,3 @@
-import { constants } from "starknet";
 import { Connector } from "starknetkit";
 import { ArgentMobileConnector } from "starknetkit/argentMobile";
 import { InjectedConnector } from "starknetkit/injected";
@@ -14,7 +13,7 @@ export const getConnectors = () => {
     new ArgentMobileConnector({
       dappName: "Starknet ID",
       url: process.env.NEXT_PUBLIC_APP_LINK as string,
-      chainId: constants.NetworkName.SN_MAIN,
+      chainId: "SN_MAIN",
       icons: ["https://app.starknet.id/visuals/StarknetIdLogo.svg"],
     }),
     new WebWalletConnector({

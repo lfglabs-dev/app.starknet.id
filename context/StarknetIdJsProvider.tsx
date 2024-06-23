@@ -1,9 +1,11 @@
 import { useAccount } from "@starknet-react/core";
 import React, { FunctionComponent, useState } from "react";
 import { createContext, useMemo } from "react";
-import { Provider, constants } from "starknet";
+import { Provider } from "starknet";
 import { StarknetIdNavigator } from "starknetid.js";
 import { hexToDecimal } from "../utils/feltService";
+import { mainnet, sepolia } from "@starknet-react/chains";
+import { bigintToStringHex } from "@/utils/stringService";
 
 type StarknetIdJsConfig = {
   starknetIdNavigator: StarknetIdNavigator | null;
@@ -29,20 +31,20 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
 
   const provider = useMemo(() => {
     return new Provider({
-      rpc: {
-        nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
-      },
+      nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
     });
   }, []);
 
   const starknetIdNavigator = useMemo(() => {
     return new StarknetIdNavigator(
       provider,
-      isTestnet
-        ? constants.StarknetChainId.SN_SEPOLIA
-        : constants.StarknetChainId.SN_MAIN
+      (isTestnet
+        ? bigintToStringHex(sepolia.id)
+        : bigintToStringHex(mainnet.id)) as
+        | "0x534e5f4d41494e"
+        | "0x534e5f5345504f4c4941"
     );
-  }, [provider]);
+  }, [provider, isTestnet]);
 
   useMemo(() => {
     if (!address) return;
