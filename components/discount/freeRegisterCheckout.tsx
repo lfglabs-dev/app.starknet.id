@@ -169,7 +169,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       !account ||
       !gasTokenPrice ||
       !gaslessCompatibility ||
-      !gaslessAPIAvailable
+      !gaslessAPIAvailable ||
+      gasMethod === "traditional"
     )
       return;
     setLoadingGas(true);
@@ -186,6 +187,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       setLoadingGas(false);
     });
   }, [
+    gasMethod,
     callData,
     account,
     gasTokenPrice,
