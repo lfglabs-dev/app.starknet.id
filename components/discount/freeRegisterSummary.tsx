@@ -48,6 +48,7 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
             disabled={gasMethod === "traditional"}
             onClick={() => setGasMethod("traditional")}
             className={styles.gasMethod}
+            type="button"
           >
             Traditional Transaction
           </button>
@@ -55,6 +56,7 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
             disabled={gasMethod === "paymaster"}
             onClick={() => setGasMethod("paymaster")}
             className={styles.gasMethod}
+            type="button"
           >
             Gasless Transaction
           </button>
@@ -99,6 +101,7 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
                     onClick={() => setGasTokenPrice(price)}
                     key={price.tokenAddress}
                     className={styles.gasMethod}
+                    type="button"
                   >
                     {tokenNames[price.tokenAddress] ||
                       shortenDomain(price.tokenAddress)}{" "}
