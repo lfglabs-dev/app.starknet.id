@@ -134,7 +134,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       );
       const nonce = await provider.getNonceForAddress(account.address);
       const details = stark.v3Details({ skipValidate: true });
-      console.log(details);
       const invocation = {
         ...details,
         contractAddress: account.address,
