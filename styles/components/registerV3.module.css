@@ -281,6 +281,24 @@
   background-color: var(--primary);
 }
 
+.gasMethods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.gasMethod {
+  border: 1px solid #cdcccc;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+}
+
+.gasMethod:disabled {
+  background-color: var(--primary);
+  color: white;
+  border: 1px solid white;
+}
+
 @media (max-width: 1084px) {
   .image {
     visibility: hidden;

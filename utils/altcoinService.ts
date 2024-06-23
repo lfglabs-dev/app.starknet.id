@@ -177,3 +177,13 @@ export const smartCurrencyChoosing = async (
     ? CurrencyType.STRK
     : CurrencyType.ETH;
 };
+
+export const tokenNames = {
+  "0x68f5c6a61780768455de69077e07e89787839bf8166decfbf92b645209c0fb8": "USDT",
+  "0x5574eb6b8789a91466f902c380d978e472db68170ff82a5b650b95a58ddf4ad": "DAI",
+  "0x53c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8": "USDC",
+  "0x3fe2b97c1fd336e750087d68b9b867997fd64a2661ff3ca5a7c771641e8e7ac": "WBTC",
+  "0x42b8f0484674ca266ac5d08e4ac6a3fe65bd3129795def2dca5c34ecc5f96d2": "wstETH",
+  "0x319111a5037cbec2b3e638cc34a3474e2d2608299f3e62866e9cc683208c610":
+    "Rocket Pool ETH",
+};

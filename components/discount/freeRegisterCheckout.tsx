@@ -74,6 +74,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [callData, setCallData] = useState<Call[]>([]);
   const [salt, setSalt] = useState<string | undefined>();
   const [gasTokenPrice, setGasTokenPrice] = useState<GasTokenPrice>();
+  const [loadingGas, setLoadingGas] = useState<boolean>(false);
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
@@ -97,6 +98,9 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     useState<GaslessCompatibility>();
   const [gasTokenPrices, setGasTokenPrices] = useState<GasTokenPrice[]>([]);
   const [maxGasTokenAmount, setMaxGasTokenAmount] = useState<bigint>();
+  const [gasMethod, setGasMethod] = useState<"traditional" | "paymaster">(
+    "traditional"
+  );
   const { addTransaction } = useNotificationManager();
   const { provider } = useProvider();
 
@@ -104,14 +108,20 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     setGasTokenPrice(gasTokenPrices[0]);
   }, [gasTokenPrices]);
 
-  const gaslessEnabled =
-    gaslessCompatibility?.isCompatible && paymasterRewards.length > 0;
+  useEffect(() => {
+    if (gaslessCompatibility?.isCompatible && paymasterRewards.length > 0)
+      setGasMethod("paymaster");
+  }, [gaslessCompatibility, paymasterRewards]);
 
   useEffect(() => {
     fetchGaslessStatus(options).then((res) => {
       setGaslessAPIAvailable(res.status);
     });
   }, []);
+
+  useEffect(() => {
+    if (gasMethod === "traditional" && loadingGas) setLoadingGas(false);
+  }, [gasMethod, loadingGas]);
 
   useEffect(() => {
     if (!account || !gaslessAPIAvailable) return;
@@ -162,6 +172,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       !gaslessAPIAvailable
     )
       return;
+    setLoadingGas(true);
     estimateCalls(account, callData).then((fees) => {
       const estimatedGasFeesInGasToken = getGasFeesInGasToken(
         BigInt(fees.overall_fee),
@@ -172,6 +183,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
         gaslessCompatibility.dataGasConsumedOverhead
       );
       setMaxGasTokenAmount(estimatedGasFeesInGasToken * BigInt(2));
+      setLoadingGas(false);
     });
   }, [
     callData,
@@ -277,7 +289,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       setDomainsMinting((prev) =>
         new Map(prev).set(encodedDomain.toString(), true)
       );
-    if (gaslessEnabled) {
+    if (gasMethod === "paymaster") {
       executeCalls(
         account,
         callData,
@@ -321,10 +333,12 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
           <FreeRegisterSummary
             duration={duration}
             domain={domain}
-            gasless={gaslessEnabled}
+            hasPaymasterRewards={paymasterRewards.length > 0}
             gasTokenPrices={gasTokenPrices}
             gasTokenPrice={gasTokenPrice}
             setGasTokenPrice={setGasTokenPrice}
+            gasMethod={gasMethod}
+            setGasMethod={setGasMethod}
           />
           <Divider className="w-full" />
           <TermCheckbox
@@ -341,13 +355,16 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 !targetAddress ||
                 !termsBox ||
                 Boolean(couponError) ||
-                loadingCoupon
+                loadingCoupon ||
+                loadingGas
               }
             >
               {!termsBox
                 ? "Please accept terms & policies"
                 : couponError
                 ? "Enter a valid Coupon"
+                : loadingGas
+                ? "Loading gas"
                 : "Register my domain"}
             </Button>
           ) : (
