@@ -101,7 +101,8 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
                     className={styles.gasMethod}
                   >
                     {tokenNames[price.tokenAddress] ||
-                      shortenDomain(price.tokenAddress)}
+                      shortenDomain(price.tokenAddress)}{" "}
+                    ({Math.round(price.priceInUSD * 100) / 100}$)
                   </button>
                 ))}
               </div>
