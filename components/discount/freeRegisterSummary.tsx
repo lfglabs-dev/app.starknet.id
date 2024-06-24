@@ -2,9 +2,10 @@ import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/registerV3.module.css";
 import { getYearlyPrice } from "@/utils/priceService";
 import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
-import { GasTokenPrice } from "@avnu/gasless-sdk";
+import { GasTokenPrice, GaslessCompatibility } from "@avnu/gasless-sdk";
 import { tokenNames } from "@/utils/altcoinService";
 import { shortenDomain } from "@/utils/stringService";
+import StyledToolTip from "../UI/styledTooltip";
 
 type FreeRegisterSummaryProps = {
   duration: number;
@@ -15,6 +16,7 @@ type FreeRegisterSummaryProps = {
   setGasTokenPrice: (price: GasTokenPrice) => void;
   gasMethod: "traditional" | "paymaster";
   setGasMethod: (method: "traditional" | "paymaster") => void;
+  gaslessCompatibility?: GaslessCompatibility;
 };
 
 const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
@@ -26,6 +28,7 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
   setGasTokenPrice,
   gasMethod,
   setGasMethod,
+  gaslessCompatibility,
 }) => {
   function getMessage() {
     return `${Math.floor(duration / 30)} months of domain registration`;
@@ -47,19 +50,37 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
           <button
             disabled={gasMethod === "traditional"}
             onClick={() => setGasMethod("traditional")}
-            className={styles.gasMethod}
+            className={
+              gasMethod === "traditional"
+                ? styles.gasMethodSelected
+                : styles.gasMethod
+            }
             type="button"
           >
             Traditional Transaction
           </button>
-          <button
-            disabled={gasMethod === "paymaster"}
-            onClick={() => setGasMethod("paymaster")}
-            className={styles.gasMethod}
-            type="button"
+          <StyledToolTip
+            title={`Allows you to pay less gas and choose other currencies to pay fees. ${
+              !gaslessCompatibility?.isCompatible
+                ? "Your account is currently not compatible. Please do a traditional tx to deploy it."
+                : ""
+            }`}
           >
-            Gasless Transaction
-          </button>
+            <button
+              disabled={
+                gasMethod === "paymaster" || !gaslessCompatibility?.isCompatible
+              }
+              onClick={() => setGasMethod("paymaster")}
+              className={
+                gasMethod === "paymaster"
+                  ? styles.gasMethodSelected
+                  : styles.gasMethod
+              }
+              type="button"
+            >
+              Gasless Transaction
+            </button>
+          </StyledToolTip>
         </div>
         {gasMethod === "paymaster" ? (
           hasPaymasterRewards ? (
@@ -100,7 +121,11 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
                     }
                     onClick={() => setGasTokenPrice(price)}
                     key={price.tokenAddress}
-                    className={styles.gasMethod}
+                    className={
+                      price.tokenAddress === gasTokenPrice?.tokenAddress
+                        ? styles.gasMethodSelected
+                        : styles.gasMethod
+                    }
                     type="button"
                   >
                     {tokenNames[price.tokenAddress] ||

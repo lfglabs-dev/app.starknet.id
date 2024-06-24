@@ -341,6 +341,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
             setGasTokenPrice={setGasTokenPrice}
             gasMethod={gasMethod}
             setGasMethod={setGasMethod}
+            gaslessCompatibility={gaslessCompatibility}
           />
           <Divider className="w-full" />
           <TermCheckbox

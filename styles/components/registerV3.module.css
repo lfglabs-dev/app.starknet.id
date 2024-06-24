@@ -287,13 +287,20 @@
   gap: 8px;
 }
 
-.gasMethod {
+.gasMethod,
+.gasMethodSelected {
   border: 1px solid #cdcccc;
   border-radius: 8px;
   padding: 0.5rem 1rem;
 }
 
 .gasMethod:disabled {
+  color: #666666;
+  background-color: #cdcccc;
+  cursor: not-allowed;
+}
+
+.gasMethodSelected {
   background-color: var(--primary);
   color: white;
   border: 1px solid white;
