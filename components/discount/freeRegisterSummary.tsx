@@ -6,6 +6,7 @@ import { GasTokenPrice, GaslessCompatibility } from "@avnu/gasless-sdk";
 import { tokenNames } from "@/utils/altcoinService";
 import { shortenDomain } from "@/utils/stringService";
 import StyledToolTip from "../UI/styledTooltip";
+import { GasMethod } from "./freeRegisterCheckout";
 
 type FreeRegisterSummaryProps = {
   duration: number;
@@ -14,8 +15,8 @@ type FreeRegisterSummaryProps = {
   gasTokenPrices?: GasTokenPrice[];
   gasTokenPrice?: GasTokenPrice;
   setGasTokenPrice: (price: GasTokenPrice) => void;
-  gasMethod: "traditional" | "paymaster";
-  setGasMethod: (method: "traditional" | "paymaster") => void;
+  gasMethod: GasMethod;
+  setGasMethod: (method: GasMethod) => void;
   gaslessCompatibility?: GaslessCompatibility;
 };
 

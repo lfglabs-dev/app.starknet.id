@@ -59,6 +59,8 @@ const options: GaslessOptions = {
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? SEPOLIA_BASE_URL : BASE_URL,
 };
 
+export type GasMethod = "traditional" | "paymaster";
+
 const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   domain,
   duration,
@@ -98,9 +100,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     useState<GaslessCompatibility>();
   const [gasTokenPrices, setGasTokenPrices] = useState<GasTokenPrice[]>([]);
   const [maxGasTokenAmount, setMaxGasTokenAmount] = useState<bigint>();
-  const [gasMethod, setGasMethod] = useState<"traditional" | "paymaster">(
-    "traditional"
-  );
+  const [gasMethod, setGasMethod] = useState<GasMethod>("traditional");
   const { addTransaction } = useNotificationManager();
   const { provider } = useProvider();
 
