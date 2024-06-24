@@ -68,19 +68,19 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       : displayedCurrency;
 
   useEffect(() => {
-    if (displayedCurrency != CurrencyType.ETH) return;
-
     function computeUsdPrice() {
-      if (ethUsdPrice && registrationPrice) {
+      if (ethUsdPrice && ethRegistrationPrice) {
         return (
-          Number(ethUsdPrice) * Number(gweiToEth(registrationPrice))
+          Number(ethUsdPrice) *
+          Number(gweiToEth(ethRegistrationPrice)) *
+          duration
         ).toFixed(2);
       }
       return "0";
     }
 
     setUsdRegistrationPrice(computeUsdPrice());
-  }, [registrationPrice, ethUsdPrice, displayedCurrency]);
+  }, [ethRegistrationPrice, ethUsdPrice, displayedCurrency, duration]);
 
   // Ideally, this should be a separate components
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
@@ -116,10 +116,15 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function displayTokenPrice(): ReactNode {
+    console.log("ethRegistrationPrice", ethRegistrationPrice);
+    console.log("ethUsdPrice", ethUsdPrice);
+
     const salesTaxAmountUsd =
       salesTaxRate *
       Number(gweiToEth(ethRegistrationPrice)) *
       Number(ethUsdPrice);
+    console.log("salesTaxAmountUsd", salesTaxAmountUsd);
+
     const salesTaxInfo = salesTaxAmountUsd
       ? ` (+ ${numberToFixedString(
           salesTaxAmountUsd

@@ -370,7 +370,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         </div>
         <div className={styles.summary}>
           <RegisterSummary
-            ethRegistrationPrice={price}
+            ethRegistrationPrice={priceInEth}
             registrationPrice={price}
             duration={duration}
             renewalBox={false}
