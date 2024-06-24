@@ -114,6 +114,10 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   }, [gaslessCompatibility, paymasterRewards]);
 
   useEffect(() => {
+    if (!gaslessCompatibility?.isCompatible) setGasMethod("traditional");
+  }, [gaslessCompatibility]);
+
+  useEffect(() => {
     fetchGaslessStatus(options).then((res) => {
       setGaslessAPIAvailable(res.status);
     });
