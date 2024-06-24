@@ -69,11 +69,12 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 
   useEffect(() => {
     function computeUsdPrice() {
+      const durationToUse = duration > 1 ? duration : 1;
       if (ethUsdPrice && ethRegistrationPrice) {
         return (
           Number(ethUsdPrice) *
           Number(gweiToEth(ethRegistrationPrice)) *
-          duration
+          durationToUse
         ).toFixed(2);
       }
       return "0";
