@@ -116,6 +116,9 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function displayTokenPrice(): ReactNode {
+    if (!ethRegistrationPrice || !salesTaxRate || !registrationPrice)
+      return null;
+
     const salesTaxAmountUsd =
       salesTaxRate *
       Number(gweiToEth(ethRegistrationPrice)) *
