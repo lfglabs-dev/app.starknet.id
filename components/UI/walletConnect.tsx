@@ -1,4 +1,5 @@
 import React, { FunctionComponent } from "react";
+import { useRouter } from "next/router";
 import { Modal, useMediaQuery } from "@mui/material";
 import { Connector } from "starknetkit";
 import styles from "../../styles/components/walletConnect.module.css";
@@ -23,6 +24,7 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
   connectors,
   connectWallet,
 }) => {
+  const router = useRouter();
   const connect = (connector: Connector) => {
     connectWallet(connector);
     closeModal();
@@ -31,7 +33,28 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
 
   const filterConnectors = (connectors: Connector[]) => {
     if (!isMobile) return connectors;
-    return connectors.filter((connector) => connector.id !== "argentMobile");
+    return connectors.filter((connector) => connector.id !== "argentX");
+  };
+
+  const openBraavosMobile = () => {
+    window.open(`braavos://dapp/app.starknet.id${router.pathname}`);
+  };
+
+  const needInstall = (connector: Connector, isAvailable: boolean) => {
+    if (connector.id === "braavos" && isMobile) {
+      return false;
+    }
+    return !isAvailable;
+  };
+
+  const tryConnect = (connector: Connector, isAvailable: boolean) => {
+    if (isAvailable) {
+      connect(connector);
+    } else if (isMobile && connector.id === "braavos") {
+      openBraavosMobile();
+    } else {
+      window.open(getConnectorDiscovery(connector.id));
+    }
   };
 
   return (
@@ -66,11 +89,7 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
                 <div
                   key={connector.id}
                   className={styles.wallet}
-                  onClick={
-                    isAvailable
-                      ? () => connect(connector)
-                      : () => window.open(getConnectorDiscovery(connector.id))
-                  }
+                  onClick={() => tryConnect(connector, isAvailable)}
                 >
                   <img
                     src={getConnectorIcon(connector.id)}
@@ -78,8 +97,8 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
                   />
                   <div className={styles.walletName}>
                     <p>
-                      {!isAvailable ? "Install " : ""}
-                      {connector.id === "argentX" && isMobile
+                      {needInstall(connector, isAvailable) ? "Install " : ""}
+                      {connector.id === "argentMobile" && isMobile
                         ? "Argent"
                         : getConnectorName(connector.id)}
                     </p>

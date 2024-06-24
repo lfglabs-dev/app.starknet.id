@@ -78,7 +78,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
-  const [renewalBox, setRenewalBox] = useState<boolean>(false);
+  const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [termsBox, setTermsBox] = useState<boolean>(false);
   const mainDomain = useDomainFromAddress(address ?? "");
   const [mainDomainBox, setMainDomainBox] = useState<boolean>(true);
@@ -260,6 +260,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         setSalesTaxAmount("");
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     formState.isSwissResident,
     price,
@@ -267,7 +268,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     discountedPrice,
     formState.needMetadata,
     formState.salesTaxRate,
-  ]);
+  ]); // Don't call updateFromState on every render
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
