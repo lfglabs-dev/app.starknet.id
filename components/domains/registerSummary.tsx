@@ -69,11 +69,12 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 
   useEffect(() => {
     function computeUsdPrice() {
+      const durationToUse = duration > 1 ? duration : 1;
       if (ethUsdPrice && ethRegistrationPrice) {
         return (
           Number(ethUsdPrice) *
           Number(gweiToEth(ethRegistrationPrice)) *
-          duration
+          durationToUse
         ).toFixed(2);
       }
       return "0";
@@ -82,6 +83,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     setUsdRegistrationPrice(computeUsdPrice());
   }, [ethRegistrationPrice, ethUsdPrice, duration]);
 
+  // Ideally, this should be a separate components
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
     return (
       <div className="flex items-center justify-center">
@@ -119,6 +121,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       salesTaxRate *
       Number(gweiToEth(ethRegistrationPrice)) *
       Number(ethUsdPrice);
+
     const salesTaxInfo = salesTaxAmountUsd
       ? ` (+ ${numberToFixedString(
           salesTaxAmountUsd
@@ -127,7 +130,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 
     const registerPrice = Number(gweiToEth(registrationPrice));
     const registerPriceStr =
-      registerPrice != 0 ? numberToFixedString(registerPrice, 3) : "0";
+      registerPrice != 0 ? numberToFixedString(registerPrice, 4) : "0";
     if (isUpselled && discountedPrice) {
       return displayDiscountedPrice(
         registerPriceStr,
