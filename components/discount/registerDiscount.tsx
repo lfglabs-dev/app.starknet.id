@@ -8,7 +8,6 @@ import { applyRateToBigInt, hexToDecimal } from "../../utils/feltService";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Call } from "starknet";
 import { posthog } from "posthog-js";
-import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
 import { Divider } from "@mui/material";
@@ -37,6 +36,7 @@ import {
   getTokenQuote,
 } from "../../utils/altcoinService";
 import { getPriceFromDomain } from "@/utils/priceService";
+import { useRouter } from "next/router";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -59,6 +59,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   goBack,
   sponsor = "0",
 }) => {
+  const router = useRouter();
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
@@ -73,7 +74,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   );
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const [salt, setSalt] = useState<string | undefined>();
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
@@ -92,6 +92,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
+  const [tokenIdRedirect, setTokenIdRedirect] = useState<string>("0");
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -251,6 +252,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     }
 
     // Merge and set the call data
+    setTokenIdRedirect(String(newTokenId));
     setCallData(calls);
   }, [
     duration,
@@ -282,7 +284,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-        groups: mailGroups, // Domain Owner group + quantumleap group^
+        groups: mailGroups, // Domain Owner group
         tax_state: isSwissResident ? "switzerland" : "none",
         salt: salt,
       }),
@@ -300,7 +302,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         status: "pending",
       },
     });
-    setIsTxModalOpen(true);
+    router.push(`/confirmation?tokenId=${tokenIdRedirect}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerData]); // We want to execute this only once after the tx is sent
 
@@ -412,12 +414,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         </div>
       </div>
       <img className={styles.image} src="/visuals/register.webp" />
-      <TxConfirmationModal
-        txHash={registerData?.transaction_hash}
-        isTxModalOpen={isTxModalOpen}
-        closeModal={() => setIsTxModalOpen(false)}
-        title="Your domain is on it's way !"
-      />
     </div>
   );
 };
