@@ -80,7 +80,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     }
 
     setUsdRegistrationPrice(computeUsdPrice());
-  }, [ethRegistrationPrice, ethUsdPrice, displayedCurrency, duration]);
+  }, [ethRegistrationPrice, ethUsdPrice, duration]);
 
   // Ideally, this should be a separate components
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
@@ -116,14 +116,10 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function displayTokenPrice(): ReactNode {
-    console.log("ethRegistrationPrice", ethRegistrationPrice);
-    console.log("ethUsdPrice", ethUsdPrice);
-
     const salesTaxAmountUsd =
       salesTaxRate *
       Number(gweiToEth(ethRegistrationPrice)) *
       Number(ethUsdPrice);
-    console.log("salesTaxAmountUsd", salesTaxAmountUsd);
 
     const salesTaxInfo = salesTaxAmountUsd
       ? ` (+ ${numberToFixedString(
