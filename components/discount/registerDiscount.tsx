@@ -226,10 +226,17 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
     // If the user has toggled autorenewal
     if (renewalBox) {
-      const allowance =
+      const yearlyPriceInEth = getPriceFromDomain(1, domain);
+      const allowance = getAutoRenewAllowance(
+        displayedCurrency,
+        salesTaxRate,
         displayedCurrency === CurrencyType.ETH
-          ? String(getPriceFromDomain(1, domain))
-          : getAutoRenewAllowance(displayedCurrency, salesTaxRate, price);
+          ? String(yearlyPriceInEth)
+          : String(
+              (yearlyPriceInEth * BigInt(quoteData?.quote ?? "0")) /
+                BigInt(1e18)
+            ) // Convert the yearly price in eth to the altcoin yearly price
+      );
 
       if (needsAllowance) {
         calls.push(
