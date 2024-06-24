@@ -77,7 +77,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
-  const [termsBox, setTermsBox] = useState<boolean>(true);
+  const [termsBox, setTermsBox] = useState<boolean>(false);
   const [renewalBox, setRenewalBox] = useState<boolean>(false);
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const { account, address } = useAccount();
