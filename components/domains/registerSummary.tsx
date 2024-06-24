@@ -49,6 +49,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
+  const [priceComponent, setPriceComponent] = useState<ReactNode>(() => <></>);
   const recurrence = renewalBox && duration === 1 ? "/year" : "";
   useEffect(() => {
     fetch(
@@ -68,75 +69,90 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       : displayedCurrency;
 
   useEffect(() => {
+    if (displayedCurrency != CurrencyType.ETH) return;
+
     function computeUsdPrice() {
-      if (ethUsdPrice && ethRegistrationPrice) {
+      if (ethUsdPrice && registrationPrice) {
         return (
-          Number(ethUsdPrice) *
-          Number(gweiToEth(ethRegistrationPrice)) *
-          duration
+          Number(ethUsdPrice) * Number(gweiToEth(registrationPrice))
         ).toFixed(2);
       }
       return "0";
     }
 
     setUsdRegistrationPrice(computeUsdPrice());
-  }, [ethRegistrationPrice, ethUsdPrice, duration]);
+  }, [registrationPrice, ethUsdPrice, displayedCurrency]);
 
-  function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
-    return (
-      <div className="flex items-center justify-center">
-        <span className={styles.price}>
-          {priceToPay} {announcedCurrency} {recurrence}
-        </span>
-        {isSwissResident ? (
-          <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
-        ) : null}
-      </div>
-    );
-  }
-
-  function displayDiscountedPrice(
-    price: string,
-    priceDiscounted: string,
-    salesTaxInfo: string
-  ): ReactNode {
-    return (
-      <div className="flex items-center justify-center">
-        <span className={styles.priceCrossed}>{price}</span>
-        <ArrowRightIcon width="25" color="#454545" />
-        <span className={styles.price}>
-          {priceDiscounted} {announcedCurrency} {recurrence} 🔥
-        </span>
-        {isSwissResident ? (
-          <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
-        ) : null}
-      </div>
-    );
-  }
-
-  function displayTokenPrice(): ReactNode {
-    const salesTaxAmountUsd =
-      salesTaxRate *
-      Number(gweiToEth(ethRegistrationPrice)) *
-      Number(ethUsdPrice);
-    const salesTaxInfo = salesTaxAmountUsd
-      ? ` (+ ${numberToFixedString(
-          salesTaxAmountUsd
-        )}$ worth of ${announcedCurrency} for Swiss VAT)`
-      : "";
-
-    const registerPrice = Number(gweiToEth(registrationPrice));
-    const registerPriceStr =
-      registerPrice != 0 ? numberToFixedString(registerPrice, 4) : "0";
-    if (isUpselled && discountedPrice) {
-      return displayDiscountedPrice(
-        registerPriceStr,
-        numberToFixedString(Number(gweiToEth(discountedPrice)), 3),
-        salesTaxInfo
+  // Ideally, this should be a separate components
+  useEffect(() => {
+    function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
+      return (
+        <div className="flex items-center justify-center">
+          <span className={styles.price}>
+            {priceToPay} {announcedCurrency} {recurrence}
+          </span>
+          {isSwissResident ? (
+            <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
+          ) : null}
+        </div>
       );
     }
-    return displayPrice(registerPriceStr, salesTaxInfo);
-  }
+
+    function displayDiscountedPrice(
+      price: string,
+      priceDiscounted: string,
+      salesTaxInfo: string
+    ): ReactNode {
+      return (
+        <div className="flex items-center justify-center">
+          <span className={styles.priceCrossed}>{price}</span>
+          <ArrowRightIcon width="25" color="#454545" />
+          <span className={styles.price}>
+            {priceDiscounted} {announcedCurrency} {recurrence} 🔥
+          </span>
+          {isSwissResident ? (
+            <p className={styles.legend}>&nbsp;{salesTaxInfo}</p>
+          ) : null}
+        </div>
+      );
+    }
+
+    function displayTokenPrice(): ReactNode {
+      const salesTaxAmountUsd =
+        salesTaxRate *
+        Number(gweiToEth(ethRegistrationPrice)) *
+        Number(ethUsdPrice);
+      const salesTaxInfo = salesTaxAmountUsd
+        ? ` (+ ${numberToFixedString(
+            salesTaxAmountUsd
+          )}$ worth of ${announcedCurrency} for Swiss VAT)`
+        : "";
+
+      const registerPrice = Number(gweiToEth(registrationPrice));
+      const registerPriceStr =
+        registerPrice != 0 ? numberToFixedString(registerPrice, 4) : "0";
+      if (isUpselled && discountedPrice) {
+        return displayDiscountedPrice(
+          registerPriceStr,
+          numberToFixedString(Number(gweiToEth(discountedPrice)), 3),
+          salesTaxInfo
+        );
+      }
+      return displayPrice(registerPriceStr, salesTaxInfo);
+    }
+
+    setPriceComponent(displayTokenPrice);
+  }, [
+    announcedCurrency,
+    discountedPrice,
+    ethRegistrationPrice,
+    ethUsdPrice,
+    isSwissResident,
+    isUpselled,
+    recurrence,
+    registrationPrice,
+    salesTaxRate,
+  ]);
 
   function getMessage() {
     if (!ethRegistrationPrice) return "0";
@@ -157,7 +173,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           {loadingPrice ? (
             <Skeleton variant="text" width="150px" height="24px" />
           ) : (
-            displayTokenPrice()
+            priceComponent
           )}
           <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
         </div>

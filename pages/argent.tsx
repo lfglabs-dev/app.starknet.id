@@ -98,6 +98,7 @@ const Argent: NextPage = () => {
                 goBack={goBack}
                 priceInEth={argentDiscount.offer.price}
                 mailGroups={[argentDiscount.discountMailGroupId]}
+                sponsor={argentDiscount.sponsor}
               />
             </div>
           ) : null}

@@ -44,6 +44,8 @@
   font-style: normal;
   font-weight: 400;
   line-height: 20px;
+  margin-left: 1rem;
+  margin-right: 1rem;
 }
 
 .descriptionVariant {

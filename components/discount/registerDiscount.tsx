@@ -4,11 +4,7 @@ import Button from "../UI/button";
 import { useAccount, useContractWrite } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import { getDomainWithStark, isValidEmail } from "../../utils/stringService";
-import {
-  applyRateToBigInt,
-  hexToDecimal,
-  numberToFixedString,
-} from "../../utils/feltService";
+import { applyRateToBigInt, hexToDecimal } from "../../utils/feltService";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Call } from "starknet";
 import { posthog } from "posthog-js";
@@ -50,6 +46,7 @@ type RegisterDiscountProps = {
   priceInEth: string;
   mailGroups: string[];
   goBack: () => void;
+  sponsor?: string;
 };
 
 const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
@@ -60,6 +57,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   priceInEth,
   mailGroups,
   goBack,
+  sponsor = "0",
 }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
@@ -169,21 +167,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     }
   }, [address]);
 
-  // Set sponsor
-  // useEffect(() => {
-  //   const referralData = localStorage.getItem("referralData");
-  //   if (referralData) {
-  //     const data = JSON.parse(referralData);
-  //     if (data.sponsor && data?.expiry >= new Date().getTime()) {
-  //       setSponsor(data.sponsor);
-  //     } else {
-  //       setSponsor("0");
-  //     }
-  //   } else {
-  //     setSponsor("0");
-  //   }
-  // }, [domain]);
-
   // Set Register Multicall
   useEffect(() => {
     if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
@@ -204,7 +187,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         registrationCalls.buy(
           encodedDomain,
           newTokenId,
-          "0",
+          sponsor,
           duration,
           txMetadataHash,
           discountId
@@ -215,7 +198,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         registrationCalls.altcoinBuy(
           encodedDomain,
           newTokenId,
-          "0",
+          sponsor,
           duration,
           txMetadataHash,
           ERC20Contract[displayedCurrency],
@@ -242,21 +225,21 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
     // If the user has toggled autorenewal
     if (renewalBox) {
+      const allowance =
+        displayedCurrency === CurrencyType.ETH
+          ? String(getPriceFromDomain(1, domain))
+          : getAutoRenewAllowance(displayedCurrency, salesTaxRate, price);
+
       if (needsAllowance) {
         calls.push(
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
             AutoRenewalContracts[displayedCurrency],
-            String(getPriceFromDomain(1, domain))
+            allowance
           )
         );
       }
 
-      const allowance = getAutoRenewAllowance(
-        displayedCurrency,
-        salesTaxRate,
-        price
-      );
       calls.push(
         autoRenewalCalls.enableRenewal(
           AutoRenewalContracts[displayedCurrency],
@@ -285,6 +268,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     discountId,
     quoteData,
     displayedCurrency,
+    sponsor,
   ]);
 
   useEffect(() => {
