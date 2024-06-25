@@ -29,10 +29,7 @@ const Argent: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    if (
-      !connector?.connector ||
-      !["Argent X", "Argent (mobile)"].includes(connector.connector?.name)
-    ) {
+    if (!connector?.connector || !connector.connector?.id.includes("argent")) {
       setIsArgent(false);
       return;
     }
