@@ -31,7 +31,7 @@ const Argent: NextPage = () => {
   useEffect(() => {
     if (
       !connector?.connector ||
-      !["Argent X", "Argent (mobile)"].includes(connector.connector?.name)
+      !connector.connector?.name.includes("Argent")
     ) {
       setIsArgent(false);
       return;
