@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React from "react";
 import type { FunctionComponent } from "react";
 import { useEffect, useState } from "react";
 import Button from "../UI/button";
@@ -18,32 +18,9 @@ import { getFreeDomain } from "@/utils/campaignService";
 import TermCheckbox from "../domains/termCheckbox";
 import { useRouter } from "next/router";
 import FreeRegisterSummary from "./freeRegisterSummary";
-import {
-  fetchAccountCompatibility,
-  fetchAccountsRewards,
-  GaslessCompatibility,
-  GaslessOptions,
-  PaymasterReward,
-  SEPOLIA_BASE_URL,
-  executeCalls,
-  getGasFeesInGasToken,
-  GasTokenPrice,
-  fetchGasTokenPrices,
-  fetchGaslessStatus,
-  BASE_URL,
-} from "@avnu/gasless-sdk";
-import {
-  useAccount,
-  useContractWrite,
-  useProvider,
-} from "@starknet-react/core";
-import {
-  AccountInterface,
-  Call,
-  EstimateFeeResponse,
-  stark,
-  transaction,
-} from "starknet";
+import { useAccount } from "@starknet-react/core";
+import { Call } from "starknet";
+import usePaymaster from "@/hooks/paymaster";
 
 type FreeRegisterCheckoutProps = {
   domain: string;
@@ -54,13 +31,6 @@ type FreeRegisterCheckoutProps = {
   banner: string;
 };
 
-const options: GaslessOptions = {
-  baseUrl:
-    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? SEPOLIA_BASE_URL : BASE_URL,
-};
-
-export type GasMethod = "traditional" | "paymaster";
-
 const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   domain,
   duration,
@@ -69,136 +39,41 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   couponHelper,
   banner,
 }) => {
-  const [paymasterRewards, setPaymasterRewards] = useState<PaymasterReward[]>(
-    []
-  );
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [callData, setCallData] = useState<Call[]>([]);
   const [salt, setSalt] = useState<string | undefined>();
-  const [gasTokenPrice, setGasTokenPrice] = useState<GasTokenPrice>();
-  const [loadingGas, setLoadingGas] = useState<boolean>(false);
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const { account, address } = useAccount();
-  const { writeAsync: execute, data: registerData } = useContractWrite({
-    calls: callData,
-  });
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
+  const { addTransaction } = useNotificationManager();
   const router = useRouter();
   const [tokenId, setTokenId] = useState<number>(0);
   const [coupon, setCoupon] = useState<string>("");
   const [couponError, setCouponError] = useState<string>("");
   const [signature, setSignature] = useState<string[]>(["", ""]);
   const [loadingCoupon, setLoadingCoupon] = useState<boolean>(false);
-  const [gaslessAPIAvailable, setGaslessAPIAvailable] = useState<boolean>(true);
-  const [gaslessCompatibility, setGaslessCompatibility] =
-    useState<GaslessCompatibility>();
-  const [gasTokenPrices, setGasTokenPrices] = useState<GasTokenPrice[]>([]);
-  const [maxGasTokenAmount, setMaxGasTokenAmount] = useState<bigint>();
-  const [gasMethod, setGasMethod] = useState<GasMethod>("traditional");
-  const { addTransaction } = useNotificationManager();
-  const { provider } = useProvider();
-
-  useEffect(() => {
-    setGasTokenPrice(gasTokenPrices[0]);
-  }, [gasTokenPrices]);
-
-  useEffect(() => {
-    if (gaslessCompatibility?.isCompatible && paymasterRewards.length > 0)
-      setGasMethod("paymaster");
-  }, [gaslessCompatibility, paymasterRewards]);
-
-  useEffect(() => {
-    if (!gaslessCompatibility?.isCompatible) setGasMethod("traditional");
-  }, [gaslessCompatibility]);
-
-  useEffect(() => {
-    fetchGaslessStatus(options).then((res) => {
-      setGaslessAPIAvailable(res.status);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (gasMethod === "traditional" && loadingGas) setLoadingGas(false);
-  }, [gasMethod, loadingGas]);
-
-  useEffect(() => {
-    if (!account || !gaslessAPIAvailable) return;
-    fetchAccountCompatibility(account.address, options).then(
-      setGaslessCompatibility
-    );
-    fetchAccountsRewards(account.address, {
-      ...options,
-      protocol: "gasless-sdk",
-    }).then(setPaymasterRewards);
-  }, [account, gaslessAPIAvailable]);
-
-  const estimateCalls = useCallback(
-    async (
-      account: AccountInterface,
-      calls: Call[]
-    ): Promise<EstimateFeeResponse> => {
-      const contractVersion = await provider.getContractVersion(
-        account.address
-      );
-      const nonce = await provider.getNonceForAddress(account.address);
-      const details = stark.v3Details({ skipValidate: true });
-      const invocation = {
-        ...details,
-        contractAddress: account.address,
-        calldata: transaction.getExecuteCalldata(calls, contractVersion.cairo),
-        signature: [],
-      };
-      return provider.getInvokeEstimateFee(
-        { ...invocation },
-        { ...details, nonce },
-        "pending",
-        true
-      );
-    },
-    [provider]
-  );
-
-  useEffect(() => {
-    fetchGasTokenPrices(options).then(setGasTokenPrices);
-  }, []);
-
-  useEffect(() => {
-    if (
-      !account ||
-      !gasTokenPrice ||
-      !gaslessCompatibility ||
-      !gaslessAPIAvailable ||
-      gasMethod === "traditional"
-    )
-      return;
-    setLoadingGas(true);
-    estimateCalls(account, callData).then((fees) => {
-      const estimatedGasFeesInGasToken = getGasFeesInGasToken(
-        BigInt(fees.overall_fee),
-        gasTokenPrice,
-        BigInt(fees.gas_price),
-        BigInt(fees.data_gas_price ?? "0x1"),
-        gaslessCompatibility.gasConsumedOverhead,
-        gaslessCompatibility.dataGasConsumedOverhead
-      );
-      setMaxGasTokenAmount(estimatedGasFeesInGasToken * BigInt(2));
-      setLoadingGas(false);
-    });
-  }, [
-    gasMethod,
-    callData,
-    account,
+  const {
+    handleRegister,
+    data: registerData,
+    paymasterRewards,
+    gasTokenPrices,
     gasTokenPrice,
+    loadingGas,
+    gasMethod,
+    setGasMethod,
     gaslessCompatibility,
-    estimateCalls,
-    gaslessAPIAvailable,
-  ]);
+    setGasTokenPrice,
+  } = usePaymaster(callData, () =>
+    setDomainsMinting((prev) =>
+      new Map(prev).set(encodedDomain.toString(), true)
+    )
+  );
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -288,29 +163,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       setLoadingCoupon(false);
     });
   }, [coupon, domain, address]);
-
-  const handleRegister = () => {
-    if (!account) return;
-    const then = () =>
-      setDomainsMinting((prev) =>
-        new Map(prev).set(encodedDomain.toString(), true)
-      );
-    if (gasMethod === "paymaster") {
-      executeCalls(
-        account,
-        callData,
-        {
-          gasTokenAddress: gasTokenPrice?.tokenAddress,
-          maxGasTokenAmount,
-        },
-        options
-      )
-        .then(then)
-        .catch((error) => {
-          console.error("Error when executing with Paymaster:", error);
-        });
-    } else execute().then(then);
-  };
 
   return (
     <div className={styles.container}>

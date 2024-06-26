@@ -9,7 +9,6 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import connectStyles from "../../styles/components/walletConnect.module.css";
-
 import Button from "./button";
 import { useConnect, useAccount, useDisconnect } from "@starknet-react/core";
 import { sepolia, mainnet } from "@starknet-react/chains";
@@ -54,6 +53,7 @@ const Navbar: FunctionComponent = () => {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [showWalletConnectModal, setShowWalletConnectModal] =
     useState<boolean>(false);
+
   const [lastConnector, setLastConnector] = useState<Connector | null>(null);
   // could be replaced by a useProfileData from starknet-react when updated
   useEffect(() => {
@@ -88,6 +88,7 @@ const Navbar: FunctionComponent = () => {
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
   }, [address]);
+
   useEffect(() => {
     if (!isConnected || !account) return;
     account.getChainId().then((chainId) => {
