@@ -10,7 +10,7 @@ export const PRICES = {
   FIVE: BigInt("24657534246575"),
 };
 
-export function getPriceFromDomain(
+export function getDomainPriceWei(
   durationInDays: number,
   domain: string
 ): bigint {
@@ -33,13 +33,13 @@ export function getPriceFromDomain(
   }
 }
 
-export function getPriceFromDomains(
+export function getManyDomainsPriceWei(
   domains: string[],
   durationInDays: number
 ): bigint {
-  // Calculate the sum of all prices with getPriceFromDomain
+  // Calculate the sum of all prices with getDomainPriceWei
   return domains.reduce(
-    (acc, domain) => acc + getPriceFromDomain(durationInDays, domain),
+    (acc, domain) => acc + getDomainPriceWei(durationInDays, domain),
     BigInt(0)
   );
 }
@@ -55,7 +55,7 @@ export function areDomainSelected(
 export function getYearlyPrice(domain: string): string {
   if (!domain) return "0";
 
-  return weiToEth(String(getPriceFromDomain(365, domain)));
+  return weiToEth(String(getDomainPriceWei(365, domain))).toString();
 }
 
 export function getTotalYearlyPrice(
@@ -65,10 +65,10 @@ export function getTotalYearlyPrice(
 
   return weiToEth(
     String(
-      getPriceFromDomains(
+      getManyDomainsPriceWei(
         Object.keys(selectedDomains).filter((key) => selectedDomains[key]),
         1
       )
     )
-  );
+  ).toString();
 }

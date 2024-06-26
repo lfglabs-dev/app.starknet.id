@@ -40,7 +40,7 @@ import {
   getDomainPriceAltcoin,
   getTokenQuote,
 } from "../../utils/altcoinService";
-import { getPriceFromDomain } from "@/utils/priceService";
+import { getDomainPriceWei } from "@/utils/priceService";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -247,7 +247,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
             AutoRenewalContracts[displayedCurrency],
-            String(getPriceFromDomain(365, domain))
+            String(getDomainPriceWei(365, domain))
           )
         );
       }
@@ -255,13 +255,13 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       const allowance = getAutoRenewAllowance(
         displayedCurrency,
         salesTaxRate,
-        price
+        BigInt(price)
       );
       calls.push(
         autoRenewalCalls.enableRenewal(
           AutoRenewalContracts[displayedCurrency],
           encodedDomain,
-          allowance,
+          allowance.toString(),
           txMetadataHash
         )
       );
@@ -380,8 +380,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         </div>
         <div className={styles.summary}>
           <RegisterSummary
-            ethRegistrationPrice={price}
-            registrationPrice={price}
+            dailyPriceInEth={priceInEth}
+            dailyPrice={price}
+            discountedPrice={price}
             durationInDays={durationInDays}
             renewalBox={false}
             salesTaxRate={salesTaxRate}

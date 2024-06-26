@@ -1,7 +1,7 @@
 import Big from "big.js";
 import { CurrenciesRange, CurrencyType, ERC20Contract } from "./constants";
 import { applyRateToBigInt, hexToDecimal } from "./feltService";
-import { getPriceFromDomain } from "./priceService";
+import { getDomainPriceWei } from "./priceService";
 import { Result } from "starknet";
 
 export const getTokenQuote = async (tokenAddress: string) => {
@@ -17,11 +17,10 @@ export const getTokenQuote = async (tokenAddress: string) => {
 
 export const getDomainPriceAltcoin = (quote: string, priceInEth: bigint) => {
   if (quote === "1") return priceInEth;
-
+  // we use Big
   const quoteBigInt = BigInt(quote);
   const scaleFactor = BigInt(10 ** 18);
-  const price = priceInEth * (quoteBigInt / scaleFactor);
-
+  const price = (priceInEth * quoteBigInt) / scaleFactor;
   return price;
 };
 
@@ -58,7 +57,7 @@ export const getRenewalPriceETH = (
   domain: string,
   duration: number
 ): string => {
-  if (priceError || !priceData) return getPriceFromDomain(1, domain).toString();
+  if (priceError || !priceData) return getDomainPriceWei(1, domain).toString();
   else {
     // Divide the priceData by the duration to get the renewal price
     const high = priceData?.["price"].high << BigInt(128);
@@ -68,18 +67,18 @@ export const getRenewalPriceETH = (
   }
 };
 
+// returns yearly domain price
 export const getDomainPrice = (
   domain: string,
   currencyType: CurrencyType,
+  days: number,
   quote?: string
-): string => {
+): bigint => {
+  const priceInEth = getDomainPriceWei(days, domain);
   if (currencyType === CurrencyType.ETH) {
-    return getPriceFromDomain(1, domain).toString();
+    return priceInEth;
   } else {
-    return getDomainPriceAltcoin(
-      quote as string,
-      getPriceFromDomain(1, domain)
-    ).toString();
+    return getDomainPriceAltcoin(quote as string, priceInEth);
   }
 };
 
@@ -88,14 +87,12 @@ export const getDomainPrice = (
 export const getAutoRenewAllowance = (
   currencyType: CurrencyType,
   salesTaxRate: number,
-  domainPrice: string
-): string => {
-  const limitPrice = getLimitPriceRange(currencyType, BigInt(domainPrice));
-  const allowance: string = salesTaxRate
-    ? (
-        BigInt(limitPrice) + BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
-      ).toString()
-    : limitPrice.toString();
+  domainPrice: bigint
+): bigint => {
+  const limitPrice = getLimitPriceRange(currencyType, domainPrice);
+  const allowance: bigint = salesTaxRate
+    ? BigInt(limitPrice) + BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
+    : limitPrice;
 
   return allowance;
 };

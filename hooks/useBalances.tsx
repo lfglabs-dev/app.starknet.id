@@ -18,8 +18,6 @@ export default function useBalances(address?: string) {
     blockIdentifier: BlockTag.pending,
   });
 
-  console.log("erc20BalanceData:", address, erc20BalanceData);
-
   useEffect(() => {
     const balancesCallData = () => {
       const currencies = Object.values(ERC20Contract);

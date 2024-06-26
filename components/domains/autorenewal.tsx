@@ -16,7 +16,7 @@ import SwissForm from "./swissForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
-  getPriceFromDomains,
+  getManyDomainsPriceWei,
 } from "../../utils/priceService";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import BackButton from "../UI/backButton";
@@ -222,7 +222,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   useEffect(() => {
     if (!selectedDomains) return;
     setPriceInEth(
-      getPriceFromDomains(selectedDomainsToArray(selectedDomains), duration)
+      getManyDomainsPriceWei(selectedDomainsToArray(selectedDomains), duration)
     );
   }, [selectedDomains, duration]);
 
@@ -299,7 +299,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
               autoRenewalCalls.enableRenewal(
                 AutoRenewalContracts[currency],
                 encodedDomain,
-                allowance,
+                allowance.toString(),
                 `0x${metadataHash}`
               )
             );

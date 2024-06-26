@@ -315,7 +315,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
               autoRenewalCalls.enableRenewal(
                 AutoRenewalContracts[displayedCurrency],
                 encodedDomain,
-                allowance,
+                allowance.toString(),
                 txMetadataHash
               )
             );
@@ -410,8 +410,9 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
         </div>
         <div className={styles.summary}>
           <RegisterSummary
-            ethRegistrationPrice={priceInEth}
-            registrationPrice={price}
+            dailyPriceInEth={priceInEth}
+            dailyPrice={price}
+            discountedPrice={price}
             duration={Number(numberToFixedString(duration / 365))}
             renewalBox={renewalBox}
             salesTaxRate={salesTaxRate}

@@ -48,13 +48,8 @@ const FreeRenewalPage: NextPage = () => {
               process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
               freeRenewalDiscount.discountMailGroupId,
             ]}
-            durationInDays={freeRenewalDiscount.offer.durationInDays}
-            discountId={freeRenewalDiscount.offer.discountId}
-            customMessage={freeRenewalDiscount.offer.customMessage as string}
-            priceInEth={freeRenewalDiscount.offer.price}
-            goBack={goBack}
-            renewPrice="0"
-          />
+            offer={freeRenewalDiscount.offer}
+            goBack={goBack}          />
         </div>
       ) : null}
     </div>
