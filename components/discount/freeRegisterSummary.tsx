@@ -6,7 +6,7 @@ import { GasTokenPrice, GaslessCompatibility } from "@avnu/gasless-sdk";
 import { tokenNames } from "@/utils/altcoinService";
 import { shortenDomain } from "@/utils/stringService";
 import StyledToolTip from "../UI/styledTooltip";
-import { GasMethod } from "./freeRegisterCheckout";
+import { GasMethod } from "@/hooks/paymaster";
 
 type FreeRegisterSummaryProps = {
   duration: number;
