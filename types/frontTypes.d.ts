@@ -175,3 +175,7 @@ type EvmFields =
   | "arbitrum"
   | "optimism"
   | "polygon";
+
+type CallResult = {
+  [key: string]: any;
+};
