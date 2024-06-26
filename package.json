@@ -43,7 +43,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
     "react-loader-spinner": "5.4.5",
-    "starknet": "^6.9.0",
+    "starknet": "6.9.0",
     "starknetid.js": "^3.2.2",
     "starknetkit": "^1.1.9",
     "tldts": "^6.1.20",
