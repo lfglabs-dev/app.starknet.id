@@ -12,7 +12,7 @@ import { TextField, styled } from "@mui/material";
 import styles from "../../styles/search.module.css";
 import SearchResult from "../UI/searchResult";
 import { utils } from "starknetid.js";
-import { Abi, Contract, Provider } from "starknet";
+import { Abi, Contract, Provider, Result } from "starknet";
 import naming_abi from "../../abi/starknet/naming_abi.json";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
 import { isValidDomain, getDomainWithStark } from "../../utils/stringService";
@@ -205,7 +205,7 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         if (signal?.aborted) {
           return reject("Aborted");
         }
-        contract?.call("domain_to_data", [encoded]).then((res) => {
+        contract?.call("domain_to_data", [encoded]).then((res: Result) => {
           if (Number(res?.["expiry"]) < currentTimeStamp) {
             resolve({
               name,
