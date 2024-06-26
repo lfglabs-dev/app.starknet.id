@@ -228,6 +228,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         totalSpentQuote &&
         BigInt(tokenBalance) >= totalSpentQuote
       ) {
+        console.log("debugging balance:", tokenBalance, totalSpentQuote);
         setInvalidBalance(false);
       } else {
         setInvalidBalance(true);
@@ -284,6 +285,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     }
     if (quoteData) {
       setLoadingPrice(false);
+      setReloadingPrice(false);
       const newPriceInAltcoin = getDomainPriceAltcoin(
         quoteData.quote,
         priceInEth
