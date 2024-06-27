@@ -284,7 +284,10 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
         }
         // Add AutoRenewal calls for all currencies
         selectedDomainsToArray(selectedDomains).map((domain) => {
-          if (needSubscription && needSubscription[domain]?.[currency]) {
+          if (
+            needSubscription &&
+            needSubscription.needSubscription[domain]?.[currency]
+          ) {
             const encodedDomain = utils
               .encodeDomain(domain)
               .map((element) => element.toString())[0];

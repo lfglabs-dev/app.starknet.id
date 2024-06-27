@@ -130,7 +130,7 @@ type TokenNeedsAllowance = {
 };
 
 type NeedSubscription = {
-  [key in string]: TokenNeedsAllowance;
+  [key: string]: TokenNeedsAllowance;
 };
 
 type MulticallCallData = {

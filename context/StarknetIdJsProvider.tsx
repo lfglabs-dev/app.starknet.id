@@ -29,9 +29,7 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
 
   const provider = useMemo(() => {
     return new Provider({
-      rpc: {
-        nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
-      },
+      nodeUrl: process.env.NEXT_PUBLIC_RPC_URL,
     });
   }, []);
 

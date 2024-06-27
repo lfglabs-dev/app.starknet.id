@@ -52,7 +52,7 @@ export const formatDomainData = (
 
 export const storeDomainData = (tokenId: string, domainData: IdentityData) => {
   let existingDataRaw = localStorage.getItem("SID-domainData");
-  let existingData: IdentityData[] = existingDataRaw
+  let existingData: Record<string, IdentityData> = existingDataRaw
     ? JSON.parse(existingDataRaw)
     : {};
 
@@ -63,7 +63,7 @@ export const storeDomainData = (tokenId: string, domainData: IdentityData) => {
 
 export const getDomainData = (tokenId: string): IdentityData | undefined => {
   let existingDataRaw = localStorage.getItem("SID-domainData");
-  let existingData: IdentityData[] = existingDataRaw
+  let existingData: Record<string, IdentityData> = existingDataRaw
     ? JSON.parse(existingDataRaw)
     : {};
   // if data exists & creation_date is less than 10mn ago, use it
