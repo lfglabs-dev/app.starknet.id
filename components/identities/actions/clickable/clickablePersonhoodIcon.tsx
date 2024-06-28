@@ -13,7 +13,7 @@ import {
   StarknetSignature,
 } from "@anima-protocol/personhood-sdk-react";
 import { useAccount } from "@starknet-react/core";
-import { Call, constants, typedData } from "starknet";
+import { Call, TypedData, constants } from "starknet";
 import { useContractWrite } from "@starknet-react/core";
 import { hexToDecimal } from "../../../../utils/feltService";
 import { minifyDomain } from "../../../../utils/stringService";
@@ -102,7 +102,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
 
   const sign = useCallback(
     (payload: string | object) => {
-      return account?.signMessage(payload as typedData.TypedData) as Promise<
+      return account?.signMessage(payload as TypedData) as Promise<
         string | StarknetSignature
       >;
     },
