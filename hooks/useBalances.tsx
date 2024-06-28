@@ -49,12 +49,13 @@ export default function useBalances(address?: string) {
 
   useEffect(() => {
     if (erc20BalanceError || !erc20BalanceData) return;
+    const erc20BalanceRes = erc20BalanceData as bigint[][];
     const currencies = Object.values(CurrencyType);
     const balanceEntries: TokenBalance = {};
     currencies.forEach((currency, index) => {
       const balance = fromUint256(
-        BigInt(erc20BalanceData[index][0]),
-        BigInt(erc20BalanceData[index][1])
+        BigInt(erc20BalanceRes[index][0]),
+        BigInt(erc20BalanceRes[index][1])
       );
       balanceEntries[currency] = balance;
     });

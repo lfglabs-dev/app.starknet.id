@@ -3,7 +3,11 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { useAccount, useContractWrite } from "@starknet-react/core";
 import { utils } from "starknetid.js";
-import { getDomainWithStark, isValidEmail } from "../../utils/stringService";
+import {
+  formatHexString,
+  getDomainWithStark,
+  isValidEmail,
+} from "../../utils/stringService";
 import { applyRateToBigInt, hexToDecimal } from "../../utils/feltService";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Call } from "starknet";
@@ -37,6 +41,7 @@ import {
 } from "../../utils/altcoinService";
 import { getPriceFromDomain } from "@/utils/priceService";
 import { useRouter } from "next/router";
+import { formatDomainData } from "@/utils/cacheDomainData";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -309,6 +314,14 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         status: "pending",
       },
     });
+    formatDomainData(
+      tokenIdRedirect,
+      formatHexString(address as string),
+      getDomainWithStark(domain),
+      duration,
+      Boolean(!hasMainDomain), // isMainDomain
+      undefined // Selected PFPs
+    );
     router.push(`/confirmation?tokenId=${tokenIdRedirect}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerData]); // We want to execute this only once after the tx is sent

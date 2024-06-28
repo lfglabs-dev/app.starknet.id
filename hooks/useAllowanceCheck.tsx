@@ -24,11 +24,12 @@ export default function useAllowanceCheck(
     });
 
   useEffect(() => {
+    const erc20AllowanceRes = erc20AllowanceData as CallResult;
     if (
       erc20AllowanceError ||
-      (erc20AllowanceData &&
-        erc20AllowanceData["remaining"].low !== UINT_128_MAX &&
-        erc20AllowanceData["remaining"].high !== UINT_128_MAX)
+      (erc20AllowanceRes &&
+        erc20AllowanceRes["remaining"].low !== UINT_128_MAX &&
+        erc20AllowanceRes["remaining"].high !== UINT_128_MAX)
     ) {
       setNeedsAllowance(true);
     } else {

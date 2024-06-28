@@ -76,9 +76,10 @@ export const getRenewalPriceETH = (
 ): string => {
   if (priceError || !priceData) return getPriceFromDomain(1, domain).toString();
   else {
+    const res = priceData as CallResult;
     // Divide the priceData by the duration to get the renewal price
-    const high = priceData?.["price"].high << BigInt(128);
-    const price = priceData?.["price"].low + high;
+    const high = res?.["price"].high << BigInt(128);
+    const price = res?.["price"].low + high;
     const renew = price / BigInt(duration);
     return renew.toString(10);
   }

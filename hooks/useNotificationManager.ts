@@ -4,6 +4,10 @@ import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
 import { hexToDecimal } from "../utils/feltService";
 import { NotificationType } from "../utils/constants";
+import {
+  RejectedTransactionReceiptResponse,
+  RevertedTransactionReceiptResponse,
+} from "starknet";
 
 const notificationsAtom = atomWithStorage<SIDNotification<NotificationData>[]>(
   "userNotifications_SID",
@@ -24,21 +28,34 @@ export function useNotificationManager() {
       if (notification.address !== hexToDecimal(address)) return;
       if (notification.data.status === "pending") {
         const transaction = notification.data;
-        const data = await provider.getTransactionReceipt(transaction.hash);
+        const transactionReceipt = await provider.waitForTransaction(
+          transaction.hash
+        );
         const updatedTransactions = [...notifications];
 
-        if (data?.status === "REJECTED" || data?.status === "REVERTED") {
-          updatedTransactions[index].data.status = "error";
-          updatedTransactions[index].data.txStatus = "REJECTED";
-          setNotifications(updatedTransactions);
-        } else if (
-          data?.status === "ACCEPTED_ON_L2" ||
-          data?.status === "ACCEPTED_ON_L1" ||
-          data?.finality_status === "ACCEPTED_ON_L2" ||
-          data?.finality_status === "ACCEPTED_ON_L1"
+        if (
+          transactionReceipt.isRejected() ||
+          transactionReceipt.isReverted() ||
+          transactionReceipt.isError()
         ) {
+          updatedTransactions[index].data.status = "error";
+          transactionReceipt.match({
+            rejected: (txR: RejectedTransactionReceiptResponse) => {
+              updatedTransactions[index].data.txStatus = txR.status;
+            },
+            reverted: (txR: RevertedTransactionReceiptResponse) => {
+              updatedTransactions[index].data.txStatus = txR.status;
+            },
+            error: (err: Error) => {
+              console.log("Error while fetching transaction receipt", err);
+              updatedTransactions[index].data.txStatus = undefined;
+            },
+            success: () => {},
+          });
+          setNotifications(updatedTransactions);
+        } else if (transactionReceipt.isSuccess()) {
           updatedTransactions[index].data.txStatus =
-            data?.status ?? data?.finality_status;
+            transactionReceipt.finality_status;
           updatedTransactions[index].data.status = "success";
           setNotifications(updatedTransactions);
         }
