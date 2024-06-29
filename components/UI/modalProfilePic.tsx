@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "../../styles/components/modalMessage.module.css";
 import ppStyles from "../../styles/components/profilePic.module.css";
 import { FunctionComponent } from "react";
@@ -47,7 +47,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
     ]);
   }, [nftData, tokenId]);
 
-  const confirm = () => {
+  const confirm = useCallback(() => {
     if (!account) return;
     account
       .execute(callData)
@@ -68,7 +68,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
       .catch((error) => {
         console.error("Transaction execution failed", error);
       });
-  };
+  }, [account, callData, addTransaction, setPfpTxHash, tokenId, closeModal]);
 
   return (
     <Modal
