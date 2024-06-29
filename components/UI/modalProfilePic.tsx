@@ -48,6 +48,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   }, [nftData, tokenId]);
 
   const confirm = () => {
+    console.log(account);
     if (!account) return;
     account
       .execute(callData)
