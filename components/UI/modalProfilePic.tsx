@@ -52,6 +52,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
     account
       .execute(callData)
       .then((tx) => {
+        console.log(tx);
         addTransaction({
           timestamp: Date.now(),
           subtext: `For identity ${tokenId}`,
