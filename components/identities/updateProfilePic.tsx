@@ -66,6 +66,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
         nftData={selectedPfp as StarkscanNftProps}
         tokenId={tokenId}
         setPfpTxHash={setPfpTxHash}
+        back={back}
       />
     </>
   );

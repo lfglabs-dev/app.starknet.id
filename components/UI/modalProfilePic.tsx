@@ -21,6 +21,7 @@ type ModalProfilePicProps = {
   nftData: StarkscanNftProps;
   tokenId: string;
   setPfpTxHash: (hash: string) => void;
+  back: () => void;
 };
 
 const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
@@ -29,6 +30,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   isModalOpen,
   nftData,
   tokenId,
+  back,
 }) => {
   const [callData, setCallData] = useState<Call[]>([]);
   const { addTransaction } = useNotificationManager();
@@ -65,6 +67,12 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
     closeModal(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateData]); // We want to trigger this only when the tx passed
+
+  const handleConfirm = () => {
+    execute();
+    closeModal(false);
+    back();
+  };
 
   return (
     <Modal
@@ -106,7 +114,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
               />
             }
             description=""
-            onClick={() => execute()}
+            onClick={handleConfirm}
           />
           <div className={ppStyles.modalBack} onClick={() => closeModal(true)}>
             <ArrowLeftIcon width="24" color={theme.palette.secondary.main} />
