@@ -48,12 +48,10 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   }, [nftData, tokenId]);
 
   const confirm = () => {
-    console.log(account);
     if (!account) return;
     account
       .execute(callData)
       .then((tx) => {
-        console.log(tx);
         addTransaction({
           timestamp: Date.now(),
           subtext: `For identity ${tokenId}`,
