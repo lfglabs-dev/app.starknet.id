@@ -49,20 +49,25 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
 
   const confirm = () => {
     if (!account) return;
-    account.execute(callData).then((tx) => {
-      addTransaction({
-        timestamp: Date.now(),
-        subtext: `For identity ${tokenId}`,
-        type: NotificationType.TRANSACTION,
-        data: {
-          type: TransactionType.SET_PFP,
-          hash: tx.transaction_hash,
-          status: "pending",
-        },
+    account
+      .execute(callData)
+      .then((tx) => {
+        addTransaction({
+          timestamp: Date.now(),
+          subtext: `For identity ${tokenId}`,
+          type: NotificationType.TRANSACTION,
+          data: {
+            type: TransactionType.SET_PFP,
+            hash: tx.transaction_hash,
+            status: "pending",
+          },
+        });
+        setPfpTxHash(tx.transaction_hash);
+        closeModal(false);
+      })
+      .catch((error) => {
+        console.error("Transaction execution failed", error);
       });
-      setPfpTxHash(tx.transaction_hash);
-      closeModal(false);
-    });
   };
 
   return (
