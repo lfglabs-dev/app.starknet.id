@@ -1,6 +1,7 @@
 import React, { useContext, useMemo } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";

@@ -1,6 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import styles from "../../styles/components/identityMenu.module.css";
 import { utils } from "starknetid.js";
 import ClickableAction from "../UI/iconsComponents/clickableAction";

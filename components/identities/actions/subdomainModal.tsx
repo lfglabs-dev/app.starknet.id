@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { TextField } from "@mui/material";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import { useIsValid } from "../../../hooks/naming";
 import { numberToString } from "../../../utils/stringService";
 import SelectIdentity from "../../domains/selectIdentity";

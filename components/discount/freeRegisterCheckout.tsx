@@ -3,7 +3,7 @@ import type { FunctionComponent } from "react";
 import { useEffect, useState } from "react";
 import type { Call } from "starknet";
 import Button from "../UI/button";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import { getDomainWithStark } from "../../utils/stringService";
 import { posthog } from "posthog-js";
@@ -20,6 +20,7 @@ import { getFreeDomain } from "@/utils/campaignService";
 import TermCheckbox from "../domains/termCheckbox";
 import { useRouter } from "next/router";
 import FreeRegisterSummary from "./freeRegisterSummary";
+import { useContractWrite } from "@/hooks/useContract";
 
 type FreeRegisterCheckoutProps = {
   domain: string;

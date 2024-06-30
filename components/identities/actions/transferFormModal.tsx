@@ -5,7 +5,7 @@ import React, {
   useContext,
 } from "react";
 import { TextField, InputAdornment } from "@mui/material";
-import { useContractWrite } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import { useRouter } from "next/router";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
 import { utils } from "starknetid.js";

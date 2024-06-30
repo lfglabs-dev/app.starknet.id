@@ -14,7 +14,7 @@ import {
 } from "@anima-protocol/personhood-sdk-react";
 import { useAccount } from "@starknet-react/core";
 import { Call, TypedData, constants } from "starknet";
-import { useContractWrite } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import { hexToDecimal } from "../../../../utils/feltService";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
