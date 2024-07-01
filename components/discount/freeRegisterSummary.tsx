@@ -129,8 +129,9 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
                     }
                     type="button"
                   >
-                    {tokenNames[price.tokenAddress] ||
-                      shortenDomain(price.tokenAddress)}{" "}
+                    {tokenNames[
+                      price.tokenAddress as keyof typeof tokenNames
+                    ] || shortenDomain(price.tokenAddress)}{" "}
                   </button>
                 ))}
               </div>
