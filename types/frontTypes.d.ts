@@ -130,7 +130,7 @@ type TokenNeedsAllowance = {
 };
 
 type NeedSubscription = {
-  [key in string]: TokenNeedsAllowance;
+  [key: string]: TokenNeedsAllowance;
 };
 
 type MulticallCallData = {
@@ -175,3 +175,7 @@ type EvmFields =
   | "arbitrum"
   | "optimism"
   | "polygon";
+
+type CallResult = {
+  [key: string]: any;
+};

@@ -67,10 +67,11 @@ export default function useNeedsAllowances(
     if (erc20AllowanceError || !erc20AllowanceData) return;
     const currencyNames = Object.values(CurrencyType);
     const needsAllowancesEntries: Record<string, boolean> = {};
+    const erc20AllowanceRes = erc20AllowanceData as bigint[][];
     currencyNames.forEach((currency, index) => {
       const balance = fromUint256(
-        BigInt(erc20AllowanceData[index][0]),
-        BigInt(erc20AllowanceData[index][1])
+        BigInt(erc20AllowanceRes[index][0]),
+        BigInt(erc20AllowanceRes[index][1])
       );
       needsAllowancesEntries[currency] = balance === "0";
     });

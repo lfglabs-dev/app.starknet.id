@@ -112,9 +112,10 @@ export function useDataFromDomain(domain: string): FullDomainData {
     args: [encoded],
   });
 
+  const res = data as CallResult;
   return {
-    expiry: data?.["expiry"],
-    owner: data?.["owner"],
+    expiry: res?.["expiry"],
+    owner: res?.["owner"],
     error: error?.message as string,
   };
 }

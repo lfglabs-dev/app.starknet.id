@@ -3,16 +3,15 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { useAccount, useContractWrite } from "@starknet-react/core";
 import { utils } from "starknetid.js";
-import { getDomainWithStark, isValidEmail } from "../../utils/stringService";
 import {
-  applyRateToBigInt,
-  hexToDecimal,
-  numberToFixedString,
-} from "../../utils/feltService";
+  formatHexString,
+  getDomainWithStark,
+  isValidEmail,
+} from "../../utils/stringService";
+import { applyRateToBigInt, hexToDecimal } from "../../utils/feltService";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Call } from "starknet";
 import { posthog } from "posthog-js";
-import TxConfirmationModal from "../UI/txConfirmationModal";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
 import { Divider } from "@mui/material";
@@ -40,6 +39,9 @@ import {
   getDomainPriceAltcoin,
   getTokenQuote,
 } from "../../utils/altcoinService";
+import { getPriceFromDomain } from "@/utils/priceService";
+import { useRouter } from "next/router";
+import { formatDomainData } from "@/utils/cacheDomainData";
 
 type RegisterDiscountProps = {
   domain: string;
@@ -49,6 +51,7 @@ type RegisterDiscountProps = {
   priceInEth: string;
   mailGroups: string[];
   goBack: () => void;
+  sponsor?: string;
 };
 
 const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
@@ -59,7 +62,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   priceInEth,
   mailGroups,
   goBack,
+  sponsor = "0",
 }) => {
+  const router = useRouter();
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
@@ -74,12 +79,11 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   );
   const [invalidBalance, setInvalidBalance] = useState<boolean>(false);
   const [salt, setSalt] = useState<string | undefined>();
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const encodedDomain = utils
     .encodeDomain(domain)
     .map((element) => element.toString())[0];
-  const [termsBox, setTermsBox] = useState<boolean>(true);
-  const [renewalBox, setRenewalBox] = useState<boolean>(true);
+  const [termsBox, setTermsBox] = useState<boolean>(false);
+  const [renewalBox, setRenewalBox] = useState<boolean>(false);
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const { account, address } = useAccount();
   const { writeAsync: execute, data: registerData } = useContractWrite({
@@ -93,6 +97,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const needsAllowance = useAllowanceCheck(displayedCurrency, address);
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
+  const [tokenIdRedirect, setTokenIdRedirect] = useState<string>("0");
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -168,21 +173,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     }
   }, [address]);
 
-  // Set sponsor
-  // useEffect(() => {
-  //   const referralData = localStorage.getItem("referralData");
-  //   if (referralData) {
-  //     const data = JSON.parse(referralData);
-  //     if (data.sponsor && data?.expiry >= new Date().getTime()) {
-  //       setSponsor(data.sponsor);
-  //     } else {
-  //       setSponsor("0");
-  //     }
-  //   } else {
-  //     setSponsor("0");
-  //   }
-  // }, [domain]);
-
   // Set Register Multicall
   useEffect(() => {
     if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
@@ -195,6 +185,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     // Common calls
     const calls = [
       registrationCalls.approve(price, ERC20Contract[displayedCurrency]),
+      registrationCalls.mint(newTokenId),
     ];
 
     if (displayedCurrency === CurrencyType.ETH) {
@@ -202,7 +193,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         registrationCalls.buy(
           encodedDomain,
           newTokenId,
-          "0",
+          sponsor,
           duration,
           txMetadataHash,
           discountId
@@ -213,7 +204,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         registrationCalls.altcoinBuy(
           encodedDomain,
           newTokenId,
-          "0",
+          sponsor,
           duration,
           txMetadataHash,
           ERC20Contract[displayedCurrency],
@@ -240,21 +231,28 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
     // If the user has toggled autorenewal
     if (renewalBox) {
+      const yearlyPriceInEth = getPriceFromDomain(1, domain);
+      const allowance = getAutoRenewAllowance(
+        displayedCurrency,
+        salesTaxRate,
+        displayedCurrency === CurrencyType.ETH
+          ? String(yearlyPriceInEth)
+          : String(
+              (yearlyPriceInEth * BigInt(quoteData?.quote ?? "0")) /
+                BigInt(1e18)
+            ) // Convert the yearly price in eth to the altcoin yearly price
+      );
+
       if (needsAllowance) {
         calls.push(
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
             AutoRenewalContracts[displayedCurrency],
-            String(Number(price) / duration)
+            allowance
           )
         );
       }
 
-      const allowance = getAutoRenewAllowance(
-        displayedCurrency,
-        salesTaxRate,
-        price
-      );
       calls.push(
         autoRenewalCalls.enableRenewal(
           AutoRenewalContracts[displayedCurrency],
@@ -266,6 +264,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     }
 
     // Merge and set the call data
+    setTokenIdRedirect(String(newTokenId));
     setCallData(calls);
   }, [
     duration,
@@ -283,6 +282,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     discountId,
     quoteData,
     displayedCurrency,
+    sponsor,
   ]);
 
   useEffect(() => {
@@ -296,7 +296,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       body: JSON.stringify({
         meta_hash: metadataHash,
         email,
-        groups: mailGroups, // Domain Owner group + quantumleap group^
+        groups: mailGroups, // Domain Owner group
         tax_state: isSwissResident ? "switzerland" : "none",
         salt: salt,
       }),
@@ -314,7 +314,15 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         status: "pending",
       },
     });
-    setIsTxModalOpen(true);
+    formatDomainData(
+      tokenIdRedirect,
+      formatHexString(address as string),
+      getDomainWithStark(domain),
+      duration,
+      Boolean(!hasMainDomain), // isMainDomain
+      undefined // Selected PFPs
+    );
+    router.push(`/confirmation?tokenId=${tokenIdRedirect}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerData]); // We want to execute this only once after the tx is sent
 
@@ -375,9 +383,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         </div>
         <div className={styles.summary}>
           <RegisterSummary
-            ethRegistrationPrice={price}
+            ethRegistrationPrice={priceInEth}
             registrationPrice={price}
-            duration={Number(numberToFixedString(duration / 365))}
+            duration={duration}
             renewalBox={false}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
@@ -426,12 +434,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         </div>
       </div>
       <img className={styles.image} src="/visuals/register.webp" />
-      <TxConfirmationModal
-        txHash={registerData?.transaction_hash}
-        isTxModalOpen={isTxModalOpen}
-        closeModal={() => setIsTxModalOpen(false)}
-        title="Your domain is on it's way !"
-      />
     </div>
   );
 };
