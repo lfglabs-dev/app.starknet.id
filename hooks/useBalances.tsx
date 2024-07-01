@@ -15,7 +15,7 @@ export default function useBalances(address?: string) {
     functionName: "aggregate",
     args: callData,
     watch: true,
-    blockIdentifier: BlockTag.PENDING,
+    blockIdentifier: BlockTag.pending,
   });
 
   useEffect(() => {
