@@ -47,6 +47,12 @@ const usePaymaster = (callData: Call[], then: () => void) => {
   });
 
   useEffect(() => {
+    console.log(gasTokenPrice, maxGasTokenAmount);
+    if (!gasTokenPrice || !maxGasTokenAmount) return;
+    console.log("Price", maxGasTokenAmount / gasTokenPrice?.priceInETH);
+  }, [gasTokenPrice, maxGasTokenAmount]);
+
+  useEffect(() => {
     setGasTokenPrice(gasTokenPrices[0]);
   }, [gasTokenPrices]);
 
