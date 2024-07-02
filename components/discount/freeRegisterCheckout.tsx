@@ -69,6 +69,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     setGasMethod,
     gaslessCompatibility,
     setGasTokenPrice,
+    sponsoredTXAvailable,
   } = usePaymaster(callData, () =>
     setDomainsMinting((prev) =>
       new Map(prev).set(encodedDomain.toString(), true)
@@ -197,7 +198,9 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
             setGasTokenPrice={setGasTokenPrice}
             gasMethod={gasMethod}
             setGasMethod={setGasMethod}
-            gaslessCompatibility={gaslessCompatibility}
+            paymasterAvailable={
+              gaslessCompatibility?.isCompatible || sponsoredTXAvailable
+            }
           />
           <Divider className="w-full" />
           <TermCheckbox

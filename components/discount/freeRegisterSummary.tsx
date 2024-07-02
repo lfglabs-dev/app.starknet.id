@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/registerV3.module.css";
 import { getYearlyPrice } from "@/utils/priceService";
 import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
-import { GasTokenPrice, GaslessCompatibility } from "@avnu/gasless-sdk";
+import { GasTokenPrice } from "@avnu/gasless-sdk";
 import { tokenNames } from "@/utils/altcoinService";
 import { shortenDomain } from "@/utils/stringService";
 import StyledToolTip from "../UI/styledTooltip";
@@ -17,7 +17,7 @@ type FreeRegisterSummaryProps = {
   setGasTokenPrice: (price: GasTokenPrice) => void;
   gasMethod: GasMethod;
   setGasMethod: (method: GasMethod) => void;
-  gaslessCompatibility?: GaslessCompatibility;
+  paymasterAvailable: boolean;
 };
 
 const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
@@ -29,7 +29,7 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
   setGasTokenPrice,
   gasMethod,
   setGasMethod,
-  gaslessCompatibility,
+  paymasterAvailable,
 }) => {
   function getMessage() {
     return `${Math.floor(duration / 30)} months of domain registration`;
@@ -62,15 +62,12 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
           </button>
           <StyledToolTip
             title={`Allows you to pay less gas and choose other currencies to pay fees. ${
-              !gaslessCompatibility?.isCompatible
-                ? "Your account is currently not compatible. Please do a traditional tx to deploy it."
-                : ""
+              paymasterAvailable
+                ? ""
+                : "Wallet not compatible. Please deploy it or switch to ArgentX in order to use Paymaster."
             }`}
           >
             <button
-              disabled={
-                gasMethod === "paymaster" || !gaslessCompatibility?.isCompatible
-              }
               onClick={() => setGasMethod("paymaster")}
               className={
                 gasMethod === "paymaster"
@@ -78,6 +75,7 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
                   : styles.gasMethod
               }
               type="button"
+              disabled={!paymasterAvailable}
             >
               Gasless Transaction
             </button>

@@ -20,6 +20,7 @@ import {
 } from "starknet";
 import { GaslessOptions, SEPOLIA_BASE_URL, BASE_URL } from "@avnu/gasless-sdk";
 import { useAccount } from "@starknet-react/core";
+import { getLastConnector } from "@/utils/connectorWrapper";
 
 export type GasMethod = "traditional" | "paymaster";
 
@@ -42,15 +43,19 @@ const usePaymaster = (callData: Call[], then: () => void) => {
   );
   const [gasTokenPrice, setGasTokenPrice] = useState<GasTokenPrice>();
   const [loadingGas, setLoadingGas] = useState<boolean>(false);
+  const [sponsoredTXAvailable, setSponsoredTXAvailable] =
+    useState<boolean>(false);
   const { writeAsync: execute, data } = useContractWrite({
     calls: callData,
   });
 
   useEffect(() => {
-    console.log(gasTokenPrice, maxGasTokenAmount);
-    if (!gasTokenPrice || !maxGasTokenAmount) return;
-    console.log("Price", maxGasTokenAmount / gasTokenPrice?.priceInETH);
-  }, [gasTokenPrice, maxGasTokenAmount]);
+    if (!account) return;
+    const connectorId = getLastConnector()?.id;
+    setSponsoredTXAvailable(
+      connectorId === "argentX" || connectorId === "argentMobile"
+    );
+  }, [account]);
 
   useEffect(() => {
     setGasTokenPrice(gasTokenPrices[0]);
@@ -77,9 +82,12 @@ const usePaymaster = (callData: Call[], then: () => void) => {
 
   useEffect(() => {
     if (!account || !gaslessAPIAvailable) return;
-    fetchAccountCompatibility(account.address, options).then(
-      setGaslessCompatibility
-    );
+    fetchAccountCompatibility(account.address, options)
+      .then(setGaslessCompatibility)
+      .catch((e) => {
+        setGaslessCompatibility(undefined);
+        console.error(e);
+      });
     fetchAccountsRewards(account.address, {
       ...options,
       protocol: "gasless-sdk",
@@ -178,6 +186,7 @@ const usePaymaster = (callData: Call[], then: () => void) => {
     gasMethod,
     setGasMethod,
     gaslessCompatibility,
+    sponsoredTXAvailable,
   };
 };
 
