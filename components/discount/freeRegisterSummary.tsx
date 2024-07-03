@@ -7,6 +7,7 @@ import { tokenNames } from "@/utils/altcoinService";
 import { shortenDomain } from "@/utils/stringService";
 import StyledToolTip from "../UI/styledTooltip";
 import { GasMethod } from "@/hooks/paymaster";
+import { Alert } from "@mui/material";
 
 type FreeRegisterSummaryProps = {
   duration: number;
@@ -18,6 +19,7 @@ type FreeRegisterSummaryProps = {
   gasMethod: GasMethod;
   setGasMethod: (method: GasMethod) => void;
   paymasterAvailable: boolean;
+  maxGasTokenAmount?: bigint;
 };
 
 const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
@@ -30,10 +32,15 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
   gasMethod,
   setGasMethod,
   paymasterAvailable,
+  maxGasTokenAmount,
 }) => {
   function getMessage() {
     return `${Math.floor(duration / 30)} months of domain registration`;
   }
+
+  const getTokenName = (price: GasTokenPrice) =>
+    tokenNames[price.tokenAddress as keyof typeof tokenNames] ||
+    shortenDomain(price.tokenAddress);
 
   return (
     <div className={styles.pricesSummary}>
@@ -99,7 +106,7 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
               </p>
             </div>
           ) : (
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 w-full">
               <p className="text-sm">
                 No{" "}
                 <a
@@ -127,12 +134,21 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
                     }
                     type="button"
                   >
-                    {tokenNames[
-                      price.tokenAddress as keyof typeof tokenNames
-                    ] || shortenDomain(price.tokenAddress)}{" "}
+                    {getTokenName(price)}{" "}
                   </button>
                 ))}
               </div>
+              {gasTokenPrice ? (
+                <Alert severity="info">
+                  {maxGasTokenAmount
+                    ? `Please make sure to have at least ${maxGasTokenAmount.toString()} ${getTokenName(
+                        gasTokenPrice
+                      )} to prevent transaction failure.`
+                    : `Please make sure to have enough ${getTokenName(
+                        gasTokenPrice
+                      )} to prevent transaction failure.`}
+                </Alert>
+              ) : null}
             </div>
           )
         ) : null}

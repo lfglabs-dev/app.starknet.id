@@ -196,6 +196,7 @@ const usePaymaster = (callData: Call[], then: () => void) => {
     setGasMethod,
     gaslessCompatibility,
     sponsoredTXAvailable,
+    maxGasTokenAmount,
   };
 };
 

@@ -70,6 +70,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     gaslessCompatibility,
     setGasTokenPrice,
     sponsoredTXAvailable,
+    maxGasTokenAmount,
   } = usePaymaster(callData, () =>
     setDomainsMinting((prev) =>
       new Map(prev).set(encodedDomain.toString(), true)
@@ -201,6 +202,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
             paymasterAvailable={
               gaslessCompatibility?.isCompatible || sponsoredTXAvailable
             }
+            maxGasTokenAmount={maxGasTokenAmount}
           />
           <Divider className="w-full" />
           <TermCheckbox
