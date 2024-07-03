@@ -65,8 +65,8 @@ const usePaymaster = (callData: Call[], then: () => void) => {
   }, [account]);
 
   useEffect(() => {
-    setGasTokenPrice(gasTokenPrices[0]);
-  }, [gasTokenPrices]);
+    if (!gasTokenPrice) setGasTokenPrice(gasTokenPrices[0]);
+  }, [gasTokenPrice, gasTokenPrices]);
 
   useEffect(() => {
     if (gaslessCompatibility?.isCompatible && paymasterRewards.length > 0)
@@ -128,7 +128,11 @@ const usePaymaster = (callData: Call[], then: () => void) => {
   );
 
   useEffect(() => {
-    fetchGasTokenPrices(options).then(setGasTokenPrices);
+    const fetch = async () =>
+      fetchGasTokenPrices(options).then(setGasTokenPrices);
+    fetch();
+    const interval = setInterval(fetch, 20000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
