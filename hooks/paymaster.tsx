@@ -10,7 +10,11 @@ import {
   fetchGaslessStatus,
   executeCalls,
 } from "@avnu/gasless-sdk";
-import { useContractWrite, useProvider } from "@starknet-react/core";
+import {
+  useContractWrite,
+  useProvider,
+  useAccount,
+} from "@starknet-react/core";
 import {
   AccountInterface,
   Call,
@@ -19,7 +23,6 @@ import {
   transaction,
 } from "starknet";
 import { GaslessOptions, SEPOLIA_BASE_URL, BASE_URL } from "@avnu/gasless-sdk";
-import { useAccount } from "@starknet-react/core";
 import { getLastConnector } from "@/utils/connectorWrapper";
 
 export type GasMethod = "traditional" | "paymaster";
@@ -48,6 +51,10 @@ const usePaymaster = (callData: Call[], then: () => void) => {
   const { writeAsync: execute, data } = useContractWrite({
     calls: callData,
   });
+  const walletClassHash =
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+      ? "0x029927c8af6bccf3f6fda035981e765a7bdbf18a2dc0d630494f8758aa908e2b"
+      : "0x01a736d6ed154502257f02b1ccdf4d9d1089f80811cd6acad48e6b6a9d1f2003";
 
   useEffect(() => {
     if (!account) return;
@@ -90,7 +97,7 @@ const usePaymaster = (callData: Call[], then: () => void) => {
       });
     fetchAccountsRewards(account.address, {
       ...options,
-      protocol: "gasless-sdk",
+      protocol: "STARKNETID",
     }).then(setPaymasterRewards);
   }, [account, gaslessAPIAvailable]);
 
@@ -162,10 +169,12 @@ const usePaymaster = (callData: Call[], then: () => void) => {
       executeCalls(
         account,
         callData,
-        {
-          gasTokenAddress: gasTokenPrice?.tokenAddress,
-          maxGasTokenAmount,
-        },
+        paymasterRewards.length === 0
+          ? {
+              gasTokenAddress: gasTokenPrice?.tokenAddress,
+              maxGasTokenAmount,
+            }
+          : {},
         options
       )
         .then(then)
