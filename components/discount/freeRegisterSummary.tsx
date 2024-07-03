@@ -20,6 +20,7 @@ type FreeRegisterSummaryProps = {
   setGasMethod: (method: GasMethod) => void;
   paymasterAvailable: boolean;
   maxGasTokenAmount?: bigint;
+  deployed?: boolean;
 };
 
 const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
@@ -33,6 +34,7 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
   setGasMethod,
   paymasterAvailable,
   maxGasTokenAmount,
+  deployed,
 }) => {
   function getMessage() {
     return `${Math.floor(duration / 30)} months of domain registration`;
@@ -117,38 +119,47 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
                 >
                   Paymaster
                 </a>{" "}
-                reward. Please select a gas token.
+                reward. {deployed ? "Please select a gas token." : ""}
               </p>
-              <div className={styles.gasMethods}>
-                {gasTokenPrices?.map((price) => (
-                  <button
-                    disabled={
-                      price.tokenAddress === gasTokenPrice?.tokenAddress
-                    }
-                    onClick={() => setGasTokenPrice(price)}
-                    key={price.tokenAddress}
-                    className={
-                      price.tokenAddress === gasTokenPrice?.tokenAddress
-                        ? styles.gasMethodSelected
-                        : styles.gasMethod
-                    }
-                    type="button"
-                  >
-                    {getTokenName(price)}{" "}
-                  </button>
-                ))}
-              </div>
-              {gasTokenPrice ? (
-                <Alert severity="info">
-                  {maxGasTokenAmount
-                    ? `Please make sure to have at least ${maxGasTokenAmount.toString()} ${getTokenName(
-                        gasTokenPrice
-                      )} to prevent transaction failure.`
-                    : `Please make sure to have enough ${getTokenName(
-                        gasTokenPrice
-                      )} to prevent transaction failure.`}
+              {deployed ? (
+                <>
+                  <div className={styles.gasMethods}>
+                    {gasTokenPrices?.map((price) => (
+                      <button
+                        disabled={
+                          price.tokenAddress === gasTokenPrice?.tokenAddress
+                        }
+                        onClick={() => setGasTokenPrice(price)}
+                        key={price.tokenAddress}
+                        className={
+                          price.tokenAddress === gasTokenPrice?.tokenAddress
+                            ? styles.gasMethodSelected
+                            : styles.gasMethod
+                        }
+                        type="button"
+                      >
+                        {getTokenName(price)}{" "}
+                      </button>
+                    ))}
+                  </div>
+                  {gasTokenPrice ? (
+                    <Alert severity="info">
+                      {maxGasTokenAmount
+                        ? `Please make sure to have at least ${maxGasTokenAmount.toString()} ${getTokenName(
+                            gasTokenPrice
+                          )} to prevent transaction failure.`
+                        : `Please make sure to have enough ${getTokenName(
+                            gasTokenPrice
+                          )} to prevent transaction failure.`}
+                    </Alert>
+                  ) : null}
+                </>
+              ) : (
+                <Alert severity="error">
+                  Your wallet is not deployed. To sponsor its deployment, please
+                  gather rewards.
                 </Alert>
-              ) : null}
+              )}
             </div>
           )
         ) : null}

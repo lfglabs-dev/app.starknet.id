@@ -69,8 +69,9 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     setGasMethod,
     gaslessCompatibility,
     setGasTokenPrice,
-    sponsoredTXAvailable,
+    sponsoredDeploymentAvailable,
     maxGasTokenAmount,
+    loadingDeploymentData,
   } = usePaymaster(callData, () =>
     setDomainsMinting((prev) =>
       new Map(prev).set(encodedDomain.toString(), true)
@@ -200,9 +201,10 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
             gasMethod={gasMethod}
             setGasMethod={setGasMethod}
             paymasterAvailable={
-              gaslessCompatibility?.isCompatible || sponsoredTXAvailable
+              gaslessCompatibility?.isCompatible || sponsoredDeploymentAvailable
             }
             maxGasTokenAmount={maxGasTokenAmount}
+            deployed={gaslessCompatibility?.isCompatible}
           />
           <Divider className="w-full" />
           <TermCheckbox
@@ -220,7 +222,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 !termsBox ||
                 Boolean(couponError) ||
                 loadingCoupon ||
-                loadingGas
+                loadingGas ||
+                loadingDeploymentData
               }
             >
               {!termsBox
@@ -229,6 +232,10 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 ? "Enter a valid Coupon"
                 : loadingGas
                 ? "Loading gas"
+                : loadingDeploymentData
+                ? paymasterRewards.length > 0
+                  ? "Loading deployment data"
+                  : "No Paymaster reward available"
                 : "Register my domain"}
             </Button>
           ) : (
