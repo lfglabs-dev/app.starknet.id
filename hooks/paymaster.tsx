@@ -9,6 +9,9 @@ import {
   fetchGasTokenPrices,
   fetchGaslessStatus,
   executeCalls,
+  GaslessOptions,
+  SEPOLIA_BASE_URL,
+  BASE_URL,
 } from "@avnu/gasless-sdk";
 import {
   useContractWrite,
@@ -22,7 +25,6 @@ import {
   stark,
   transaction,
 } from "starknet";
-import { GaslessOptions, SEPOLIA_BASE_URL, BASE_URL } from "@avnu/gasless-sdk";
 import { getLastConnector } from "@/utils/connectorWrapper";
 
 export type GasMethod = "traditional" | "paymaster";
