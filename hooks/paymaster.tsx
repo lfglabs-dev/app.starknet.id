@@ -9,9 +9,6 @@ import {
   fetchGasTokenPrices,
   fetchGaslessStatus,
   executeCalls,
-  GaslessOptions,
-  SEPOLIA_BASE_URL,
-  BASE_URL,
 } from "@avnu/gasless-sdk";
 import {
   useContractWrite,
@@ -23,17 +20,16 @@ import {
   AccountInterface,
   Call,
   EstimateFeeResponse,
+  Signature,
+  TypedData,
   stark,
   transaction,
 } from "starknet";
 import isStarknetDeployed from "./isDeployed";
+import { UNIVERSAL_DEPLOYER, gaslessOptions } from "@/utils/constants";
+import { decimalToHex } from "@/utils/feltService";
 
 export type GasMethod = "traditional" | "paymaster";
-
-const options: GaslessOptions = {
-  baseUrl:
-    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? SEPOLIA_BASE_URL : BASE_URL,
-};
 
 const usePaymaster = (callData: Call[], then: () => void) => {
   const { account } = useAccount();
@@ -56,7 +52,7 @@ const usePaymaster = (callData: Call[], then: () => void) => {
   });
   const { connector } = useConnect();
   const { isDeployed, deploymentData } = isStarknetDeployed(account?.address);
-  const [deploymentTypedData, setDeploymentTypedData] = useState<string>();
+  const [deploymentTypedData, setDeploymentTypedData] = useState<TypedData>();
 
   useEffect(() => {
     if (!account || !connector) return;
@@ -79,7 +75,7 @@ const usePaymaster = (callData: Call[], then: () => void) => {
   }, [gaslessCompatibility]);
 
   useEffect(() => {
-    fetchGaslessStatus(options).then((res) => {
+    fetchGaslessStatus(gaslessOptions).then((res) => {
       setGaslessAPIAvailable(res.status);
     });
   }, []);
@@ -90,14 +86,14 @@ const usePaymaster = (callData: Call[], then: () => void) => {
 
   useEffect(() => {
     if (!account || !gaslessAPIAvailable) return;
-    fetchAccountCompatibility(account.address, options)
+    fetchAccountCompatibility(account.address, gaslessOptions)
       .then(setGaslessCompatibility)
       .catch((e) => {
         setGaslessCompatibility(undefined);
         console.error(e);
       });
     fetchAccountsRewards(account.address, {
-      ...options,
+      ...gaslessOptions,
       protocol: "STARKNETID",
     }).then(setPaymasterRewards);
   }, [account, gaslessAPIAvailable]);
@@ -130,7 +126,7 @@ const usePaymaster = (callData: Call[], then: () => void) => {
 
   useEffect(() => {
     const fetch = async () =>
-      fetchGasTokenPrices(options).then(setGasTokenPrices);
+      fetchGasTokenPrices(gaslessOptions).then(setGasTokenPrices);
     fetch();
     const interval = setInterval(fetch, 20000);
     return () => clearInterval(interval);
@@ -177,14 +173,28 @@ const usePaymaster = (callData: Call[], then: () => void) => {
       !gasTokenPrice?.tokenAddress
     )
       return;
-    fetch(`${options.baseUrl}/gasless/v1/build-typed-data`, {
+    const deploymentCallData: Call[] = [
+      {
+        contractAddress: UNIVERSAL_DEPLOYER,
+        entrypoint: "deployContract",
+        calldata: [
+          deploymentData.class_hash,
+          deploymentData.salt,
+          decimalToHex(deploymentData.version),
+          decimalToHex(deploymentData.calldata.length),
+          ...deploymentData.calldata,
+        ],
+      },
+      ...callData,
+    ];
+    fetch(`${gaslessOptions.baseUrl}/gasless/v1/build-typed-data`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         userAddress: account.address,
-        calls: callData,
+        calls: deploymentCallData,
         gasTokenAddress: gasTokenPrice?.tokenAddress,
         maxGasTokenAmount,
         accountClassHash: deploymentData.class_hash,
@@ -211,24 +221,35 @@ const usePaymaster = (callData: Call[], then: () => void) => {
   const handleRegister = () => {
     if (!account) return;
     if (gasMethod === "paymaster") {
-      if (deploymentData) {
-        fetch(`${options.baseUrl}/gasless/v1/execute`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userAddress: account.address,
-            calls: callData,
-            gasTokenAddress: gasTokenPrice?.tokenAddress,
-            maxGasTokenAmount,
-            accountClassHash: deploymentData.class_hash,
-            typedData: deploymentTypedData,
-          }),
-        })
-          .then(then)
-          .catch((error) => {
-            console.error("Error when executing with Paymaster:", error);
+      if (deploymentData && deploymentTypedData) {
+        account
+          .signMessage(
+            deploymentTypedData,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            { skipDeploy: true }
+          )
+          .then((signature: Signature) => {
+            console.log(
+              "Deployment sponsoring & freedomain mint signature:",
+              signature
+            );
+            fetch(`${gaslessOptions.baseUrl}/gasless/v1/execute`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                userAddress: account.address,
+                typedData: deploymentTypedData,
+                signature,
+                deploymentData,
+              }),
+            })
+              .then(then)
+              .catch((error) => {
+                console.error("Error when executing with Paymaster:", error);
+              });
           });
       } else
         executeCalls(
@@ -240,7 +261,7 @@ const usePaymaster = (callData: Call[], then: () => void) => {
                 maxGasTokenAmount,
               }
             : {},
-          options
+          gaslessOptions
         )
           .then(then)
           .catch((error) => {

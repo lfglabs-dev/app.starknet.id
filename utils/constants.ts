@@ -1,3 +1,5 @@
+import { BASE_URL, GaslessOptions, SEPOLIA_BASE_URL } from "@avnu/gasless-sdk";
+
 export const basicAlphabet = "abcdefghijklmnopqrstuvwxyz0123456789-";
 export const bigAlphabet = "这来";
 export const totalAlphabet = basicAlphabet + bigAlphabet;
@@ -161,3 +163,11 @@ export enum FormType {
   REGISTER = "Your Registration",
   RENEW = "Your Renewal",
 }
+
+export const UNIVERSAL_DEPLOYER =
+  "0x041a78e741e5af2fec34b695679bc6891742439f7afb8484ecd7766661ad02bf";
+
+export const gaslessOptions: GaslessOptions = {
+  baseUrl:
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? SEPOLIA_BASE_URL : BASE_URL,
+};
