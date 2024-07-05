@@ -173,8 +173,9 @@ const usePaymaster = (callData: Call[], then: () => void) => {
       !gasTokenPrice?.tokenAddress
     )
       return;
+    console.log("Deployment data:", deploymentData);
     const deploymentCallData: Call[] = [
-      {
+      /*{
         contractAddress: UNIVERSAL_DEPLOYER,
         entrypoint: "deployContract",
         calldata: [
@@ -184,19 +185,18 @@ const usePaymaster = (callData: Call[], then: () => void) => {
           decimalToHex(deploymentData.calldata.length),
           ...deploymentData.calldata,
         ],
-      },
+      },*/
       ...callData,
     ];
     fetch(`${gaslessOptions.baseUrl}/gasless/v1/build-typed-data`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "api-key": process.env.NEXT_PUBLIC_AVNU_PAYMASTER_API_KEY as string,
       },
       body: JSON.stringify({
         userAddress: account.address,
         calls: deploymentCallData,
-        gasTokenAddress: gasTokenPrice?.tokenAddress,
-        maxGasTokenAmount,
         accountClassHash: deploymentData.class_hash,
       }),
     })
