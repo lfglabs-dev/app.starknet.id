@@ -169,11 +169,9 @@ const usePaymaster = (callData: Call[], then: () => void) => {
       !account ||
       isDeployed ||
       !deploymentData ||
-      !sponsoredDeploymentAvailable ||
-      !gasTokenPrice?.tokenAddress
+      !sponsoredDeploymentAvailable
     )
       return;
-    console.log("Deployment data:", deploymentData);
     const deploymentCallData: Call[] = [
       /*{
         contractAddress: UNIVERSAL_DEPLOYER,
@@ -214,7 +212,6 @@ const usePaymaster = (callData: Call[], then: () => void) => {
     deploymentData,
     sponsoredDeploymentAvailable,
     callData,
-    gasTokenPrice,
     maxGasTokenAmount,
   ]);
 
