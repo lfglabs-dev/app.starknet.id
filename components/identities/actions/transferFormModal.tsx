@@ -5,7 +5,7 @@ import React, {
   useContext,
 } from "react";
 import { TextField, InputAdornment } from "@mui/material";
-import { useContractWrite } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
 import { utils } from "starknetid.js";
@@ -36,8 +36,8 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
   const [isTxSent, setIsTxSent] = useState(false);
   const [isSendingTx, setIsSendingTx] = useState(false);
 
-  const { writeAsync: transfer_identity_and_set_domain, data: transferData } =
-    useContractWrite({
+  const { send: transfer_identity_and_set_domain, data: transferData } =
+    useSendTransaction({
       calls: identity
         ? identityChangeCalls.transfer(identity, targetAddress)
         : [],

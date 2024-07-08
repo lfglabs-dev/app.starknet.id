@@ -1,4 +1,4 @@
-import { useContractRead } from "@starknet-react/core";
+import { useReadContract } from "@starknet-react/core";
 import { useSolSubdomainContract } from "./contracts";
 import { Abi } from "starknet";
 import { useEffect, useState } from "react";
@@ -11,8 +11,8 @@ export default function useHasClaimSolSubdomain(
 ) {
   const [claimedDomains, setClaimedDomains] = useState<string[]>([]);
   const { contract } = useSolSubdomainContract();
-  const { data: claimedData, error: claimedError } = useContractRead({
-    address: contract?.address as string,
+  const { data: claimedData, error: claimedError } = useReadContract({
+    address: contract?.address as HexString,
     abi: contract?.abi as Abi,
     functionName: "were_claimed",
     args: [

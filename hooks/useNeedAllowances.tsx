@@ -1,4 +1,4 @@
-import { useContractRead } from "@starknet-react/core";
+import { useReadContract } from "@starknet-react/core";
 import { useMulticallContract } from "./contracts";
 import { Abi, BlockTag, CairoCustomEnum, Call, RawArgs, hash } from "starknet";
 import { useEffect, useState } from "react";
@@ -18,8 +18,8 @@ export default function useNeedsAllowances(
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: multicallContract } = useMulticallContract();
   const { data: erc20AllowanceData, error: erc20AllowanceError } =
-    useContractRead({
-      address: multicallContract?.address as string,
+    useReadContract({
+      address: multicallContract?.address as HexString,
       abi: multicallContract?.abi as Abi,
       functionName: "aggregate",
       args: callData,

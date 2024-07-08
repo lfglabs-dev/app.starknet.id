@@ -1,7 +1,12 @@
 import React, { useMemo } from "react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
-import { useAccount, useConnect, useContractWrite } from "@starknet-react/core";
+import {
+  useAccount,
+  useConnect,
+  useSendTransaction,
+  Connector as starknetReactConnector,
+} from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
 import MintIcon from "../components/UI/iconsComponents/icons/mintIcon";
@@ -37,7 +42,7 @@ const Identities: NextPage = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // We want this to run only once
-  const { writeAsync: execute, data: mintData } = useContractWrite({
+  const { sendAsync: execute, data: mintData } = useSendTransaction({
     calls: [callData],
   });
 
@@ -91,7 +96,7 @@ const Identities: NextPage = () => {
   }
 
   const connectWallet = async (connector: Connector) => {
-    await connectAsync({ connector });
+    await connectAsync({ connector: connector as starknetReactConnector });
     localStorage.setItem("SID-connectedWallet", connector.id);
     localStorage.setItem("SID-lastUsedConnector", connector.id);
   };

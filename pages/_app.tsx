@@ -5,7 +5,11 @@ import Navbar from "../components/UI/navbar";
 import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
-import { StarknetConfig, jsonRpcProvider } from "@starknet-react/core";
+import {
+  StarknetConfig,
+  jsonRpcProvider,
+  Connector,
+} from "@starknet-react/core";
 import { Analytics } from "@vercel/analytics/react";
 import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
@@ -94,7 +98,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               provider={providers}
               connectors={
                 addWalnutLogsToConnectors({
-                  connectors: getConnectors(),
+                  connectors: getConnectors() as any,
                   apiKey: process.env.NEXT_PUBLIC_WALNUT_API_KEY as string,
                 }) as any
               }

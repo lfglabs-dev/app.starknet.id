@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { TextField } from "@mui/material";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
 import { hexToDecimal } from "../../../utils/feltService";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
@@ -30,8 +30,8 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   const [isTxSent, setIsTxSent] = useState(false);
   const [isSendingTx, setIsSendingTx] = useState(false);
 
-  const { writeAsync: set_domain_to_address, data: domainToAddressData } =
-    useContractWrite({
+  const { sendAsync: set_domain_to_address, data: domainToAddressData } =
+    useSendTransaction({
       calls: identity
         ? identityChangeCalls.setStarknetAddress(
             identity,

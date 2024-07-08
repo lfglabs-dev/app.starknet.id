@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useAccount, useConnect } from "@starknet-react/core";
+import {
+  Connector as starknetReactConnector,
+  useAccount,
+  useConnect,
+} from "@starknet-react/core";
 import Button from "./button";
 import { FunctionComponent } from "react";
 import { Connector } from "starknetkit";
@@ -20,7 +24,7 @@ const ConnectButton: FunctionComponent = () => {
   }, [isConnected]);
 
   const connectWallet = async (connector: Connector) => {
-    await connectAsync({ connector });
+    await connectAsync({ connector: connector as starknetReactConnector });
     localStorage.setItem("SID-connectedWallet", connector.id);
   };
 

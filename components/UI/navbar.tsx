@@ -10,7 +10,12 @@ import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import connectStyles from "../../styles/components/walletConnect.module.css";
 import Button from "./button";
-import { useConnect, useAccount, useDisconnect } from "@starknet-react/core";
+import {
+  useConnect,
+  useAccount,
+  useDisconnect,
+  Connector as starknetReactConnector,
+} from "@starknet-react/core";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { useMediaQuery } from "@mui/material";
@@ -63,7 +68,7 @@ const Navbar: FunctionComponent = () => {
 
   const connectWallet = async (connector: Connector) => {
     try {
-      await connectAsync({ connector });
+      await connectAsync({ connector: connector as starknetReactConnector });
       localStorage.setItem("SID-connectedWallet", connector.id);
       localStorage.setItem("SID-lastUsedConnector", connector.id);
     } catch (e) {

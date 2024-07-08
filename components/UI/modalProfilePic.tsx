@@ -7,7 +7,7 @@ import ClickableAction from "./iconsComponents/clickableAction";
 import theme from "../../styles/theme";
 import DoneFilledIcon from "./iconsComponents/icons/doneFilledIcon";
 import ArrowLeftIcon from "./iconsComponents/icons/arrowLeftIcon";
-import { useContractWrite } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-react/core";
 import { Call } from "starknet";
 import identityChangeCalls from "../../utils/callData/identityChangeCalls";
 import { hexToDecimal, toUint256 } from "../../utils/feltService";
@@ -32,7 +32,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
 }) => {
   const [callData, setCallData] = useState<Call[]>([]);
   const { addTransaction } = useNotificationManager();
-  const { writeAsync: execute, data: updateData } = useContractWrite({
+  const { sendAsync: execute, data: updateData } = useSendTransaction({
     calls: callData,
   });
 

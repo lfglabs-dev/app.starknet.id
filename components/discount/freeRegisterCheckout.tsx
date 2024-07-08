@@ -3,7 +3,7 @@ import type { FunctionComponent } from "react";
 import { useEffect, useState } from "react";
 import type { Call } from "starknet";
 import Button from "../UI/button";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import { getDomainWithStark } from "../../utils/stringService";
 import { posthog } from "posthog-js";
@@ -47,7 +47,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const { account, address } = useAccount();
-  const { writeAsync: execute, data: registerData } = useContractWrite({
+  const { sendAsync: execute, data: registerData } = useSendTransaction({
     calls: callData,
   });
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(

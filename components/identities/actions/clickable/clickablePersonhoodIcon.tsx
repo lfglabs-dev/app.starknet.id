@@ -14,7 +14,7 @@ import {
 } from "@anima-protocol/personhood-sdk-react";
 import { useAccount } from "@starknet-react/core";
 import { Call, TypedData, constants } from "starknet";
-import { useContractWrite } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-react/core";
 import { hexToDecimal } from "../../../../utils/feltService";
 import { minifyDomain } from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
@@ -42,7 +42,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [callData, setCallData] = useState<Call>();
   const { addTransaction } = useNotificationManager();
-  const { writeAsync: execute, data: verifierData } = useContractWrite({
+  const { sendAsync: execute, data: verifierData } = useSendTransaction({
     calls: [callData as Call],
   });
   const network =

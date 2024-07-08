@@ -17,7 +17,7 @@ import {
   TransactionType,
   swissVatRate,
 } from "@/utils/constants";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import Button from "@/components/UI/button";
 import RegisterSummary from "../registerSummary";
 import { useNotificationManager } from "@/hooks/useNotificationManager";
@@ -100,7 +100,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const [hasChosenCurrency, setHasChosenCurrency] = useState<boolean>(false);
   const [callData, setCallData] = useState<Call[]>([]);
   const [tokenIdRedirect, setTokenIdRedirect] = useState<string>("0");
-  const { writeAsync: execute, data: checkoutData } = useContractWrite({
+  const { sendAsync: execute, data: checkoutData } = useSendTransaction({
     calls: callData,
   });
   const [reducedDuration, setReducedDuration] = useState<number>(0); // reduced duration for the user to buy the domain

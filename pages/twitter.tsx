@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import homeStyles from "../styles/Home.module.css";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ErrorScreen from "../components/UI/screens/errorScreen";
@@ -95,9 +95,9 @@ const Twitter: NextPage = () => {
   //Contract
   const {
     data: twitterVerificationData,
-    writeAsync: execute,
+    sendAsync: execute,
     error: twitterVerificationError,
-  } = useContractWrite({ calls: [calls as Call] });
+  } = useSendTransaction({ calls: [calls as Call] });
 
   function verifyTwitter() {
     execute();

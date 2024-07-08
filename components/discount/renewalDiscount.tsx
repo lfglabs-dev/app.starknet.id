@@ -1,7 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import {
   formatHexString,
   isValidEmail,
@@ -92,7 +92,7 @@ const RenewalDiscount: FunctionComponent<RenewalDiscountProps> = ({
     useState<Record<string, boolean>>();
   const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
   const { address } = useAccount();
-  const { writeAsync: execute, data: renewData } = useContractWrite({
+  const { sendAsync: execute, data: renewData } = useSendTransaction({
     calls: callData,
   });
   const [domainsMinting, setDomainsMinting] =
