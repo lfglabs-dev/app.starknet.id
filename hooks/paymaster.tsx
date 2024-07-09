@@ -26,7 +26,7 @@ import {
   transaction,
 } from "starknet";
 import isStarknetDeployed from "./isDeployed";
-import { UNIVERSAL_DEPLOYER, gaslessOptions } from "@/utils/constants";
+import { gaslessOptions } from "@/utils/constants";
 import { decimalToHex } from "@/utils/feltService";
 
 export type GasMethod = "traditional" | "paymaster";
@@ -172,20 +172,6 @@ const usePaymaster = (callData: Call[], then: () => void) => {
       !sponsoredDeploymentAvailable
     )
       return;
-    const deploymentCallData: Call[] = [
-      /*{
-        contractAddress: UNIVERSAL_DEPLOYER,
-        entrypoint: "deployContract",
-        calldata: [
-          deploymentData.class_hash,
-          deploymentData.salt,
-          decimalToHex(deploymentData.version),
-          decimalToHex(deploymentData.calldata.length),
-          ...deploymentData.calldata,
-        ],
-      },*/
-      ...callData,
-    ];
     fetch(`${gaslessOptions.baseUrl}/gasless/v1/build-typed-data`, {
       method: "POST",
       headers: {
@@ -194,7 +180,7 @@ const usePaymaster = (callData: Call[], then: () => void) => {
       },
       body: JSON.stringify({
         userAddress: account.address,
-        calls: deploymentCallData,
+        calls: callData,
         accountClassHash: deploymentData.class_hash,
       }),
     })
@@ -227,10 +213,6 @@ const usePaymaster = (callData: Call[], then: () => void) => {
             { skipDeploy: true }
           )
           .then((signature: Signature) => {
-            console.log(
-              "Deployment sponsoring & freedomain mint signature:",
-              signature
-            );
             fetch(`${gaslessOptions.baseUrl}/gasless/v1/execute`, {
               method: "POST",
               headers: {
@@ -238,8 +220,8 @@ const usePaymaster = (callData: Call[], then: () => void) => {
               },
               body: JSON.stringify({
                 userAddress: account.address,
-                typedData: deploymentTypedData,
-                signature,
+                typedData: JSON.stringify(deploymentTypedData),
+                signature: (signature as string[]).map(decimalToHex),
                 deploymentData,
               }),
             })
