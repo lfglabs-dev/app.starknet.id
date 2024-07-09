@@ -217,6 +217,8 @@ const usePaymaster = (callData: Call[], then: () => void) => {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                "api-key": process.env
+                  .NEXT_PUBLIC_AVNU_PAYMASTER_API_KEY as string,
               },
               body: JSON.stringify({
                 userAddress: account.address,
