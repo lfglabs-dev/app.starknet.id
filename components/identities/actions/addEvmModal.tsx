@@ -4,7 +4,7 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
-import { useContractWrite } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import styles from "../../../styles/components/evmModalMessage.module.css";
 import Button from "../../UI/button";

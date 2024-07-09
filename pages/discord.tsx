@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ErrorScreen from "../components/UI/screens/errorScreen";

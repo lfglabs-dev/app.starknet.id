@@ -1,5 +1,6 @@
 import { Modal, TextField } from "@mui/material";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { isHexString, minifyAddress } from "../../utils/stringService";
 import styles from "../../styles/components/modalMessage.module.css";

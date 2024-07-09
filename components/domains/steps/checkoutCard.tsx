@@ -17,7 +17,8 @@ import {
   TransactionType,
   swissVatRate,
 } from "@/utils/constants";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import Button from "@/components/UI/button";
 import RegisterSummary from "../registerSummary";
 import { useNotificationManager } from "@/hooks/useNotificationManager";

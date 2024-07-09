@@ -1,7 +1,8 @@
 import React, { useMemo } from "react";
 import type { NextPage } from "next";
 import styles from "../styles/Home.module.css";
-import { useAccount, useConnect, useContractWrite } from "@starknet-react/core";
+import { useAccount, useConnect } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
 import MintIcon from "../components/UI/iconsComponents/icons/mintIcon";

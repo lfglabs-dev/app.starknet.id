@@ -1,7 +1,8 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import { utils } from "starknetid.js";
 import {
   formatHexString,

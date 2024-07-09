@@ -10,11 +10,8 @@ import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import OptionIcon from "../UI/iconsComponents/icons/optionIcon";
 import styles from "../../styles/solana.module.css";
 import { Abi, Call } from "starknet";
-import {
-  useAccount,
-  useContractRead,
-  useContractWrite,
-} from "@starknet-react/core";
+import { useAccount, useContractRead } from "@starknet-react/core";
+import { useContractWrite } from "@/hooks/useContract";
 import SolanaCalls from "../../utils/callData/solanaCalls";
 import { utils } from "starknetid.js";
 import ChangeAddressModal from "./changeAddressModal";

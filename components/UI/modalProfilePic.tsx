@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import styles from "../../styles/components/modalMessage.module.css";
 import ppStyles from "../../styles/components/profilePic.module.css";
 import { FunctionComponent } from "react";
@@ -7,13 +7,13 @@ import ClickableAction from "./iconsComponents/clickableAction";
 import theme from "../../styles/theme";
 import DoneFilledIcon from "./iconsComponents/icons/doneFilledIcon";
 import ArrowLeftIcon from "./iconsComponents/icons/arrowLeftIcon";
-import { useContractWrite } from "@starknet-react/core";
 import { Call } from "starknet";
 import identityChangeCalls from "../../utils/callData/identityChangeCalls";
 import { hexToDecimal, toUint256 } from "../../utils/feltService";
 import { getImgUrl } from "../../utils/stringService";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../utils/constants";
+import { useAccount } from "@starknet-react/core";
 
 type ModalProfilePicProps = {
   closeModal: (cancel: boolean) => void;
@@ -31,10 +31,8 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
   tokenId,
 }) => {
   const [callData, setCallData] = useState<Call[]>([]);
+  const { account } = useAccount();
   const { addTransaction } = useNotificationManager();
-  const { writeAsync: execute, data: updateData } = useContractWrite({
-    calls: callData,
-  });
 
   useEffect(() => {
     if (!nftData) return;
@@ -49,22 +47,28 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
     ]);
   }, [nftData, tokenId]);
 
-  useEffect(() => {
-    if (!updateData?.transaction_hash) return;
-    addTransaction({
-      timestamp: Date.now(),
-      subtext: `For identity ${tokenId}`,
-      type: NotificationType.TRANSACTION,
-      data: {
-        type: TransactionType.SET_PFP,
-        hash: updateData.transaction_hash,
-        status: "pending",
-      },
-    });
-    setPfpTxHash(updateData.transaction_hash);
-    closeModal(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [updateData]); // We want to trigger this only when the tx passed
+  const confirm = useCallback(() => {
+    if (!account) return;
+    account
+      .execute(callData)
+      .then((tx) => {
+        addTransaction({
+          timestamp: Date.now(),
+          subtext: `For identity ${tokenId}`,
+          type: NotificationType.TRANSACTION,
+          data: {
+            type: TransactionType.SET_PFP,
+            hash: tx.transaction_hash,
+            status: "pending",
+          },
+        });
+        setPfpTxHash(tx.transaction_hash);
+        closeModal(false);
+      })
+      .catch((error) => {
+        console.error("Transaction execution failed", error);
+      });
+  }, [account, callData, addTransaction, setPfpTxHash, tokenId, closeModal]);
 
   return (
     <Modal
@@ -106,7 +110,7 @@ const ModalProfilePic: FunctionComponent<ModalProfilePicProps> = ({
               />
             }
             description=""
-            onClick={() => execute()}
+            onClick={confirm}
           />
           <div className={ppStyles.modalBack} onClick={() => closeModal(true)}>
             <ArrowLeftIcon width="24" color={theme.palette.secondary.main} />
