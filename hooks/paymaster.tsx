@@ -31,7 +31,10 @@ import { decimalToHex } from "@/utils/feltService";
 
 export type GasMethod = "traditional" | "paymaster";
 
-const usePaymaster = (callData: Call[], then: () => void) => {
+const usePaymaster = (
+  callData: Call[],
+  then: (transactionHash: string) => void
+) => {
   const { account } = useAccount();
   const [gaslessAPIAvailable, setGaslessAPIAvailable] = useState<boolean>(true);
   const [gaslessCompatibility, setGaslessCompatibility] =
@@ -227,7 +230,10 @@ const usePaymaster = (callData: Call[], then: () => void) => {
                 deploymentData,
               }),
             })
-              .then(then)
+              .then((res) => res.json())
+              .then((data) => {
+                return then(data.transactionHash);
+              })
               .catch((error) => {
                 console.error("Error when executing with Paymaster:", error);
               });
@@ -244,11 +250,11 @@ const usePaymaster = (callData: Call[], then: () => void) => {
             : {},
           gaslessOptions
         )
-          .then(then)
+          .then((res) => then(res.transactionHash))
           .catch((error) => {
             console.error("Error when executing with Paymaster:", error);
           });
-    } else execute().then(then);
+    } else execute().then((res) => then(res.transaction_hash));
   };
 
   const loadingDeploymentData =

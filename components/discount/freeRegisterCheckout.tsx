@@ -58,6 +58,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [couponError, setCouponError] = useState<string>("");
   const [signature, setSignature] = useState<string[]>(["", ""]);
   const [loadingCoupon, setLoadingCoupon] = useState<boolean>(false);
+  const [transactionHash, setTransactionHash] = useState<string | undefined>();
   const {
     handleRegister,
     data: registerData,
@@ -72,11 +73,18 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     sponsoredDeploymentAvailable,
     maxGasTokenAmount,
     loadingDeploymentData,
-  } = usePaymaster(callData, () =>
+  } = usePaymaster(callData, async (transactionHash) => {
     setDomainsMinting((prev) =>
       new Map(prev).set(encodedDomain.toString(), true)
-    )
-  );
+    );
+    console.log(transactionHash);
+    if (transactionHash) setTransactionHash(transactionHash);
+  });
+
+  useEffect(() => {
+    if (!registerData?.transaction_hash) return;
+    setTransactionHash(registerData.transaction_hash);
+  }, [registerData]);
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -116,7 +124,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   }
 
   useEffect(() => {
-    if (!registerData?.transaction_hash) return;
+    if (!transactionHash) return;
     posthog?.capture("register");
     addTransaction({
       timestamp: Date.now(),
@@ -124,14 +132,14 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       type: NotificationType.TRANSACTION,
       data: {
         type: TransactionType.BUY_DOMAIN,
-        hash: registerData.transaction_hash,
+        hash: transactionHash,
         status: "pending",
       },
     });
 
     router.push(`/confirmation?tokenId=${tokenId}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [registerData, tokenId]);
+  }, [transactionHash, tokenId]);
 
   useEffect(() => {
     if (!coupon) {
