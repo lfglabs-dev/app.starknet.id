@@ -11,12 +11,12 @@ import styles from "../../styles/components/navbar.module.css";
 import connectStyles from "../../styles/components/walletConnect.module.css";
 import Button from "./button";
 import { useConnect, useAccount, useDisconnect } from "@starknet-react/core";
+import { sepolia, mainnet } from "@starknet-react/chains";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { useMediaQuery } from "@mui/material";
 import { CircularProgress } from "@mui/material";
 import ModalWallet from "./modalWallet";
-import { constants } from "starknet";
 import { useTheme } from "@mui/material/styles";
 import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
 import DesktopNav from "./desktopNav";
@@ -32,6 +32,7 @@ import {
 import WalletConnect from "./walletConnect";
 import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon";
 import errorLottie from "../../public/visuals/errorLottie.json";
+import { bigintToStringHex } from "@/utils/stringService";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -52,8 +53,8 @@ const Navbar: FunctionComponent = () => {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [showWalletConnectModal, setShowWalletConnectModal] =
     useState<boolean>(false);
-  const [lastConnector, setLastConnector] = useState<Connector | null>(null);
 
+  const [lastConnector, setLastConnector] = useState<Connector | null>(null);
   // could be replaced by a useProfileData from starknet-react when updated
   useEffect(() => {
     if (starknetIdNavigator !== null && address !== undefined) {
@@ -92,10 +93,8 @@ const Navbar: FunctionComponent = () => {
     if (!isConnected || !account) return;
     account.getChainId().then((chainId) => {
       const isWrongNetwork =
-        (chainId === constants.StarknetChainId.SN_SEPOLIA &&
-          network === "mainnet") ||
-        (chainId === constants.StarknetChainId.SN_MAIN &&
-          network === "testnet");
+        (chainId === bigintToStringHex(sepolia.id) && network === "mainnet") ||
+        (chainId === bigintToStringHex(mainnet.id) && network === "testnet");
       setIsWrongNetwork(isWrongNetwork);
     });
   }, [account, network, isConnected]);
