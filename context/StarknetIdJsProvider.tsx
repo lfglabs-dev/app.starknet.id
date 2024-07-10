@@ -40,7 +40,7 @@ export const StarknetIdJsProvider: FunctionComponent<Context> = ({
         ? constants.StarknetChainId.SN_SEPOLIA
         : constants.StarknetChainId.SN_MAIN
     );
-  }, [provider]);
+  }, [provider, isTestnet]);
 
   useMemo(() => {
     if (!address) return;
