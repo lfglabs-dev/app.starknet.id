@@ -96,12 +96,14 @@ function MyApp({ Component, pageProps }: AppProps) {
             <StarknetConfig
               chains={chains}
               provider={providers}
-              connectors={
-                addWalnutLogsToConnectors({
-                  connectors: getConnectors() as any,
-                  apiKey: process.env.NEXT_PUBLIC_WALNUT_API_KEY as string,
-                }) as any
-              }
+              connectors={getConnectors() as Connector[]}
+              // Remove Walnut for now as it's not up to date
+              // connectors={
+              //   addWalnutLogsToConnectors({
+              //     connectors: getConnectors() as any,
+              //     apiKey: process.env.NEXT_PUBLIC_WALNUT_API_KEY as string,
+              //   }) as any
+              // }
               autoConnect
             >
               <StarknetIdJsProvider>

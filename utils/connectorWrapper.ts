@@ -16,6 +16,7 @@ export const getConnectors = () => {
       url: process.env.NEXT_PUBLIC_APP_LINK as string,
       chainId: constants.NetworkName.SN_MAIN,
       icons: ["https://app.starknet.id/visuals/StarknetIdLogo.svg"],
+      rpcUrl: process.env.NEXT_PUBLIC_RPC_URL as string,
     }),
     new WebWalletConnector({
       url:

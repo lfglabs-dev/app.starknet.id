@@ -42,13 +42,12 @@ const Navbar: FunctionComponent = () => {
   const theme = useTheme();
   const [nav, setNav] = useState<boolean>(false);
   const [desktopNav, setDesktopNav] = useState<boolean>(false);
-  const { address, account } = useAccount();
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const { account, isConnected } = useAccount();
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const { connectAsync, connectors } = useConnect();
   const { disconnect } = useDisconnect();
   const isMobile = useMediaQuery("(max-width:425px)");
-  const domainOrAddress = useDisplayName(address ?? "", isMobile);
+  const domainOrAddress = useDisplayName(account?.address ?? "", isMobile);
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
   const [txLoading, setTxLoading] = useState<number>(0);
@@ -61,10 +60,12 @@ const Navbar: FunctionComponent = () => {
 
   // could be replaced by a useProfileData from starknet-react when updated
   useEffect(() => {
-    if (starknetIdNavigator !== null && address !== undefined) {
-      starknetIdNavigator.getProfileData(address).then(setProfile);
+    if (starknetIdNavigator !== null && account !== undefined) {
+      starknetIdNavigator
+        .getProfileData(account?.address as string)
+        .then(setProfile);
     }
-  }, [address, starknetIdNavigator]);
+  }, [account, starknetIdNavigator]);
 
   const connectWallet = async (connector: Connector) => {
     try {
@@ -82,16 +83,17 @@ const Navbar: FunctionComponent = () => {
   // Autoconnect
   useEffect(() => {
     const connectToStarknet = async () => {
+      if (isConnected) return;
       const connector = getLastConnected();
       if (connector && connector.available()) await connectWallet(connector);
     };
     connectToStarknet();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectAsync, connectors]); // Disable to make sure it only runs once
+  }, [connectors]); // Disable to make sure it only runs once
 
-  useEffect(() => {
-    address ? setIsConnected(true) : setIsConnected(false);
-  }, [address]);
+  // useEffect(() => {
+  //   address ? setIsConnected(true) : setIsConnected(false);
+  // }, [address]);
 
   useEffect(() => {
     if (!isConnected || !account) return;
@@ -111,7 +113,7 @@ const Navbar: FunctionComponent = () => {
 
   function disconnectByClick(): void {
     disconnect();
-    setIsConnected(false);
+    // setIsConnected(false);
     setIsWrongNetwork(false);
     setShowWallet(false);
     localStorage.removeItem("SID-connectedWallet");
