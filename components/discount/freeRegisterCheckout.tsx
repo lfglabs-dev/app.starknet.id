@@ -1,9 +1,8 @@
 import React from "react";
 import type { FunctionComponent } from "react";
 import { useEffect, useState } from "react";
-import type { Call } from "starknet";
 import Button from "../UI/button";
-import { useAccount, useSendTransaction } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import { getDomainWithStark } from "../../utils/stringService";
 import { posthog } from "posthog-js";
@@ -20,6 +19,8 @@ import { getFreeDomain } from "@/utils/campaignService";
 import TermCheckbox from "../domains/termCheckbox";
 import { useRouter } from "next/router";
 import FreeRegisterSummary from "./freeRegisterSummary";
+import { Call } from "starknet";
+import usePaymaster from "@/hooks/paymaster";
 
 type FreeRegisterCheckoutProps = {
   domain: string;
@@ -47,19 +48,43 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const { account, address } = useAccount();
-  const { sendAsync: execute, data: registerData } = useSendTransaction({
-    calls: callData,
-  });
   const [domainsMinting, setDomainsMinting] = useState<Map<string, boolean>>(
     new Map()
   );
+  const { addTransaction } = useNotificationManager();
   const router = useRouter();
   const [tokenId, setTokenId] = useState<number>(0);
   const [coupon, setCoupon] = useState<string>("");
   const [couponError, setCouponError] = useState<string>("");
   const [signature, setSignature] = useState<string[]>(["", ""]);
   const [loadingCoupon, setLoadingCoupon] = useState<boolean>(false);
-  const { addTransaction } = useNotificationManager();
+  const [transactionHash, setTransactionHash] = useState<string | undefined>();
+  const {
+    handleRegister,
+    data: registerData,
+    paymasterRewards,
+    gasTokenPrices,
+    gasTokenPrice,
+    loadingGas,
+    gasMethod,
+    setGasMethod,
+    gaslessCompatibility,
+    setGasTokenPrice,
+    sponsoredDeploymentAvailable,
+    maxGasTokenAmount,
+    loadingDeploymentData,
+  } = usePaymaster(callData, async (transactionHash) => {
+    setDomainsMinting((prev) =>
+      new Map(prev).set(encodedDomain.toString(), true)
+    );
+    console.log(transactionHash);
+    if (transactionHash) setTransactionHash(transactionHash);
+  });
+
+  useEffect(() => {
+    if (!registerData?.transaction_hash) return;
+    setTransactionHash(registerData.transaction_hash);
+  }, [registerData]);
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -99,7 +124,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   }
 
   useEffect(() => {
-    if (!registerData?.transaction_hash) return;
+    if (!transactionHash) return;
     posthog?.capture("register");
     addTransaction({
       timestamp: Date.now(),
@@ -107,14 +132,14 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       type: NotificationType.TRANSACTION,
       data: {
         type: TransactionType.BUY_DOMAIN,
-        hash: registerData.transaction_hash,
+        hash: transactionHash,
         status: "pending",
       },
     });
 
     router.push(`/confirmation?tokenId=${tokenId}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [registerData, tokenId]);
+  }, [transactionHash, tokenId]);
 
   useEffect(() => {
     if (!coupon) {
@@ -150,13 +175,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     });
   }, [coupon, domain, address]);
 
-  const handleRegister = () =>
-    execute().then(() =>
-      setDomainsMinting((prev) =>
-        new Map(prev).set(encodedDomain.toString(), true)
-      )
-    );
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -181,7 +199,21 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
           </div>
         </div>
         <div className={styles.summary}>
-          <FreeRegisterSummary duration={duration} domain={domain} />
+          <FreeRegisterSummary
+            duration={duration}
+            domain={domain}
+            hasPaymasterRewards={paymasterRewards.length > 0}
+            gasTokenPrices={gasTokenPrices}
+            gasTokenPrice={gasTokenPrice}
+            setGasTokenPrice={setGasTokenPrice}
+            gasMethod={gasMethod}
+            setGasMethod={setGasMethod}
+            paymasterAvailable={
+              gaslessCompatibility?.isCompatible || sponsoredDeploymentAvailable
+            }
+            maxGasTokenAmount={maxGasTokenAmount}
+            deployed={gaslessCompatibility?.isCompatible}
+          />
           <Divider className="w-full" />
           <TermCheckbox
             checked={termsBox}
@@ -197,13 +229,21 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 !targetAddress ||
                 !termsBox ||
                 Boolean(couponError) ||
-                loadingCoupon
+                loadingCoupon ||
+                loadingGas ||
+                loadingDeploymentData
               }
             >
               {!termsBox
                 ? "Please accept terms & policies"
                 : couponError
                 ? "Enter a valid Coupon"
+                : loadingGas
+                ? "Loading gas"
+                : loadingDeploymentData
+                ? paymasterRewards.length > 0
+                  ? "Loading deployment data"
+                  : "No Paymaster reward available"
                 : "Register my domain"}
             </Button>
           ) : (

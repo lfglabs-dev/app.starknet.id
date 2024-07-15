@@ -16,7 +16,10 @@ import { useAccount } from "@starknet-react/core";
 import { Call, TypedData, constants } from "starknet";
 import { useSendTransaction } from "@starknet-react/core";
 import { hexToDecimal } from "../../../../utils/feltService";
-import { minifyDomain } from "../../../../utils/stringService";
+import {
+  bigintToStringHex,
+  minifyDomain,
+} from "../../../../utils/stringService";
 import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
 import theme from "../../../../styles/theme";
 import { posthog } from "posthog-js";
@@ -24,6 +27,7 @@ import ProfilSecurityIcon from "../../../UI/iconsComponents/icons/profilSecurity
 import identityChangeCalls from "../../../../utils/callData/identityChangeCalls";
 import { useNotificationManager } from "../../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../../utils/constants";
+import { mainnet, sepolia } from "@starknet-react/chains";
 
 type ClickablePersonhoodIconProps = {
   width: string;
@@ -221,8 +225,8 @@ const ClickablePersonhoodIcon: FunctionComponent<
                       walletAddress={address}
                       starknetChainId={
                         network === "testnet"
-                          ? constants.StarknetChainId.SN_SEPOLIA
-                          : constants.StarknetChainId.SN_MAIN
+                          ? bigintToStringHex(sepolia.id)
+                          : bigintToStringHex(mainnet.id)
                       }
                       chainType="STARKNET"
                     />

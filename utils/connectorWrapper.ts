@@ -1,9 +1,9 @@
-import { constants } from "starknet";
 import { Connector } from "starknetkit";
 import { ArgentMobileConnector } from "starknetkit/argentMobile";
 import { InjectedConnector } from "starknetkit/injected";
 import { WebWalletConnector } from "starknetkit/webwallet";
 import { getBrowser } from "./browserService";
+import { constants } from "starknet";
 
 export const getConnectors = () => {
   const connectors = [
