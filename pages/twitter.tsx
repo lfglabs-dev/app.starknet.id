@@ -26,7 +26,7 @@ const Twitter: NextPage = () => {
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
-  const [calls, setCalls] = useState<Call | undefined>();
+  const [calls, setCalls] = useState<Call>({} as Call);
 
   useEffect(() => {
     if (!tokenId) {
