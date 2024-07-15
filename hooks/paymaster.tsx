@@ -63,6 +63,14 @@ const usePaymaster = (
     });
   }, []);
 
+  const refreshRewards = useCallback(() => {
+    if (!account) return;
+    fetchAccountsRewards(account.address, {
+      ...gaslessOptions,
+      protocol: "STARKNETID",
+    }).then(setPaymasterRewards);
+  }, [account]);
+
   useEffect(() => {
     if (!account || !gaslessAPIAvailable) return;
     fetchAccountCompatibility(account.address, gaslessOptions)
@@ -71,11 +79,8 @@ const usePaymaster = (
         setGaslessCompatibility(undefined);
         console.error(e);
       });
-    fetchAccountsRewards(account.address, {
-      ...gaslessOptions,
-      protocol: "STARKNETID",
-    }).then(setPaymasterRewards);
-  }, [account, gaslessAPIAvailable]);
+    refreshRewards();
+  }, [account, gaslessAPIAvailable, refreshRewards]);
 
   const estimateCalls = useCallback(
     async (
@@ -238,6 +243,7 @@ const usePaymaster = (
     gaslessCompatibility,
     maxGasTokenAmount,
     loadingDeploymentData,
+    refreshRewards,
   };
 };
 

@@ -62,13 +62,9 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const {
     handleRegister,
     paymasterRewards,
-    gasTokenPrices,
-    gasTokenPrice,
     loadingGas,
-    gaslessCompatibility,
-    setGasTokenPrice,
-    maxGasTokenAmount,
     loadingDeploymentData,
+    refreshRewards,
   } = usePaymaster(callData, async (transactionHash) => {
     setDomainsMinting((prev) =>
       new Map(prev).set(encodedDomain.toString(), true)
@@ -85,6 +81,11 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   useEffect(() => {
     if (address) setTargetAddress(address);
   }, [address]);
+
+  useEffect(() => {
+    if (loadingCoupon || !coupon) return;
+    refreshRewards();
+  }, [loadingCoupon, coupon, refreshRewards]);
 
   useEffect(() => {
     // salt must not be empty to preserve privacy
@@ -188,16 +189,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
               </div>
             </div>
             <div className={styles.summary}>
-              <FreeRegisterSummary
-                duration={duration}
-                domain={domain}
-                hasPaymasterRewards={paymasterRewards.length > 0}
-                gasTokenPrices={gasTokenPrices}
-                gasTokenPrice={gasTokenPrice}
-                setGasTokenPrice={setGasTokenPrice}
-                maxGasTokenAmount={maxGasTokenAmount}
-                deployed={gaslessCompatibility?.isCompatible}
-              />
+              <FreeRegisterSummary duration={duration} domain={domain} />
               <Divider className="w-full" />
               <TermCheckbox
                 checked={termsBox}
