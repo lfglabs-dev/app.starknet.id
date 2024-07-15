@@ -11,7 +11,7 @@ import {
   executeCalls,
 } from "@avnu/gasless-sdk";
 import {
-  useContractWrite,
+  useSendTransaction,
   useProvider,
   useAccount,
   useConnect,
@@ -50,7 +50,7 @@ const usePaymaster = (
   const [loadingGas, setLoadingGas] = useState<boolean>(false);
   const [sponsoredDeploymentAvailable, setSponsoredDeploymentAvailable] =
     useState<boolean>(false);
-  const { writeAsync: execute, data } = useContractWrite({
+  const { sendAsync: execute, data } = useSendTransaction({
     calls: callData,
   });
   const { connector } = useConnect();
