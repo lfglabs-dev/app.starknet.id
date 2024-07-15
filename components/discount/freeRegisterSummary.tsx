@@ -5,9 +5,8 @@ import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
 import { GasTokenPrice } from "@avnu/gasless-sdk";
 import { tokenNames } from "@/utils/altcoinService";
 import { shortenDomain } from "@/utils/stringService";
-import StyledToolTip from "../UI/styledTooltip";
-import { GasMethod } from "@/hooks/paymaster";
 import { Alert } from "@mui/material";
+import { useAccount } from "@starknet-react/core";
 
 type FreeRegisterSummaryProps = {
   duration: number;
@@ -16,9 +15,6 @@ type FreeRegisterSummaryProps = {
   gasTokenPrices?: GasTokenPrice[];
   gasTokenPrice?: GasTokenPrice;
   setGasTokenPrice: (price: GasTokenPrice) => void;
-  gasMethod: GasMethod;
-  setGasMethod: (method: GasMethod) => void;
-  paymasterAvailable: boolean;
   maxGasTokenAmount?: bigint;
   deployed?: boolean;
 };
@@ -30,12 +26,11 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
   gasTokenPrices,
   gasTokenPrice,
   setGasTokenPrice,
-  gasMethod,
-  setGasMethod,
-  paymasterAvailable,
   maxGasTokenAmount,
   deployed,
 }) => {
+  const { address } = useAccount();
+
   function getMessage() {
     return `${Math.floor(duration / 30)} months of domain registration`;
   }
@@ -56,41 +51,7 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
             <strong>Free</strong>
           </p>
         </div>
-        <div className={styles.gasMethods}>
-          <button
-            disabled={gasMethod === "traditional"}
-            onClick={() => setGasMethod("traditional")}
-            className={
-              gasMethod === "traditional"
-                ? styles.gasMethodSelected
-                : styles.gasMethod
-            }
-            type="button"
-          >
-            Traditional Transaction
-          </button>
-          <StyledToolTip
-            title={`Allows you to pay less gas and choose other currencies to pay fees. ${
-              paymasterAvailable
-                ? ""
-                : "Wallet not compatible. Please deploy it or switch to ArgentX in order to use Paymaster."
-            }`}
-          >
-            <button
-              onClick={() => setGasMethod("paymaster")}
-              className={
-                gasMethod === "paymaster"
-                  ? styles.gasMethodSelected
-                  : styles.gasMethod
-              }
-              type="button"
-              disabled={!paymasterAvailable}
-            >
-              Gasless Transaction
-            </button>
-          </StyledToolTip>
-        </div>
-        {gasMethod === "paymaster" ? (
+        {address ? (
           hasPaymasterRewards ? (
             <div className="flex items-center gap-2">
               <DoneIcon width="24" color="green" />

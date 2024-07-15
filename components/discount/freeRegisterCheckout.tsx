@@ -7,7 +7,7 @@ import { getDomainWithStark } from "../../utils/stringService";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
-import { Divider } from "@mui/material";
+import { Divider, useMediaQuery } from "@mui/material";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import BackButton from "../UI/backButton";
@@ -61,30 +61,21 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [transactionHash, setTransactionHash] = useState<string | undefined>();
   const {
     handleRegister,
-    data: registerData,
     paymasterRewards,
     gasTokenPrices,
     gasTokenPrice,
     loadingGas,
-    gasMethod,
-    setGasMethod,
     gaslessCompatibility,
     setGasTokenPrice,
-    sponsoredDeploymentAvailable,
     maxGasTokenAmount,
     loadingDeploymentData,
   } = usePaymaster(callData, async (transactionHash) => {
     setDomainsMinting((prev) =>
       new Map(prev).set(encodedDomain.toString(), true)
     );
-    console.log(transactionHash);
     if (transactionHash) setTransactionHash(transactionHash);
   });
-
-  useEffect(() => {
-    if (!registerData?.transaction_hash) return;
-    setTransactionHash(registerData.transaction_hash);
-  }, [registerData]);
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -142,11 +133,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   }, [transactionHash, tokenId]);
 
   useEffect(() => {
-    if (!coupon) {
-      setCouponError("Please enter a coupon code");
-      setLoadingCoupon(false);
-      return;
-    }
+    if (!coupon) return setLoadingCoupon(false);
     const lastSuccessCoupon = localStorage.getItem("lastSuccessCoupon");
     if (coupon === lastSuccessCoupon) {
       setCouponError("");
@@ -178,78 +165,82 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <div className={styles.form}>
-          <BackButton onClick={() => goBack()} />
-          <div className="flex flex-col items-start gap-4 self-stretch">
-            <p className={styles.legend}>Your registration</p>
-            <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
-          </div>
-          <div className="flex flex-col items-start gap-6 self-stretch">
-            {couponCode ? (
-              <TextField
-                helperText={couponHelper}
-                label="Coupon code"
-                value={coupon}
-                onChange={(e) => changeCoupon(e.target.value)}
-                color="secondary"
-                error={Boolean(couponError)}
-                errorMessage={couponError}
+        {address || !isMobile ? (
+          <>
+            <div className={styles.form}>
+              <BackButton onClick={() => goBack()} />
+              <div className="flex flex-col items-start gap-4 self-stretch">
+                <p className={styles.legend}>Your registration</p>
+                <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
+              </div>
+              <div className="flex flex-col items-start gap-6 self-stretch">
+                {couponCode ? (
+                  <TextField
+                    helperText={couponHelper}
+                    label="Coupon code"
+                    value={coupon}
+                    onChange={(e) => changeCoupon(e.target.value)}
+                    color="secondary"
+                    error={Boolean(couponError)}
+                    errorMessage={couponError}
+                  />
+                ) : null}
+              </div>
+            </div>
+            <div className={styles.summary}>
+              <FreeRegisterSummary
+                duration={duration}
+                domain={domain}
+                hasPaymasterRewards={paymasterRewards.length > 0}
+                gasTokenPrices={gasTokenPrices}
+                gasTokenPrice={gasTokenPrice}
+                setGasTokenPrice={setGasTokenPrice}
+                maxGasTokenAmount={maxGasTokenAmount}
+                deployed={gaslessCompatibility?.isCompatible}
               />
-            ) : null}
-          </div>
-        </div>
-        <div className={styles.summary}>
-          <FreeRegisterSummary
-            duration={duration}
-            domain={domain}
-            hasPaymasterRewards={paymasterRewards.length > 0}
-            gasTokenPrices={gasTokenPrices}
-            gasTokenPrice={gasTokenPrice}
-            setGasTokenPrice={setGasTokenPrice}
-            gasMethod={gasMethod}
-            setGasMethod={setGasMethod}
-            paymasterAvailable={
-              gaslessCompatibility?.isCompatible || sponsoredDeploymentAvailable
-            }
-            maxGasTokenAmount={maxGasTokenAmount}
-            deployed={gaslessCompatibility?.isCompatible}
-          />
-          <Divider className="w-full" />
-          <TermCheckbox
-            checked={termsBox}
-            onChange={() => setTermsBox(!termsBox)}
-          />
-          {address ? (
-            <Button
-              onClick={handleRegister}
-              disabled={
-                (domainsMinting.get(encodedDomain) as boolean) ||
-                !account ||
-                !duration ||
-                !targetAddress ||
-                !termsBox ||
-                Boolean(couponError) ||
-                loadingCoupon ||
-                loadingGas ||
-                loadingDeploymentData
-              }
-            >
-              {!termsBox
-                ? "Please accept terms & policies"
-                : couponError
-                ? "Enter a valid Coupon"
-                : loadingGas
-                ? "Loading gas"
-                : loadingDeploymentData
-                ? paymasterRewards.length > 0
-                  ? "Loading deployment data"
-                  : "No Paymaster reward available"
-                : "Register my domain"}
-            </Button>
-          ) : (
+              <Divider className="w-full" />
+              <TermCheckbox
+                checked={termsBox}
+                onChange={() => setTermsBox(!termsBox)}
+              />
+              {address ? (
+                <Button
+                  onClick={handleRegister}
+                  disabled={
+                    (domainsMinting.get(encodedDomain) as boolean) ||
+                    !account ||
+                    !duration ||
+                    !targetAddress ||
+                    !termsBox ||
+                    Boolean(couponError) ||
+                    loadingCoupon ||
+                    loadingGas ||
+                    loadingDeploymentData
+                  }
+                >
+                  {!termsBox
+                    ? "Please accept terms & policies"
+                    : couponError
+                    ? "Enter a valid Coupon"
+                    : loadingGas
+                    ? "Loading gas"
+                    : loadingDeploymentData
+                    ? paymasterRewards.length > 0
+                      ? "Loading deployment data"
+                      : "No Paymaster reward available"
+                    : "Register my domain"}
+                </Button>
+              ) : (
+                <ConnectButton />
+              )}
+            </div>
+          </>
+        ) : (
+          <div className={styles.form}>
+            <BackButton onClick={() => goBack()} />
             <ConnectButton />
-          )}
-        </div>
+          </div>
+        )}
       </div>
       <div
         className={styles.image}

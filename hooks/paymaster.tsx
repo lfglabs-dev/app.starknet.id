@@ -10,12 +10,7 @@ import {
   fetchGaslessStatus,
   executeCalls,
 } from "@avnu/gasless-sdk";
-import {
-  useContractWrite,
-  useProvider,
-  useAccount,
-  useConnect,
-} from "@starknet-react/core";
+import { useProvider, useAccount, useConnect } from "@starknet-react/core";
 import {
   AccountInterface,
   Call,
@@ -29,8 +24,6 @@ import isStarknetDeployed from "./isDeployed";
 import { gaslessOptions } from "@/utils/constants";
 import { decimalToHex } from "@/utils/feltService";
 
-export type GasMethod = "traditional" | "paymaster";
-
 const usePaymaster = (
   callData: Call[],
   then: (transactionHash: string) => void
@@ -41,7 +34,6 @@ const usePaymaster = (
     useState<GaslessCompatibility>();
   const [gasTokenPrices, setGasTokenPrices] = useState<GasTokenPrice[]>([]);
   const [maxGasTokenAmount, setMaxGasTokenAmount] = useState<bigint>();
-  const [gasMethod, setGasMethod] = useState<GasMethod>("traditional");
   const { provider } = useProvider();
   const [paymasterRewards, setPaymasterRewards] = useState<PaymasterReward[]>(
     []
@@ -50,9 +42,6 @@ const usePaymaster = (
   const [loadingGas, setLoadingGas] = useState<boolean>(false);
   const [sponsoredDeploymentAvailable, setSponsoredDeploymentAvailable] =
     useState<boolean>(false);
-  const { writeAsync: execute, data } = useContractWrite({
-    calls: callData,
-  });
   const { connector } = useConnect();
   const { isDeployed, deploymentData } = isStarknetDeployed(account?.address);
   const [deploymentTypedData, setDeploymentTypedData] = useState<TypedData>();
@@ -69,23 +58,10 @@ const usePaymaster = (
   }, [gasTokenPrice, gasTokenPrices]);
 
   useEffect(() => {
-    if (gaslessCompatibility?.isCompatible && paymasterRewards.length > 0)
-      setGasMethod("paymaster");
-  }, [gaslessCompatibility, paymasterRewards]);
-
-  useEffect(() => {
-    if (!gaslessCompatibility?.isCompatible) setGasMethod("traditional");
-  }, [gaslessCompatibility]);
-
-  useEffect(() => {
     fetchGaslessStatus(gaslessOptions).then((res) => {
       setGaslessAPIAvailable(res.status);
     });
   }, []);
-
-  useEffect(() => {
-    if (gasMethod === "traditional" && loadingGas) setLoadingGas(false);
-  }, [gasMethod, loadingGas]);
 
   useEffect(() => {
     if (!account || !gaslessAPIAvailable) return;
@@ -140,8 +116,7 @@ const usePaymaster = (
       !account ||
       !gasTokenPrice ||
       !gaslessCompatibility ||
-      !gaslessAPIAvailable ||
-      gasMethod === "traditional"
+      !gaslessAPIAvailable
     )
       return;
     setLoadingGas(true);
@@ -158,7 +133,6 @@ const usePaymaster = (
       setLoadingGas(false);
     });
   }, [
-    gasMethod,
     callData,
     account,
     gasTokenPrice,
@@ -205,70 +179,63 @@ const usePaymaster = (
 
   const handleRegister = () => {
     if (!account) return;
-    if (gasMethod === "paymaster") {
-      if (deploymentData && deploymentTypedData) {
-        account
-          .signMessage(
-            deploymentTypedData,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            { skipDeploy: true }
-          )
-          .then((signature: Signature) => {
-            fetch(`${gaslessOptions.baseUrl}/gasless/v1/execute`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                userAddress: account.address,
-                typedData: JSON.stringify(deploymentTypedData),
-                signature: (signature as string[]).map(decimalToHex),
-                deploymentData,
-              }),
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                return then(data.transactionHash);
-              })
-              .catch((error) => {
-                console.error("Error when executing with Paymaster:", error);
-              });
-          });
-      } else
-        executeCalls(
-          account,
-          callData,
-          paymasterRewards.length === 0
-            ? {
-                gasTokenAddress: gasTokenPrice?.tokenAddress,
-                maxGasTokenAmount,
-              }
-            : {},
-          gaslessOptions
+    if (deploymentData && deploymentTypedData) {
+      account
+        .signMessage(
+          deploymentTypedData,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          { skipDeploy: true }
         )
-          .then((res) => then(res.transactionHash))
-          .catch((error) => {
-            console.error("Error when executing with Paymaster:", error);
-          });
-    } else execute().then((res) => then(res.transaction_hash));
+        .then((signature: Signature) => {
+          fetch(`${gaslessOptions.baseUrl}/gasless/v1/execute`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userAddress: account.address,
+              typedData: JSON.stringify(deploymentTypedData),
+              signature: (signature as string[]).map(decimalToHex),
+              deploymentData,
+            }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              return then(data.transactionHash);
+            })
+            .catch((error) => {
+              console.error("Error when executing with Paymaster:", error);
+            });
+        });
+    } else
+      executeCalls(
+        account,
+        callData,
+        paymasterRewards.length === 0
+          ? {
+              gasTokenAddress: gasTokenPrice?.tokenAddress,
+              maxGasTokenAmount,
+            }
+          : {},
+        gaslessOptions
+      )
+        .then((res) => then(res.transactionHash))
+        .catch((error) => {
+          console.error("Error when executing with Paymaster:", error);
+        });
   };
 
-  const loadingDeploymentData =
-    !isDeployed && !deploymentTypedData && gasMethod === "paymaster";
+  const loadingDeploymentData = !isDeployed && !deploymentTypedData;
 
   return {
     handleRegister,
-    data,
     paymasterRewards,
     gasTokenPrices,
     gasTokenPrice,
     loadingGas,
     setGasTokenPrice,
-    gasMethod,
-    setGasMethod,
     gaslessCompatibility,
-    sponsoredDeploymentAvailable,
     maxGasTokenAmount,
     loadingDeploymentData,
   };
