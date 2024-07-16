@@ -78,7 +78,7 @@ const Navbar: FunctionComponent = () => {
   // Autoconnect
   useEffect(() => {
     const connectToStarknet = async () => {
-      if (isConnected) return;
+      if (isConnected || isMobile) return;
       const connector = getLastConnected();
       if (connector && connector.available()) await connectWallet(connector);
     };
