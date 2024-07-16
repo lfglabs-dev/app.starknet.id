@@ -18,9 +18,11 @@ import { getFreeDomain } from "@/utils/campaignService";
 import TermCheckbox from "../domains/termCheckbox";
 import { useRouter } from "next/router";
 import FreeRegisterSummary from "./freeRegisterSummary";
-import { useAccount } from "@starknet-react/core";
+import { useAccount, useConnect } from "@starknet-react/core";
 import { Call } from "starknet";
 import usePaymaster from "@/hooks/paymaster";
+import WalletConnect from "../UI/walletConnect";
+import { Connector } from "starknetkit";
 
 type FreeRegisterCheckoutProps = {
   domain: string;
@@ -59,6 +61,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [signature, setSignature] = useState<string[]>(["", ""]);
   const [loadingCoupon, setLoadingCoupon] = useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState<string | undefined>();
+  const [showWalletConnectModal, setShowWalletConnectModal] =
+    useState<boolean>(true);
   const {
     handleRegister,
     paymasterRewards,
@@ -71,6 +75,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     );
     if (transactionHash) setTransactionHash(transactionHash);
   });
+  const { connectAsync, connectors } = useConnect();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   // on first load, we generate a salt
@@ -163,76 +168,72 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     });
   }, [coupon, domain, address]);
 
+  const connectWallet = async (connector: Connector) => {
+    await connectAsync({ connector });
+    localStorage.setItem("SID-connectedWallet", connector.id);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        {address || !isMobile ? (
-          <>
-            <div className={styles.form}>
-              <BackButton onClick={() => goBack()} />
-              <div className="flex flex-col items-start gap-4 self-stretch">
-                <p className={styles.legend}>Your registration</p>
-                <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
-              </div>
-              <div className="flex flex-col items-start gap-6 self-stretch">
-                {couponCode ? (
-                  <TextField
-                    helperText={couponHelper}
-                    label="Coupon code"
-                    value={coupon}
-                    onChange={(e) => changeCoupon(e.target.value)}
-                    color="secondary"
-                    error={Boolean(couponError)}
-                    errorMessage={couponError}
-                  />
-                ) : null}
-              </div>
-            </div>
-            <div className={styles.summary}>
-              <FreeRegisterSummary duration={duration} domain={domain} />
-              <Divider className="w-full" />
-              <TermCheckbox
-                checked={termsBox}
-                onChange={() => setTermsBox(!termsBox)}
-              />
-              {address ? (
-                <Button
-                  onClick={handleRegister}
-                  disabled={
-                    (domainsMinting.get(encodedDomain) as boolean) ||
-                    !account ||
-                    !duration ||
-                    !targetAddress ||
-                    !termsBox ||
-                    Boolean(couponError) ||
-                    loadingCoupon ||
-                    loadingGas ||
-                    loadingDeploymentData
-                  }
-                >
-                  {!termsBox
-                    ? "Please accept terms & policies"
-                    : couponError
-                    ? "Enter a valid Coupon"
-                    : loadingGas
-                    ? "Loading gas"
-                    : loadingDeploymentData
-                    ? paymasterRewards.length > 0
-                      ? "Loading deployment data"
-                      : "No Paymaster reward available"
-                    : "Register my domain"}
-                </Button>
-              ) : (
-                <ConnectButton />
-              )}
-            </div>
-          </>
-        ) : (
-          <div className={styles.form}>
-            <BackButton onClick={() => goBack()} />
-            <ConnectButton />
+        <div className={styles.form}>
+          <BackButton onClick={() => goBack()} />
+          <div className="flex flex-col items-start gap-4 self-stretch">
+            <p className={styles.legend}>Your registration</p>
+            <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
           </div>
-        )}
+          <div className="flex flex-col items-start gap-6 self-stretch">
+            {couponCode ? (
+              <TextField
+                helperText={couponHelper}
+                label="Coupon code"
+                value={coupon}
+                onChange={(e) => changeCoupon(e.target.value)}
+                color="secondary"
+                error={Boolean(couponError)}
+                errorMessage={couponError}
+              />
+            ) : null}
+          </div>
+        </div>
+        <div className={styles.summary}>
+          <FreeRegisterSummary duration={duration} domain={domain} />
+          <Divider className="w-full" />
+          <TermCheckbox
+            checked={termsBox}
+            onChange={() => setTermsBox(!termsBox)}
+          />
+          {address ? (
+            <Button
+              onClick={handleRegister}
+              disabled={
+                (domainsMinting.get(encodedDomain) as boolean) ||
+                !account ||
+                !duration ||
+                !targetAddress ||
+                !termsBox ||
+                Boolean(couponError) ||
+                loadingCoupon ||
+                loadingGas ||
+                loadingDeploymentData
+              }
+            >
+              {!termsBox
+                ? "Please accept terms & policies"
+                : couponError
+                ? "Enter a valid Coupon"
+                : loadingGas
+                ? "Loading gas"
+                : loadingDeploymentData
+                ? paymasterRewards.length > 0
+                  ? "Loading deployment data"
+                  : "No Paymaster reward available"
+                : "Register my domain"}
+            </Button>
+          ) : (
+            <ConnectButton />
+          )}
+        </div>
       </div>
       <div
         className={styles.image}
@@ -240,6 +241,14 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
           backgroundImage: `url(${banner})`,
         }}
       />
+      {!address && isMobile ? (
+        <WalletConnect
+          closeModal={() => setShowWalletConnectModal(false)}
+          open={showWalletConnectModal}
+          connectors={connectors as Connector[]}
+          connectWallet={connectWallet}
+        />
+      ) : null}
     </div>
   );
 };
