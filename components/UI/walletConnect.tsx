@@ -8,6 +8,7 @@ import {
   getConnectorDiscovery,
   getConnectorIcon,
   getConnectorName,
+  isInArgentMobileAppBrowser,
   sortConnectors,
 } from "@/utils/connectorWrapper";
 
@@ -32,8 +33,10 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   const filterConnectors = (connectors: Connector[]) => {
-    if (!isMobile) return connectors;
-    return connectors.filter((connector) => connector.id !== "argentX");
+    if (isInArgentMobileAppBrowser()) {
+      return connectors.filter((connector) => connector.id === "argentMobile");
+    }
+    return connectors;
   };
 
   const openBraavosMobile = () => {

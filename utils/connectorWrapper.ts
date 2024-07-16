@@ -1,4 +1,4 @@
-import { Connector } from "starknetkit";
+import { Connector, StarknetWindowObject } from "starknetkit";
 import { ArgentMobileConnector } from "starknetkit/argentMobile";
 import { InjectedConnector } from "starknetkit/injected";
 import { WebWalletConnector } from "starknetkit/webwallet";
@@ -88,6 +88,19 @@ export const getLastConnected = (): Connector | null => {
     return connector || null;
   }
   return null;
+};
+
+export const isInArgentMobileAppBrowser = (): boolean => {
+  if (!window?.starknet_argentX) {
+    return false;
+  }
+
+  const starknetMobile =
+    window?.starknet_argentX as unknown as StarknetWindowObject & {
+      isInAppBrowser: boolean;
+    };
+
+  return starknetMobile?.isInAppBrowser;
 };
 
 const wallets = [

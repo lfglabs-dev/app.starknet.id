@@ -83,7 +83,7 @@ const Navbar: FunctionComponent = () => {
     };
     connectToStarknet();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectAsync, connectors]); // Disable to make sure it only runs once
+  }, [connectors]); // Disable to make sure it only runs once
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);
