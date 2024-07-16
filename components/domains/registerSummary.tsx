@@ -75,6 +75,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
     }
   }, [ethUsdQuote, ethPrice]);
 
+  // Ideally, this should be a separate components
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
     return (
       <div className="flex items-center justify-center">
