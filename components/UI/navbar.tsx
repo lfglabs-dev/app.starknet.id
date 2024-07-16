@@ -76,15 +76,15 @@ const Navbar: FunctionComponent = () => {
   };
 
   // Autoconnect
-  // useEffect(() => {
-  //   const connectToStarknet = async () => {
-  //     if (isConnected || isMobile) return;
-  //     const connector = getLastConnected();
-  //     if (connector && connector.available()) await connectWallet(connector);
-  //   };
-  //   connectToStarknet();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [connectors]); // Disable to make sure it only runs once
+  useEffect(() => {
+    const connectToStarknet = async () => {
+      if (isConnected || isMobile) return;
+      const connector = getLastConnected();
+      if (connector && connector.available()) await connectWallet(connector);
+    };
+    connectToStarknet();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [connectors]); // Disable to make sure it only runs once
 
   useEffect(() => {
     address ? setIsConnected(true) : setIsConnected(false);

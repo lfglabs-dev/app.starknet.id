@@ -91,7 +91,7 @@ export const getLastConnected = (): Connector | null => {
 };
 
 export const isInArgentMobileAppBrowser = (): boolean => {
-  if (typeof window === undefined || !window?.starknet_argentX) {
+  if (typeof window === "undefined" || !window?.starknet_argentX) {
     return false;
   }
 
