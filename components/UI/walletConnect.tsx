@@ -42,7 +42,8 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
     if (isArgentMobile) {
       return connectors.filter((connector) => connector.id === "argentMobile");
     }
-    return connectors;
+    if (!isMobile) return connectors;
+    return connectors.filter((connector) => connector.id !== "argentX");
   };
 
   const openBraavosMobile = () => {
