@@ -61,16 +61,27 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [transactionHash, setTransactionHash] = useState<string | undefined>();
   const {
     handleRegister,
+    data: registerData,
     paymasterRewards,
     loadingGas,
     loadingDeploymentData,
     refreshRewards,
-  } = usePaymaster(callData, async (transactionHash) => {
-    setDomainsMinting((prev) =>
-      new Map(prev).set(encodedDomain.toString(), true)
-    );
-    if (transactionHash) setTransactionHash(transactionHash);
-  });
+    invalidTx,
+  } = usePaymaster(
+    callData,
+    async (transactionHash) => {
+      setDomainsMinting((prev) =>
+        new Map(prev).set(encodedDomain.toString(), true)
+      );
+      if (transactionHash) setTransactionHash(transactionHash);
+    },
+    !coupon
+  );
+
+  useEffect(() => {
+    if (!registerData?.transaction_hash) return;
+    setTransactionHash(registerData.transaction_hash);
+  }, [registerData]);
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -95,11 +106,11 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   }, [salt]);
 
   useEffect(() => {
+    if (signature[0] === null) return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     setTokenId(newTokenId);
     const txMetadataHash = `0x${metadataHash}` as HexString;
-
     const freeRegisterCalls = registrationCalls.getFreeRegistrationCalls(
       newTokenId,
       encodedDomain,
@@ -209,10 +220,12 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
             >
               {!termsBox
                 ? "Please accept terms & policies"
-                : couponError
+                : couponError || !coupon
                 ? "Enter a valid Coupon"
                 : loadingGas
-                ? "Loading gas"
+                ? invalidTx
+                  ? "Invalid signature"
+                  : "Loading gas"
                 : loadingDeploymentData
                 ? paymasterRewards.length > 0
                   ? "Loading deployment data"
