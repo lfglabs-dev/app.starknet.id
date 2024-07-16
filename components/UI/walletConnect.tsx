@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Modal, useMediaQuery } from "@mui/material";
 import { Connector } from "starknetkit";
@@ -26,14 +26,20 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
   connectWallet,
 }) => {
   const router = useRouter();
+  const [isArgentMobile, setIsArgentMobile] = useState(false);
   const connect = (connector: Connector) => {
     connectWallet(connector);
     closeModal();
   };
   const isMobile = useMediaQuery("(max-width: 768px)");
 
+  useEffect(() => {
+    if (typeof window !== "undefined")
+      setIsArgentMobile(isInArgentMobileAppBrowser());
+  }, []);
+
   const filterConnectors = (connectors: Connector[]) => {
-    if (isInArgentMobileAppBrowser()) {
+    if (isArgentMobile) {
       return connectors.filter((connector) => connector.id === "argentMobile");
     }
     return connectors;
