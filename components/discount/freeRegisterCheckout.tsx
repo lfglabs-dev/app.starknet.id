@@ -7,7 +7,7 @@ import { getDomainWithStark } from "../../utils/stringService";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
-import { Divider, useMediaQuery } from "@mui/material";
+import { Divider } from "@mui/material";
 import registrationCalls from "../../utils/callData/registrationCalls";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import BackButton from "../UI/backButton";
@@ -18,11 +18,9 @@ import { getFreeDomain } from "@/utils/campaignService";
 import TermCheckbox from "../domains/termCheckbox";
 import { useRouter } from "next/router";
 import FreeRegisterSummary from "./freeRegisterSummary";
-import { useAccount, useConnect } from "@starknet-react/core";
+import { useAccount } from "@starknet-react/core";
 import { Call } from "starknet";
 import usePaymaster from "@/hooks/paymaster";
-import WalletConnect from "../UI/walletConnect";
-import { Connector } from "starknetkit";
 
 type FreeRegisterCheckoutProps = {
   domain: string;
@@ -61,8 +59,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [signature, setSignature] = useState<string[]>(["", ""]);
   const [loadingCoupon, setLoadingCoupon] = useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState<string | undefined>();
-  const [showWalletConnectModal, setShowWalletConnectModal] =
-    useState<boolean>(true);
   const {
     handleRegister,
     paymasterRewards,
@@ -75,8 +71,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     );
     if (transactionHash) setTransactionHash(transactionHash);
   });
-  const { connectAsync, connectors } = useConnect();
-  const isMobile = useMediaQuery("(max-width: 768px)");
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -168,11 +162,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     });
   }, [coupon, domain, address]);
 
-  const connectWallet = async (connector: Connector) => {
-    await connectAsync({ connector });
-    localStorage.setItem("SID-connectedWallet", connector.id);
-  };
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -241,14 +230,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
           backgroundImage: `url(${banner})`,
         }}
       />
-      {!address && isMobile ? (
-        <WalletConnect
-          closeModal={() => setShowWalletConnectModal(false)}
-          open={showWalletConnectModal}
-          connectors={connectors as Connector[]}
-          connectWallet={connectWallet}
-        />
-      ) : null}
     </div>
   );
 };
