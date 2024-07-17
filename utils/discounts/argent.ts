@@ -10,7 +10,7 @@ export const argentDiscount = {
   },
   name: "Argent 1$ domain",
   image: "/argent/argentdiscount.webp",
-  expiry: 1719964799000, // timestamp in ms
+  expiry: 1722470399000, // timestamp in ms
   discountMailGroupId: "124587870775149633",
   sponsor: "0x64d28d1d1d53a0b5de12e3678699bc9ba32c1cb19ce1c048578581ebb7f8396",
 };
