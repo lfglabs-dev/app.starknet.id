@@ -209,6 +209,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
               disabled={
                 (domainsMinting.get(encodedDomain) as boolean) ||
                 !account ||
+                !coupon ||
                 !duration ||
                 !targetAddress ||
                 !termsBox ||
