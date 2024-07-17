@@ -115,7 +115,10 @@ const usePaymaster = (
           "pending",
           true
         )
-        .catch(() => setInvalidTx(true));
+        .catch((e) => {
+          console.error(e);
+          setInvalidTx(true);
+        });
     },
     [provider]
   );
