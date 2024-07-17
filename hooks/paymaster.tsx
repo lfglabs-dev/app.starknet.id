@@ -229,7 +229,10 @@ const usePaymaster = (
                 return then(data.transactionHash);
               })
               .catch((error) => {
-                console.error("Error when executing with Paymaster:", error);
+                console.error(
+                  "Error when executing (including deployment) with Paymaster:",
+                  error
+                );
               });
           });
       } else
