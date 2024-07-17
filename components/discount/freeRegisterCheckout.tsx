@@ -95,7 +95,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   useEffect(() => {
     if (loadingCoupon || !coupon) return;
     refreshRewards();
-  }, [loadingCoupon, coupon, refreshRewards]);
+  }, [loadingCoupon, coupon, refreshRewards, address]);
 
   useEffect(() => {
     // salt must not be empty to preserve privacy
