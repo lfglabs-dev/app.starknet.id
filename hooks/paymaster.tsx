@@ -143,6 +143,7 @@ const usePaymaster = (
     setLoadingGas(true);
     estimateCalls(account, callData).then((fees) => {
       if (!fees) return;
+      setInvalidTx(false);
       const estimatedGasFeesInGasToken = getGasFeesInGasToken(
         BigInt(fees.overall_fee),
         gasTokenPrice,
