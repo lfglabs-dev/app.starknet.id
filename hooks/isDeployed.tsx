@@ -10,30 +10,33 @@ export default function isStarknetDeployed(address?: string) {
   const [isDeployed, setIsDeployed] = useState<boolean>(false);
   const [deploymentData, setDeploymentData] =
     useState<GetDeploymentDataResult>();
+  const [nonDeployedAddress, setNonDeployedAddress] = useState<string>();
+  const [reload, setReload] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!address || !provider || !connector?.id) return;
+    if (isDeployed || deploymentData) return;
+    const interval = setInterval(() => {
+      setReload(true);
+    }, 3000);
+    return () => clearTimeout(interval);
+  }, [isDeployed, deploymentData]);
+
+  useEffect(() => {
+    if (reload) return setReload(false);
+    if (
+      !address ||
+      !provider ||
+      !connector?.id ||
+      address === nonDeployedAddress
+    )
+      return;
     const checkIsDeployed = async () => {
       try {
-        provider
-          .getClassHashAt(address)
-          .then((classHash) => {
-            console.log("Class hash", classHash);
-            setIsDeployed(true);
-            setDeploymentData(undefined);
-            return;
-          })
-          .catch((error) => {
-            console.error("Error getting class hash", error);
-            setIsDeployed(false);
-          });
-
         const availableWallets = await getStarknet.getAvailableWallets();
         if (!availableWallets) {
           setDeploymentData(undefined);
           return;
         }
-
         availableWallets.forEach(async (connectedWallet) => {
           if (
             connectedWallet.id === connector?.id &&
@@ -47,6 +50,7 @@ export default function isStarknetDeployed(address?: string) {
             );
             if (isGetDeploymentDataResult(data)) {
               setDeploymentData(data);
+              setNonDeployedAddress(address);
             } else {
               console.error(
                 "Received data is not in the expected format:",
@@ -59,11 +63,12 @@ export default function isStarknetDeployed(address?: string) {
       } catch (error) {
         console.error("Error getting deployment data", error);
         setDeploymentData(undefined);
+        setIsDeployed(true);
       }
     };
 
     checkIsDeployed();
-  }, [address, provider, connector?.id]);
+  }, [address, provider, connector?.id, nonDeployedAddress, reload]);
 
   return { isDeployed, deploymentData };
 }

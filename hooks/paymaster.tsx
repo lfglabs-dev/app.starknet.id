@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   fetchAccountCompatibility,
   fetchAccountsRewards,
@@ -7,7 +7,6 @@ import {
   getGasFeesInGasToken,
   GasTokenPrice,
   fetchGasTokenPrices,
-  fetchGaslessStatus,
   executeCalls,
 } from "@avnu/gasless-sdk";
 import {
@@ -35,7 +34,6 @@ const usePaymaster = (
   loadingCallData: boolean
 ) => {
   const { account } = useAccount();
-  const [gaslessAPIAvailable, setGaslessAPIAvailable] = useState<boolean>(true);
   const [gaslessCompatibility, setGaslessCompatibility] =
     useState<GaslessCompatibility>();
   const [gasTokenPrices, setGasTokenPrices] = useState<GasTokenPrice[]>([]);
@@ -46,8 +44,6 @@ const usePaymaster = (
   );
   const [gasTokenPrice, setGasTokenPrice] = useState<GasTokenPrice>();
   const [loadingGas, setLoadingGas] = useState<boolean>(false);
-  const [sponsoredDeploymentAvailable, setSponsoredDeploymentAvailable] =
-    useState<boolean>(false);
   const { writeAsync: execute, data } = useContractWrite({
     calls: callData,
   });
@@ -56,22 +52,14 @@ const usePaymaster = (
   const [deploymentTypedData, setDeploymentTypedData] = useState<TypedData>();
   const [invalidTx, setInvalidTx] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (!account || !connector) return;
-    setSponsoredDeploymentAvailable(
-      connector.id === "argentX" || connector.id === "argentMobile"
-    );
-  }, [account, connector]);
+  const argentWallet = useMemo(
+    () => connector?.id === "argentX" || connector?.id === "argentMobile",
+    [connector]
+  );
 
   useEffect(() => {
     if (!gasTokenPrice) setGasTokenPrice(gasTokenPrices[0]);
   }, [gasTokenPrice, gasTokenPrices]);
-
-  useEffect(() => {
-    fetchGaslessStatus(gaslessOptions).then((res) => {
-      setGaslessAPIAvailable(res.status);
-    });
-  }, []);
 
   const refreshRewards = useCallback(() => {
     if (!account) return;
@@ -82,7 +70,7 @@ const usePaymaster = (
   }, [account]);
 
   useEffect(() => {
-    if (!account || !gaslessAPIAvailable) return;
+    if (!account) return;
     fetchAccountCompatibility(account.address, gaslessOptions)
       .then(setGaslessCompatibility)
       .catch((e) => {
@@ -90,7 +78,7 @@ const usePaymaster = (
         console.error(e);
       });
     refreshRewards();
-  }, [account, gaslessAPIAvailable, refreshRewards]);
+  }, [account, refreshRewards]);
 
   const estimateCalls = useCallback(
     async (
@@ -132,13 +120,7 @@ const usePaymaster = (
   }, []);
 
   useEffect(() => {
-    if (
-      !account ||
-      !gasTokenPrice ||
-      !gaslessCompatibility ||
-      !gaslessAPIAvailable ||
-      loadingCallData
-    )
+    if (!account || !gasTokenPrice || !gaslessCompatibility || loadingCallData)
       return;
     setLoadingGas(true);
     estimateCalls(account, callData).then((fees) => {
@@ -161,16 +143,18 @@ const usePaymaster = (
     gasTokenPrice,
     gaslessCompatibility,
     estimateCalls,
-    gaslessAPIAvailable,
     loadingCallData,
   ]);
+
+  const loadingDeploymentData = !isDeployed && !deploymentData;
 
   useEffect(() => {
     if (
       !account ||
       isDeployed ||
       !deploymentData ||
-      !sponsoredDeploymentAvailable
+      !argentWallet ||
+      loadingDeploymentData
     )
       return;
     fetch(`${gaslessOptions.baseUrl}/gasless/v1/build-typed-data`, {
@@ -186,7 +170,7 @@ const usePaymaster = (
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.messages) return;
+        if (data.messages || data.error) return;
         setDeploymentTypedData(data);
       })
       .catch((error) => {
@@ -196,15 +180,17 @@ const usePaymaster = (
     account,
     isDeployed,
     deploymentData,
-    sponsoredDeploymentAvailable,
+    argentWallet,
     callData,
     maxGasTokenAmount,
+    loadingDeploymentData,
   ]);
 
   const handleRegister = () => {
     if (!account) return;
-    if (connector?.id === "argentX" || connector?.id === "argentMobile") {
+    if (argentWallet) {
       if (deploymentData && deploymentTypedData) {
+        console.log(deploymentData);
         account
           .signMessage(
             deploymentTypedData,
@@ -255,7 +241,7 @@ const usePaymaster = (
     } else execute().then((res) => then(res.transaction_hash));
   };
 
-  const loadingDeploymentData = !isDeployed && !deploymentTypedData;
+  const loadingTypedData = deploymentData && !deploymentTypedData;
 
   return {
     handleRegister,
@@ -270,6 +256,7 @@ const usePaymaster = (
     loadingDeploymentData,
     refreshRewards,
     invalidTx,
+    loadingTypedData,
   };
 };
 

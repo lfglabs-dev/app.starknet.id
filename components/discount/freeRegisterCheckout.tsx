@@ -67,6 +67,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     loadingDeploymentData,
     refreshRewards,
     invalidTx,
+    loadingTypedData,
   } = usePaymaster(
     callData,
     async (transactionHash) => {
@@ -216,7 +217,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 Boolean(couponError) ||
                 loadingCoupon ||
                 loadingGas ||
-                loadingDeploymentData
+                loadingDeploymentData ||
+                loadingTypedData
               }
             >
               {!termsBox
@@ -227,6 +229,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 ? invalidTx
                   ? "Invalid signature"
                   : "Loading gas"
+                : loadingTypedData
+                ? "Building typed data"
                 : loadingDeploymentData
                 ? paymasterRewards.length > 0
                   ? "Loading deployment data"
