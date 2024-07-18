@@ -53,7 +53,7 @@ const usePaymaster = (
   const [invalidTx, setInvalidTx] = useState<boolean>(false);
 
   const argentWallet = useMemo(
-    () => connector?.id === "argentX" || connector?.id === "argentMobile",
+    () => connector?.id === "argentX" /*|| connector?.id === "argentMobile"*/,
     [connector]
   );
 
