@@ -18,7 +18,7 @@ export default function isStarknetDeployed(address?: string) {
     const interval = setInterval(() => {
       setReload(true);
     }, 3000);
-    return () => clearTimeout(interval);
+    return () => clearInterval(interval);
   }, [isDeployed, deploymentData]);
 
   useEffect(() => {
