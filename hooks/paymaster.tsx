@@ -146,7 +146,8 @@ const usePaymaster = (
     loadingCallData,
   ]);
 
-  const loadingDeploymentData = !isDeployed && !deploymentData;
+  const loadingDeploymentData =
+    connector?.id !== "argentMobile" && !isDeployed && !deploymentData;
 
   useEffect(() => {
     if (
@@ -188,12 +189,8 @@ const usePaymaster = (
 
   const handleRegister = () => {
     if (!account) return;
-    if (argentWallet) {
-      if (
-        deploymentData &&
-        deploymentTypedData &&
-        connector?.id !== "argentMobile"
-      ) {
+    if (argentWallet && (connector?.id !== "argentMobile" || isDeployed)) {
+      if (deploymentData && deploymentTypedData) {
         account
           .signMessage(
             deploymentTypedData,
@@ -244,7 +241,8 @@ const usePaymaster = (
     } else execute().then((res) => then(res.transaction_hash));
   };
 
-  const loadingTypedData = connector?.id !== "argentMobile" && deploymentData && !deploymentTypedData;
+  const loadingTypedData =
+    connector?.id !== "argentMobile" && deploymentData && !deploymentTypedData;
 
   return {
     handleRegister,
