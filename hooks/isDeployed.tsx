@@ -32,6 +32,19 @@ export default function isStarknetDeployed(address?: string) {
       return;
     const checkIsDeployed = async () => {
       try {
+        provider
+          .getClassHashAt(address)
+          .then((classHash) => {
+            console.log("Class hash", classHash);
+            setIsDeployed(true);
+            setDeploymentData(undefined);
+            return;
+          })
+          .catch((error) => {
+            console.error("Error getting class hash", error);
+            setIsDeployed(false);
+          });
+
         const availableWallets = await getStarknet.getAvailableWallets();
         if (!availableWallets) {
           setDeploymentData(undefined);
@@ -63,7 +76,6 @@ export default function isStarknetDeployed(address?: string) {
       } catch (error) {
         console.error("Error getting deployment data", error);
         setDeploymentData(undefined);
-        setIsDeployed(true);
       }
     };
 
