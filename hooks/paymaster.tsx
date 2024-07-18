@@ -189,8 +189,11 @@ const usePaymaster = (
   const handleRegister = () => {
     if (!account) return;
     if (argentWallet) {
-      if (deploymentData && deploymentTypedData) {
-        console.log(deploymentData);
+      if (
+        deploymentData &&
+        deploymentTypedData &&
+        connector?.id !== "argentMobile"
+      ) {
         account
           .signMessage(
             deploymentTypedData,
@@ -241,7 +244,7 @@ const usePaymaster = (
     } else execute().then((res) => then(res.transaction_hash));
   };
 
-  const loadingTypedData = deploymentData && !deploymentTypedData;
+  const loadingTypedData = connector?.id !== "argentMobile" && deploymentData && !deploymentTypedData;
 
   return {
     handleRegister,
