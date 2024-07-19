@@ -398,7 +398,8 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
                 !address ||
                 !termsBox ||
                 (needMedadata && emailError) ||
-                !areDomainSelected(selectedDomains)
+                !areDomainSelected(selectedDomains) ||
+                !(callData.length > 0) // Cover the case where there are no domains to subscribe
               }
             >
               {!termsBox
@@ -407,7 +408,9 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
                 ? "Select a domain to subscribe"
                 : needMedadata && emailError
                 ? "Enter a valid Email"
-                : "Enable subscription"}
+                : callData.length > 0
+                ? "Enable subscription"
+                : "You're already subscribed"}
             </Button>
           ) : (
             <ConnectButton />
