@@ -63,23 +63,21 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     handleRegister,
     data: registerData,
     paymasterRewards,
-    gasTokenPrices,
-    gasTokenPrice,
     loadingGas,
-    gasMethod,
-    setGasMethod,
-    gaslessCompatibility,
-    setGasTokenPrice,
-    sponsoredDeploymentAvailable,
-    maxGasTokenAmount,
     loadingDeploymentData,
-  } = usePaymaster(callData, async (transactionHash) => {
-    setDomainsMinting((prev) =>
-      new Map(prev).set(encodedDomain.toString(), true)
-    );
-    console.log(transactionHash);
-    if (transactionHash) setTransactionHash(transactionHash);
-  });
+    refreshRewards,
+    invalidTx,
+    loadingTypedData,
+  } = usePaymaster(
+    callData,
+    async (transactionHash) => {
+      setDomainsMinting((prev) =>
+        new Map(prev).set(encodedDomain.toString(), true)
+      );
+      if (transactionHash) setTransactionHash(transactionHash);
+    },
+    !coupon
+  );
 
   useEffect(() => {
     if (!registerData?.transaction_hash) return;
@@ -96,6 +94,11 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   }, [address]);
 
   useEffect(() => {
+    if (loadingCoupon || !coupon) return;
+    refreshRewards();
+  }, [loadingCoupon, coupon, refreshRewards, address]);
+
+  useEffect(() => {
     // salt must not be empty to preserve privacy
     if (!salt) return;
     (async () => {
@@ -104,11 +107,11 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   }, [salt]);
 
   useEffect(() => {
+    if (signature[0] === null) return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     setTokenId(newTokenId);
     const txMetadataHash = `0x${metadataHash}` as HexString;
-
     const freeRegisterCalls = registrationCalls.getFreeRegistrationCalls(
       newTokenId,
       encodedDomain,
@@ -142,11 +145,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   }, [transactionHash, tokenId]);
 
   useEffect(() => {
-    if (!coupon) {
-      setCouponError("Please enter a coupon code");
-      setLoadingCoupon(false);
-      return;
-    }
+    if (!coupon) return setLoadingCoupon(false);
     const lastSuccessCoupon = localStorage.getItem("lastSuccessCoupon");
     if (coupon === lastSuccessCoupon) {
       setCouponError("");
@@ -199,21 +198,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
           </div>
         </div>
         <div className={styles.summary}>
-          <FreeRegisterSummary
-            duration={duration}
-            domain={domain}
-            hasPaymasterRewards={paymasterRewards.length > 0}
-            gasTokenPrices={gasTokenPrices}
-            gasTokenPrice={gasTokenPrice}
-            setGasTokenPrice={setGasTokenPrice}
-            gasMethod={gasMethod}
-            setGasMethod={setGasMethod}
-            paymasterAvailable={
-              gaslessCompatibility?.isCompatible || sponsoredDeploymentAvailable
-            }
-            maxGasTokenAmount={maxGasTokenAmount}
-            deployed={gaslessCompatibility?.isCompatible}
-          />
+          <FreeRegisterSummary duration={duration} domain={domain} />
           <Divider className="w-full" />
           <TermCheckbox
             checked={termsBox}
@@ -225,21 +210,27 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
               disabled={
                 (domainsMinting.get(encodedDomain) as boolean) ||
                 !account ||
+                !coupon ||
                 !duration ||
                 !targetAddress ||
                 !termsBox ||
                 Boolean(couponError) ||
                 loadingCoupon ||
                 loadingGas ||
-                loadingDeploymentData
+                loadingDeploymentData ||
+                loadingTypedData
               }
             >
               {!termsBox
                 ? "Please accept terms & policies"
-                : couponError
+                : couponError || !coupon
                 ? "Enter a valid Coupon"
                 : loadingGas
-                ? "Loading gas"
+                ? invalidTx
+                  ? "Invalid signature"
+                  : "Loading gas"
+                : loadingTypedData
+                ? "Building typed data"
                 : loadingDeploymentData
                 ? paymasterRewards.length > 0
                   ? "Loading deployment data"
