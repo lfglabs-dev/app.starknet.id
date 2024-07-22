@@ -37,9 +37,9 @@ const Identities: NextPage = () => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // We want this to run only once
-  const { writeAsync: execute, data: mintData } = useContractWrite({
-    calls: [callData],
-  });
+  // const { writeAsync: execute, data: mintData } = useContractWrite({
+  //   calls: [callData],
+  // });
 
   useEffect(() => {
     if (address) {
@@ -70,24 +70,25 @@ const Identities: NextPage = () => {
     }
   }, [address, router.asPath]);
 
-  useEffect(() => {
-    if (!mintData?.transaction_hash) return;
-    addTransaction({
-      timestamp: Date.now(),
-      subtext: `Minting identity #${randomTokenId}`,
-      type: NotificationType.TRANSACTION,
-      data: {
-        type: TransactionType.MINT_IDENTITY,
-        hash: mintData.transaction_hash,
-        status: "pending",
-      },
-    });
-    setIsTxModalOpen(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mintData]); // We want this to run only when the tx is sent
+  // useEffect(() => {
+  //   if (!mintData?.transaction_hash) return;
+  //   addTransaction({
+  //     timestamp: Date.now(),
+  //     subtext: `Minting identity #${randomTokenId}`,
+  //     type: NotificationType.TRANSACTION,
+  //     data: {
+  //       type: TransactionType.MINT_IDENTITY,
+  //       hash: mintData.transaction_hash,
+  //       status: "pending",
+  //     },
+  //   });
+  //   setIsTxModalOpen(true);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [mintData]); // We want this to run only when the tx is sent
 
   function mint() {
-    execute();
+    // execute();
+    console.log("minting");
   }
 
   const connectWallet = async (connector: Connector) => {
@@ -149,12 +150,12 @@ const Identities: NextPage = () => {
           )}
         </div>
       </div>
-      <TxConfirmationModal
+      {/*<TxConfirmationModal
         txHash={mintData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
         closeModal={() => setIsTxModalOpen(false)}
         title="Your identity NFT is on it's way !"
-      />
+      />*/}
       <WalletConnect
         closeModal={() => setShowWalletConnectModal(false)}
         open={showWalletConnectModal}
