@@ -2,7 +2,7 @@ import { Skeleton } from "@mui/material";
 import React, { FunctionComponent } from "react";
 import styles from "../../../styles/components/identityCard.module.css";
 
-const identityActionsSkeleton: FunctionComponent = () => {
+const IdentityActionsSkeleton: FunctionComponent = () => {
   return (
     <div className={styles.identitiesActionsSkeletonButtons}>
       <Skeleton variant="rounded" width={300} height={60} />
@@ -13,4 +13,4 @@ const identityActionsSkeleton: FunctionComponent = () => {
   );
 };
 
-export default identityActionsSkeleton;
+export default IdentityActionsSkeleton;

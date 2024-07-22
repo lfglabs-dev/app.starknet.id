@@ -17,7 +17,7 @@ const Confirmation: NextPage = () => {
   const { copied, copyToClipboard } = useCopyToClipboard();
 
   const redirect = () => {
-    if (tokenId) router.push(`/identities/${tokenId}`);
+    if (tokenId) router.push(`/identities/${tokenId}?minting=true`);
     else router.push(`/identities`);
   };
 
