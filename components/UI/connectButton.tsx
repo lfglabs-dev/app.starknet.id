@@ -40,7 +40,7 @@ const ConnectButton: FunctionComponent = () => {
               className={styles.btnIcon}
             />
           ) : null}
-          <p>Connect wallet</p>
+          <p className="mx-auto">Connect wallet</p>
           {lastConnector ? (
             <div
               className={styles.arrowDown}

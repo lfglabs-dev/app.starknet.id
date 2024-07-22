@@ -10,9 +10,26 @@ export default function isStarknetDeployed(address?: string) {
   const [isDeployed, setIsDeployed] = useState<boolean>(false);
   const [deploymentData, setDeploymentData] =
     useState<GetDeploymentDataResult>();
+  const [nonDeployedAddress, setNonDeployedAddress] = useState<string>();
+  const [reload, setReload] = useState<boolean>(false);
 
   useEffect(() => {
-    if (!address || !provider || !connector?.id) return;
+    if (isDeployed || deploymentData) return;
+    const interval = setInterval(() => {
+      setReload(true);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [isDeployed, deploymentData]);
+
+  useEffect(() => {
+    if (reload) return setReload(false);
+    if (
+      !address ||
+      !provider ||
+      !connector?.id ||
+      address === nonDeployedAddress
+    )
+      return;
     const checkIsDeployed = async () => {
       try {
         provider
@@ -33,7 +50,6 @@ export default function isStarknetDeployed(address?: string) {
           setDeploymentData(undefined);
           return;
         }
-
         availableWallets.forEach(async (connectedWallet) => {
           if (
             connectedWallet.id === connector?.id &&
@@ -47,6 +63,7 @@ export default function isStarknetDeployed(address?: string) {
             );
             if (isGetDeploymentDataResult(data)) {
               setDeploymentData(data);
+              setNonDeployedAddress(address);
             } else {
               console.error(
                 "Received data is not in the expected format:",
@@ -63,7 +80,7 @@ export default function isStarknetDeployed(address?: string) {
     };
 
     checkIsDeployed();
-  }, [address, provider, connector?.id]);
+  }, [address, provider, connector?.id, nonDeployedAddress, reload]);
 
   return { isDeployed, deploymentData };
 }

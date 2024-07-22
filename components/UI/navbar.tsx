@@ -33,6 +33,7 @@ import WalletConnect from "./walletConnect";
 import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon";
 import errorLottie from "../../public/visuals/errorLottie.json";
 import { bigintToStringHex } from "@/utils/stringService";
+import { useRouter } from "next/router";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
@@ -53,6 +54,13 @@ const Navbar: FunctionComponent = () => {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [showWalletConnectModal, setShowWalletConnectModal] =
     useState<boolean>(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const pageName = router.pathname.split("/")[1];
+    if (pageName !== "gift" && pageName !== "register") return;
+    if (isMobile) setShowWalletConnectModal(true);
+  }, [isMobile, router.pathname]);
 
   const [lastConnector, setLastConnector] = useState<Connector | null>(null);
   // could be replaced by a useProfileData from starknet-react when updated

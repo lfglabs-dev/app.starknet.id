@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   fetchAccountCompatibility,
   fetchAccountsRewards,
@@ -7,14 +7,13 @@ import {
   getGasFeesInGasToken,
   GasTokenPrice,
   fetchGasTokenPrices,
-  fetchGaslessStatus,
   executeCalls,
 } from "@avnu/gasless-sdk";
 import {
-  useContractWrite,
   useProvider,
   useAccount,
   useConnect,
+  useContractWrite,
 } from "@starknet-react/core";
 import {
   AccountInterface,
@@ -29,83 +28,63 @@ import isStarknetDeployed from "./isDeployed";
 import { gaslessOptions } from "@/utils/constants";
 import { decimalToHex } from "@/utils/feltService";
 
-export type GasMethod = "traditional" | "paymaster";
-
 const usePaymaster = (
   callData: Call[],
-  then: (transactionHash: string) => void
+  then: (transactionHash: string) => void,
+  loadingCallData: boolean
 ) => {
   const { account } = useAccount();
-  const [gaslessAPIAvailable, setGaslessAPIAvailable] = useState<boolean>(true);
   const [gaslessCompatibility, setGaslessCompatibility] =
     useState<GaslessCompatibility>();
   const [gasTokenPrices, setGasTokenPrices] = useState<GasTokenPrice[]>([]);
   const [maxGasTokenAmount, setMaxGasTokenAmount] = useState<bigint>();
-  const [gasMethod, setGasMethod] = useState<GasMethod>("traditional");
   const { provider } = useProvider();
   const [paymasterRewards, setPaymasterRewards] = useState<PaymasterReward[]>(
     []
   );
   const [gasTokenPrice, setGasTokenPrice] = useState<GasTokenPrice>();
   const [loadingGas, setLoadingGas] = useState<boolean>(false);
-  const [sponsoredDeploymentAvailable, setSponsoredDeploymentAvailable] =
-    useState<boolean>(false);
   const { writeAsync: execute, data } = useContractWrite({
     calls: callData,
   });
   const { connector } = useConnect();
   const { isDeployed, deploymentData } = isStarknetDeployed(account?.address);
   const [deploymentTypedData, setDeploymentTypedData] = useState<TypedData>();
+  const [invalidTx, setInvalidTx] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (!account || !connector) return;
-    setSponsoredDeploymentAvailable(
-      connector.id === "argentX" || connector.id === "argentMobile"
-    );
-  }, [account, connector]);
+  const argentWallet = useMemo(
+    () => connector?.id === "argentX" /*|| connector?.id === "argentMobile"*/,
+    [connector]
+  );
 
   useEffect(() => {
     if (!gasTokenPrice) setGasTokenPrice(gasTokenPrices[0]);
   }, [gasTokenPrice, gasTokenPrices]);
 
-  useEffect(() => {
-    if (gaslessCompatibility?.isCompatible && paymasterRewards.length > 0)
-      setGasMethod("paymaster");
-  }, [gaslessCompatibility, paymasterRewards]);
+  const refreshRewards = useCallback(() => {
+    if (!account) return;
+    fetchAccountsRewards(account.address, {
+      ...gaslessOptions,
+      protocol: "STARKNETID",
+    }).then(setPaymasterRewards);
+  }, [account]);
 
   useEffect(() => {
-    if (!gaslessCompatibility?.isCompatible) setGasMethod("traditional");
-  }, [gaslessCompatibility]);
-
-  useEffect(() => {
-    fetchGaslessStatus(gaslessOptions).then((res) => {
-      setGaslessAPIAvailable(res.status);
-    });
-  }, []);
-
-  useEffect(() => {
-    if (gasMethod === "traditional" && loadingGas) setLoadingGas(false);
-  }, [gasMethod, loadingGas]);
-
-  useEffect(() => {
-    if (!account || !gaslessAPIAvailable) return;
+    if (!account) return;
     fetchAccountCompatibility(account.address, gaslessOptions)
       .then(setGaslessCompatibility)
       .catch((e) => {
         setGaslessCompatibility(undefined);
         console.error(e);
       });
-    fetchAccountsRewards(account.address, {
-      ...gaslessOptions,
-      protocol: "STARKNETID",
-    }).then(setPaymasterRewards);
-  }, [account, gaslessAPIAvailable]);
+    refreshRewards();
+  }, [account, refreshRewards]);
 
   const estimateCalls = useCallback(
     async (
       account: AccountInterface,
       calls: Call[]
-    ): Promise<EstimateFeeResponse> => {
+    ): Promise<EstimateFeeResponse | void> => {
       const contractVersion = await provider.getContractVersion(
         account.address
       );
@@ -117,12 +96,17 @@ const usePaymaster = (
         calldata: transaction.getExecuteCalldata(calls, contractVersion.cairo),
         signature: [],
       };
-      return provider.getInvokeEstimateFee(
-        { ...invocation },
-        { ...details, nonce },
-        "pending",
-        true
-      );
+      return provider
+        .getInvokeEstimateFee(
+          { ...invocation },
+          { ...details, nonce },
+          "pending",
+          true
+        )
+        .catch((e) => {
+          console.error(e);
+          setInvalidTx(true);
+        });
     },
     [provider]
   );
@@ -136,16 +120,12 @@ const usePaymaster = (
   }, []);
 
   useEffect(() => {
-    if (
-      !account ||
-      !gasTokenPrice ||
-      !gaslessCompatibility ||
-      !gaslessAPIAvailable ||
-      gasMethod === "traditional"
-    )
+    if (!account || !gasTokenPrice || !gaslessCompatibility || loadingCallData)
       return;
     setLoadingGas(true);
     estimateCalls(account, callData).then((fees) => {
+      if (!fees) return;
+      setInvalidTx(false);
       const estimatedGasFeesInGasToken = getGasFeesInGasToken(
         BigInt(fees.overall_fee),
         gasTokenPrice,
@@ -158,21 +138,24 @@ const usePaymaster = (
       setLoadingGas(false);
     });
   }, [
-    gasMethod,
     callData,
     account,
     gasTokenPrice,
     gaslessCompatibility,
     estimateCalls,
-    gaslessAPIAvailable,
+    loadingCallData,
   ]);
+
+  const loadingDeploymentData =
+    connector?.id !== "argentMobile" && !isDeployed && !deploymentData;
 
   useEffect(() => {
     if (
       !account ||
       isDeployed ||
       !deploymentData ||
-      !sponsoredDeploymentAvailable
+      !argentWallet ||
+      loadingDeploymentData
     )
       return;
     fetch(`${gaslessOptions.baseUrl}/gasless/v1/build-typed-data`, {
@@ -188,7 +171,7 @@ const usePaymaster = (
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.messages) return;
+        if (data.messages || data.error) return;
         setDeploymentTypedData(data);
       })
       .catch((error) => {
@@ -198,14 +181,15 @@ const usePaymaster = (
     account,
     isDeployed,
     deploymentData,
-    sponsoredDeploymentAvailable,
+    argentWallet,
     callData,
     maxGasTokenAmount,
+    loadingDeploymentData,
   ]);
 
   const handleRegister = () => {
     if (!account) return;
-    if (gasMethod === "paymaster") {
+    if (argentWallet && (connector?.id !== "argentMobile" || isDeployed)) {
       if (deploymentData && deploymentTypedData) {
         account
           .signMessage(
@@ -232,7 +216,10 @@ const usePaymaster = (
                 return then(data.transactionHash);
               })
               .catch((error) => {
-                console.error("Error when executing with Paymaster:", error);
+                console.error(
+                  "Error when executing (including deployment) with Paymaster:",
+                  error
+                );
               });
           });
       } else
@@ -254,8 +241,8 @@ const usePaymaster = (
     } else execute().then((res) => then(res.transaction_hash));
   };
 
-  const loadingDeploymentData =
-    !isDeployed && !deploymentTypedData && gasMethod === "paymaster";
+  const loadingTypedData =
+    connector?.id !== "argentMobile" && deploymentData && !deploymentTypedData;
 
   return {
     handleRegister,
@@ -265,12 +252,12 @@ const usePaymaster = (
     gasTokenPrice,
     loadingGas,
     setGasTokenPrice,
-    gasMethod,
-    setGasMethod,
     gaslessCompatibility,
-    sponsoredDeploymentAvailable,
     maxGasTokenAmount,
     loadingDeploymentData,
+    refreshRewards,
+    invalidTx,
+    loadingTypedData,
   };
 };
 
