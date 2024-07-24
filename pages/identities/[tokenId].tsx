@@ -31,8 +31,24 @@ const TokenIdPage: NextPage = () => {
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [ppTxHash, setPpTxHash] = useState<string>();
   const [ppImageUrl, setPpImageUrl] = useState("");
+  const [minting, setMinting] = useState(false);
   const searchParams = useSearchParams();
-  const minting = searchParams.get("minting") === "true";
+  const mintingInUrl = searchParams.get("minting") === "true";
+
+  useEffect(() => {
+    if (mintingInUrl) setMinting(true);
+    else setMinting(false);
+  }, [mintingInUrl]);
+
+  const endMinting = useCallback(() => {
+    router.replace(router.asPath.split("?")[0]);
+    setMinting(false);
+    setHideActions(false);
+  }, [router]);
+
+  useEffect(() => {
+    if (minting && identity) endMinting();
+  }, [minting, identity, endMinting]);
 
   useEffect(() => {
     if (!identity || !address) {
@@ -78,10 +94,7 @@ const TokenIdPage: NextPage = () => {
           return response.json();
         })
         .then((data: IdentityData) => {
-          if (minting) {
-            router.replace(router.asPath.split("?")[0]);
-            setHideActions(false);
-          }
+          if (minting) endMinting();
           setIdentity(new Identity(data));
           setIsIdentityADomain(Boolean(data?.domain));
         })
@@ -95,7 +108,7 @@ const TokenIdPage: NextPage = () => {
             setIsIdentityADomain(false);
           }
         }),
-    [tokenId, minting, router]
+    [tokenId, minting, endMinting]
   );
 
   useEffect(() => {

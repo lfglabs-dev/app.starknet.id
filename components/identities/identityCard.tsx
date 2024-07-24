@@ -106,7 +106,9 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           </div>
           {minting ? (
             <div className="text-left h-full py-2">
-              <h1 className="text-3xl font-bold">Minting your identity...</h1>
+              <h1 className="text-3xl font-bold font-quickZap">
+                Minting your identity...
+              </h1>
               <p>This page will refresh automatically</p>
               <Skeleton className="mt-3" variant="rounded" height={30} />
               <Skeleton className="mt-3" variant="rounded" height={58} />
