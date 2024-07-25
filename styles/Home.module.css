@@ -2,6 +2,7 @@
   height: 88vh;
   position: relative;
   margin-top: 12vh;
+  overflow: auto;
 }
 
 .wrapperScreen {
