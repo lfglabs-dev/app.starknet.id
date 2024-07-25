@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import homeStyles from "../../styles/Home.module.css";
 import styles from "../../styles/components/identitiesV1.module.css";
 import { useRouter } from "next/router";
@@ -14,6 +14,8 @@ import BackButton from "../../components/UI/backButton";
 import { Identity } from "../../utils/apiWrappers/identity";
 import { formatHexString } from "../../utils/stringService";
 import { getDomainData } from "@/utils/cacheDomainData";
+import { useSearchParams } from "next/navigation";
+import IdentityActionsSkeleton from "@/components/identities/skeletons/identityActionsSkeleton";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -29,6 +31,24 @@ const TokenIdPage: NextPage = () => {
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [ppTxHash, setPpTxHash] = useState<string>();
   const [ppImageUrl, setPpImageUrl] = useState("");
+  const [minting, setMinting] = useState(false);
+  const searchParams = useSearchParams();
+  const mintingInUrl = searchParams.get("minting") === "true";
+
+  useEffect(() => {
+    if (mintingInUrl) setMinting(true);
+    else setMinting(false);
+  }, [mintingInUrl]);
+
+  const endMinting = useCallback(() => {
+    router.replace(router.asPath.split("?")[0]);
+    setMinting(false);
+    setHideActions(false);
+  }, [router]);
+
+  useEffect(() => {
+    if (minting && identity) endMinting();
+  }, [minting, identity, endMinting]);
 
   useEffect(() => {
     if (!identity || !address) {
@@ -64,35 +84,47 @@ const TokenIdPage: NextPage = () => {
     }
   };
 
+  const refreshData = useCallback(
+    () =>
+      fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/id_to_data?id=${tokenId}`)
+        .then(async (response) => {
+          if (!response.ok) {
+            throw new Error(await response.text());
+          }
+          return response.json();
+        })
+        .then((data: IdentityData) => {
+          if (minting) endMinting();
+          setIdentity(new Identity(data));
+          setIsIdentityADomain(Boolean(data?.domain));
+        })
+        .catch(() => {
+          // Domain data might not be indexed yet, so we check local storage
+          const domainData = getDomainData(tokenId);
+          if (domainData) {
+            setIdentity(new Identity(domainData));
+            setIsIdentityADomain(Boolean(domainData?.domain));
+          } else {
+            setIsIdentityADomain(false);
+          }
+        }),
+    [tokenId, minting, endMinting]
+  );
+
+  useEffect(() => {
+    if (minting && tokenId && !identity) {
+      const interval = setInterval(() => refreshData(), 1000);
+      return () => clearInterval(interval);
+    }
+  }, [minting, tokenId, identity, refreshData]);
+
   useEffect(() => {
     if (tokenId) {
-      const refreshData = () =>
-        fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/id_to_data?id=${tokenId}`)
-          .then(async (response) => {
-            if (!response.ok) {
-              throw new Error(await response.text());
-            }
-            return response.json();
-          })
-          .then((data: IdentityData) => {
-            setIdentity(new Identity(data));
-            setIsIdentityADomain(Boolean(data?.domain));
-          })
-          .catch(() => {
-            // Domain data might not be indexed yet, so we check local storage
-            const domainData = getDomainData(tokenId);
-            if (domainData) {
-              setIdentity(new Identity(domainData));
-              setIsIdentityADomain(Boolean(domainData?.domain));
-            } else {
-              setIsIdentityADomain(false);
-            }
-          });
       refreshData();
       const timer = setInterval(() => refreshData(), 30e3);
       return () => clearInterval(timer);
     }
-  }, [tokenId]);
+  }, [tokenId, refreshData]);
 
   return (
     <>
@@ -114,7 +146,7 @@ const TokenIdPage: NextPage = () => {
                     onPPClick={() => setIsUpdatingPp(true)}
                     ppImageUrl={ppImageUrl}
                   />
-                  {!hideActions && (
+                  {!hideActions ? (
                     <IdentityActions
                       isOwner={isOwner}
                       tokenId={tokenId}
@@ -122,6 +154,8 @@ const TokenIdPage: NextPage = () => {
                       identity={identity}
                       hideActionsHandler={hideActionsHandler}
                     />
+                  ) : (
+                    minting && <IdentityActionsSkeleton />
                   )}
                 </div>
                 <IdentityWarnings
