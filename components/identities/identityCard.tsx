@@ -15,6 +15,7 @@ import { debounce } from "../../utils/debounceService";
 import { Identity } from "../../utils/apiWrappers/identity";
 import CopyContent from "../UI/copyContent";
 import AddEvmAction from "./actions/addEvmAction";
+import { useSearchParams } from "next/navigation";
 
 type IdentityCardProps = {
   identity?: Identity;
@@ -38,6 +39,8 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   const isMobile = useMediaQuery("(max-width:1124px)");
   const handleMouseEnter = debounce(() => setIsHovered(true), 50);
   const handleMouseLeave = debounce(() => setIsHovered(false), 50);
+  const searchParams = useSearchParams();
+  const minting = searchParams.get("minting") === "true";
 
   return (
     <div className={styles.wrapper}>
@@ -101,6 +104,16 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
               </Tooltip>
             ) : null}
           </div>
+          {minting ? (
+            <div className="text-left h-full py-2">
+              <h1 className="text-3xl font-bold font-quickZap">
+                Minting your identity...
+              </h1>
+              <p>This page will refresh automatically</p>
+              <Skeleton className="mt-3" variant="rounded" height={30} />
+              <Skeleton className="mt-3" variant="rounded" height={58} />
+            </div>
+          ) : null}
           <div>
             <div className="flex flex-row items-center justify-center gap-5 mb-5">
               <div className="flex flex-col">
@@ -126,7 +139,6 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                 ) : null}
               </div>
             </div>
-
             <AddEvmAction identity={identity} isOwner={isOwner} />
             <SocialMediaActions
               identity={identity}
