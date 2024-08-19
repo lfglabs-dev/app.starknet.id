@@ -16,7 +16,10 @@ export default function Document() {
           content="Starknet ID: Your profile, seamlessly connecting you to the entire Starknet ecosystem."
         />
         <meta property="og:url" content={process.env.NEXT_PUBLIC_APP_LINK} />
-        <meta property="og:image" content="/visuals/starknetIdMeta.webp" />
+        <meta
+          property="og:image"
+          content={`${process.env.NEXT_PUBLIC_APP_LINK}/visuals/starknetIdMeta.webp`}
+        />
         <meta
           name="description"
           content="Starknet ID: Your profile, seamlessly connecting you to the entire Starknet ecosystem."
@@ -27,7 +30,10 @@ export default function Document() {
           name="twitter:description"
           content="Starknet ID: Your profile, seamlessly connecting you to the entire Starknet ecosystem."
         />
-        <meta name="twitter:image" content="/visuals/starknetIdMeta.webp" />
+        <meta
+          name="twitter:image"
+          content={`${process.env.NEXT_PUBLIC_APP_LINK}/visuals/starknetIdMeta.webp`}
+        />
         <meta name="twitter:card" content="player" />
         <meta name="twitter:site" content="@Starknet_id" />
         <meta name="twitter:player" content="https://app.starknet.id" />
