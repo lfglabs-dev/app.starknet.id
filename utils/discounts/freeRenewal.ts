@@ -13,7 +13,7 @@ export const freeRenewalDiscount: FreeRenewalDiscount = {
   expiry: 1816767999000, // timestamp in ms
   discountMailGroupId: "106085143136961963",
   offer: {
-    duration: 90, // in days
+    durationInDays: 90, // in days
     customMessage: "3 months free",
     discountId: "X", // No need
     price: "0",

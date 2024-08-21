@@ -3,6 +3,7 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { useAccount, useContractWrite } from "@starknet-react/core";
 import {
+  bigintToStringHex,
   formatHexString,
   isValidEmail,
   selectedDomainsToArray,
@@ -54,29 +55,26 @@ import useNeedSubscription from "@/hooks/useNeedSubscription";
 type FreeRenewalCheckoutProps = {
   groups: string[];
   goBack: () => void;
-  duration: number;
-  discountId: string;
-  customMessage: string;
-  priceInEth: string;
-  renewPrice: string;
+  offer: Discount;
 };
 
 const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   groups,
-  priceInEth,
-  renewPrice,
-  duration,
-  discountId,
-  customMessage,
+  offer,
   goBack,
 }) => {
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
-  const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
+  const [salesTaxAmount, setSalesTaxAmount] = useState<bigint>(BigInt(0));
   const [callData, setCallData] = useState<Call[]>([]);
-  const [price, setPrice] = useState<string>(priceInEth);
+  // total price before discount quoted in ETH
+  const [dailyPriceInEth, setdailyPriceInEth] = useState<bigint>();
+  // total price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
+  const [dailyPrice, setDailyPrice] = useState<bigint>();
+  // price paid by the user including discount
+  const [discountedPrice, setDiscountedPrice] = useState<bigint>(BigInt(0));
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [displayedCurrencies, setDisplayedCurrencies] = useState<
     CurrencyType[]
@@ -193,7 +191,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
     // Start the refetch scheduling
     scheduleRefetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayedCurrencies, price]); // We don't add quoteData because it would create an infinite loop
+  }, [displayedCurrencies, discountedPrice]); // We don't add quoteData because it would create an infinite loop
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -245,12 +243,12 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   useEffect(() => {
     if (isSwissResident) {
       setSalesTaxRate(swissVatRate);
-      setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
+      setSalesTaxAmount(applyRateToBigInt(discountedPrice, swissVatRate));
     } else {
       setSalesTaxRate(0);
-      setSalesTaxAmount("");
+      setSalesTaxAmount(BigInt(0));
     }
-  }, [isSwissResident, price]);
+  }, [discountedPrice, isSwissResident]);
 
   // build free renewal call
   useEffect(() => {
@@ -272,13 +270,11 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
       displayedCurrencies.map((currency) => {
         // Add ERC20 allowance for all currencies if needed
         if (needsAllowances[currency]) {
-          const priceToApprove =
-            currency === CurrencyType.ETH ? priceInEth : price;
           calls.unshift(
             autoRenewalCalls.approve(
               ERC20Contract[currency],
               AutoRenewalContracts[currency],
-              priceToApprove
+              discountedPrice ? discountedPrice?.toString() : "0"
             )
           );
         }

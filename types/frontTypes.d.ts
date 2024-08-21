@@ -51,7 +51,7 @@ type UsState = {
 };
 
 type Discount = {
-  duration: number;
+  durationInDays: number;
   customMessage?: string;
   discountId: string;
   price: string;
