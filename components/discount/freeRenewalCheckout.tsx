@@ -391,7 +391,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
         </div>
         <div className={styles.summary}>
           <RegisterSummary
-            yearlyPrice={potentialPrice}
+            priceInEth={potentialPrice}
             price={offer.price}
             durationInYears={Number(
               numberToFixedString(offer.durationInDays / 365)

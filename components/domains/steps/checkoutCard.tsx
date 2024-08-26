@@ -75,9 +75,13 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const router = useRouter();
   const { account, address } = useAccount();
   const { formState, updateFormState, clearForm } = useContext(FormContext);
-  const [dailyPriceInEth, setDailyPriceInEth] = useState<bigint>(BigInt(0)); // price in ETH for 1 year
-  const [price, setPrice] = useState<bigint>(BigInt(0)); // total price in displayedCurrency
-  const [discountedPrice, setDiscountedPrice] = useState<bigint>(BigInt(0)); // discounted price in displayedCurrency
+  const [dailyPriceInEth, setDailyPriceInEth] = useState<bigint>(BigInt(0)); // Daily price in ETH
+  const [discountedPriceInEth, setDiscountedPriceInEth] = useState<bigint>(
+    BigInt(0)
+  ); // Daily discounted price in ETH
+  const [price, setPrice] = useState<bigint>(BigInt(0)); // Total price to pay in displayedCurrency
+  const [discountedPrice, setDiscountedPrice] = useState<bigint>(BigInt(0)); // Total discounted price to pay in displayedCurrency
+
   const [maxPriceRange, setMaxPriceRange] = useState<bigint>(BigInt(0)); // max price range for the displayedCurrency that will be spent on yearly subscription
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [salesTaxAmount, setSalesTaxAmount] = useState<bigint>(BigInt(0));
@@ -160,8 +164,16 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   useEffect(() => {
     // get the price for domains for a year
     if (!formState.selectedDomains) return;
-    setDailyPriceInEth(getManyDomainsPriceWei(formState.selectedDomains, 1));
-  }, [formState.selectedDomains, formState.durationInYears]);
+
+    const _dailyPriceInEth = getManyDomainsPriceWei(
+      formState.selectedDomains,
+      1
+    );
+    setDailyPriceInEth(_dailyPriceInEth);
+    setDiscountedPriceInEth(
+      _dailyPriceInEth * BigInt(discount.paidDurationInDays)
+    );
+  }, [formState.selectedDomains, discount.paidDurationInDays]);
 
   useEffect(() => {
     const discountedPrice =
@@ -424,7 +436,9 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           price,
           salesTaxAmount,
           discountedPrice
-            ? Number(BigInt(discount.durationInDays) / BigInt(365))
+            ? Number(
+                BigInt(discount.durationInDays) / BigInt(finalDurationInDays)
+              )
             : formState.durationInYears,
           allowanceStatus.currentAllowance
         );
@@ -802,7 +816,9 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       <div className={styles.container}>
         <div className={styles.checkout}>
           <RegisterSummary
-            yearlyPrice={dailyPriceInEth * BigInt(365)}
+            priceInEth={
+              dailyPriceInEth * BigInt(formState.durationInYears * 365)
+            }
             price={price}
             durationInYears={
               formState.isUpselled
@@ -817,6 +833,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
             loadingPrice={loadingPrice}
             isUpselled={formState.isUpselled}
             discountedPrice={discountedPrice}
+            discountedPriceInEth={discountedPriceInEth}
           />
           <Divider className="w-full" />
           <div className={styles.checkoutSummary}>

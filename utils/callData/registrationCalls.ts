@@ -47,7 +47,7 @@ function altcoinBuy(
   encodedDomain: string,
   tokenId: number,
   sponsor: string,
-  durationInYears: number,
+  durationInDays: number,
   metadata: HexString,
   erc20Address: string,
   quoteData: QuoteQueryData,
@@ -62,7 +62,7 @@ function altcoinBuy(
       // domain
       encodedDomain,
       // days
-      numberToString(durationInYears * 365),
+      numberToString(durationInDays),
       // resolver
       0,
       // sponsor

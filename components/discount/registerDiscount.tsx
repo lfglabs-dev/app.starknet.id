@@ -45,7 +45,7 @@ import { formatDomainData } from "@/utils/cacheDomainData";
 
 type RegisterDiscountProps = {
   domain: string;
-  duration: number;
+  durationInDays: number;
   discountId: string;
   customMessage: string;
   priceInEth: bigint;
@@ -56,7 +56,7 @@ type RegisterDiscountProps = {
 
 const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   domain,
-  duration,
+  durationInDays,
   discountId,
   customMessage,
   priceInEth,
@@ -194,7 +194,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           encodedDomain,
           newTokenId,
           sponsor,
-          duration,
+          durationInDays,
           txMetadataHash,
           discountId
         )
@@ -205,7 +205,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           encodedDomain,
           newTokenId,
           sponsor,
-          duration,
+          durationInDays,
           txMetadataHash,
           ERC20Contract[displayedCurrency],
           quoteData as QuoteQueryData,
@@ -264,7 +264,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     setTokenIdRedirect(String(newTokenId));
     setCallData(calls);
   }, [
-    duration,
+    durationInDays,
     targetAddress,
     price,
     domain,
@@ -315,7 +315,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       tokenIdRedirect,
       formatHexString(address as string),
       getDomainWithStark(domain),
-      duration,
+      durationInDays,
       Boolean(!hasMainDomain), // isMainDomain
       undefined // Selected PFPs
     );
@@ -380,9 +380,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         </div>
         <div className={styles.summary}>
           <RegisterSummary
-            yearlyPrice={priceInEth}
+            priceInEth={priceInEth}
             price={price}
-            durationInYears={duration}
+            durationInYears={durationInDays / 365}
             renewalBox={false}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
@@ -410,7 +410,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
               disabled={
                 (domainsMinting.get(encodedDomain) as boolean) ||
                 !account ||
-                !duration ||
+                !durationInDays ||
                 !targetAddress ||
                 invalidBalance ||
                 !termsBox ||

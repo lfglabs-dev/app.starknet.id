@@ -15,7 +15,7 @@ import { getDisplayablePrice } from "@/utils/priceService";
 
 type RegisterSummaryProps = {
   durationInYears: number;
-  yearlyPrice: bigint;
+  priceInEth: bigint;
   price: bigint;
   renewalBox?: boolean;
   salesTaxRate: number;
@@ -27,13 +27,14 @@ type RegisterSummaryProps = {
     | ((type: CurrencyType) => void);
   loadingPrice?: boolean;
   isUpselled?: boolean;
-  discountedPrice?: bigint; // price the user will pay after discount
+  discountedPrice?: bigint;
+  discountedPriceInEth?: bigint;
   areArCurrenciesEnabled?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   durationInYears,
-  yearlyPrice,
+  priceInEth,
   price,
   renewalBox = true,
   salesTaxRate,
@@ -44,6 +45,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   loadingPrice,
   isUpselled = false,
   discountedPrice,
+  discountedPriceInEth,
   areArCurrenciesEnabled = false,
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1 ETH in USD
@@ -68,19 +70,24 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 
   useEffect(() => {
     const computeUsdPrice = () => {
-      if (!ethUsdPrice || !price) return 0;
+      if (!ethUsdPrice || !priceInEth) return 0;
 
       const effectivePrice =
-        discountedPrice && discountedPrice !== BigInt(0)
-          ? discountedPrice
-          : price;
-      const effectiveDuration = Math.max(durationInYears, 1);
+        discountedPrice && discountedPrice !== BigInt(0) && discountedPriceInEth
+          ? discountedPriceInEth
+          : priceInEth;
 
-      return Number(ethUsdPrice) * weiToEth(effectivePrice) * effectiveDuration;
+      return Number(ethUsdPrice) * weiToEth(effectivePrice);
     };
 
     setUsdRegistrationPrice(computeUsdPrice().toFixed(2));
-  }, [price, ethUsdPrice, durationInYears, discountedPrice]);
+  }, [
+    priceInEth,
+    ethUsdPrice,
+    durationInYears,
+    discountedPrice,
+    discountedPriceInEth,
+  ]);
 
   // Ideally, this should be a separate components
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
@@ -117,7 +124,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 
   function displayTokenPrice(): ReactNode {
     const salesTaxAmountUsd =
-      salesTaxRate * weiToEth(yearlyPrice) * Number(ethUsdPrice);
+      salesTaxRate * weiToEth(priceInEth) * Number(ethUsdPrice);
 
     const salesTaxInfo = salesTaxAmountUsd
       ? ` (+ ${numberToFixedString(
@@ -137,9 +144,9 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 
   function getCheckoutMessage() {
     if (customMessage) return customMessage;
-    if (!yearlyPrice) return "0";
+    if (!priceInEth) return "0";
     else {
-      return `${getDisplayablePrice(yearlyPrice)} ETH x ${durationInYears} ${
+      return `${getDisplayablePrice(priceInEth)} ETH x ${durationInYears} ${
         isUpselled || durationInYears > 1 ? "years" : "year"
       }`;
     }
