@@ -109,7 +109,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   });
   const [reducedDuration, setReducedDuration] = useState<number>(0); // reduced duration for the user to buy the domain
   const [nonSubscribedDomains, setNonSubscribedDomains] = useState<string[]>();
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [currencyError, setCurrencyError] = useState<boolean>(false);
 
   const hasMainDomain = useMemo(() => {
     if (!mainDomain || !mainDomain.domain) return false;
@@ -123,9 +123,10 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       const data = await getTokenQuote(ERC20Contract[displayedCurrency]);
       if (data) {
         setQuoteData(data);
+        setCurrencyError(false);
       } else {
         setDisplayedCurrency(CurrencyType.ETH);
-        setErrorMessage("Failed to get token quote. Please use ETH for now.");
+        setCurrencyError(true);
       }
     };
 
@@ -860,11 +861,10 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         </div>
       </div>
       <Notification
-        visible={!!errorMessage}
-        severity="error"
-        onClose={() => setErrorMessage("")}
+        visible={currencyError}
+        onClose={() => setCurrencyError(false)}
       >
-        <p>{errorMessage}</p>
+        <p>Failed to get token quote. Please use ETH for now.</p>
       </Notification>
     </>
   );

@@ -43,7 +43,7 @@ export function applyRateToBigInt(bigInt: bigint, percentage: number): bigint {
   const integerPercentage = BigInt(Math.round(percentage * 100));
 
   // Perform the multiplication
-  const result = (bigInt * integerPercentage) / BigInt(100);
+  const result = (BigInt(bigInt) * integerPercentage) / BigInt(100);
 
   // Convert the result back to a string
   return result;

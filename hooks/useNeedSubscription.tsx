@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { hexToDecimal } from "@/utils/feltService";
-import { processSubscriptionData } from "@/utils/subscriptionService";
 
 type UseNeedSubscriptionResult = {
   needSubscription: NeedSubscription;
@@ -26,7 +25,15 @@ export default function useNeedSubscription(
       )
         .then((response) => response.json())
         .then((data: SubscriptionInfos) => {
-          const processedData = processSubscriptionData(data);
+          const processedData: NeedSubscription = {};
+          Object.entries(data).forEach(([domain, subscriptions]) => {
+            if (subscriptions.eth_subscriptions === null) {
+              processedData[domain] = {
+                ETH: { needsAllowance: true, currentAllowance: BigInt(0) },
+                STRK: { needsAllowance: true, currentAllowance: BigInt(0) },
+              };
+            }
+          });
           setNeedSubscription(processedData);
           setIsLoading(false);
         });

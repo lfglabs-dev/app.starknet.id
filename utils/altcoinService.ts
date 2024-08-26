@@ -18,10 +18,15 @@ export const getTokenQuote = async (tokenAddress: string) => {
 export const getDomainPriceAltcoin = (quote: string, priceInEth: bigint) => {
   if (quote === "1") return priceInEth;
 
-  // we use Big
   const quoteBigInt = BigInt(quote);
   const scaleFactor = BigInt(10 ** 18);
-  const price = (priceInEth * quoteBigInt) / scaleFactor;
+  const priceBeforeRounding = (priceInEth * quoteBigInt) / scaleFactor;
+
+  // Rounding to nearest integer
+  const remainder =
+    (priceInEth * quoteBigInt * BigInt(2)) % (scaleFactor * BigInt(2));
+  const roundingAdjustment = remainder >= scaleFactor ? BigInt(1) : BigInt(0);
+  const price = priceBeforeRounding + roundingAdjustment;
 
   return price;
 };
@@ -94,6 +99,7 @@ export const getDomainPrice = (
   quote?: string
 ): bigint => {
   if (currencyType === CurrencyType.ETH || !quote) {
+    // When quote is missing we return ETH price
     return getDomainPriceWei(durationInDays, domain);
   } else {
     return getDomainPriceAltcoin(

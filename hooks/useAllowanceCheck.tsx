@@ -9,11 +9,6 @@ import {
   AutoRenewalContracts,
 } from "../utils/constants";
 
-type AllowanceStatus = {
-  needsAllowance: boolean;
-  currentAllowance: bigint;
-};
-
 export default function useAllowanceCheck(
   erc20: CurrencyType,
   address?: string

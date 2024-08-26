@@ -16,6 +16,7 @@ import SwissForm from "./swissForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
+  getApprovalAmount,
   getTotalYearlyPrice,
 } from "../../utils/priceService";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
@@ -42,9 +43,10 @@ import {
 } from "../../utils/altcoinService";
 import ArCurrencyDropdown from "./arCurrencyDropdown";
 import { areArraysEqual } from "@/utils/arrayService";
-import useNeedsAllowances from "@/hooks/useNeedAllowances";
+import useNeedAllowances from "@/hooks/useNeedAllowances";
 import useNeedSubscription from "@/hooks/useNeedSubscription";
 import AutoRenewalDomainsBox from "./autoRenewalDomainsBox";
+import Notification from "../UI/notification";
 
 type SubscriptionProps = {
   groups: string[];
@@ -79,9 +81,15 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     useState<Record<string, boolean>>();
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
-  const needsAllowance = useNeedsAllowances(address);
+  const allowanceStatus = useNeedAllowances(address);
   const { needSubscription, isLoading: needSubscriptionLoading } =
     useNeedSubscription(address);
+  const [currencyError, setCurrencyError] = useState<boolean>(false);
+
+  // Console log hook for needSubscription
+  useEffect(() => {
+    console.log("needSubscription:", needSubscription);
+  }, [needSubscription]);
 
   useEffect(() => {
     if (!address) return;
@@ -187,7 +195,13 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
       if (isCurrencyETH || !contractToQuote) return;
 
       getTokenQuote(contractToQuote).then((data) => {
-        setQuoteData(data);
+        if (data) {
+          setQuoteData(data);
+          setCurrencyError(false);
+        } else {
+          setDisplayedCurrencies([CurrencyType.ETH]);
+          setCurrencyError(true);
+        }
       });
     };
 
@@ -261,15 +275,24 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
 
       displayedCurrencies.map((currency) => {
         // Add ERC20 allowance for all currencies if needed
-        if (needsAllowance[currency]) {
-          const priceToApprove =
-            currency === CurrencyType.ETH ? priceInEth : price;
+        if (allowanceStatus[currency].needsAllowance) {
+          console.log("price", price);
+          console.log(
+            "allowanceStatus[currency].currentAllowance",
+            allowanceStatus[currency].currentAllowance
+          );
+          const amountToApprove = getApprovalAmount(
+            price,
+            salesTaxAmount,
+            1,
+            allowanceStatus[currency].currentAllowance
+          );
 
           calls.push(
             autoRenewalCalls.approve(
               ERC20Contract[currency],
               AutoRenewalContracts[currency],
-              priceToApprove
+              amountToApprove
             )
           );
         }
@@ -305,13 +328,12 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         });
       });
       setCallData(calls);
-      console.log("Calls", calls);
     }
   }, [
     selectedDomains,
     price,
     salesTaxAmount,
-    needsAllowance,
+    allowanceStatus,
     metadataHash,
     salesTaxRate,
     displayedCurrencies,
@@ -419,6 +441,12 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         isTxModalOpen={isTxModalOpen}
         closeModal={() => window.history.back()}
       />
+      <Notification
+        visible={currencyError}
+        onClose={() => setCurrencyError(false)}
+      >
+        <p>Failed to get token quote. Please use ETH for now.</p>
+      </Notification>
     </div>
   );
 };

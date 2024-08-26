@@ -126,7 +126,12 @@ type TokenAllowance = {
 };
 
 type TokenNeedsAllowance = {
-  [key in CurrencyType]: boolean;
+  [key in CurrencyType]: AllowanceStatus;
+};
+
+type AllowanceStatus = {
+  needsAllowance: boolean;
+  currentAllowance: bigint;
 };
 
 type NeedSubscription = {
