@@ -6,7 +6,7 @@ import { CurrencyType } from "@/utils/constants";
 type ReduceDurationProps = {
   currentDuration: number;
   newDuration: number;
-  updateFormState: ({ duration }: { duration: number }) => void;
+  updateFormState: ({ durationInYears }: { durationInYears: number }) => void;
   displayCurrency: CurrencyType;
 };
 
@@ -17,7 +17,7 @@ const ReduceDuration: FunctionComponent<ReduceDurationProps> = ({
   displayCurrency,
 }) => {
   const handleSwitchDuration = () => {
-    updateFormState({ duration: newDuration });
+    updateFormState({ durationInYears: newDuration });
   };
   return (
     <div className={styles.container}>

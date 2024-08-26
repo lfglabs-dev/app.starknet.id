@@ -16,7 +16,7 @@ import SwissForm from "./swissForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
-  getPriceFromDomains,
+  getTotalYearlyPrice,
 } from "../../utils/priceService";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import BackButton from "../UI/backButton";
@@ -55,10 +55,10 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
-  const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
+  const [salesTaxAmount, setSalesTaxAmount] = useState<bigint>(BigInt(0));
   const [callData, setCallData] = useState<Call[]>([]);
-  const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH
-  const [price, setPrice] = useState<string>(""); // price in displayedCurrencies, set to priceInEth on first load as ETH is the default currency
+  const [priceInEth, setPriceInEth] = useState<bigint>(BigInt(0)); // price in ETH
+  const [price, setPrice] = useState<bigint>(BigInt(0)); // price in displayedCurrencies, set to priceInEth on first load as ETH is the default currency
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [displayedCurrencies, setDisplayedCurrencies] = useState<
     CurrencyType[]
@@ -79,7 +79,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     useState<Record<string, boolean>>();
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
-  const duration = 1;
   const needsAllowance = useNeedsAllowances(address);
   const { needSubscription, isLoading: needSubscriptionLoading } =
     useNeedSubscription(address);
@@ -221,13 +220,8 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   // if selectedDomains or duration have changed, we update priceInEth
   useEffect(() => {
     if (!selectedDomains) return;
-    setPriceInEth(
-      getPriceFromDomains(
-        selectedDomainsToArray(selectedDomains),
-        duration
-      ).toString()
-    );
-  }, [selectedDomains, duration]);
+    setPriceInEth(getTotalYearlyPrice(selectedDomains));
+  }, [selectedDomains]);
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
@@ -251,7 +245,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
       } else {
         setSalesTaxRate(0);
-        setSalesTaxAmount("");
+        setSalesTaxAmount(BigInt(0));
       }
     }
   }, [isSwissResident, price, needMedadata, salesTaxRate]);
@@ -290,6 +284,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
             const domainPrice = getDomainPrice(
               domain,
               currency,
+              365,
               quoteData?.quote
             );
             const allowance = getAutoRenewAllowance(
@@ -310,6 +305,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         });
       });
       setCallData(calls);
+      console.log("Calls", calls);
     }
   }, [
     selectedDomains,

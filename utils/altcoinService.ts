@@ -1,8 +1,8 @@
-import Big from "big.js";
 import { CurrenciesRange, CurrencyType, ERC20Contract } from "./constants";
 import { applyRateToBigInt, hexToDecimal } from "./feltService";
-import { getPriceFromDomain } from "./priceService";
+import { getDomainPriceWei } from "./priceService";
 import { Result } from "starknet";
+import { selectedDomainsToArray } from "./stringService";
 
 export const getTokenQuote = async (tokenAddress: string) => {
   try {
@@ -15,29 +15,31 @@ export const getTokenQuote = async (tokenAddress: string) => {
   }
 };
 
-export const getDomainPriceAltcoin = (quote: string, priceInEth: string) => {
+export const getDomainPriceAltcoin = (quote: string, priceInEth: bigint) => {
   if (quote === "1") return priceInEth;
 
-  const priceBigInt = new Big(priceInEth);
-  const quoteBigInt = new Big(quote);
-  const scaleFactor = new Big(10 ** 18);
-
-  const price = priceBigInt.mul(quoteBigInt).div(scaleFactor).toFixed(0);
+  // we use Big
+  const quoteBigInt = BigInt(quote);
+  const scaleFactor = BigInt(10 ** 18);
+  const price = (priceInEth * quoteBigInt) / scaleFactor;
 
   return price;
 };
 
 export const getPriceForDuration = (
-  priceFor1Y: string,
-  duration: number
-): string => {
-  if (duration === 1) return priceFor1Y;
+  priceFor1Y: bigint,
+  durationInDays: number
+): bigint => {
+  if (durationInDays === 365) return priceFor1Y;
 
-  const priceBigInt = new Big(priceFor1Y);
-  const durationBigInt = new Big(duration);
+  // Convert the string to BigInt
+  const priceBigInt = BigInt(priceFor1Y);
+  const durationBigInt = BigInt(durationInDays);
 
-  const price = priceBigInt.mul(durationBigInt).toFixed(0);
+  // Perform the multiplication
+  const price = priceBigInt * durationBigInt;
 
+  // Convert the result back to string
   return price;
 };
 
@@ -74,7 +76,7 @@ export const getRenewalPriceETH = (
   domain: string,
   duration: number
 ): string => {
-  if (priceError || !priceData) return getPriceFromDomain(1, domain).toString();
+  if (priceError || !priceData) return getDomainPriceWei(1, domain).toString();
   else {
     const res = priceData as CallResult;
     // Divide the priceData by the duration to get the renewal price
@@ -88,31 +90,68 @@ export const getRenewalPriceETH = (
 export const getDomainPrice = (
   domain: string,
   currencyType: CurrencyType,
+  durationInDays: number,
   quote?: string
-): string => {
-  if (currencyType === CurrencyType.ETH) {
-    return getPriceFromDomain(1, domain).toString();
+): bigint => {
+  if (currencyType === CurrencyType.ETH || !quote) {
+    return getDomainPriceWei(durationInDays, domain);
   } else {
     return getDomainPriceAltcoin(
       quote as string,
-      getPriceFromDomain(1, domain).toString()
+      getDomainPriceWei(durationInDays, domain)
     );
   }
 };
+
+export function getYearlyPrice(
+  domain: string,
+  currencyType: CurrencyType,
+  quote?: string
+): bigint {
+  const priceInWei = getDomainPrice(domain, currencyType, 365, quote);
+
+  return priceInWei;
+}
+
+export function getManyDomainsPrice(
+  selectedDomains: Record<string, boolean> | undefined,
+  currencyType: CurrencyType,
+  durationInDays: number,
+  quote?: string
+): bigint {
+  if (!selectedDomains) return BigInt(0);
+
+  // Calculate the sum of all prices with getPriceFromDomain
+  return selectedDomainsToArray(selectedDomains).reduce(
+    (acc, domain) =>
+      acc + getDomainPrice(domain, currencyType, durationInDays, quote),
+    BigInt(0)
+  );
+}
+
+export function getTotalYearlyPrice(
+  selectedDomains: Record<string, boolean> | undefined,
+  currencyType: CurrencyType,
+  quote?: string
+): bigint {
+  if (!selectedDomains) return BigInt(0);
+
+  const price = getManyDomainsPrice(selectedDomains, currencyType, 365, quote);
+
+  return price;
+}
 
 // function to compute the limit price for the auto renewal contract
 // depending on the token selected by the user
 export const getAutoRenewAllowance = (
   currencyType: CurrencyType,
   salesTaxRate: number,
-  domainPrice: string
-): string => {
-  const limitPrice = getLimitPriceRange(currencyType, BigInt(domainPrice));
-  const allowance: string = salesTaxRate
-    ? (
-        BigInt(limitPrice) + BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
-      ).toString()
-    : limitPrice.toString();
+  domainPrice: bigint
+): bigint => {
+  const limitPrice = getLimitPriceRange(currencyType, domainPrice);
+  const allowance: bigint = salesTaxRate
+    ? BigInt(limitPrice) + BigInt(applyRateToBigInt(limitPrice, salesTaxRate))
+    : limitPrice;
 
   return allowance;
 };
@@ -133,7 +172,7 @@ export async function fetchAvnuQuoteData(): Promise<AvnuQuote[]> {
 // Determine the currency type based on token balances and STRK quote
 export const smartCurrencyChoosing = async (
   tokenBalances: TokenBalance,
-  priceIntEth?: string // price to pay in ETH
+  priceInEth?: bigint // price to pay in ETH
 ): Promise<CurrencyType> => {
   // Early returns based on token presence
   if (tokenBalances.ETH && !tokenBalances.STRK) return CurrencyType.ETH;
@@ -159,8 +198,8 @@ export const smartCurrencyChoosing = async (
 
   // If domain price is provided, use it to determine currency type
   // if a user can only pay with one currency then we'll select it
-  if (priceIntEth) {
-    const priceBigInt = BigInt(priceIntEth);
+  if (priceInEth) {
+    const priceBigInt = priceInEth;
     const ethBalance = BigInt(tokenBalances.ETH);
     // if user can only pay in STRK and doesn't have enough ETH to pay for the domain
     if (strkConvertedBalance > priceBigInt && ethBalance < priceBigInt) {

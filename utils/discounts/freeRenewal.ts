@@ -16,7 +16,7 @@ export const freeRenewalDiscount: FreeRenewalDiscount = {
     durationInDays: 90, // in days
     customMessage: "3 months free",
     discountId: "X", // No need
-    price: "0",
+    price: BigInt(0),
     desc: "Get a free 3-months renewal for all your .STARK domains.",
     title: { desc: "Renew your domain", catch: "for FREE" },
     image: "/freeRenewal/freeRenewal.webp",

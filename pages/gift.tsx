@@ -43,7 +43,7 @@ const FreeRegistration: NextPage = () => {
         <div className={styles.container}>
           <FreeRegisterCheckout
             domain={searchResult?.name ?? ""}
-            duration={freeRegistration.offer.duration}
+            durationInDays={freeRegistration.offer.durationInDays}
             goBack={goBack}
             couponCode={freeRegistration.offer.couponCode}
             couponHelper={freeRegistration.offer.couponHelper}

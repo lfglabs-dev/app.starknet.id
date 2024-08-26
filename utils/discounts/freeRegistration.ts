@@ -15,7 +15,7 @@ export const freeRegistration: FreeRegistration = {
   offer: {
     durationInDays: 90, // in days
     discountId: "X",
-    price: "0",
+    price: BigInt(0),
     desc: "Unlock your .stark domain for free and secure your Starknet profile!",
     title: {
       desc: "Get your",

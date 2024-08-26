@@ -3,7 +3,6 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { useAccount, useContractWrite } from "@starknet-react/core";
 import {
-  bigintToStringHex,
   formatHexString,
   isValidEmail,
   selectedDomainsToArray,
@@ -22,7 +21,7 @@ import RegisterSummary from "../domains/registerSummary";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
-  getTotalYearlyPrice,
+  getDisplayablePrice,
 } from "../../utils/priceService";
 import RenewalDomainsBox from "../domains/renewalDomainsBox";
 import registrationCalls from "../../utils/callData/registrationCalls";
@@ -46,8 +45,8 @@ import ConnectButton from "../UI/connectButton";
 import {
   getAutoRenewAllowance,
   getDomainPrice,
-  getDomainPriceAltcoin,
   getTokenQuote,
+  getTotalYearlyPrice,
 } from "../../utils/altcoinService";
 import { areArraysEqual } from "@/utils/arrayService";
 import useNeedSubscription from "@/hooks/useNeedSubscription";
@@ -69,12 +68,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<bigint>(BigInt(0));
   const [callData, setCallData] = useState<Call[]>([]);
-  // total price before discount quoted in ETH
-  const [dailyPriceInEth, setdailyPriceInEth] = useState<bigint>();
-  // total price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
-  const [dailyPrice, setDailyPrice] = useState<bigint>();
   // price paid by the user including discount
-  const [discountedPrice, setDiscountedPrice] = useState<bigint>(BigInt(0));
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [displayedCurrencies, setDisplayedCurrencies] = useState<
     CurrencyType[]
@@ -84,7 +78,10 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMetadata, setNeedMetadata] = useState<boolean>(false);
-  const [potentialPrice, setPotentialPrice] = useState<string>("0");
+  const [potentialPrice, setPotentialPrice] = useState<bigint>(BigInt(0));
+  const [customCheckoutMessage, setCustomCheckoutMessage] =
+    useState<string>("");
+
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
   const { address } = useAccount();
@@ -98,10 +95,6 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
   const needsAllowances = useNeedsAllowances(address);
   const needSubscription = useNeedSubscription(address);
-
-  useEffect(() => {
-    setPotentialPrice(getTotalYearlyPrice(selectedDomains));
-  }, [selectedDomains, setPotentialPrice]);
 
   useEffect(() => {
     if (!renewData?.transaction_hash || !salt || !metadataHash) return;
@@ -191,7 +184,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
     // Start the refetch scheduling
     scheduleRefetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayedCurrencies, discountedPrice]); // We don't add quoteData because it would create an infinite loop
+  }, [displayedCurrencies]); // We don't add quoteData because it would create an infinite loop
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -243,12 +236,12 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   useEffect(() => {
     if (isSwissResident) {
       setSalesTaxRate(swissVatRate);
-      setSalesTaxAmount(applyRateToBigInt(discountedPrice, swissVatRate));
+      setSalesTaxAmount(applyRateToBigInt(offer.price, swissVatRate));
     } else {
       setSalesTaxRate(0);
       setSalesTaxAmount(BigInt(0));
     }
-  }, [discountedPrice, isSwissResident]);
+  }, [isSwissResident, offer.price]);
 
   // build free renewal call
   useEffect(() => {
@@ -274,7 +267,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
             autoRenewalCalls.approve(
               ERC20Contract[currency],
               AutoRenewalContracts[currency],
-              discountedPrice ? discountedPrice?.toString() : "0"
+              offer.price ?? BigInt(0)
             )
           );
         }
@@ -291,6 +284,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
             const domainPrice = getDomainPrice(
               domain,
               currency,
+              365,
               quoteData?.quote
             );
             const allowance = getAutoRenewAllowance(
@@ -303,7 +297,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
               autoRenewalCalls.enableRenewal(
                 AutoRenewalContracts[currency],
                 encodedDomain,
-                allowance,
+                allowance, // Warning review: Do we need to multiply by 10 here to have 10 years ?
                 txMetadataHash
               )
             );
@@ -311,37 +305,47 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
         });
       });
       setCallData(calls);
+      console.log("Calls: ", calls);
     }
   }, [
     selectedDomains,
-    price,
     salesTaxAmount,
     needsAllowances,
     metadataHash,
     salesTaxRate,
-    duration,
-    discountId,
     needMetadata,
     quoteData,
     displayedCurrencies,
     needSubscription,
-    priceInEth,
+    offer.price,
   ]);
 
   useEffect(() => {
-    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
-      CurrencyType.ETH,
+    const isCurrencySTRK = areArraysEqual(displayedCurrencies, [
+      CurrencyType.STRK,
     ]);
+    const currencyDisplayed = isCurrencySTRK
+      ? CurrencyType.STRK
+      : CurrencyType.ETH;
+    const totalYearlyPrice = getTotalYearlyPrice(
+      selectedDomains,
+      currencyDisplayed,
+      quoteData?.quote
+    );
+    const potentialCurrency = quoteData?.quote
+      ? currencyDisplayed
+      : CurrencyType.ETH;
 
-    if (isCurrencyETH) {
-      setPrice(priceInEth);
-      setLoadingPrice(false);
-    } else if (quoteData) {
-      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
-      setPrice(priceInAltcoin);
-      setLoadingPrice(false);
-    }
-  }, [priceInEth, quoteData, displayedCurrencies]);
+    // Setting the potential price in the displayed currency
+    setPotentialPrice(totalYearlyPrice);
+    setCustomCheckoutMessage(
+      `${offer.customMessage} and then ${getDisplayablePrice(
+        totalYearlyPrice
+      )} ${potentialCurrency} per year`
+    );
+
+    setLoadingPrice(false);
+  }, [quoteData, displayedCurrencies, selectedDomains, offer.customMessage]);
 
   const onCurrencySwitch = (currency: CurrencyType[]) => {
     setDisplayedCurrencies(currency as CurrencyType[]);
@@ -387,12 +391,14 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
         </div>
         <div className={styles.summary}>
           <RegisterSummary
-            ethRegistrationPrice={priceInEth}
-            registrationPrice={price}
-            duration={Number(numberToFixedString(duration / 365))}
+            yearlyPrice={potentialPrice}
+            price={offer.price}
+            durationInYears={Number(
+              numberToFixedString(offer.durationInDays / 365)
+            )}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
-            customMessage={`${customMessage} and then ${potentialPrice} ETH per year`}
+            customMessage={customCheckoutMessage}
             displayedCurrency={displayedCurrencies}
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
@@ -403,7 +409,6 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
             isArOnforced={true}
-            ethRenewalPrice={renewPrice}
           />
           <div>
             {address ? (

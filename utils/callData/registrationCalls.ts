@@ -1,11 +1,15 @@
 import { Call } from "starknet";
 import { numberToString, numberToStringHex } from "../stringService";
 
-function approve(price: string, erc20Address: string): Call {
+function approve(price: bigint, erc20Address: string): Call {
   return {
     contractAddress: erc20Address,
     entrypoint: "approve",
-    calldata: [process.env.NEXT_PUBLIC_NAMING_CONTRACT as string, price, 0],
+    calldata: [
+      process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+      price.toString(),
+      0,
+    ],
   };
 }
 
@@ -13,7 +17,7 @@ function buy(
   encodedDomain: string,
   tokenId: number,
   sponsor: string,
-  durationInYears: number,
+  durationInDays: number,
   metadata: HexString,
   discountId?: string
 ): Call {
@@ -26,7 +30,7 @@ function buy(
       // domain
       encodedDomain,
       // days
-      numberToString(durationInYears * 365),
+      numberToString(durationInDays),
       // resolver
       0,
       // sponsor
@@ -96,17 +100,21 @@ function mainId(tokenId: number): Call {
   };
 }
 
-function vatTransfer(amount: string, erc20_contract: string): Call {
+function vatTransfer(amount: bigint, erc20_contract: string): Call {
   return {
     contractAddress: erc20_contract,
     entrypoint: "transfer",
-    calldata: [process.env.NEXT_PUBLIC_VAT_CONTRACT as string, amount, "0"],
+    calldata: [
+      process.env.NEXT_PUBLIC_VAT_CONTRACT as string,
+      amount.toString(),
+      "0",
+    ],
   };
 }
 
 function renew(
   encodedDomain: string,
-  durationInYears: number,
+  durationInDays: number,
   metadataHash: HexString,
   sponsor?: string,
   discountId?: string
@@ -116,7 +124,7 @@ function renew(
     entrypoint: "renew",
     calldata: [
       encodedDomain,
-      durationInYears * 365,
+      durationInDays,
       sponsor ?? 0,
       discountId ?? 0,
       metadataHash,
@@ -126,7 +134,7 @@ function renew(
 
 function altcoinRenew(
   encodedDomain: string,
-  durationInYears: number,
+  durationInDays: number,
   metadataHash: HexString,
   erc20Address: string,
   quoteData: QuoteQueryData,
@@ -138,7 +146,7 @@ function altcoinRenew(
     entrypoint: "altcoin_renew",
     calldata: [
       encodedDomain,
-      durationInYears * 365,
+      durationInDays,
       sponsor ?? 0,
       discountId ?? 0,
       metadataHash,

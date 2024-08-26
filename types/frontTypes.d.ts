@@ -54,7 +54,7 @@ type Discount = {
   durationInDays: number;
   customMessage?: string;
   discountId: string;
-  price: string;
+  price: bigint;
   desc: string;
   title: { desc: string; catch: string; descAfter?: string };
   image?: string;
@@ -141,9 +141,9 @@ type MulticallCallData = {
 };
 
 type Upsell = {
-  duration: number; // duration you get
-  paidDuration: number; // duration you pay for
-  maxDuration: number; // if user selects a duration higher, upsell won't be applied
+  durationInDays: number; // duration you get
+  paidDurationInDays: number; // duration you pay for
+  maxDurationInDays: number; // if user selects a duration higher, upsell won't be applied
   discountId: string;
   imageUrl: string;
   title: {

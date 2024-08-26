@@ -3,20 +3,19 @@ import { Call } from "starknet";
 function approve(
   erc20Contract: string,
   renewalContract: string,
-  erc20Price: string
+  erc20Price: bigint
 ): Call {
-  const amountToApprove = erc20Price.concat("0"); // multiply by 10 to approve 10 years
   return {
     contractAddress: erc20Contract,
     entrypoint: "approve",
-    calldata: [renewalContract, amountToApprove, "0"],
+    calldata: [renewalContract, erc20Price.toString(), "0"],
   };
 }
 
 function enableRenewal(
   autoRenewalContract: string,
   encodedDomain: string,
-  price: string,
+  price: bigint,
   metahash: string
 ): Call {
   return {
@@ -24,7 +23,7 @@ function enableRenewal(
     entrypoint: "enable_renewals",
     calldata: [
       encodedDomain.toString(),
-      price,
+      price.toString(),
       0, // sponsor
       metahash,
     ],
