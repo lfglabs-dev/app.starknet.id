@@ -5,7 +5,7 @@ import React, {
   useState,
 } from "react";
 import styles from "../../styles/components/registerV3.module.css";
-import { numberToFixedString, weiToEth } from "../../utils/feltService";
+import { weiToEth } from "../../utils/feltService";
 import { CurrencyType } from "../../utils/constants";
 import CurrencyDropdown from "./currencyDropdown";
 import { Skeleton } from "@mui/material";
@@ -50,6 +50,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1 ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
+  const [salesTaxAmountUsd, setSalesTaxAmountUsd] = useState<string>("0");
   const recurrence = renewalBox && durationInYears === 1 ? "/year" : "";
   useEffect(() => {
     fetch(
@@ -69,24 +70,32 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       : displayedCurrency;
 
   useEffect(() => {
-    const computeUsdPrice = () => {
-      if (!ethUsdPrice || !priceInEth) return 0;
+    const effectivePrice =
+      discountedPrice && discountedPrice !== BigInt(0) && discountedPriceInEth
+        ? discountedPriceInEth
+        : priceInEth;
 
-      const effectivePrice =
-        discountedPrice && discountedPrice !== BigInt(0) && discountedPriceInEth
-          ? discountedPriceInEth
-          : priceInEth;
+    const computeUsdRegistrationPrice = () => {
+      if (!ethUsdPrice || !priceInEth) return 0;
 
       return Number(ethUsdPrice) * weiToEth(effectivePrice);
     };
 
-    setUsdRegistrationPrice(computeUsdPrice().toFixed(2));
+    const computeUsdSalesTaxAmount = () => {
+      if (!ethUsdPrice || !priceInEth) return 0;
+
+      return salesTaxRate * weiToEth(effectivePrice) * Number(ethUsdPrice);
+    };
+
+    setUsdRegistrationPrice(computeUsdRegistrationPrice().toFixed(2));
+    setSalesTaxAmountUsd(computeUsdSalesTaxAmount().toFixed(2));
   }, [
     priceInEth,
     ethUsdPrice,
     durationInYears,
     discountedPrice,
     discountedPriceInEth,
+    salesTaxRate,
   ]);
 
   // Ideally, this should be a separate components
@@ -123,13 +132,8 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function displayTokenPrice(): ReactNode {
-    const salesTaxAmountUsd =
-      salesTaxRate * weiToEth(priceInEth) * Number(ethUsdPrice);
-
     const salesTaxInfo = salesTaxAmountUsd
-      ? ` (+ ${numberToFixedString(
-          salesTaxAmountUsd
-        )}$ worth of ${announcedCurrency} for Swiss VAT)`
+      ? ` (+ ${salesTaxAmountUsd}$ worth of ${announcedCurrency} for Swiss VAT)`
       : "";
 
     if (isUpselled && discountedPrice) {
@@ -163,7 +167,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           ) : (
             displayTokenPrice()
           )}
-          <p className={styles.legend}>≈ ${usdRegistrationPrice.toString()}</p>
+          <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
         </div>
       </div>
       {areArCurrenciesEnabled ? (
