@@ -88,3 +88,18 @@ export function getApprovalAmount(
 
   return amountToApprove;
 }
+export function isApprovalInfinite(approval: bigint | string): boolean {
+  // Convert approval to a BigInt if it's not already
+  const approvalBigInt = BigInt(approval);
+
+  // Define the threshold values
+  const UINT_256_MINUS_UINT_128 =
+    (BigInt(1) << BigInt(256)) - (BigInt(1) << BigInt(128));
+
+  // Define a threshold of 10K ETH in wei (10,000 * 10^18)
+  const THRESHOLD = BigInt(10000) * BigInt(10 ** 18);
+
+  return (
+    approvalBigInt >= THRESHOLD || approvalBigInt === UINT_256_MINUS_UINT_128
+  );
+}

@@ -30,6 +30,7 @@ type RegisterSummaryProps = {
   discountedPrice?: bigint;
   discountedPriceInEth?: bigint;
   areArCurrenciesEnabled?: boolean;
+  isUsdPriceHidden?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
@@ -47,6 +48,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   discountedPrice,
   discountedPriceInEth,
   areArCurrenciesEnabled = false,
+  isUsdPriceHidden = false,
 }) => {
   const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1 ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
@@ -167,7 +169,9 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
           ) : (
             displayTokenPrice()
           )}
-          <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
+          {isUsdPriceHidden ? null : (
+            <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
+          )}
         </div>
       </div>
       {areArCurrenciesEnabled ? (

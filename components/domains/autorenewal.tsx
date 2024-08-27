@@ -86,11 +86,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     useNeedSubscription(address);
   const [currencyError, setCurrencyError] = useState<boolean>(false);
 
-  // Console log hook for needSubscription
-  useEffect(() => {
-    console.log("needSubscription:", needSubscription);
-  }, [needSubscription]);
-
   useEffect(() => {
     if (!address) return;
     fetch(
@@ -276,11 +271,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
       displayedCurrencies.map((currency) => {
         // Add ERC20 allowance for all currencies if needed
         if (allowanceStatus[currency].needsAllowance) {
-          console.log("price", price);
-          console.log(
-            "allowanceStatus[currency].currentAllowance",
-            allowanceStatus[currency].currentAllowance
-          );
           const amountToApprove = getApprovalAmount(
             price,
             salesTaxAmount,

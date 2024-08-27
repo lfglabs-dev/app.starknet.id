@@ -9,6 +9,7 @@ import {
   getYearlyPriceWei,
   getApprovalAmount,
   getDisplayablePrice,
+  isApprovalInfinite,
 } from "../../utils/priceService";
 import { generateString } from "../../utils/stringService";
 
@@ -249,5 +250,42 @@ describe("getDisplayablePrice function", () => {
   it("should handle large numbers correctly", () => {
     const price = BigInt("123456789000000000000000"); // 123,456.789 ETH in wei
     expect(getDisplayablePrice(price)).toBe("123456.789");
+  });
+});
+
+describe("isApprovalInfinite function", () => {
+  it("should return true for values equal to or greater than UINT_128_MAX", () => {
+    const UINT_128_MAX = (BigInt(1) << BigInt(128)) - BigInt(1);
+    expect(isApprovalInfinite(UINT_128_MAX)).toBe(true);
+    expect(isApprovalInfinite(UINT_128_MAX + BigInt(1))).toBe(true);
+  });
+
+  it("should return true for UINT_256_MINUS_UINT_128", () => {
+    const UINT_256_MINUS_UINT_128 =
+      (BigInt(1) << BigInt(256)) - (BigInt(1) << BigInt(128));
+    expect(isApprovalInfinite(UINT_256_MINUS_UINT_128)).toBe(true);
+  });
+
+  it("should return true for UINT_256_MINUS_UINT_128", () => {
+    const UINT_256_MINUS_UINT_128 =
+      (BigInt(1) << BigInt(256)) - (BigInt(1) << BigInt(128));
+    expect(isApprovalInfinite(UINT_256_MINUS_UINT_128)).toBe(true);
+  });
+
+  it("should return false for values less than 10K ETH", () => {
+    const THRESHOLD = BigInt(10000) * BigInt(10 ** 18);
+    expect(isApprovalInfinite(THRESHOLD - BigInt(1))).toBe(false);
+    expect(isApprovalInfinite(THRESHOLD + BigInt(1))).toBe(true);
+  });
+
+  it("should handle string inputs", () => {
+    const UINT_128_MAX = ((BigInt(1) << BigInt(128)) - BigInt(1)).toString();
+    expect(isApprovalInfinite(UINT_128_MAX)).toBe(true);
+    expect(isApprovalInfinite("1000000")).toBe(false);
+  });
+
+  it("should return false for zero", () => {
+    expect(isApprovalInfinite(BigInt(0))).toBe(false);
+    expect(isApprovalInfinite("0")).toBe(false);
   });
 });

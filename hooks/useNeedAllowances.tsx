@@ -6,8 +6,8 @@ import {
   ERC20Contract,
   CurrencyType,
   AutoRenewalContracts,
-  UINT_128_MAX,
 } from "../utils/constants";
+import { isApprovalInfinite } from "@/utils/priceService";
 
 export default function useNeedsAllowances(
   address?: string
@@ -74,13 +74,8 @@ export default function useNeedsAllowances(
     const newNeedsAllowances: TokenNeedsAllowance = {};
     const erc20AllowanceRes = erc20AllowanceData as CallResult[];
     currencyNames.forEach((currency, index) => {
-      console.log(
-        "erc20AllowanceRes[index] " + currency,
-        erc20AllowanceRes[index]
-      );
-
       newNeedsAllowances[currency] = {
-        needsAllowance: erc20AllowanceRes[index][0] !== UINT_128_MAX,
+        needsAllowance: !isApprovalInfinite(erc20AllowanceRes[index][0]),
         currentAllowance: erc20AllowanceRes[index][0],
       };
     });

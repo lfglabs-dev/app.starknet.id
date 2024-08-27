@@ -8,10 +8,7 @@ import {
   selectedDomainsToArray,
   selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
-import {
-  applyRateToBigInt,
-  numberToFixedString,
-} from "../../utils/feltService";
+import { applyRateToBigInt } from "../../utils/feltService";
 import { Call } from "starknet";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
@@ -21,6 +18,7 @@ import RegisterSummary from "../domains/registerSummary";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
+  getApprovalAmount,
   getDisplayablePrice,
 } from "../../utils/priceService";
 import RenewalDomainsBox from "../domains/renewalDomainsBox";
@@ -93,7 +91,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
-  const needsAllowances = useNeedsAllowances(address);
+  const allowanceStatus = useNeedsAllowances(address);
   const needSubscription = useNeedSubscription(address);
 
   useEffect(() => {
@@ -236,12 +234,12 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   useEffect(() => {
     if (isSwissResident) {
       setSalesTaxRate(swissVatRate);
-      setSalesTaxAmount(applyRateToBigInt(offer.price, swissVatRate));
+      setSalesTaxAmount(applyRateToBigInt(potentialPrice, swissVatRate));
     } else {
       setSalesTaxRate(0);
       setSalesTaxAmount(BigInt(0));
     }
-  }, [isSwissResident, offer.price]);
+  }, [isSwissResident, potentialPrice]);
 
   // build free renewal call
   useEffect(() => {
@@ -262,12 +260,19 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
 
       displayedCurrencies.map((currency) => {
         // Add ERC20 allowance for all currencies if needed
-        if (needsAllowances[currency]) {
+        if (allowanceStatus[currency].needsAllowance) {
+          const amountToApprove = getApprovalAmount(
+            potentialPrice,
+            salesTaxAmount,
+            1,
+            allowanceStatus[currency].currentAllowance
+          );
+
           calls.unshift(
             autoRenewalCalls.approve(
               ERC20Contract[currency],
               AutoRenewalContracts[currency],
-              offer.price ?? BigInt(0)
+              amountToApprove
             )
           );
         }
@@ -310,14 +315,14 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   }, [
     selectedDomains,
     salesTaxAmount,
-    needsAllowances,
+    allowanceStatus,
     metadataHash,
     salesTaxRate,
     needMetadata,
     quoteData,
     displayedCurrencies,
     needSubscription,
-    offer.price,
+    potentialPrice,
   ]);
 
   useEffect(() => {
@@ -393,9 +398,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
           <RegisterSummary
             priceInEth={potentialPrice}
             price={offer.price}
-            durationInYears={Number(
-              numberToFixedString(offer.durationInDays / 365)
-            )}
+            durationInYears={offer.durationInDays / 365}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
             customMessage={customCheckoutMessage}
@@ -403,6 +406,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
             areArCurrenciesEnabled
+            isUsdPriceHidden
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
