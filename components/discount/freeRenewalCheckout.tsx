@@ -310,7 +310,6 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
         });
       });
       setCallData(calls);
-      console.log("Calls: ", calls);
     }
   }, [
     selectedDomains,

@@ -4,7 +4,7 @@ import { createContext, useMemo } from "react";
 import { computeMetadataHash, generateSalt } from "@/utils/userDataService";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
 
-type FormState = {
+export type FormState = {
   email: string;
   isSwissResident: boolean;
   tokenId: number;
@@ -75,7 +75,7 @@ export const FormProvider: FunctionComponent<Context> = ({ children }) => {
   // Handle metadataHash and salt
   useMemo(() => {
     updateFormState({ salt: generateSalt() });
-  }, [formState.selectedDomains, updateFormState]);
+  }, [updateFormState]);
 
   useMemo(() => {
     if (!address) return;

@@ -27,7 +27,7 @@ export function hexToDecimal(hex: string | undefined): string {
 
 export function weiToEth(wei: string | bigint): number {
   const stringed = wei.toString();
-  if (!stringed || isNaN(Number(stringed))) {
+  if (!stringed || Number.isNaN(Number(stringed))) {
     return 0;
   }
 

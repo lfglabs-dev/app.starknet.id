@@ -15,3 +15,18 @@ export function fullIdsToDomains(fullIds: FullId[]): string[] {
     .filter((identity: FullId) => isStarkRootDomain(identity.domain))
     .map((identity: FullId) => identity.domain);
 }
+
+export function processSubscriptionData(
+  data: SubscriptionInfos
+): NeedSubscription {
+  const processedData: NeedSubscription = {};
+  Object.entries(data).forEach(([domain, subscriptions]) => {
+    if (subscriptions.eth_subscriptions === null) {
+      processedData[domain] = {
+        ETH: { needsAllowance: true, currentAllowance: BigInt(0) },
+        STRK: { needsAllowance: true, currentAllowance: BigInt(0) },
+      };
+    }
+  });
+  return processedData;
+}

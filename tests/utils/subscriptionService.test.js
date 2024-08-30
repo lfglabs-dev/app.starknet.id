@@ -1,6 +1,7 @@
 import {
   getNonSubscribedDomains,
   fullIdsToDomains,
+  processSubscriptionData,
 } from "../../utils/subscriptionService";
 
 describe("getNonSubscribedDomains function", () => {
@@ -64,5 +65,45 @@ describe("fullIdsToDomains", () => {
 
     const result = fullIdsToDomains(mockFullIds);
     expect(result).toEqual([]);
+  });
+});
+
+describe("processSubscriptionData function", () => {
+  it("should process subscription data correctly", () => {
+    const mockData = {
+      "example.stark": { eth_subscriptions: null },
+      "example2.stark": { eth_subscriptions: {} },
+    };
+
+    const expectedOutput = {
+      "example.stark": {
+        ETH: { needsAllowance: true, currentAllowance: BigInt(0) },
+        STRK: { needsAllowance: true, currentAllowance: BigInt(0) },
+      },
+    };
+
+    const result = processSubscriptionData(mockData);
+    expect(result).toEqual(expectedOutput);
+  });
+
+  it("should return an empty object if no domains need subscriptions", () => {
+    const mockData = {
+      "example.stark": { eth_subscriptions: {} },
+      "example2.stark": { eth_subscriptions: {} },
+    };
+
+    const expectedOutput = {};
+
+    const result = processSubscriptionData(mockData);
+    expect(result).toEqual(expectedOutput);
+  });
+
+  it("should handle an empty input object", () => {
+    const mockData = {};
+
+    const expectedOutput = {};
+
+    const result = processSubscriptionData(mockData);
+    expect(result).toEqual(expectedOutput);
   });
 });

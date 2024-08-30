@@ -6,12 +6,10 @@ import DiscountEndScreen from "../components/discount/discountEndScreen";
 const Argent: NextPage = () => {
   return (
     <div className={homeStyles.screen}>
-      <>
-        <DiscountEndScreen
-          title="Argent discount has ended"
-          image="/argent/argentdiscount.webp"
-        />
-      </>
+      <DiscountEndScreen
+        title="Argent discount has ended"
+        image="/argent/argentdiscount.webp"
+      />
     </div>
   );
 };
