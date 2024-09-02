@@ -17,6 +17,8 @@ export const useCurrencyManagement = () => {
 
   // we fetch the quote for the currency selected
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     const fetchQuote = async () => {
       if (displayedCurrency === CurrencyType.ETH) {
         setQuoteData(null);
@@ -45,11 +47,16 @@ export const useCurrencyManagement = () => {
       }
 
       const timeUntilNextCheck = quoteData.max_quote_validity - timeLimit;
-      setTimeout(scheduleRefetch, Math.max(15000, timeUntilNextCheck * 100));
+      timeoutId = setTimeout(
+        scheduleRefetch,
+        Math.max(15000, timeUntilNextCheck * 100)
+      );
     };
 
     fetchQuote();
     scheduleRefetch();
+
+    return () => clearTimeout(timeoutId);
   }, [displayedCurrency, quoteData]);
 
   return {
