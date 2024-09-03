@@ -24,7 +24,7 @@ import usePaymaster from "@/hooks/paymaster";
 
 type FreeRegisterCheckoutProps = {
   domain: string;
-  duration: number;
+  durationInDays: number;
   goBack: () => void;
   couponCode?: boolean;
   couponHelper?: string;
@@ -33,7 +33,7 @@ type FreeRegisterCheckoutProps = {
 
 const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   domain,
-  duration,
+  durationInDays,
   goBack,
   couponCode,
   couponHelper,
@@ -198,7 +198,10 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
           </div>
         </div>
         <div className={styles.summary}>
-          <FreeRegisterSummary duration={duration} domain={domain} />
+          <FreeRegisterSummary
+            durationInDays={durationInDays}
+            domain={domain}
+          />
           <Divider className="w-full" />
           <TermCheckbox
             checked={termsBox}
@@ -211,7 +214,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 (domainsMinting.get(encodedDomain) as boolean) ||
                 !account ||
                 !coupon ||
-                !duration ||
+                !durationInDays ||
                 !targetAddress ||
                 !termsBox ||
                 Boolean(couponError) ||

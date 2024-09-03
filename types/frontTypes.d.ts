@@ -51,10 +51,10 @@ type UsState = {
 };
 
 type Discount = {
-  duration: number;
+  durationInDays: number;
   customMessage?: string;
   discountId: string;
-  price: string;
+  price: bigint;
   desc: string;
   title: { desc: string; catch: string; descAfter?: string };
   image?: string;
@@ -126,7 +126,12 @@ type TokenAllowance = {
 };
 
 type TokenNeedsAllowance = {
-  [key in CurrencyType]: boolean;
+  [key in CurrencyType]: AllowanceStatus;
+};
+
+type AllowanceStatus = {
+  needsAllowance: boolean;
+  currentAllowance: bigint;
 };
 
 type NeedSubscription = {
@@ -141,9 +146,9 @@ type MulticallCallData = {
 };
 
 type Upsell = {
-  duration: number; // duration you get
-  paidDuration: number; // duration you pay for
-  maxDuration: number; // if user selects a duration higher, upsell won't be applied
+  durationInDays: number; // duration you get
+  paidDurationInDays: number; // duration you pay for
+  maxDurationInDays: number; // if user selects a duration higher, upsell won't be applied
   discountId: string;
   imageUrl: string;
   title: {

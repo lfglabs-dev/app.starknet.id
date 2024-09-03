@@ -1,20 +1,26 @@
 import { useContractRead } from "@starknet-react/core";
 import { useMulticallContract } from "./contracts";
 import { Abi, BlockTag, CairoCustomEnum, Call, RawArgs, hash } from "starknet";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   ERC20Contract,
   CurrencyType,
   AutoRenewalContracts,
 } from "../utils/constants";
-import { fromUint256 } from "../utils/feltService";
+import { isApprovalInfinite } from "@/utils/priceService";
+
+const createInitialAllowances = (): TokenNeedsAllowance =>
+  Object.values(CurrencyType).reduce((acc, currency) => {
+    acc[currency] = { needsAllowance: false, currentAllowance: BigInt(0) };
+    return acc;
+  }, {} as TokenNeedsAllowance);
 
 export default function useNeedsAllowances(
   address?: string
 ): TokenNeedsAllowance {
-  const [needsAllowances, setNeedsAllowances] = useState<
-    Record<string, boolean>
-  >({});
+  const initialAllowances = useMemo(() => createInitialAllowances(), []);
+  const [needsAllowances, setNeedsAllowances] =
+    useState<TokenNeedsAllowance>(initialAllowances);
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: multicallContract } = useMulticallContract();
   const { data: erc20AllowanceData, error: erc20AllowanceError } =
@@ -66,16 +72,18 @@ export default function useNeedsAllowances(
   useEffect(() => {
     if (erc20AllowanceError || !erc20AllowanceData) return;
     const currencyNames = Object.values(CurrencyType);
-    const needsAllowancesEntries: Record<string, boolean> = {};
-    const erc20AllowanceRes = erc20AllowanceData as bigint[][];
+    const newNeedsAllowances: TokenNeedsAllowance = {};
+    const erc20AllowanceRes = erc20AllowanceData as CallResult[];
     currencyNames.forEach((currency, index) => {
-      const balance = fromUint256(
-        BigInt(erc20AllowanceRes[index][0]),
-        BigInt(erc20AllowanceRes[index][1])
-      );
-      needsAllowancesEntries[currency] = balance === "0";
+      newNeedsAllowances[currency] = {
+        needsAllowance: !isApprovalInfinite(erc20AllowanceRes[index][0]),
+        currentAllowance: erc20AllowanceRes[index][0],
+      };
     });
-    setNeedsAllowances(needsAllowancesEntries);
+    setNeedsAllowances((prevAllowances) => ({
+      ...prevAllowances,
+      ...newNeedsAllowances,
+    }));
   }, [erc20AllowanceData, erc20AllowanceError]);
 
   return needsAllowances;

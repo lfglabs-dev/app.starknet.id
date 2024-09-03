@@ -1,14 +1,14 @@
 import { useAccount } from "@starknet-react/core";
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useCallback, useState } from "react";
 import { createContext, useMemo } from "react";
 import { computeMetadataHash, generateSalt } from "@/utils/userDataService";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
 
-type FormState = {
+export type FormState = {
   email: string;
   isSwissResident: boolean;
   tokenId: number;
-  duration: number;
+  durationInYears: number;
   selectedDomains: Record<string, boolean>;
   // metadata
   salt?: string;
@@ -34,7 +34,7 @@ const initialState: FormState = {
   email: "",
   isSwissResident: false,
   tokenId: 0,
-  duration: 1,
+  durationInYears: 1,
   selectedDomains: {},
   needMetadata: false,
   salesTaxRate: 0,
@@ -44,7 +44,9 @@ const initialState: FormState = {
 
 export const FormContext = createContext<FormConfig>({
   formState: initialState,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   clearForm: () => {},
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   updateFormState: () => {},
 });
 
@@ -55,11 +57,11 @@ export const FormProvider: FunctionComponent<Context> = ({ children }) => {
     address as string
   );
 
-  const updateFormState = (updates: Partial<FormState>) => {
+  const updateFormState = useCallback((updates: Partial<FormState>) => {
     setFormState((prevState) => ({ ...prevState, ...updates }));
-  };
+  }, []);
 
-  const clearForm = () => {
+  const clearForm = useCallback(() => {
     setFormState((prevState) => ({
       ...prevState,
       selectedDomains: {},
@@ -68,12 +70,12 @@ export const FormProvider: FunctionComponent<Context> = ({ children }) => {
       isUpselled: false,
       selectedPfp: undefined,
     }));
-  };
+  }, []);
 
   // Handle metadataHash and salt
   useMemo(() => {
     updateFormState({ salt: generateSalt() });
-  }, [formState.selectedDomains]);
+  }, [updateFormState]);
 
   useMemo(() => {
     if (!address) return;
@@ -94,7 +96,7 @@ export const FormProvider: FunctionComponent<Context> = ({ children }) => {
         console.log("Error while fetching metadata:", err);
         updateFormState({ needMetadata: true });
       });
-  }, [address]);
+  }, [address, updateFormState]);
 
   useMemo(() => {
     if (!formState.salt || !formState.needMetadata) return;
@@ -112,6 +114,7 @@ export const FormProvider: FunctionComponent<Context> = ({ children }) => {
     formState.email,
     formState.isSwissResident,
     formState.needMetadata,
+    updateFormState,
   ]);
 
   const contextValues = useMemo(() => {

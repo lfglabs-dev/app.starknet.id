@@ -13,7 +13,7 @@ import {
   StarknetSignature,
 } from "@anima-protocol/personhood-sdk-react";
 import { useAccount } from "@starknet-react/core";
-import { Call, TypedData, constants } from "starknet";
+import { Call, TypedData } from "starknet";
 import { useContractWrite } from "@starknet-react/core";
 import { hexToDecimal } from "../../../../utils/feltService";
 import {

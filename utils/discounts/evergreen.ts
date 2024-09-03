@@ -1,7 +1,7 @@
 export const renewal: Upsell = {
-  duration: 3,
-  paidDuration: 2,
-  maxDuration: 1,
+  durationInDays: 3 * 365,
+  paidDurationInDays: 2 * 365,
+  maxDurationInDays: 1 * 365,
   discountId: "1",
   imageUrl: "/register/gift.webp",
   title: {
@@ -12,9 +12,9 @@ export const renewal: Upsell = {
 };
 
 export const registration: Upsell = {
-  duration: 3,
-  paidDuration: 2,
-  maxDuration: 1,
+  durationInDays: 3 * 365,
+  paidDurationInDays: 2 * 365,
+  maxDurationInDays: 1 * 365,
   discountId: "1",
   imageUrl: "/register/gift.webp",
   title: {

@@ -2,7 +2,7 @@ import {
   hexToDecimal,
   decimalToHex,
   stringToHex,
-  gweiToEth,
+  weiToEth,
   applyRateToBigInt,
   fromUint256,
   toUint256,
@@ -46,11 +46,15 @@ describe("Should test decimalToHex function", () => {
   });
 
   it("Should convert a number to its hex representation", () => {
-    expect(decimalToHex(123)).toEqual("0x000000000000000000000000000000000000000000000000000000000000007b");
+    expect(decimalToHex(123)).toEqual(
+      "0x000000000000000000000000000000000000000000000000000000000000007b"
+    );
   });
 
   it("Should convert 0 to 0x0", () => {
-    expect(decimalToHex(0)).toEqual("0x0000000000000000000000000000000000000000000000000000000000000000");
+    expect(decimalToHex(0)).toEqual(
+      "0x0000000000000000000000000000000000000000000000000000000000000000"
+    );
   });
 });
 
@@ -68,39 +72,39 @@ describe("Should test the stringToHex function", () => {
   });
 });
 
-describe("Should test gweiToEth function", () => {
-  it("Should return the right ETH value from a given Gwei value", () => {
-    expect(gweiToEth("1000000000000000000")).toEqual("1");
-    expect(gweiToEth("10000000000000000")).toEqual("0.01");
+describe("Should test weiToEth function", () => {
+  it("Should return the right ETH value from a given wei value in bigint or string", () => {
+    expect(weiToEth("1000000000000000000")).toEqual(1);
+    expect(weiToEth(BigInt("10000000000000000"))).toEqual(0.01);
   });
 
   it("Should return 0 if the argument is an empty string", () => {
-    expect(gweiToEth("")).toEqual("0");
+    expect(weiToEth("")).toEqual(0);
   });
 });
 
 describe("Should test applyRateToBigInt function", () => {
   it("Should return the correct value after multiplying by a percentage", () => {
-    expect(applyRateToBigInt("100000000000000000000", 0.35)).toEqual(
-      "35000000000000000000"
+    expect(applyRateToBigInt(BigInt("100000000000000000000"), 0.35)).toEqual(
+      BigInt("35000000000000000000")
     );
-    expect(applyRateToBigInt("100000000000000000000", 0.75)).toEqual(
-      "75000000000000000000"
+    expect(applyRateToBigInt(BigInt("100000000000000000000"), 0.75)).toEqual(
+      BigInt("75000000000000000000")
     );
     expect(applyRateToBigInt(BigInt("100000000000000000000"), 0.5)).toEqual(
-      "50000000000000000000"
+      BigInt("50000000000000000000")
     );
   });
 
   it("Should return 0 if the argument is an empty string or zero", () => {
-    expect(applyRateToBigInt("", 0.35)).toEqual("0");
-    expect(applyRateToBigInt("0", 0.75)).toEqual("0");
-    expect(applyRateToBigInt(BigInt(0), 0.5)).toEqual("0");
+    expect(applyRateToBigInt(BigInt(0), 0.35)).toEqual(BigInt(0));
+    expect(applyRateToBigInt(BigInt(0), 0.75)).toEqual(BigInt(0));
+    expect(applyRateToBigInt(BigInt(0), 0.5)).toEqual(BigInt(0));
   });
 
   it("Should handle negative percentages", () => {
-    expect(applyRateToBigInt("100000000000000000000", -0.35)).toEqual(
-      "-35000000000000000000"
+    expect(applyRateToBigInt(BigInt("100000000000000000000"), -0.35)).toEqual(
+      BigInt("-35000000000000000000")
     );
   });
 });
@@ -108,10 +112,14 @@ describe("Should test applyRateToBigInt function", () => {
 describe("fromUint256 function", () => {
   it("should correctly combine low and high BigInts", () => {
     expect(fromUint256(BigInt(1), BigInt(0))).toBe("1");
-    expect(fromUint256(BigInt(0), BigInt(1))).toBe("340282366920938463463374607431768211456"); // 2^128
-    expect(fromUint256(BigInt(1), BigInt(1))).toBe("340282366920938463463374607431768211457"); // 2^128 + 1
+    expect(fromUint256(BigInt(0), BigInt(1))).toBe(
+      "340282366920938463463374607431768211456"
+    ); // 2^128
+    expect(fromUint256(BigInt(1), BigInt(1))).toBe(
+      "340282366920938463463374607431768211457"
+    ); // 2^128 + 1
   });
-  
+
   it("should handle edge cases", () => {
     expect(fromUint256(BigInt(0), BigInt(0))).toBe("0");
     expect(
@@ -119,11 +127,13 @@ describe("fromUint256 function", () => {
     ).toBe("340282366920938463463374607431768211455"); // 2^128 - 1
     expect(
       fromUint256(
-        BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"), 
+        BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"),
         BigInt("0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")
       )
-    ).toBe("115792089237316195423570985008687907853269984665640564039457584007913129639935"); // 2^256 - 1
-  });  
+    ).toBe(
+      "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+    ); // 2^256 - 1
+  });
 });
 
 describe("Should test the toUint256 function", () => {
@@ -139,7 +149,8 @@ describe("Should test the toUint256 function", () => {
   });
 
   it("Should handle extremely large numbers", () => {
-    const largeInput = "1206167596222043737899107594365023368541035738443865566657697352045290673496";
+    const largeInput =
+      "1206167596222043737899107594365023368541035738443865566657697352045290673496";
     const result = toUint256(largeInput);
 
     const expectedLow = "113427455640312821154458202477256070488";
@@ -154,4 +165,4 @@ describe("Should test the toUint256 function", () => {
 
     expect(() => toUint256(invalidInput)).toThrow();
   });
-})
+});

@@ -39,16 +39,16 @@ import {
   getDomainPriceAltcoin,
   getTokenQuote,
 } from "../../utils/altcoinService";
-import { getPriceFromDomain } from "@/utils/priceService";
+import { getDomainPriceWei } from "@/utils/priceService";
 import { useRouter } from "next/router";
 import { formatDomainData } from "@/utils/cacheDomainData";
 
 type RegisterDiscountProps = {
   domain: string;
-  duration: number;
+  durationInDays: number;
   discountId: string;
   customMessage: string;
-  priceInEth: string;
+  priceInEth: bigint;
   mailGroups: string[];
   goBack: () => void;
   sponsor?: string;
@@ -56,7 +56,7 @@ type RegisterDiscountProps = {
 
 const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   domain,
-  duration,
+  durationInDays,
   discountId,
   customMessage,
   priceInEth,
@@ -70,9 +70,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
-  const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
+  const [salesTaxAmount, setSalesTaxAmount] = useState<bigint>(BigInt(0));
   const [callData, setCallData] = useState<Call[]>([]);
-  const [price, setPrice] = useState<string>(priceInEth); // set to priceInEth at initialization and updated to altcoin if selected by user
+  const [price, setPrice] = useState<bigint>(priceInEth); // set to priceInEth at initialization and updated to altcoin if selected by user
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [displayedCurrency, setDisplayedCurrency] = useState<CurrencyType>(
     CurrencyType.ETH
@@ -194,7 +194,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           encodedDomain,
           newTokenId,
           sponsor,
-          duration,
+          durationInDays,
           txMetadataHash,
           discountId
         )
@@ -205,7 +205,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           encodedDomain,
           newTokenId,
           sponsor,
-          duration,
+          durationInDays,
           txMetadataHash,
           ERC20Contract[displayedCurrency],
           quoteData as QuoteQueryData,
@@ -231,16 +231,13 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
     // If the user has toggled autorenewal
     if (renewalBox) {
-      const yearlyPriceInEth = getPriceFromDomain(1, domain);
+      const yearlyPriceInEth = getDomainPriceWei(365, domain);
       const allowance = getAutoRenewAllowance(
         displayedCurrency,
         salesTaxRate,
         displayedCurrency === CurrencyType.ETH
-          ? String(yearlyPriceInEth)
-          : String(
-              (yearlyPriceInEth * BigInt(quoteData?.quote ?? "0")) /
-                BigInt(1e18)
-            ) // Convert the yearly price in eth to the altcoin yearly price
+          ? yearlyPriceInEth
+          : (yearlyPriceInEth * BigInt(quoteData?.quote ?? "0")) / BigInt(1e18)
       );
 
       if (needsAllowance) {
@@ -248,7 +245,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
           autoRenewalCalls.approve(
             ERC20Contract[displayedCurrency],
             AutoRenewalContracts[displayedCurrency],
-            allowance
+            allowance * BigInt(10) // Allow 10 years
           )
         );
       }
@@ -267,7 +264,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     setTokenIdRedirect(String(newTokenId));
     setCallData(calls);
   }, [
-    duration,
+    durationInDays,
     targetAddress,
     price,
     domain,
@@ -318,7 +315,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       tokenIdRedirect,
       formatHexString(address as string),
       getDomainWithStark(domain),
-      duration,
+      durationInDays,
       Boolean(!hasMainDomain), // isMainDomain
       undefined // Selected PFPs
     );
@@ -337,7 +334,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
     } else {
       setSalesTaxRate(0);
-      setSalesTaxAmount("");
+      setSalesTaxAmount(BigInt(0));
     }
   }, [isSwissResident, price]);
 
@@ -383,9 +380,9 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
         </div>
         <div className={styles.summary}>
           <RegisterSummary
-            ethRegistrationPrice={priceInEth}
-            registrationPrice={price}
-            duration={duration}
+            priceInEth={priceInEth}
+            price={price}
+            durationInYears={durationInDays / 365}
             renewalBox={false}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
@@ -413,7 +410,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
               disabled={
                 (domainsMinting.get(encodedDomain) as boolean) ||
                 !account ||
-                !duration ||
+                !durationInDays ||
                 !targetAddress ||
                 invalidBalance ||
                 !termsBox ||

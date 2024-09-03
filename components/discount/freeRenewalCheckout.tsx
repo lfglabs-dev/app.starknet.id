@@ -8,10 +8,7 @@ import {
   selectedDomainsToArray,
   selectedDomainsToEncodedArray,
 } from "../../utils/stringService";
-import {
-  applyRateToBigInt,
-  numberToFixedString,
-} from "../../utils/feltService";
+import { applyRateToBigInt } from "../../utils/feltService";
 import { Call } from "starknet";
 import styles from "../../styles/components/registerV2.module.css";
 import TextField from "../UI/textField";
@@ -21,7 +18,8 @@ import RegisterSummary from "../domains/registerSummary";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
-  getTotalYearlyPrice,
+  getApprovalAmount,
+  getDisplayablePrice,
 } from "../../utils/priceService";
 import RenewalDomainsBox from "../domains/renewalDomainsBox";
 import registrationCalls from "../../utils/callData/registrationCalls";
@@ -45,8 +43,8 @@ import ConnectButton from "../UI/connectButton";
 import {
   getAutoRenewAllowance,
   getDomainPrice,
-  getDomainPriceAltcoin,
   getTokenQuote,
+  getTotalYearlyPrice,
 } from "../../utils/altcoinService";
 import { areArraysEqual } from "@/utils/arrayService";
 import useNeedSubscription from "@/hooks/useNeedSubscription";
@@ -54,29 +52,21 @@ import useNeedSubscription from "@/hooks/useNeedSubscription";
 type FreeRenewalCheckoutProps = {
   groups: string[];
   goBack: () => void;
-  duration: number;
-  discountId: string;
-  customMessage: string;
-  priceInEth: string;
-  renewPrice: string;
+  offer: Discount;
 };
 
 const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   groups,
-  priceInEth,
-  renewPrice,
-  duration,
-  discountId,
-  customMessage,
+  offer,
   goBack,
 }) => {
   const [email, setEmail] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
-  const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
+  const [salesTaxAmount, setSalesTaxAmount] = useState<bigint>(BigInt(0));
   const [callData, setCallData] = useState<Call[]>([]);
-  const [price, setPrice] = useState<string>(priceInEth);
+  // price paid by the user including discount
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [displayedCurrencies, setDisplayedCurrencies] = useState<
     CurrencyType[]
@@ -86,7 +76,10 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMetadata, setNeedMetadata] = useState<boolean>(false);
-  const [potentialPrice, setPotentialPrice] = useState<string>("0");
+  const [potentialPrice, setPotentialPrice] = useState<bigint>(BigInt(0));
+  const [customCheckoutMessage, setCustomCheckoutMessage] =
+    useState<string>("");
+
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
   const { address } = useAccount();
@@ -98,12 +91,8 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
   const [loadingPrice, setLoadingPrice] = useState<boolean>(false);
-  const needsAllowances = useNeedsAllowances(address);
+  const allowanceStatus = useNeedsAllowances(address);
   const needSubscription = useNeedSubscription(address);
-
-  useEffect(() => {
-    setPotentialPrice(getTotalYearlyPrice(selectedDomains));
-  }, [selectedDomains, setPotentialPrice]);
 
   useEffect(() => {
     if (!renewData?.transaction_hash || !salt || !metadataHash) return;
@@ -193,7 +182,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
     // Start the refetch scheduling
     scheduleRefetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayedCurrencies, price]); // We don't add quoteData because it would create an infinite loop
+  }, [displayedCurrencies]); // We don't add quoteData because it would create an infinite loop
 
   // on first load, we generate a salt
   useEffect(() => {
@@ -245,12 +234,12 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
   useEffect(() => {
     if (isSwissResident) {
       setSalesTaxRate(swissVatRate);
-      setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
+      setSalesTaxAmount(applyRateToBigInt(potentialPrice, swissVatRate));
     } else {
       setSalesTaxRate(0);
-      setSalesTaxAmount("");
+      setSalesTaxAmount(BigInt(0));
     }
-  }, [isSwissResident, price]);
+  }, [isSwissResident, potentialPrice]);
 
   // build free renewal call
   useEffect(() => {
@@ -271,14 +260,19 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
 
       displayedCurrencies.map((currency) => {
         // Add ERC20 allowance for all currencies if needed
-        if (needsAllowances[currency]) {
-          const priceToApprove =
-            currency === CurrencyType.ETH ? priceInEth : price;
+        if (allowanceStatus[currency].needsAllowance) {
+          const amountToApprove = getApprovalAmount(
+            potentialPrice,
+            salesTaxAmount,
+            1,
+            allowanceStatus[currency].currentAllowance
+          );
+
           calls.unshift(
             autoRenewalCalls.approve(
               ERC20Contract[currency],
               AutoRenewalContracts[currency],
-              priceToApprove
+              amountToApprove
             )
           );
         }
@@ -295,6 +289,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
             const domainPrice = getDomainPrice(
               domain,
               currency,
+              365,
               quoteData?.quote
             );
             const allowance = getAutoRenewAllowance(
@@ -307,7 +302,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
               autoRenewalCalls.enableRenewal(
                 AutoRenewalContracts[currency],
                 encodedDomain,
-                allowance,
+                allowance, // Warning review: Do we need to multiply by 10 here to have 10 years ?
                 txMetadataHash
               )
             );
@@ -318,34 +313,43 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
     }
   }, [
     selectedDomains,
-    price,
     salesTaxAmount,
-    needsAllowances,
+    allowanceStatus,
     metadataHash,
     salesTaxRate,
-    duration,
-    discountId,
     needMetadata,
     quoteData,
     displayedCurrencies,
     needSubscription,
-    priceInEth,
+    potentialPrice,
   ]);
 
   useEffect(() => {
-    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
-      CurrencyType.ETH,
+    const isCurrencySTRK = areArraysEqual(displayedCurrencies, [
+      CurrencyType.STRK,
     ]);
+    const currencyDisplayed = isCurrencySTRK
+      ? CurrencyType.STRK
+      : CurrencyType.ETH;
+    const totalYearlyPrice = getTotalYearlyPrice(
+      selectedDomains,
+      currencyDisplayed,
+      quoteData?.quote
+    );
+    const potentialCurrency = quoteData?.quote
+      ? currencyDisplayed
+      : CurrencyType.ETH;
 
-    if (isCurrencyETH) {
-      setPrice(priceInEth);
-      setLoadingPrice(false);
-    } else if (quoteData) {
-      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
-      setPrice(priceInAltcoin);
-      setLoadingPrice(false);
-    }
-  }, [priceInEth, quoteData, displayedCurrencies]);
+    // Setting the potential price in the displayed currency
+    setPotentialPrice(totalYearlyPrice);
+    setCustomCheckoutMessage(
+      `${offer.customMessage} and then ${getDisplayablePrice(
+        totalYearlyPrice
+      )} ${potentialCurrency} per year`
+    );
+
+    setLoadingPrice(false);
+  }, [quoteData, displayedCurrencies, selectedDomains, offer.customMessage]);
 
   const onCurrencySwitch = (currency: CurrencyType[]) => {
     setDisplayedCurrencies(currency as CurrencyType[]);
@@ -391,23 +395,23 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
         </div>
         <div className={styles.summary}>
           <RegisterSummary
-            ethRegistrationPrice={priceInEth}
-            registrationPrice={price}
-            duration={Number(numberToFixedString(duration / 365))}
+            priceInEth={potentialPrice}
+            price={offer.price}
+            durationInYears={offer.durationInDays / 365}
             salesTaxRate={salesTaxRate}
             isSwissResident={isSwissResident}
-            customMessage={`${customMessage} and then ${potentialPrice} ETH per year`}
+            customMessage={customCheckoutMessage}
             displayedCurrency={displayedCurrencies}
             onCurrencySwitch={onCurrencySwitch}
             loadingPrice={loadingPrice}
             areArCurrenciesEnabled
+            isUsdPriceHidden
           />
           <Divider className="w-full" />
           <RegisterCheckboxes
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
             isArOnforced={true}
-            ethRenewalPrice={renewPrice}
           />
           <div>
             {address ? (

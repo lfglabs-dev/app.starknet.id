@@ -25,36 +25,28 @@ export function hexToDecimal(hex: string | undefined): string {
   return new BN(hex.slice(2), 16).toString(10);
 }
 
-export function gweiToEth(gwei: string): string {
-  if (!gwei || isNaN(Number(gwei))) {
-    return "0";
+export function weiToEth(wei: string | bigint): number {
+  const stringed = wei.toString();
+  if (!stringed || Number.isNaN(Number(stringed))) {
+    return 0;
   }
 
-  const gweiBigInt = new Big(gwei);
+  const weiBig = new Big(stringed);
   const scaleFactor = new Big(10 ** 18);
 
-  const ethBigInt = gweiBigInt.div(scaleFactor).round(5);
-
-  return ethBigInt.toString();
+  const ethBig = weiBig.div(scaleFactor);
+  return Number(ethBig.toString());
 }
 
-export function applyRateToBigInt(
-  bigIntStr: string | bigint,
-  percentage: number
-): string {
-  // Convert the string to a BigInt
-  if (typeof bigIntStr === "string") {
-    bigIntStr = BigInt(bigIntStr);
-  }
-
+export function applyRateToBigInt(bigInt: bigint, percentage: number): bigint {
   // Convert the percentage to an integer by scaling it up by 100
   const integerPercentage = BigInt(Math.round(percentage * 100));
 
   // Perform the multiplication
-  const result = (bigIntStr * integerPercentage) / BigInt(100);
+  const result = (BigInt(bigInt) * integerPercentage) / BigInt(100);
 
   // Convert the result back to a string
-  return result.toString();
+  return result;
 }
 
 // A function that converts a number to a string with max 2 decimals

@@ -30,7 +30,7 @@ const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
     // Initialize the upsell state
     updateFormState({
       isUpselled: true,
-      duration: 1,
+      durationInYears: 1,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]); // Don't call updateFromState on every render
