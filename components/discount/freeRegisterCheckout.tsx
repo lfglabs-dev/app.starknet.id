@@ -67,6 +67,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     loadingDeploymentData,
     refreshRewards,
     invalidTx,
+    txErrorMessage,
+    txShortErrorMessage,
     loadingTypedData,
   } = usePaymaster(
     callData,
@@ -146,16 +148,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
 
   useEffect(() => {
     if (!coupon) return setLoadingCoupon(false);
-    const lastSuccessCoupon = localStorage.getItem("lastSuccessCoupon");
-    if (coupon === lastSuccessCoupon) {
-      setCouponError("");
-      setLoadingCoupon(false);
-      const signature = JSON.parse(
-        localStorage.getItem("couponSignature") as string
-      );
-      setSignature(signature);
-      return;
-    }
     if (!address) return;
     getFreeDomain(address, `${domain}.stark`, coupon).then((res) => {
       if (res.error)
@@ -166,9 +158,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
         const signature = [res.r, res.s];
         setSignature(signature);
         setCouponError("");
-        // Write in local storage
-        localStorage.setItem("lastSuccessCoupon", coupon);
-        localStorage.setItem("couponSignature", JSON.stringify(signature));
       }
       setLoadingCoupon(false);
     });
@@ -207,6 +196,9 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
             checked={termsBox}
             onChange={() => setTermsBox(!termsBox)}
           />
+          {invalidTx && txErrorMessage ? (
+            <p className={styles.errorMessage}>{txErrorMessage}</p>
+          ) : null}
           {address ? (
             <Button
               onClick={handleRegister}
@@ -230,7 +222,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 ? "Enter a valid Coupon"
                 : loadingGas
                 ? invalidTx
-                  ? "Invalid signature"
+                  ? txShortErrorMessage
                   : "Loading gas"
                 : loadingTypedData
                 ? "Building typed data"
