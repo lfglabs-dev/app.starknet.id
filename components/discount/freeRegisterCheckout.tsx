@@ -41,6 +41,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
 }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [callData, setCallData] = useState<Call[]>([]);
+  const [loadingCallData, setLoadingCallData] = useState<boolean>(true);
   const [salt, setSalt] = useState<string | undefined>();
   const encodedDomain = utils
     .encodeDomain(domain)
@@ -78,7 +79,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       );
       if (transactionHash) setTransactionHash(transactionHash);
     },
-    !coupon
+    loadingCallData
   );
 
   useEffect(() => {
@@ -120,7 +121,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       signature,
       txMetadataHash
     );
-    return setCallData(freeRegisterCalls);
+    setCallData(freeRegisterCalls);
+    setLoadingCallData(false);
   }, [metadataHash, encodedDomain, signature]);
 
   function changeCoupon(value: string): void {
@@ -149,6 +151,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   useEffect(() => {
     if (!coupon) return setLoadingCoupon(false);
     if (!address) return;
+    setLoadingCallData(true);
     getFreeDomain(address, `${domain}.stark`, coupon).then((res) => {
       if (res.error)
         setCouponError(
@@ -220,6 +223,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 ? "Please accept terms & policies"
                 : couponError || !coupon
                 ? "Enter a valid Coupon"
+                : loadingCallData
+                ? "Loading call data"
                 : loadingGas
                 ? invalidTx
                   ? txShortErrorMessage
