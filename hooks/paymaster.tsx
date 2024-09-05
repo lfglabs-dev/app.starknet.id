@@ -133,6 +133,7 @@ const usePaymaster = (
     if (!account || !gasTokenPrice || !gaslessCompatibility || loadingCallData)
       return;
     setLoadingGas(true);
+    setInvalidTx(false);
     estimateCalls(account, callData).then((fees) => {
       if (!fees) return;
       setInvalidTx(false);

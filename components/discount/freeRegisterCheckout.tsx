@@ -110,7 +110,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   }, [salt]);
 
   useEffect(() => {
-    if (signature[0] === null) return;
+    if (!signature[0]) return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     setTokenId(newTokenId);
