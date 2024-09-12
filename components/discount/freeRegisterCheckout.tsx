@@ -68,8 +68,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     loadingDeploymentData,
     refreshRewards,
     invalidTx,
-    txErrorMessage,
-    txShortErrorMessage,
+    txError,
     loadingTypedData,
   } = usePaymaster(
     callData,
@@ -199,8 +198,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
             checked={termsBox}
             onChange={() => setTermsBox(!termsBox)}
           />
-          {invalidTx && txErrorMessage ? (
-            <p className={styles.errorMessage}>{txErrorMessage}</p>
+          {invalidTx && txError?.message ? (
+            <p className={styles.errorMessage}>{txError.message}</p>
           ) : null}
           {address ? (
             <Button
@@ -227,7 +226,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 ? "Loading call data"
                 : loadingGas
                 ? invalidTx
-                  ? txShortErrorMessage
+                  ? txError?.short
                   : "Loading gas"
                 : loadingTypedData
                 ? "Building typed data"

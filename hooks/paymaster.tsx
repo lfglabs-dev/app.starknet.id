@@ -28,6 +28,11 @@ import isStarknetDeployed from "./isDeployed";
 import { gaslessOptions } from "@/utils/constants";
 import { decimalToHex } from "@/utils/feltService";
 
+type ErrorMessage = {
+  message: string;
+  short: string;
+};
+
 const usePaymaster = (
   callData: Call[],
   then: (transactionHash: string) => void,
@@ -51,8 +56,7 @@ const usePaymaster = (
   const { isDeployed, deploymentData } = isStarknetDeployed(account?.address);
   const [deploymentTypedData, setDeploymentTypedData] = useState<TypedData>();
   const [invalidTx, setInvalidTx] = useState<boolean>(false);
-  const [txErrorMessage, setTxErrorMessage] = useState<string>();
-  const [txShortErrorMessage, setTxShortErrorMessage] = useState<string>();
+  const [txError, setTxError] = useState<ErrorMessage>();
 
   const argentWallet = useMemo(
     () => connector?.id === "argentX" /*|| connector?.id === "argentMobile"*/,
@@ -108,13 +112,9 @@ const usePaymaster = (
         .catch((e) => {
           console.error(e);
           const stringError = e.toString();
-          if (stringError.includes("Invalid signature")) {
-            setTxErrorMessage("");
-            setTxShortErrorMessage("Invalid signature");
-          } else {
-            setTxErrorMessage(stringError);
-            setTxShortErrorMessage("TX error");
-          }
+          if (stringError.includes("Invalid signature"))
+            setTxError({ message: "", short: "Invalid signature" });
+          else setTxError({ message: stringError, short: "TX error" });
           setInvalidTx(true);
         });
     },
@@ -269,8 +269,7 @@ const usePaymaster = (
     refreshRewards,
     invalidTx,
     loadingTypedData,
-    txErrorMessage,
-    txShortErrorMessage,
+    txError,
   };
 };
 
