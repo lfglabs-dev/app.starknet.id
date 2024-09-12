@@ -41,6 +41,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
 }) => {
   const [targetAddress, setTargetAddress] = useState<string>("");
   const [callData, setCallData] = useState<Call[]>([]);
+  const [loadingCallData, setLoadingCallData] = useState<boolean>(true);
   const [salt, setSalt] = useState<string | undefined>();
   const encodedDomain = utils
     .encodeDomain(domain)
@@ -67,6 +68,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     loadingDeploymentData,
     refreshRewards,
     invalidTx,
+    txError,
     loadingTypedData,
   } = usePaymaster(
     callData,
@@ -76,7 +78,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       );
       if (transactionHash) setTransactionHash(transactionHash);
     },
-    !coupon
+    loadingCallData
   );
 
   useEffect(() => {
@@ -107,7 +109,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   }, [salt]);
 
   useEffect(() => {
-    if (signature[0] === null) return;
+    if (!signature[0]) return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     setTokenId(newTokenId);
@@ -118,7 +120,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       signature,
       txMetadataHash
     );
-    return setCallData(freeRegisterCalls);
+    setCallData(freeRegisterCalls);
+    setLoadingCallData(false);
   }, [metadataHash, encodedDomain, signature]);
 
   function changeCoupon(value: string): void {
@@ -146,17 +149,8 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
 
   useEffect(() => {
     if (!coupon) return setLoadingCoupon(false);
-    const lastSuccessCoupon = localStorage.getItem("lastSuccessCoupon");
-    if (coupon === lastSuccessCoupon) {
-      setCouponError("");
-      setLoadingCoupon(false);
-      const signature = JSON.parse(
-        localStorage.getItem("couponSignature") as string
-      );
-      setSignature(signature);
-      return;
-    }
     if (!address) return;
+    setLoadingCallData(true);
     getFreeDomain(address, `${domain}.stark`, coupon).then((res) => {
       if (res.error)
         setCouponError(
@@ -166,9 +160,6 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
         const signature = [res.r, res.s];
         setSignature(signature);
         setCouponError("");
-        // Write in local storage
-        localStorage.setItem("lastSuccessCoupon", coupon);
-        localStorage.setItem("couponSignature", JSON.stringify(signature));
       }
       setLoadingCoupon(false);
     });
@@ -207,6 +198,9 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
             checked={termsBox}
             onChange={() => setTermsBox(!termsBox)}
           />
+          {invalidTx && txError?.message ? (
+            <p className={styles.errorMessage}>{txError.message}</p>
+          ) : null}
           {address ? (
             <Button
               onClick={handleRegister}
@@ -228,9 +222,11 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 ? "Please accept terms & policies"
                 : couponError || !coupon
                 ? "Enter a valid Coupon"
+                : loadingCallData
+                ? "Loading call data"
                 : loadingGas
                 ? invalidTx
-                  ? "Invalid signature"
+                  ? txError?.short
                   : "Loading gas"
                 : loadingTypedData
                 ? "Building typed data"
