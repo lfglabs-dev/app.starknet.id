@@ -11,12 +11,14 @@ export const getConnectors = () => {
     new InjectedConnector({ options: { id: "braavos" } }),
     new InjectedConnector({ options: { id: "okxwallet" } }),
     new InjectedConnector({ options: { id: "bitkeep" } }),
-    // new ArgentMobileConnector({
-    //   dappName: "Starknet ID",
-    //   url: process.env.NEXT_PUBLIC_APP_LINK as string,
-    //   chainId: constants.NetworkName.SN_MAIN,
-    //   icons: ["https://app.starknet.id/visuals/StarknetIdLogo.svg"],
-    // }),
+    ArgentMobileConnector.init({
+      options: {
+        dappName: "Starknet ID",
+        url: process.env.NEXT_PUBLIC_APP_LINK as string,
+        chainId: constants.NetworkName.SN_MAIN,
+        icons: ["https://app.starknet.id/visuals/StarknetIdLogo.svg"],
+      },
+    }),
     new WebWalletConnector({
       url: "https://web.argent.xyz/",
     }),
