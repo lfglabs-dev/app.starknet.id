@@ -13,7 +13,7 @@ import {
   NotificationType,
   TransactionType,
 } from "@/utils/constants";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import Button from "@/components/UI/button";
 import RegisterSummary from "../registerSummary";
 import { useNotificationManager } from "@/hooks/useNotificationManager";
@@ -52,7 +52,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   const { addTransaction } = useNotificationManager();
   const tokenBalances = useBalances(address); // fetch the user balances for all whitelisted tokens
   const [callData, setCallData] = useState<Call[]>([]);
-  const { writeAsync: execute, data: checkoutData } = useContractWrite({
+  const { sendAsync: execute, data: checkoutData } = useSendTransaction({
     calls: callData,
   });
 

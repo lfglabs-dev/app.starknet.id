@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "../styles/Home.module.css";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import ErrorScreen from "../components/UI/screens/errorScreen";
@@ -32,7 +32,7 @@ const Discord: NextPage = () => {
 
   // Access localStorage
   const [tokenId, setTokenId] = useState<string>("");
-  const [calls, setCalls] = useState<Call | undefined>();
+  const [calls, setCalls] = useState<Call>({} as Call);
 
   useEffect(() => {
     if (!tokenId) {
@@ -101,9 +101,9 @@ const Discord: NextPage = () => {
   //Contract
   const {
     data: discordVerificationData,
-    writeAsync: execute,
+    sendAsync: execute,
     error: discordVerificationError,
-  } = useContractWrite({ calls: [calls as Call] });
+  } = useSendTransaction({ calls: [calls as Call] });
 
   function verifyDiscord() {
     execute();

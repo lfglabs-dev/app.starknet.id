@@ -1,7 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { utils } from "starknetid.js";
 import {
   formatHexString,
@@ -86,7 +86,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   const [renewalBox, setRenewalBox] = useState<boolean>(false);
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const { account, address } = useAccount();
-  const { writeAsync: execute, data: registerData } = useContractWrite({
+  const { sendAsync: execute, data: registerData } = useSendTransaction({
     calls: callData,
   });
   const hasMainDomain = !useDisplayName(address ?? "", false).startsWith("0x");

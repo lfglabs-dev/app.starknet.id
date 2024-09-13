@@ -5,7 +5,7 @@ import React, {
   useContext,
 } from "react";
 import { TextField, InputAdornment } from "@mui/material";
-import { useContractWrite } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import { isHexString, minifyAddress } from "../../utils/stringService";
 import { utils } from "starknetid.js";
@@ -45,7 +45,7 @@ const ExternalDomainsTransferModal: FunctionComponent<
   const [isSendingTx, setIsSendingTx] = useState(false);
   const [callData, setCallData] = useState<Call[]>([]);
 
-  const { writeAsync: transfer_name, data: transferData } = useContractWrite({
+  const { sendAsync: transfer_name, data: transferData } = useSendTransaction({
     calls: callData,
   });
 

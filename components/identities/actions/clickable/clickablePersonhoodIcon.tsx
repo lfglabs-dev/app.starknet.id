@@ -14,7 +14,7 @@ import {
 } from "@anima-protocol/personhood-sdk-react";
 import { useAccount } from "@starknet-react/core";
 import { Call, TypedData } from "starknet";
-import { useContractWrite } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-react/core";
 import { hexToDecimal } from "../../../../utils/feltService";
 import {
   bigintToStringHex,
@@ -46,7 +46,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [callData, setCallData] = useState<Call>();
   const { addTransaction } = useNotificationManager();
-  const { writeAsync: execute, data: verifierData } = useContractWrite({
+  const { sendAsync: execute, data: verifierData } = useSendTransaction({
     calls: [callData as Call],
   });
   const network =
