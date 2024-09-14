@@ -158,7 +158,7 @@ const usePaymaster = (
   ]);
 
   const loadingDeploymentData =
-    connector?.id !== "argentMobile" && !isDeployed && !deploymentData;
+    connector?.id === "argentX" && !isDeployed && !deploymentData;
 
   useEffect(() => {
     if (
