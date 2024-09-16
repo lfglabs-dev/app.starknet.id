@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import type { NextPage } from "next";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/discount.module.css";
@@ -11,14 +11,6 @@ import FreeRegisterCheckout from "@/components/discount/freeRegisterCheckout";
 const FreeRegistration: NextPage = () => {
   const [searchResult, setSearchResult] = useState<SearchResult | undefined>();
   const [screen, setScreen] = useState<number>(1);
-
-  useEffect(() => {
-    const currentDate = new Date();
-    const timestamp = currentDate.getTime();
-
-    if (timestamp >= freeRegistration.expiry) setScreen(0);
-  }, []);
-
   const goBack = () => setScreen(screen - 1);
 
   return (
@@ -36,7 +28,6 @@ const FreeRegistration: NextPage = () => {
           image={freeRegistration.offer.image ?? freeRegistration.image}
           setSearchResult={setSearchResult}
           setScreen={setScreen}
-          expiry={freeRegistration.expiry}
         />
       ) : null}
       {screen === 2 ? (

@@ -10,7 +10,7 @@ type FreeRegisterPresentationProps = {
   title: { desc: string; catch: string; descAfter?: string };
   desc: string;
   image: string;
-  expiry: number;
+  expiry?: number;
 };
 
 const FreeRegisterPresentation: FunctionComponent<
@@ -42,7 +42,7 @@ const FreeRegisterPresentation: FunctionComponent<
             className={styles.illustrationVariant}
             alt="Registration illustration"
           />
-          <Timer expiry={expiry} fixed />
+          {expiry && <Timer expiry={expiry} fixed />}
         </div>
       </div>
     </div>
