@@ -1,5 +1,5 @@
 import { Modal, TextField } from "@mui/material";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { isHexString, minifyAddress } from "../../utils/stringService";
 import styles from "../../styles/components/modalMessage.module.css";
@@ -30,7 +30,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   const { addTransaction } = useNotificationManager();
   const [isTxSent, setIsTxSent] = useState(false);
   const [callData, setCallData] = useState<Call[]>([]);
-  const { writeAsync: setResolving, data: resolvingData } = useContractWrite({
+  const { sendAsync: setResolving, data: resolvingData } = useSendTransaction({
     calls: callData,
   });
 

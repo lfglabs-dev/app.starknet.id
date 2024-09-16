@@ -1,4 +1,4 @@
-import { useContractRead } from "@starknet-react/core";
+import { useReadContract } from "@starknet-react/core";
 import { useEtherContract } from "./contracts";
 import { Abi } from "starknet";
 import { useEffect, useState } from "react";
@@ -17,7 +17,7 @@ export default function useAllowanceCheck(
   const [currentAllowance, setCurrentAllowance] = useState<bigint>(BigInt(0));
   const { contract: etherContract } = useEtherContract();
   const { data: erc20AllowanceData, error: erc20AllowanceError } =
-    useContractRead({
+    useReadContract({
       address: ERC20Contract[erc20],
       abi: etherContract?.abi as Abi,
       functionName: "allowance",

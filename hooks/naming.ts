@@ -1,4 +1,4 @@
-import { useContractRead } from "@starknet-react/core";
+import { useReadContract } from "@starknet-react/core";
 import { useNamingContract } from "./contracts";
 import { useContext, useEffect, useState } from "react";
 import { utils } from "starknetid.js";
@@ -105,8 +105,8 @@ export function useDataFromDomain(domain: string): FullDomainData {
     ? utils.encodeDomain(domain).map((elem) => elem.toString()) // remove when dapp uses starknet.js v5
     : [];
 
-  const { data, error } = useContractRead({
-    address: contract?.address as string,
+  const { data, error } = useReadContract({
+    address: contract?.address as HexString,
     abi: contract?.abi as Abi,
     functionName: "domain_to_data",
     args: [encoded],

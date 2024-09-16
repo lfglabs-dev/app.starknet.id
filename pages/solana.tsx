@@ -4,7 +4,11 @@ import Image from "next/image";
 import AffiliateImage from "../public/visuals/affiliate.webp";
 import Button from "../components/UI/button";
 import StarknetIcon from "../components/UI/iconsComponents/icons/starknetIcon";
-import { useAccount, useConnect, useContractWrite } from "@starknet-react/core";
+import {
+  useAccount,
+  useConnect,
+  useSendTransaction,
+} from "@starknet-react/core";
 import ProgressBar from "../components/UI/progressBar";
 import { NextPage } from "next";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
@@ -50,7 +54,7 @@ const Solana: NextPage = () => {
     starknetAddress as string
   );
   const [callData, setCallData] = useState<Call[]>([]);
-  const { writeAsync: execute, data: registerData } = useContractWrite({
+  const { sendAsync: execute, data: registerData } = useSendTransaction({
     calls: callData,
   });
   const [open, setOpen] = useState(true);

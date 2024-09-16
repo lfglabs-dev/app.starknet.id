@@ -4,7 +4,7 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
-import { useContractWrite } from "@starknet-react/core";
+import { useSendTransaction } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import styles from "../../../styles/components/evmModalMessage.module.css";
 import Button from "../../UI/button";
@@ -42,7 +42,7 @@ const AddEvmModal: FunctionComponent<AddEvmModalProps> = ({
   const abortControllerRef = useRef<AbortController | null>(null);
   const [isSendingTx, setIsSendingTx] = useState(false);
 
-  const { writeAsync: set_user_data, data: userData } = useContractWrite({
+  const { sendAsync: set_user_data, data: userData } = useSendTransaction({
     calls:
       identity && isValid
         ? [

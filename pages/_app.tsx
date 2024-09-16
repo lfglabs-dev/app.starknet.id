@@ -5,14 +5,17 @@ import Navbar from "../components/UI/navbar";
 import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
 import theme from "../styles/theme";
-import { StarknetConfig, jsonRpcProvider } from "@starknet-react/core";
+import {
+  Connector,
+  StarknetConfig,
+  jsonRpcProvider,
+} from "@starknet-react/core";
 import { Analytics } from "@vercel/analytics/react";
 import { StarknetIdJsProvider } from "../context/StarknetIdJsProvider";
 import { PostHogProvider } from "posthog-js/react";
 import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
 import { Chain, sepolia, mainnet } from "@starknet-react/chains";
-import { addWalnutLogsToConnectors } from "@walnuthq/sdk";
 // Solana
 import { clusterApiUrl } from "@solana/web3.js";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
@@ -93,10 +96,11 @@ function MyApp({ Component, pageProps }: AppProps) {
               chains={chains}
               provider={providers}
               connectors={
-                addWalnutLogsToConnectors({
-                  connectors: getConnectors(),
-                  apiKey: process.env.NEXT_PUBLIC_WALNUT_API_KEY as string,
-                }) as any
+                getConnectors() as Connector[]
+                // addWalnutLogsToConnectors({
+                //   connectors: getConnectors(),
+                //   apiKey: process.env.NEXT_PUBLIC_WALNUT_API_KEY as string,
+                // }) as any
               }
               autoConnect
             >

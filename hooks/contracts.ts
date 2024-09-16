@@ -14,69 +14,69 @@ import { Abi } from "starknet";
 export function useStarknetIdContract() {
   return useContract({
     abi: starknet_id_abi as Abi,
-    address: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT,
+    address: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as HexString,
   });
 }
 
 export function useNamingContract() {
   return useContract({
     abi: naming_abi as Abi,
-    address: process.env.NEXT_PUBLIC_NAMING_CONTRACT,
+    address: process.env.NEXT_PUBLIC_NAMING_CONTRACT as HexString,
   });
 }
 
 export function usePricingContract() {
   return useContract({
     abi: pricing_abi as Abi,
-    address: process.env.NEXT_PUBLIC_PRICING_CONTRACT,
+    address: process.env.NEXT_PUBLIC_PRICING_CONTRACT as HexString,
   });
 }
 
 export function useVerifierIdContract() {
   return useContract({
     abi: verifier_abi as Abi,
-    address: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT,
+    address: process.env.NEXT_PUBLIC_VERIFIER_CONTRACT as HexString,
   });
 }
 
 export function useEtherContract() {
   return useContract({
     abi: erc20_abi as Abi,
-    address: process.env.NEXT_PUBLIC_ETHER_CONTRACT,
+    address: process.env.NEXT_PUBLIC_ETHER_CONTRACT as HexString,
   });
 }
 
 export function useBraavosNftContract() {
   return useContract({
     abi: braavosNFT_abi as Abi,
-    address: process.env.NEXT_PUBLIC_BRAAVOS_SHIELD_CONTRACT,
+    address: process.env.NEXT_PUBLIC_BRAAVOS_SHIELD_CONTRACT as HexString,
   });
 }
 
 export function useRenewalContract() {
   return useContract({
     abi: renewal_abi.abi as Abi,
-    address: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT,
+    address: process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as HexString,
   });
 }
 
 export function useNftPpVerifierContract() {
   return useContract({
     abi: nft_pp_verifier_abi.abi as Abi,
-    address: process.env.NEXT_PUBLIC_NFT_PP_VERIFIER,
+    address: process.env.NEXT_PUBLIC_NFT_PP_VERIFIER as HexString,
   });
 }
 
 export function useSolSubdomainContract() {
   return useContract({
     abi: sol_subdomain_abi.abi as Abi,
-    address: process.env.NEXT_PUBLIC_SOL_SUBDOMAINS,
+    address: process.env.NEXT_PUBLIC_SOL_SUBDOMAINS as HexString,
   });
 }
 
 export function useMulticallContract() {
   return useContract({
     abi: multicall_abi.abi as Abi,
-    address: process.env.NEXT_PUBLIC_MULTICALL_CONTRACT,
+    address: process.env.NEXT_PUBLIC_MULTICALL_CONTRACT as HexString,
   });
 }

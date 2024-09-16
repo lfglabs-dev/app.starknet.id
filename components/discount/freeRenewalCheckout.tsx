@@ -1,7 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { formatHexString, isValidEmail } from "../../utils/stringService";
 import { applyRateToBigInt } from "../../utils/feltService";
 import styles from "../../styles/components/registerV2.module.css";
@@ -80,7 +80,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
     address,
     metadataHash
   );
-  const { writeAsync: execute, data: renewData } = useContractWrite({
+  const { sendAsync: execute, data: renewData } = useSendTransaction({
     calls: callData,
   });
   const [domainsMinting, setDomainsMinting] =
