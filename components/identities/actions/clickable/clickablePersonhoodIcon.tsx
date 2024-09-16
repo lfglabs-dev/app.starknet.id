@@ -44,10 +44,10 @@ const ClickablePersonhoodIcon: FunctionComponent<
   const [sessionId, setSessionId] = useState<string | undefined>();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [callData, setCallData] = useState<Call>();
+  const [callData, setCallData] = useState<Call[]>([]);
   const { addTransaction } = useNotificationManager();
   const { sendAsync: execute, data: verifierData } = useSendTransaction({
-    calls: [callData as Call],
+    calls: callData,
   });
   const network =
     process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
@@ -70,7 +70,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
   useEffect(() => {
     const executeVerification = () => {
       execute().finally(() => {
-        setCallData(undefined);
+        setCallData([]);
         setIsLoading(false);
         setIsOpen(false);
         setSessionId(undefined);
@@ -124,7 +124,7 @@ const ClickablePersonhoodIcon: FunctionComponent<
       .then((response) => response.json())
       .then((sig) => {
         const hexSessionId = "0x" + (sessionId as string).replace(/-/g, "");
-        setCallData(
+        setCallData([
           identityChangeCalls.writeVerifierData(
             process.env.NEXT_PUBLIC_VERIFIER_POP_CONTRACT as string,
             tokenId,
@@ -132,8 +132,8 @@ const ClickablePersonhoodIcon: FunctionComponent<
             "proof_of_personhood",
             hexToDecimal(hexSessionId),
             [sig.r, sig.s]
-          )
-        );
+          ),
+        ]);
       })
       .catch((error) =>
         console.log("An error occurred while fetching signture", error)
