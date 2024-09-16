@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import {
   AutoRenewalContracts,
   CurrencyType,
@@ -112,12 +112,14 @@ export const useFreeRenewalTxPrep = (
     metadataHash,
   ]);
 
+  const prevCallDataRef = useRef(callData);
   useEffect(() => {
     const newCallData = buildCalls();
-    if (!isEqual(newCallData, callData)) {
+    if (!isEqual(newCallData, prevCallDataRef.current)) {
       setCallData(newCallData);
+      prevCallDataRef.current = newCallData;
     }
-  }, [buildCalls, callData]);
+  }, [buildCalls]);
 
   return { callData };
 };
