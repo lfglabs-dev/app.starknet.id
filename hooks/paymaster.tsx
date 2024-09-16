@@ -13,7 +13,7 @@ import {
   useProvider,
   useAccount,
   useConnect,
-  useContractWrite,
+  useSendTransaction,
 } from "@starknet-react/core";
 import {
   AccountInterface,
@@ -49,7 +49,7 @@ const usePaymaster = (
   );
   const [gasTokenPrice, setGasTokenPrice] = useState<GasTokenPrice>();
   const [loadingGas, setLoadingGas] = useState<boolean>(false);
-  const { writeAsync: execute, data } = useContractWrite({
+  const { sendAsync: execute, data } = useSendTransaction({
     calls: callData,
   });
   const { connector } = useConnect();
