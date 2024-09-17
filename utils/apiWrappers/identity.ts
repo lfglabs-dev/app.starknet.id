@@ -1,4 +1,3 @@
-import { shortString } from "starknet";
 import { fromUint256, hexToDecimal } from "../feltService";
 import { formatHexString, getImgUrl } from "../stringService";
 import {
@@ -84,7 +83,7 @@ export class Identity {
   }
 
   get targetAddress(): string {
-    let legacyAddress = this._data.domain?.legacy_address;
+    const legacyAddress = this._data.domain?.legacy_address;
     if (
       legacyAddress &&
       legacyAddress !==
@@ -92,7 +91,7 @@ export class Identity {
     ) {
       return legacyAddress;
     }
-    let starknetFromId = this.getUserData(STARKNET);
+    const starknetFromId = this.getUserData(STARKNET);
     if (
       starknetFromId &&
       starknetFromId !==
