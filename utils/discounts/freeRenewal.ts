@@ -10,7 +10,7 @@ type FreeRenewalDiscount = {
 export const freeRenewalDiscount: FreeRenewalDiscount = {
   name: "The Free Renewal",
   image: "/freeRenewal/freeRenewal.webp",
-  expiry: 1816767999000, // timestamp in ms
+  expiry: 1727308799000, // timestamp in ms 25/09/2024 23:59:59
   discountMailGroupId: "106085143136961963",
   offer: {
     durationInDays: 90, // in days
