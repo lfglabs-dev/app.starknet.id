@@ -13,9 +13,9 @@ export const freeRegistration: FreeRegistration = {
   expiry: 1726382280 * 1000, // timestamp in ms
   discountMailGroupId: "X",
   offer: {
-    duration: 90, // in days
+    durationInDays: 90, // in days
     discountId: "X",
-    price: "0",
+    price: BigInt(0),
     desc: "Unlock your .stark domain for free and secure your Starknet profile!",
     title: {
       desc: "Get your",

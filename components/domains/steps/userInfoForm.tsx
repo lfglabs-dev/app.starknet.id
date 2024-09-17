@@ -63,7 +63,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
 
   function changeDuration(
     type: IncrementType,
-    value: number = formState.duration
+    value: number = formState.durationInYears
   ): void {
     let newValue = value;
 
@@ -81,7 +81,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
     if (isNaN(newValue) || newValue > maxYearsToRegister || newValue < 1)
       return;
     updateFormState({
-      duration: newValue,
+      durationInYears: newValue,
       isUpselled: newValue === 1 ? true : false,
     });
   }
@@ -108,8 +108,8 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
 
   const isDisabled = (): boolean => {
     return (
-      !formState.duration ||
-      formState.duration < 1 ||
+      !formState.durationInYears ||
+      formState.durationInYears < 1 ||
       (formState.needMetadata && emailError) ||
       (type === FormType.RENEW && !areDomainSelected(formState.selectedDomains))
     );
@@ -154,7 +154,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
               />
             ) : null}
             <NumberTextField
-              value={formState.duration}
+              value={formState.durationInYears}
               label="Years to register (max 25 years)"
               placeholder="years"
               onChange={(e) =>

@@ -1,4 +1,4 @@
-import { useContractRead } from "@starknet-react/core";
+import { useReadContract } from "@starknet-react/core";
 import { useNftPpVerifierContract } from "./contracts";
 import { Abi } from "starknet";
 import { useEffect, useState } from "react";
@@ -11,8 +11,8 @@ export default function useWhitelistedNFTs(address: string) {
   );
   const [userNfts, setUserNfts] = useState<StarkscanNftProps[]>([]);
   const { contract } = useNftPpVerifierContract();
-  const { data: whitelistData, error: whitelistError } = useContractRead({
-    address: contract?.address as string,
+  const { data: whitelistData, error: whitelistError } = useReadContract({
+    address: contract?.address as HexString,
     abi: contract?.abi as Abi,
     functionName: "get_whitelisted_contracts",
     args: [],

@@ -22,22 +22,34 @@ const CurrencyType = {
 describe("getDomainPriceAltcoin function", () => {
   it("should correctly calculate domain price in altcoin for valid inputs", () => {
     // priceInEth is in wei (1e18 wei = 1 ETH) and quote is the number of altcoin per ETH
-    expect(getDomainPriceAltcoin("100", "5000000000000000000")).toBe("500"); // 5 ETH to altcoin at a 1:100 rate
-    expect(getDomainPriceAltcoin("50", "10000000000000000000")).toBe("500"); // 10 ETH to altcoin at a 1:50 rate
-    expect(getDomainPriceAltcoin("200", "2500000000000000000")).toBe("500"); // 2.5 ETH to altcoin at a 1:200 rate
+    expect(getDomainPriceAltcoin("100", BigInt("5000000000000000000"))).toBe(
+      BigInt("500")
+    ); // 5 ETH to altcoin at a 1:100 rate
+    expect(getDomainPriceAltcoin("50", BigInt("10000000000000000000"))).toBe(
+      BigInt("500")
+    ); // 10 ETH to altcoin at a 1:50 rate
+    expect(getDomainPriceAltcoin("200", BigInt("2500000000000000000"))).toBe(
+      BigInt("500")
+    ); // 2.5 ETH to altcoin at a 1:200 rate
   });
 
   it("should handle edge cases gracefully", () => {
-    expect(getDomainPriceAltcoin("0", "1000000000000000000")).toBe("0"); // Zero rate
-    expect(getDomainPriceAltcoin("100", "0")).toBe("0"); // Zero priceInEth
-    expect(getDomainPriceAltcoin("1", "1000000000000000000")).toBe(
-      "1000000000000000000"
+    expect(getDomainPriceAltcoin("0", BigInt("1000000000000000000"))).toBe(
+      BigInt("0")
+    ); // Zero rate
+    expect(getDomainPriceAltcoin("100", BigInt(0))).toBe(BigInt("0")); // Zero priceInEth
+    expect(getDomainPriceAltcoin("1", BigInt("1000000000000000000"))).toBe(
+      BigInt("1000000000000000000")
     ); // 1:1 rate
   });
 
   it("should return a rounded value to nearest altcoin", () => {
-    expect(getDomainPriceAltcoin("100", "5500000000000000000")).toBe("550"); // 5.5 ETH at a 1:100 rate, rounded
-    expect(getDomainPriceAltcoin("150", "3333333333333333333")).toBe("500"); // 3.333... ETH at a 1:150 rate, rounded
+    expect(getDomainPriceAltcoin("100", BigInt("5500000000000000000"))).toBe(
+      BigInt("550")
+    ); // 5.5 ETH at a 1:100 rate, rounded
+    expect(getDomainPriceAltcoin("150", BigInt("3333333333333333333"))).toBe(
+      BigInt("500")
+    ); // 3.333... ETH at a 1:150 rate, rounded
   });
 });
 
@@ -125,8 +137,8 @@ describe("getRenewalPriceETH", () => {
 
 describe("getDomainPrice", () => {
   it("returns price in ETH when currency type is ETH", () => {
-    const domainPrice = PRICES.FIVE.toString();
-    const result = getDomainPrice("example.com", CurrencyType.ETH);
+    const domainPrice = PRICES.FIVE;
+    const result = getDomainPrice("example.com", CurrencyType.ETH, 1);
 
     expect(result).toBe(domainPrice);
   });
@@ -134,17 +146,11 @@ describe("getDomainPrice", () => {
   it("returns price in alternative currency when currency type is not ETH", () => {
     // price of 1 ETH in STRK
     const quote = "1644663352891940798464";
-    const domainPriceInETH = PRICES.FIVE.toString();
-    const domainPriceSTRK = getDomainPriceAltcoin(domainPriceInETH, quote);
+    const domainPriceInETH = PRICES.FIVE;
+    const domainPriceSTRK = getDomainPriceAltcoin(quote, domainPriceInETH);
 
-    const result = getDomainPrice("example.com", CurrencyType.STRK, quote);
+    const result = getDomainPrice("example.com", CurrencyType.STRK, 1, quote);
     expect(result).toBe(domainPriceSTRK);
-  });
-
-  it("throws an error when quote is missing for non-ETH currency type", () => {
-    expect(() => {
-      getDomainPrice("example.com", CurrencyType.STRK);
-    }).toThrow("[big.js] Invalid number");
   });
 });
 
@@ -152,7 +158,7 @@ describe("getAutoRenewAllowance", () => {
   it("calculates allowance without sales tax when salesTaxRate is 0", () => {
     const currencyType = CurrencyType.ETH;
     const salesTaxRate = 0;
-    const domainPrice = PRICES.FIVE.toString();
+    const domainPrice = PRICES.FIVE;
 
     const result = getAutoRenewAllowance(
       currencyType,
@@ -166,7 +172,7 @@ describe("getAutoRenewAllowance", () => {
   it("calculates allowance with sales tax when salesTaxRate is provided", () => {
     const currencyType = CurrencyType.ETH;
     const salesTaxRate = 0.1; // 10%
-    const domainPrice = "1000000000000000000"; // 1 ETH
+    const domainPrice = BigInt("1000000000000000000"); // 1 ETH
     const limitPrice = BigInt(domainPrice);
     const taxAmount = BigInt("100000000000000000"); // 0.1 ETH
 
@@ -178,37 +184,37 @@ describe("getAutoRenewAllowance", () => {
       domainPrice
     );
 
-    expect(result).toBe(expectedAllowance.toString());
+    expect(result).toBe(expectedAllowance);
   });
 });
 
 describe("getPriceForDuration function", () => {
   it("should correctly calculate domain price for valid inputs", () => {
-    expect(getPriceForDuration("1000000000000000000", 5)).toBe(
-      "5000000000000000000"
+    expect(getPriceForDuration(BigInt("1000000000000000000"), 5)).toBe(
+      BigInt("5000000000000000000")
     ); // 1 ETH for 5 years
-    expect(getPriceForDuration("500000000000000000", 10)).toBe(
-      "5000000000000000000"
+    expect(getPriceForDuration(BigInt("500000000000000000"), 10)).toBe(
+      BigInt("5000000000000000000")
     ); // 0.5 ETH for 10 years
-    expect(getPriceForDuration("2000000000000000000", 2)).toBe(
-      "4000000000000000000"
+    expect(getPriceForDuration(BigInt("2000000000000000000"), 2)).toBe(
+      BigInt("4000000000000000000")
     ); // 2 ETH for 2 years
   });
 
   it("should handle edge cases gracefully", () => {
-    expect(getPriceForDuration("0", 10)).toBe("0"); // Zero priceFor1Y
-    expect(getPriceForDuration("1000000000000000000", 1)).toBe(
-      "1000000000000000000"
+    expect(getPriceForDuration(BigInt(0), 10)).toBe(BigInt(0)); // Zero priceFor1Y
+    expect(getPriceForDuration(BigInt("1000000000000000000"), 1)).toBe(
+      BigInt("1000000000000000000")
     ); // Duration is 1
-    expect(getPriceForDuration("0", 0)).toBe("0"); // Zero priceFor1Y and zero duration
+    expect(getPriceForDuration(BigInt(0), 0)).toBe(BigInt(0)); // Zero priceFor1Y and zero duration
   });
 
   it("should return a rounded value correctly", () => {
-    expect(getPriceForDuration("1234567890000000000", 3)).toBe(
-      "3703703670000000000"
+    expect(getPriceForDuration(BigInt("1234567890000000000"), 3)).toBe(
+      BigInt("3703703670000000000")
     );
-    expect(getPriceForDuration("1234567890000000000", 4)).toBe(
-      "4938271560000000000"
+    expect(getPriceForDuration(BigInt("1234567890000000000"), 4)).toBe(
+      BigInt("4938271560000000000")
     );
   });
 });

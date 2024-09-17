@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { TextField } from "@mui/material";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { useIsValid } from "../../../hooks/naming";
 import { numberToString } from "../../../utils/stringService";
 import SelectIdentity from "../../domains/selectIdentity";
@@ -32,8 +32,8 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   const [callData, setCallData] = useState<Call[]>([]);
   const { address } = useAccount();
   const { addTransaction } = useNotificationManager();
-  const { writeAsync: transfer_domain, data: transferDomainData } =
-    useContractWrite({
+  const { sendAsync: transfer_domain, data: transferDomainData } =
+    useSendTransaction({
       calls: callData,
     });
   const [isTxSent, setIsTxSent] = useState(false);

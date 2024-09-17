@@ -13,7 +13,7 @@ import {
   useProvider,
   useAccount,
   useConnect,
-  useContractWrite,
+  useSendTransaction,
 } from "@starknet-react/core";
 import {
   AccountInterface,
@@ -27,6 +27,11 @@ import {
 import isStarknetDeployed from "./isDeployed";
 import { gaslessOptions } from "@/utils/constants";
 import { decimalToHex } from "@/utils/feltService";
+
+type ErrorMessage = {
+  message: string;
+  short: string;
+};
 
 const usePaymaster = (
   callData: Call[],
@@ -44,13 +49,14 @@ const usePaymaster = (
   );
   const [gasTokenPrice, setGasTokenPrice] = useState<GasTokenPrice>();
   const [loadingGas, setLoadingGas] = useState<boolean>(false);
-  const { writeAsync: execute, data } = useContractWrite({
+  const { sendAsync: execute, data } = useSendTransaction({
     calls: callData,
   });
   const { connector } = useConnect();
   const { isDeployed, deploymentData } = isStarknetDeployed(account?.address);
   const [deploymentTypedData, setDeploymentTypedData] = useState<TypedData>();
   const [invalidTx, setInvalidTx] = useState<boolean>(false);
+  const [txError, setTxError] = useState<ErrorMessage>();
 
   const argentWallet = useMemo(
     () => connector?.id === "argentX" /*|| connector?.id === "argentMobile"*/,
@@ -105,6 +111,10 @@ const usePaymaster = (
         )
         .catch((e) => {
           console.error(e);
+          const stringError = e.toString();
+          if (stringError.includes("Invalid signature"))
+            setTxError({ message: "", short: "Invalid signature" });
+          else setTxError({ message: stringError, short: "TX error" });
           setInvalidTx(true);
         });
     },
@@ -123,6 +133,7 @@ const usePaymaster = (
     if (!account || !gasTokenPrice || !gaslessCompatibility || loadingCallData)
       return;
     setLoadingGas(true);
+    setInvalidTx(false);
     estimateCalls(account, callData).then((fees) => {
       if (!fees) return;
       setInvalidTx(false);
@@ -147,7 +158,7 @@ const usePaymaster = (
   ]);
 
   const loadingDeploymentData =
-    connector?.id !== "argentMobile" && !isDeployed && !deploymentData;
+    connector?.id === "argentX" && !isDeployed && !deploymentData;
 
   useEffect(() => {
     if (
@@ -258,6 +269,7 @@ const usePaymaster = (
     refreshRewards,
     invalidTx,
     loadingTypedData,
+    txError,
   };
 };
 

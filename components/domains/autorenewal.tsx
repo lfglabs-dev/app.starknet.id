@@ -1,7 +1,7 @@
 import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import {
   formatHexString,
   isValidEmail,
@@ -16,7 +16,8 @@ import SwissForm from "./swissForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
   areDomainSelected,
-  getPriceFromDomains,
+  getApprovalAmount,
+  getTotalYearlyPrice,
 } from "../../utils/priceService";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import BackButton from "../UI/backButton";
@@ -42,9 +43,10 @@ import {
 } from "../../utils/altcoinService";
 import ArCurrencyDropdown from "./arCurrencyDropdown";
 import { areArraysEqual } from "@/utils/arrayService";
-import useNeedsAllowances from "@/hooks/useNeedAllowances";
+import useNeedAllowances from "@/hooks/useNeedAllowances";
 import useNeedSubscription from "@/hooks/useNeedSubscription";
 import AutoRenewalDomainsBox from "./autoRenewalDomainsBox";
+import Notification from "../UI/notification";
 
 type SubscriptionProps = {
   groups: string[];
@@ -55,10 +57,10 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   const [emailError, setEmailError] = useState<boolean>(true);
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
-  const [salesTaxAmount, setSalesTaxAmount] = useState<string>("0");
+  const [salesTaxAmount, setSalesTaxAmount] = useState<bigint>(BigInt(0));
   const [callData, setCallData] = useState<Call[]>([]);
-  const [priceInEth, setPriceInEth] = useState<string>(""); // price in ETH
-  const [price, setPrice] = useState<string>(""); // price in displayedCurrencies, set to priceInEth on first load as ETH is the default currency
+  const [priceInEth, setPriceInEth] = useState<bigint>(BigInt(0)); // price in ETH
+  const [price, setPrice] = useState<bigint>(BigInt(0)); // price in displayedCurrencies, set to priceInEth on first load as ETH is the default currency
   const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
   const [displayedCurrencies, setDisplayedCurrencies] = useState<
     CurrencyType[]
@@ -72,17 +74,17 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
   const { address } = useAccount();
-  const { writeAsync: execute, data: autorenewData } = useContractWrite({
+  const { sendAsync: execute, data: autorenewData } = useSendTransaction({
     calls: callData,
   });
   const [domainsMinting, setDomainsMinting] =
     useState<Record<string, boolean>>();
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
-  const duration = 1;
-  const needsAllowance = useNeedsAllowances(address);
+  const allowanceStatus = useNeedAllowances(address);
   const { needSubscription, isLoading: needSubscriptionLoading } =
     useNeedSubscription(address);
+  const [currencyError, setCurrencyError] = useState<boolean>(false);
 
   useEffect(() => {
     if (!address) return;
@@ -188,7 +190,13 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
       if (isCurrencyETH || !contractToQuote) return;
 
       getTokenQuote(contractToQuote).then((data) => {
-        setQuoteData(data);
+        if (data) {
+          setQuoteData(data);
+          setCurrencyError(false);
+        } else {
+          setDisplayedCurrencies([CurrencyType.ETH]);
+          setCurrencyError(true);
+        }
       });
     };
 
@@ -221,13 +229,8 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
   // if selectedDomains or duration have changed, we update priceInEth
   useEffect(() => {
     if (!selectedDomains) return;
-    setPriceInEth(
-      getPriceFromDomains(
-        selectedDomainsToArray(selectedDomains),
-        duration
-      ).toString()
-    );
-  }, [selectedDomains, duration]);
+    setPriceInEth(getTotalYearlyPrice(selectedDomains));
+  }, [selectedDomains]);
 
   // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
@@ -251,7 +254,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
       } else {
         setSalesTaxRate(0);
-        setSalesTaxAmount("");
+        setSalesTaxAmount(BigInt(0));
       }
     }
   }, [isSwissResident, price, needMedadata, salesTaxRate]);
@@ -267,15 +270,19 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
 
       displayedCurrencies.map((currency) => {
         // Add ERC20 allowance for all currencies if needed
-        if (needsAllowance[currency]) {
-          const priceToApprove =
-            currency === CurrencyType.ETH ? priceInEth : price;
+        if (allowanceStatus[currency].needsAllowance) {
+          const amountToApprove = getApprovalAmount(
+            price,
+            salesTaxAmount,
+            1,
+            allowanceStatus[currency].currentAllowance
+          );
 
           calls.push(
             autoRenewalCalls.approve(
               ERC20Contract[currency],
               AutoRenewalContracts[currency],
-              priceToApprove
+              amountToApprove
             )
           );
         }
@@ -290,6 +297,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
             const domainPrice = getDomainPrice(
               domain,
               currency,
+              365,
               quoteData?.quote
             );
             const allowance = getAutoRenewAllowance(
@@ -315,7 +323,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     selectedDomains,
     price,
     salesTaxAmount,
-    needsAllowance,
+    allowanceStatus,
     metadataHash,
     salesTaxRate,
     displayedCurrencies,
@@ -423,6 +431,12 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         isTxModalOpen={isTxModalOpen}
         closeModal={() => window.history.back()}
       />
+      <Notification
+        visible={currencyError}
+        onClose={() => setCurrencyError(false)}
+      >
+        <p>Failed to get token quote. Please use ETH for now.</p>
+      </Notification>
     </div>
   );
 };

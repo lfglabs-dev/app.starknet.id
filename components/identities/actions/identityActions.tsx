@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from "react";
 import { FunctionComponent, useEffect, useState } from "react";
-import { useAccount, useContractWrite } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
 import ChangeAddressModal from "./changeAddressModal";
 import TransferFormModal from "./transferFormModal";
 import SubdomainModal from "./subdomainModal";
@@ -66,8 +66,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
     []
   );
-  const { writeAsync: disableRenewal, data: disableRenewalData } =
-    useContractWrite({
+  const { sendAsync: disableRenewal, data: disableRenewalData } =
+    useSendTransaction({
       calls: disableRenewalCalldata,
     });
 
@@ -102,7 +102,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     callDataEncodedDomain.push(domain.toString(10));
   });
 
-  const { writeAsync: setMainId, data: mainDomainData } = useContractWrite({
+  const { sendAsync: setMainId, data: mainDomainData } = useSendTransaction({
     calls: identity
       ? identityChangeCalls.setAsMainId(
           identity,

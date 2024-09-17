@@ -1,22 +1,22 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/registerV3.module.css";
-import { getYearlyPrice } from "@/utils/priceService";
+import { getDisplayablePrice, getYearlyPriceWei } from "@/utils/priceService";
 import DoneIcon from "../UI/iconsComponents/icons/doneIcon";
 import { useAccount } from "@starknet-react/core";
 
 type FreeRegisterSummaryProps = {
-  duration: number;
+  durationInDays: number;
   domain: string;
 };
 
 const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
   domain,
-  duration,
+  durationInDays,
 }) => {
   const { address } = useAccount();
 
   function getMessage() {
-    return `${Math.floor(duration / 30)} months of domain registration`;
+    return `${Math.floor(durationInDays / 30)} months of domain registration`;
   }
 
   return (
@@ -26,7 +26,9 @@ const FreeRegisterSummary: FunctionComponent<FreeRegisterSummaryProps> = ({
         <div className={styles.priceContainer}>
           <p className={styles.legend}>{getMessage()}</p>
           <p>
-            <span className="line-through">{getYearlyPrice(domain)} ETH</span>
+            <span className="line-through">
+              {getDisplayablePrice(getYearlyPriceWei(domain))} ETH
+            </span>
             &nbsp;&nbsp;
             <strong>Free</strong>
           </p>

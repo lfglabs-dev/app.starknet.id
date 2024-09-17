@@ -5,17 +5,18 @@ import React, {
   useState,
 } from "react";
 import styles from "../../styles/components/registerV3.module.css";
-import { gweiToEth, numberToFixedString } from "../../utils/feltService";
+import { weiToEth } from "../../utils/feltService";
 import { CurrencyType } from "../../utils/constants";
 import CurrencyDropdown from "./currencyDropdown";
 import { Skeleton } from "@mui/material";
 import ArrowRightIcon from "../UI/iconsComponents/icons/arrowRightIcon";
 import ArCurrencyDropdown from "./arCurrencyDropdown";
+import { getDisplayablePrice } from "@/utils/priceService";
 
 type RegisterSummaryProps = {
-  duration: number;
-  ethRegistrationPrice: string;
-  registrationPrice: string; // price in displayedCurrency, set to priceInEth on first load as ETH is the default currency
+  durationInYears: number;
+  priceInEth: bigint;
+  price: bigint;
   renewalBox?: boolean;
   salesTaxRate: number;
   isSwissResident?: boolean;
@@ -26,15 +27,16 @@ type RegisterSummaryProps = {
     | ((type: CurrencyType) => void);
   loadingPrice?: boolean;
   isUpselled?: boolean;
-  discountedPrice?: string; // price the user will pay after discount
-  discountedDuration?: number; // years the user will have the domain for after discount
+  discountedPrice?: bigint;
+  discountedPriceInEth?: bigint;
   areArCurrenciesEnabled?: boolean;
+  isUsdPriceHidden?: boolean;
 };
 
 const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
-  duration,
-  ethRegistrationPrice,
-  registrationPrice,
+  durationInYears,
+  priceInEth,
+  price,
   renewalBox = true,
   salesTaxRate,
   isSwissResident,
@@ -44,12 +46,14 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   loadingPrice,
   isUpselled = false,
   discountedPrice,
-  discountedDuration,
+  discountedPriceInEth,
   areArCurrenciesEnabled = false,
+  isUsdPriceHidden = false,
 }) => {
-  const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1ETH in USD
+  const [ethUsdPrice, setEthUsdPrice] = useState<string>("0"); // price of 1 ETH in USD
   const [usdRegistrationPrice, setUsdRegistrationPrice] = useState<string>("0");
-  const recurrence = renewalBox && duration === 1 ? "/year" : "";
+  const [salesTaxAmountUsd, setSalesTaxAmountUsd] = useState<string>("0");
+  const recurrence = renewalBox && durationInYears === 1 ? "/year" : "";
   useEffect(() => {
     fetch(
       "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
@@ -57,7 +61,7 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       .then((res) => res.json())
       .then((data) => {
         console.log("Coingecko API Data:", data);
-        setEthUsdPrice(data?.ethereum?.usd.toString());
+        setEthUsdPrice(data?.ethereum?.usd);
       })
       .catch((err) => console.log("Coingecko API Error:", err));
   }, []);
@@ -68,20 +72,33 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       : displayedCurrency;
 
   useEffect(() => {
-    function computeUsdPrice() {
-      const durationToUse = duration > 1 ? duration : 1;
-      if (ethUsdPrice && ethRegistrationPrice) {
-        return (
-          Number(ethUsdPrice) *
-          Number(gweiToEth(ethRegistrationPrice)) *
-          durationToUse
-        ).toFixed(2);
-      }
-      return "0";
-    }
+    const effectivePrice =
+      discountedPrice && discountedPrice !== BigInt(0) && discountedPriceInEth
+        ? discountedPriceInEth
+        : priceInEth;
 
-    setUsdRegistrationPrice(computeUsdPrice());
-  }, [ethRegistrationPrice, ethUsdPrice, duration]);
+    const computeUsdRegistrationPrice = () => {
+      if (!ethUsdPrice || !priceInEth) return 0;
+
+      return Number(ethUsdPrice) * weiToEth(effectivePrice);
+    };
+
+    const computeUsdSalesTaxAmount = () => {
+      if (!ethUsdPrice || !priceInEth) return 0;
+
+      return salesTaxRate * weiToEth(effectivePrice) * Number(ethUsdPrice);
+    };
+
+    setUsdRegistrationPrice(computeUsdRegistrationPrice().toFixed(2));
+    setSalesTaxAmountUsd(computeUsdSalesTaxAmount().toFixed(2));
+  }, [
+    priceInEth,
+    ethUsdPrice,
+    durationInYears,
+    discountedPrice,
+    discountedPriceInEth,
+    salesTaxRate,
+  ]);
 
   // Ideally, this should be a separate components
   function displayPrice(priceToPay: string, salesTaxInfo: string): ReactNode {
@@ -117,37 +134,27 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
   }
 
   function displayTokenPrice(): ReactNode {
-    const salesTaxAmountUsd =
-      salesTaxRate *
-      Number(gweiToEth(ethRegistrationPrice)) *
-      Number(ethUsdPrice);
-
     const salesTaxInfo = salesTaxAmountUsd
-      ? ` (+ ${numberToFixedString(
-          salesTaxAmountUsd
-        )}$ worth of ${announcedCurrency} for Swiss VAT)`
+      ? ` (+ ${salesTaxAmountUsd}$ worth of ${announcedCurrency} for Swiss VAT)`
       : "";
 
-    const registerPrice = Number(gweiToEth(registrationPrice));
-    const registerPriceStr =
-      registerPrice != 0 ? numberToFixedString(registerPrice, 4) : "0";
     if (isUpselled && discountedPrice) {
       return displayDiscountedPrice(
-        registerPriceStr,
-        numberToFixedString(Number(gweiToEth(discountedPrice)), 3),
+        getDisplayablePrice(price),
+        getDisplayablePrice(discountedPrice),
         salesTaxInfo
       );
     }
-    return displayPrice(registerPriceStr, salesTaxInfo);
+    return displayPrice(getDisplayablePrice(price), salesTaxInfo);
   }
 
-  function getMessage() {
-    if (!ethRegistrationPrice) return "0";
+  function getCheckoutMessage() {
     if (customMessage) return customMessage;
+    if (!priceInEth) return "0";
     else {
-      return `${gweiToEth(ethRegistrationPrice)} ETH x ${
-        isUpselled ? discountedDuration : duration
-      } ${isUpselled || duration > 1 ? "years" : "year"}`;
+      return `${getDisplayablePrice(priceInEth)} ETH x ${durationInYears} ${
+        isUpselled || durationInYears > 1 ? "years" : "year"
+      }`;
     }
   }
 
@@ -156,13 +163,15 @@ const RegisterSummary: FunctionComponent<RegisterSummaryProps> = ({
       <div className={styles.totalDue}>
         <h4 className={styles.totalDueTitle}>Total due:</h4>
         <div className={styles.priceContainer}>
-          <p className={styles.legend}>{getMessage()}</p>
+          <p className={styles.legend}>{getCheckoutMessage()}</p>
           {loadingPrice ? (
             <Skeleton variant="text" width="150px" height="24px" />
           ) : (
             displayTokenPrice()
           )}
-          <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
+          {isUsdPriceHidden ? null : (
+            <p className={styles.legend}>≈ ${usdRegistrationPrice}</p>
+          )}
         </div>
       </div>
       {areArCurrenciesEnabled ? (

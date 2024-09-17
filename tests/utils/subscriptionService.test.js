@@ -1,69 +1,8 @@
 import {
-  processSubscriptionData,
   getNonSubscribedDomains,
   fullIdsToDomains,
+  processSubscriptionData,
 } from "../../utils/subscriptionService";
-import { ERC20Contract } from "../../utils/constants";
-
-describe("processSubscriptionData function", () => {
-  const mockSubscriptionInfos = {
-    "domain1.stark": {
-      eth_subscriptions: [
-        {
-          enabled: true,
-          allowance: "0x0",
-          renewer_address: "0xabc",
-          auto_renew_contract: null,
-          token: ERC20Contract.ETH,
-        },
-      ],
-      altcoin_subscriptions: [
-        {
-          enabled: true,
-          allowance: "0x0",
-          renewer_address: "0xdef",
-          auto_renew_contract: null,
-          token: ERC20Contract.STRK,
-        },
-      ],
-    },
-    "domain2.stark": {
-      eth_subscriptions: [
-        {
-          enabled: true,
-          allowance: "0x1",
-          renewer_address: "0xghi",
-          auto_renew_contract: null,
-          token: ERC20Contract.ETH,
-        },
-      ],
-      altcoin_subscriptions: [
-        {
-          enabled: true,
-          allowance: "0x1",
-          renewer_address: "0xjkl",
-          auto_renew_contract: null,
-          token: ERC20Contract.STRK,
-        },
-      ],
-    },
-    "domain3.stark": {
-      eth_subscriptions: null,
-      altcoin_subscriptions: null,
-    },
-  };
-
-  it("should process subscription data and set the correct needs allowance", () => {
-    const expectedOutput = {
-      "domain1.stark": { ETH: true, STRK: true },
-      "domain2.stark": { ETH: false, STRK: false },
-      "domain3.stark": { ETH: true, STRK: true },
-    };
-
-    const result = processSubscriptionData(mockSubscriptionInfos);
-    expect(result).toEqual(expectedOutput);
-  });
-});
 
 describe("getNonSubscribedDomains function", () => {
   const mockData = {
@@ -126,5 +65,45 @@ describe("fullIdsToDomains", () => {
 
     const result = fullIdsToDomains(mockFullIds);
     expect(result).toEqual([]);
+  });
+});
+
+describe("processSubscriptionData function", () => {
+  it("should process subscription data correctly", () => {
+    const mockData = {
+      "example.stark": { eth_subscriptions: null },
+      "example2.stark": { eth_subscriptions: {} },
+    };
+
+    const expectedOutput = {
+      "example.stark": {
+        ETH: { needsAllowance: true, currentAllowance: BigInt(0) },
+        STRK: { needsAllowance: true, currentAllowance: BigInt(0) },
+      },
+    };
+
+    const result = processSubscriptionData(mockData);
+    expect(result).toEqual(expectedOutput);
+  });
+
+  it("should return an empty object if no domains need subscriptions", () => {
+    const mockData = {
+      "example.stark": { eth_subscriptions: {} },
+      "example2.stark": { eth_subscriptions: {} },
+    };
+
+    const expectedOutput = {};
+
+    const result = processSubscriptionData(mockData);
+    expect(result).toEqual(expectedOutput);
+  });
+
+  it("should handle an empty input object", () => {
+    const mockData = {};
+
+    const expectedOutput = {};
+
+    const result = processSubscriptionData(mockData);
+    expect(result).toEqual(expectedOutput);
   });
 });

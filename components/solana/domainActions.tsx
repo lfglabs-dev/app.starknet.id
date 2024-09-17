@@ -12,8 +12,8 @@ import styles from "../../styles/solana.module.css";
 import { Abi, Call } from "starknet";
 import {
   useAccount,
-  useContractRead,
-  useContractWrite,
+  useReadContract,
+  useSendTransaction,
 } from "@starknet-react/core";
 import SolanaCalls from "../../utils/callData/solanaCalls";
 import { utils } from "starknetid.js";
@@ -36,16 +36,16 @@ const DomainActions: FunctionComponent<DomainActionsProps> = ({ name }) => {
   const { addTransaction } = useNotificationManager();
   const [isTxSent, setIsTxSent] = useState(false);
   const [mainDomainCalldata, setMainDomainCalldata] = useState<Call[]>([]);
-  const { writeAsync: executeMainDomain, data: mainDomainData } =
-    useContractWrite({
+  const { sendAsync: executeMainDomain, data: mainDomainData } =
+    useSendTransaction({
       calls: mainDomainCalldata,
     });
   const { contract } = useNamingContract();
   const encodedDomain = utils
     .encodeDomain(`${name}.sol.stark`)
     .map((x) => x.toString());
-  const { data: resolveData } = useContractRead({
-    address: contract?.address as string,
+  const { data: resolveData } = useReadContract({
+    address: contract?.address as HexString,
     abi: contract?.abi as Abi,
     functionName: "domain_to_address",
     args: [encodedDomain, []],

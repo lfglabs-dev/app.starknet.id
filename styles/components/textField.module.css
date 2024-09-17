@@ -10,7 +10,7 @@
 }
 
 .radioWhite {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: 7.983px;
   padding: 8px 15px;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
@@ -30,6 +30,8 @@
   font-weight: 500;
   line-height: 20px; /* 142.857% */
   align-self: flex-start;
+  max-width: 100%;
+  word-break: break-word;
 }
 
 .errorLegend {
