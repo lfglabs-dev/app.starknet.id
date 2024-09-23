@@ -59,7 +59,8 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
             className={styles.imageGallery}
             onClick={() => router.push(`/identities/${identity.id}`)}
           >
-            {isIdentityExpiringSoon(identity) ? (
+            {needAutoRenewal?.includes(identity.domain) &&
+            isIdentityExpiringSoon(identity) ? (
               <div className={styles.expiryWarning}>
                 <Tooltip
                   title={
