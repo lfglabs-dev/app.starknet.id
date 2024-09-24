@@ -60,7 +60,7 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
             <li className={styles.burgerItem}>Documentation</li>
           </Link>
           <Link href="https://www.starknet.id/pdfs/Terms.pdf" target="_blank">
-            <li className={styles.burgerItem}>Term of use</li>
+            <li className={styles.burgerItem}>Terms of use</li>
           </Link>
           <Link
             href="https://starknet.id/pdfs/PrivacyPolicy.pdf"
