@@ -29,6 +29,22 @@ export function shortenDomain(
   }
 }
 
+export function advancedMinifyDomain(
+  domain?: string,
+  firstPartMaxLength?: number,
+  characterToBreak?: number
+): string {
+  if (!domain) return "";
+
+  if (domain.length > (characterToBreak ?? 20)) {
+    const firstPart = domain.substring(0, firstPartMaxLength ?? 10);
+
+    return (firstPart + "...").toLowerCase();
+  } else {
+    return domain.toLowerCase();
+  }
+}
+
 export function minifyDomain(
   domain: string,
   characterToBreak?: number
