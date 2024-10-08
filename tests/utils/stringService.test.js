@@ -34,6 +34,7 @@ import {
   generateSuggestedNames,
   generateSuggestedDomains,
   getEnsFromStark,
+  advancedMinifyDomain,
 } from "../../utils/stringService";
 
 describe("Should test is1234Domain", () => {
@@ -414,6 +415,32 @@ describe("Should test shortenDomain function", () => {
 
   it("Should return an empty string if the domain is an empty string", () => {
     expect(shortenDomain("")).toEqual("");
+  });
+});
+
+describe("Should test advancedMinifyDomain function", () => {
+  it("Should return the same domain if the length is less than the default characterToBreak", () => {
+    expect(advancedMinifyDomain("example.com")).toEqual("example.com");
+  });
+
+  it("Should return the shortened domain if the length is greater than the default characterToBreak", () => {
+    expect(
+      advancedMinifyDomain("averylongdomainnametoshorten.com", 10, 13)
+    ).toEqual("averylongd...");
+  });
+
+  it("Should return the same domain if the length is less than the custom characterToBreak", () => {
+    expect(advancedMinifyDomain("example.com", 10, 15)).toEqual("example.com");
+  });
+
+  it("Should return the shortened domain if the length is greater than the custom characterToBreak", () => {
+    expect(
+      advancedMinifyDomain("averylongdomainnametoshorten.com", 10, 15)
+    ).toEqual("averylongd...");
+  });
+
+  it("Should return an empty string if the domain is undefined", () => {
+    expect(advancedMinifyDomain(undefined)).toEqual("");
   });
 });
 

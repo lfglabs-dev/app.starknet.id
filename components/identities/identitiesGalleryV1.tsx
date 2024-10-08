@@ -6,7 +6,11 @@ import React, {
 } from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
-import { getDomainKind, minifyDomain } from "../../utils/stringService";
+import {
+  advancedMinifyDomain,
+  getDomainKind,
+  minifyDomain,
+} from "../../utils/stringService";
 import ErrorIcon from "@mui/icons-material/Error";
 import { Tooltip } from "@mui/material";
 import {
@@ -59,7 +63,8 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
             className={styles.imageGallery}
             onClick={() => router.push(`/identities/${identity.id}`)}
           >
-            {isIdentityExpiringSoon(identity) ? (
+            {needAutoRenewal?.includes(identity.domain) &&
+            isIdentityExpiringSoon(identity) ? (
               <div className={styles.expiryWarning}>
                 <Tooltip
                   title={
@@ -82,7 +87,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
             <div className={styles.identityInfo}>
               <p className="font-bold font-quickZap">
                 {identity.domain
-                  ? minifyDomain(identity.domain)
+                  ? advancedMinifyDomain(identity.domain, 14, 18)
                   : `ID: ${identity.id}`}
               </p>
               {needAutoRenewal?.includes(identity.domain) ? (

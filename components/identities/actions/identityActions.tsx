@@ -51,6 +51,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const encodedDomains = utils.encodeDomain(identity?.domain);
   const { addTransaction } = useNotificationManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+  const [txHash, setTxHash] = useState<string>('');
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
   const [isMainDomain, setIsMainDomain] = useState<boolean>(
     identity ? identity.isMain : false
@@ -159,6 +160,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         status: "pending",
       },
     });
+    setTxHash(mainDomainData.transaction_hash);
     setIsTxModalOpen(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mainDomainData]);
@@ -199,6 +201,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         status: "pending",
       },
     });
+    setTxHash(disableRenewalData.transaction_hash);
     setIsTxModalOpen(true);
     posthog?.capture("disable-ar"); // track events for analytics
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -360,7 +363,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           domain={identity?.domain}
         />
         <TxConfirmationModal
-          txHash={mainDomainData?.transaction_hash}
+          txHash={txHash}
           isTxModalOpen={isTxModalOpen}
           closeModal={() => setIsTxModalOpen(false)}
           title="Your Transaction is on it's way !"
