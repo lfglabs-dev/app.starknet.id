@@ -53,7 +53,6 @@ export default function isStarknetDeployed(address?: string) {
         availableWallets.forEach(async (connectedWallet) => {
           if (
             connectedWallet.id === connector?.id &&
-            connectedWallet.isConnected &&
             connectedWallet.id !== "braavos" // we cannot deploye braavos account for the user for now
           ) {
             const data = await wallet.deploymentData(
