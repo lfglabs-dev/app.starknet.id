@@ -30,7 +30,7 @@ export default function useNeedsAllowances(
       functionName: "aggregate",
       args: callData,
       watch: true,
-      blockIdentifier: BlockTag.pending,
+      blockIdentifier: BlockTag.PENDING,
     });
 
   useEffect(() => {

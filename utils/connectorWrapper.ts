@@ -19,6 +19,7 @@ export const getConnectors = () => {
         icons: ["https://app.starknet.id/visuals/StarknetIdLogo.svg"],
       },
     }),
+    new InjectedConnector({ options: { id: "keplr" } }),
     new WebWalletConnector({
       url: "https://web.argent.xyz/",
     }),
@@ -161,5 +162,17 @@ const wallets = [
       safari: "https://apps.apple.com/us/app/okx-wallet/id6463797825",
     },
     website: "https://www.okx.com/",
+  },
+  {
+    id: "keplr",
+    name: "Keplr Wallet",
+    icon: "/visuals/kepler_logo.svg",
+    downloads: {
+      chrome:
+        "https://chromewebstore.google.com/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap",
+      firefox: "https://addons.mozilla.org/en-US/firefox/addon/keplr/",
+      edge: "https://microsoftedge.microsoft.com/addons/detail/keplr/ocodgmmffbkkeecmadcijjhkmeohinei",
+    },
+    website: "https://www.keplr.app/",
   },
 ];
