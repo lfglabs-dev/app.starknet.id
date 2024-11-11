@@ -64,6 +64,8 @@ const usePaymaster = (
     [connector]
   );
 
+  const paymasterEnabled = !argentWallet;
+
   useEffect(() => {
     if (!gasTokenPrice) setGasTokenPrice(gasTokenPrices[0]);
   }, [gasTokenPrice, gasTokenPrices]);
@@ -131,8 +133,14 @@ const usePaymaster = (
   }, []);
 
   useEffect(() => {
-    if (!account || !gasTokenPrice || !gaslessCompatibility || loadingCallData)
-      return;
+    if (
+      !account ||
+      !gasTokenPrice ||
+      !gaslessCompatibility ||
+      loadingCallData ||
+      !paymasterEnabled
+    )
+      return setLoadingGas(false);
     setLoadingGas(true);
     setInvalidTx(false);
     estimateCalls(account, callData).then((fees) => {
@@ -156,6 +164,7 @@ const usePaymaster = (
     gaslessCompatibility,
     estimateCalls,
     loadingCallData,
+    paymasterEnabled,
   ]);
 
   const loadingDeploymentData =
@@ -249,7 +258,7 @@ const usePaymaster = (
     loadingDeploymentData,
     refreshRewards,
     invalidTx,
-    loadingTypedData: !typedData && (argentWallet || isDeployed),
+    loadingTypedData: !typedData && isDeployed && paymasterEnabled,
     txError,
   };
 };
