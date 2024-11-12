@@ -95,6 +95,8 @@ const Identities: NextPage = () => {
   }
 
   const connectWallet = async (connector: Connector) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     await connectAsync({ connector });
     localStorage.setItem("SID-connectedWallet", connector.id);
     localStorage.setItem("SID-lastUsedConnector", connector.id);

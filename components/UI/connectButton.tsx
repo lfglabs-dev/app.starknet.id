@@ -20,7 +20,9 @@ const ConnectButton: FunctionComponent = () => {
   }, [isConnected]);
 
   const connectWallet = async (connector: Connector) => {
-    await connectAsync({ connector });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    await connectAsync({ connector: connector });
     localStorage.setItem("SID-connectedWallet", connector.id);
   };
 

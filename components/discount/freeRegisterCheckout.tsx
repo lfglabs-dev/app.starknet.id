@@ -21,6 +21,7 @@ import FreeRegisterSummary from "./freeRegisterSummary";
 import { useAccount } from "@starknet-react/core";
 import { Call } from "starknet";
 import usePaymaster from "@/hooks/paymaster";
+import useIsWrongNetwork from "@/hooks/isWrongNetwork";
 
 type FreeRegisterCheckoutProps = {
   domain: string;
@@ -60,6 +61,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   const [signature, setSignature] = useState<string[]>(["", ""]);
   const [loadingCoupon, setLoadingCoupon] = useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState<string | undefined>();
+  const { isWrongNetwork } = useIsWrongNetwork();
   const {
     handleRegister,
     data: registerData,
@@ -150,6 +152,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
   useEffect(() => {
     if (!coupon) return setLoadingCoupon(false);
     if (!address) return;
+    if (isWrongNetwork) return setLoadingCoupon(false);
     setLoadingCallData(true);
     getFreeDomain(address, `${domain}.stark`, coupon).then((res) => {
       if (res.error)
@@ -163,7 +166,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
       }
       setLoadingCoupon(false);
     });
-  }, [coupon, domain, address]);
+  }, [coupon, domain, address, isWrongNetwork]);
 
   return (
     <div className={styles.container}>
@@ -205,6 +208,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
             <Button
               onClick={handleRegister}
               disabled={
+                isWrongNetwork ||
                 (domainsMinting.get(encodedDomain) as boolean) ||
                 !account ||
                 !coupon ||
@@ -218,7 +222,9 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 loadingTypedData
               }
             >
-              {!termsBox
+              {isWrongNetwork
+                ? "Wrong Network"
+                : !termsBox
                 ? "Please accept terms & policies"
                 : couponError || !coupon
                 ? "Enter a valid Coupon"

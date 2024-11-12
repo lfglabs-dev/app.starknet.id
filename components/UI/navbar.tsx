@@ -11,7 +11,6 @@ import styles from "../../styles/components/navbar.module.css";
 import connectStyles from "../../styles/components/walletConnect.module.css";
 import Button from "./button";
 import { useConnect, useAccount, useDisconnect } from "@starknet-react/core";
-import { sepolia, mainnet } from "@starknet-react/chains";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { useMediaQuery } from "@mui/material";
@@ -32,16 +31,15 @@ import {
 import WalletConnect from "./walletConnect";
 import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon";
 import errorLottie from "../../public/visuals/errorLottie.json";
-import { bigintToStringHex } from "@/utils/stringService";
 import { useRouter } from "next/router";
+import useIsWrongNetwork from "@/hooks/isWrongNetwork";
 
 const Navbar: FunctionComponent = () => {
   const theme = useTheme();
   const [nav, setNav] = useState<boolean>(false);
   const [desktopNav, setDesktopNav] = useState<boolean>(false);
-  const { address, account } = useAccount();
+  const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const { connectAsync, connectors } = useConnect();
   const { disconnect } = useDisconnect();
   const isMobile = useMediaQuery("(max-width:425px)");
@@ -52,6 +50,7 @@ const Navbar: FunctionComponent = () => {
   const [showWallet, setShowWallet] = useState<boolean>(false);
   const [profile, setProfile] = useState<StarkProfile | undefined>(undefined);
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
+  const { isWrongNetwork, setIsWrongNetwork } = useIsWrongNetwork();
   const [showWalletConnectModal, setShowWalletConnectModal] =
     useState<boolean>(false);
   const router = useRouter();
@@ -72,6 +71,8 @@ const Navbar: FunctionComponent = () => {
 
   const connectWallet = async (connector: Connector) => {
     try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       await connectAsync({ connector });
       localStorage.setItem("SID-connectedWallet", connector.id);
       localStorage.setItem("SID-lastUsedConnector", connector.id);
@@ -99,23 +100,12 @@ const Navbar: FunctionComponent = () => {
   }, [address]);
 
   useEffect(() => {
-    if (!isConnected || !account) return;
-    account.getChainId().then((chainId) => {
-      const isWrongNetwork =
-        (chainId === bigintToStringHex(sepolia.id) && network === "mainnet") ||
-        (chainId === bigintToStringHex(mainnet.id) && network === "testnet");
-      setIsWrongNetwork(isWrongNetwork);
-    });
-  }, [account, network, isConnected]);
-
-  useEffect(() => {
     setLastConnector(getLastConnector());
   }, [isConnected]);
 
   function disconnectByClick(): void {
     disconnect();
     setIsConnected(false);
-    setIsWrongNetwork(false);
     setShowWallet(false);
     localStorage.removeItem("SID-connectedWallet");
   }

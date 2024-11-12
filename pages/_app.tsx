@@ -55,9 +55,7 @@ if (typeof window !== "undefined") {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const chains = [
-    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? sepolia : mainnet,
-  ];
+  const chains = [mainnet, sepolia]; // We support both chains so that we can detect if the user is on the wrong one
   const providers = jsonRpcProvider({
     rpc: (_chain: Chain) => ({
       nodeUrl: process.env.NEXT_PUBLIC_RPC_URL as string,
