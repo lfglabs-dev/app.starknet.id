@@ -64,7 +64,7 @@ const usePaymaster = (
     [connector]
   );
 
-  const paymasterEnabled = !argentWallet;
+  const paymasterEnabled = true; // We can conditionally enable/disable depending on the wallet + deployment info
 
   useEffect(() => {
     if (!gasTokenPrice) setGasTokenPrice(gasTokenPrices[0]);
@@ -171,7 +171,7 @@ const usePaymaster = (
     connector?.id === "argentX" && !isDeployed && !deploymentData;
 
   useEffect(() => {
-    if (!account) return;
+    if (!account || !paymasterEnabled) return;
     if (
       !isDeployed &&
       (!deploymentData || !argentWallet || loadingDeploymentData)
@@ -206,11 +206,12 @@ const usePaymaster = (
     callData,
     maxGasTokenAmount,
     loadingDeploymentData,
+    paymasterEnabled,
   ]);
 
   const handleRegister = useCallback(() => {
     if (!account) return;
-    if (typedData && !argentWallet) {
+    if (typedData && paymasterEnabled) {
       signTypedDataAsync(typedData).then((signature: Signature) => {
         const body: { [id: string]: object | string } = {
           userAddress: account.address,
@@ -242,7 +243,7 @@ const usePaymaster = (
     typedData,
     execute,
     isDeployed,
-    argentWallet,
+    paymasterEnabled,
   ]);
 
   return {
