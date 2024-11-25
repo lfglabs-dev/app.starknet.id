@@ -2,9 +2,9 @@ import { weiToEth } from "./feltService";
 import { getDomainLength, selectedDomainsToArray } from "./stringService";
 
 export const PRICES = {
-  ONE: BigInt("801369863013699"),
-  TWO: BigInt("657534246575343"),
-  THREE: BigInt("160000000000000"),
+  ONE: BigInt("273972602739726"),
+  TWO: BigInt("136986301369863"),
+  THREE: BigInt("68493150684931"),
   FOUR: BigInt("36986301369863"),
   FIVE: BigInt("24657534246575"),
 };
