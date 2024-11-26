@@ -54,11 +54,12 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
     if (connector.id === "braavos" && isMobile) {
       return false;
     }
+    if (connector.id === "metamask") return false;
     return !isAvailable;
   };
 
   const tryConnect = (connector: Connector, isAvailable: boolean) => {
-    if (isAvailable) {
+    if (isAvailable || connector.id === "metamask") {
       connect(connector);
     } else if (isMobile && connector.id === "braavos") {
       openBraavosMobile();
@@ -95,6 +96,7 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
           {sortConnectors(filterConnectors(connectors)).map(
             (connector: Connector) => {
               const isAvailable = connector.available();
+              console.log("isAvailable", connector.id, isAvailable);
               return (
                 <div
                   key={connector.id}
