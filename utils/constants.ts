@@ -35,6 +35,36 @@ export const NftCollections = [
     name: "Blobert",
     externalLink: "https://element.market/collections/blobert",
   },
+  {
+    imageUri:
+      "https://s.nfte.so/asset/collection/featured/13041814-9ee2-4d22-b060-ad6de5a3dedc.webp",
+    name: "Starkpunks",
+    externalLink: "https://element.market/collections/starkpunks",
+  },
+  {
+    imageUri:
+      "https://s.nfte.so/ebizprod/collection/image/202409261855369786bf93c26d45bb9feae5d48e7a6b29.avif",
+    name: "Persona by XAR",
+    externalLink: "https://element.market/collections/personaxar",
+  },
+  {
+    imageUri:
+      "https://s.nfte.so/ebizprod/collection/image/2024030811331141bb5ac7adfa420ab24b813ece99b01a.gif",
+    name: "Alter Nova",
+    externalLink: "https://element.market/collections/alternovaxyz",
+  },
+  {
+    imageUri:
+      "https://i.nfte.ai/ia/l1001/35199/2945561246737408481_662150591.avif",
+    name: "Ventorians NFT Collection",
+    externalLink: "https://element.market/collections/ventorians-nft-collection",
+  },
+  {
+    imageUri:
+      "https://s.nfte.so/ebizprod/collection/image/20240417213527fb94ec4e5ff44488955e912f4f2017a5.png",
+    name: "Everai",
+    externalLink: "https://element.market/collections/everai-starknet",
+  },
 ];
 
 export const ourNfts = [

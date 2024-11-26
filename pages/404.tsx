@@ -8,7 +8,7 @@ const NotFound: NextPage = () => {
       <div className={styles.wrapperScreen}>
         <div className="flex flex-col items-center justify-center h-full">
           <img
-            src="/visuals/errorIllu.webp"
+            src="/visuals/404illu.webp"
             height={300}
             width={300}
             alt="error illustration"

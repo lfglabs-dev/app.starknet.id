@@ -352,7 +352,7 @@ const Navbar: FunctionComponent = () => {
                   </Link>
                 </div>
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
-                  <Link href="https://github.com/starknet-id" target="_blank">
+                  <Link href="https://github.com/lfglabs-dev" target="_blank">
                     <FaGithub size={28} color={theme.palette.grey[800]} />
                   </Link>
                 </div>
