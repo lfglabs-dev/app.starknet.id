@@ -69,24 +69,15 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                 <Tooltip
                   title={
                     isIdentityExpired(identity)
-<<<<<<< HEAD
-                      ? "This domain is expired"
-                      : `Be careful, this domain will expire on ${timestampToReadableDate(
-=======
                       ? "This domain has expired! Renew it now to keep using it."
                       : `This domain will expire on ${timestampToReadableDate(
->>>>>>> e09c027 (Fix: Add distinct warning for expired domains)
                           identity?.domain_expiry ?? 0
                         )}`
                   }
                   arrow
                 >
-<<<<<<< HEAD
-                  <ErrorIcon color="error" />
-=======
                   {/* <ErrorIcon color="error" /> */}
                   <RenewalIcon color={isIdentityExpired(identity) ? "#FF3333" : "#FFDE21"} width="12" />
->>>>>>> e09c027 (Fix: Add distinct warning for expired domains)
                 </Tooltip>
               </div>
             ) : null}
