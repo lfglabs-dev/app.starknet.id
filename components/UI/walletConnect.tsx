@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Modal, useMediaQuery } from "@mui/material";
 import { Connector } from "starknetkit";
@@ -8,9 +8,9 @@ import {
   getConnectorDiscovery,
   getConnectorIcon,
   getConnectorName,
+  isInArgentMobileAppBrowser,
   sortConnectors,
 } from "@/utils/connectorWrapper";
-import { isInArgentMobileAppBrowser } from 'starknetkit/argentMobile';
 
 type WalletConnectProps = {
   closeModal: () => void;
@@ -26,21 +26,21 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
   connectWallet,
 }) => {
   const router = useRouter();
+  const [isArgentMobile, setIsArgentMobile] = useState(false);
   const connect = (connector: Connector) => {
     connectWallet(connector);
     closeModal();
   };
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const filterConnectors = (connectors: Connector[]) => {
-    if (isInArgentMobileAppBrowser()) {
-      // Filter connectors and remove duplicates
-      const uniqueConnectors = connectors
-        .filter((connector) => connector.id === "argentMobile" || connector.id === "argentX")
-        .reduce((map, connector) => map.set(connector.id, connector), new Map())
-        .values();
+  useEffect(() => {
+    if (typeof window !== "undefined")
+      setIsArgentMobile(isInArgentMobileAppBrowser());
+  }, []);
 
-      return Array.from(uniqueConnectors);
+  const filterConnectors = (connectors: Connector[]) => {
+    if (isArgentMobile) {
+      return connectors.filter((connector) => connector.id === "argentMobile");
     }
     if (!isMobile) return connectors;
     return connectors.filter((connector) => connector.id !== "argentX");
@@ -102,13 +102,13 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
                   onClick={() => tryConnect(connector, isAvailable)}
                 >
                   <img
-                    src={isInArgentMobileAppBrowser() ? getConnectorIcon('argentMobile') : getConnectorIcon(connector.id)}
+                    src={getConnectorIcon(connector.id)}
                     className={styles.walletIcon}
                   />
                   <div className={styles.walletName}>
                     <p>
                       {needInstall(connector, isAvailable) ? "Install " : ""}
-                      {isInArgentMobileAppBrowser()
+                      {connector.id === "argentMobile" && isMobile
                         ? "Argent"
                         : getConnectorName(connector.id)}
                     </p>
