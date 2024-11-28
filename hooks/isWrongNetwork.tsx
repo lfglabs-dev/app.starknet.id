@@ -20,7 +20,7 @@ const useIsWrongNetwork = () => {
         ? bigintToStringHex(chain.id) === bigintToStringHex(mainnet.id)
         : bigintToStringHex(chain.id) === bigintToStringHex(sepolia.id)
     );
-  }, [account]);
+  }, [account, chain]);
 
   return {
     isWrongNetwork,
