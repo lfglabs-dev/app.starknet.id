@@ -10,7 +10,12 @@ import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import connectStyles from "../../styles/components/walletConnect.module.css";
 import Button from "./button";
-import { useConnect, useAccount, useDisconnect } from "@starknet-react/core";
+import {
+  useConnect,
+  useAccount,
+  useDisconnect,
+  useSwitchChain,
+} from "@starknet-react/core";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { useMediaQuery } from "@mui/material";
@@ -21,7 +26,7 @@ import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
 import DesktopNav from "./desktopNav";
 import CloseFilledIcon from "./iconsComponents/icons/closeFilledIcon";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
-import { StarkProfile } from "starknetid.js";
+import { StarknetChainId, StarkProfile } from "starknetid.js";
 import { Connector } from "starknetkit";
 import {
   getConnectorIcon,
@@ -54,6 +59,14 @@ const Navbar: FunctionComponent = () => {
   const [showWalletConnectModal, setShowWalletConnectModal] =
     useState<boolean>(false);
   const router = useRouter();
+  const { switchChainAsync } = useSwitchChain({
+    params: {
+      chainId:
+        network === "testnet"
+          ? StarknetChainId.SN_SEPOLIA
+          : StarknetChainId.SN_MAIN,
+    },
+  });
 
   useEffect(() => {
     const pageName = router.pathname.split("/")[1];
@@ -131,6 +144,11 @@ const Navbar: FunctionComponent = () => {
 
     return textToReturn;
   }
+
+  const switchNetwork = async (network: string) => {
+    const res = await switchChainAsync();
+    if (res) setIsWrongNetwork(false);
+  };
 
   return (
     <>
@@ -372,8 +390,8 @@ const Navbar: FunctionComponent = () => {
               network to be able use it.
             </p>
             <div className="mt-5">
-              <Button onClick={() => disconnectByClick()}>
-                {`Disconnect`}
+              <Button onClick={() => switchNetwork(network)}>
+                {`Switch to ${network}`}
               </Button>
             </div>
           </div>
