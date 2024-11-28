@@ -306,7 +306,11 @@ const Navbar: FunctionComponent = () => {
                       </li>
                     </Link>
                     <Link
+<<<<<<< HEAD
                       href={process.env.NEXT_PUBLIC_STARKNET_ID as string}
+=======
+                      href={ `${process.env.NEXT_PUBLIC_STARKNET_ID as string}` }
+>>>>>>> e09c027 (Fix: Add distinct warning for expired domains)
                       target="_blank"
                     >
                       <li className={styles.menuItemSmall} onClick={handleNav}>
