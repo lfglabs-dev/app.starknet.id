@@ -91,13 +91,8 @@ export const getLastConnected = (): Connector | null => {
   return null;
 };
 
-export const isArgentWallet = (connector?: StarknetReactConnector) => {
-  return (
-    connector &&
-    (connector.id === "argentX" ||
-      connector.id === "argentMobile" ||
-      connector.id === "argentWebWallet")
-  );
+export const supportSwitchNetwork = (connector?: StarknetReactConnector) => {
+  return connector && connector.id === "argentX";
 };
 
 const wallets = [

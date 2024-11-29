@@ -32,7 +32,7 @@ import {
   getConnectorIcon,
   getLastConnected,
   getLastConnector,
-  isArgentWallet,
+  supportSwitchNetwork,
 } from "@/utils/connectorWrapper";
 import WalletConnect from "./walletConnect";
 import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon";
@@ -147,7 +147,7 @@ const Navbar: FunctionComponent = () => {
   }
 
   const switchNetwork = async () => {
-    if (isArgentWallet(connector)) {
+    if (supportSwitchNetwork(connector)) {
       const res = await switchChainAsync();
       if (res) setIsWrongNetwork(false);
     } else {
@@ -396,7 +396,7 @@ const Navbar: FunctionComponent = () => {
             </p>
             <div className="mt-5">
               <Button onClick={() => switchNetwork()}>
-                {isArgentWallet(connector)
+                {supportSwitchNetwork(connector)
                   ? `Switch to ${network}`
                   : "Disconnect"}
               </Button>
