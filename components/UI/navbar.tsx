@@ -32,6 +32,7 @@ import {
   getConnectorIcon,
   getLastConnected,
   getLastConnector,
+  isArgentWallet,
 } from "@/utils/connectorWrapper";
 import WalletConnect from "./walletConnect";
 import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon";
@@ -45,7 +46,7 @@ const Navbar: FunctionComponent = () => {
   const [desktopNav, setDesktopNav] = useState<boolean>(false);
   const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const { connectAsync, connectors } = useConnect();
+  const { connectAsync, connectors, connector } = useConnect();
   const { disconnect } = useDisconnect();
   const isMobile = useMediaQuery("(max-width:425px)");
   const domainOrAddress = useDisplayName(address ?? "", isMobile);
@@ -145,9 +146,12 @@ const Navbar: FunctionComponent = () => {
     return textToReturn;
   }
 
-  const switchNetwork = async (network: string) => {
-    const res = await switchChainAsync();
-    if (res) setIsWrongNetwork(false);
+  const switchNetwork = async () => {
+    if (isArgentWallet(connector)) disconnectByClick();
+    else {
+      const res = await switchChainAsync();
+      if (res) setIsWrongNetwork(false);
+    }
   };
 
   return (
@@ -390,8 +394,10 @@ const Navbar: FunctionComponent = () => {
               network to be able use it.
             </p>
             <div className="mt-5">
-              <Button onClick={() => switchNetwork(network)}>
-                {`Switch to ${network}`}
+              <Button onClick={() => switchNetwork()}>
+                {isArgentWallet(connector)
+                  ? `Switch to ${network}`
+                  : "Disconnect"}
               </Button>
             </div>
           </div>

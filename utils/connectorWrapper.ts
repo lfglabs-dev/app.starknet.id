@@ -4,6 +4,7 @@ import { InjectedConnector } from "starknetkit/injected";
 import { WebWalletConnector } from "starknetkit/webwallet";
 import { getBrowser } from "./browserService";
 import { constants } from "starknet";
+import { Connector as StarknetReactConnector } from "@starknet-react/core";
 
 export const getConnectors = () => {
   const connectors = [
@@ -88,6 +89,15 @@ export const getLastConnected = (): Connector | null => {
     return connector || null;
   }
   return null;
+};
+
+export const isArgentWallet = (connector?: StarknetReactConnector) => {
+  return (
+    connector &&
+    (connector.id === "argentX" ||
+      connector.id === "argentMobile" ||
+      connector.id === "argentWebWallet")
+  );
 };
 
 const wallets = [
