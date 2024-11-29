@@ -147,10 +147,11 @@ const Navbar: FunctionComponent = () => {
   }
 
   const switchNetwork = async () => {
-    if (isArgentWallet(connector)) disconnectByClick();
-    else {
+    if (isArgentWallet(connector)) {
       const res = await switchChainAsync();
       if (res) setIsWrongNetwork(false);
+    } else {
+      disconnectByClick();
     }
   };
 
