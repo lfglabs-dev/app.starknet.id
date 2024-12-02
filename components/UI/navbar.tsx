@@ -10,7 +10,12 @@ import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
 import styles from "../../styles/components/navbar.module.css";
 import connectStyles from "../../styles/components/walletConnect.module.css";
 import Button from "./button";
-import { useConnect, useAccount, useDisconnect } from "@starknet-react/core";
+import {
+  useConnect,
+  useAccount,
+  useDisconnect,
+  useSwitchChain,
+} from "@starknet-react/core";
 import ModalMessage from "./modalMessage";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { useMediaQuery } from "@mui/material";
@@ -21,12 +26,13 @@ import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
 import DesktopNav from "./desktopNav";
 import CloseFilledIcon from "./iconsComponents/icons/closeFilledIcon";
 import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
-import { StarkProfile } from "starknetid.js";
+import { StarknetChainId, StarkProfile } from "starknetid.js";
 import { Connector } from "starknetkit";
 import {
   getConnectorIcon,
   getLastConnected,
   getLastConnector,
+  supportSwitchNetwork,
 } from "@/utils/connectorWrapper";
 import WalletConnect from "./walletConnect";
 import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon";
@@ -40,7 +46,7 @@ const Navbar: FunctionComponent = () => {
   const [desktopNav, setDesktopNav] = useState<boolean>(false);
   const { address } = useAccount();
   const [isConnected, setIsConnected] = useState<boolean>(false);
-  const { connectAsync, connectors } = useConnect();
+  const { connectAsync, connectors, connector } = useConnect();
   const { disconnect } = useDisconnect();
   const isMobile = useMediaQuery("(max-width:425px)");
   const domainOrAddress = useDisplayName(address ?? "", isMobile);
@@ -54,6 +60,14 @@ const Navbar: FunctionComponent = () => {
   const [showWalletConnectModal, setShowWalletConnectModal] =
     useState<boolean>(false);
   const router = useRouter();
+  const { switchChainAsync } = useSwitchChain({
+    params: {
+      chainId:
+        network === "testnet"
+          ? StarknetChainId.SN_SEPOLIA
+          : StarknetChainId.SN_MAIN,
+    },
+  });
 
   useEffect(() => {
     const pageName = router.pathname.split("/")[1];
@@ -131,6 +145,15 @@ const Navbar: FunctionComponent = () => {
 
     return textToReturn;
   }
+
+  const switchNetwork = async () => {
+    if (supportSwitchNetwork(connector)) {
+      const res = await switchChainAsync();
+      if (res) setIsWrongNetwork(false);
+    } else {
+      disconnectByClick();
+    }
+  };
 
   return (
     <>
@@ -372,8 +395,10 @@ const Navbar: FunctionComponent = () => {
               network to be able use it.
             </p>
             <div className="mt-5">
-              <Button onClick={() => disconnectByClick()}>
-                {`Disconnect`}
+              <Button onClick={() => switchNetwork()}>
+                {supportSwitchNetwork(connector)
+                  ? `Switch to ${network}`
+                  : "Disconnect"}
               </Button>
             </div>
           </div>
