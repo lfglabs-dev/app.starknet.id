@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import modalStyles from "../../styles/components/modalMessage.module.css";
 import Button from "./button";
 import verifiedLottie from "../../public/visuals/verifiedLottie.json";
-import Lottie from "lottie-react";
+import LottieWrapper from "./lottieWrapper";
 
 type ConfirmationTxProps = {
   closeModal: () => void;
@@ -29,13 +29,12 @@ const ConfirmationTx: FunctionComponent<ConfirmationTxProps> = ({
         Your Transaction is on it&apos;s way !
       </p>
       <div className="mt-7 flex flex-col items-center justify-center text-center">
-        <Lottie className="w-48" animationData={verifiedLottie} loop={false} />{" "}
+        <LottieWrapper className="w-48" animationData={verifiedLottie} loop={false} />{" "}
         <p
           className="text-sm underline cursor-pointer"
           onClick={() =>
             window.open(
-              `https://${
-                process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "sepolia." : ""
+              `https://${process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "sepolia." : ""
               }starkscan.co/tx/${txHash}`
             )
           }

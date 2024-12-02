@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from "react";
-import Lottie from "lottie-react";
 import ModalMessage from "../UI/modalMessage";
 import verifiedLottie from "../../public/visuals/verifiedLottie.json";
 import Button from "./button";
+import LottieWrapper from "./lottieWrapper";
 
 type TxConfirmationModalProps = {
   txHash?: string;
@@ -24,7 +24,7 @@ const TxConfirmationModal: FunctionComponent<TxConfirmationModalProps> = ({
       closeModal={() => closeModal()}
       message={
         <div className="mt-7 flex flex-col items-center justify-center text-center">
-          <Lottie
+          <LottieWrapper
             className="w-52"
             animationData={verifiedLottie}
             loop={false}
@@ -33,10 +33,9 @@ const TxConfirmationModal: FunctionComponent<TxConfirmationModalProps> = ({
             className="text-sm underline cursor-pointer"
             onClick={() =>
               window.open(
-                `https://${
-                  process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-                    ? "sepolia."
-                    : ""
+                `https://${process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+                  ? "sepolia."
+                  : ""
                 }starkscan.co/tx/${txHash}`
               )
             }

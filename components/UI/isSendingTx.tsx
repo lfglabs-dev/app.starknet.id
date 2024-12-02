@@ -2,8 +2,8 @@
 import React, { FunctionComponent } from "react";
 import modalStyles from "../../styles/components/modalMessage.module.css";
 import sendingLottie from "../../public/visuals/sendingLottie.json";
-import Lottie from "lottie-react";
 import Button from "./button";
+import LottieWrapper from "./lottieWrapper";
 
 const IsSendingTx: FunctionComponent = () => {
   return (
@@ -12,10 +12,10 @@ const IsSendingTx: FunctionComponent = () => {
         Confirm the transaction in your wallet !
       </p>
       <div className="flex flex-col items-center justify-center text-center -mt-20 -mb-16">
-        <Lottie style={{ width: "500px" }} animationData={sendingLottie} loop />
+        <LottieWrapper style={{ width: "500px" }} animationData={sendingLottie} loop />
       </div>
       <div className="w-auto">
-        <Button onClick={() => {}} disabled>
+        <Button onClick={() => { }} disabled>
           Sending transaction
         </Button>
       </div>

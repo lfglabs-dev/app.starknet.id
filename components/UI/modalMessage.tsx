@@ -2,7 +2,7 @@ import React from "react";
 import styles from "../../styles/components/modalMessage.module.css";
 import { FunctionComponent, ReactNode } from "react";
 import { Modal } from "@mui/material";
-import Lottie from "lottie-react";
+import LottieWrapper from "./lottieWrapper";
 
 type ModalMessageProps = {
   title: string;
@@ -41,7 +41,7 @@ const ModalMessage: FunctionComponent<ModalMessageProps> = ({
         <p className={styles.menu_title}>{title}</p>
         {lottie ? (
           <div className="flex flex-col items-center justify-center sm:-mb-20 sm:-mt-20 -mb-8 -mt-8">
-            <Lottie className="w-68" animationData={lottie} loop={false} />
+            <LottieWrapper className="w-68" animationData={lottie} loop={false} />
           </div>
         ) : null}
 

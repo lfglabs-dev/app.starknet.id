@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from "react";
-import Lottie from "lottie-react";
 import ModalMessage from "../UI/modalMessage";
 import verifiedLottie from "../../public/visuals/verifiedLottie.json";
 import Button from "./button";
+import LottieWrapper from "./lottieWrapper";
 
 type RegisterConfirmationModalProps = {
   txHash?: string;
@@ -21,7 +21,7 @@ const RegisterConfirmationModal: FunctionComponent<
       message={
         <div className="flex items-center justify-center text-center py-5 gap-2 flex-wrap lg:flex-nowrap">
           <div className="flex flex-col">
-            <Lottie
+            <LottieWrapper
               className="w-52"
               animationData={verifiedLottie}
               loop={false}
@@ -30,10 +30,9 @@ const RegisterConfirmationModal: FunctionComponent<
               className="text-xs underline cursor-pointer"
               onClick={() =>
                 window.open(
-                  `https://${
-                    process.env.NEXT_PUBLIC_IS_TESTNET === "true"
-                      ? "sepolia."
-                      : ""
+                  `https://${process.env.NEXT_PUBLIC_IS_TESTNET === "true"
+                    ? "sepolia."
+                    : ""
                   }starkscan.co/tx/${txHash}`
                 )
               }
