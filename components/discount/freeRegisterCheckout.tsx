@@ -173,6 +173,23 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     });
   }, [coupon, domain, address, isWrongNetwork]);
 
+  const getButtonText = () => {
+    if (isWrongNetwork) return "Wrong Network";
+    if (!termsBox) return "Please accept terms & policies";
+    if (couponError || !coupon) return "Enter a valid Coupon";
+    if (loadingCallData) return "Loading call data";
+    if (loadingGas) {
+      if (invalidTx) return txError?.short;
+      return "Loading gas";
+    }
+    if (loadingTypedData) return "Building typed data";
+    if (loadingDeploymentData) {
+      if (paymasterRewards.length > 0) return "Loading deployment data";
+      return "No Paymaster reward available";
+    }
+    return "Register my domain";
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -227,25 +244,7 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
                 loadingTypedData
               }
             >
-              {isWrongNetwork
-                ? "Wrong Network"
-                : !termsBox
-                  ? "Please accept terms & policies"
-                  : couponError || !coupon
-                    ? "Enter a valid Coupon"
-                    : loadingCallData
-                      ? "Loading call data"
-                      : loadingGas
-                        ? invalidTx
-                          ? txError?.short
-                          : "Loading gas"
-                        : loadingTypedData
-                          ? "Building typed data"
-                          : loadingDeploymentData
-                            ? paymasterRewards.length > 0
-                              ? "Loading deployment data"
-                              : "No Paymaster reward available"
-                            : "Register my domain"}
+              {getButtonText()}
             </Button>
           ) : (
             <ConnectButton />

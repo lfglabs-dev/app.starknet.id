@@ -75,8 +75,7 @@ describe("computeMetadataHash function", () => {
       expectedHashHex.length - 2
     );
 
-    const result = await computeMetadataHash(
-"none",email, taxState, salt);
+    const result = await computeMetadataHash(email, taxState, salt);
 
     expect(result).toBe(expectedHash);
   });

@@ -229,6 +229,12 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
     [updateFormState]
   );
 
+  const getButtonText = () => {
+    if (!termsBox) return "Please accept terms & policies";
+    if (invalidBalance) return `You don't have enough ${displayedCurrency}`;
+    return "Purchase";
+  };
+
   return (
     <>
       {formState.durationInYears === 1 ? (
@@ -307,11 +313,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
                   !termsBox
                 }
               >
-                {!termsBox
-                  ? "Please accept terms & policies"
-                  : invalidBalance
-                    ? `You don't have enough ${displayedCurrency}`
-                    : "Purchase"}
+                {getButtonText()}
               </Button>
             </div>
           </div>
