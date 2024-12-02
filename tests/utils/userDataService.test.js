@@ -9,7 +9,6 @@ import crypto from "crypto";
 // Mock the crypto module
 global.crypto = crypto;
 
-const STARKNET_ID_URL = process.env.NEXT_PUBLIC_STARKNET_ID;
 global.fetch = jest.fn();
 
 describe("generateSalt function", () => {
@@ -76,7 +75,8 @@ describe("computeMetadataHash function", () => {
       expectedHashHex.length - 2
     );
 
-    const result = await computeMetadataHash(email, taxState, salt);
+    const result = await computeMetadataHash(
+"none",email, taxState, salt);
 
     expect(result).toBe(expectedHash);
   });

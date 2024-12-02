@@ -106,7 +106,12 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
     // salt must not be empty to preserve privacy
     if (!salt) return;
     (async () => {
-      setMetadataHash(await computeMetadataHash("none", "none", salt));
+      setMetadataHash(await computeMetadataHash(
+        "none",
+        "none",
+        salt
+      )
+      );
     })();
   }, [salt]);
 
@@ -225,22 +230,22 @@ const FreeRegisterCheckout: FunctionComponent<FreeRegisterCheckoutProps> = ({
               {isWrongNetwork
                 ? "Wrong Network"
                 : !termsBox
-                ? "Please accept terms & policies"
-                : couponError || !coupon
-                ? "Enter a valid Coupon"
-                : loadingCallData
-                ? "Loading call data"
-                : loadingGas
-                ? invalidTx
-                  ? txError?.short
-                  : "Loading gas"
-                : loadingTypedData
-                ? "Building typed data"
-                : loadingDeploymentData
-                ? paymasterRewards.length > 0
-                  ? "Loading deployment data"
-                  : "No Paymaster reward available"
-                : "Register my domain"}
+                  ? "Please accept terms & policies"
+                  : couponError || !coupon
+                    ? "Enter a valid Coupon"
+                    : loadingCallData
+                      ? "Loading call data"
+                      : loadingGas
+                        ? invalidTx
+                          ? txError?.short
+                          : "Loading gas"
+                        : loadingTypedData
+                          ? "Building typed data"
+                          : loadingDeploymentData
+                            ? paymasterRewards.length > 0
+                              ? "Loading deployment data"
+                              : "No Paymaster reward available"
+                            : "Register my domain"}
             </Button>
           ) : (
             <ConnectButton />

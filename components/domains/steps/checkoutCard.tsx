@@ -37,14 +37,12 @@ import { useRenewalTxPrep } from "@/hooks/checkout/useRenewalTxPrep";
 
 type CheckoutCardProps = {
   type: FormType;
-  groups: string[];
   discount: Upsell;
 };
 
 const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   type,
   discount,
-  groups,
 }) => {
   const router = useRouter();
   const { account, address } = useAccount();
@@ -166,7 +164,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           meta_hash: formState.metadataHash,
-          email: formState.email,
+          email: "none",
           tax_state: formState.isSwissResident ? "switzerland" : "none",
           salt: formState.salt,
         }),
@@ -175,16 +173,6 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         .catch((err) => console.log("Error on sending metadata:", err));
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tx_hash: formatHexString(checkoutData.transaction_hash),
-        groups: renewalBox ? groups : [groups[0]],
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.log("Error on registering to email:", err));
 
     addTransaction({
       timestamp: Date.now(),
@@ -255,8 +243,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         />
       ) : null}
       {reducedDuration > 0 &&
-      invalidBalance &&
-      reducedDuration !== formState.durationInYears * 365 ? (
+        invalidBalance &&
+        reducedDuration !== formState.durationInYears * 365 ? (
         <ReduceDuration
           newDuration={reducedDuration}
           currentDuration={formState.durationInYears}
@@ -322,8 +310,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
                 {!termsBox
                   ? "Please accept terms & policies"
                   : invalidBalance
-                  ? `You don't have enough ${displayedCurrency}`
-                  : "Purchase"}
+                    ? `You don't have enough ${displayedCurrency}`
+                    : "Purchase"}
               </Button>
             </div>
           </div>
