@@ -1,9 +1,10 @@
-import { Connector, StarknetWindowObject } from "starknetkit";
+import { Connector } from "starknetkit";
 import { ArgentMobileConnector } from "starknetkit/argentMobile";
 import { InjectedConnector } from "starknetkit/injected";
 import { WebWalletConnector } from "starknetkit/webwallet";
 import { getBrowser } from "./browserService";
 import { constants } from "starknet";
+import { Connector as StarknetReactConnector } from "@starknet-react/core";
 
 export const getConnectors = () => {
   const connectors = [
@@ -91,17 +92,8 @@ export const getLastConnected = (): Connector | null => {
   return null;
 };
 
-export const isInArgentMobileAppBrowser = (): boolean => {
-  if (typeof window === "undefined" || !window?.starknet_argentX) {
-    return false;
-  }
-
-  const starknetMobile =
-    window?.starknet_argentX as unknown as StarknetWindowObject & {
-      isInAppBrowser: boolean;
-    };
-
-  return starknetMobile?.isInAppBrowser;
+export const supportSwitchNetwork = (connector?: StarknetReactConnector) => {
+  return connector && connector.id === "argentX";
 };
 
 const wallets = [
