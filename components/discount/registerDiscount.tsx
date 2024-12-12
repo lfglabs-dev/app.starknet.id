@@ -6,14 +6,12 @@ import { utils } from "starknetid.js";
 import {
   formatHexString,
   getDomainWithStark,
-  isValidEmail,
 } from "../../utils/stringService";
 import { applyRateToBigInt, hexToDecimal } from "../../utils/feltService";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Call } from "starknet";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
-import TextField from "../UI/textField";
 import { Divider } from "@mui/material";
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import RegisterSummary from "../domains/registerSummary";
@@ -66,8 +64,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 }) => {
   const router = useRouter();
   const [targetAddress, setTargetAddress] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [emailError, setEmailError] = useState<boolean>(true);
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<bigint>(BigInt(0));
@@ -111,14 +107,13 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     (async () => {
       setMetadataHash(
         await computeMetadataHash(
-          email,
-          //mailGroups,
+          "none",
           isSwissResident ? "switzerland" : "none",
           salt
         )
       );
     })();
-  }, [email, isSwissResident, salt]);
+  }, [isSwissResident, salt]);
 
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
@@ -292,7 +287,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         meta_hash: metadataHash,
-        email,
+        email: "none",
         groups: mailGroups, // Domain Owner group
         tax_state: isSwissResident ? "switzerland" : "none",
         salt: salt,
@@ -323,10 +318,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerData]); // We want to execute this only once after the tx is sent
 
-  function changeEmail(value: string): void {
-    setEmail(value);
-    setEmailError(isValidEmail(value) ? false : true);
-  }
 
   useEffect(() => {
     if (isSwissResident) {
@@ -363,15 +354,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
             <h3 className={styles.domain}>{getDomainWithStark(domain)}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            <TextField
-              helperText="We won't share your email with anyone. We'll use it only to inform you about your domain and our news, you can unsubscribe at any moment."
-              label="Email address"
-              value={email}
-              onChange={(e) => changeEmail(e.target.value)}
-              color="secondary"
-              error={emailError}
-              errorMessage="Please enter a valid email address"
-            />
             <SwissForm
               isSwissResident={isSwissResident}
               onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
@@ -413,17 +395,14 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
                 !durationInDays ||
                 !targetAddress ||
                 invalidBalance ||
-                !termsBox ||
-                emailError
+                !termsBox
               }
             >
               {!termsBox
                 ? "Please accept terms & policies"
                 : invalidBalance
-                ? `You don't have enough ${displayedCurrency}`
-                : emailError
-                ? "Enter a valid Email"
-                : "Register my domain"}
+                  ? `You don't have enough ${displayedCurrency}`
+                  : "Register my domain"}
             </Button>
           ) : (
             <ConnectButton />

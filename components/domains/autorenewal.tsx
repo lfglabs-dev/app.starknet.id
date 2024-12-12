@@ -3,15 +3,12 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
 import {
-  formatHexString,
-  isValidEmail,
   selectedDomainsToArray,
 } from "../../utils/stringService";
 import { applyRateToBigInt } from "../../utils/feltService";
 import { Call } from "starknet";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
-import TextField from "../UI/textField";
 import SwissForm from "./swissForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
@@ -48,13 +45,8 @@ import useNeedSubscription from "@/hooks/useNeedSubscription";
 import AutoRenewalDomainsBox from "./autoRenewalDomainsBox";
 import Notification from "../UI/notification";
 
-type SubscriptionProps = {
-  groups: string[];
-};
 
-const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
-  const [email, setEmail] = useState<string>("");
-  const [emailError, setEmailError] = useState<boolean>(true);
+const Subscription: FunctionComponent = () => {
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<bigint>(BigInt(0));
@@ -117,7 +109,7 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           meta_hash: metadataHash,
-          email,
+          email: "none",
           tax_state: isSwissResident ? "switzerland" : "none",
           salt: salt,
         }),
@@ -128,17 +120,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
         });
     }
 
-    // Subscribe to auto renewal mailing list if renewal box is checked
-    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tx_hash: formatHexString(autorenewData.transaction_hash),
-        groups,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.log("Error on registering to email:", err));
 
     addTransaction({
       timestamp: Date.now(),
@@ -168,13 +149,13 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     (async () => {
       setMetadataHash(
         await computeMetadataHash(
-          email,
+          "none",
           isSwissResident ? "switzerland" : "none",
           salt
         )
       );
     })();
-  }, [email, salt, renewalBox, isSwissResident, needMedadata]);
+  }, [salt, isSwissResident, needMedadata]);
 
   // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
@@ -332,11 +313,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
     priceInEth,
   ]);
 
-  function changeEmail(value: string): void {
-    setEmail(value);
-    setEmailError(isValidEmail(value) ? false : true);
-  }
-
   return (
     <div className={styles.container}>
       <div className={styles.card}>
@@ -350,18 +326,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
             </p>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            {needMedadata ? (
-              <TextField
-                helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
-                label="Email address"
-                value={email}
-                onChange={(e) => changeEmail(e.target.value)}
-                color="secondary"
-                error={emailError}
-                errorMessage="Please enter a valid email address"
-                type="email"
-              />
-            ) : null}
             {needMedadata ? (
               <SwissForm
                 isSwissResident={isSwissResident}
@@ -405,7 +369,6 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
                 domainsMinting === selectedDomains ||
                 !address ||
                 !termsBox ||
-                (needMedadata && emailError) ||
                 !areDomainSelected(selectedDomains) ||
                 callData.length === 0 // Cover the case where there are no domains to subscribe
               }
@@ -413,12 +376,10 @@ const Subscription: FunctionComponent<SubscriptionProps> = ({ groups }) => {
               {!termsBox
                 ? "Please accept terms & policies"
                 : !areDomainSelected(selectedDomains)
-                ? "Select a domain to subscribe"
-                : needMedadata && emailError
-                ? "Enter a valid Email"
-                : callData.length === 0
-                ? "You're already subscribed"
-                : "Enable subscription"}
+                  ? "Select a domain to subscribe"
+                  : callData.length === 0
+                    ? "You're already subscribed"
+                    : "Enable subscription"}
             </Button>
           ) : (
             <ConnectButton />

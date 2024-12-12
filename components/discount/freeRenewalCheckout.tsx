@@ -2,10 +2,8 @@ import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
-import { formatHexString, isValidEmail } from "../../utils/stringService";
 import { applyRateToBigInt } from "../../utils/feltService";
 import styles from "../../styles/components/registerV2.module.css";
-import TextField from "../UI/textField";
 import SwissForm from "../domains/swissForm";
 import { Divider } from "@mui/material";
 import RegisterSummary from "../domains/registerSummary";
@@ -33,18 +31,14 @@ import { areArraysEqual } from "@/utils/arrayService";
 import { useFreeRenewalTxPrep } from "@/hooks/checkout/useFreeRenewalTxPrep";
 
 type FreeRenewalCheckoutProps = {
-  groups: string[];
   goBack: () => void;
   offer: Discount;
 };
 
 const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
-  groups,
   offer,
   goBack,
 }) => {
-  const [email, setEmail] = useState<string>("");
-  const [emailError, setEmailError] = useState<boolean>(true);
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<bigint>(BigInt(0));
@@ -99,7 +93,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           meta_hash: metadataHash,
-          email: email,
+          email: "none",
           tax_state: isSwissResident ? "switzerland" : "none",
           salt: salt,
         }),
@@ -108,17 +102,6 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
         .catch((err) => console.log("Error on sending metadata:", err));
     }
 
-    // Subscribe to auto renewal mailing list if renewal box is checked
-    fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/mail_subscribe`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        tx_hash: formatHexString(renewData.transaction_hash),
-        groups,
-      }),
-    })
-      .then((res) => res.json())
-      .catch((err) => console.log("Error on registering to email:", err));
 
     addTransaction({
       timestamp: Date.now(),
@@ -211,7 +194,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
 
     const computeHashes = async () => {
       const hash = await computeMetadataHash(
-        email,
+        "none",
         isSwissResident ? "switzerland" : "none",
         salt
       );
@@ -219,12 +202,7 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
     };
 
     computeHashes();
-  }, [email, salt, isSwissResident, needMetadata]);
-
-  function changeEmail(value: string): void {
-    setEmail(value);
-    setEmailError(isValidEmail(value) ? false : true);
-  }
+  }, [salt, isSwissResident, needMetadata]);
 
   useEffect(() => {
     if (isSwissResident) {
@@ -288,18 +266,6 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
             {needMetadata && (
-              <TextField
-                helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
-                label="Email address"
-                value={email}
-                onChange={(e) => changeEmail(e.target.value)}
-                color="secondary"
-                error={emailError}
-                errorMessage="Please enter a valid email address"
-                type="email"
-              />
-            )}
-            {needMetadata && (
               <SwissForm
                 isSwissResident={isSwissResident}
                 onSwissResidentChange={() =>
@@ -347,17 +313,14 @@ const FreeRenewalCheckout: FunctionComponent<FreeRenewalCheckoutProps> = ({
                   domainsMinting === selectedDomains ||
                   !address ||
                   !termsBox ||
-                  (emailError && needMetadata) ||
                   !areDomainSelected(selectedDomains)
                 }
               >
                 {!termsBox
                   ? "Please accept terms & policies"
                   : !areDomainSelected(selectedDomains)
-                  ? "Select a domain to renew"
-                  : emailError && needMetadata
-                  ? "Enter a valid Email"
-                  : "Renew my domain(s)"}
+                    ? "Select a domain to renew"
+                    : "Renew my domain(s)"}
               </Button>
             ) : (
               <ConnectButton />

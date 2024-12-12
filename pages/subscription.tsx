@@ -8,11 +8,7 @@ const AutoRenewalPage: NextPage = () => {
   return (
     <div className={homeStyles.screen}>
       <div className={styles.container}>
-        <AutoRenewal
-          groups={[
-            process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
-          ]}
-        />
+        <AutoRenewal />
       </div>
     </div>
   );
