@@ -14,7 +14,7 @@ export function transfer(identity: Identity, target: string): Call[] {
   const transferCall = {
     contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
     entrypoint: "transferFrom",
-    calldata: [identity.ownerAddress, target, identity.id, 0],
+    calldata: [identity.ownerAddress, target, identity.id, "0"],
   };
 
   return [transferCall];
@@ -52,7 +52,7 @@ export function setUserData(
   return {
     contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
     entrypoint: "set_user_data",
-    calldata: [tokenId, field, data, 0],
+    calldata: [tokenId, field, data, "0"],
   };
 }
 
@@ -112,7 +112,7 @@ function writeVerifierData(
     entrypoint: "write_confirmation",
     calldata: [
       tokenId,
-      timestamp,
+      timestamp.toString(),
       stringToHex(dataType),
       dataToWrite.toString(),
       signatures[0],

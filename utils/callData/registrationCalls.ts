@@ -1,14 +1,15 @@
 import { Call } from "starknet";
 import { numberToString, numberToStringHex } from "../stringService";
+import { hexToDecimal } from "../feltService";
 
 function approve(price: bigint, erc20Address: string): Call {
   return {
     contractAddress: erc20Address,
     entrypoint: "approve",
     calldata: [
-      process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
+      hexToDecimal(process.env.NEXT_PUBLIC_NAMING_CONTRACT as string),
       price.toString(),
-      0,
+      "0",
     ],
   };
 }
@@ -32,13 +33,13 @@ function buy(
       // days
       numberToString(durationInDays),
       // resolver
-      0,
+      "0",
       // sponsor
       sponsor,
       // discount
-      discountId ?? 0,
+      discountId ?? "0",
       // metadata
-      metadata,
+      hexToDecimal(metadata),
     ],
   };
 }
@@ -64,19 +65,19 @@ function altcoinBuy(
       // days
       numberToString(durationInDays),
       // resolver
-      0,
+      "0",
       // sponsor
       sponsor,
       // discount
-      discountId ?? 0,
+      discountId ?? "0",
       // metadata
-      metadata,
+      hexToDecimal(metadata),
       // altcoin address
-      erc20Address,
+      hexToDecimal(erc20Address),
       // quote
       quoteData.quote,
       // max quote validity
-      quoteData.max_quote_validity,
+      numberToString(quoteData.max_quote_validity),
       // signature
       quoteData.r,
       quoteData.s,
@@ -96,7 +97,7 @@ function mainId(tokenId: number): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
     entrypoint: "set_main_id",
-    calldata: [tokenId],
+    calldata: [numberToStringHex(tokenId)],
   };
 }
 
@@ -105,7 +106,7 @@ function vatTransfer(amount: bigint, erc20_contract: string): Call {
     contractAddress: erc20_contract,
     entrypoint: "transfer",
     calldata: [
-      process.env.NEXT_PUBLIC_VAT_CONTRACT as string,
+      hexToDecimal(process.env.NEXT_PUBLIC_VAT_CONTRACT as string),
       amount.toString(),
       "0",
     ],
@@ -124,10 +125,10 @@ function renew(
     entrypoint: "renew",
     calldata: [
       encodedDomain,
-      durationInDays,
-      sponsor ?? 0,
-      discountId ?? 0,
-      metadataHash,
+      numberToString(durationInDays),
+      sponsor ?? "0",
+      discountId ?? "0",
+      hexToDecimal(metadataHash),
     ],
   };
 }
@@ -146,13 +147,13 @@ function altcoinRenew(
     entrypoint: "altcoin_renew",
     calldata: [
       encodedDomain,
-      durationInDays,
-      sponsor ?? 0,
-      discountId ?? 0,
-      metadataHash,
-      erc20Address,
+      numberToString(durationInDays),
+      sponsor ?? "0",
+      discountId ?? "0",
+      hexToDecimal(metadataHash),
+      hexToDecimal(erc20Address),
       quoteData.quote,
-      quoteData.max_quote_validity,
+      numberToString(quoteData.max_quote_validity),
       quoteData.r,
       quoteData.s,
     ],
@@ -163,7 +164,7 @@ function freeRenewal(encodedDomain: string, ar_contract: string): Call {
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "ar_discount_renew",
-    calldata: [encodedDomain, ar_contract],
+    calldata: [encodedDomain, hexToDecimal(ar_contract)],
   };
 }
 
@@ -233,7 +234,7 @@ export const getFreeRegistrationCalls = (
         numberToStringHex(newTokenId),
         numberToStringHex(encodedDomain),
         signature.map((s) => numberToStringHex(s)),
-        txMetadataHash,
+        hexToDecimal(txMetadataHash),
       ].flat(),
     },
   ];

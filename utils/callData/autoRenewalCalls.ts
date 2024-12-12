@@ -1,4 +1,5 @@
 import { Call } from "starknet";
+import { hexToDecimal } from "../feltService";
 
 function approve(
   erc20Contract: string,
@@ -8,7 +9,7 @@ function approve(
   return {
     contractAddress: erc20Contract,
     entrypoint: "approve",
-    calldata: [renewalContract, erc20Price.toString(), "0"],
+    calldata: [hexToDecimal(renewalContract), erc20Price.toString(), "0"],
   };
 }
 
@@ -24,8 +25,8 @@ function enableRenewal(
     calldata: [
       encodedDomain.toString(),
       price.toString(),
-      0, // sponsor
-      metahash,
+      "0", // sponsor
+      hexToDecimal(metahash),
     ],
   };
 }
