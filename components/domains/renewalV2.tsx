@@ -10,11 +10,8 @@ import SelectPfp from "./steps/selectPfp";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 import evergreenDiscounts from "@/utils/discounts/evergreen";
 
-type RenewalProps = {
-  groups: string[];
-};
 
-const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
+const RenewalV2: FunctionComponent = () => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
   const { updateFormState, userNfts, isLoadingNfts } = useContext(FormContext);
@@ -95,7 +92,6 @@ const RenewalV2: FunctionComponent<RenewalProps> = ({ groups }) => {
       {currentStep === 3 && (
         <CheckoutCard
           type={FormType.RENEW}
-          groups={groups}
           discount={evergreenDiscounts.renewal}
         />
       )}

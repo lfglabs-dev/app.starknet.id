@@ -12,14 +12,12 @@ import evergreenDiscounts from "@/utils/discounts/evergreen";
 
 type RegisterV3Props = {
   domain: string;
-  groups: string[];
   setDomain: (domain: string) => void;
 };
 
 const RegisterV3: FunctionComponent<RegisterV3Props> = ({
   domain,
   setDomain,
-  groups,
 }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
@@ -85,7 +83,6 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
       {currentStep === 3 && (
         <CheckoutCard
           type={FormType.REGISTER}
-          groups={groups}
           discount={evergreenDiscounts.registration}
         />
       )}
