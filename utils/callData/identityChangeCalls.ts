@@ -86,7 +86,7 @@ export function setAsMainId(
     output.push({
       contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
       entrypoint: "migrate_domain",
-      calldata: [encodedDomain.length, ...encodedDomain],
+      calldata: [encodedDomain.length.toString(), ...encodedDomain],
     });
   }
 
