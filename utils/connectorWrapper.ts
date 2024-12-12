@@ -5,8 +5,11 @@ import { WebWalletConnector } from "starknetkit/webwallet";
 import { getBrowser } from "./browserService";
 import { constants } from "starknet";
 import { Connector as StarknetReactConnector } from "@starknet-react/core";
+import { getStarknet } from "@starknet-io/get-starknet-core";
 
 export const getConnectors = () => {
+  // For Metamask
+  getStarknet();
   const connectors = [
     new InjectedConnector({ options: { id: "argentX" } }),
     new InjectedConnector({ options: { id: "braavos" } }),

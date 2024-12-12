@@ -10,7 +10,7 @@ import {
   getConnectorName,
   sortConnectors,
 } from "@/utils/connectorWrapper";
-import { isInArgentMobileAppBrowser } from 'starknetkit/argentMobile';
+import { isInArgentMobileAppBrowser } from "starknetkit/argentMobile";
 
 type WalletConnectProps = {
   closeModal: () => void;
@@ -36,7 +36,10 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
     if (isInArgentMobileAppBrowser()) {
       // Filter connectors and remove duplicates
       const uniqueConnectors = connectors
-        .filter((connector) => connector.id === "argentMobile" || connector.id === "argentX")
+        .filter(
+          (connector) =>
+            connector.id === "argentMobile" || connector.id === "argentX"
+        )
         .reduce((map, connector) => map.set(connector.id, connector), new Map())
         .values();
 
@@ -54,12 +57,11 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
     if (connector.id === "braavos" && isMobile) {
       return false;
     }
-    if (connector.id === "metamask") return false;
     return !isAvailable;
   };
 
   const tryConnect = (connector: Connector, isAvailable: boolean) => {
-    if (isAvailable || connector.id === "metamask") {
+    if (isAvailable) {
       connect(connector);
     } else if (isMobile && connector.id === "braavos") {
       openBraavosMobile();
@@ -96,7 +98,6 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
           {sortConnectors(filterConnectors(connectors)).map(
             (connector: Connector) => {
               const isAvailable = connector.available();
-              console.log("isAvailable", connector.id, isAvailable);
               return (
                 <div
                   key={connector.id}
@@ -104,7 +105,11 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
                   onClick={() => tryConnect(connector, isAvailable)}
                 >
                   <img
-                    src={isInArgentMobileAppBrowser() ? getConnectorIcon('argentMobile') : getConnectorIcon(connector.id)}
+                    src={
+                      isInArgentMobileAppBrowser()
+                        ? getConnectorIcon("argentMobile")
+                        : getConnectorIcon(connector.id)
+                    }
                     className={styles.walletIcon}
                   />
                   <div className={styles.walletName}>
