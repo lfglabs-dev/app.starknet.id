@@ -23,7 +23,7 @@ export function transfer(identity: Identity, target: string): Call[] {
 export function setStarknetAddress(
   identity: Identity,
   address: string,
-  callDataEncodedDomain: (number | string)[] = []
+  callDataEncodedDomain: string[] = []
 ): Call[] {
   const domain = identity.data.domain;
   const output = [];
@@ -59,7 +59,7 @@ export function setUserData(
 export function setAsMainId(
   identity: Identity,
   hasRev: boolean,
-  callDataEncodedDomain: (number | string)[] = []
+  callDataEncodedDomain: string[] = []
 ): Call[] {
   const output = [];
   // reset reverse address if set

@@ -13,7 +13,7 @@ import TransactionModal from "@/components/UI/transactionModal";
 type SubdomainModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
-  callDataEncodedDomain: (number | string)[];
+  callDataEncodedDomain: string[];
   domain?: string;
 };
 
