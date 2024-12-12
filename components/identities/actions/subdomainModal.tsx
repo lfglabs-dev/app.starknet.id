@@ -13,7 +13,7 @@ import TransactionModal from "@/components/UI/transactionModal";
 type SubdomainModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
-  callDataEncodedDomain: (number | string)[];
+  callDataEncodedDomain: string[];
   domain?: string;
 };
 
@@ -56,10 +56,10 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "transfer_domain",
           calldata: [
-            Number(callDataEncodedDomain[0]) + 1,
+            numberToString(Number(callDataEncodedDomain[0]) + 1),
             encodedSubdomain,
             ...callDataEncodedDomain.slice(1),
-            targetTokenId,
+            numberToString(targetTokenId),
           ],
         },
       ]);
@@ -74,10 +74,10 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
           contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
           entrypoint: "transfer_domain",
           calldata: [
-            Number(callDataEncodedDomain[0]) + 1,
+            numberToString(Number(callDataEncodedDomain[0]) + 1),
             encodedSubdomain,
             ...callDataEncodedDomain.slice(1),
-            newTokenId,
+            numberToString(newTokenId),
           ],
         },
       ]);
