@@ -9,7 +9,7 @@ function claimDomain(
   return {
     contractAddress: process.env.NEXT_PUBLIC_SOL_SUBDOMAINS as string,
     entrypoint: "claim",
-    calldata: [encodedDomain, r, s, maxValidity],
+    calldata: [encodedDomain, r, s, maxValidity.toString()],
   };
 }
 
@@ -27,7 +27,7 @@ function setResolving(encodedDomain: string, targetAddr: string): Call {
 
 function setAsMainDomain(encodedDomain: string): Call {
   const rootDomain = "16434"; // sol encoded
-  const calldata = [2, encodedDomain, rootDomain, 0]; // zero is hint argument
+  const calldata = ["2", encodedDomain, rootDomain, "0"]; // zero is hint argument
   return {
     contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
     entrypoint: "set_address_to_domain",

@@ -37,7 +37,7 @@ const Identities: NextPage = () => {
     return {
       contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
       entrypoint: "mint",
-      calldata: [randomTokenId],
+      calldata: [randomTokenId.toString()],
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // We want this to run only once

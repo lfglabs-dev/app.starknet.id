@@ -9,7 +9,6 @@ import crypto from "crypto";
 // Mock the crypto module
 global.crypto = crypto;
 
-const STARKNET_ID_URL = process.env.NEXT_PUBLIC_STARKNET_ID;
 global.fetch = jest.fn();
 
 describe("generateSalt function", () => {

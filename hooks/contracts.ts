@@ -9,7 +9,7 @@ import renewal_abi from "../abi/starknet/renewal.sierra.json";
 import nft_pp_verifier_abi from "../abi/starknet/nft_pp_verifier_abi.json";
 import sol_subdomain_abi from "../abi/starknet/sol_subdomain_abi.json";
 import multicall_abi from "../abi/starknet/multicall_abi.json";
-import { Abi } from "starknet";
+import type { Abi } from "starknet";
 
 export function useStarknetIdContract() {
   return useContract({

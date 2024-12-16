@@ -51,7 +51,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const encodedDomains = utils.encodeDomain(identity?.domain);
   const { addTransaction } = useNotificationManager();
   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-  const [txHash, setTxHash] = useState<string>('');
+  const [txHash, setTxHash] = useState<string>("");
   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
   const [isMainDomain, setIsMainDomain] = useState<boolean>(
     identity ? identity.isMain : false
@@ -98,7 +98,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   }, [identity]);
 
   // Add all subdomains to the parameters
-  const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
+  const callDataEncodedDomain: string[] = [encodedDomains.length.toString()];
   encodedDomains.forEach((domain) => {
     callDataEncodedDomain.push(domain.toString(10));
   });
@@ -247,7 +247,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           )}
           {identity && isOwner && address && (
             <div className={styles.identityActions}>
-              {callDataEncodedDomain[0] === 1 && !isAutoRenewalEnabled ? (
+              {callDataEncodedDomain[0] === "1" && !isAutoRenewalEnabled ? (
                 <ClickableAction
                   title="ENABLE SUBSCRIPTION"
                   description={nextAutoRenew}
@@ -256,7 +256,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   onClick={() => router.push("/subscription")}
                 />
               ) : null}
-              {callDataEncodedDomain[0] === 1 ? (
+              {callDataEncodedDomain[0] === "1" ? (
                 <ClickableAction
                   title="RENEW YOUR DOMAIN"
                   style="primary"
@@ -316,7 +316,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     }
                     onClick={() => setIsSubdomainFormOpen(true)}
                   />
-                  {callDataEncodedDomain[0] === 1 && isAutoRenewalEnabled ? (
+                  {callDataEncodedDomain[0] === "1" && isAutoRenewalEnabled ? (
                     <ClickableAction
                       title="DISABLE SUBSCRIPTION"
                       description={nextAutoRenew}

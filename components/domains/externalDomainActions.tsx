@@ -36,7 +36,7 @@ const ExternalDomainActions: FunctionComponent<ExternalDomainActionsProps> = ({
 
   // Add all subdomains to the parameters
   const encodedDomains = utils.encodeDomain(domain);
-  const callDataEncodedDomain: (number | string)[] = [encodedDomains.length];
+  const callDataEncodedDomain: string[] = [encodedDomains.length.toString()];
   encodedDomains.forEach((domain) => {
     callDataEncodedDomain.push(domain.toString(10));
   });
