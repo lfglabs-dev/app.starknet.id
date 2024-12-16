@@ -14,7 +14,7 @@ export function transfer(identity: Identity, target: string): Call[] {
   const transferCall = {
     contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
     entrypoint: "transferFrom",
-    calldata: [identity.ownerAddress, target, identity.id, 0],
+    calldata: [identity.ownerAddress, target, identity.id, "0"],
   };
 
   return [transferCall];
@@ -23,7 +23,7 @@ export function transfer(identity: Identity, target: string): Call[] {
 export function setStarknetAddress(
   identity: Identity,
   address: string,
-  callDataEncodedDomain: (number | string)[] = []
+  callDataEncodedDomain: string[] = []
 ): Call[] {
   const domain = identity.data.domain;
   const output = [];
@@ -52,14 +52,14 @@ export function setUserData(
   return {
     contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
     entrypoint: "set_user_data",
-    calldata: [tokenId, field, data, 0],
+    calldata: [tokenId, field, data, "0"],
   };
 }
 
 export function setAsMainId(
   identity: Identity,
   hasRev: boolean,
-  callDataEncodedDomain: (number | string)[] = []
+  callDataEncodedDomain: string[] = []
 ): Call[] {
   const output = [];
   // reset reverse address if set
@@ -86,7 +86,7 @@ export function setAsMainId(
     output.push({
       contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
       entrypoint: "migrate_domain",
-      calldata: [encodedDomain.length, ...encodedDomain],
+      calldata: [encodedDomain.length.toString(), ...encodedDomain],
     });
   }
 
@@ -112,7 +112,7 @@ function writeVerifierData(
     entrypoint: "write_confirmation",
     calldata: [
       tokenId,
-      timestamp,
+      timestamp.toString(),
       stringToHex(dataType),
       dataToWrite.toString(),
       signatures[0],

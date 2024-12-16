@@ -7,8 +7,7 @@ import React, {
 import styles from "../../../styles/components/registerV3.module.css";
 import { FormContext } from "@/context/FormProvider";
 import { FormType } from "@/utils/constants";
-import { getDomainWithStark, isValidEmail } from "@/utils/stringService";
-import TextField from "../../UI/textField";
+import { getDomainWithStark } from "@/utils/stringService";
 import SwissForm from "../swissForm";
 import SelectIdentity from "../selectIdentity";
 import NumberTextField from "@/components/UI/numberTextField";
@@ -40,8 +39,6 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   const maxYearsToRegister = 25;
   const { address } = useAccount();
   const { formState, updateFormState } = useContext(FormContext);
-  const [email, setEmail] = useState<string>("");
-  const [emailError, setEmailError] = useState<boolean>(true);
   const [selectedDomains, setSelectedDomains] =
     useState<Record<string, boolean>>();
 
@@ -51,11 +48,6 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDomains, type]); // Don't call updateFromState on every render
 
-  function changeEmail(value: string): void {
-    setEmail(value);
-    setEmailError(isValidEmail(value) ? false : true);
-    updateFormState({ email: value });
-  }
 
   function changeTokenId(value: number): void {
     updateFormState({ tokenId: value });
@@ -99,9 +91,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   };
 
   const getButtonText = (): string => {
-    return formState.needMetadata && emailError
-      ? "Enter a valid Email"
-      : type === FormType.RENEW && !areDomainSelected(formState.selectedDomains)
+    return type === FormType.RENEW && !areDomainSelected(formState.selectedDomains)
       ? "Select a domain to renew"
       : "Next step";
   };
@@ -110,7 +100,6 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
     return (
       !formState.durationInYears ||
       formState.durationInYears < 1 ||
-      (formState.needMetadata && emailError) ||
       (type === FormType.RENEW && !areDomainSelected(formState.selectedDomains))
     );
   };
@@ -124,18 +113,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
             <h3 className={styles.domain}>{getTitle()}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-            {formState.needMetadata ? (
-              <TextField
-                helperText="Secure your domain's future and stay ahead with vital updates. Your email stays private with us, always."
-                label="Email address"
-                value={email}
-                onChange={(e) => changeEmail(e.target.value)}
-                color="secondary"
-                error={emailError}
-                errorMessage="Please enter a valid email address"
-                type="email"
-              />
-            ) : null}
+
 
             {formState.needMetadata ? (
               <SwissForm

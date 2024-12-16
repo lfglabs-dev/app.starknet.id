@@ -44,10 +44,6 @@ const FreeRenewalPage: NextPage = () => {
       {screen === 2 ? (
         <div className={styles.container}>
           <FreeRenewalCheckout
-            groups={[
-              process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
-              freeRenewalDiscount.discountMailGroupId,
-            ]}
             offer={freeRenewalDiscount.offer}
             goBack={goBack}
           />

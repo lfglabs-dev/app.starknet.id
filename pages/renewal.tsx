@@ -10,11 +10,7 @@ const RenewalPage: NextPage = () => {
     <div className={homeStyles.screen}>
       <div className={styles.container}>
         <FormProvider>
-          <RenewalV2
-            groups={[
-              process.env.NEXT_PUBLIC_MAILING_LIST_GROUP_AUTO_RENEWAL ?? "",
-            ]}
-          />
+          <RenewalV2 />
         </FormProvider>
       </div>
     </div>

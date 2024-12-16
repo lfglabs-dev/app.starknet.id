@@ -5,7 +5,6 @@ import { computeMetadataHash, generateSalt } from "@/utils/userDataService";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
 
 export type FormState = {
-  email: string;
   isSwissResident: boolean;
   tokenId: number;
   durationInYears: number;
@@ -31,7 +30,6 @@ type FormConfig = {
 };
 
 const initialState: FormState = {
-  email: "",
   isSwissResident: false,
   tokenId: 0,
   durationInYears: 1,
@@ -45,9 +43,9 @@ const initialState: FormState = {
 export const FormContext = createContext<FormConfig>({
   formState: initialState,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  clearForm: () => {},
+  clearForm: () => { },
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  updateFormState: () => {},
+  updateFormState: () => { },
 });
 
 export const FormProvider: FunctionComponent<Context> = ({ children }) => {
@@ -103,7 +101,7 @@ export const FormProvider: FunctionComponent<Context> = ({ children }) => {
     (async () => {
       updateFormState({
         metadataHash: await computeMetadataHash(
-          formState.email,
+          "none",
           formState.isSwissResident ? "switzerland" : "none",
           formState.salt as string
         ),
@@ -111,7 +109,6 @@ export const FormProvider: FunctionComponent<Context> = ({ children }) => {
     })();
   }, [
     formState.salt,
-    formState.email,
     formState.isSwissResident,
     formState.needMetadata,
     updateFormState,

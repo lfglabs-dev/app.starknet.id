@@ -12,7 +12,7 @@ import TransactionModal from "@/components/UI/transactionModal";
 type ChangeAddressModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
-  callDataEncodedDomain: (number | string)[];
+  callDataEncodedDomain: string[];
   identity?: Identity;
   currentTargetAddress?: string;
 };
