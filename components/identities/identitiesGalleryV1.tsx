@@ -57,27 +57,26 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
     // Our Indexer
     <div className={styles.galleryContainer}>
       {identities.map((identity, index) => {
+        const isExpired = isIdentityExpired(identity);
+        const isExpiringSoon = isIdentityExpiringSoon(identity);
+        const expiryDate = timestampToReadableDate(identity?.domain_expiry ?? 0);
+
         return (
           <div
             key={index}
             className={styles.imageGallery}
             onClick={() => router.push(`/identities/${identity.id}`)}
           >
-            {needAutoRenewal?.includes(identity.domain) &&
-             (isIdentityExpired(identity) || isIdentityExpiringSoon(identity)) ? (
+            {isExpired ? (
               <div className={styles.expiryWarning}>
-                <Tooltip
-                  title={
-                    isIdentityExpired(identity)
-                      ? "This domain has expired! Renew it now to keep using it."
-                      : `This domain will expire on ${timestampToReadableDate(
-                          identity?.domain_expiry ?? 0
-                        )}`
-                  }
-                  arrow
-                >
-                  {/* <ErrorIcon color="error" /> */}
-                  <RenewalIcon color={isIdentityExpired(identity) ? "#FF3333" : "#FFDE21"} width="12" />
+                <Tooltip title="This domain has expired! Renew it now to keep using it." arrow>
+                  <ErrorIcon color="error" />
+                </Tooltip>
+              </div>
+            ) : isExpiringSoon ? (
+              <div className={styles.expiryWarning}>
+                <Tooltip title={`This domain is expiring soon on ${expiryDate}`} arrow>
+                  <ErrorIcon color="warning" />
                 </Tooltip>
               </div>
             ) : null}
