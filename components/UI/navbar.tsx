@@ -327,7 +327,7 @@ const Navbar: FunctionComponent = () => {
                       </li>
                     </Link>
                     <Link
-                      href={ `${process.env.NEXT_PUBLIC_STARKNET_ID as string}` }
+                      href={`${process.env.NEXT_PUBLIC_STARKNET_ID as string}`}
                       target="_blank"
                     >
                       <li className={styles.menuItemSmall} onClick={handleNav}>
