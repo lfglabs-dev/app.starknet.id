@@ -73,7 +73,7 @@ const IdentitiesGalleryV1: FunctionComponent<IdentitiesGalleryV1Props> = ({
                   <ErrorIcon color="error" />
                 </Tooltip>
               </div>
-            ) : isExpiringSoon ? (
+            ) : isExpiringSoon && needAutoRenewal?.includes(identity.domain) ? (
               <div className={styles.expiryWarning}>
                 <Tooltip title={`This domain is expiring soon on ${expiryDate}`} arrow>
                   <ErrorIcon color="warning" />
