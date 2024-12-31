@@ -234,7 +234,7 @@ export const getFreeRegistrationCalls = (
         numberToStringHex(newTokenId),
         numberToStringHex(encodedDomain),
         signature.map((s) => numberToStringHex(s)),
-        hexToDecimal(txMetadataHash),
+        numberToStringHex(hexToDecimal(txMetadataHash)), // Reformat hex hash
       ].flat(),
     },
   ];
