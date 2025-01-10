@@ -2,7 +2,9 @@ import React, { FunctionComponent } from "react";
 import modalStyles from "../../styles/components/modalMessage.module.css";
 import Button from "./button";
 import verifiedLottie from "../../public/visuals/verifiedLottie.json";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 type ConfirmationTxProps = {
   closeModal: () => void;
