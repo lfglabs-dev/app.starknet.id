@@ -78,6 +78,21 @@
   background: #cdcccc;
 }
 
+.dark {
+  color: var(--background);
+  background: var(--primary600);
+  border-radius: 8px;
+  width: fit-content;
+}
+
+.dark:hover {
+  background: var(--primary);
+}
+
+.dark:disabled:hover {
+  background: #cdcccc;
+}
+
 /* white */
 .white {
   color: var(--dark-content);

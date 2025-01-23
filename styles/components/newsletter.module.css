@@ -1,6 +1,4 @@
 .page {
-  padding-top: calc(max(12vh, 80px) + 64px);
-  padding-bottom: 64px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,17 +19,20 @@
   position: fixed;
   width: 392px;
   height: 394px;
-  left: -120px;
-  bottom: -80px;
+  left: -65px;
+  bottom: -1px;
 }
 
 .balloon,
 .starknet,
 .coconut {
   position: fixed;
-  width: 114px;
-  height: 114px;
-  transform: rotate(-14.355deg) translate(-300px, -300px);
+  width: 130px;
+  height: 130px;
+}
+
+.balloon{
+  transform: translate(300px, 50px);
 }
 
 .lilLeaf1,
@@ -53,9 +54,9 @@
 }
 
 .coconut {
-  width: 52px;
-  height: 52px;
-  transform: rotate(80deg) translate(50px, -400px);
+  width: 64px;
+  height: 64px;
+  transform: translate(1100px, 250px);
 }
 
 .starknet {
@@ -66,7 +67,7 @@
 
 .tree2 {
   left: auto;
-  right: -130px;
+  right: -65px;
 }
 
 .title {
@@ -80,6 +81,16 @@
   line-height: 58px; /* 120.833% */
   color: var(--secondary);
   max-width: 618px;
+}
+
+.paragraph{
+  max-width: 487px;
+  height: 72px;
+  text-align: center;
+  font-weight: 400;
+  font-family: Poppins-Regular;
+  line-height: 24px;
+  color: #8C8989;
 }
 
 .title strong {
@@ -136,11 +147,11 @@
 }
 
 .confirmContainer {
-  width: 1184px;
+  width: 100%;
+  height: 100vh;
+  padding-top: calc(max(12vh, 80px) + 64px);
   display: flex;
-  border-radius: 20px;
   background-color: var(--background-light);
-  box-shadow: var(--small-shadow);
 }
 
 .bannerContainer {
@@ -165,7 +176,7 @@
 }
 
 .confirmContent {
-  width: 50%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;

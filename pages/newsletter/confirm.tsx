@@ -6,29 +6,26 @@ const NewsletterConfirm: NextPage = () => {
   return (
     <div className={styles.page}>
       <div className={styles.confirmContainer}>
-        <div className={styles.bannerContainer}>
-          <img
-            src="https://storage.googleapis.com/support-kms-prod/OugFYQGklDvyRbnHYclDAjGPqARIkc6XTJ2W"
-            alt="How to remove email from spam"
-            className={styles.confirmBanner}
-          />
+        <div>
+          <img src="/visuals/hotAirBalloon.svg" alt="hot air balloon" className={styles.balloon}/>
+          <img src="/visuals/coconut.svg" className={styles.coconut} />
+          <img src="/visuals/leftTree.svg" className={styles.tree1}/>
+          <img src="/visuals/rightTree.svg" className={styles.tree2}/>
         </div>
         <div className={styles.confirmContent}>
-          <div>
-            <p className="mb-2">One last thing...</p>
-            <h1 className={styles.title}>
+          <p className="mb-2">One last thing...</p>
+          <h1 className={styles.title}>
               You&apos;re <strong>subscribed !</strong>
-            </h1>
-            <p className="mt-4">
-              Almost there! To ensure you receive our newsletters, please check
-              your email to confirm your subscription. Don&apos;t let vital
+          </h1>
+          <p className={`${styles.paragraph} mt-4`}>
+              No noise, just news.Almost there! To ensure you receive our
+              newsletters, please check your email to confirm your subscription. Don&apos;t let vital
               updates slip through – add us to your trusted senders
-            </p>
-            <div className="w-[244px] mt-12">
-              <Button onClick={() => window.open("mailto:", "_self")}>
+          </p>
+          <div className="mt-12">
+              <Button variation="dark" onClick={() => window.open("mailto:", "_self")}>
                 Open your email
               </Button>
-            </div>
           </div>
         </div>
       </div>
