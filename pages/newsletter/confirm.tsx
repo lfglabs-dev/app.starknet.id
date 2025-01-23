@@ -13,7 +13,7 @@ const NewsletterConfirm: NextPage = () => {
           <img src="/visuals/rightTree.svg" className={styles.tree2}/>
         </div>
         <div className={styles.confirmContent}>
-          <p className="mb-2">One last thing...</p>
+          <p className={`${styles.last} mb-2`}>One last thing...</p>
           <h1 className={styles.title}>
               You&apos;re <strong>subscribed !</strong>
           </h1>

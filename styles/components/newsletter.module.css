@@ -93,6 +93,14 @@
   color: #8C8989;
 }
 
+.last{
+  text-align: center;
+  font-weight: 400;
+  font-family: Poppins-Regular;
+  line-height: 24px;
+  color: #8C8989;
+}
+
 .title strong {
   color: var(--primary);
   font-family: "QuickZap";
