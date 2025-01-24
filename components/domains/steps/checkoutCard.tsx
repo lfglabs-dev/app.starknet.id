@@ -237,17 +237,6 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   return (
     <>
-      {formState.durationInYears === 1 ? (
-        <UpsellCard
-          upsellData={discount as Upsell}
-          enabled={formState.isUpselled}
-          onUpsellChoice={onUpsellChoice}
-          invalidBalance={invalidBalance}
-          hasUserSelectedOffer={hasUserSelectedOffer}
-          setHasUserSelectedOffer={setHasUserSelectedOffer}
-          loadingPrice={loadingPrice}
-        />
-      ) : null}
       {reducedDuration > 0 &&
         invalidBalance &&
         reducedDuration !== formState.durationInYears * 365 ? (
@@ -260,6 +249,17 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       ) : null}
 
       <div className={styles.container}>
+        {formState.durationInYears === 1 ? (
+          <UpsellCard
+            upsellData={discount as Upsell}
+            enabled={formState.isUpselled}
+            onUpsellChoice={onUpsellChoice}
+            invalidBalance={invalidBalance}
+            hasUserSelectedOffer={hasUserSelectedOffer}
+            setHasUserSelectedOffer={setHasUserSelectedOffer}
+            loadingPrice={loadingPrice}
+          />
+        ) : null}
         <div className={styles.checkout}>
           <RegisterSummary
             priceInEth={
@@ -297,24 +297,26 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
               displayedCurrency={displayedCurrency}
               maxPriceRange={maxPriceRange}
             />
-            <div>
-              <Button
-                onClick={() =>
-                  execute().then(() => {
-                    setDomainsMinting(formState.selectedDomains);
-                  })
-                }
-                disabled={
-                  domainsMinting === formState.selectedDomains ||
-                  !account ||
-                  !formState.durationInYears ||
-                  formState.durationInYears < 1 ||
-                  invalidBalance ||
-                  !termsBox
-                }
-              >
-                {getButtonText()}
-              </Button>
+            <div className={styles.checkoutButton}>
+              <div>
+                <Button
+                  onClick={() =>
+                    execute().then(() => {
+                      setDomainsMinting(formState.selectedDomains);
+                    })
+                  }
+                  disabled={
+                    domainsMinting === formState.selectedDomains ||
+                    !account ||
+                    !formState.durationInYears ||
+                    formState.durationInYears < 1 ||
+                    invalidBalance ||
+                    !termsBox
+                  }
+                >
+                  {getButtonText()}
+                </Button>
+              </div>
             </div>
           </div>
         </div>

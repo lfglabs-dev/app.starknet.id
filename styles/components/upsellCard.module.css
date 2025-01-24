@@ -3,14 +3,9 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 1084px;
-  max-width: 100%;
+  width: 100%;
   background-color: white;
   justify-content: space-between;
-  margin-bottom: 100px;
-  border-radius: 1rem;
-  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-  margin-bottom: 3rem;
   overflow: hidden;
   position: relative;
   z-index: 0;
@@ -18,15 +13,12 @@
 
 .card {
   display: flex;
-  width: 694px;
-  padding: 32px 0px;
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
   flex-shrink: 0;
   z-index: 1;
-  background-color: #fff;
-  padding: 64px 48px;
+  background-color: var(--background);
 }
 
 .image {
@@ -49,19 +41,27 @@
 }
 
 .catch {
-  color: var(--primary);
+  color: var(--dark-content);
   font-family: "QuickZap";
-  font-size: 36px;
+  font-size: 24px;
   font-style: normal;
   font-weight: 400;
-  line-height: 42px;
+  line-height: 32px;
 }
 
 .desc {
-  margin-top: 24px;
+  margin-top: 6px;
   text-align: left;
   font-size: 16px;
-  color: var(--secondary);
+  line-height: 24px;
+  color: var(--content-600, #8c8989);
+}
+
+.radioGroupContainer {
+  width: 100%;
+  border: 1px solid #45454533;
+  border-radius: 8px;
+  padding: 8px 20px;
 }
 
 .radioGroup {
@@ -79,9 +79,7 @@
   }
 
   .card {
-    order: 2;
     width: 100%;
-    padding: 32px 24px;
   }
 
   .image {
