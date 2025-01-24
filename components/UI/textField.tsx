@@ -19,7 +19,20 @@ type TextFieldProps = {
 	centerLabel?: true | false;
 };
 
-const TextField: FunctionComponent<TextFieldProps> = ({ label, value, onChange, color, required = false, error = false, errorMessage, placeholder, helperText, type, variant = "default", centerLabel = false }) => {
+const TextField: FunctionComponent<TextFieldProps> = ({
+  label,
+  value,
+  onChange,
+  color,
+  required = false,
+  error = false,
+  errorMessage,
+  placeholder,
+  helperText,
+  type,
+  variant = "default",
+  centerLabel = false,
+}) => {
 	return (
 		<div className="flex flex-col w-full">
 			<div className={`flex gap-1 mb-[9.8px] ${centerLabel && "justify-center"}`}>
