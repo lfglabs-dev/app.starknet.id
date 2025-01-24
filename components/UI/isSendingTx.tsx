@@ -2,9 +2,10 @@
 import React, { FunctionComponent } from "react";
 import modalStyles from "../../styles/components/modalMessage.module.css";
 import sendingLottie from "../../public/visuals/sendingLottie.json";
-import Lottie from "lottie-react";
 import Button from "./button";
+import dynamic from "next/dynamic";
 
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 const IsSendingTx: FunctionComponent = () => {
   return (
     <div className={modalStyles.menu}>
