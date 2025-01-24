@@ -18,6 +18,7 @@ import { useNotificationManager } from "../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../utils/constants";
 import WalletConnect from "@/components/UI/walletConnect";
 import { Connector } from "starknetkit";
+import AddButton from "@/components/UI/AddButtonIdentities";
 
 const Identities: NextPage = () => {
   const { address } = useAccount();
@@ -119,8 +120,8 @@ const Identities: NextPage = () => {
                 centralized location. Streamline your digital presence with
                 convenience and control.
               </p>
-              <div className="w-fit block mx-auto px-4 mt-[33px]">
-                <ClickableAction
+              <div className="w-fit block mx-auto px-4 mt-[33px] ">
+                {/* <ClickableAction
                   title="ADD IDENTITIES"
                   icon={<MintIcon />}
                   onClick={
@@ -129,7 +130,16 @@ const Identities: NextPage = () => {
                       : () => setShowWalletConnectModal(true)
                   }
                   width="auto"
-                />
+                /> */}
+                  <AddButton onClick={
+                    address
+                      ? () => mint()
+                      : () => setShowWalletConnectModal(true)
+                  }   radius="8px" 
+>
+                ADD IDENTITIES
+                </AddButton>
+          
               </div>
             </>
           ) : (
@@ -139,8 +149,8 @@ const Identities: NextPage = () => {
                 externalDomains={externalDomains}
                 address={address}
               />
-              <div className="w-fit block mx-auto px-4 mt-[33px]">
-                <ClickableAction
+              <div className="w-fit block mx-auto px-4 mt-[33px] bg-red-500">
+                {/* <ClickableAction
                   title="ADD IDENTITIES"
                   icon={<MintIcon />}
                   onClick={
@@ -149,7 +159,15 @@ const Identities: NextPage = () => {
                       : () => setShowWalletConnectModal(true)
                   }
                   width="auto"
-                />
+                /> */}
+                 <AddButton onClick={
+                    address
+                      ? () => mint()
+                      : () => setShowWalletConnectModal(true)
+                  }   radius="8px" 
+>
+                ADD IDENTITIES
+                </AddButton>
               </div>
             </div>
           )}
