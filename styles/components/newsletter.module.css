@@ -165,6 +165,12 @@
 }
 
 @media screen and (max-width: 768px) {
+  .page{
+    padding-inline: 16px;
+  }
+  .description{
+    font-size: 14px;
+  }
   .tree1{
     left: -114px;
     bottom: -105px;
