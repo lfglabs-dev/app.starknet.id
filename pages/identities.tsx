@@ -120,7 +120,7 @@ const Identities: NextPage = () => {
                 centralized location. Streamline your digital presence with
                 convenience and control.
               </p>
-              <div className="w-fit block mx-auto px-4 mt-[33px] ">
+              <div className="w-fit block mx-auto px-4 mt-[48px] ">
                 {/* <ClickableAction
                   title="ADD IDENTITIES"
                   icon={<MintIcon />}
@@ -149,7 +149,7 @@ const Identities: NextPage = () => {
                 externalDomains={externalDomains}
                 address={address}
               />
-              <div className="w-fit block mx-auto px-4 mt-[33px] bg-red-500">
+              <div className="w-fit block mx-auto px-4 mt-[48px] bg-red-500">
                 {/* <ClickableAction
                   title="ADD IDENTITIES"
                   icon={<MintIcon />}
