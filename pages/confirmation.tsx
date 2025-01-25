@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import { useAccount } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import styles from "../styles/components/confirmation.module.css";
-import Button from "@/components/UI/button";
+// import Button from "@/components/UI/button";
 import { minifyAddress } from "@/utils/stringService";
 import theme from "@/styles/theme";
 import CopyIcon from "@/components/UI/iconsComponents/icons/copyIcon";
