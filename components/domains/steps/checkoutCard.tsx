@@ -298,7 +298,9 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
               maxPriceRange={maxPriceRange}
             />
             <div className={styles.checkoutButton}>
-              <div className="flex gap-4">
+              <div
+                className={(!termsBox || invalidBalance) ? "flex flex-col-reverse gap-4" : "flex gap-4"}
+              >
                 <div className="flex sm:hidden">
                   <Button
                     variation="white"
