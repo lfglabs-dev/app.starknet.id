@@ -8,9 +8,9 @@ const NewsletterConfirm: NextPage = () => {
       <div className={styles.confirmContainer}>
         <div>
           <img src="/visuals/hotAirBalloon.svg" alt="hot air balloon" className={styles.balloon}/>
-          <img src="/visuals/coconut.svg" className={styles.coconut} />
-          <img src="/visuals/leftTree.svg" className={styles.tree1}/>
-          <img src="/visuals/rightTree.svg" className={styles.tree2}/>
+          <img src="/visuals/coconut.svg" alt="decorative coconut" className={styles.coconut} />
++         <img src="/visuals/leftTree.svg" alt="decorative left tree" className={styles.tree1}/>
++         <img src="/visuals/rightTree.svg" alt="decorative right tree" className={styles.tree2}/>
         </div>
         <div className={styles.confirmContent}>
           <p className={`${styles.last} mb-2`}>One last thing...</p>
