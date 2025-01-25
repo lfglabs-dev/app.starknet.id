@@ -52,24 +52,22 @@
   text-align: center;
 }
 
-
 .nftSection::-webkit-scrollbar {
   width: 6px;
 }
 
 .nftSection::-webkit-scrollbar-thumb {
-  background-color: #402D28;
+  background-color: #402d28;
   border-radius: 6px;
   height: 74.5px;
 }
-
 
 .nftSection {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  width: 37.5rem; 
-  height: 21.9375rem; 
+  width: 37.5rem;
+  height: 21.9375rem;
   overflow-y: scroll;
   overflow-x: hidden;
   justify-content: center;
@@ -99,16 +97,17 @@
   flex-direction: column;
   transition: opacity 0.3s ease;
 }
+
+.nftSection:has(.nftImg:hover) .nftImg:not(:hover) {
+  opacity: 0.5;
+}
+
 .nftImg:hover {
   opacity: 1;
 }
 
-.nftImg:not(:hover) {
-  opacity: 0.5;
-}
 .nftImg.nftImgSelected {
   border: 2px solid var(--primary);
-  opacity: 1;
 }
 
 .selectedIcon {
