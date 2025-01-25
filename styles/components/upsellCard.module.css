@@ -73,6 +73,7 @@
 @media (max-width: 1084px) {
   .container {
     max-width: 90%;
+    width: 100%;
     margin: 1rem;
     flex-direction: column;
     align-items: center;

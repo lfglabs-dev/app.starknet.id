@@ -236,45 +236,86 @@
   opacity: 0.7;
 }
 
+.purchaseStepNav {
+  display: none; 
+}
+
+@media (min-width: 768px) {
+  .purchaseStepNav {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 200px;
+    height: 533px;
+    background-color: white;
+    border: 1px solid #4545451A;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 1024px) {
+  .purchaseStepNav {
+    display: flex;
+  }
+}
+
+.purchaseStepNavMobile {
+  display: block;
+  background-color: white;
+  border: 1px solid #4545451A;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 768px) {
+  .purchaseStepNavMobile {
+    display: none; 
+  }
+}
+
 .stepsContainer {
-  width: 100%;
+  padding: 12px;
   display: flex;
-  justify-content: space-around;
-  padding: 24px;
+  flex-direction: column;
+  gap: 10px; 
+  max-width: 100%;
 }
 
-.progressSteps {
+.step {
   display: flex;
-  flex-direction: row;
   align-items: center;
-  text-align: center;
-  max-width: 600px;
-  gap: 10px;
-}
-
-.progressStep {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  text-align: center;
-  gap: 5px;
   cursor: pointer;
-  color: var(--secondary);
+  padding: 12px;
+}
+
+.stepContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.passedStep {
+  color: var(--primary, #19aa6e); 
+  font-weight: 500;
 }
 
 .activeStep {
-  color: var(--primary);
+  color: var(--secondary, #000); 
   font-weight: 700;
-  line-height: 20px;
   font-family: "Poppins-Bold";
 }
 
-.progressLine {
-  flex-grow: 1;
-  height: 2px;
-  background-color: var(--secondary300);
-  position: relative;
-  width: 50px;
+.disabledStep {
+  color: var(--disabled, #CDCCCC); 
+  cursor: not-allowed; 
+}
+
+.stepText {
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .primaryBg {
@@ -313,6 +354,7 @@
 
   .container {
     max-width: 90%;
+    width: 90%;
     margin: 1rem;
   }
 
@@ -343,9 +385,12 @@
     letter-spacing: -0.3px;
   }
 
-  .progressStep p {
-    display: none;
+  .stepsContainer {
+    flex-direction: row;
+    justify-content: center;
+    justify-self: center;
   }
+
 }
 
 @media screen and (max-width: 400px) {
