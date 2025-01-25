@@ -34,6 +34,7 @@ import { usePriceManagement } from "@/hooks/checkout/usePriceManagement";
 import { useCheckoutState } from "@/hooks/checkout/useCheckoutState";
 import { useRegisterTxPrep } from "@/hooks/checkout/useRegisterTxPrep";
 import { useRenewalTxPrep } from "@/hooks/checkout/useRenewalTxPrep";
+import CloseIcon from "@/components/UI/iconsComponents/icons/closeIcon";
 
 type CheckoutCardProps = {
   type: FormType;
@@ -329,6 +330,13 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
               </div>
             </div>
           </div>
+        </div>
+        <div className="absolute right-0 top-0 w-5 h-5">
+          <button
+            onClick={() => router.push("/")}
+          >
+            <CloseIcon />
+          </button>
         </div>
       </div>
       <Notification
