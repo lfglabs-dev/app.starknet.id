@@ -52,19 +52,6 @@
   text-align: center;
 }
 
-.nftSection {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-  width: 37.5rem;
-  height: 21.9375rem;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  justify-content: center;
-  align-items: center;
-  margin-left: auto;
-  margin-right: auto;
-}
 
 .nftSection::-webkit-scrollbar {
   width: 6px;
