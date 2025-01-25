@@ -14,6 +14,7 @@ const NewsletterConfirm: NextPage = () => {
         </div>
         <div className={styles.confirmContent}>
           <p className={`${styles.last} mb-2`}>One last thing...</p>
+          <p className={`${styles.last} mb-2 ${styles.letter}`}>Newsletter</p>
           <h1 className={styles.title}>
               You&apos;re <strong>subscribed !</strong>
           </h1>
