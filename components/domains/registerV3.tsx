@@ -20,12 +20,12 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
   setDomain,
 }) => {
   const { address } = useAccount();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(2);
   const { updateFormState, userNfts, isLoadingNfts } = useContext(FormContext);
 
-  useEffect(() => {
-    if (!address) setCurrentStep(1);
-  }, [address]);
+  // useEffect(() => {
+  //   if (!address) setCurrentStep(1);
+  // }, [address]);
 
   useEffect(() => {
     // Add domain in context and initialize the upsell state

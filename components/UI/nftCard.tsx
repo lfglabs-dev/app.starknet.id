@@ -21,12 +21,14 @@ const NftCard: FunctionComponent<NftCardProps> = ({
 }) => {
   return (
     <div className={styles.nftCard}>
+    
       <div
         className={`${styles.nftImg} ${
           isHovered || isSelected ? styles.nftImgSelected : ""
         }`}
         onClick={selectPicture}
       >
+
         {isHovered || isSelected ? (
           <div className={styles.selectedIcon}>
             <DoneFilledIcon
