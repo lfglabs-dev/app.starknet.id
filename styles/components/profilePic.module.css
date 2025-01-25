@@ -284,11 +284,11 @@
   .nftSection {
     width: 100%;
     justify-content: center;
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .nftImg {
     width: 5rem;
     height: 5rem;
-    grid-template-columns: repeat(3, 1fr);
   }
 }
