@@ -67,7 +67,12 @@ const Confirmation: NextPage = () => {
           )}
         </div>
         <div>
-          <button onClick={redirect} className='font-quickZap rounded-md bg-[#0C8654] px-3 py-1.5 border-none outline-none'>Go to your domain</button>
+          <button
+            onClick={redirect}
+            className="font-quickZap rounded-md bg-[#0C8654] px-3 py-1.5 border-none outline-none"
+          >
+            Go to your domain
+          </button>
         </div>
       </div>
       <div className={styles.coconutLeft}>
