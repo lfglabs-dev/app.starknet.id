@@ -70,7 +70,7 @@ const UpsellCard: FunctionComponent<UpsellCardProps> = ({
           />
         </div>
       </RadioGroup>
-      <Divider className="w-full" />
+      <Divider className={styles.divider} />
     </div>
   );
 };

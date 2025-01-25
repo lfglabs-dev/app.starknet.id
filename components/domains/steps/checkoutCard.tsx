@@ -281,7 +281,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
             discountedPrice={discountedPrice}
             discountedPriceInEth={discountedPriceInEth}
           />
-          <Divider className="w-full" />
+          <Divider className={styles.divider} />
           <div className={styles.checkoutSummary}>
             <RegisterCheckboxes
               onChangeTermsBox={onChangeTermsBox}
@@ -298,7 +298,15 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
               maxPriceRange={maxPriceRange}
             />
             <div className={styles.checkoutButton}>
-              <div>
+              <div className="flex gap-4">
+                <div className="flex sm:hidden">
+                  <Button
+                    variation="white"
+                    onClick={() => router.push("/")}
+                  >
+                    Cancel
+                  </Button>
+                </div>
                 <Button
                   onClick={() =>
                     execute().then(() => {
