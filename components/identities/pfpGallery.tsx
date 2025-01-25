@@ -26,7 +26,6 @@ const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
   return (
     <>
       <div>
-        <p className={styles.subtitle}>Your NFTs</p>
         <h2 className={styles.title}>Choose your NFT Profile picture</h2>
         <div className={styles.nftSection}>
           {isLoading ? (
@@ -58,6 +57,8 @@ const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
               </WarningMessage>
             </div>
           )}
+
+
         </div>
       </div>
     </>
