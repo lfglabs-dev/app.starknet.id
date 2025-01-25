@@ -289,6 +289,6 @@
   .nftImg {
     width: 5rem;
     height: 5rem;
-    flex: 1 1 calc(33.333% - 10px); 
+    grid-template-columns: repeat(3, 1fr);
   }
 }
