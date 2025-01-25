@@ -155,16 +155,16 @@ const Navbar: FunctionComponent = () => {
 
   return (
     <>
-      <div className={"fixed w-full z-20 bg-background top-0"}>
+      <div className={"fixed w-full z-20 bg-background-nav top-0"}>
         <div className={styles.navbarContainer}>
           <div className="ml-4">
             <Link href="/" className="cursor-pointer">
               <img
                 className={styles.starknetIdLogo}
-                src="/visuals/StarknetIdLogo.svg"
+                src={isMobile ? "/visuals/MbLogo.svg" : "/visuals/Logo.svg"}
                 alt="Starknet.id Logo"
-                width={90}
-                height={90}
+                width={ isMobile ? 48 :170}
+                height={isMobile ? 48 :90}
               />
             </Link>
           </div>
@@ -198,6 +198,7 @@ const Navbar: FunctionComponent = () => {
                       : () => setShowWalletConnectModal(true)
                   }
                   variation={isConnected ? "white" : "primary"}
+                  radius={isConnected ?'8px':'500px'}
                 >
                   {isConnected ? (
                     <>
@@ -285,7 +286,7 @@ const Navbar: FunctionComponent = () => {
                   <Link href="/" className="cursor-pointer">
                     <img
                       className="cursor-pointer"
-                      src="/visuals/StarknetIdLogo.svg"
+                      src={isMobile ? "/visuals/MbLogo.svg" : "/visuals/Logo.svg"}
                       alt="Starknet.id Logo"
                       width={72}
                       height={72}
