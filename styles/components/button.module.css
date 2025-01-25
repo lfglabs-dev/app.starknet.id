@@ -12,8 +12,8 @@
   text-transform: uppercase;
   letter-spacing: 0.094em;
   border: none;
-  padding: 0 2rem;
-  border-radius: 500px;
+  padding: 0 1rem;
+  border-radius: 8px;
   min-width: 5rem;
   width: 100%;
   margin: 0.25rem;
@@ -98,7 +98,7 @@
   right: -5px;
   bottom: -5px;
   border: 2px solid var(--tertiary); /* Based on Nimiq Light Blue */
-  border-radius: 500px;
+  border-radius: 8px;
   opacity: 0;
   pointer-events: none;
 }
