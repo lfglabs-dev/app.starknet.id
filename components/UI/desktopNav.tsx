@@ -16,16 +16,16 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
   // Close when clicking outside the nav
   useEffect(() => {
     const handleClickOutside: EventListener = (e) => {
-      const burger = document.getElementById("burger");
+      const burger = document?.getElementById("burger");
       if (burger && !burger.contains(e.target as Node)) {
         close();
       }
     };
     // Bind the event listener
-    document.addEventListener("mousedown", handleClickOutside);
+    document?.addEventListener("mousedown", handleClickOutside);
     return () => {
       // Unbind the event listener on clean up
-      document.removeEventListener("mousedown", handleClickOutside);
+      document?.removeEventListener("mousedown", handleClickOutside);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
