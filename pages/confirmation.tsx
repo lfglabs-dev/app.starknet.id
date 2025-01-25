@@ -40,7 +40,7 @@ const Confirmation: NextPage = () => {
         </div>
         <div>
           <div>Refer your friends to Starknet ID and earn crypto ! </div>
-          <div className="font-extrabold">
+          <div className="font-extrabold font-quickZap">
             Earn up to 10$ per friends with your referral link below.
           </div>
         </div>
@@ -67,7 +67,7 @@ const Confirmation: NextPage = () => {
           )}
         </div>
         <div>
-          <Button onClick={redirect}>Go to your domain</Button>
+          <button onClick={redirect} className='font-quickZap rounded-md bg-[#0C8654] px-3 py-1.5 border-none outline-none'>Go to your domain</button>
         </div>
       </div>
       <div className={styles.coconutLeft}>

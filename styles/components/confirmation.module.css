@@ -25,21 +25,22 @@
   line-height: 58px;
   text-align: center;
   text-transform: uppercase;
-  color: var(--secondary);
+  color: var(--dark-content);
 }
 
 .highlight {
-  color: var(--primary);
+  color: var(--primary600);
 }
 
 .copyAddr {
-  background-color: #fffcf8;
+  background-color: #fff;
   width: 320px;
   height: 40px;
   padding: 8px 16px;
   gap: 8px;
   border-radius: 8px;
   box-shadow: 0px 2px 30px 0px #0000000f;
+  border: 1px solid #e0e0e0;
   display: flex;
   cursor: pointer;
 }
