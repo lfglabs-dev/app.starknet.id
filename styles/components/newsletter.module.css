@@ -1,5 +1,5 @@
 .page {
-  padding-top: calc(max(12vh, 80px) + 64px);
+  padding-top: calc(max(11vh, 80px) + 64px);
   /* padding-bottom: 40px; */
   display: flex;
   flex-direction: column;
@@ -7,7 +7,6 @@
   justify-content: center;
   min-height: 88vh;
   color: var(--dark-content);
-  overflow-y: auto;
   width: 100%;
 }
 
@@ -47,18 +46,6 @@
   width: 52px;
   height: 52px;
   transform: rotate(67.05deg) translate(101.71px, -372.97px);
-}
-
-
-.starknet {
-  width: 32px;
-  height: 32px;
-  transform: translate(-450px, 130px);
-}
-
-.tree2 {
-  left: auto;
-  right: -130px;
 }
 
 .title {
