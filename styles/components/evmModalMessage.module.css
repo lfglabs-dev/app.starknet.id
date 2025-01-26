@@ -75,7 +75,7 @@
 }
 
 .cardDesc {
-  color: #8c8989;
+  color: var(--content-600);
   font-size: 12px;
 }
 

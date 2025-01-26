@@ -4,8 +4,8 @@
   flex-direction: row;
   align-items: center;
   gap: 3rem;
-  position: relative;
-  height: 85vh;
+  min-height: 88vh;
+  margin-top: 12vh;
 }
 
 .searchBarContainer {
@@ -21,11 +21,12 @@
 }
 
 .illustration {
-  width: 500px;
+  width: 440px;
+  height: 428.53px;
 }
 
 .description {
-  color: var(--content-600, #8c8989);
+  color: var(--content-600);
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
