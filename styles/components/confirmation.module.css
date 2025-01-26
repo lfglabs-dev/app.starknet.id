@@ -7,7 +7,6 @@
   color: #454545;
   gap: 24px;
   text-align: center;
-  margin: 10px;
   position: relative;
   z-index: 1;
   overflow: hidden;
@@ -85,7 +84,7 @@
     display: none;
   }
 
-  .coconutLeft, 
+  .coconutLeft,
   .coconutRight {
     bottom: -100px;
     width: 350px;
@@ -94,7 +93,7 @@
   .coconutLeft {
     left: -50px;
   }
-  
+
   .coconutRight {
     right: -50px;
   }
@@ -115,6 +114,7 @@
   .subtitle {
     font-size: 12px;
     line-height: 16px;
+    margin-top: 2rem;
   }
 
   .copyAddr {
@@ -123,7 +123,7 @@
     padding: 6px 14px;
   }
 
-  .coconutLeft, 
+  .coconutLeft,
   .coconutRight {
     bottom: -70px;
     width: 200px;
@@ -132,7 +132,7 @@
   .coconutLeft {
     left: -80px;
   }
-  
+
   .coconutRight {
     right: -63px;
   }
