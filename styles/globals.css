@@ -25,7 +25,7 @@
   --secondary300: #eae0d5;
   --tertiary: #bf9e7b;
   --light-tertiary: #f5f0eb;
-  --background: #fcfffe;
+  --background: #ffffff;
   --background-light: #fffcf8;
   --background-light300: #f8f7f7;
   --background-white: #ffffff;
@@ -54,7 +54,6 @@ a {
   font-family: "QuickZap";
   font-size: 2.5rem;
   color: var(--secondary);
-  text-shadow: 1px 1px var(--tertiary);
   text-transform: uppercase;
 }
 
