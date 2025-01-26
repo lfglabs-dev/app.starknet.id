@@ -3,7 +3,7 @@ import { NextPage } from "next";
 import { useAccount } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import styles from "../styles/components/confirmation.module.css";
-// import Button from "@/components/UI/button";
+import Button from "@/components/UI/button";
 import { minifyAddress } from "@/utils/stringService";
 import theme from "@/styles/theme";
 import CopyIcon from "@/components/UI/iconsComponents/icons/copyIcon";
@@ -67,12 +67,12 @@ const Confirmation: NextPage = () => {
           )}
         </div>
         <div>
-          <button
+          <Button
             onClick={redirect}
-            className="font-quickZap rounded-md bg-[#0C8654] px-3 py-1.5 border-none outline-none"
+            className="font-quickZap rounded-md bg-[#0C8654] text-white px-3 py-1.5 border-none outline-none"
           >
             Go to your domain
-          </button>
+          </Button>
         </div>
       </div>
       <div className={styles.coconutLeft}>
