@@ -57,26 +57,10 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 
   return (
     <>
-      {currentStep > 1 ? (
-        <RegisterSteps
-          currentStep={currentStep}
-          setStep={goToStep}
-          showPfp={userNfts && userNfts.length > 0}
-          isLoading={isLoadingNfts}
-        />
-      ) : (
-        <div className="sm:w-2/5 w-4/5 mt-5 mb-5">
-          <SearchBar
-            onChangeTypedValue={(typeValue: string) => setDomain(typeValue)}
-            showHistory={false}
-          />
-        </div>
-      )}
       {currentStep === 1 && (
         <UserInfoForm
           type={FormType.REGISTER}
           goToNextStep={goToNextStep}
-          imageUrl="/visuals/register.webp"
         />
       )}
       {currentStep === 2 && <SelectPfp goToNextStep={goToNextStep} />}
