@@ -8,7 +8,7 @@
   line-height: 1.25rem /* 20px */;
   cursor: pointer;
   font-weight: 500;
-  color: var(--secondary);
+  color: #454545;
   text-transform: underline;
   transition: 0.3s ease-in-out;
   position: relative;
@@ -72,14 +72,22 @@
   height: 80px;
   padding-left: 4px;
 }
+.starknetId {
+  color: #454545;
+  letter-spacing: 0.1em;
+}
 
 @media (max-width: 800px) {
   .navbarContainer {
     height: 80px;
   }
   .starknetIdLogo {
-    width: 150px;
+    width: 50px;
     height: 72px;
+  }
+  .starknetID {
+    display: block;
+    font-size: 25px;
   }
 }
 
@@ -90,6 +98,9 @@
   .starknetIdLogo {
     width: 40px;
     height: 72px;
+  }
+  .starknetID{
+    display: none;
   }
 }
 
