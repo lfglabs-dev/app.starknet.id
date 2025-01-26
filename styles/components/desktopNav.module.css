@@ -1,12 +1,12 @@
 .navContainer {
   position: absolute;
   justify-content: space-between;
-  background-color: #fff;
+  background-color:#fff;
   right: 0;
   top: 38px;
   border-radius: 8px;
-  border: 1px solid var(--light-tertiary-300, #f5f0eb);
-  background: var(--background-light, #fffcf8);
+  border: 1px solid var(--light-tertiary-300, #cccccc);
+  /* background: var(--background-light, #fffcf8); */
   /* Small Shadow */
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   display: inline-flex;
@@ -40,7 +40,7 @@
 }
 
 .burgerItem:hover {
-  background-color: var(--light-tertiary);
+  background-color: var(--light-tertiary-300, #cccccc);
 }
 
 .hr {
