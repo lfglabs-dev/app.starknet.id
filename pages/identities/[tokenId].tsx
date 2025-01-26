@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import homeStyles from "../../styles/Home.module.css";
 import styles from "../../styles/components/identitiesV1.module.css";
 import { useRouter } from "next/router";
@@ -6,7 +6,11 @@ import { NextPage } from "next";
 import IdentityWarnings from "../../components/identities/identityWarnings";
 import IdentityCard from "../../components/identities/identityCard";
 import IdentityActions from "../../components/identities/actions/identityActions";
-import { useAccount } from "@starknet-react/core";
+import {
+  useAccount,
+  useConnect,
+  useSendTransaction,
+} from "@starknet-react/core";
 import IdentityPageSkeleton from "../../components/identities/skeletons/identityPageSkeleton";
 import UpdateProfilePic from "../../components/identities/updateProfilePic";
 import TxConfirmationModal from "../../components/UI/txConfirmationModal";
@@ -16,6 +20,11 @@ import { formatHexString } from "../../utils/stringService";
 import { getDomainData } from "@/utils/cacheDomainData";
 import { useSearchParams } from "next/navigation";
 import IdentityActionsSkeleton from "@/components/identities/skeletons/identityActionsSkeleton";
+import { hexToDecimal } from "@/utils/feltService";
+import AddButton from "@/components/UI/AddButtonIdentities";
+import WalletConnect from "@/components/UI/walletConnect";
+import { Connector } from "starknetkit";
+import { FaPlus } from "react-icons/fa";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -34,6 +43,23 @@ const TokenIdPage: NextPage = () => {
   const [minting, setMinting] = useState(false);
   const searchParams = useSearchParams();
   const mintingInUrl = searchParams.get("minting") === "true";
+  const { connectAsync, connectors } = useConnect();
+  const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
+  const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
+  const [showWalletConnectModal, setShowWalletConnectModal] =
+    useState<boolean>(false);
+
+  const callData = useMemo(() => {
+    return {
+      contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
+      entrypoint: "mint",
+      calldata: [randomTokenId.toString()],
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const { sendAsync: execute } = useSendTransaction({
+    calls: [callData],
+  });
 
   useEffect(() => {
     if (mintingInUrl) setMinting(true);
@@ -126,6 +152,42 @@ const TokenIdPage: NextPage = () => {
     }
   }, [tokenId, refreshData]);
 
+  function mint() {
+    execute();
+  }
+  useEffect(() => {
+    if (address) {
+      // Our Indexer
+      fetch(
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
+        }/addr_to_full_ids?addr=${hexToDecimal(address)}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setOwnedIdentities(data.full_ids);
+          // setLoading(false);
+        });
+
+      // fetch(
+      //   `${
+      //     process.env.NEXT_PUBLIC_SERVER_LINK
+      //   }/addr_to_external_domains?addr=${hexToDecimal(address)}`
+      // )
+      //   .then((response) => response.json())
+      //   .then((data: ExternalDomains) => {
+      //     setExternalDomains(data.domains);
+      //   });
+    }
+  }, [address, router.asPath]);
+  const connectWallet = async (connector: Connector) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    await connectAsync({ connector });
+    localStorage.setItem("SID-connectedWallet", connector.id);
+    localStorage.setItem("SID-lastUsedConnector", connector.id);
+  };
+  //console.log({ router: router.query.tokenId, searchParams });
   return (
     <>
       <div className={styles.screen}>
@@ -136,33 +198,67 @@ const TokenIdPage: NextPage = () => {
             <div className={styles.backButton}>
               <BackButton onClick={() => window.history.back()} />
             </div>
-            <div className={styles.containerIdentity}>
-              <>
-                <div className={styles.identityBox}>
-                  <IdentityCard
-                    identity={identity}
-                    tokenId={tokenId}
-                    isOwner={isOwner}
-                    onPPClick={() => setIsUpdatingPp(true)}
-                    ppImageUrl={ppImageUrl}
-                  />
-                  {!hideActions ? (
-                    <IdentityActions
-                      isOwner={isOwner}
-                      tokenId={tokenId}
-                      isIdentityADomain={isIdentityADomain}
-                      identity={identity}
-                      hideActionsHandler={hideActionsHandler}
-                    />
-                  ) : (
-                    minting && <IdentityActionsSkeleton />
-                  )}
+            <div className="flex-col flex md:flex-row gap-5 md:gap-8 md:pl-5 mb-6">
+              <div
+                className={`${
+                  !hideActions ? "lg:mx-0" : "lg:ml-20 border"
+                } mx-auto md:mx-0  bg-[#FFFFFF] w-[90%] md:w-[217px] shadow-md rounded-2xl h-[319px] md:h-[533px] md:p-5 relative text-center`}
+              >
+                <div className="h-[280px] md:h-[480px] overflow-y-auto">
+                  {ownedIdentities.map((domain, index) => (
+                    <button
+                      className={`${
+                        domain.id === router.query.tokenId
+                          ? "text-[#402D28] hover:text-[#CDCCCC]"
+                          : " text-[#CDCCCC] hover:text-[#402D28]"
+                      }font-medium text-lg leading-5 cursor-pointer border-[#CDCCCC] border-b md:border-none md:py-0 py-6 md:my-3 block w-full`}
+                      key={index}
+                      onClick={() => router.push(`/identities/${domain.id}`)}
+                    >
+                      {domain.id}
+                    </button>
+                  ))}
                 </div>
-                <IdentityWarnings
-                  isIdentityADomain={isIdentityADomain}
-                  identity={identity}
-                />
-              </>
+                <button
+                  className="bottom-4 w-full justify-center text-center items-center font-quickZap font-normal flex gap-2"
+                  onClick={
+                    address
+                      ? () => mint()
+                      : () => setShowWalletConnectModal(true)
+                  }
+                >
+                  <FaPlus />
+                  ADD IDENTITIES
+                </button>
+              </div>
+              <div className={styles.containerIdentity}>
+                <>
+                  <div className={styles.identityBox}>
+                    <IdentityCard
+                      identity={identity}
+                      tokenId={tokenId}
+                      isOwner={isOwner}
+                      onPPClick={() => setIsUpdatingPp(true)}
+                      ppImageUrl={ppImageUrl}
+                    />
+                    {!hideActions ? (
+                      <IdentityActions
+                        isOwner={isOwner}
+                        tokenId={tokenId}
+                        isIdentityADomain={isIdentityADomain}
+                        identity={identity}
+                        hideActionsHandler={hideActionsHandler}
+                      />
+                    ) : (
+                      minting && <IdentityActionsSkeleton />
+                    )}
+                  </div>
+                  <IdentityWarnings
+                    isIdentityADomain={isIdentityADomain}
+                    identity={identity}
+                  />
+                </>
+              </div>
             </div>
           </div>
         ) : (
@@ -179,6 +275,12 @@ const TokenIdPage: NextPage = () => {
         isTxModalOpen={isTxModalOpen}
         closeModal={() => setIsTxModalOpen(false)}
         title="Your new profile picture is being set !"
+      />
+      <WalletConnect
+        closeModal={() => setShowWalletConnectModal(false)}
+        open={showWalletConnectModal}
+        connectors={connectors as Connector[]}
+        connectWallet={connectWallet}
       />
     </>
   );
