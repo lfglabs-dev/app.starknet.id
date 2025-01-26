@@ -69,7 +69,7 @@ const Confirmation: NextPage = () => {
         <div>
           <Button
             onClick={redirect}
-            style={{ borderRadius: '12px' }}
+            radius={'12px'}
           >
             Go to your domain
           </Button>
