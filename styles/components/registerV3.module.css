@@ -1,13 +1,10 @@
 .container {
   display: flex;
-  width: 1084px;
-  max-width: 100%;
-  background-color: white;
+  flex-direction: column;
+  width: 100%;
+  background-color: var(--background);
   justify-content: space-between;
-  margin-bottom: 100px;
   border-radius: 1rem;
-  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-  margin-bottom: 3rem;
   overflow: hidden;
   position: relative;
   z-index: 0;
@@ -142,20 +139,32 @@
 .checkout {
   display: flex;
   width: 100%;
-  padding: 48px;
+  margin-top: 24px;
   flex-direction: column;
   align-items: flex-start;
-  gap: 48px;
+  gap: 24px;
   flex-shrink: 0;
   z-index: 1;
-  background-color: #fff;
+  background-color: var(--background);
 }
 
 .checkoutSummary {
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
+}
+
+.checkoutButton {
+  width: 100%;
+  display: flex;
+  justify-content: center
+}
+
+.divider {
+  width: 100%;
+  border-color: var(--background-light300)
 }
 
 .pricesSummary {
@@ -176,6 +185,7 @@
 .totalDueTitle {
   font-family: "Poppins-Bold";
   font-size: 20px;
+  font-weight: 500;
   line-height: 24px; /* 120% */
   letter-spacing: 0.2px;
 }
@@ -240,26 +250,6 @@
   display: none; 
 }
 
-@media (min-width: 768px) {
-  .purchaseStepNav {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 200px;
-    height: 533px;
-    background-color: white;
-    border: 1px solid #4545451A;
-    border-radius: 16px;
-    overflow: hidden;
-  }
-}
-
-@media (min-width: 1024px) {
-  .purchaseStepNav {
-    display: flex;
-  }
-}
-
 .purchaseStepNavMobile {
   display: block;
   background-color: white;
@@ -271,6 +261,19 @@
 }
 
 @media (min-width: 768px) {
+  .purchaseStepNav {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 200px; 
+    flex-shrink: 0; 
+    height: 533px;
+    background-color: white;
+    border: 1px solid #4545451A;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
   .purchaseStepNavMobile {
     display: none; 
   }
@@ -282,6 +285,7 @@
   flex-direction: column;
   gap: 10px; 
   max-width: 100%;
+  min-width: 220px;
 }
 
 .step {
@@ -318,10 +322,6 @@
   font-weight: 500;
 }
 
-.primaryBg {
-  background-color: var(--primary);
-}
-
 .gasMethods {
   display: flex;
   flex-wrap: wrap;
@@ -347,28 +347,45 @@
   border: 1px solid white;
 }
 
+@media (max-width: 1570px) {
+  .container {
+    padding: 0px 120px;
+  }
+}
+
 @media (max-width: 1084px) {
   .image {
     visibility: hidden;
   }
 
   .container {
-    max-width: 90%;
-    width: 90%;
-    margin: 1rem;
+    max-width: 100%;
+    padding: 0px 64px;
+    width: 100%;
   }
 
   .card {
     width: 100%;
   }
 
+  .totalDue {
+    align-items: center;
+  }
+
+  .priceContainer {
+    align-items: center;
+  }
+
   .pricesSummary {
-    flex-direction: column-reverse;
+    flex-direction: column;
     gap: 1.5rem;
+    align-items: center;
   }
 
   .pfpGallery {
     margin: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
   }
 
   .pfpBtns {
@@ -380,17 +397,31 @@
 }
 
 @media screen and (max-width: 768px) {
-  .legend {
-    font-size: 12px;
-    letter-spacing: -0.3px;
+  .container {
+    padding: 0px 32px;
   }
 
   .stepsContainer {
+    min-width: 200px;
     flex-direction: row;
     justify-content: center;
     justify-self: center;
   }
 
+  .legend {
+    font-size: 12px;
+    letter-spacing: -0.3px;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .container {
+    padding: 0px 4px;
+  }
+
+  .divider {
+    display: none;
+  }
 }
 
 @media screen and (max-width: 400px) {

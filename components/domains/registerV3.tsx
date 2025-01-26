@@ -57,8 +57,8 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 
   return (
     <>
-      <div className="flex flex-col md:flex-row gap-10">
-        <aside className={styles.purchaseStepNav}>
+      <div className="w-full flex flex-col lg:flex-row md:flex-row justify-center gap-4 px-8 py-4 lg:px-32 md:px-16 sm:py-12">
+        <aside className={`${styles.purchaseStepNav}`}>
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}
@@ -71,7 +71,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
     />
         </aside>
 
-        <div className={styles.purchaseStepNavMobile}>
+        <div className={`${styles.purchaseStepNavMobile}`}>
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}
