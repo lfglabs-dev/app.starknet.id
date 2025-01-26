@@ -1,11 +1,14 @@
 .navContainer {
   position: absolute;
   justify-content: space-between;
-  background-color:#fff;
+  background: var(--Colors-Content-Grey-100, hsla(0, 7%, 97%, 1));
+  ;
   right: 0;
   top: 38px;
   border-radius: 8px;
-  border: 1px solid var(--light-tertiary-300, #cccccc);
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  border: 1px solid var(--Colors-Content-Grey-200, rgba(205, 204, 204, 1));
+  /* border: 1px solid var(--light-tertiary-300, #cccccc); */
   /* background: var(--background-light, #fffcf8); */
   /* Small Shadow */
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
