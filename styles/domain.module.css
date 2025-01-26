@@ -4,9 +4,8 @@
   flex-direction: row;
   align-items: center;
   gap: 3rem;
-  margin-top: 2rem;
-  min-height: 100vh;
-  
+  min-height: 88vh;
+  margin-top: 12vh;
 }
 
 .searchBarContainer {
@@ -22,7 +21,7 @@
 }
 
 .illustration {
- width: 440px;
+  width: 440px;
   height: 428.53px;
 }
 
