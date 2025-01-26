@@ -21,7 +21,7 @@ const Button: FunctionComponent<ButtonProps> = ({
       disabled={disabled}
       onClick={onClick}
       className={` ${styles["nq-button"]} ${styles[variation]}`}
-       style={radius ? { borderRadius: radius } : undefined}
+      style={radius ? { borderRadius: radius } : undefined}
     >
       {children}
     </button>
