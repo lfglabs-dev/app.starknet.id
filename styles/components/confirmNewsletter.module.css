@@ -179,6 +179,9 @@
 }
 
 @media screen and (max-width: 768px) {
+  .confirmContainer {
+    padding-top: calc(max(12vh, 80px) + 64px);
+  }
   .tree1,
   .tree2 {
     bottom: -200px;
