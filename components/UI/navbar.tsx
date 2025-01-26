@@ -165,8 +165,8 @@ const Navbar: FunctionComponent = () => {
                 className={styles.starknetIdLogo}
                 src={isMobile ? "/visuals/MbLogo.svg" : "/visuals/Logo.svg"}
                 alt="Starknet.id Logo"
-                width={ isMobile ? 0 :170}
-                height={isMobile ?  0 :90}
+                width={ isMobile ? 40 :170}
+                height={isMobile ?  40 :90}
               />
             </Link>
           </div>
@@ -200,7 +200,7 @@ const Navbar: FunctionComponent = () => {
                       : () => setShowWalletConnectModal(true)
                   }
                   variation={isConnected ? "white" : "primary"}
-                  radius="15px"
+                  radius="13px"
                 >
                   {isConnected ? (
                     <>
@@ -287,7 +287,7 @@ const Navbar: FunctionComponent = () => {
                 <div>
                   <Link href="/" className="cursor-pointer">
                     <img
-                      className={`${styles.starknetIdLogo} cursor-pointer`}
+                      className={styles.starknetIdLogo}
                       src={isMobile ? "/visuals/MbLogo.svg" : "/visuals/Logo.svg"}
                       alt="Starknet.id Logo"
                       width={170}
