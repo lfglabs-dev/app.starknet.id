@@ -10,7 +10,7 @@
 
 .subtitle {
   margin-top: 16px;
-  color: var(--content-600, #8c8989);
+  color: var(--content-600);
   text-align: center;
 
   /* Body/default/regular */

@@ -25,7 +25,7 @@
 }
 
 .description {
-  color: var(--content-600, #8c8989);
+  color: var(--content-600);
   font-size: 15px;
   font-style: normal;
   font-weight: 400;
