@@ -8,6 +8,7 @@
   overflow: hidden;
   position: relative;
   z-index: 0;
+  padding: 0px 166px;
 }
 
 .card {
@@ -304,6 +305,14 @@
 .passedStep {
   color: var(--primary, #19aa6e); 
   font-weight: 500;
+}
+
+.progressStepName {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .activeStep {

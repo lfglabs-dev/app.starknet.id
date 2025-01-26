@@ -4,12 +4,11 @@
 
 .menuItem {
   margin-left: 2.5rem /* 40px */;
-  font-size: 0.875rem /* 14px */;
+  font-size: 0.875rem; /* 14px */;
   line-height: 1.25rem /* 20px */;
-  text-transform: uppercase;
   cursor: pointer;
-  font-weight: 600;
-  color: var(--secondary);
+  font-weight: 500;
+  color: #454545;
   text-transform: underline;
   transition: 0.3s ease-in-out;
   position: relative;
@@ -60,8 +59,8 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding-left: 4rem;
+  padding-right: 4rem;
   height: 12vh;
 }
 
@@ -73,16 +72,42 @@
   height: 80px;
   padding-left: 4px;
 }
+.starknetId {
+  color: #454545;
+}
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) { 
   .navbarContainer {
     height: 80px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .navbarContainer {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
   .starknetIdLogo {
-    width: 72px;
+    width: 40px;
     height: 72px;
   }
 }
+
+@media (max-width: 425px) {
+  .navbarContainer {
+    height: 80px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .starknetIdLogo {
+    width: 40px;
+    height: 72px;
+  }
+}
+
+
 
 .mobileNavbarShown {
   animation: mobileNavbarIn 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
