@@ -66,7 +66,8 @@
 /* green */
 .primary {
   color: var(--background);
-  background: var(--primary);
+  background: var(--primary600);
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.2);
 }
 
 .primary:hover {
@@ -96,6 +97,7 @@
 .white {
   color: var(--dark-content);
   background: #ffffff;
+  border: 1px solid #4545451A;
 }
 
 .nq-button::before {
