@@ -1,5 +1,5 @@
 import React, { NextPage } from "next";
-import styles from "../../styles/components/newsletter.module.css";
+import styles from "../../styles/components/confirmNewsletter.module.css";
 import Button from "../../components/UI/button";
 
 const NewsletterConfirm: NextPage = () => {
