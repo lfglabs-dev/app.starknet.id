@@ -165,14 +165,14 @@ const Navbar: FunctionComponent = () => {
                 className={styles.starknetIdLogo}
                 src="/visuals/MbLogo.svg"
                 alt="Starknet.id Logo"
-                width={ isMobile ? 40 :60}
+                width={ isMobile ? 40 :40}
                 height={isMobile ?  40 :90}
               />
-              <p className={`${styles.starknetId} text-[#454545] text-2xl font-semibold leading-10 font-quickZap ${isMobile ? "hidden": "block"}`}>StarkNet ID</p>
+              <p className={`${styles.starknetId} text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${isMobile ? "hidden": "block"}`}>StarkNet ID</p>
             </Link>
           </div>
           <div>
-            <ul className="hidden lg:flex gap-7 items-center">
+            <ul className="hidden lg:flex gap-1 items-center">
               <Link href="/identities">
                 <li className={styles.menuItem}>My Identities</li>
               </Link>
@@ -291,12 +291,11 @@ const Navbar: FunctionComponent = () => {
                       className={styles.starknetIdLogo}
                       src="/visuals/MbLogo.svg"
                       alt="Starknet.id Logo"
-                      width={170}
-                      height={90}
+                      width={35}
+                      height={30}
                     />
                   </Link>
-                  <p className={`${styles.starknetId} text-[#454545] text-2xl font-semibold font-quickZap ${isMobile ? "hidden": "block"}`}>StarkNet ID</p>
-
+                  <p className={`${styles.starknetId} text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${isMobile ? "hidden": "block"}`}>StarkNet ID</p>
                 </div>
 
                 <div
