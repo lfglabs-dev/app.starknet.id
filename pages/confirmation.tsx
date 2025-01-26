@@ -33,14 +33,14 @@ const Confirmation: NextPage = () => {
         <div>
           <div className={styles.subtitle}>Referral</div>
           <div className={styles.title}>
-            It&apos;s now time to earn
-            <br />
+            It&apos;s now time to earn {" "}
+            <br className="hidden sm:block"/>
             <span className={styles.highlight}>crypto!</span>
           </div>
         </div>
         <div>
           <div>Refer your friends to Starknet ID and earn crypto ! </div>
-          <div className="font-extrabold font-quickZap">
+          <div className="font-extrabold">
             Earn up to 10$ per friends with your referral link below.
           </div>
         </div>
@@ -69,7 +69,7 @@ const Confirmation: NextPage = () => {
         <div>
           <Button
             onClick={redirect}
-            className="font-quickZap rounded-md bg-[#0C8654] text-white px-3 py-1.5 border-none outline-none"
+            style={{ borderRadius: '12px' }}
           >
             Go to your domain
           </Button>

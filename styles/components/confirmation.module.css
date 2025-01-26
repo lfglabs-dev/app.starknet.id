@@ -10,6 +10,7 @@
   margin: 10px;
   position: relative;
   z-index: 1;
+  overflow: hidden;
 }
 
 .subtitle {
@@ -47,17 +48,17 @@
 
 .coconutLeft {
   position: fixed;
-  left: -150px;
-  bottom: -80px;
-  width: 390px;
+  left: 0px;
+  bottom: -3px;
+  width: 420px;
   overflow: hidden;
 }
 
 .coconutRight {
   position: fixed;
-  right: -150px;
-  bottom: -80px;
-  width: 390px;
+  right: -125px;
+  bottom: -3px;
+  width: 420px;
   overflow: hidden;
 }
 
@@ -80,15 +81,64 @@
 }
 
 @media (max-width: 1084px) {
-  .coconutLeft,
-  .coconutRight,
   .coconut {
     display: none;
+  }
+
+  .coconutLeft, 
+  .coconutRight {
+    bottom: -100px;
+    width: 350px;
+  }
+
+  .coconutLeft {
+    left: -50px;
+  }
+  
+  .coconutRight {
+    right: -50px;
   }
 
   .balloon {
     right: 0;
     left: auto;
-    top: 70px;
+    top: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 32px;
+    line-height: 38px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .copyAddr {
+    width: 260px;
+    height: 40px;
+    padding: 6px 14px;
+  }
+
+  .coconutLeft, 
+  .coconutRight {
+    bottom: -70px;
+    width: 200px;
+  }
+
+  .coconutLeft {
+    left: -80px;
+  }
+  
+  .coconutRight {
+    right: -63px;
+  }
+
+  .balloon {
+    left: 0;
+    width: 90px;
   }
 }

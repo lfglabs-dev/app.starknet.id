@@ -6,6 +6,7 @@ type ButtonProps = {
   children: string | ReactNode;
   disabled?: boolean;
   variation?: string;
+  style?: React.CSSProperties;
 };
 
 const Button: FunctionComponent<ButtonProps> = ({
@@ -13,12 +14,14 @@ const Button: FunctionComponent<ButtonProps> = ({
   onClick,
   disabled = false,
   variation = "primary",
+  style,
 }) => {
   return (
     <button
       disabled={disabled}
       onClick={onClick}
       className={` ${styles["nq-button"]} ${styles[variation]}`}
+      style={style}
     >
       {children}
     </button>
