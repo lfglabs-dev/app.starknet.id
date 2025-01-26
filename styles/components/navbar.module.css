@@ -86,7 +86,6 @@
 
 @media (max-width: 800px) {
   .navbarContainer {
-    height: 80px;
     padding-left: 1.5rem;
     padding-right: 1.5rem;
   }
@@ -109,9 +108,6 @@
   .starknetIdLogo {
     width: 40px;
     height: 72px;
-  }
-  .starknetID{
-    display: none;
   }
 }
 
