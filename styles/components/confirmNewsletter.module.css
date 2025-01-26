@@ -131,7 +131,6 @@
     border: 1px solid #cdcccc;
     padding: 0 10px;
     color: var(--brown);
-    background: white;
     box-shadow: var(--small-shadow);
     border-radius: 0.5rem;
     max-width: calc(100vw - 2rem);
