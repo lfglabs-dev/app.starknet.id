@@ -17,7 +17,7 @@ type RegisterV3Props = {
 
 const RegisterV3: FunctionComponent<RegisterV3Props> = ({
   domain,
-  setDomain, // Not used since domain search bar is removed for this component
+  setDomain,
 }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
@@ -67,7 +67,8 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
           />
 
     <img 
-      src="/visuals/purchaseStepVisual.svg" 
+      src="/visuals/purchaseStepVisual.svg"
+      alt="Domain purchase steps visualization"
     />
         </aside>
 
@@ -82,6 +83,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
   <div className="flex justify-center">
     <img 
       src="/visuals/purchaseStepVisualMobile.svg" 
+      alt="Domain purchase steps visualization"
     />
   </div>
         </div>
