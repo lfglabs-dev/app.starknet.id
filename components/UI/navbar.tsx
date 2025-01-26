@@ -165,13 +165,13 @@ const Navbar: FunctionComponent = () => {
                 className={styles.starknetIdLogo}
                 src={isMobile ? "/visuals/MbLogo.svg" : "/visuals/Logo.svg"}
                 alt="Starknet.id Logo"
-                width={ isMobile ? 48 :170}
-                height={isMobile ? 48 :90}
+                width={ isMobile ? 0 :170}
+                height={isMobile ?  0 :90}
               />
             </Link>
           </div>
           <div>
-            <ul className="hidden lg:flex uppercase items-center">
+            <ul className="hidden lg:flex items-center">
               <Link href="/identities">
                 <li className={styles.menuItem}>My Identities</li>
               </Link>
@@ -200,7 +200,7 @@ const Navbar: FunctionComponent = () => {
                       : () => setShowWalletConnectModal(true)
                   }
                   variation={isConnected ? "white" : "primary"}
-                  radius={isConnected ?'8px':'500px'}
+                  radius="15px"
                 >
                   {isConnected ? (
                     <>
@@ -287,11 +287,11 @@ const Navbar: FunctionComponent = () => {
                 <div>
                   <Link href="/" className="cursor-pointer">
                     <img
-                      className="cursor-pointer"
+                      className={`${styles.starknetIdLogo} cursor-pointer`}
                       src={isMobile ? "/visuals/MbLogo.svg" : "/visuals/Logo.svg"}
                       alt="Starknet.id Logo"
-                      width={72}
-                      height={72}
+                      width={170}
+                      height={90}
                     />
                   </Link>
                 </div>
