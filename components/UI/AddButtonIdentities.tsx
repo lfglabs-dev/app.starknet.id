@@ -1,5 +1,5 @@
 import React, { FunctionComponent, ReactNode } from "react";
-import styles from "../../styles/components/button.module.css";
+import styles from "../../styles/components/addIdentitiesButton.module.css";
 
 type ButtonProps = {
   onClick: () => void;
@@ -9,7 +9,7 @@ type ButtonProps = {
   radius?: string; 
 };
 
-const Button: FunctionComponent<ButtonProps> = ({
+const AddButton: FunctionComponent<ButtonProps> = ({
   children,
   onClick,
   disabled = false,
@@ -20,7 +20,7 @@ const Button: FunctionComponent<ButtonProps> = ({
     <button
       disabled={disabled}
       onClick={onClick}
-      className={` ${styles["nq-button"]} ${styles[variation]}`}
+      className={` ${styles["iq-button"]} ${styles[variation]}`}
        style={radius ? { borderRadius: radius } : undefined}
     >
       {children}
@@ -28,4 +28,4 @@ const Button: FunctionComponent<ButtonProps> = ({
   );
 };
 
-export default Button;
+export default AddButton;

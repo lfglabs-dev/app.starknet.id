@@ -44,18 +44,6 @@ const NewsletterPage: NextPage = () => {
       <div className={styles.coconut}>
         <Image src="/visuals/coconut.webp" alt="coconut" fill />
       </div>
-      <div className={styles.starknet}>
-        <Image src="/icons/starknet.svg" alt="starknet" fill />
-      </div>
-      <div className={styles.lilLeaf1}>
-        <Image src="/leaves/new/lilLeaf01.svg" alt="leaf" fill />
-      </div>
-      <div className={styles.lilLeaf2}>
-        <Image src="/leaves/new/lilLeaf01.svg" alt="leaf" fill />
-      </div>
-      <div className={styles.lilLeaf3}>
-        <Image src="/leaves/new/lilLeaf02.svg" alt="leaf" fill />
-      </div>
       <div className={styles.tree1}>
         <Image src="/visuals/coconutTree1.webp" alt="coconut tree" fill />
       </div>
@@ -64,7 +52,7 @@ const NewsletterPage: NextPage = () => {
       </div>
       <p className={styles.subtitle}>Newsletter</p>
       <h1 className={styles.title}>
-        The best <strong>Starknet opportunities</strong> in your inbox
+        The best Starknet <strong>opportunities</strong> in your inbox
       </h1>
       <p className={styles.description}>
         Every two weeks, we send you exclusive insights into airdrops,
@@ -72,7 +60,7 @@ const NewsletterPage: NextPage = () => {
       </p>
       <section className={styles.form}>
         <TextField
-          helperText="Your email stays private with us, always."
+          // helperText="Your email stays private with us, always."
           value={email}
           label="Your email address"
           onChange={(e) => changeEmail(e.target.value)}
@@ -80,6 +68,7 @@ const NewsletterPage: NextPage = () => {
           error={Boolean(error)}
           errorMessage={error ?? "Please enter a valid email address"}
           type="email"
+          centerLabel={true}
         />
         <div className="w-fit block mx-auto mt-4">
           <Button onClick={submitHandler} disabled={isButtonDisabled}>

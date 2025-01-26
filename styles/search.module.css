@@ -108,21 +108,21 @@
 .subtitle {
   color: var(--dark-content);
   text-align: center;
-  margin: 3rem 0 2rem;
+  margin: 2rem 0 1rem;
 
   /* Title/H3 */
   font-family: QuickZap;
   font-size: 30px;
   font-style: normal;
   font-weight: 400;
-  line-height: 32px; /* 106.667% */
+  line-height: 38px; /* 106.667% */
 }
 
 .suggestionCategory {
   width: 100%;
   max-width: 1184px;
   display: block;
-  margin: 1rem auto;
+  margin: 3rem auto 1rem;
 }
 
 .suggestedDomainsSkeleton {
@@ -131,7 +131,7 @@
   gap: 32px;
   padding: 24px 0;
   align-self: stretch;
-  border-radius: 20px;
+  border-radius: 16px;
 
   /* Small Shadow */
   box-shadow: var(--small-shadow);
@@ -146,25 +146,31 @@
   flex-direction: column;
   align-items: center;
   align-self: stretch;
-  border-radius: 20px;
-  background: var(--background-light);
+  border-radius: 16px;
+  background: var(--background-white);
+  border: 1px solid rgba(69, 69, 69, 0.1);
+  
 
   /* Small Shadow */
   box-shadow: var(--small-shadow);
 
-  margin: 3rem 0;
+  margin: 1.5rem 0;
 }
 
 .suggestedDomainContainer {
   position: relative;
   width: 100%;
   display: flex;
-  padding: 16px 48px;
+  padding: 24px 48px;
   cursor: pointer;
 }
 
 .suggestionTable .suggestedDomainLink:first-child .suggestedDomainContainer {
   padding-top: 24px;
+}
+
+.suggestedDomainContainer p {
+  font-family: "Poppins-Bold"; 
 }
 
 .suggestionTable .suggestedDomainLink:last-child .suggestedDomainContainer {

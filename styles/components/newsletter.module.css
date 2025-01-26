@@ -5,26 +5,27 @@
   justify-content: center;
   min-height: 88vh;
   color: var(--dark-content);
-  overflow-x: hidden;
-  width: 100vw;
+  width: 100%;
 }
 
 .subtitle {
   margin-bottom: 0.5rem;
-  opacity: 0.8;
+  color: #454545;
+  font-size: 14px;
+  line-height: 20px;
 }
 
 .tree1,
 .tree2 {
   position: fixed;
+
   width: 392px;
   height: 394px;
   left: -65px;
   bottom: -1px;
-}
 
+}
 .balloon,
-.starknet,
 .coconut {
   position: fixed;
   width: 130px;
@@ -33,24 +34,6 @@
 
 .balloon{
   transform: translate(300px, 50px);
-}
-
-.lilLeaf1,
-.lilLeaf2,
-.lilLeaf3 {
-  position: fixed;
-  width: 32px;
-  height: 32px;
-  transform: translate(300px, 300px);
-}
-.lilLeaf2 {
-  mix-blend-mode: luminosity;
-  transform: rotate(-18deg) translateX(600px);
-}
-
-.lilLeaf3 {
-  mix-blend-mode: luminosity;
-  transform: translate(-600px, -50px);
 }
 
 .coconut {
@@ -75,7 +58,7 @@
 
   /* Title/H1 */
   font-family: "QuickZap";
-  font-size: 45px;
+  font-size: 48px;
   font-style: normal;
   font-weight: 400;
   line-height: 58px; /* 120.833% */
@@ -114,18 +97,18 @@
 
 .description {
   max-width: 500px;
-  color: var(--dark-content);
+  color: #8C8989;
   text-align: center;
   font-family: Poppins-Regular;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
-  line-height: 28px; /* 175% */
+  line-height: 24px;
   margin-top: 1rem;
 }
 
 .form {
-  margin-top: 1rem;
+  margin-top: 3rem;
   width: 30rem;
   max-width: 90%;
 }
@@ -139,7 +122,6 @@
 .input {
   display: flex;
   height: 56px;
-  padding: 16px;
   justify-content: flex-end;
   align-items: center;
   gap: 12px;
@@ -210,6 +192,7 @@
 
   .tree2{
     right: -100px;
+
   }
   
   .balloon {
@@ -217,6 +200,7 @@
     transform: rotate(-14.355deg);
     left: 25px;
     top: 80px;
+
   }
 
   .paragraph{
