@@ -57,12 +57,6 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 
   return currentStep === 1 ? (
     <>
-      <div className="sm:w-2/5 w-4/5 mt-5 mb-5">
-        <SearchBar
-          onChangeTypedValue={(typeValue: string) => setDomain(typeValue)}
-          showHistory={false}
-        />
-      </div>
       <UserInfoForm
         type={FormType.REGISTER}
         goToNextStep={goToNextStep}
