@@ -11,7 +11,6 @@ import { timestampToReadableDate } from "../../../utils/dateService";
 import { utils } from "starknetid.js";
 import theme from "../../../styles/theme";
 import MainIcon from "../../UI/iconsComponents/icons/mainIcon";
-import ChangeIcon from "../../UI/iconsComponents/icons/changeIcon";
 import TransferIcon from "../../UI/iconsComponents/icons/transferIcon";
 import PlusIcon from "../../UI/iconsComponents/icons/plusIcon";
 import TxConfirmationModal from "../../UI/txConfirmationModal";
@@ -27,6 +26,7 @@ import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
+import RenewalIcon from "@/components/UI/iconsComponents/icons/renewalIcon";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -247,15 +247,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           )}
           {identity && isOwner && address && (
             <div className={styles.identityActions}>
-              {callDataEncodedDomain[0] === "1" && !isAutoRenewalEnabled ? (
-                <ClickableAction
-                  title="ENABLE SUBSCRIPTION"
-                  description={nextAutoRenew}
-                  style="primary"
-                  icon={<div className={styles.renewalIcon}>ON</div>}
-                  onClick={() => router.push("/subscription")}
-                />
-              ) : null}
               {callDataEncodedDomain[0] === "1" ? (
                 <ClickableAction
                   title="RENEW YOUR DOMAIN"
@@ -264,30 +255,20 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     identity?.domainExpiry ?? 0
                   )}`}
                   icon={
-                    <ChangeIcon width="25" color={theme.palette.primary.main} />
+                    <RenewalIcon
+                      width="18"
+                      color={theme.palette.primary.main}
+                    />
                   }
                   onClick={() => router.push("/renewal")}
                 />
               ) : null}
-              {!isMainDomain && (
-                <ClickableAction
-                  title="Set as main domain"
-                  description="Set this identity as your main id"
-                  icon={
-                    <MainIcon
-                      width="23"
-                      firstColor={theme.palette.secondary.main}
-                      secondColor={theme.palette.secondary.main}
-                    />
-                  }
-                  onClick={() => setMainId()}
-                />
-              )}
+
               <ClickableAction
                 title="CHANGE DOMAIN TARGET"
                 description="Change target address"
                 icon={
-                  <SignsIcon width="25" color={theme.palette.secondary.main} />
+                  <SignsIcon width="23" color={theme.palette.secondary.main} />
                 }
                 onClick={() => setIsAddressFormOpen(true)}
               />
@@ -299,7 +280,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     description="Transfer your identity to another wallet"
                     icon={
                       <TransferIcon
-                        width="25"
+                        width="20"
                         color={theme.palette.secondary.main}
                       />
                     }
@@ -310,12 +291,36 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     description="Create a new subdomain"
                     icon={
                       <PlusIcon
-                        width="25"
+                        width="18"
                         color={theme.palette.secondary.main}
                       />
                     }
                     onClick={() => setIsSubdomainFormOpen(true)}
                   />
+                  {!isMainDomain && (
+                    <ClickableAction
+                      title="Set as main domain"
+                      description="Set this identity as your main id"
+                      icon={
+                        <MainIcon
+                          width="21"
+                          firstColor={theme.palette.secondary.main}
+                          secondColor={theme.palette.secondary.main}
+                        />
+                      }
+                      onClick={() => setMainId()}
+                    />
+                  )}
+
+                  {callDataEncodedDomain[0] === "1" && !isAutoRenewalEnabled ? (
+                    <ClickableAction
+                      title="ENABLE SUBSCRIPTION"
+                      description={nextAutoRenew}
+                      style="primary"
+                      icon={<div className={styles.renewalIcon}>ON</div>}
+                      onClick={() => router.push("/subscription")}
+                    />
+                  ) : null}
                   {callDataEncodedDomain[0] === "1" && isAutoRenewalEnabled ? (
                     <ClickableAction
                       title="DISABLE SUBSCRIPTION"

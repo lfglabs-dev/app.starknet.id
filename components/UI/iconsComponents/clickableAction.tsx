@@ -20,11 +20,12 @@ const ClickableAction: FunctionComponent<ClickableActionProps> = ({
 }) => {
   return (
     <div
-      className={`${
-        style === "secondary"
-          ? styles.clickableActionSecondary
-          : styles.clickableActionPrimary
-      }
+      className={`
+        ${
+          style === "secondary"
+            ? styles.clickableActionSecondary
+            : styles.clickableActionPrimary
+        }
         ${width === "auto" ? styles.clickableActionAutoWidth : ""}`}
       onClick={onClick}
     >
