@@ -16,7 +16,6 @@ import { formatHexString } from "../../utils/stringService";
 import { getDomainData } from "@/utils/cacheDomainData";
 import { useSearchParams } from "next/navigation";
 import IdentityActionsSkeleton from "@/components/identities/skeletons/identityActionsSkeleton";
-import IdentitySidebar from "@/components/identities/identitySidebar";
 
 const TokenIdPage: NextPage = () => {
   const router = useRouter();
@@ -137,39 +136,34 @@ const TokenIdPage: NextPage = () => {
             <div className={styles.backButton}>
               <BackButton onClick={() => window.history.back()} />
             </div>
-
-            <section className={styles.identityBoxWrapper}>
-              <IdentitySidebar />
-              <div className={styles.containerIdentity}>
-                <>
-                  <div className={styles.identityBox}>
-                    <IdentityCard
-                      identity={identity}
-                      tokenId={tokenId}
-                      isOwner={isOwner}
-                      onPPClick={() => setIsUpdatingPp(true)}
-                      ppImageUrl={ppImageUrl}
-                    />
-
-                    {!hideActions ? (
-                      <IdentityActions
-                        isOwner={isOwner}
-                        tokenId={tokenId}
-                        isIdentityADomain={isIdentityADomain}
-                        identity={identity}
-                        hideActionsHandler={hideActionsHandler}
-                      />
-                    ) : (
-                      minting && <IdentityActionsSkeleton />
-                    )}
-                  </div>
-                  <IdentityWarnings
-                    isIdentityADomain={isIdentityADomain}
+            <div className={styles.containerIdentity}>
+              <>
+                <div className={styles.identityBox}>
+                  <IdentityCard
                     identity={identity}
+                    tokenId={tokenId}
+                    isOwner={isOwner}
+                    onPPClick={() => setIsUpdatingPp(true)}
+                    ppImageUrl={ppImageUrl}
                   />
-                </>
-              </div>
-            </section>
+                  {hideActions ? (
+                    <IdentityActions
+                      isOwner={isOwner}
+                      tokenId={tokenId}
+                      isIdentityADomain={isIdentityADomain}
+                      identity={identity}
+                      hideActionsHandler={hideActionsHandler}
+                    />
+                  ) : (
+                    minting && <IdentityActionsSkeleton />
+                  )}
+                </div>
+                <IdentityWarnings
+                  isIdentityADomain={isIdentityADomain}
+                  identity={identity}
+                />
+              </>
+            </div>
           </div>
         ) : (
           <UpdateProfilePic

@@ -20,12 +20,12 @@
   box-shadow: 0px 6px 80px rgba(64, 45, 40, 0.15);
   background: radial-gradient(
     55.2% 127.01% at 50% 50%,
-    var(--light-tertiary) 0%,
-    #f5f0eb 100%
+    var(--secondary300) 0%,
+    #faefde 100%
   );
   border-width: 1px 6px 0px 1px;
   border-style: solid;
-  border-color: var(--secondary);
+  border-color: var(--tertiary);
   border-top-right-radius: 30px;
   border-top-left-radius: 30px;
 }
@@ -47,7 +47,7 @@
 .detouredLogo {
   position: absolute;
   right: 175px;
-  top: 20px;
+  top: 13px;
 }
 
 .detouredTextLogo {
@@ -58,14 +58,16 @@
 
 .lg1 {
   position: absolute;
-  left: 0;
-  top: 0;
+  right: -130px;
+  bottom: -190px;
+  transform: rotate(-40deg);
 }
 
 .lg2 {
   position: absolute;
-  right: 0;
-  bottom: -2;
+  left: -230px;
+  top: -150px;
+  transform: rotate(80deg);
 }
 
 .cardCode {
@@ -76,7 +78,7 @@
   max-width: 650px;
   border-width: 0px 6px 4px 1px;
   border-style: solid;
-  border-color: var(--secondary);
+  border-color: var(--tertiary);
   border-bottom-right-radius: 30px;
   border-bottom-left-radius: 30px;
   margin-top: -1px;
@@ -91,7 +93,7 @@
   font-size: 18px;
   line-height: 32px;
   letter-spacing: 0.8em;
-  color: var(--secondary400);
+  color: var(--secondary300);
 }
 
 .identityCardSkeleton {
@@ -121,7 +123,7 @@
 }
 
 .expiryText {
-  color: var(--primary-700, #454545);
+  color: var(--primary-700, #19aa6e);
   text-align: center;
 
   /* Body/micro/medium */
