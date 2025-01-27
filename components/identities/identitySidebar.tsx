@@ -5,17 +5,19 @@ import theme from "@/styles/theme";
 
 type IdentitySidebarProps = {
   active?: boolean;
+  identities?: string[];
+  onAddIdentity?: () => void;
 };
-
-const dummyData = ["Kevils.stark"];
 
 const IdentitySidebar: FunctionComponent<IdentitySidebarProps> = ({
   active = false,
+  identities = ["Kevils.stark"],
+  onAddIdentity,
 }) => {
   return (
     <aside className={styles.identityBoxSidebar}>
       <div className={styles.identityBoxSidebarItemsContainer}>
-        {dummyData.map((item, idx) => (
+        {identities.map((item, idx) => (
           <p
             className={
               active
@@ -30,7 +32,7 @@ const IdentitySidebar: FunctionComponent<IdentitySidebarProps> = ({
       </div>
       <div className={styles.addIdentityContainer}>
         <PlusIcon width="17" color={theme.palette.secondary.main} />
-        <p onClick={() => {}} className={styles.addIdentity}>
+        <p onClick={onAddIdentity} className={styles.addIdentity}>
           Add Identities
         </p>
       </div>
