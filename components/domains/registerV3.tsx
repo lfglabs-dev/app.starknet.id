@@ -57,7 +57,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 
   return (
     <>
-      <div className="w-full flex flex-col lg:flex-row md:flex-row justify-center gap-4 px-8 py-4 lg:px-32 md:px-16 sm:py-12">
+      <div className="w-full flex flex-col lg:flex-row md:flex-row justify-center gap-4 px-8 py-4 lg:px-32 md:px-16 sm:py-12 sm:h-[calc(100vh-6rem)]">
         <aside className={`${styles.purchaseStepNav}`} role="navigation">
           <RegisterSteps
             currentStep={currentStep}
@@ -66,10 +66,10 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
             isLoading={isLoadingNfts}
           />
 
-    <img 
-      src="/visuals/purchaseStepVisual.svg"
-      alt="Domain purchase steps visualization"
-    />
+          <img
+            src="/visuals/purchaseStepVisual.svg"
+            alt="Domain purchase steps visualization"
+          />
         </aside>
 
         <div className={`${styles.purchaseStepNavMobile}`} role="navigation">
@@ -80,12 +80,12 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
             isLoading={isLoadingNfts}
           />
 
-  <div className="flex justify-center">
-    <img 
-      src="/visuals/purchaseStepVisualMobile.svg" 
-      alt="Domain purchase steps visualization"
-    />
-  </div>
+          <div className="flex justify-center">
+            <img
+              src="/visuals/purchaseStepVisualMobile.svg"
+              alt="Domain purchase steps visualization"
+            />
+          </div>
         </div>
 
         <div className="flex-1">

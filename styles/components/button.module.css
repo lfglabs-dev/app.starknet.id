@@ -67,7 +67,6 @@
 .primary {
   color: var(--background);
   background: var(--primary600);
-  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.2);
 }
 
 .primary:hover {
