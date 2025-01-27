@@ -102,11 +102,15 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
     );
   };
 
+  const handleClose = () => {
+    window.history.back()
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.closeIcon}>
-          <CloseIcon />
+          <CloseIcon onClick={handleClose} />
         </div>
         <div className={styles.form}>
           <div className="flex flex-col items-center gap-4 self-stretch">
