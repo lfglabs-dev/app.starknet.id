@@ -25,12 +25,14 @@
   --secondary300: #eae0d5;
   --tertiary: #bf9e7b;
   --light-tertiary: #f5f0eb;
-  --background: #FCFFFE;
+  --background: #fcfffe;
   --background-light: #fffcf8;
   --background-light300: #f8f7f7;
-  --background-white:#ffffff;
+  --background-white: #ffffff;
   --dark-content: #454545;
   --negative: #d32f2f;
+  --black: #000000;
+  --white: "#ffffff";
   --nimiq-ease: cubic-bezier(0.25, 0, 0, 1);
   --small-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   --large-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.1);
@@ -79,7 +81,7 @@ a {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #402D28;
+  background: #402d28;
   border-radius: 10px;
 }
 
