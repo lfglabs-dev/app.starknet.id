@@ -30,11 +30,9 @@ const IdentitySidebar: FunctionComponent<IdentitySidebarProps> = ({
           </p>
         ))}
       </div>
-      <div className={styles.addIdentityContainer}>
+      <div onClick={onAddIdentity} className={styles.addIdentityContainer}>
         <PlusIcon width="17" color={theme.palette.secondary.main} />
-        <p onClick={onAddIdentity} className={styles.addIdentity}>
-          Add Identities
-        </p>
+        <p className={styles.addIdentity}>Add Identities</p>
       </div>
     </aside>
   );
