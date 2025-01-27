@@ -1,3 +1,4 @@
+import React from "react";
 import { FunctionComponent } from "react";
 import styles from "../../styles/components/identitySidebar.module.css";
 import PlusIcon from "../UI/iconsComponents/icons/plusIcon";
