@@ -46,7 +46,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
     <div className={styles.wrapper}>
       <div className={styles.container}>
         <div className="lg:mt-10 flex items-center lg:justify-between justify-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row">
-          <div className="my-2">
+          <div className="my-2 text-center">
             <div
               className={styles.pfpSection}
               onMouseEnter={handleMouseEnter}
@@ -117,26 +117,53 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           <div>
             <div className="flex flex-row items-center justify-center gap-5 mb-5">
               <div className="flex flex-col">
-                {identity?.targetAddress ? (
+                {isMobile ? (
                   <>
-                    {identity?.domain ? (
-                      <div className={styles.addressBar}>
-                        <h2>{minifyAddress(identity.targetAddress)}</h2>
-                        <CopyContent
-                          value={identity?.targetAddress}
-                          className="cursor-pointer ml-3"
-                        />
-                      </div>
+                    {identity?.targetAddress ? (
+                      <>
+                        <div className="flex flex-row items-center justify-center">
+                          <div className={styles.starknetAddr}>
+                            <h1 className={styles.domain}>
+                              {responsiveDomainOrId}
+                            </h1>
+                          </div>
+                        </div>
+                        {identity?.domain ? (
+                          <div className={styles.addressBar}>
+                            <h2>{minifyAddress(identity.targetAddress)}</h2>
+                            <CopyContent
+                              value={identity?.targetAddress}
+                              className="cursor-pointer ml-3"
+                            />
+                          </div>
+                        ) : null}
+                      </>
                     ) : null}
-                    <div className="flex flex-row items-center justify-center">
-                      <div className={styles.starknetAddr}>
-                        <h1 className={styles.domain}>
-                          {responsiveDomainOrId}
-                        </h1>
-                      </div>
-                    </div>
                   </>
-                ) : null}
+                ) : (
+                  <>
+                    {identity?.targetAddress ? (
+                      <>
+                        {identity?.domain ? (
+                          <div className={styles.addressBar}>
+                            <h2>{minifyAddress(identity.targetAddress)}</h2>
+                            <CopyContent
+                              value={identity?.targetAddress}
+                              className="cursor-pointer ml-3"
+                            />
+                          </div>
+                        ) : null}
+                        <div className="flex flex-row items-center justify-center">
+                          <div className={styles.starknetAddr}>
+                            <h1 className={styles.domain}>
+                              {responsiveDomainOrId}
+                            </h1>
+                          </div>
+                        </div>
+                      </>
+                    ) : null}
+                  </>
+                )}
               </div>
             </div>
             <AddEvmAction identity={identity} isOwner={isOwner} />
@@ -177,7 +204,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <rect width="380" height="6" rx="3" fill="#EAE0D5" />
+          <rect width="380" height="6" rx="3" fill="#e2dfde" />
         </svg>
       </div>
     </div>

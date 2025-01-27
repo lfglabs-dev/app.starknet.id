@@ -18,14 +18,15 @@
   max-width: 650px;
   height: 350px;
   box-shadow: 0px 6px 80px rgba(64, 45, 40, 0.15);
-  background: radial-gradient(
+  /* background: radial-gradient(
     55.2% 127.01% at 50% 50%,
-    var(--background) 0%,
+    var(--light-tertiary) 0%,
     #faefde 100%
-  );
+  ); */
+  background: var(--light-tertiary);
   border-width: 2px 6px 0px 2px;
   border-style: solid;
-  border-color: var(--black);
+  border-color: var(--identity-card-border-color);
   border-top-right-radius: 30px;
   border-top-left-radius: 30px;
 }
@@ -60,11 +61,11 @@
 
 .lg1 {
   position: absolute;
-
   transform: rotate(0deg);
   height: 200px;
   width: 140px;
-  right: 0;
+  right: 0px;
+  bottom: -55px;
 }
 /* here */
 
@@ -81,13 +82,13 @@
 
 .cardCode {
   /* Placement */
-  background-color: var(--white);
+  background-color: var(--background-white);
   height: 83px;
   width: 650px;
   max-width: 650px;
   border-width: 0px 6px 4px 2px;
   border-style: solid;
-  border-color: var(--black);
+  border-color: var(--identity-card-border-color);
   border-bottom-right-radius: 30px;
   border-bottom-left-radius: 30px;
   margin-top: -1px;
@@ -103,7 +104,7 @@
   font-size: 18px;
   line-height: 32px;
   letter-spacing: 0.8em;
-  color: var(--secondary300);
+  color: var(--identity-card-footer-text);
 }
 
 .identityCardSkeleton {
@@ -212,6 +213,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   cursor: pointer;
   font-size: 13px;
@@ -219,6 +221,7 @@
   margin-bottom: 0;
   background-color: var(--background);
   padding: 4px;
+  padding-right: 8px;
   border-radius: 8px;
   width: fit-content;
 }
@@ -227,7 +230,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .evmAddrBtn {
@@ -266,7 +269,7 @@
 
 .evmIcon {
   width: 20px;
-  height: 20px;
+  height: 14px;
 }
 
 .editIcon {
