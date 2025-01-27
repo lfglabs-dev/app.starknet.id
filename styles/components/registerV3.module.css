@@ -341,6 +341,15 @@
   border: 1px solid white;
 }
 
+.closeIcon {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 20px;
+  right: 50px;
+  cursor: pointer;
+}
+
 @media (max-width: 1570px) {
   .container {
     padding: 0px 120px;
