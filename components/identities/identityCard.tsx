@@ -147,17 +147,17 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
             />
             <img
               alt="leaf"
-              src="/leaves/new/leavesGroup01.svg"
+              src="/visuals/coconutTree3.svg"
               className={styles.lg1}
             />
             <img
               alt="leaf"
-              src="/leaves/new/leavesGroup02.svg"
+              src="/visuals/coconutTree4.svg"
               className={styles.lg2}
             />
             <img
               alt="logo"
-              src="/visuals/detouredLogo.svg"
+              src="/visuals/detouredLogoVariant.svg"
               className={styles.detouredLogo}
             />
             <img
@@ -177,7 +177,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <rect width="380" height="6" rx="3" fill="#EAE0D5" />
+          <rect width="380" height="6" rx="3" fill="#E2DFDE" />
         </svg>
       </div>
     </div>

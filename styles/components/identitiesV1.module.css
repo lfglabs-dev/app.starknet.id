@@ -73,11 +73,27 @@
   width: 100%;
 }
 
+.identityBoxWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 2.5rem;
+  gap: 1rem;
+  justify-content: center;
+}
+
+@media (min-width: 1124px) {
+  .identityBoxWrapper {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
 @media (min-width: 1124px) {
   .identityBox {
     flex-direction: row;
     justify-content: center;
-    gap: 3rem;
+    gap: 2rem;
   }
 }
 

@@ -2,7 +2,7 @@ import { Tooltip } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { FunctionComponent } from "react";
 import TwitterIcon from "../../../UI/iconsComponents/icons/twitterIcon";
-import VerifiedIcon from "../../../UI/iconsComponents/icons/verifiedIcon";
+import VerifiedVariantIcon from "../../../UI/iconsComponents/icons/verifiedVariantIcon";
 import styles from "../../../../styles/components/icons.module.css";
 import theme from "../../../../styles/theme";
 import { posthog } from "posthog-js";
@@ -63,7 +63,10 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
         >
           {twitterId ? (
             <div className={styles.verifiedIcon}>
-              <VerifiedIcon width={"24"} color={theme.palette.primary.main} />
+              <VerifiedVariantIcon
+                width={"24"}
+                color={theme.palette.primary.main}
+              />
             </div>
           ) : null}
           <TwitterIcon width={width} color={"white"} />
@@ -74,7 +77,10 @@ const ClickableTwitterIcon: FunctionComponent<ClickableTwitterIconProps> = ({
     <Tooltip title={`${domain} twitter is verified`} arrow>
       <div className={styles.unclickableIconTwitter}>
         <div className={styles.verifiedIcon}>
-          <VerifiedIcon width={"24"} color={theme.palette.primary.main} />
+          <VerifiedVariantIcon
+            width={"24"}
+            color={theme.palette.primary.main}
+          />
         </div>
         <TwitterIcon width={width} color={"white"} />
       </div>
