@@ -15,7 +15,7 @@ type registerStepsProps = {
   isLoading?: boolean;
 };
 
-const getStep = (currentStep: number, stepIndex: number) => {
+const getStep = (currentStep: number, stepIndex: number): string => {
   if (currentStep > stepIndex) return styles.passedStep;
   if (currentStep === stepIndex) return styles.activeStep;
   return styles.disabledStep;
