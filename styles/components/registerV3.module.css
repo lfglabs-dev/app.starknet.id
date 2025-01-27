@@ -109,13 +109,8 @@
   display: flex;
   flex-direction: column;
   margin: 0 40px 20px;
-  border-radius: 20px;
-  background: #fffcf8;
-  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   width: -webkit-fill-available;
-  padding: 32px 64px;
   text-align: left;
-  gap: 48px;
 }
 
 .pfpBtns {
@@ -294,6 +289,8 @@
   align-items: center;
   cursor: pointer;
   padding: 12px;
+  justify-content: space-between;
+  margin-right: 12px;
 }
 
 .stepContent {
@@ -307,14 +304,6 @@
   font-weight: 500;
 }
 
-.progressStepName {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 700;
-}
-
 .activeStep {
   color: var(--secondary, #000); 
   font-weight: 700;
@@ -323,7 +312,7 @@
 
 .disabledStep {
   color: var(--disabled, #CDCCCC); 
-  cursor: not-allowed; 
+  cursor: not-allowed;
 }
 
 .stepText {
@@ -415,6 +404,23 @@
     flex-direction: row;
     justify-content: center;
     justify-self: center;
+    gap: 10px;
+  }
+
+  .step {
+    margin-right: 0px;
+  }
+
+  .passedStep {
+    padding: 5px;
+  }
+  
+  .activeStep {
+    padding: 5px;
+  }
+  
+  .disabledStep {
+    padding: 5px;
   }
 
   .legend {
@@ -431,6 +437,8 @@
   .divider {
     display: none;
   }
+
+
 }
 
 @media screen and (max-width: 400px) {
@@ -441,6 +449,22 @@
   .price {
     font-size: 1rem;
   }
+
+  .stepsContainer {
+    gap: 3px;
+  }
+
+  .passedStep {
+    padding: 0px;
+  }
+  
+  .activeStep {
+    padding: 0px;
+  }
+  
+  .disabledStep {
+    padding: 0px;
+  }
 }
 
 @media screen and (max-width: 350px) {
@@ -450,5 +474,21 @@
   }
   .price {
     font-size: 0.8rem;
+  }
+
+  .stepsContainer {
+    gap: 3px;
+  }
+  
+  .passedStep {
+    padding: 0px;
+  }
+  
+  .activeStep {
+    padding: 0px;
+  }
+  
+  .disabledStep {
+    padding: 0px;
   }
 }
