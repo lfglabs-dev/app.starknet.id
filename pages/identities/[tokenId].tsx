@@ -146,7 +146,7 @@ const TokenIdPage: NextPage = () => {
                     onPPClick={() => setIsUpdatingPp(true)}
                     ppImageUrl={ppImageUrl}
                   />
-                  {hideActions ? (
+                  {!hideActions ? (
                     <IdentityActions
                       isOwner={isOwner}
                       tokenId={tokenId}
