@@ -9,6 +9,7 @@ import { useAccount } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { hexToDecimal } from "../../utils/feltService";
 import textFieldStyles from "../../styles/components/textField.module.css";
+import InputHelper from "../UI/inputHelper";
 
 type SelectIdentityProps = {
   tokenId: number;
@@ -27,8 +28,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
   useEffect(() => {
     if (account) {
       fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_LINK
+        `${process.env.NEXT_PUBLIC_SERVER_LINK
         }/addr_to_available_ids?addr=${hexToDecimal(account.address)}`
       )
         .then((response) => response.json())
@@ -52,49 +52,58 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
             : "Select an identity to link with your domain*"}
         </p>
       </div>
-      <Select
-        fullWidth
-        value={tokenId}
-        defaultValue={ownedIdentities[0]}
-        inputProps={{ MenuProps: { disableScrollLock: true } }}
-        onChange={(e) => changeTokenId(Number(e.target.value))}
-        style={{
-          borderRadius: "8.983px",
-        }}
-        sx={{
-          "& .MuiSelect-select": {
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          },
-          "& .css-10hburv-MuiTypography-root": {
-            fontFamily: "Poppins-Regular",
-          },
-        }}
-      >
-        <MenuItem value={0}>
-          <ListItemIcon>
-            <img
-              width={"30px"}
-              src="/visuals/StarknetIdLogo.svg"
-              alt="starknet.id avatar"
-            />
-          </ListItemIcon>
-          <ListItemText primary={defaultText} />
-        </MenuItem>
-        {ownedIdentities.map((tokenId: number, index: number) => (
-          <MenuItem key={index} value={tokenId}>
+      <InputHelper helperText="check how to mint a new token">
+        <Select
+          fullWidth
+          value={tokenId}
+          IconComponent={() => null}
+          defaultValue={ownedIdentities[0]}
+          inputProps={{ MenuProps: { disableScrollLock: true } }}
+          onChange={(e) => changeTokenId(Number(e.target.value))}
+          style={{
+            borderRadius: "8.983px",
+          }}
+          sx={{
+            "& .MuiSelect-select": {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#ffffff"
+            },
+            "& .css-10hburv-MuiTypography-root": {
+              display: "flex",
+              justifyItems: "flex-start",
+              fontFamily: "Poppins-Regular",
+            },
+            "& .css-cveggr-MuiListItemIcon-root": {
+              minWidth: "40px",
+            },
+          }}
+        >
+          <MenuItem value={0}>
             <ListItemIcon>
               <img
-                width={"25px"}
-                src={`https://identicon.starknet.id/${tokenId}`}
+                width={"30px"}
+                src="/visuals/StarknetIdLogo.svg"
                 alt="starknet.id avatar"
               />
             </ListItemIcon>
-            <ListItemText primary={tokenId} />
+            <ListItemText primary={defaultText} />
           </MenuItem>
-        ))}
-      </Select>
+          {ownedIdentities.map((tokenId: number, index: number) => (
+            <MenuItem key={index} value={tokenId}>
+              <ListItemIcon>
+                <img
+                  width={"25px"}
+                  src={`https://identicon.starknet.id/${tokenId}`}
+                  alt="starknet.id avatar"
+                />
+              </ListItemIcon>
+              <ListItemText primary={tokenId} />
+            </MenuItem>
+          ))}
+        </Select>
+      </InputHelper>
     </div>
   );
 };

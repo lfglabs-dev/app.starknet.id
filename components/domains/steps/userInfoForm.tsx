@@ -12,15 +12,14 @@ import SwissForm from "../swissForm";
 import SelectIdentity from "../selectIdentity";
 import NumberTextField from "@/components/UI/numberTextField";
 import { useAccount } from "@starknet-react/core";
-import ConnectButton from "@/components/UI/connectButton";
 import Button from "@/components/UI/button";
 import RenewalDomainsBox from "../renewalDomainsBox";
 import { areDomainSelected } from "@/utils/priceService";
+import CloseIcon from "@/components/UI/iconsComponents/icons/closeIcon";
 
 type UserInfoFormProps = {
   type: FormType;
   goToNextStep: () => void;
-  imageUrl: string;
   canUpdateDuration?: boolean;
   minDuration?: number;
 };
@@ -34,7 +33,6 @@ export enum IncrementType {
 const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   type,
   goToNextStep,
-  imageUrl,
 }) => {
   const maxYearsToRegister = 25;
   const { address } = useAccount();
@@ -107,24 +105,22 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.card}>
+        <div className={styles.closeIcon}>
+          <CloseIcon />
+        </div>
         <div className={styles.form}>
-          <div className="flex flex-col items-start gap-4 self-stretch">
-            <p className={styles.legend}>{type}</p>
+          <div className="flex flex-col items-center gap-4 self-stretch">
             <h3 className={styles.domain}>{getTitle()}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
-
-
-            {formState.needMetadata ? (
-              <SwissForm
-                isSwissResident={formState.isSwissResident}
-                onSwissResidentChange={() =>
-                  updateFormState({
-                    isSwissResident: !formState.isSwissResident,
-                  })
-                }
-              />
-            ) : null}
+            <SwissForm
+              isSwissResident={formState.isSwissResident}
+              onSwissResidentChange={() =>
+                updateFormState({
+                  isSwissResident: !formState.isSwissResident,
+                })
+              }
+            />
             {type === FormType.REGISTER ? (
               <SelectIdentity
                 tokenId={formState.tokenId}
@@ -154,17 +150,12 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
         </div>
         <div className={styles.summary}>
           <div>
-            {address ? (
-              <Button onClick={goToNextStep} disabled={isDisabled()}>
-                {getButtonText()}
-              </Button>
-            ) : (
-              <ConnectButton />
-            )}
+            <Button onClick={goToNextStep} disabled={isDisabled()}>
+              {getButtonText()}
+            </Button>
           </div>
         </div>
       </div>
-      <img className={styles.image} src={imageUrl} />
     </div>
   );
 };

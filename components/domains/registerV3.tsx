@@ -66,7 +66,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
       <UserInfoForm
         type={FormType.REGISTER}
         goToNextStep={goToNextStep}
-        imageUrl="/visuals/register.webp"
+        // imageUrl="/visuals/register.webp"
       />
     </>
   ) : (
