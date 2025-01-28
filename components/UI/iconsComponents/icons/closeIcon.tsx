@@ -1,12 +1,7 @@
 import React, { FunctionComponent } from "react";
 
-interface CloseIconProps {
-  onClick?: () => void; 
-}
-
-const CloseIcon: FunctionComponent<CloseIconProps> = ({ onClick }) => {
+const CloseIcon: FunctionComponent = () => {
   return (<svg
-      onClick={onClick}
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="17"

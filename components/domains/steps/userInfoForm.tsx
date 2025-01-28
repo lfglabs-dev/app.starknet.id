@@ -16,6 +16,7 @@ import Button from "@/components/UI/button";
 import RenewalDomainsBox from "../renewalDomainsBox";
 import { areDomainSelected } from "@/utils/priceService";
 import CloseIcon from "@/components/UI/iconsComponents/icons/closeIcon";
+import ConnectButton from "@/components/UI/connectButton";
 
 type UserInfoFormProps = {
   type: FormType;
@@ -109,8 +110,8 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <div className={styles.closeIcon}>
-          <CloseIcon onClick={handleClose} />
+        <div className={styles.closeIcon} onClick={handleClose}>
+          <CloseIcon  />
         </div>
         <div className={styles.form}>
           <div className="flex flex-col items-center gap-4 self-stretch">
@@ -154,9 +155,14 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
         </div>
         <div className={styles.summary}>
           <div>
-            <Button onClick={goToNextStep} disabled={isDisabled()}>
-              {getButtonText()}
-            </Button>
+            {address ? (
+              <Button onClick={goToNextStep} disabled={isDisabled()}>
+                {getButtonText()}
+              </Button>
+            ) : (
+                <ConnectButton />
+            )}
+            
           </div>
         </div>
       </div>
