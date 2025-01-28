@@ -3,7 +3,7 @@ import styles from "../../styles/components/desktopNav.module.css";
 import Link from "next/link";
 import TwitterIcon from "./iconsComponents/icons/twitterIcon";
 import DiscordIcon from "./iconsComponents/icons/discordIcon";
-import GitHubIcon from "./iconsComponents/icons/githubIcon";
+import GitHubIcon2 from "./iconsComponents/icons/githubIcon2";
 type DesktopNavProps = {
   close: () => void;
 };
@@ -84,7 +84,7 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
         </div>
         <div className="rounded-full shadow-gray-400 p-4 cursor-pointer">
           <Link href="https://github.com/lfglabs-dev" target="_blank">
-            <GitHubIcon width="28" color="black" />
+            <GitHubIcon2 width="28" color="black" />
           </Link>
         </div>
       </div>
