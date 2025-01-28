@@ -43,7 +43,7 @@
 .burgerItem:hover,
 .burgerItemTopLeft:hover,
 .burgerItemTopRight:hover {
-  background-color: #cccccc;
+  background-color: #cccccc5d;
 }
 
 .burgerItemTopLeft:hover {
