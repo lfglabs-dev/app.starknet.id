@@ -49,6 +49,7 @@
   position: absolute;
   right: 175px;
   top: 23px;
+  opacity: 0.2;
 }
 /* here */
 
@@ -56,6 +57,7 @@
   position: absolute;
   right: 44px;
   top: 30px;
+  opacity: 0.2;
 }
 /* here */
 
@@ -293,7 +295,7 @@
     height: 300px;
   }
   .pfpSection {
-    margin-top: 2rem;
+    margin-top: 0.5rem;
     margin-bottom: 1rem;
   }
   .pfpImg {
@@ -356,5 +358,12 @@
   .evmName {
     justify-content: center;
     text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .addressBar {
+    margin-bottom: 0;
+    padding-bottom: 0;
   }
 }
