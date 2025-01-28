@@ -4,7 +4,7 @@
 
 .menuItem {
   margin-left: 2.5rem /* 40px */;
-  font-size: 0.875rem; /* 14px */;
+  font-size: 0.875rem; /* 14px */
   line-height: 1.25rem /* 20px */;
   cursor: pointer;
   font-weight: 500;
@@ -29,10 +29,10 @@
   width: 40px;
   height: 40px;
   transform: translate(-50%, -50%);
-  background-color: red;
   z-index: -1;
   border-radius: 100px;
-  background: var(--light-tertiary);
+  background: var(--dark-content);
+  opacity: 0.1;
 }
 
 .menuItem:hover {
@@ -76,7 +76,7 @@
   color: #454545;
 }
 
-@media (max-width: 1200px) { 
+@media (max-width: 1200px) {
   .navbarContainer {
     height: 80px;
     padding-left: 2rem;
@@ -106,8 +106,6 @@
     height: 72px;
   }
 }
-
-
 
 .mobileNavbarShown {
   animation: mobileNavbarIn 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
