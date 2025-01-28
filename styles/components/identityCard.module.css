@@ -351,6 +351,7 @@
     margin-bottom: 48px;
     justify-content: center;
     text-align: center;
+    justify-self: center;
   }
   .evmName {
     justify-content: center;
