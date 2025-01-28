@@ -17,6 +17,7 @@ import RenewalDomainsBox from "../renewalDomainsBox";
 import { areDomainSelected } from "@/utils/priceService";
 import CloseIcon from "@/components/UI/iconsComponents/icons/closeIcon";
 import ConnectButton from "@/components/UI/connectButton";
+import { useRouter } from 'next/router';
 
 type UserInfoFormProps = {
   type: FormType;
@@ -35,6 +36,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   type,
   goToNextStep,
 }) => {
+  const router = useRouter();
   const maxYearsToRegister = 25;
   const { address } = useAccount();
   const { formState, updateFormState } = useContext(FormContext);
@@ -104,7 +106,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   };
 
   const handleClose = () => {
-    window.history.back()
+    router.push('/');
   };
 
   return (
