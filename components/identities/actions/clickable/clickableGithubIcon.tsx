@@ -79,7 +79,7 @@ const ClickableGithubIcon: FunctionComponent<ClickableGithubIconProps> = ({
               <VerifiedIcon width={"24"} color={theme.palette.primary.main} />
             </div>
           ) : null}
-          <GithubIcon width={width} color={"white"} />
+          <GithubIcon width={width} color="white" />
         </div>
       </Tooltip>
     )

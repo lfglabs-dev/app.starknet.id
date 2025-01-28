@@ -7,7 +7,6 @@ import CheckoutCard from "./steps/checkoutCard";
 import { useAccount } from "@starknet-react/core";
 import SelectPfp from "./steps/selectPfp";
 import RegisterSteps from "./steps/registerSteps";
-import SearchBar from "../UI/searchBar";
 import evergreenDiscounts from "@/utils/discounts/evergreen";
 
 type RegisterV3Props = {
@@ -17,7 +16,6 @@ type RegisterV3Props = {
 
 const RegisterV3: FunctionComponent<RegisterV3Props> = ({
   domain,
-  setDomain,
 }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
@@ -57,16 +55,9 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 
   return currentStep === 1 ? (
     <>
-      <div className="sm:w-2/5 w-4/5 mt-5 mb-5">
-        <SearchBar
-          onChangeTypedValue={(typeValue: string) => setDomain(typeValue)}
-          showHistory={false}
-        />
-      </div>
       <UserInfoForm
         type={FormType.REGISTER}
         goToNextStep={goToNextStep}
-        imageUrl="/visuals/register.webp"
       />
     </>
   ) : (

@@ -159,19 +159,20 @@ const Navbar: FunctionComponent = () => {
     <>
       <div className={"fixed w-full z-20 bg-background-nav top-0"}>
         <div className={styles.navbarContainer}>
-          <div className="ml-4">
-            <Link href="/" className="cursor-pointer">
+          <div className="ml-4 ">
+            <Link href="/" className="cursor-pointer flex gap-2 items-center">
               <img
                 className={styles.starknetIdLogo}
-                src={isMobile ? "/visuals/MbLogo.svg" : "/visuals/Logo.svg"}
+                src="/visuals/MbLogo.svg"
                 alt="Starknet.id Logo"
-                width={ isMobile ? 48 :170}
-                height={isMobile ? 48 :90}
+                width={ isMobile ? 40 :40}
+                height={isMobile ?  40 :90}
               />
+              <p className={`${styles.starknetId} text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${isMobile ? "hidden": "block"}`}>StarkNet ID</p>
             </Link>
           </div>
           <div>
-            <ul className="hidden lg:flex uppercase items-center">
+            <ul className="hidden lg:flex gap-1 items-center">
               <Link href="/identities">
                 <li className={styles.menuItem}>My Identities</li>
               </Link>
@@ -200,7 +201,7 @@ const Navbar: FunctionComponent = () => {
                       : () => setShowWalletConnectModal(true)
                   }
                   variation={isConnected ? "white" : "primary"}
-                  radius={isConnected ?'8px':'500px'}
+                  radius="8px"
                 >
                   {isConnected ? (
                     <>
@@ -284,16 +285,17 @@ const Navbar: FunctionComponent = () => {
           >
             <div className="h-full flex flex-col">
               <div className={styles.mobileNavBarHeader}>
-                <div>
+                <div  className="flex gap-2 items-center">
                   <Link href="/" className="cursor-pointer">
                     <img
-                      className="cursor-pointer"
-                      src={isMobile ? "/visuals/MbLogo.svg" : "/visuals/Logo.svg"}
+                      className={styles.starknetIdLogo}
+                      src="/visuals/MbLogo.svg"
                       alt="Starknet.id Logo"
-                      width={72}
-                      height={72}
+                      width={35}
+                      height={30}
                     />
                   </Link>
+                  <p className={`${styles.starknetId} text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${isMobile ? "hidden": "block"}`}>StarkNet ID</p>
                 </div>
 
                 <div

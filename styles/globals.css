@@ -25,13 +25,16 @@
   --secondary300: #eae0d5;
   --tertiary: #bf9e7b;
   --light-tertiary: #f5f0eb;
-  --background: #fcfffe;
-  --background-light: #fffcf8;
+  --border-color: #cdcccc;
+  --background: #ffffff;
+  --background-light: #ffffff;
   --background-light300: #f8f7f7;
   --background-white: #ffffff;
   --dark-content: #454545;
   --negative: #d32f2f;
-  --content-600: #8c8989;
+  --black: #000000;
+  --identity-card-footer-text: #e2dfde;
+  --identity-card-border-color: #293e28;
   --nimiq-ease: cubic-bezier(0.25, 0, 0, 1);
   --small-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   --large-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.1);
@@ -59,7 +62,7 @@ a {
 }
 
 .description {
-  color: var(--content-600);
+  color: var(--content-600, #8c8989);
   font-size: 16px;
   font-style: normal;
   font-weight: 400;

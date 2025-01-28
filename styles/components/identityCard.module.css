@@ -18,14 +18,15 @@
   max-width: 650px;
   height: 350px;
   box-shadow: 0px 6px 80px rgba(64, 45, 40, 0.15);
-  background: radial-gradient(
+  /* background: radial-gradient(
     55.2% 127.01% at 50% 50%,
-    var(--secondary300) 0%,
+    var(--light-tertiary) 0%,
     #faefde 100%
-  );
-  border-width: 1px 6px 0px 1px;
+  ); */
+  background: var(--light-tertiary);
+  border-width: 2px 6px 0px 2px;
   border-style: solid;
-  border-color: var(--tertiary);
+  border-color: var(--identity-card-border-color);
   border-top-right-radius: 30px;
   border-top-left-radius: 30px;
 }
@@ -43,45 +44,57 @@
   flex-grow: 0;
   margin-top: 7px;
 }
-
+/* here */
 .detouredLogo {
   position: absolute;
   right: 175px;
-  top: 13px;
+  top: 23px;
+  opacity: 0.2;
 }
+/* here */
 
 .detouredTextLogo {
   position: absolute;
-  right: 30px;
+  right: 44px;
   top: 30px;
+  opacity: 0.2;
 }
+/* here */
 
 .lg1 {
   position: absolute;
-  right: -130px;
-  bottom: -190px;
-  transform: rotate(-40deg);
+  transform: rotate(0deg);
+  height: 200px;
+  width: 140px;
+  right: 0px;
+  bottom: -55px;
 }
+/* here */
 
 .lg2 {
   position: absolute;
-  left: -230px;
-  top: -150px;
-  transform: rotate(80deg);
+  left: 0px;
+  top: 0px;
+  transform: rotate(0deg);
+  height: 200px;
+  width: 140px;
 }
+
+/* here */
 
 .cardCode {
   /* Placement */
-  background-color: var(--background);
+  background-color: var(--background-white);
   height: 83px;
   width: 650px;
   max-width: 650px;
-  border-width: 0px 6px 4px 1px;
+  border-width: 0px 6px 4px 2px;
   border-style: solid;
-  border-color: var(--tertiary);
+  border-color: var(--identity-card-border-color);
   border-bottom-right-radius: 30px;
   border-bottom-left-radius: 30px;
   margin-top: -1px;
+  z-index: 888;
 
   /* Inside */
   display: flex;
@@ -93,7 +106,7 @@
   font-size: 18px;
   line-height: 32px;
   letter-spacing: 0.8em;
-  color: var(--secondary300);
+  color: var(--identity-card-footer-text);
 }
 
 .identityCardSkeleton {
@@ -116,14 +129,15 @@
   align-items: center;
   gap: 8px;
   border-radius: 8px;
-  background: var(--primary-300, #dcf2e9);
+  margin-top: 8px;
+  background: var(--primary-700, #dcf2e9);
 
   /* Small Shadow */
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
 }
 
 .expiryText {
-  color: var(--primary-700, #19aa6e);
+  color: var(--primary-700, #000);
   text-align: center;
 
   /* Body/micro/medium */
@@ -202,6 +216,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   cursor: pointer;
   font-size: 13px;
@@ -209,6 +224,7 @@
   margin-bottom: 0;
   background-color: var(--background);
   padding: 4px;
+  padding-right: 8px;
   border-radius: 8px;
   width: fit-content;
 }
@@ -256,7 +272,7 @@
 
 .evmIcon {
   width: 20px;
-  height: 20px;
+  height: 14px;
 }
 
 .editIcon {
@@ -279,7 +295,7 @@
     height: 300px;
   }
   .pfpSection {
-    margin-top: 2rem;
+    margin-top: 0.5rem;
     margin-bottom: 1rem;
   }
   .pfpImg {
@@ -336,5 +352,18 @@
   .evmAddr {
     margin-bottom: 48px;
     justify-content: center;
+    text-align: center;
+    justify-self: center;
+  }
+  .evmName {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .addressBar {
+    margin-bottom: 0;
+    padding-bottom: 0;
   }
 }
