@@ -33,8 +33,7 @@ const Confirmation: NextPage = () => {
         <div>
           <div className={styles.subtitle}>Referral</div>
           <div className={styles.title}>
-            It&apos;s now time to earn
-            <br />
+            It&apos;s now time to earn <br className="hidden sm:block" />
             <span className={styles.highlight}>crypto!</span>
           </div>
         </div>
@@ -67,14 +66,16 @@ const Confirmation: NextPage = () => {
           )}
         </div>
         <div>
-          <Button onClick={redirect}>Go to your domain</Button>
+          <Button onClick={redirect} radius={"12px"}>
+            Go to your domain
+          </Button>
         </div>
       </div>
       <div className={styles.coconutLeft}>
-        <img alt="coconut" src="/register/coconutleft.webp" />
+        <img alt="coconut" src="/visuals/leftTree.svg" />
       </div>
       <div className={styles.coconutRight}>
-        <img alt="coconut" src="/register/coconutright.webp" />
+        <img alt="coconut" src="/visuals/rightTree.svg" />
       </div>
     </>
   );

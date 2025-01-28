@@ -16,13 +16,13 @@
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  padding: 8px 32px;
+  padding: 10px;
   gap: 8px;
   width: 358px;
   background: radial-gradient(
     382.53% 14823.28% at 46.39% 50%,
     #fff9f0 0%,
-    #dccab8 100%
+    /* #dccab8 100% */
   );
 
   /* Secondary/700 */
@@ -32,7 +32,7 @@
 
   /* Button */
   box-shadow: 0px 6px 80px rgba(191, 158, 123, 0.07);
-  border-radius: 20px;
+  border-radius: 12px;
 
   /* Inside auto layout */
   flex: none;
@@ -68,7 +68,7 @@
   font-family: "QuickZap";
   font-style: normal;
   font-weight: 400;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 24px;
   text-align: left;
   /* identical to box height, or 150% */
@@ -84,7 +84,7 @@
 }
 
 .clickableActionDescription {
-  font-size: 11px;
+  font-size: 12px;
   text-align: left;
 }
 
@@ -108,12 +108,12 @@
   align-items: center;
   justify-content: center;
   border-radius: 25%;
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
 }
 
 .clickableIconSecondary {
-  background-color: var(--secondary300);
+  background-color: var(--light-tertiary);
 }
 
 .renewalIcon {

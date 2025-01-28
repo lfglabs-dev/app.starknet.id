@@ -64,7 +64,9 @@ const NumberTextField: FunctionComponent<NumberTextFieldProps> = ({
         color={color}
         sx={{
           "& .css-1s8tl8g-MuiInputBase-root-MuiOutlinedInput-root": {
-            fontFamily: "Poppins-Regular",
+            fontFamily: "Poppins-bold",
+            fontSize: "1.1rem",
+            backgroundColor: "#ffffff",
             borderRadius: "7.983px",
           },
         }}
