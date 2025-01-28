@@ -1,7 +1,7 @@
 .screen {
-  height: 88vh;
+  height: 90vh;
   position: relative;
-  margin-top: 12vh;
+  margin-top: 44px;
   overflow: auto;
 }
 
