@@ -45,8 +45,8 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <div className="lg:mt-10 flex items-center lg:justify-between justify-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row">
-          <div className="my-2">
+        <div className="lg:mt-10 flex items-center lg:justify-between justify-center sm:text-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row sm:flex-col">
+          <div className="my-2 text-center">
             <div
               className={styles.pfpSection}
               onMouseEnter={handleMouseEnter}
@@ -114,55 +114,85 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
               <Skeleton className="mt-3" variant="rounded" height={58} />
             </div>
           ) : null}
-          <div>
-            <div className="flex flex-row items-center justify-center gap-5 mb-5">
-              <div className="flex flex-col">
-                {identity?.targetAddress ? (
-                  <>
-                    {identity?.domain ? (
-                      <div className={styles.addressBar}>
-                        <h2>{minifyAddress(identity.targetAddress)}</h2>
-                        <CopyContent
-                          value={identity?.targetAddress}
-                          className="cursor-pointer ml-3"
-                        />
-                      </div>
-                    ) : null}
-                    <div className="flex flex-row items-center justify-center">
-                      <div className={styles.starknetAddr}>
-                        <h1 className={styles.domain}>
-                          {responsiveDomainOrId}
-                        </h1>
-                      </div>
-                    </div>
-                  </>
-                ) : null}
+          <div className="">
+            <div className="lg:ml-8 sm:ml-0 sm:justify-center">
+              <div className="flex flex-row items-center justify-center gap-5 mb-5">
+                <div className="flex flex-col mt-4">
+                  {isMobile ? (
+                    <>
+                      {identity?.targetAddress ? (
+                        <>
+                          <div className="flex flex-row items-center justify-center">
+                            <div className={styles.starknetAddr}>
+                              <h1 className={styles.domain}>
+                                {responsiveDomainOrId}
+                              </h1>
+                            </div>
+                          </div>
+                          {identity?.domain ? (
+                            <div className={styles.addressBar}>
+                              <h2>{minifyAddress(identity.targetAddress)}</h2>
+                              <CopyContent
+                                value={identity?.targetAddress}
+                                className="cursor-pointer ml-3"
+                              />
+                            </div>
+                          ) : null}
+                        </>
+                      ) : null}
+                    </>
+                  ) : (
+                    <>
+                      {identity?.targetAddress ? (
+                        <>
+                          {identity?.domain ? (
+                            <div className={styles.addressBar}>
+                              <h2>{minifyAddress(identity.targetAddress)}</h2>
+                              <CopyContent
+                                value={identity?.targetAddress}
+                                className="cursor-pointer ml-3"
+                              />
+                            </div>
+                          ) : null}
+                          <div className="flex flex-row items-center justify-center">
+                            <div className={styles.starknetAddr}>
+                              <h1 className={styles.domain}>
+                                {responsiveDomainOrId}
+                              </h1>
+                            </div>
+                          </div>
+                        </>
+                      ) : null}
+                    </>
+                  )}
+                </div>
               </div>
+              <AddEvmAction identity={identity} isOwner={isOwner} />
+              <SocialMediaActions
+                identity={identity}
+                isOwner={isOwner}
+                tokenId={tokenId}
+              />
             </div>
-            <AddEvmAction identity={identity} isOwner={isOwner} />
-            <SocialMediaActions
-              identity={identity}
-              isOwner={isOwner}
-              tokenId={tokenId}
-            />
+
             <img
               alt="leaf"
-              src="/leaves/new/leavesGroup01.svg"
+              src="/leaves/new/leaf02.webp"
               className={styles.lg1}
             />
             <img
               alt="leaf"
-              src="/leaves/new/leavesGroup02.svg"
+              src="/leaves/new/leaf01.webp"
               className={styles.lg2}
             />
             <img
               alt="logo"
-              src="/visuals/detouredLogo.svg"
+              src="/visuals/detoured_logo.svg"
               className={styles.detouredLogo}
             />
             <img
               alt="logo"
-              src="/visuals/detouredTextLogo.svg"
+              src="/visuals/text.svg"
               className={styles.detouredTextLogo}
             />
           </div>
@@ -177,7 +207,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
-          <rect width="380" height="6" rx="3" fill="#EAE0D5" />
+          <rect width="380" height="6" rx="3" fill="#e2dfde" />
         </svg>
       </div>
     </div>

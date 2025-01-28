@@ -117,14 +117,12 @@
   .clickableIconGithub,
   .clickableIconTwitter,
   .clickableIconAnima {
-    width: 48px;
-    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .verifiedIcon svg {
-    width: 24px;
-    height: 24px;
+    width: 16px;
+    height: 16px;
   }
 }
