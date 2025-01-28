@@ -5,7 +5,7 @@
 
 .nq-button {
   position: relative;
-  height: 3rem;
+  height: 2.8rem;
   color: var(--background);
   font-size: 1rem;
   font-weight: bold;
@@ -15,16 +15,19 @@
   padding: 0 1rem;
   border-radius: 8px;
   min-width: 5rem;
-  width: 100%;
+  width: 95%;
   margin: 0.25rem;
   cursor: pointer;
-  transition: transform 450ms var(--nimiq-ease),
-    box-shadow 450ms var(--nimiq-ease);
+  transition: transform 450ms var(--nimiq-ease),    box-shadow 450ms var(--nimiq-ease);
   will-change: box-shadow;
   text-decoration: none;
   display: block;
   text-align: center;
   font-family: "QuickZap";
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
 }
 
 .nq-button:hover,
@@ -117,6 +120,10 @@
   border-radius: 8px;
   opacity: 0;
   pointer-events: none;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
 }
 
 .nq-button:focus,

@@ -8,12 +8,10 @@ import {
 } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
-import MintIcon from "../components/UI/iconsComponents/icons/mintIcon";
 import { useRouter } from "next/router";
 import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/skeletons/identitiesSkeleton";
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
-import ClickableAction from "../components/UI/iconsComponents/clickableAction";
 import { useNotificationManager } from "../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../utils/constants";
 import WalletConnect from "@/components/UI/walletConnect";
