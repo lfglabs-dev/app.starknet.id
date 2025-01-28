@@ -166,18 +166,7 @@ const TokenIdPage: NextPage = () => {
         .then((response) => response.json())
         .then((data) => {
           setOwnedIdentities(data.full_ids);
-          // setLoading(false);
         });
-
-      // fetch(
-      //   `${
-      //     process.env.NEXT_PUBLIC_SERVER_LINK
-      //   }/addr_to_external_domains?addr=${hexToDecimal(address)}`
-      // )
-      //   .then((response) => response.json())
-      //   .then((data: ExternalDomains) => {
-      //     setExternalDomains(data.domains);
-      //   });
     }
   }, [address, router.asPath]);
   const connectWallet = async (connector: Connector) => {
@@ -187,7 +176,6 @@ const TokenIdPage: NextPage = () => {
     localStorage.setItem("SID-connectedWallet", connector.id);
     localStorage.setItem("SID-lastUsedConnector", connector.id);
   };
-  //console.log({ router: router.query.tokenId, searchParams });
   return (
     <>
       <div className={styles.screen}>
@@ -202,7 +190,7 @@ const TokenIdPage: NextPage = () => {
               <div
                 className={`${
                   !hideActions ? "lg:mx-0" : "lg:ml-20 border"
-                } mx-auto md:mx-0  bg-[#FFFFFF] w-[90%] md:w-[217px] shadow-md rounded-2xl h-[319px] md:h-[533px] md:p-5 relative text-center`}
+                } mx-auto mt-5 md:mt-0 md:mx-0  bg-[#FFFFFF] w-[90%] md:w-[217px] shadow-sm rounded-2xl h-[319px] md:h-[533px] md:p-5 relative text-center border border-[#4545451A]`}
               >
                 <div className="h-[280px] md:h-[480px] overflow-y-auto">
                   {ownedIdentities.map((domain, index) => (
@@ -215,7 +203,7 @@ const TokenIdPage: NextPage = () => {
                       key={index}
                       onClick={() => router.push(`/identities/${domain.id}`)}
                     >
-                      {domain.id}
+                      {domain.domain ? domain.domain : domain.id}
                     </button>
                   ))}
                 </div>

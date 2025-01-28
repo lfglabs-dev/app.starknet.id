@@ -95,6 +95,12 @@ const Identities: NextPage = () => {
     execute();
   }
 
+  useEffect(()=>{
+    if(ownedIdentities.length > 0 ){
+      router.push(`/identities/${ownedIdentities[0].id}`);
+    }
+  },[ownedIdentities,router])
+  
   const connectWallet = async (connector: Connector) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
