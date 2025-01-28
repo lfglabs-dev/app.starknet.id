@@ -356,6 +356,7 @@
   .container {
     padding: 0px 120px;
   }
+  
 }
 
 @media (max-width: 1084px) {
@@ -388,9 +389,7 @@
   }
 
   .pfpGallery {
-    margin: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 0px 0px 20px 0px;
   }
 
   .pfpBtns {
@@ -399,9 +398,16 @@
     gap: 24px;
     max-width: 100%;
   }
+
+  .checkout {
+    padding: 0px 0px 20px 0px;
+
+  }
+
 }
 
 @media screen and (max-width: 768px) {
+  
   .container {
     padding: 0px 32px;
   }
@@ -434,6 +440,10 @@
     font-size: 12px;
     letter-spacing: -0.3px;
   }
+
+  .closeIcon {
+    display: none;
+  }
 }
 
 @media screen and (max-width: 640px) {
@@ -441,10 +451,18 @@
     padding: 0px 4px;
   }
 
+  .form {
+    padding: 0px 4px;
+  }
+
+  .pfpGallery {
+    padding: 0px 4px;
+  }
+
   .divider {
     display: none;
   }
-
+  
 
 }
 
@@ -472,6 +490,7 @@
   .disabledStep {
     padding: 0px;
   }
+  
 }
 
 @media screen and (max-width: 350px) {
