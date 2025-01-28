@@ -35,7 +35,7 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
       <div className={styles.columns}>
         <div className={styles.column} onClick={close}>
           <Link href="/pfpcollections">
-            <li className={styles.burgerItem}>PFP collections</li>
+            <li className={styles.burgerItemTopLeft}>PFP collections</li>
           </Link>
           <Link
             href={process.env.NEXT_PUBLIC_STARKNET_ID as string}
@@ -57,7 +57,7 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
         </div>
         <div className={styles.column}>
           <Link href="https://docs.starknet.id/" target="_blank">
-            <li className={styles.burgerItem}>Documentation</li>
+            <li className={styles.burgerItemTopRight}>Documentation</li>
           </Link>
           <Link href="https://www.starknet.id/pdfs/Terms.pdf" target="_blank">
             <li className={styles.burgerItem}>Terms of use</li>
@@ -72,19 +72,19 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
       </div>
       <hr className={styles.hr} />
       <div className={styles.socials}>
-        <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300">
+        <div className="rounded-full shadow-gray-400 p-3 cursor-pointer">
           <Link href="https://twitter.com/Starknet_id" target="_blank">
-            <TwitterIcon width="23" color="black" />{" "}
+            <TwitterIcon width="28" color="black" />{" "}
           </Link>
         </div>
-        <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300">
+        <div className="rounded-full shadow-gray-400 p-3 cursor-pointer">
           <Link href="https://discord.com/invite/8uS2Mgcsza" target="_blank">
-            <DiscordIcon width="23" color="#5865F2" />
+            <DiscordIcon width="28" color="#5865F2" />
           </Link>
         </div>
-        <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300">
-          <Link href="https://github.com/starknet-id" target="_blank">
-            <GitHubIcon width="23" color="black" />
+        <div className="rounded-full shadow-gray-400 p-3 cursor-pointer">
+          <Link href="https://github.com/lfglabs-dev" target="_blank">
+            <GitHubIcon width="28" color="black" />
           </Link>
         </div>
       </div>
