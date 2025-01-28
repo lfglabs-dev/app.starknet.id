@@ -25,7 +25,7 @@ const InputHelper: FunctionComponent<InputHelperProps> = ({
         >
           <div className="absolute top-1/2 -translate-y-1/2 right-2">
             <InfoIcon
-              width="28px"
+              width="20px"
               color={error ? "red" : theme.palette.grey[800]}
             />
           </div>

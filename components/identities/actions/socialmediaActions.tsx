@@ -18,9 +18,9 @@ const SocialMediaActions: FunctionComponent<SocialMediaActionsProps> = ({
   identity,
 }) => {
   return (
-    <div className=" lg:mt-6 mt-2 flex lg:justify-start justify-center lg:items-start items-center">
+    <div className=" lg:mt-6 mt-2 flex lg:justify-start justify-center lg:items-start items-center ">
       <div className={styles.socialmediaActions}>
-        <div className="flex flex-row gap-3">
+        <div className="flex flex-row gap-3 pb-4">
           <ClickableTwitterIcon
             isOwner={isOwner}
             width="24"
