@@ -25,8 +25,9 @@
   --secondary300: #eae0d5;
   --tertiary: #bf9e7b;
   --light-tertiary: #f5f0eb;
-  --background: #fcfffe;
-  --background-light: #fffcf8;
+  --border-color: #cdcccc;
+  --background: #ffffff;
+  --background-light: #ffffff;
   --background-light300: #f8f7f7;
   --background-white: #ffffff;
   --dark-content: #454545;
