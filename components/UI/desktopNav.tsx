@@ -72,17 +72,17 @@ const DesktopNav: FunctionComponent<DesktopNavProps> = ({ close }) => {
       </div>
       <hr className={styles.hr} />
       <div className={styles.socials}>
-        <div className="rounded-full shadow-gray-400 p-3 cursor-pointer">
+        <div className="rounded-full shadow-gray-400 p-4 cursor-pointer">
           <Link href="https://twitter.com/Starknet_id" target="_blank">
             <TwitterIcon width="28" color="black" />{" "}
           </Link>
         </div>
-        <div className="rounded-full shadow-gray-400 p-3 cursor-pointer">
+        <div className="rounded-full shadow-gray-400 p-4 cursor-pointer">
           <Link href="https://discord.com/invite/8uS2Mgcsza" target="_blank">
             <DiscordIcon width="28" color="#5865F2" />
           </Link>
         </div>
-        <div className="rounded-full shadow-gray-400 p-3 cursor-pointer">
+        <div className="rounded-full shadow-gray-400 p-4 cursor-pointer">
           <Link href="https://github.com/lfglabs-dev" target="_blank">
             <GitHubIcon width="28" color="black" />
           </Link>

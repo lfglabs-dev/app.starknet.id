@@ -6,7 +6,7 @@
   top: 38px;
   border-radius: 8px;
   border: 1px solid var(--light-tertiary);
-  background: var(--background-light, #fffcf8);
+  background: var(--background-light300);
   /* Small Shadow */
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   display: inline-flex;
@@ -35,7 +35,7 @@
   font-size: 16px;
   font-style: normal;
   font-weight: 500;
-  line-height: 20px; /* 125% */
+  line-height: 28px;
   display: flex;
   padding: 16px;
   gap: 10px;
