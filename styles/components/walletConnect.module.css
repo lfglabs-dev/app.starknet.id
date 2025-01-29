@@ -112,6 +112,9 @@
   justify-content: space-between;
   gap: 8px;
   white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .btnIcon {
