@@ -44,7 +44,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 
   const goToNextStep = () => {
     if (currentStep === 1) {
-      if (userNfts) {
+      if (userNfts && userNfts.length > 0) {
         goToStep(2);
       } else {
         goToStep(3);
@@ -61,7 +61,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}
-            showPfp={true}
+            showPfp={userNfts && userNfts.length > 0}
             isLoading={isLoadingNfts}
           />
 
@@ -75,7 +75,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}
-            showPfp={true}
+            showPfp={userNfts && userNfts.length > 0}
             isLoading={isLoadingNfts}
           />
 
