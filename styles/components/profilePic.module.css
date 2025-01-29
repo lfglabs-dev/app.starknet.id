@@ -67,6 +67,7 @@
   flex-wrap: wrap;
   gap: 10px;
   width: 100%;
+  max-width: 37.5rem;
   height: 21.9375rem;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -74,6 +75,7 @@
   align-items: center;
   margin-left: auto;
   margin-right: auto;
+  padding-bottom: 10px;
 }
 .nftImg img {
   width: 100%;
@@ -284,6 +286,7 @@
     width: 100%;
     justify-content: center;
     grid-template-columns: repeat(3, 1fr);
+    padding-bottom: 10px;
   }
 
   .nftImg {
