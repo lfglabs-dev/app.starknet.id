@@ -1,5 +1,4 @@
 import React, { FunctionComponent } from "react";
-import Image from "next/image";
 import styles from "../../../styles/components/registerV3.module.css";
 import ContactCardIcon from "@/components/UI/iconsComponents/icons/contactCardIcon";
 import PfpIcon from "@/components/UI/iconsComponents/icons/pfpIcon";

@@ -69,8 +69,8 @@
   gap: 9.58px;
   align-self: stretch;
   border-radius: 7.983px;
-  border: 1.597px solid var(--content-400, #cdcccc);
-  background: var(--background-paper, #fff);
+  border: 1.597px solid var(--border-color);
+  background: var(--background);
 
   /* Small Shadow */
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
@@ -213,7 +213,7 @@
   align-items: flex-start;
   gap: 10px;
   border-radius: 52px;
-  background: var(--tertiary-600, #ccb297);
+  background: var(--tertiary-600);
   /* Small Shadow */
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
 }
@@ -298,18 +298,18 @@
 }
 
 .passedStep {
-  color: var(--primary, #19aa6e); 
+  color: var(--primary); 
   font-weight: 500;
 }
 
 .activeStep {
-  color: var(--secondary, #000); 
+  color: var(--secondary); 
   font-weight: 700;
   font-family: "Poppins-Bold";
 }
 
 .disabledStep {
-  color: var(--disabled, #CDCCCC); 
+  color: var(--border-color); 
   cursor: not-allowed;
 }
 
