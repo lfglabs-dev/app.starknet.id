@@ -171,10 +171,11 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
                <IdentitiesSkeleton />
             ) : !isUpdatingPp ? (
                <div className={homeStyles.wrapperScreen}>
-                  <div className="flex-col sm:flex-col-reverse flex md:flex-row gap-3 lg:gap-[24px] justify-center md:pl-5 mb-6 md:min-h-[80vh]">
+                  {/* <div className={`flex-col sm:flex-col-reverse flex md:flex-row gap-3 lg:gap-[24px] justify-center md:pl-5 mb-6 md:min-h-[80vh]`}> */}
+                  <div className={` mb-6 md:min-h-[80vh] flex flex-col sm:flex-col-reverse md:flex-row gap-3 lg:gap-[24px] justify-center `}>
                      <div
                         className={`${
-                           !hideActions ? "lg:mx-0" : "lg:ml-20 border"
+                           !hideActions ? "lg:mx-0 " : "lg:ml-20 border max-w-[267px]"
                         } mx-auto  bg-[#FFFFFF] w-[90%] sm:w-[80%] lg:w-[267px]  shadow-sm rounded-2xl h-[319px] md:min-h-[554px] md:p-5 relative text-center border border-[#4545451A] flex flex-col items-center justify-between `}
                      >
                         <div className="h-[280px] md:min-h-[480px] w-full overflow-y-auto ">
@@ -198,7 +199,7 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
                            ADD IDENTITIES
                         </button>
                      </div>
-                     <div className={styles.containerIdentity}>
+                     <div className={`${styles.containerIdentity}  ${!hideActions ? "flex-grow-0" : "flex-grow"}`}>
                         <>
                            <div className={styles.identityBox}>
                               <IdentityCard identity={identity} tokenId={tokenId} isOwner={isOwner} onPPClick={() => setIsUpdatingPp(true)} ppImageUrl={ppImageUrl} />

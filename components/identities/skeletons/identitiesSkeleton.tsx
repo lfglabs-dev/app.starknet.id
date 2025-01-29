@@ -4,7 +4,7 @@ import styles from "../../../styles/components/identitiesV1.module.css";
 
 const IdentitiesSkeleton: FunctionComponent = () => {
    return (
-      <div className="pt-32">
+      <div className="pt-20">
          <div className={styles.identitiesSkeleton}>
             <Skeleton variant="rounded" width={300} height={546} className=""/>
             <Skeleton variant="rounded" width={598} height={346} className="mt-20 hidden md:flex"/>

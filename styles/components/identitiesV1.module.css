@@ -100,9 +100,9 @@
 @media (min-width: 1200px) {
    .identityBox {
       flex-direction: row;
-      justify-content: center;
+      /* justify-content: center; */
       gap: 2rem;
-      align-items: center;
+      /* align-items: center; */
    }
 }
 

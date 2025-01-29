@@ -10,10 +10,7 @@ const TokenIdPage: NextPage = () => {
    const tokenId: string = router.query.tokenId as string;
    return (
       <div className={homeStyles.wrapperScreen}>
-         <div className="mt-24">
-            <div className="ml-8 mb-5">
-               <BackButton onClick={() => window.history.back()} />
-            </div>
+         <div className="mt-[8rem]">
             <AvailableIdentities tokenId={tokenId} />
          </div>
       </div>
