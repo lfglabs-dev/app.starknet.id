@@ -97,7 +97,7 @@
    }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1500px) {
    .identityBox {
       flex-direction: row;
       /* justify-content: center; */

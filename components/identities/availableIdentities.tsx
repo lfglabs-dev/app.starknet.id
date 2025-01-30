@@ -164,6 +164,7 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
       localStorage.setItem("SID-connectedWallet", connector.id);
       localStorage.setItem("SID-lastUsedConnector", connector.id);
    };
+
    return (
       <>
          <div className="">
@@ -171,14 +172,11 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
                <IdentitiesSkeleton />
             ) : !isUpdatingPp ? (
                <div className={homeStyles.wrapperScreen}>
-                  {/* <div className={`flex-col sm:flex-col-reverse flex md:flex-row gap-3 lg:gap-[24px] justify-center md:pl-5 mb-6 md:min-h-[80vh]`}> */}
-                  <div className={` mb-6 md:min-h-[80vh] flex flex-col sm:flex-col-reverse md:flex-row gap-3 lg:gap-[24px] justify-center `}>
+                  <div className={` mb-6 md:min-h-[80vh] flex flex-col sm:flex-col-reverse xl:flex-row gap-3 lg:gap-[24px] justify-center items-center `}>
                      <div
-                        className={`${
-                           !hideActions ? "lg:mx-0 " : "lg:ml-20 border max-w-[267px]"
-                        } mx-auto  bg-[#FFFFFF] w-[90%] sm:w-[80%] lg:w-[267px]  shadow-sm rounded-2xl h-[319px] md:min-h-[554px] md:p-5 relative text-center border border-[#4545451A] flex flex-col items-center justify-between `}
+                        className={`${"lg:ml-28 border max-w-[267px]"} m-auto  bg-[#FFFFFF] w-[90%] sm:w-[80%] lg:w-[267px]  shadow-sm rounded-2xl h-[319px] md:h-[500px] xl:h-screen 2xl:h-[600px]  md:p-5 relative text-center border border-[#4545451A] flex flex-col items-center justify-between `}
                      >
-                        <div className="h-[280px] md:min-h-[480px] w-full overflow-y-auto ">
+                        <div className="h-full md:min-h-[100%] md:w-full overflow-y-auto ">
                            {ownedIdentities.map((domain, index) => (
                               <button
                                  className={`${
@@ -192,18 +190,19 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
                            ))}
                         </div>
                         <button
-                           className="bottom-4 w-full justify-center text-center items-center font-quickZap font-normal flex gap-2 mb-3 sm:mb-0"
+                           className=" mt-[-1rem] w-full justify-center text-center items-center font-quickZap font-normal flex gap-2 "
                            onClick={address ? () => mint() : () => setShowWalletConnectModal(true)}
                         >
                            <FaPlus />
                            ADD IDENTITIES
                         </button>
+                        <br />
                      </div>
-                     <div className={`${styles.containerIdentity}  ${!hideActions ? "flex-grow-0" : "flex-grow"}`}>
+                     <div className={`${styles.containerIdentity}  ${!isIdentityADomain ? "flex-grow" : "flex-grow"}`}>
                         <>
                            <div className={styles.identityBox}>
                               <IdentityCard identity={identity} tokenId={tokenId} isOwner={isOwner} onPPClick={() => setIsUpdatingPp(true)} ppImageUrl={ppImageUrl} />
-                              {!hideActions ? (
+                              {isIdentityADomain ? (
                                  <IdentityActions
                                     isOwner={isOwner}
                                     tokenId={tokenId}
