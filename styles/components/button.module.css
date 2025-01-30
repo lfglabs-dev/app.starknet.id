@@ -16,7 +16,7 @@
   border-radius: 8px;
   min-width: 5rem;
   width: 95%;
-  margin: 0.25rem;
+  margin: 10px;
   cursor: pointer;
   transition: transform 450ms var(--nimiq-ease),    box-shadow 450ms var(--nimiq-ease);
   will-change: box-shadow;
@@ -32,7 +32,6 @@
 
 .nq-button:hover,
 .nq-button:focus {
-  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.2);
   transform: translate3D(0, -2px, 0);
 }
 
@@ -70,7 +69,6 @@
 .primary {
   color: var(--background);
   background: var(--primary600);
-  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.2);
 }
 
 .primary:hover {
@@ -116,7 +114,6 @@
   top: -5px;
   right: -5px;
   bottom: -5px;
-  border: 2px solid var(--tertiary); /* Based on Nimiq Light Blue */
   border-radius: 8px;
   opacity: 0;
   pointer-events: none;

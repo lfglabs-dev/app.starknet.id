@@ -1,24 +1,21 @@
 .container {
   display: flex;
   flex-direction: column;
-  width: 1084px;
-  max-width: 100%;
+  width: 100%;
   background-color: var(--background);
   justify-content: space-between;
   border-radius: 1rem;
   overflow: hidden;
   position: relative;
   z-index: 0;
-  padding: 0px 166px;
 }
 
 .card {
   display: flex;
   width: 100%;
-  padding: 32px 0px;
   flex-direction: column;
   align-items: flex-start;
-  gap: 48px;
+  gap: 100px;
   flex-shrink: 0;
   z-index: 1;
   background-color: transparent;
@@ -70,8 +67,8 @@
   gap: 9.58px;
   align-self: stretch;
   border-radius: 7.983px;
-  border: 1.597px solid var(--content-400, #cdcccc);
-  background: var(--background-paper, #fff);
+  border: 1.597px solid var(--border-color);
+  background: var(--background);
 
   /* Small Shadow */
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
@@ -106,16 +103,12 @@
 }
 
 .pfpGallery {
+  position: relative;
   display: flex;
   flex-direction: column;
-  margin: 0 40px 20px;
-  border-radius: 20px;
-  background: #fffcf8;
-  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+  height: calc(100vh - 14rem);
   width: -webkit-fill-available;
-  padding: 32px 64px;
   text-align: left;
-  gap: 48px;
 }
 
 .pfpBtns {
@@ -127,6 +120,18 @@
 }
 
 .skipBtn {
+  text-align: center;
+  font-family: "QuickZap";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  color: #454545;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  margin: auto;
   text-align: center;
   font-family: "QuickZap";
   font-size: 20px;
@@ -154,7 +159,6 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 24px;
 }
 
 .checkoutButton {
@@ -219,7 +223,7 @@
   align-items: flex-start;
   gap: 10px;
   border-radius: 52px;
-  background: var(--tertiary-600, #ccb297);
+  background: var(--tertiary-600);
   /* Small Shadow */
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
 }
@@ -247,73 +251,80 @@
   opacity: 0.7;
 }
 
-.stepsContainer {
-  min-width: 220px;
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  justify-content: space-between;
+.purchaseStepNav {
+  display: none; 
+}
+
+.purchaseStepNavMobile {
+  display: block;
+  background-color: white;
   border: 1px solid #4545451A;
   border-radius: 16px;
-  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-  background-color: #FFFFFF
-}
-
-.stepsBackground {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 15%;
-  border-radius: 16px;
   overflow: hidden;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.progressSteps {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 24px;
-  gap: 24px;
+@media (min-width: 1280px) {
+  .purchaseStepNav {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 200px; 
+    flex-shrink: 0; 
+    background-color: white;
+    border: 1px solid #4545451A;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .purchaseStepNavMobile {
+    display: none; 
+  }
+
+  .step {
+    padding: 12px;
+  }
 }
 
-.progressStep {
-  width: 100%;
+.stepsContainer {
+  justify-content: center;
+}
+
+.step {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
   align-items: center;
-  text-align: center;
-  gap: 5px;
   cursor: pointer;
-  color: var(--secondary);
+  margin: 10px;
+  justify-content: space-between;
+  margin-right: 12px;
 }
 
-.progressStepName {
+.stepContent {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
-  font-weight: 700;
+}
+
+.passedStep {
+  color: var(--primary); 
+  font-weight: 500;
 }
 
 .activeStep {
-  color: var(--primary);
+  color: var(--secondary); 
   font-weight: 700;
-  line-height: 20px;
   font-family: "Poppins-Bold";
 }
 
-.progressLine {
-  flex-grow: 1;
-  height: 2px;
-  background-color: var(--secondary300);
-  position: relative;
-  width: 50px;
+.disabledStep {
+  color: var(--border-color); 
+  cursor: not-allowed;
 }
 
-.primaryBg {
-  background-color: var(--primary);
+.stepText {
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .gasMethods {
@@ -345,7 +356,7 @@
   width: 20px;
   height: 20px;
   position: absolute;
-  top: 20px;
+  top: 0px;
   right: 50px;
   cursor: pointer;
 }
@@ -354,20 +365,36 @@
   .container {
     padding: 0px 120px;
   }
+  
+  .pfpBtns {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+
+
+  .stepsContainer {
+  flex-direction: column;
+}
 }
 
-@media (max-width: 1084px) {
+@media (max-width: 1280px) {
+
   .image {
     visibility: hidden;
   }
 
   .container {
-    max-width: 90%;
+    max-width: 100%;
     padding: 0px 64px;
+    width: 100%;
   }
 
   .card {
     width: 100%;
+    gap: 30px;
   }
 
   .totalDue {
@@ -385,32 +412,86 @@
   }
 
   .pfpGallery {
-    margin: 10px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 0px 0px 20px 0px;
+
+      height: 0px;
+
   }
 
   .pfpBtns {
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 10px;
     max-width: 100%;
   }
+
+  .checkout {
+    padding: 0px 0px 20px 0px;
+
+  }
+
+  .step {
+    margin: 10px;
+  }
+
+  .stepsContainer {
+    display: flex;
+    flex-direction: row;
+    max-width: 100%;
+    min-width: 220px;
+  }
+
+  .closeIcon {
+    display: none;
+  }
+
 }
 
 @media screen and (max-width: 768px) {
+  
   .container {
     padding: 0px 32px;
   }
 
-  .stepsContainer {
-    min-width: 180px;
+  .card {
+    gap: 24px;
+  }
+
+  .step {
+    margin-right: 0px;
+  }
+
+  .passedStep {
+    padding: 5px;
+  }
+  
+  .activeStep {
+    padding: 5px;
+  }
+  
+  .disabledStep {
+    padding: 5px;
   }
 
   .legend {
     font-size: 12px;
     letter-spacing: -0.3px;
   }
+
+  .pfpBtns {
+    margin-top: 0px;
+    padding-bottom: 10px;
+  }
+
+  .skipBtn {
+    font-size: 14px;
+  }
+
+  .cancelBtn {
+    font-size: 14px;
+  }
+
 }
 
 @media screen and (max-width: 640px) {
@@ -418,25 +499,19 @@
     padding: 0px 4px;
   }
 
-  .stepsBackground {
-    height: 50%;
+  .form {
+    padding: 0px 4px;
   }
 
-  .progressSteps {
-    width: 100%;
-    flex-direction: row;
-    height: 120px;
-    align-items: flex-start;
-    justify-content: space-around;
-  }
-
-  .progressStep {
-    width: auto;
+  .pfpGallery {
+    padding: 0px 4px;
   }
 
   .divider {
     display: none;
   }
+  
+
 }
 
 @media screen and (max-width: 400px) {
@@ -447,6 +522,24 @@
   .price {
     font-size: 1rem;
   }
+
+  .stepsContainer {
+    padding: 10px;
+    gap: 3px;
+  }
+
+  .passedStep {
+    padding: 0px;
+  }
+  
+  .activeStep {
+    padding: 0px;
+  }
+  
+  .disabledStep {
+    padding: 0px;
+  }
+  
 }
 
 @media screen and (max-width: 350px) {
@@ -456,5 +549,21 @@
   }
   .price {
     font-size: 0.8rem;
+  }
+
+  .stepsContainer {
+    gap: 3px;
+  }
+  
+  .passedStep {
+    padding: 0px;
+  }
+  
+  .activeStep {
+    padding: 0px;
+  }
+  
+  .disabledStep {
+    padding: 0px;
   }
 }

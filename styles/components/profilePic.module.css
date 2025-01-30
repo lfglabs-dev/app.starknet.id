@@ -48,7 +48,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 32px; /* 106.667% */
-  margin-bottom: 48px;
+  margin-bottom: 28px;
   text-align: center;
 }
 
@@ -66,14 +66,18 @@
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  width: 37.5rem;
-  height: 21.9375rem;
+  width: 100%;
+  max-width: 37.5rem;
+  min-height: auto;
+  max-height: 21.938rem;
   overflow-y: scroll;
   overflow-x: hidden;
   justify-content: center;
   align-items: center;
   margin-left: auto;
   margin-right: auto;
+  padding-bottom: 10px;
+  grid-template-columns: repeat(3, 1fr);
 }
 .nftImg img {
   width: 100%;
@@ -281,9 +285,12 @@
     max-width: 100%;
   }
   .nftSection {
+    min-height: auto;
+    max-height: 18.5rem;
     width: 100%;
     justify-content: center;
     grid-template-columns: repeat(3, 1fr);
+    padding-bottom: 10px;
   }
 
   .nftImg {

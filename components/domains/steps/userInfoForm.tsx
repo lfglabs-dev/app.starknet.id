@@ -156,7 +156,10 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
           </div>
         </div>
         <div className={styles.summary}>
-          <div>
+          <div className="flex justify-between gap-8">
+          <div onClick={handleClose} className={styles.cancelBtn}>
+    Cancel
+  </div>
             {address ? (
               <Button onClick={goToNextStep} disabled={isDisabled()}>
                 {getButtonText()}
