@@ -166,3 +166,15 @@
    align-items: center;
    margin-top: 13vh;
 }
+
+.SIDENAV {
+   background-color: white;
+   border: 1px solid #4545451a;
+   text-align: center;
+}
+
+@media (min-width: 1310px) {
+   .SIDENAV {
+      height: calc(80vh - 6rem);
+   }
+}

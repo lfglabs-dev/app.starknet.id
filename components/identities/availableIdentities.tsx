@@ -169,12 +169,17 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
       <>
          <div className="">
             {isIdentityADomain === undefined ? (
-               <IdentitiesSkeleton />
+               <div className="">
+                  {" "}
+                  <IdentitiesSkeleton />
+               </div>
             ) : !isUpdatingPp ? (
                <div className={homeStyles.wrapperScreen}>
-                  <div className={` mb-6 md:min-h-[80vh] flex flex-col sm:flex-col-reverse xl:flex-row gap-3 lg:gap-[24px] justify-center items-center `}>
+                  <div className={` mb-6 md:min-h-[80vh] flex flex-col sm:flex-col-reverse xl:flex-row gap-3 lg:gap-[24px] justify-center items-center  `}>
                      <div
-                        className={`${"lg:ml-28 border max-w-[267px]"} m-auto  bg-[#FFFFFF] w-[90%] sm:w-[80%] lg:w-[267px]  shadow-sm rounded-2xl h-[319px] md:h-[500px] xl:h-screen 2xl:h-[600px]  md:p-5 relative text-center border border-[#4545451A] flex flex-col items-center justify-between `}
+                        className={`${"xl:ml-28 border max-w-[267px]"} m-auto w-[90%] sm:w-[80%] lg:w-[267px]  shadow-sm rounded-2xl h-[319px] md:h-[500px] lg:h-[700px] ${
+                           styles.SIDENAV
+                        } md:p-5 relative flex flex-col items-center justify-between `}
                      >
                         <div className="h-full md:min-h-[100%] md:w-full overflow-y-auto ">
                            {ownedIdentities.map((domain, index) => (
@@ -190,13 +195,12 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
                            ))}
                         </div>
                         <button
-                           className=" mt-[-1rem] w-full justify-center text-center items-center font-quickZap font-normal flex gap-2 "
+                           className=" mt-[-1.3rem] w-full justify-center text-center items-center font-quickZap font-normal min-h-[40px] py-2 flex gap-2 bg-white rounded-b-2xl"
                            onClick={address ? () => mint() : () => setShowWalletConnectModal(true)}
                         >
                            <FaPlus />
                            ADD IDENTITIES
                         </button>
-                        <br />
                      </div>
                      <div className={`${styles.containerIdentity}  ${!isIdentityADomain ? "flex-grow" : "flex-grow"}`}>
                         <>
