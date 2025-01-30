@@ -2,7 +2,7 @@ import React, {FunctionComponent} from "react";
 
 const RenewalIcon: FunctionComponent<IconProps> = ({color, width}) => {
    return (
-      <svg width={width || "20"} height={width} viewBox="0 0 21 20" fill={color} xmlns="http://www.w3.org/2000/svg">
+      <svg width={width || "21"}  height={width} viewBox="0 0 21 20" fill={color} xmlns="http://www.w3.org/2000/svg">
          <ellipse cx="17.137" cy="15.0669" rx="2.57449" ry="2.33056" fill="#0C8654" />
          <path
             d="M19.7089 6.00473V6.28565C19.7089 6.62899 19.3034 6.90991 18.8078 6.90991H2.58857C2.09298 6.90991 1.6875 6.62899 1.6875 6.28565V5.99849C1.6875 4.56894 3.35448 3.41406 5.41793 3.41406H15.9695C18.0329 3.41406 19.7089 4.57518 19.7089 6.00473Z"
