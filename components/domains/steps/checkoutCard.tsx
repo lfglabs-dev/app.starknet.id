@@ -300,15 +300,15 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
             />
             <div className={styles.checkoutButton}>
               <div
-                className={(!termsBox || invalidBalance) ? "flex flex-col-reverse gap-4" : "flex gap-4"}
+                className={(!termsBox || invalidBalance) ? "flex flex-col-reverse gap-2" : "flex gap-4"}
               >
                 <div className="flex sm:hidden">
-                  <Button
-                    variation="white"
+                  <div
+                    className={styles.cancelBtn}
                     onClick={() => router.push("/")}
                   >
                     Cancel
-                  </Button>
+                  </div>
                 </div>
                 <Button
                   onClick={() =>
@@ -331,7 +331,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
             </div>
           </div>
         </div>
-        <div className="absolute right-0 top-0 w-5 h-5">
+        <div className={styles.closeIcon}>
           <button
             onClick={() => router.push("/")}
           >

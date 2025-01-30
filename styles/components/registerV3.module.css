@@ -8,16 +8,14 @@
   overflow: hidden;
   position: relative;
   z-index: 0;
-  padding: 0px 166px;
 }
 
 .card {
   display: flex;
   width: 100%;
-  padding: 32px 0px;
   flex-direction: column;
   align-items: flex-start;
-  gap: 48px;
+  gap: 100px;
   flex-shrink: 0;
   z-index: 1;
   background-color: transparent;
@@ -105,9 +103,10 @@
 }
 
 .pfpGallery {
+  position: relative;
   display: flex;
   flex-direction: column;
-  margin: 0 40px 20px;
+  height: calc(100vh - 14rem);
   width: -webkit-fill-available;
   text-align: left;
 }
@@ -121,6 +120,18 @@
 }
 
 .skipBtn {
+  text-align: center;
+  font-family: "QuickZap";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  color: #454545;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  margin: auto;
   text-align: center;
   font-family: "QuickZap";
   font-size: 20px;
@@ -148,7 +159,6 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 24px;
 }
 
 .checkoutButton {
@@ -255,7 +265,7 @@
   margin-right: auto;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1280px) {
   .purchaseStepNav {
     display: flex;
     flex-direction: column;
@@ -271,22 +281,21 @@
   .purchaseStepNavMobile {
     display: none; 
   }
+
+  .step {
+    padding: 12px;
+  }
 }
 
 .stepsContainer {
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px; 
-  max-width: 100%;
-  min-width: 220px;
+  justify-content: center;
 }
 
 .step {
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 12px;
+  margin: 10px;
   justify-content: space-between;
   margin-right: 12px;
 }
@@ -347,7 +356,7 @@
   width: 20px;
   height: 20px;
   position: absolute;
-  top: 20px;
+  top: 0px;
   right: 50px;
   cursor: pointer;
 }
@@ -357,9 +366,22 @@
     padding: 0px 120px;
   }
   
+  .pfpBtns {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+
+
+  .stepsContainer {
+  flex-direction: column;
+}
 }
 
-@media (max-width: 1084px) {
+@media (max-width: 1280px) {
+
   .image {
     visibility: hidden;
   }
@@ -372,6 +394,7 @@
 
   .card {
     width: 100%;
+    gap: 30px;
   }
 
   .totalDue {
@@ -390,18 +413,37 @@
 
   .pfpGallery {
     padding: 0px 0px 20px 0px;
+
+      height: 0px;
+
   }
 
   .pfpBtns {
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 10px;
     max-width: 100%;
   }
 
   .checkout {
     padding: 0px 0px 20px 0px;
 
+  }
+
+  .step {
+    margin: 10px;
+  }
+
+  .stepsContainer {
+    display: flex;
+    flex-direction: row;
+    max-width: 100%;
+    min-width: 220px;
+  }
+
+  .closeIcon {
+    display: none;
   }
 
 }
@@ -412,12 +454,8 @@
     padding: 0px 32px;
   }
 
-  .stepsContainer {
-    min-width: 200px;
-    flex-direction: row;
-    justify-content: center;
-    justify-self: center;
-    gap: 10px;
+  .card {
+    gap: 24px;
   }
 
   .step {
@@ -441,9 +479,19 @@
     letter-spacing: -0.3px;
   }
 
-  .closeIcon {
-    display: none;
+  .pfpBtns {
+    margin-top: 0px;
+    padding-bottom: 10px;
   }
+
+  .skipBtn {
+    font-size: 14px;
+  }
+
+  .cancelBtn {
+    font-size: 14px;
+  }
+
 }
 
 @media screen and (max-width: 640px) {
@@ -476,6 +524,7 @@
   }
 
   .stepsContainer {
+    padding: 10px;
     gap: 3px;
   }
 

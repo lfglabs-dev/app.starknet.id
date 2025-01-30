@@ -74,6 +74,17 @@
   border-color: var(--background-light300);
 }
 
+@media (max-width:1280px) {
+  
+  .catch {
+    margin: auto;
+  }
+
+  .desc {
+    text-align: center;
+  }
+}
+
 @media (max-width: 1084px) {
   .container {
     max-width: 90%;
