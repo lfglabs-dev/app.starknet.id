@@ -56,6 +56,19 @@
    text-align: center;
    max-width: 100%;
 }
+.IDScreen {
+   min-height: 629px;
+}
+.CardContainer {
+   width: 650px;
+   max-width: 650px;
+}
+@media (max-width: 1124px) {
+   .CardContainer {
+      width: 100%;
+      height: fit-content;
+   }
+}
 
 .identitiesSkeleton {
    display: flex;
@@ -169,12 +182,12 @@
 
 .SIDENAV {
    background-color: white;
-   border: 1px solid #4545451a;
    text-align: center;
 }
 
-@media (min-width: 1310px) {
+@media (min-width: 1290px) {
    .SIDENAV {
       height: calc(80vh - 6rem);
+      /* height: 397px; */
    }
 }

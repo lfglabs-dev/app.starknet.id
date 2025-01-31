@@ -170,20 +170,14 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
          <div className="min-h-[80vh]">
             {isIdentityADomain === undefined ? (
                <div className="">
-                  {" "}
                   <IdentitiesSkeleton />
                </div>
             ) : !isUpdatingPp ? (
-               <div className={`${homeStyles.wrapperScreen} overflow-x-hidden`}>
-                  <div
-                     className={` mb-6 md:min-h-[80vh] max-w-screen overflow-x-hidden flex flex-col sm:flex-col-reverse xl:flex-row gap-3 ${
-                        isIdentityADomain ? "lg:gap-0 2xl:gap-[24px]" : "lg:gap-[24px]"
-                     } justify-center items-center  `}
-                  >
+               <div className={`${styles.IDScreen} px-[16px] lg:px-0 overflow-x-hidden flex flex-col xl:flex-row justify-center items-center gap-[24px] `}>
+                  <div className=" w-[100%] sm:w-[358px] xl:w-[220px]">
                      <div
-                        className={` ${
-                           isIdentityADomain ? "xl:ml-12 2xl:ml-28" : "xl:ml-28"
-                        } ${" border w-[90%]"} sm:w-[70%] md:w-[50%] xl:w-[267px] h-[319px] md:h-[500px] lg:h-[600px] ${
+                        className={`
+                         ${" border w-[100%] md:w-auto h-[319px] xl:h-auto"} ${
                            styles.SIDENAV
                         } relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
                      >
@@ -208,25 +202,16 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
                            ADD IDENTITIES
                         </button>
                      </div>
-                     <div className={`${styles.containerIdentity}  ${!isIdentityADomain ? "flex-grow" : "flex-grow"}`}>
-                        <>
-                           <div className={styles.identityBox}>
-                              <IdentityCard identity={identity} tokenId={tokenId} isOwner={isOwner} onPPClick={() => setIsUpdatingPp(true)} ppImageUrl={ppImageUrl} />
-                              {isIdentityADomain ? (
-                                 <IdentityActions
-                                    isOwner={isOwner}
-                                    tokenId={tokenId}
-                                    isIdentityADomain={isIdentityADomain}
-                                    identity={identity}
-                                    hideActionsHandler={hideActionsHandler}
-                                 />
-                              ) : (
-                                 minting && <IdentityActionsSkeleton />
-                              )}
-                           </div>
-                           <IdentityWarnings isIdentityADomain={isIdentityADomain} identity={identity} />
-                        </>
-                     </div>
+                  </div>
+                  <div className={` flex justify-center items-center ${styles.CardContainer}`}>
+                     <IdentityCard identity={identity} tokenId={tokenId} isOwner={isOwner} onPPClick={() => setIsUpdatingPp(true)} ppImageUrl={ppImageUrl} />
+                  </div>
+                  <div className=" min-w-[280px]">
+                     {isIdentityADomain ? (
+                        <IdentityActions isOwner={isOwner} tokenId={tokenId} isIdentityADomain={isIdentityADomain} identity={identity} hideActionsHandler={hideActionsHandler} />
+                     ) : (
+                        minting && <IdentityActionsSkeleton />
+                     )}
                   </div>
                </div>
             ) : (

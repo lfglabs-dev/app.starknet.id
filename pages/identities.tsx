@@ -1,6 +1,7 @@
 import React, {useMemo} from "react";
 import type {NextPage} from "next";
 import styles from "../styles/Home.module.css";
+import style from "../../styles/components/identitiesV1.module.css";
 import {useAccount, useConnect, useSendTransaction} from "@starknet-react/core";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/router";
@@ -90,7 +91,7 @@ const Identities: NextPage = () => {
 
    return (
       <>
-         <div className={` ${styles.screen} overflow-y-hidden`}>
+         <div className={` ${styles.screen} overflow-y-hidden hide-scrollbar`}>
             <div>
                {loading ? (
                   <section className="mt-20 w-full">
@@ -119,7 +120,7 @@ const Identities: NextPage = () => {
                      </div>
                   </div>
                ) : (
-                  <div className="mt-20 xl:max-h-[76vh] xl:overflow-hidden">
+                  <div className="mt-20 xl:max-h-[80vh] xl:overflow-hidden hide-scrollbar">
                      <AvailableIdentities tokenId={ownedIdentities[0].id} />
                   </div>
                )}
