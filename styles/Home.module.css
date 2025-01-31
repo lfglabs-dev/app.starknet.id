@@ -29,11 +29,12 @@
 
 .containerGallery {
   margin-top: 12vh;
-  min-height: 88vh;
+  min-height: 75vh;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  overflow-y: hidden;
 }
 
 .title {

@@ -1,125 +1,109 @@
-import React, { useMemo } from "react";
-import type { NextPage } from "next";
+import React, {useMemo} from "react";
+import type {NextPage} from "next";
 import styles from "../styles/Home.module.css";
-import {
-  useAccount,
-  useConnect,
-  useSendTransaction,
-} from "@starknet-react/core";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { hexToDecimal } from "../utils/feltService";
+import {useAccount, useConnect, useSendTransaction} from "@starknet-react/core";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/router";
+import {hexToDecimal} from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/skeletons/identitiesSkeleton";
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
-import { useNotificationManager } from "../hooks/useNotificationManager";
-import { NotificationType, TransactionType } from "../utils/constants";
+import {useNotificationManager} from "../hooks/useNotificationManager";
+import {NotificationType, TransactionType} from "../utils/constants";
 import WalletConnect from "@/components/UI/walletConnect";
-import { Connector } from "starknetkit";
+import {Connector} from "starknetkit";
 import AddButton from "@/components/UI/AddButtonIdentities";
 import AvailableIdentities from "@/components/identities/availableIdentities";
 
 const Identities: NextPage = () => {
-  const { address } = useAccount();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
-  const [externalDomains, setExternalDomains] = useState<string[]>([]);
-  const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
-  const router = useRouter();
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-  const { addTransaction } = useNotificationManager();
-  const { connectAsync, connectors } = useConnect();
-  const [showWalletConnectModal, setShowWalletConnectModal] =
-    useState<boolean>(false);
+   const {address} = useAccount();
+   const [loading, setLoading] = useState<boolean>(true);
+   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
+   const [externalDomains, setExternalDomains] = useState<string[]>([]);
+   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
+   const router = useRouter();
+   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+   const {addTransaction} = useNotificationManager();
+   const {connectAsync, connectors} = useConnect();
+   const [showWalletConnectModal, setShowWalletConnectModal] = useState<boolean>(false);
 
-  //Mint
-  const callData = useMemo(() => {
-    return {
-      contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
-      entrypoint: "mint",
-      calldata: [randomTokenId.toString()],
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // We want this to run only once
-  const { sendAsync: execute, data: mintData } = useSendTransaction({
-    calls: [callData],
-  });
+   //Mint
+   const callData = useMemo(() => {
+      return {
+         contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
+         entrypoint: "mint",
+         calldata: [randomTokenId.toString()],
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, []); // We want this to run only once
+   const {sendAsync: execute, data: mintData} = useSendTransaction({
+      calls: [callData],
+   });
 
-  useEffect(() => {
-    if (address) {
-      setLoading(true);
-      // Our Indexer
-      fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_LINK
-        }/addr_to_full_ids?addr=${hexToDecimal(address)}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          setOwnedIdentities(data.full_ids);
-          setLoading(false);
-        });
+   useEffect(() => {
+      if (address) {
+         setLoading(true);
+         // Our Indexer
+         fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_to_full_ids?addr=${hexToDecimal(address)}`)
+            .then((response) => response.json())
+            .then((data) => {
+               setOwnedIdentities(data.full_ids);
+               setLoading(false);
+            });
 
-      fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_LINK
-        }/addr_to_external_domains?addr=${hexToDecimal(address)}`
-      )
-        .then((response) => response.json())
-        .then((data: ExternalDomains) => {
-          setExternalDomains(data.domains);
-        });
-    } else {
-      setLoading(false);
-    }
-  }, [address, router.asPath]);
+         fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_to_external_domains?addr=${hexToDecimal(address)}`)
+            .then((response) => response.json())
+            .then((data: ExternalDomains) => {
+               setExternalDomains(data.domains);
+            });
+      } else {
+         setLoading(false);
+      }
+   }, [address, router.asPath]);
 
-  useEffect(() => {
-    if (!mintData?.transaction_hash) return;
-    addTransaction({
-      timestamp: Date.now(),
-      subtext: `Minting identity #${randomTokenId}`,
-      type: NotificationType.TRANSACTION,
-      data: {
-        type: TransactionType.MINT_IDENTITY,
-        hash: mintData.transaction_hash,
-        status: "pending",
-      },
-    });
-    setIsTxModalOpen(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mintData]); // We want this to run only when the tx is sent
+   useEffect(() => {
+      if (!mintData?.transaction_hash) return;
+      addTransaction({
+         timestamp: Date.now(),
+         subtext: `Minting identity #${randomTokenId}`,
+         type: NotificationType.TRANSACTION,
+         data: {
+            type: TransactionType.MINT_IDENTITY,
+            hash: mintData.transaction_hash,
+            status: "pending",
+         },
+      });
+      setIsTxModalOpen(true);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+   }, [mintData]); // We want this to run only when the tx is sent
 
-  function mint() {
-    execute();
-  }
+   function mint() {
+      execute();
+   }
 
-  const connectWallet = async (connector: Connector) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    await connectAsync({ connector });
-    localStorage.setItem("SID-connectedWallet", connector.id);
-    localStorage.setItem("SID-lastUsedConnector", connector.id);
-  };
+   const connectWallet = async (connector: Connector) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      await connectAsync({connector});
+      localStorage.setItem("SID-connectedWallet", connector.id);
+      localStorage.setItem("SID-lastUsedConnector", connector.id);
+   };
 
-  return (
-    <>
-      <div className={styles.screen}>
-        <div>
-          {loading ? (
-            <IdentitiesSkeleton />
-          ) : ownedIdentities.length + externalDomains.length === 0 ||
-            !address ? (
-            <div className={styles.containerGallery}>
-              <h1 className="title text-center mb-[16px]">
-                All Your Identities in One Place
-              </h1>
-              <p className="description text-center max-w-2xl">
-                Easily access and manage all your identities from one
-                centralized location. Streamline your digital presence with
-                convenience and control.
-              </p>
-              <div className="w-fit block mx-auto px-4 mt-[48px] ">
-                {/* <ClickableAction
+   return (
+      <>
+         <div className={` ${styles.screen} overflow-y-hidden`}>
+            <div>
+               {loading ? (
+                  <section className="mt-20 w-full">
+                     <IdentitiesSkeleton />
+                  </section>
+               ) : ownedIdentities.length + externalDomains.length === 0 || !address ? (
+                  <div className={styles.containerGallery}>
+                     <h1 className="title text-center mb-[16px]">All Your Identities in One Place</h1>
+                     <p className="description text-center max-w-2xl">
+                        Easily access and manage all your identities from one centralized location. Streamline your digital presence with convenience and control.
+                     </p>
+                     <div className="w-fit block mx-auto px-4 mt-[48px] ">
+                        {/* <ClickableAction
                   title="ADD IDENTITIES"
                   icon={<MintIcon />}
                   onClick={
@@ -129,39 +113,27 @@ const Identities: NextPage = () => {
                   }
                   width="auto"
                 /> */}
-                <AddButton
-                  onClick={
-                    address
-                      ? () => mint()
-                      : () => setShowWalletConnectModal(true)
-                  }
-                  radius="8px"
-                >
-                  ADD IDENTITIES
-                </AddButton>
-              </div>
+                        <AddButton onClick={address ? () => mint() : () => setShowWalletConnectModal(true)} radius="8px">
+                           ADD IDENTITIES
+                        </AddButton>
+                     </div>
+                  </div>
+               ) : (
+                  <div className="mt-20 xl:max-h-[76vh] xl:overflow-hidden">
+                     <AvailableIdentities tokenId={ownedIdentities[0].id} />
+                  </div>
+               )}
             </div>
-          ) : (
-            <div className="mt-20">
-              <AvailableIdentities tokenId={ownedIdentities[0].id} />
-            </div>
-          )}
-        </div>
-      </div>
-      <TxConfirmationModal
-        txHash={mintData?.transaction_hash}
-        isTxModalOpen={isTxModalOpen}
-        closeModal={() => setIsTxModalOpen(false)}
-        title="Your identity NFT is on it's way !"
-      />
-      <WalletConnect
-        closeModal={() => setShowWalletConnectModal(false)}
-        open={showWalletConnectModal}
-        connectors={connectors as Connector[]}
-        connectWallet={connectWallet}
-      />
-    </>
-  );
+         </div>
+         <TxConfirmationModal
+            txHash={mintData?.transaction_hash}
+            isTxModalOpen={isTxModalOpen}
+            closeModal={() => setIsTxModalOpen(false)}
+            title="Your identity NFT is on it's way !"
+         />
+         <WalletConnect closeModal={() => setShowWalletConnectModal(false)} open={showWalletConnectModal} connectors={connectors as Connector[]} connectWallet={connectWallet} />
+      </>
+   );
 };
 
 export default Identities;
