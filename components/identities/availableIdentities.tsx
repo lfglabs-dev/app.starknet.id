@@ -174,19 +174,23 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
                   <IdentitiesSkeleton />
                </div>
             ) : !isUpdatingPp ? (
-               <div className={homeStyles.wrapperScreen}>
-                  <div className={` mb-6 md:min-h-[80vh] flex flex-col sm:flex-col-reverse xl:flex-row gap-3 lg:gap-[24px] justify-center items-center  `}>
+               <div className={`${homeStyles.wrapperScreen} overflow-x-hidden`}>
+                  <div
+                     className={` mb-6 md:min-h-[80vh] max-w-screen overflow-x-hidden flex flex-col sm:flex-col-reverse xl:flex-row gap-3 lg:gap-[24px] justify-center items-center  `}
+                  >
                      <div
-                        className={`${"xl:ml-28 border max-w-[267px]"} m-auto w-[90%] sm:w-[80%] lg:w-[267px]  shadow-sm rounded-2xl h-[319px] md:h-[500px] lg:h-[700px] ${
+                        className={` ${
+                           isIdentityADomain ? "xl:ml-4 2xl:ml-28" : "xl:ml-28"
+                        } ${" border w-[371px]"} sm:w-[70%] md:w-[50%] xl:w-[267px] h-[319px] md:h-[500px] lg:h-[600px] ${
                            styles.SIDENAV
-                        } md:p-5 relative flex flex-col items-center justify-between `}
+                        } relative flex flex-col items-center justify-between px-[24px] pt-[24px] m-auto shadow-sm rounded-2xl`}
                      >
-                        <div className="h-full md:min-h-[100%] md:w-full overflow-y-auto ">
+                        <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] " >
                            {ownedIdentities.map((domain, index) => (
                               <button
                                  className={`${
                                     domain.id === router.query.tokenId || domain.id === tokenId ? "text-[#402D28] hover:text-[#CDCCCC]" : " text-[#CDCCCC] hover:text-[#402D28]"
-                                 } font-medium text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#CDCCCC] border-b md:border-none md:py-0 py-6 md:my-3 block w-full`}
+                                 } font-medium text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#CDCCCC] border-b md:border-none md:py-0 py-6 md:my-3 block w-full text-center xl:text-left`}
                                  key={index}
                                  onClick={() => router.push(`/identities/${domain.id}`)}
                               >
@@ -195,7 +199,7 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
                            ))}
                         </div>
                         <button
-                           className=" mt-[-1.3rem] w-full justify-center text-center items-center font-quickZap font-normal min-h-[40px] py-2 flex gap-2 bg-white rounded-b-2xl"
+                           className="  w-full justify-center text-center items-center font-quickZap font-normal min-h-[40px] py-2 flex gap-2 bg-white rounded-b-2xl"
                            onClick={address ? () => mint() : () => setShowWalletConnectModal(true)}
                         >
                            <FaPlus />
