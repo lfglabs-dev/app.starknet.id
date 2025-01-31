@@ -18,7 +18,7 @@ export default function Document() {
         <meta property="og:url" content={process.env.NEXT_PUBLIC_APP_LINK} />
         <meta
           property="og:image"
-          content={`${process.env.NEXT_PUBLIC_APP_LINK}/visuals/starknetIdMeta.webp`}
+          content={`${process.env.NEXT_PUBLIC_APP_LINK}/visuals/starknetIdMetaImage.webp`}
         />
         <meta
           name="description"
@@ -32,7 +32,7 @@ export default function Document() {
         />
         <meta
           name="twitter:image"
-          content={`${process.env.NEXT_PUBLIC_APP_LINK}/visuals/starknetIdMeta.webp`}
+          content={`${process.env.NEXT_PUBLIC_APP_LINK}/visuals/starknetIdMetaImage.webp`}
         />
         <meta name="twitter:card" content="player" />
         <meta name="twitter:site" content="@Starknet_id" />
