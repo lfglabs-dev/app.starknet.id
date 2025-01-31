@@ -176,12 +176,14 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
             ) : !isUpdatingPp ? (
                <div className={`${homeStyles.wrapperScreen} overflow-x-hidden`}>
                   <div
-                     className={` mb-6 md:min-h-[80vh] max-w-screen overflow-x-hidden flex flex-col sm:flex-col-reverse xl:flex-row gap-3 lg:gap-[24px] justify-center items-center  `}
+                     className={` mb-6 md:min-h-[80vh] max-w-screen overflow-x-hidden flex flex-col sm:flex-col-reverse xl:flex-row gap-3 ${
+                        isIdentityADomain ? "lg:gap-0 2xl:gap-[24px]" : "lg:gap-[24px]"
+                     } justify-center items-center  `}
                   >
                      <div
                         className={` ${
-                           isIdentityADomain ? "xl:ml-4 2xl:ml-28" : "xl:ml-28"
-                        } ${" border  w-[90%]"} sm:w-[70%] md:w-[50%] xl:w-[267px] h-[319px] md:h-[500px] lg:h-[600px] ${
+                           isIdentityADomain ? "xl:ml-12 2xl:ml-28" : "xl:ml-28"
+                        } ${" border w-[90%]"} sm:w-[70%] md:w-[50%] xl:w-[267px] h-[319px] md:h-[500px] lg:h-[600px] ${
                            styles.SIDENAV
                         } relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
                      >
