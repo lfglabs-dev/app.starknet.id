@@ -183,7 +183,7 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
                            isIdentityADomain ? "xl:ml-4 2xl:ml-28" : "xl:ml-28"
                         } ${" border  w-[90%]"} sm:w-[70%] md:w-[50%] xl:w-[267px] h-[319px] md:h-[500px] lg:h-[600px] ${
                            styles.SIDENAV
-                        } relative flex flex-col items-center justify-between sm:px-[24px] pt-[24px] m-auto shadow-sm rounded-2xl `}
+                        } relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
                      >
                         <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
                            {ownedIdentities.map((domain, index) => (
