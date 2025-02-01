@@ -177,7 +177,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     <>
       <div className="min-h-[80vh]">
         {isIdentityADomain === undefined ? (
-          <div className="">
+          <div>
             <IdentitiesSkeleton />
           </div>
         ) : !isUpdatingPp ? (
