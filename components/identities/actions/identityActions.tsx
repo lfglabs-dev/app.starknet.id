@@ -29,31 +29,44 @@ import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 import RenewalIcon from "@/components/UI/iconsComponents/icons/renewalIcon";
 
 type IdentityActionsProps = {
-   identity?: Identity;
-   tokenId: string;
-   isIdentityADomain: boolean;
-   isOwner: boolean;
+  identity?: Identity;
+  tokenId: string;
+  isIdentityADomain: boolean;
+  isOwner: boolean;
 };
 
-const IdentityActions: FunctionComponent<IdentityActionsProps> = ({identity, tokenId, isIdentityADomain, isOwner}) => {
-   const [isAddressFormOpen, setIsAddressFormOpen] = useState<boolean>(false);
-   const [isTransferFormOpen, setIsTransferFormOpen] = useState<boolean>(false);
-   const [isSubdomainFormOpen, setIsSubdomainFormOpen] = useState<boolean>(false);
-   const {address} = useAccount();
-   const encodedDomains = utils.encodeDomain(identity?.domain);
-   const {addTransaction} = useNotificationManager();
-   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-   const [txHash, setTxHash] = useState<string>("");
-   const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
-   const [isMainDomain, setIsMainDomain] = useState<boolean>(identity ? identity.isMain : false);
-   const router = useRouter();
-   const {starknetIdNavigator} = useContext(StarknetIdJsContext);
-   // AutoRenewals
-   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] = useState<boolean>(false);
-   const [autoRenewalData, setAutoRenewalData] = useState<RenewalData[]>([]);
-   const [hasReverseAddressRecord, setHasReverseAddressRecord] = useState<boolean>(false);
-   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>([]);
-   const {sendAsync: disableRenewal, data: disableRenewalData} = useSendTransaction({
+const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
+  identity,
+  tokenId,
+  isIdentityADomain,
+  isOwner,
+}) => {
+  const [isAddressFormOpen, setIsAddressFormOpen] = useState<boolean>(false);
+  const [isTransferFormOpen, setIsTransferFormOpen] = useState<boolean>(false);
+  const [isSubdomainFormOpen, setIsSubdomainFormOpen] =
+    useState<boolean>(false);
+  const { address } = useAccount();
+  const encodedDomains = utils.encodeDomain(identity?.domain);
+  const { addTransaction } = useNotificationManager();
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+  const [txHash, setTxHash] = useState<string>("");
+  const [viewMoreClicked, setViewMoreClicked] = useState<boolean>(false);
+  const [isMainDomain, setIsMainDomain] = useState<boolean>(
+    identity ? identity.isMain : false
+  );
+  const router = useRouter();
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
+  // AutoRenewals
+  const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
+    useState<boolean>(false);
+  const [autoRenewalData, setAutoRenewalData] = useState<RenewalData[]>([]);
+  const [hasReverseAddressRecord, setHasReverseAddressRecord] =
+    useState<boolean>(false);
+  const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
+    []
+  );
+  const { sendAsync: disableRenewal, data: disableRenewalData } =
+    useSendTransaction({
       calls: disableRenewalCalldata,
     });
 
@@ -133,23 +146,22 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({identity, tok
       });
   }, [address, tokenId, identity, isOwner]);
 
-   useEffect(() => {
-      if (!mainDomainData?.transaction_hash) return;
-      addTransaction({
-         timestamp: Date.now(),
-         subtext: "Set as main id",
-         type: NotificationType.TRANSACTION,
-         data: {
-            type: TransactionType.MAIN_DOMAIN,
-            hash: mainDomainData.transaction_hash,
-            status: "pending",
-         },
-      });
-      setTxHash(mainDomainData.transaction_hash);
-      setIsTxModalOpen(true);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [mainDomainData]);
-
+  useEffect(() => {
+    if (!mainDomainData?.transaction_hash) return;
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: "Set as main id",
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.MAIN_DOMAIN,
+        hash: mainDomainData.transaction_hash,
+        status: "pending",
+      },
+    });
+    setTxHash(mainDomainData.transaction_hash);
+    setIsTxModalOpen(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mainDomainData]);
 
   useEffect(() => {
     if (isAutoRenewalEnabled) {
