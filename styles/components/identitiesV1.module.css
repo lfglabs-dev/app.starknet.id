@@ -172,13 +172,14 @@
   margin-top: 13vh;
 }
 
-.SIDENAV {
+.sideNav {
   background-color: white;
   text-align: center;
+  box-shadow: var(--small-shadow);
 }
 
 @media (min-width: 1290px) {
-  .SIDENAV {
+  .sideNav {
     height: calc(80vh - 6rem);
   }
 }
