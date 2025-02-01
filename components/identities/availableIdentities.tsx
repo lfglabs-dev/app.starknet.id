@@ -87,9 +87,10 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
          }
       };
 
-      fetchProfilePic();
-   }, [identity]);
+    fetchProfilePic();
+  }, [identity]);
 
+ 
    useEffect(() => {
       if (isIdentityADomain === true) {
          setHideActions(true);
@@ -205,7 +206,7 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
                   </div>
                   <div className=" min-w-[280px]">
                      {hideActions ? (
-                        <IdentityActions isOwner={isOwner} tokenId={tokenId} isIdentityADomain={isIdentityADomain} identity={identity} />
+                        <IdentityActions isOwner={isOwner} tokenId={tokenId} isIdentityADomain={isIdentityADomain} identity={identity}  />
                      ) : (
                         minting && <IdentityActionsSkeleton />
                      )}
