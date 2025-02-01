@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import homeStyles from "../../styles/Home.module.css";
 import styles from "../../styles/components/identitiesV1.module.css";
 import { useRouter } from "next/router";
-import IdentityWarnings from "../../components/identities/identityWarnings";
 import IdentityCard from "../../components/identities/identityCard";
 import IdentityActions from "../../components/identities/actions/identityActions";
 import {
@@ -10,7 +8,6 @@ import {
   useConnect,
   useSendTransaction,
 } from "@starknet-react/core";
-import IdentityPageSkeleton from "../../components/identities/skeletons/identityPageSkeleton";
 import UpdateProfilePic from "../../components/identities/updateProfilePic";
 import TxConfirmationModal from "../../components/UI/txConfirmationModal";
 import { Identity } from "../../utils/apiWrappers/identity";
@@ -22,6 +19,7 @@ import { hexToDecimal } from "@/utils/feltService";
 import WalletConnect from "@/components/UI/walletConnect";
 import { Connector } from "starknetkit";
 import { FaPlus } from "react-icons/fa";
+import IdentitiesSkeleton from "./skeletons/identitiesSkeleton";
 
 const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
   const router = useRouter();
@@ -99,13 +97,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     fetchProfilePic();
   }, [identity]);
 
-  const hideActionsHandler = (state: boolean) => {
-    if (state == true) {
-      setHideActions(true);
-    } else {
-      setHideActions(false);
-    }
-  };
+  useEffect(() => setHideActions(!isIdentityADomain), [isIdentityADomain]);
 
   const refreshData = useCallback(
     () =>
@@ -174,27 +166,34 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     localStorage.setItem("SID-connectedWallet", connector.id);
     localStorage.setItem("SID-lastUsedConnector", connector.id);
   };
+
   return (
     <>
-      <div className="">
+      <div className="min-h-[80vh]">
         {isIdentityADomain === undefined ? (
-          <IdentityPageSkeleton />
+          <div>
+            <IdentitiesSkeleton />
+          </div>
         ) : !isUpdatingPp ? (
-          <div className={homeStyles.wrapperScreen}>
-            <div className="flex-col flex md:flex-row gap-5 md:gap-8 md:pl-5 mb-6">
+          <div
+            className={`${styles.IDScreen} px-[16px] lg:px-0 overflow-x-hidden flex flex-col xl:flex-row justify-center items-center gap-[24px] `}
+          >
+            <div className=" w-[100%] sm:w-[358px] xl:w-[220px]">
               <div
-                className={`${
-                  !hideActions ? "lg:mx-0" : "lg:ml-20 border"
-                } mx-auto mt-5 md:mt-0 md:mx-0  bg-[#FFFFFF] w-[90%] md:w-[217px] shadow-sm rounded-2xl h-[319px] md:h-[533px] md:p-5 relative text-center border border-[#4545451A]`}
+                className={`
+                         ${" border w-[100%] md:w-auto h-[319px] xl:h-auto"} ${
+                  styles.sideNav
+                } relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
               >
-                <div className="h-[280px] md:h-[480px] overflow-y-auto">
+                <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
                   {ownedIdentities.map((domain, index) => (
                     <button
                       className={`${
-                        domain.id === router.query.tokenId || domain.id === tokenId
+                        domain.id === router.query.tokenId ||
+                        domain.id === tokenId
                           ? "text-[#402D28] hover:text-[#CDCCCC]"
                           : " text-[#CDCCCC] hover:text-[#402D28]"
-                      }font-medium text-lg leading-5 cursor-pointer border-[#CDCCCC] border-b md:border-none md:py-0 py-6 md:my-3 block w-full`}
+                      } font-medium text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-full text-center xl:text-left`}
                       key={index}
                       onClick={() => router.push(`/identities/${domain.id}`)}
                     >
@@ -203,7 +202,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                   ))}
                 </div>
                 <button
-                  className="bottom-4 w-full justify-center text-center items-center font-quickZap font-normal flex gap-2"
+                  className="  w-full justify-center text-center items-center font-quickZap font-normal min-h-[40px] py-5 flex gap-2 bg-white rounded-b-2xl"
                   onClick={
                     address
                       ? () => mint()
@@ -214,34 +213,29 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                   ADD IDENTITIES
                 </button>
               </div>
-              <div className={styles.containerIdentity}>
-                <>
-                  <div className={styles.identityBox}>
-                    <IdentityCard
-                      identity={identity}
-                      tokenId={tokenId}
-                      isOwner={isOwner}
-                      onPPClick={() => setIsUpdatingPp(true)}
-                      ppImageUrl={ppImageUrl}
-                    />
-                    {!hideActions ? (
-                      <IdentityActions
-                        isOwner={isOwner}
-                        tokenId={tokenId}
-                        isIdentityADomain={isIdentityADomain}
-                        identity={identity}
-                        hideActionsHandler={hideActionsHandler}
-                      />
-                    ) : (
-                      minting && <IdentityActionsSkeleton />
-                    )}
-                  </div>
-                  <IdentityWarnings
-                    isIdentityADomain={isIdentityADomain}
-                    identity={identity}
-                  />
-                </>
-              </div>
+            </div>
+            <div
+              className={` flex justify-center items-center ${styles.CardContainer}`}
+            >
+              <IdentityCard
+                identity={identity}
+                tokenId={tokenId}
+                isOwner={isOwner}
+                onPPClick={() => setIsUpdatingPp(true)}
+                ppImageUrl={ppImageUrl}
+              />
+            </div>
+            <div className=" min-w-[280px]">
+              {hideActions ? (
+                minting && <IdentityActionsSkeleton />
+              ) : (
+                <IdentityActions
+                  isOwner={isOwner}
+                  tokenId={tokenId}
+                  isIdentityADomain={isIdentityADomain}
+                  identity={identity}
+                />
+              )}
             </div>
           </div>
         ) : (

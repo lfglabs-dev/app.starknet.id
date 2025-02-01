@@ -103,10 +103,12 @@ const Identities: NextPage = () => {
 
   return (
     <>
-      <div className={styles.screen}>
+      <div className={` ${styles.screen} overflow-y-hidden hide-scrollbar`}>
         <div>
           {loading ? (
-            <IdentitiesSkeleton />
+            <section className="mt-20 w-full">
+              <IdentitiesSkeleton />
+            </section>
           ) : ownedIdentities.length + externalDomains.length === 0 ||
             !address ? (
             <div className={styles.containerGallery}>
@@ -119,16 +121,6 @@ const Identities: NextPage = () => {
                 convenience and control.
               </p>
               <div className="w-fit block mx-auto px-4 mt-[48px] ">
-                {/* <ClickableAction
-                  title="ADD IDENTITIES"
-                  icon={<MintIcon />}
-                  onClick={
-                    address
-                      ? () => mint()
-                      : () => setShowWalletConnectModal(true)
-                  }
-                  width="auto"
-                /> */}
                 <AddButton
                   onClick={
                     address
@@ -142,7 +134,7 @@ const Identities: NextPage = () => {
               </div>
             </div>
           ) : (
-            <div className="mt-20">
+            <div className="mt-20 xl:max-h-[80vh] xl:overflow-hidden hide-scrollbar">
               <AvailableIdentities tokenId={ownedIdentities[0].id} />
             </div>
           )}

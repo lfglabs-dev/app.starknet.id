@@ -1,84 +1,86 @@
 .screen {
-  height: 88vh;
-  position: relative;
-  margin-top: 12vh;
-  overflow: auto;
+   height: 90vh;
+   position: relative;
+   margin-top: 44px;
+   overflow: auto;
 }
 
 .wrapperScreen {
-  display: inline-flex;
-  flex-direction: column;
-  width: 100%;
-  justify-content: center;
-  height: calc(100% - 12vh);
+   display: inline-flex;
+   flex-direction: column;
+   width: 100%;
+   justify-content: center;
+   height: calc(100% - 12vh);
 }
+
 
 .containerScreen,
 .container {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  text-align: center;
+   height: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   text-align: center;
 }
 
 .containerScreen {
-  height: calc(100% - 12vh);
+   height: calc(100% - 12vh);
 }
 
 .containerGallery {
-  margin-top: 12vh;
-  min-height: 88vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
+   margin-top: 12vh;
+   min-height: 75vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-direction: column;
+   overflow-y: hidden;
 }
 
 .title {
-  font-family: "QuickZap";
-  font-size: 2.5rem;
-  color: var(--primary);
-  text-transform: uppercase;
-  text-align: center;
+   font-family: "QuickZap";
+   font-size: 2.5rem;
+   color: var(--primary);
+   text-transform: uppercase;
+   text-align: center;
 }
 
 .cardTitle {
-  font-family: "QuickZap";
-  font-size: 2rem;
-  color: var(--primary);
-  text-transform: lowercase;
-  text-align: center;
+   font-family: "QuickZap";
+   font-size: 2rem;
+   color: var(--primary);
+   text-transform: lowercase;
+   text-align: center;
 }
 
 .cardColumn,
 .cardCenter,
 .card {
-  margin-top: 1rem;
-  padding: 1rem;
-  color: inherit;
-  text-decoration: none;
-  border: 2px solid var(--tertiary);
-  border-radius: 10px;
-  transition: color 0.15s ease, border-color 0.15s ease;
-  width: 100%;
-  background-color: var(--background);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  overflow-wrap: break-word;
+   margin-top: 1rem;
+   padding: 1rem;
+   color: inherit;
+   text-decoration: none;
+   border: 2px solid var(--tertiary);
+   border-radius: 10px;
+   transition: color 0.15s ease, border-color 0.15s ease;
+   width: 100%;
+   background-color: var(--background);
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   cursor: pointer;
+   overflow-wrap: break-word;
 }
 
 .cardColumn,
 .cardCenter {
-  justify-content: center;
-  margin-top: 0.5rem;
+   justify-content: center;
+   margin-top: 0.5rem;
 }
 
 .cardColumn {
-  flex-direction: column;
+   flex-direction: column;
 }
 
 .cardColumn:hover,
@@ -90,72 +92,72 @@
 .card:hover,
 .card:focus,
 .card:active {
-  border-color: var(--primary);
+   border-color: var(--primary);
 }
 
 .card:hover h2,
 .card:focus h2,
 .card:active h2 {
-  color: var(--primary);
+   color: var(--primary);
 }
 
 .card text {
-  margin: 0;
-  font-size: 1.25rem;
-  line-height: 1.5;
+   margin: 0;
+   font-size: 1.25rem;
+   line-height: 1.5;
 }
 
 .cardCenter p {
-  margin: 0;
-  font-size: 1rem;
-  line-height: 1;
+   margin: 0;
+   font-size: 1rem;
+   line-height: 1;
 }
 
 .firstLeaf {
-  position: fixed;
-  bottom: 0%;
-  width: 200px;
-  z-index: -1000;
-  overflow: hidden;
+   position: fixed;
+   bottom: 0%;
+   width: 200px;
+   z-index: -1000;
+   overflow: hidden;
 }
 
 .secondLeaf {
-  position: fixed;
-  right: 0%;
-  bottom: 0%;
-  width: 200px;
-  z-index: -1000;
-  overflow: hidden;
+   position: fixed;
+   right: 0%;
+   bottom: 0%;
+   width: 200px;
+   z-index: -1000;
+   overflow: hidden;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
-  .title {
-    font-size: 2rem;
-  }
-  .container {
-    height: 85vh;
-  }
+   .title {
+      font-size: 2rem;
+   }
+   .container {
+      height: 85vh;
+   }
 
-  .firstLeaf,
-  .secondLeaf {
-    width: 150px;
-  }
+   .firstLeaf,
+   .secondLeaf {
+      width: 150px;
+   }
 }
 
 @media (max-width: 768px) {
-  .container {
-    height: 85vh;
-  }
-  .title {
-    font-size: 2rem;
-  }
+   .container {
+      height: 85vh;
+   }
+   .title {
+      font-size: 2rem;
+   }
 
-  .cardTitle {
-    font-size: 1.5rem;
-  }
+   .cardTitle {
+      font-size: 1.5rem;
+   }
 
-  .firstLeaf,
-  .secondLeaf {
-    visibility: hidden;
-  }
+   .firstLeaf,
+   .secondLeaf {
+      visibility: hidden;
+   }
 }

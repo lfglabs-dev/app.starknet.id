@@ -56,14 +56,26 @@
   text-align: center;
   max-width: 100%;
 }
+.IDScreen {
+  min-height: 629px;
+}
+.CardContainer {
+  width: 650px;
+  max-width: 650px;
+}
+@media (max-width: 1124px) {
+  .CardContainer {
+    width: 100%;
+    height: fit-content;
+  }
+}
 
 .identitiesSkeleton {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: center;
   width: 100%;
-  gap: 32px;
+  gap: 16px;
 }
 
 .identityBox {
@@ -72,6 +84,7 @@
   flex-direction: column;
   width: 100%;
   align-items: center;
+  height: auto;
 }
 
 .identityBoxWrapper {
@@ -87,13 +100,13 @@
   .identityBoxWrapper {
     flex-direction: row;
     flex-wrap: wrap;
+    min-height: 90vh;
   }
 }
 
-@media (min-width: 1124px) {
+@media (min-width: 1200px) {
   .identityBox {
     flex-direction: row;
-    justify-content: center;
     gap: 2rem;
   }
 }
@@ -157,4 +170,16 @@
   justify-content: center;
   align-items: center;
   margin-top: 13vh;
+}
+
+.sideNav {
+  background-color: white;
+  text-align: center;
+  box-shadow: var(--small-shadow);
+}
+
+@media (min-width: 1290px) {
+  .sideNav {
+    height: calc(80vh - 6rem);
+  }
 }
