@@ -1,97 +1,102 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
-import homeStyles from "../../styles/Home.module.css";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styles from "../../styles/components/identitiesV1.module.css";
-import {useRouter} from "next/router";
-import IdentityWarnings from "../../components/identities/identityWarnings";
+import { useRouter } from "next/router";
 import IdentityCard from "../../components/identities/identityCard";
 import IdentityActions from "../../components/identities/actions/identityActions";
-import {useAccount, useConnect, useSendTransaction} from "@starknet-react/core";
-import IdentityPageSkeleton from "../../components/identities/skeletons/identityPageSkeleton";
+import {
+  useAccount,
+  useConnect,
+  useSendTransaction,
+} from "@starknet-react/core";
 import UpdateProfilePic from "../../components/identities/updateProfilePic";
 import TxConfirmationModal from "../../components/UI/txConfirmationModal";
-import {Identity} from "../../utils/apiWrappers/identity";
-import {formatHexString} from "../../utils/stringService";
-import {getDomainData} from "@/utils/cacheDomainData";
-import {useSearchParams} from "next/navigation";
+import { Identity } from "../../utils/apiWrappers/identity";
+import { formatHexString } from "../../utils/stringService";
+import { getDomainData } from "@/utils/cacheDomainData";
+import { useSearchParams } from "next/navigation";
 import IdentityActionsSkeleton from "@/components/identities/skeletons/identityActionsSkeleton";
-import {hexToDecimal} from "@/utils/feltService";
+import { hexToDecimal } from "@/utils/feltService";
 import WalletConnect from "@/components/UI/walletConnect";
-import {Connector} from "starknetkit";
-import {FaPlus} from "react-icons/fa";
+import { Connector } from "starknetkit";
+import { FaPlus } from "react-icons/fa";
 import IdentitiesSkeleton from "./skeletons/identitiesSkeleton";
 
-const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
-   const router = useRouter();
-   const {address} = useAccount();
-   //const tokenId: string = router.query.tokenId as string;
-   const [identity, setIdentity] = useState<Identity>();
-   const [isIdentityADomain, setIsIdentityADomain] = useState<boolean | undefined>();
-   const [hideActions, setHideActions] = useState(false);
-   const [isOwner, setIsOwner] = useState(true);
-   const [isUpdatingPp, setIsUpdatingPp] = useState(false);
-   const [isTxModalOpen, setIsTxModalOpen] = useState(false);
-   const [ppTxHash, setPpTxHash] = useState<string>();
-   const [ppImageUrl, setPpImageUrl] = useState("");
-   const [minting, setMinting] = useState(false);
-   const searchParams = useSearchParams();
-   const mintingInUrl = searchParams.get("minting") === "true";
-   const {connectAsync, connectors} = useConnect();
-   const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
-   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
-   const [showWalletConnectModal, setShowWalletConnectModal] = useState<boolean>(false);
+const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
+  const router = useRouter();
+  const { address } = useAccount();
+  //const tokenId: string = router.query.tokenId as string;
+  const [identity, setIdentity] = useState<Identity>();
+  const [isIdentityADomain, setIsIdentityADomain] = useState<
+    boolean | undefined
+  >();
+  const [hideActions, setHideActions] = useState(false);
+  const [isOwner, setIsOwner] = useState(true);
+  const [isUpdatingPp, setIsUpdatingPp] = useState(false);
+  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
+  const [ppTxHash, setPpTxHash] = useState<string>();
+  const [ppImageUrl, setPpImageUrl] = useState("");
+  const [minting, setMinting] = useState(false);
+  const searchParams = useSearchParams();
+  const mintingInUrl = searchParams.get("minting") === "true";
+  const { connectAsync, connectors } = useConnect();
+  const [ownedIdentities, setOwnedIdentities] = useState<FullId[]>([]);
+  const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
+  const [showWalletConnectModal, setShowWalletConnectModal] =
+    useState<boolean>(false);
 
-   const callData = useMemo(() => {
-      return {
-         contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
-         entrypoint: "mint",
-         calldata: [randomTokenId.toString()],
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, []);
-   const {sendAsync: execute} = useSendTransaction({
-      calls: [callData],
-   });
+  const callData = useMemo(() => {
+    return {
+      contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
+      entrypoint: "mint",
+      calldata: [randomTokenId.toString()],
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const { sendAsync: execute } = useSendTransaction({
+    calls: [callData],
+  });
 
-   useEffect(() => {
-      if (mintingInUrl) setMinting(true);
-      else setMinting(false);
-   }, [mintingInUrl]);
+  useEffect(() => {
+    if (mintingInUrl) setMinting(true);
+    else setMinting(false);
+  }, [mintingInUrl]);
 
-   const endMinting = useCallback(() => {
-      router.replace(router.asPath.split("?")[0]);
-      setMinting(false);
-      setHideActions(false);
-   }, [router]);
+  const endMinting = useCallback(() => {
+    router.replace(router.asPath.split("?")[0]);
+    setMinting(false);
+    setHideActions(false);
+  }, [router]);
 
-   useEffect(() => {
-      if (minting && identity) endMinting();
-   }, [minting, identity, endMinting]);
+  useEffect(() => {
+    if (minting && identity) endMinting();
+  }, [minting, identity, endMinting]);
 
-   useEffect(() => {
-      if (!identity || !address) {
-         setIsOwner(false);
-         return;
+  useEffect(() => {
+    if (!identity || !address) {
+      setIsOwner(false);
+      return;
+    }
+    setIsOwner(identity.ownerAddress === formatHexString(address));
+  }, [identity, address]);
+
+  useEffect(() => {
+    if (!identity) {
+      setPpImageUrl("");
+      return;
+    }
+
+    const fetchProfilePic = async () => {
+      try {
+        const imgUrl = await identity.getPfpFromVerifierData();
+        setPpImageUrl(imgUrl);
+      } catch (error) {
+        setPpImageUrl("");
       }
-      setIsOwner(identity.ownerAddress === formatHexString(address));
-   }, [identity, address]);
-
-   useEffect(() => {
-      if (!identity) {
-         setPpImageUrl("");
-         return;
-      }
-
-      const fetchProfilePic = async () => {
-         try {
-            const imgUrl = await identity.getPfpFromVerifierData();
-            setPpImageUrl(imgUrl);
-         } catch (error) {
-            setPpImageUrl("");
-         }
-      };
+    };
 
       fetchProfilePic();
    }, [identity]);
+
    // this function does not work
    const hideActionsHandler = (state: boolean) => {
       // if (state === true) {
@@ -106,76 +111,78 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
    useEffect(() => {
       if (isIdentityADomain === true) {
          setHideActions(true);
-         console.log("true");
       } else {
          setHideActions(false);
-         console.log("false");
       }
    }, [isIdentityADomain]);
 
-   const refreshData = useCallback(
-      () =>
-         fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/id_to_data?id=${tokenId}`)
-            .then(async (response) => {
-               if (!response.ok) {
-                  throw new Error(await response.text());
-               }
-               return response.json();
-            })
-            .then((data: IdentityData) => {
-               if (minting) endMinting();
-               setIdentity(new Identity(data));
-               setIsIdentityADomain(Boolean(data?.domain));
-            })
-            .catch(() => {
-               // Domain data might not be indexed yet, so we check local storage
-               const domainData = getDomainData(tokenId);
-               if (domainData) {
-                  setIdentity(new Identity(domainData));
-                  setIsIdentityADomain(Boolean(domainData?.domain));
-               } else {
-                  setIsIdentityADomain(false);
-               }
-            }),
-      [tokenId, minting, endMinting]
-   );
+  const refreshData = useCallback(
+    () =>
+      fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/id_to_data?id=${tokenId}`)
+        .then(async (response) => {
+          if (!response.ok) {
+            throw new Error(await response.text());
+          }
+          return response.json();
+        })
+        .then((data: IdentityData) => {
+          if (minting) endMinting();
+          setIdentity(new Identity(data));
+          setIsIdentityADomain(Boolean(data?.domain));
+        })
+        .catch(() => {
+          // Domain data might not be indexed yet, so we check local storage
+          const domainData = getDomainData(tokenId);
+          if (domainData) {
+            setIdentity(new Identity(domainData));
+            setIsIdentityADomain(Boolean(domainData?.domain));
+          } else {
+            setIsIdentityADomain(false);
+          }
+        }),
+    [tokenId, minting, endMinting]
+  );
 
-   useEffect(() => {
-      if (minting && tokenId && !identity) {
-         const interval = setInterval(() => refreshData(), 1000);
-         return () => clearInterval(interval);
-      }
-   }, [minting, tokenId, identity, refreshData]);
+  useEffect(() => {
+    if (minting && tokenId && !identity) {
+      const interval = setInterval(() => refreshData(), 1000);
+      return () => clearInterval(interval);
+    }
+  }, [minting, tokenId, identity, refreshData]);
 
-   useEffect(() => {
-      if (tokenId) {
-         refreshData();
-         const timer = setInterval(() => refreshData(), 30e3);
-         return () => clearInterval(timer);
-      }
-   }, [tokenId, refreshData]);
+  useEffect(() => {
+    if (tokenId) {
+      refreshData();
+      const timer = setInterval(() => refreshData(), 30e3);
+      return () => clearInterval(timer);
+    }
+  }, [tokenId, refreshData]);
 
-   function mint() {
-      execute();
-   }
-   useEffect(() => {
-      if (address) {
-         // Our Indexer
-         fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_to_full_ids?addr=${hexToDecimal(address)}`)
-            .then((response) => response.json())
-            .then((data) => {
-               setOwnedIdentities(data.full_ids);
-            });
-      }
-   }, [address, router.asPath]);
+  function mint() {
+    execute();
+  }
+  useEffect(() => {
+    if (address) {
+      // Our Indexer
+      fetch(
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
+        }/addr_to_full_ids?addr=${hexToDecimal(address)}`
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setOwnedIdentities(data.full_ids);
+        });
+    }
+  }, [address, router.asPath]);
 
-   const connectWallet = async (connector: Connector) => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      await connectAsync({connector});
-      localStorage.setItem("SID-connectedWallet", connector.id);
-      localStorage.setItem("SID-lastUsedConnector", connector.id);
-   };
+  const connectWallet = async (connector: Connector) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    await connectAsync({ connector });
+    localStorage.setItem("SID-connectedWallet", connector.id);
+    localStorage.setItem("SID-lastUsedConnector", connector.id);
+  };
 
    return (
       <>
