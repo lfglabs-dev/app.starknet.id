@@ -92,14 +92,26 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
 
       fetchProfilePic();
    }, [identity]);
-
+   // this function does not work
    const hideActionsHandler = (state: boolean) => {
-      if (state == true) {
+      // if (state === true) {
+      //    // setHideActions(true);
+      //    console.log("hello, it's true")
+      // } else {
+      //    // setHideActions(false);
+      //    console.log("hello, it's faalse")
+      // }
+      // console.log(state)
+   };
+   useEffect(() => {
+      if (isIdentityADomain === true) {
          setHideActions(true);
+         console.log("true");
       } else {
          setHideActions(false);
+         console.log("false");
       }
-   };
+   }, [isIdentityADomain]);
 
    const refreshData = useCallback(
       () =>
@@ -207,7 +219,7 @@ const AvailableIdentities = ({tokenId}: {tokenId: string}) => {
                      <IdentityCard identity={identity} tokenId={tokenId} isOwner={isOwner} onPPClick={() => setIsUpdatingPp(true)} ppImageUrl={ppImageUrl} />
                   </div>
                   <div className=" min-w-[280px]">
-                     {isIdentityADomain ? (
+                     {hideActions ? (
                         <IdentityActions isOwner={isOwner} tokenId={tokenId} isIdentityADomain={isIdentityADomain} identity={identity} hideActionsHandler={hideActionsHandler} />
                      ) : (
                         minting && <IdentityActionsSkeleton />
