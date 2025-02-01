@@ -32,11 +32,10 @@ type IdentityActionsProps = {
    identity?: Identity;
    tokenId: string;
    isIdentityADomain: boolean;
-   hideActionsHandler: (state: boolean) => void;
    isOwner: boolean;
 };
 
-const IdentityActions: FunctionComponent<IdentityActionsProps> = ({identity, tokenId, isIdentityADomain, hideActionsHandler, isOwner}) => {
+const IdentityActions: FunctionComponent<IdentityActionsProps> = ({identity, tokenId, isIdentityADomain, isOwner}) => {
    const [isAddressFormOpen, setIsAddressFormOpen] = useState<boolean>(false);
    const [isTransferFormOpen, setIsTransferFormOpen] = useState<boolean>(false);
    const [isSubdomainFormOpen, setIsSubdomainFormOpen] = useState<boolean>(false);
@@ -133,16 +132,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({identity, tok
       });
       setTxHash(mainDomainData.transaction_hash);
       setIsTxModalOpen(true);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [mainDomainData]);
 
-   if (isIdentityADomain) {
-      hideActionsHandler(true);
-      //  console.log("true");
-   } else {
-      hideActionsHandler(false);
-      //  console.log("false");
-   }
+  
 
    useEffect(() => {
       if (isAutoRenewalEnabled) {
