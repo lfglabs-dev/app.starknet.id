@@ -21,7 +21,7 @@
   --primary: #19aa6e;
   --primary300: #dcf2e9;
   --primary600: #0c8654;
-  --secondary: #402d28;
+  --secondary: #454545;
   --secondary300: #eae0d5;
   --tertiary: #bf9e7b;
   --tertiary-600: #ccb297;
@@ -58,7 +58,6 @@ a {
   font-family: "QuickZap";
   font-size: 2.5rem;
   color: var(--secondary);
-  text-shadow: 1px 1px var(--tertiary);
   text-transform: uppercase;
 }
 
@@ -154,10 +153,10 @@ strong {
 }
 
 .hide-scrollbar {
-  scrollbar-width: none; 
-  -ms-overflow-style: none; 
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .hide-scrollbar::-webkit-scrollbar {
-  display: none;  
+  display: none;
 }

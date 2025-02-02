@@ -9,7 +9,7 @@ const TokenIdPage: NextPage = () => {
   const tokenId: string = router.query.tokenId as string;
   return (
     <div className={homeStyles.wrapperScreen}>
-      <div className="mt-[8rem]">
+      <div className="mt-[12vh]">
         <AvailableIdentities tokenId={tokenId} />
       </div>
     </div>
