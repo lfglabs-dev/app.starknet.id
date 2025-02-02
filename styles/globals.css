@@ -32,6 +32,7 @@
   --background-light300: #f8f7f7;
   --background-white: #ffffff;
   --dark-content: #454545;
+  --content600: #8c8989;
   --negative: #d32f2f;
   --black: #000000;
   --identity-card-footer-text: #e2dfde;
@@ -62,7 +63,7 @@ a {
 }
 
 .description {
-  color: var(--content-600, #8c8989);
+  color: var(--content600);
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
