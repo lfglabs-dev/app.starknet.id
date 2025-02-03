@@ -7,17 +7,16 @@ import {
   useSendTransaction,
 } from "@starknet-react/core";
 import { useEffect, useState } from "react";
-import IdentitiesGallery from "../components/identities/identitiesGalleryV1";
-import MintIcon from "../components/UI/iconsComponents/icons/mintIcon";
 import { useRouter } from "next/router";
 import { hexToDecimal } from "../utils/feltService";
 import IdentitiesSkeleton from "../components/identities/skeletons/identitiesSkeleton";
 import TxConfirmationModal from "../components/UI/txConfirmationModal";
-import ClickableAction from "../components/UI/iconsComponents/clickableAction";
 import { useNotificationManager } from "../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../utils/constants";
 import WalletConnect from "@/components/UI/walletConnect";
 import { Connector } from "starknetkit";
+import AddButton from "@/components/UI/AddButtonIdentities";
+import AvailableIdentities from "@/components/identities/availableIdentities";
 
 const Identities: NextPage = () => {
   const { address } = useAccount();
@@ -104,13 +103,15 @@ const Identities: NextPage = () => {
 
   return (
     <>
-      <div className={styles.containerGallery}>
+      <div className={` ${styles.screen} overflow-y-hidden hide-scrollbar`}>
         <div>
           {loading ? (
-            <IdentitiesSkeleton />
+            <section className="mt-20 w-full">
+              <IdentitiesSkeleton />
+            </section>
           ) : ownedIdentities.length + externalDomains.length === 0 ||
             !address ? (
-            <>
+            <div className={styles.containerGallery}>
               <h1 className="title text-center mb-[16px]">
                 All Your Identities in One Place
               </h1>
@@ -119,38 +120,22 @@ const Identities: NextPage = () => {
                 centralized location. Streamline your digital presence with
                 convenience and control.
               </p>
-              <div className="w-fit block mx-auto px-4 mt-[33px]">
-                <ClickableAction
-                  title="ADD IDENTITIES"
-                  icon={<MintIcon />}
+              <div className="w-fit block mx-auto px-4 mt-[48px] ">
+                <AddButton
                   onClick={
                     address
                       ? () => mint()
                       : () => setShowWalletConnectModal(true)
                   }
-                  width="auto"
-                />
+                  radius="8px"
+                >
+                  ADD IDENTITIES
+                </AddButton>
               </div>
-            </>
+            </div>
           ) : (
-            <div>
-              <IdentitiesGallery
-                identities={ownedIdentities}
-                externalDomains={externalDomains}
-                address={address}
-              />
-              <div className="w-fit block mx-auto px-4 mt-[33px]">
-                <ClickableAction
-                  title="ADD IDENTITIES"
-                  icon={<MintIcon />}
-                  onClick={
-                    address
-                      ? () => mint()
-                      : () => setShowWalletConnectModal(true)
-                  }
-                  width="auto"
-                />
-              </div>
+            <div className="max-h-[88vh] xl:overflow-hidden hide-scrollbar">
+              <AvailableIdentities tokenId={ownedIdentities[0].id} />
             </div>
           )}
         </div>

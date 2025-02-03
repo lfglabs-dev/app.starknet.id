@@ -14,6 +14,7 @@ const theme = createTheme({
       default: "#F5F5F5",
     },
     grey: {
+      200: "#CDCCCC",
       800: "#454545",
     },
   },

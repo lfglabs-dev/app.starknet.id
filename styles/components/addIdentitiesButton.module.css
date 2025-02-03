@@ -1,0 +1,122 @@
+.iq-button::-moz-focus-inner,
+.iq-button-s::-moz-focus-inner {
+  border: 0;
+}
+
+.iq-button {
+  position: relative;
+  height:44px;
+  color: var(--background);
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.094em;
+  border: none;
+  padding: 0 2rem;
+  border-radius: 500px;
+  min-width: 5rem;
+  width:200px;
+  margin: 0.25rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 450ms var(--nimiq-ease),
+    box-shadow 450ms var(--nimiq-ease);
+  will-change: box-shadow;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  font-family: "QuickZap";
+}
+
+.iq-button:hover,
+.iq-button:focus {
+  box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.2);
+  transform: translate3D(0, -2px, 0);
+}
+
+.iq-button:hover::before,
+.iq-button:active::before,
+.iq-button:focus::before {
+  opacity: 1;
+}
+
+.iq-button:active {
+  outline: none;
+  box-shadow: 0 0.2rem 0.3rem rgba(0, 0, 0, 0.2);
+  transform: translate3D(0, 1px, 0);
+  transition: transform 200ms cubic-bezier(0.41, 0.34, 0.26, 1.55),
+    box-shadow 200ms cubic-bezier(0.41, 0.34, 0.26, 1.55) !important;
+}
+
+.iq-button:disabled,
+.iq-button[disabled] {
+  background-color: #cdcccc;
+  color: #666666;
+  box-shadow: 0px 6px 80px 0px rgba(191, 158, 123, 0.07);
+}
+
+.iq-button:disabled:hover,
+.iq-button:disabled:focus {
+  box-shadow: none;
+  transform: none;
+  cursor: default;
+}
+
+/* Color variations */
+
+/* green */
+.primary {
+  color: var(--background);
+  background: var(--primary);
+}
+
+.primary:hover {
+  background: var(--primary600);
+}
+
+.primary:disabled:hover {
+  background: #cdcccc;
+}
+
+/* white */
+.white {
+  color: var(--dark-content);
+  background: #ffffff;
+}
+
+.iq-button::before {
+  background-image: var(--secondary);
+}
+
+/* Focus Ring for Tabs – can be optimized in the future with better :focus-visible support */
+
+.iq-button::after {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: -5px;
+  right: -5px;
+  bottom: -5px;
+  border-radius: 500px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.iq-button:focus,
+.iq-button-s:focus,
+.iq-button-pill:focus {
+  outline: none;
+}
+
+.iq-button:focus::after {
+  opacity: 1;
+}
+
+
+
+@media (max-width: 1024px) {
+  .iq-button {
+    font-size: 0.7rem;
+    line-height: 1.2rem;
+  }
+}

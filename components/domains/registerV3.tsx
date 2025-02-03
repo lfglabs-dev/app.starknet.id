@@ -5,9 +5,9 @@ import UserInfoForm from "./steps/userInfoForm";
 import { FormType } from "@/utils/constants";
 import CheckoutCard from "./steps/checkoutCard";
 import { useAccount } from "@starknet-react/core";
+import styles from "../../styles/components/registerV3.module.css";
 import SelectPfp from "./steps/selectPfp";
 import RegisterSteps from "./steps/registerSteps";
-import SearchBar from "../UI/searchBar";
 import evergreenDiscounts from "@/utils/discounts/evergreen";
 
 type RegisterV3Props = {
@@ -17,7 +17,6 @@ type RegisterV3Props = {
 
 const RegisterV3: FunctionComponent<RegisterV3Props> = ({
   domain,
-  setDomain,
 }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
@@ -57,35 +56,53 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 
   return (
     <>
-      {currentStep > 1 ? (
-        <RegisterSteps
-          currentStep={currentStep}
-          setStep={goToStep}
-          showPfp={userNfts && userNfts.length > 0}
-          isLoading={isLoadingNfts}
-        />
-      ) : (
-        <div className="sm:w-2/5 w-4/5 mt-5 mb-5">
-          <SearchBar
-            onChangeTypedValue={(typeValue: string) => setDomain(typeValue)}
-            showHistory={false}
+      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[calc(100vh-6rem)]">
+        <aside className={`${styles.purchaseStepNav}`} role="navigation">
+          <RegisterSteps
+            currentStep={currentStep}
+            setStep={goToStep}
+            showPfp={userNfts && userNfts.length > 0}
+            isLoading={isLoadingNfts}
           />
+
+          <img
+            src="/visuals/purchaseStepVisual.svg"
+            alt="Domain purchase steps visualization"
+          />
+        </aside>
+
+        <div className={`${styles.purchaseStepNavMobile}`} role="navigation">
+          <RegisterSteps
+            currentStep={currentStep}
+            setStep={goToStep}
+            showPfp={userNfts && userNfts.length > 0}
+            isLoading={isLoadingNfts}
+          />
+
+          <div className="flex justify-center">
+            <img
+              src="/visuals/purchaseStepVisualMobile.svg"
+              alt="Domain purchase steps visualization"
+            />
+          </div>
         </div>
-      )}
-      {currentStep === 1 && (
-        <UserInfoForm
-          type={FormType.REGISTER}
-          goToNextStep={goToNextStep}
-          imageUrl="/visuals/register.webp"
-        />
-      )}
-      {currentStep === 2 && <SelectPfp goToNextStep={goToNextStep} />}
-      {currentStep === 3 && (
-        <CheckoutCard
-          type={FormType.REGISTER}
-          discount={evergreenDiscounts.registration}
-        />
-      )}
+
+        <div className="flex-1">
+          {currentStep === 1 && (
+            <UserInfoForm
+              type={FormType.REGISTER}
+              goToNextStep={goToNextStep}
+            />
+          )}
+          {currentStep === 2 && <SelectPfp goToNextStep={goToNextStep} />}
+          {currentStep === 3 && (
+            <CheckoutCard
+              type={FormType.REGISTER}
+              discount={evergreenDiscounts.registration}
+            />
+          )}
+        </div>
+      </div>
     </>
   );
 };

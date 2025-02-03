@@ -4,12 +4,11 @@
 
 .menuItem {
   margin-left: 2.5rem /* 40px */;
-  font-size: 0.875rem /* 14px */;
+  font-size: 0.875rem; /* 14px */
   line-height: 1.25rem /* 20px */;
-  text-transform: uppercase;
   cursor: pointer;
-  font-weight: 600;
-  color: var(--secondary);
+  font-weight: 500;
+  color: #454545;
   text-transform: underline;
   transition: 0.3s ease-in-out;
   position: relative;
@@ -30,10 +29,10 @@
   width: 40px;
   height: 40px;
   transform: translate(-50%, -50%);
-  background-color: red;
   z-index: -1;
   border-radius: 100px;
-  background: var(--light-tertiary);
+  background: var(--dark-content);
+  opacity: 0.1;
 }
 
 .menuItem:hover {
@@ -60,9 +59,10 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding-left: 4rem;
+  padding-right: 4rem;
   height: 12vh;
+  z-index: 12;
 }
 
 .mobileNavBarHeader {
@@ -73,13 +73,37 @@
   height: 80px;
   padding-left: 4px;
 }
+.starknetId {
+  color: #454545;
+}
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
   .navbarContainer {
     height: 80px;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+@media (max-width: 800px) {
+  .navbarContainer {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
   .starknetIdLogo {
-    width: 72px;
+    width: 40px;
+    height: 72px;
+  }
+}
+
+@media (max-width: 425px) {
+  .navbarContainer {
+    height: 80px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .starknetIdLogo {
+    width: 40px;
     height: 72px;
   }
 }

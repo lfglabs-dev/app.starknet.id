@@ -6,6 +6,7 @@ type ButtonProps = {
   children: string | ReactNode;
   disabled?: boolean;
   variation?: string;
+  radius?: string; 
 };
 
 const Button: FunctionComponent<ButtonProps> = ({
@@ -13,12 +14,14 @@ const Button: FunctionComponent<ButtonProps> = ({
   onClick,
   disabled = false,
   variation = "primary",
+  radius,
 }) => {
   return (
     <button
       disabled={disabled}
       onClick={onClick}
       className={` ${styles["nq-button"]} ${styles[variation]}`}
+      style={radius ? { borderRadius: radius } : undefined}
     >
       {children}
     </button>

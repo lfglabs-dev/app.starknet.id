@@ -34,6 +34,7 @@ import { usePriceManagement } from "@/hooks/checkout/usePriceManagement";
 import { useCheckoutState } from "@/hooks/checkout/useCheckoutState";
 import { useRegisterTxPrep } from "@/hooks/checkout/useRegisterTxPrep";
 import { useRenewalTxPrep } from "@/hooks/checkout/useRenewalTxPrep";
+import CloseIcon from "@/components/UI/iconsComponents/icons/closeIcon";
 
 type CheckoutCardProps = {
   type: FormType;
@@ -237,17 +238,6 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
 
   return (
     <>
-      {formState.durationInYears === 1 ? (
-        <UpsellCard
-          upsellData={discount as Upsell}
-          enabled={formState.isUpselled}
-          onUpsellChoice={onUpsellChoice}
-          invalidBalance={invalidBalance}
-          hasUserSelectedOffer={hasUserSelectedOffer}
-          setHasUserSelectedOffer={setHasUserSelectedOffer}
-          loadingPrice={loadingPrice}
-        />
-      ) : null}
       {reducedDuration > 0 &&
         invalidBalance &&
         reducedDuration !== formState.durationInYears * 365 ? (
@@ -260,6 +250,17 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
       ) : null}
 
       <div className={styles.container}>
+        {formState.durationInYears === 1 ? (
+          <UpsellCard
+            upsellData={discount as Upsell}
+            enabled={formState.isUpselled}
+            onUpsellChoice={onUpsellChoice}
+            invalidBalance={invalidBalance}
+            hasUserSelectedOffer={hasUserSelectedOffer}
+            setHasUserSelectedOffer={setHasUserSelectedOffer}
+            loadingPrice={loadingPrice}
+          />
+        ) : null}
         <div className={styles.checkout}>
           <RegisterSummary
             priceInEth={
@@ -281,7 +282,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
             discountedPrice={discountedPrice}
             discountedPriceInEth={discountedPriceInEth}
           />
-          <Divider className="w-full" />
+          <Divider className={styles.divider} />
           <div className={styles.checkoutSummary}>
             <RegisterCheckboxes
               onChangeTermsBox={onChangeTermsBox}
@@ -297,26 +298,45 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
               displayedCurrency={displayedCurrency}
               maxPriceRange={maxPriceRange}
             />
-            <div>
-              <Button
-                onClick={() =>
-                  execute().then(() => {
-                    setDomainsMinting(formState.selectedDomains);
-                  })
-                }
-                disabled={
-                  domainsMinting === formState.selectedDomains ||
-                  !account ||
-                  !formState.durationInYears ||
-                  formState.durationInYears < 1 ||
-                  invalidBalance ||
-                  !termsBox
-                }
+            <div className={styles.checkoutButton}>
+              <div
+                className={(!termsBox || invalidBalance) ? "flex flex-col-reverse gap-2" : "flex gap-4"}
               >
-                {getButtonText()}
-              </Button>
+                <div className="flex sm:hidden">
+                  <div
+                    className={styles.cancelBtn}
+                    onClick={() => router.push("/")}
+                  >
+                    Cancel
+                  </div>
+                </div>
+                <Button
+                  onClick={() =>
+                    execute().then(() => {
+                      setDomainsMinting(formState.selectedDomains);
+                    })
+                  }
+                  disabled={
+                    domainsMinting === formState.selectedDomains ||
+                    !account ||
+                    !formState.durationInYears ||
+                    formState.durationInYears < 1 ||
+                    invalidBalance ||
+                    !termsBox
+                  }
+                >
+                  {getButtonText()}
+                </Button>
+              </div>
             </div>
           </div>
+        </div>
+        <div className={styles.closeIcon}>
+          <button
+            onClick={() => router.push("/")}
+          >
+            <CloseIcon />
+          </button>
         </div>
       </div>
       <Notification

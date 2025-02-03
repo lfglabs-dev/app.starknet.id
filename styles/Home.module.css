@@ -29,18 +29,18 @@
 
 .containerGallery {
   margin-top: 12vh;
-  min-height: 88vh;
+  min-height: 75vh;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  overflow-y: hidden;
 }
 
 .title {
   font-family: "QuickZap";
   font-size: 2.5rem;
   color: var(--primary);
-  text-shadow: 1px 1px var(--tertiary);
   text-transform: uppercase;
   text-align: center;
 }

@@ -21,15 +21,22 @@
   --primary: #19aa6e;
   --primary300: #dcf2e9;
   --primary600: #0c8654;
-  --secondary: #402d28;
+  --secondary: #454545;
   --secondary300: #eae0d5;
   --tertiary: #bf9e7b;
+  --tertiary-600: #ccb297;
   --light-tertiary: #f5f0eb;
-  --background: #fff9f0;
-  --background-light: #fffcf8;
+  --border-color: #cdcccc;
+  --background: #ffffff;
+  --background-light: #ffffff;
   --background-light300: #f8f7f7;
+  --background-white: #ffffff;
   --dark-content: #454545;
+  --content600: #8c8989;
   --negative: #d32f2f;
+  --black: #000000;
+  --identity-card-footer-text: #e2dfde;
+  --identity-card-border-color: #293e28;
   --nimiq-ease: cubic-bezier(0.25, 0, 0, 1);
   --small-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
   --large-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.1);
@@ -52,12 +59,11 @@ a {
   font-family: "QuickZap";
   font-size: 2.5rem;
   color: var(--secondary);
-  text-shadow: 1px 1px var(--tertiary);
   text-transform: uppercase;
 }
 
 .description {
-  color: var(--content-600, #8c8989);
+  color: var(--content600);
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
@@ -78,7 +84,7 @@ a {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #19aa6e50;
+  background: #402d28;
   border-radius: 10px;
 }
 
@@ -145,4 +151,13 @@ strong {
   .secondLeavesGroup {
     visibility: hidden;
   }
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
