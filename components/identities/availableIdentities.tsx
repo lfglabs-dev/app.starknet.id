@@ -169,7 +169,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
 
   return (
     <>
-      <div className="min-h-[80vh]">
+      <div className="min-h-[88vh]">
         {isIdentityADomain === undefined ? (
           <div>
             <IdentitiesSkeleton />
@@ -181,7 +181,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
             <div className=" w-[100%] sm:w-[358px] xl:w-[220px]">
               <div
                 className={`
-                         ${" border w-[100%] md:w-auto h-[319px] xl:h-auto"} ${
+                         ${"border w-[100%] md:w-auto h-[319px] xl:h-auto"} ${
                   styles.sideNav
                 } relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
               >
@@ -191,7 +191,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                       className={`${
                         domain.id === router.query.tokenId ||
                         domain.id === tokenId
-                          ? "text-[#402D28] hover:text-[#CDCCCC]"
+                          ? "text-[#402D28]"
                           : " text-[#CDCCCC] hover:text-[#402D28]"
                       } font-medium text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-full text-center xl:text-left`}
                       key={index}
@@ -202,7 +202,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                   ))}
                 </div>
                 <button
-                  className="  w-full justify-center text-center items-center font-quickZap font-normal min-h-[40px] py-5 flex gap-2 bg-white rounded-b-2xl"
+                  className="w-full justify-center text-center items-center font-quickZap font-normal min-h-[40px] py-5 flex gap-2 bg-white rounded-b-2xl"
                   onClick={
                     address
                       ? () => mint()
