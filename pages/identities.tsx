@@ -135,7 +135,9 @@ const Identities: NextPage = () => {
             </div>
           ) : (
             <div className="max-h-[88vh] xl:overflow-hidden hide-scrollbar">
-              <AvailableIdentities tokenId={ownedIdentities[0].id} />
+              {ownedIdentities.length + externalDomains.length > 1 ? (
+                <AvailableIdentities tokenId={ownedIdentities[0].id} />
+              ) : null}
             </div>
           )}
         </div>
