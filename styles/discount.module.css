@@ -3,7 +3,6 @@
   position: relative;
   margin-top: 12vh;
   overflow: auto;
-  padding-top: 2rem;
 }
 
 .wrapperScreen {
@@ -11,11 +10,12 @@
   flex-direction: column;
   width: 100%;
   justify-content: center;
-  height: calc(82vh - 2rem);
+  height: 82vh;
 }
 
 .container,
 .containerVariant {
+  margin-top: 2rem;
   display: flex;
   align-items: center;
   gap: 24px;

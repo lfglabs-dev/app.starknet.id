@@ -51,7 +51,7 @@ const Argent: NextPage = () => {
   return (
     <div className={styles.screen}>
       {!isArgent || !account ? (
-        <div className="flex flex-col items-center justify-center h-full">
+        <div className="flex flex-col items-center justify-center h-[82vh]">
           <div className="mb-10">
             <ArgentIcon width="150px" color="#FF875B" />
           </div>
