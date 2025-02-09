@@ -34,7 +34,8 @@ export default function useAllowanceCheck(
         erc20AllowanceRes["remaining"].high !== UINT_128_MAX)
     ) {
       setNeedsAllowance(true);
-      setCurrentAllowance(BigInt(erc20AllowanceRes["remaining"].low));
+      if (erc20AllowanceRes)
+        setCurrentAllowance(BigInt(erc20AllowanceRes["remaining"].low));
     } else {
       setNeedsAllowance(false);
       setCurrentAllowance(BigInt(0));

@@ -27,7 +27,7 @@ const DiscountOfferScreen: FunctionComponent<DiscountOfferScreenProps> = ({
   }
 
   return (
-    <div className={homeStyles.wrapperScreen}>
+    <div className={styles.wrapperScreen}>
       <div className={styles.container}>
         <div className={styles.illustrationContainer}>
           <img src={image} className={styles.illustration} />
