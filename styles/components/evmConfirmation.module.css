@@ -1,3 +1,6 @@
+.main {
+ background-color: #FCFFFE;
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -57,27 +60,33 @@
 
 .coconutLeft {
   position: fixed;
-  left: -150px;
-  bottom: -80px;
+  left: -10px;
+  bottom: 0;
   width: 390px;
   overflow: hidden;
 }
 
 .coconutRight {
   position: fixed;
-  right: -150px;
-  bottom: -80px;
+  right: -95px;
+  bottom: 0;
   width: 390px;
   overflow: hidden;
 }
 
-.discord {
-  position: fixed;
-  top: 100px;
-  left: 100px;
+.balloon {
+  position: absolute;
+  top: -65px;
+  left: -40px;
   width: 115px;
+  height: 115px;
   overflow: hidden;
   z-index: -1;
+}
+
+.titleContainer,
+.domainBtn {
+  position: relative;
 }
 
 .twitter {
@@ -108,11 +117,18 @@
 }
 
 .metamask {
-  position: fixed;
-  bottom: 220px;
-  right: 150px;
+  position: absolute;
+  bottom: 40px;
+  left: 500px;
+  height: 205px;
   width: 130px;
   overflow: hidden;
+}
+
+@media (max-width: 1300px) {
+  .metamask {
+    left: 400px;
+  }
 }
 
 @media (max-width: 1084px) {
@@ -124,16 +140,18 @@
     font-size: 30px;
     line-height: 46px;
   }
-  .coconutLeft,
-  .coconutRight {
-    display: none;
+  .coconutLeft {
+    left: -160px;
+    bottom: -40px;
   }
 
-  .discord {
-    top: 70px;
-    right: 10px;
-    left: auto;
-    width: 70px;
+  .coconutRight {
+    right: -210px;
+    bottom: -40px;
+  }
+
+  .balloon {
+    top: -100px;
   }
 
   .twitter {
@@ -155,7 +173,6 @@
   }
 
   .metamask {
-    bottom: -25px;
-    right: -25px;
+    display: none;
   }
 }

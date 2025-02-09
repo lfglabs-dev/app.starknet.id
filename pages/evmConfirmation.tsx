@@ -21,21 +21,12 @@ const EvmConfirmation: NextPage = () => {
   };
 
   return (
-    <>
+    <div className={styles.main}>
       <div className={styles.container}>
-        <div className={styles.discord}>
-          <img alt="discord icon" src="/ens/discord.svg" />
-        </div>
-        <div className={styles.twitter}>
-          <img alt="twitter icon" src="/ens/twitter.svg" />
-        </div>
-        <div className={styles.github}>
-          <img alt="github icon" src="/ens/github.svg" />
-        </div>
-        <div className={styles.profile}>
-          <img alt="profile icon" src="/ens/profile.svg" />
-        </div>
-        <div>
+        <div className={styles.titleContainer}>
+          <div className={styles.balloon}>
+            <img alt="floating ballon icon" src="/ens/baloon.svg" />
+          </div>
           <div className={styles.title}>
             You can now send money on your metamask with{" "}
             <span className={styles.highlight}>{domain}.sNid.ETH</span>
@@ -55,14 +46,14 @@ const EvmConfirmation: NextPage = () => {
           <Button onClick={redirectEns}>Go to your ENS domain</Button>
         </div>
 
-        <div>
+        <div className={styles.domainBtn}>
+          <div className={styles.metamask}>
+            <img alt="metamask icon" src="/ens/metamask.svg" />
+          </div>
           <div onClick={redirect} className={styles.backButton}>
             Back to your domain
           </div>
         </div>
-      </div>
-      <div className={styles.metamask}>
-        <img alt="metamask icon" src="/ens/metamask.svg" />
       </div>
       <div className={styles.coconutLeft}>
         <img alt="coconut tree" src="/register/coconutleft.webp" />
@@ -70,7 +61,7 @@ const EvmConfirmation: NextPage = () => {
       <div className={styles.coconutRight}>
         <img alt="coconut tree" src="/register/coconutright.webp" />
       </div>
-    </>
+    </div>
   );
 };
 
