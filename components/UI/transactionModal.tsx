@@ -66,8 +66,11 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
                 ></path>
               </svg>
             </button>
+            <div className ="w-[520px] ">
+
             <p className={styles.menu_title}>{title}</p>
             {modalContent}
+            </div>
             <div className="mt-5 flex justify-center">
               <Button disabled={isButtonDisabled} onClick={sendTransaction}>
                 {buttonCta}

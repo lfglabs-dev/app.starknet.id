@@ -89,7 +89,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
 
   const modalContent = (
     <>
-      <p className="mt-5">
+      <p className="mt-5 text-sm text-center text-[#8C8989] leading-6">
         An Identity is an NFT that everyone can mint for free that permits
         linking different types of data to it (Social Media, stark domain ...).
         This form enables you to send this identity to another wallet.
@@ -100,9 +100,24 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
           id="outlined-end-adornment"
           fullWidth
           value={addressInput}
-          variant="outlined"
+          // variant="outlined"
           onChange={(e) => changeAddress(e.target.value)}
           color="secondary"
+          sx={{
+            boxShadow: "0px 2px 30px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+            "& label": {
+              color: "#45454533", // Change label color
+              textAlign: "center", // Doesn't fully center but aligns text inside
+              width: "100%",
+            },
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": {
+                borderColor: "#45454533", // Change border color
+              },
+             
+            },
+          }}
           required
           InputProps={{
             endAdornment: (
@@ -131,7 +146,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
       sendTransaction={transferIdentityAndSetDomain}
       transactionHash={transferData?.transaction_hash}
       isButtonDisabled={!targetAddress}
-      buttonCta="Send domain"
+      buttonCta="set new address"
     />
   );
 };

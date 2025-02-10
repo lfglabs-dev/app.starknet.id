@@ -7,10 +7,11 @@
   transform: translate(-50%, -50%);
   border-radius: 20px;
   padding: 45px;
-  width: 700px;
+  width: 690px;
   min-height: 400px;
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-direction: column;
   z-index: 1000;
 }
@@ -42,7 +43,7 @@
 .menu_title {
   color: var(--brown);
   font-family: "QuickZap";
-  font-size: 21px;
+  font-size: 24px;
   font-weight: bold;
   text-align: center;
   z-index: 1000;
