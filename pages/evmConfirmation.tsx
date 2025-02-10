@@ -25,7 +25,7 @@ const EvmConfirmation: NextPage = () => {
       <div className={styles.container}>
         <div className={styles.titleContainer}>
           <div className={styles.balloon}>
-            <img alt="floating ballon icon" src="/ens/baloon.svg" />
+            <img alt="floating ballon icon" src="/visuals/balloon.webp" />
           </div>
           <div className={styles.title}>
             You can now send money on your metamask with{" "}
@@ -59,7 +59,7 @@ const EvmConfirmation: NextPage = () => {
         <img alt="coconut tree" src="/register/coconutleft.webp" />
       </div>
       <div className={styles.coconutRight}>
-        <img alt="coconut tree" src="/register/coconutright.webp" />
+        <img alt="coconut tree" src="/register/coconutright2.webp" />
       </div>
     </div>
   );

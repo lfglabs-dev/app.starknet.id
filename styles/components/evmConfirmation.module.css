@@ -62,16 +62,22 @@
   position: fixed;
   left: -10px;
   bottom: 0;
-  width: 390px;
+  width: 330px;
   overflow: hidden;
 }
 
 .coconutRight {
   position: fixed;
-  right: -95px;
+  right: 0;
   bottom: 0;
-  width: 390px;
+  width: 400px;
+  display: flex;
+  /* flex: 1 0 400px; */
   overflow: hidden;
+}
+
+.coconutLeft > img, .coconutRight > img {
+  width: 100%;
 }
 
 .balloon {
@@ -125,6 +131,16 @@
   overflow: hidden;
 }
 
+@media (max-width:1500px){
+  .coconutLeft{
+    width: 280px;
+  }
+  .coconutRight{
+    width: 330px;
+  }
+
+}
+
 @media (max-width: 1300px) {
   .metamask {
     left: 400px;
@@ -141,12 +157,12 @@
     line-height: 46px;
   }
   .coconutLeft {
-    left: -160px;
-    bottom: -40px;
+    left: -170px;
+    bottom: -110px;
   }
 
   .coconutRight {
-    right: -210px;
+    right: -170px;
     bottom: -40px;
   }
 
