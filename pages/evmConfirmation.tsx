@@ -23,18 +23,10 @@ const EvmConfirmation: NextPage = () => {
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.discord}>
-          <img alt="discord icon" src="/ens/discord.svg" />
+      <div className={styles.balloon}>
+          <img alt="balloon" src="/register/balloon.webp" />
         </div>
-        <div className={styles.twitter}>
-          <img alt="twitter icon" src="/ens/twitter.svg" />
-        </div>
-        <div className={styles.github}>
-          <img alt="github icon" src="/ens/github.svg" />
-        </div>
-        <div className={styles.profile}>
-          <img alt="profile icon" src="/ens/profile.svg" />
-        </div>
+       
         <div>
           <div className={styles.title}>
             You can now send money on your metamask with{" "}
@@ -44,10 +36,10 @@ const EvmConfirmation: NextPage = () => {
         <div>
           <div className={styles.description}>
             Your EVM address has been successfully linked to{" "}
-            <span className={styles.strong}>{domain}.snid.eth</span>. All EVM
+            <span className={styles.strong}>{domain}.SNID.ETH</span>. All EVM
             records in ENS now reflect this address. Additionally, we&apos;ve
             updated your profile with your{" "}
-            <span className={styles.strong}>PFP, GitHub, Twitter</span>, and
+            <span>PFP, GitHub, Twitter</span>, and
             other verified Starknet ID information
           </div>
         </div>
