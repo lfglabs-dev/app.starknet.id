@@ -2,8 +2,8 @@ export const argentDiscount = {
   offer: {
     duration: 365,
     customMessage: "-50% (with Argent discount)",
-    discountId: "0x617267656e745f6f6e655f646f6c6c6172",
-    price: "288493150684927",
+    discountId: "3",
+    price: "25849315068492700",
     desc: "Get your domain for half the price. Don't miss out on this exclusive opportunity only available with your Argent wallet!",
     title: { desc: "Mint your domain", catch: "-50% discount" },
     image: "/argent/argentdiscount.webp",
