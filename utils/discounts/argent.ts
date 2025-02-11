@@ -11,5 +11,5 @@ export const argentDiscount = {
   name: "Argent -50% domain",
   image: "/argent/argentdiscount.webp",
   expiry: 1770207266000, // timestamp in ms
-  sponsor: "0x64d28d1d1d53a0b5de12e3678699bc9ba32c1cb19ce1c048578581ebb7f8396",
+  sponsor: "0",
 };
