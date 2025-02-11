@@ -8,6 +8,7 @@ import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import TransactionModal from "@/components/UI/transactionModal";
+import { CustomTextField } from "@/components/UI/CustomTextField";
 
 type ChangeAddressModalProps = {
   handleClose: () => void;
@@ -34,10 +35,10 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
     useSendTransaction({
       calls: identity
         ? identityChangeCalls.setStarknetAddress(
-            identity,
-            hexToDecimal(targetAddress),
-            callDataEncodedDomain
-          )
+          identity,
+          hexToDecimal(targetAddress),
+          callDataEncodedDomain
+        )
         : [],
     });
 
@@ -75,25 +76,23 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   const modalContent = (
     <div className="mt-5 flex flex-col justify-center">
       {currentTargetAddress && (
-        <p>
+       <p className="font-normal text-sm leading-6 tracking-normal text-[#8C8989] text-center" style={{ fontFamily: 'Poppins-Regular, sans-serif' }}>
           A stark domain resolves to a Starknet address, the current target
           address of {identity?.domain} is{" "}
-          <strong>{minifyAddress(currentTargetAddress)}</strong>. You can change
+          <strong className="font-bold text-[#454545]">{minifyAddress(currentTargetAddress)}</strong>. You can change
           it by using this form.
         </p>
       )}
       <div className="mt-5">
-        <TextField
-          helperText="You need to copy paste a wallet address or it won't work"
-          fullWidth
-          label="new target address"
+        <CustomTextField 
+        fullWidth
           id="outlined-basic"
-          value={targetAddress ?? address}
+          placeholder="new target address"
           variant="outlined"
           onChange={(e) => changeAddress(e.target.value)}
-          color="secondary"
-          required
-        />
+          value={targetAddress ?? address}
+          helperText="You need to copy paste a wallet address or it won't work"
+          required />
       </div>
     </div>
   );

@@ -69,7 +69,7 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
             <p className={styles.menu_title}>{title}</p>
             {modalContent}
             <div className="mt-5 flex justify-center">
-              <Button disabled={isButtonDisabled} onClick={sendTransaction}>
+              <Button disabled={isButtonDisabled} onClick={sendTransaction} className="!w-[30%] !text-sm">
                 {buttonCta}
               </Button>
             </div>
