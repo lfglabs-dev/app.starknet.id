@@ -7,7 +7,9 @@ import theme from "../../styles/theme";
 import { useRouter } from "next/router";
 
 const SelectedCollections: FunctionComponent = () => {
+
   const router = useRouter();
+  
   return (
     <>
       <div className={styles.nftCollectionWraper}>
@@ -16,7 +18,8 @@ const SelectedCollections: FunctionComponent = () => {
             <div
               className={styles.nftCollectionCard}
               key={index}
-              onClick={() => window.open(collection.externalLink)}>
+              onClick={() => window.open(collection.externalLink)}
+            >
               <div
                 style={{ backgroundImage: `url(${collection.imageUri})` }}
                 className={styles.nftCollectionImg}
@@ -35,7 +38,7 @@ const SelectedCollections: FunctionComponent = () => {
           onClick={() => window.open("https://unframed.co/")}
           width="auto"
         />
-          <div className="">
+         <div className="">
             <div className={styles.cancelBtn} onClick={() => router.push("/")}>
               Cancel
             </div>
