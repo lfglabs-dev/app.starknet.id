@@ -92,10 +92,6 @@ const Argent: NextPage = () => {
                 customMessage={argentDiscount.offer.customMessage}
                 goBack={goBack}
                 priceInEth={BigInt(argentDiscount.offer.price)}
-                mailGroups={[
-                  process.env.NEXT_PUBLIC_MAILING_LIST_GROUP ?? "",
-                  argentDiscount.discountMailGroupId,
-                ]}
                 sponsor={argentDiscount.sponsor}
               />
             </div>

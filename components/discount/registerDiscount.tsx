@@ -44,7 +44,6 @@ type RegisterDiscountProps = {
   discountId: string;
   customMessage: string;
   priceInEth: bigint;
-  mailGroups: string[];
   goBack: () => void;
   sponsor?: string;
 };
@@ -55,7 +54,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   discountId,
   customMessage,
   priceInEth,
-  mailGroups,
   goBack,
   sponsor = "0",
 }) => {
@@ -286,8 +284,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         meta_hash: metadataHash,
-        email: "none",
-        groups: mailGroups, // Domain Owner group
         tax_state: isSwissResident ? "switzerland" : "none",
         salt: salt,
       }),
