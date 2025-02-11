@@ -1,7 +1,6 @@
 import React, { FunctionComponent, ReactNode } from "react";
-import InfoIcon from "./iconsComponents/icons/infoIcon";
 import StyledToolTip from "./styledTooltip";
-import theme from "../../styles/theme";
+
 
 type InputHelperProps = {
   children: ReactNode;
@@ -24,10 +23,7 @@ const InputHelper: FunctionComponent<InputHelperProps> = ({
           placement="top"
         >
           <div className="absolute top-1/2 -translate-y-1/2 right-2">
-            <InfoIcon
-              width="20px"
-              color={error ? "red" : theme.palette.grey[800]}
-            />
+            
           </div>
         </StyledToolTip>
       ) : null}

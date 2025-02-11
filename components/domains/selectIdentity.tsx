@@ -23,7 +23,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
   const { account } = useAccount();
   const [ownedIdentities, setOwnedIdentities] = useState<number[] | []>([]);
   const matches = useMediaQuery("(max-width: 1084px)");
-  const defaultText = matches ? "Mint a new one" : "Mint a new Starknet ID";
+  const defaultText = matches ? "Mint a new one" : "Mint a new starknet id";
 
   useEffect(() => {
     if (account) {
@@ -45,7 +45,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex my-1">
+      <div className="grid place-content-center my-2 ">
         <p className={textFieldStyles.legend}>
           {matches
             ? "Select an identity*"
@@ -68,7 +68,9 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "#ffffff"
+              backgroundColor: "#ffffff",
+              textAlign: 'center'
+
             },
             "& .css-10hburv-MuiTypography-root": {
               display: "flex",
@@ -77,10 +79,20 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
             },
             "& .css-cveggr-MuiListItemIcon-root": {
               minWidth: "40px",
+              display: "flex",
+              alignItems: "center",
+              
+            },
+           
+            "& .MuiListItemText-root": {
+              textAlign: "center",
+              justifyContent: "center",
+              display: "flex",
             },
           }}
         >
           <MenuItem value={0}>
+          <div className="flex gap-2">
             <ListItemIcon>
               <img
                 width={"30px"}
@@ -89,6 +101,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
               />
             </ListItemIcon>
             <ListItemText primary={defaultText} />
+            </div>
           </MenuItem>
           {ownedIdentities.map((tokenId: number, index: number) => (
             <MenuItem key={index} value={tokenId}>

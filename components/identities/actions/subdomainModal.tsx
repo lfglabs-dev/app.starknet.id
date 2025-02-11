@@ -113,12 +113,14 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
 
   const modalContent = (
     <>
-      <p className="mt-5">
+    <div className="bg-[#FCFFFE]">
+      <p className="mt-5 text-center text-[#8C8989]">
         As you own {domain} you can create a subdomain of it using this form.
         This subdomain won&apos;t have any expiry date but the owner of the
         parent domain will always be able to redeem it.
       </p>
-      <div className="mt-5 flex flex-col justify-center">
+      </div>
+      <div className="mt-5 flex flex-col justify-center w-full bg-[#FCFFFE]">
         <TextField
           fullWidth
           id="outlined-basic"
@@ -126,15 +128,27 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             isDomainValid !== true
               ? `"${isDomainValid}" is not a valid character`
               : "Subdomain"
+              
           }
           placeholder="Subdomain"
           variant="outlined"
           onChange={(e) => changeSubdomain(e.target.value)}
           color="secondary"
-          required
           error={isDomainValid !== true}
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              textAlign: "center",
+              "& input": {
+                textAlign: "center",
+                padding: "15px 0",
+                color:"#454545 10%",
+              },
+            },
+          }}
         />
+        <div className="mt-6">
         <SelectIdentity tokenId={targetTokenId} changeTokenId={changeTokenId} />
+        </div>
       </div>
     </>
   );
