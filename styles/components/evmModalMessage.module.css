@@ -42,16 +42,17 @@
 .menu_title {
   color: #454545;
   font-family: "QuickZap";
-  font-size: 30px;
-  font-weight: bold;
+  font-size: 24px;
+  font-weight: 400;
   text-align: center;
 }
 
 .menu_subtitle {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 20px;
   text-align: center;
+  color: "#8c8989";
 }
 
 .infoCard {
@@ -63,26 +64,34 @@
   border-radius: 20px;
   background: var(--background-light);
   box-shadow: 0px 2px 30px 0px #0000000f;
-  margin-top: 24px;
+  margin-top: 0px;
 }
 
 .cardTitle {
   color: #454545;
-  font-family: "QuickZap";
-  font-size: 21px;
+  font-family: "Poppins-Bold";
+  font-size: 18px;
+  line-height: 24px;
   font-weight: bold;
   margin-bottom: 12px;
 }
 
 .cardDesc {
-  color: var(--content-600);
+  color: var(--content600);
   font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  font-family: "Poppins-Regular";
 }
 
 .cardImg {
   width: 100%;
   height: auto;
   max-width: 250px;
+}
+
+.cardInput {
+  @apply !bg-white h-[68px] w-full text-center border border-[#4545451A]/20 rounded-lg shadow-sm placeholder:text-[#454545]/20 p-5;
 }
 
 @media (max-width: 850px) {
@@ -105,8 +114,8 @@
 
 @media (max-width: 625px) {
   .menu {
-    width: 320px;
-    padding: 30px;
+    width: 95%;
+    padding: 16px;
   }
 
   .menu_title {
