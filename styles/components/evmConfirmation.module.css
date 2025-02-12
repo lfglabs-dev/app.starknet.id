@@ -82,7 +82,7 @@
 
 .balloon {
   position: absolute;
-  top: -65px;
+  top: -75px;
   left: -40px;
   width: 115px;
   height: 115px;
@@ -190,5 +190,48 @@
 
   .metamask {
     display: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .coconutLeft {
+    left: -110px;
+    width: 200px;
+  }
+
+  .coconutRight {
+    width: 200px;
+    right: -100px;
+  }
+
+  .balloon {
+    top: -70px;
+    left: -20px;
+    width: 80px;
+  }
+}
+
+@media (max-width: 320px) {
+  .balloon {
+    top: -50px;
+    left: -10px;
+    width: 60px;
+  }
+}
+
+@media (max-height: 700px) {
+  .container {
+    height: calc(100vh - 50px);
+  }
+  .title {
+    font-size: 1.6rem;
+    line-height: 1.5rem;
+  }
+  .description {
+    font-size: 14px;
+    line-height: 24px;
+  }
+  .balloon{
+    top: -80px;
   }
 }
