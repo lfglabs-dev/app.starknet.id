@@ -66,7 +66,7 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
                 ></path>
               </svg>
             </button>
-            <div className ="w-[520px] ">
+            <div className ="lg:w-[520px]  ">
 
             <p className={styles.menu_title}>{title}</p>
             {modalContent}

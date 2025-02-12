@@ -51,7 +51,7 @@
 
 @media (max-width: 1024px) {
   .menu {
-    width: 320px;
+    width: 420px;
     padding: 30px;
     height: auto;
   }
@@ -60,4 +60,12 @@
     font-size: 19px;
     margin: -7px -2px 2px;
   }
+}
+@media (max-width: 430px) {
+  .menu {
+    width: 320px;
+   
+  }
+
+
 }

@@ -89,7 +89,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
 
   const modalContent = (
     <>
-      <p className="mt-5 text-sm text-center text-[#8C8989] leading-6">
+      <p className="mt-5 md:text-sm text-xs text-center text-[#8C8989] md:leading-6">
         An Identity is an NFT that everyone can mint for free that permits
         linking different types of data to it (Social Media, stark domain ...).
         This form enables you to send this identity to another wallet.
@@ -107,15 +107,28 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
             boxShadow: "0px 2px 30px rgba(0, 0, 0, 0.1)",
             borderRadius: "8px",
             "& label": {
-              color: "#45454533", // Change label color
-              textAlign: "center", // Doesn't fully center but aligns text inside
-              width: "100%",
+              color: "#45454533",
+              left: "50%",  
+              top: "50%",  
+              transform: "translate(-50%, -50%)", 
+              transition: "all 0.2s ease-in-out",
+              position: "absolute", 
+              pointerEvents: "none", 
+              
+            },
+            "& .MuiInputLabel-root": {
+              left: "50%",  
+              transform: "translate(-50%, -50%)",
+            },
+            "& .MuiInputLabel-shrink": {
+              left: "10px",
+              top: "0px", 
+              transform: "translate(0, -8px) scale(0.75) !important", 
             },
             "& .MuiOutlinedInput-root": {
               "& fieldset": {
-                borderColor: "#45454533", // Change border color
+                borderColor: "#45454533",
               },
-             
             },
           }}
           required
