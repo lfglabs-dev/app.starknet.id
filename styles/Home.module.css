@@ -3,12 +3,16 @@
   position: relative;
   margin-top: 12vh;
   overflow: auto;
+  display: flex;
+  justify-content: center;
 }
 
 .wrapperScreen {
   display: inline-flex;
   flex-direction: column;
   width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
   justify-content: center;
   height: calc(100% - 12vh);
 }

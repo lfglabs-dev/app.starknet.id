@@ -3,10 +3,7 @@ import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { utils } from "starknetid.js";
-import {
-  formatHexString,
-  getDomainWithStark,
-} from "../../utils/stringService";
+import { formatHexString, getDomainWithStark } from "../../utils/stringService";
 import { applyRateToBigInt, hexToDecimal } from "../../utils/feltService";
 import { useDisplayName } from "../../hooks/displayName.tsx";
 import { Call } from "starknet";
@@ -47,7 +44,6 @@ type RegisterDiscountProps = {
   discountId: string;
   customMessage: string;
   priceInEth: bigint;
-  mailGroups: string[];
   goBack: () => void;
   sponsor?: string;
 };
@@ -58,7 +54,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   discountId,
   customMessage,
   priceInEth,
-  mailGroups,
   goBack,
   sponsor = "0",
 }) => {
@@ -97,7 +92,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
 
   // on first load, we generate a salt
   useEffect(() => {
-    setSalt(generateSalt());
+    const generated = generateSalt();
+    setSalt(generated);
   }, []);
 
   // we update compute the purchase metadata hash
@@ -171,6 +167,7 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
   // Set Register Multicall
   useEffect(() => {
     if (displayedCurrency !== CurrencyType.ETH && !quoteData) return;
+    if (!metadataHash) return;
     // Variables
     const newTokenId: number = Math.floor(Math.random() * 1000000000000);
     const txMetadataHash = ("0x" + metadataHash) as HexString;
@@ -287,8 +284,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         meta_hash: metadataHash,
-        email: "none",
-        groups: mailGroups, // Domain Owner group
         tax_state: isSwissResident ? "switzerland" : "none",
         salt: salt,
       }),
@@ -317,7 +312,6 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
     router.push(`/confirmation?tokenId=${tokenIdRedirect}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerData]); // We want to execute this only once after the tx is sent
-
 
   useEffect(() => {
     if (isSwissResident) {
@@ -401,8 +395,8 @@ const RegisterDiscount: FunctionComponent<RegisterDiscountProps> = ({
               {!termsBox
                 ? "Please accept terms & policies"
                 : invalidBalance
-                  ? `You don't have enough ${displayedCurrency}`
-                  : "Register my domain"}
+                ? `You don't have enough ${displayedCurrency}`
+                : "Register my domain"}
             </Button>
           ) : (
             <ConnectButton />
