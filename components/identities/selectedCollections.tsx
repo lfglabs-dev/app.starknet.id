@@ -33,7 +33,8 @@ const SelectedCollections: FunctionComponent = () => {
         <ClickableAction
           title="Get your NFT"
           icon={
-            <ArrowRightIcon width="25" color={theme.palette.secondary.main} />
+      <ArrowRightIcon width="25" color={theme.palette.secondary.main} />
+
           }
           onClick={() => window.open("https://unframed.co/")}
           width="auto"
