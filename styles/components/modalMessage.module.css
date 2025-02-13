@@ -41,9 +41,9 @@
 }
 
 .menu_title {
-  color: var(--brown);
+  color: #454545;
   font-family: "QuickZap";
-  font-size: 21px;
+  font-size: 24px;
   font-weight: bold;
   text-align: center;
   z-index: 1000;

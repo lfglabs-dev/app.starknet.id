@@ -52,7 +52,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
             : "Select an identity to link with your domain*"}
         </p>
       </div>
-      <InputHelper helperText="check how to mint a new token">
+      <InputHelper >
         <Select
           fullWidth
           value={tokenId}
