@@ -38,7 +38,7 @@ const EvmConfirmation: NextPage = () => {
             <span className={styles.strong}>{domain}.snid.eth</span>. All EVM
             records in ENS now reflect this address. Additionally, we&apos;ve
             updated your profile with your{" "}
-            <span className={styles.strong}>PFP, GitHub, Twitter</span>, and
+            <span>PFP, GitHub, Twitter</span>, and
             other verified Starknet ID information
           </div>
         </div>
