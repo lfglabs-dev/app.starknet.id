@@ -1,3 +1,9 @@
+.sharedGalleryStyles {
+  --shared-spacing: 0 40px 20px;
+  --shared-padding: 32px 64px;
+  --border-radius-lg: 20px;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -22,21 +28,22 @@
 }
 
 .gallery {
-  margin: 0 40px 20px;
-  border-radius: 20px;
   background: #fffcf8;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+
+  margin: var(--shared-spacing);
+  border-radius: var(--border-radius-lg);
+  padding: var(--shared-padding);
   width: -webkit-fill-available;
-  padding: 32px 64px;
   text-align: left;
 }
 
 .noNfts {
-  margin: 0 40px 20px;
-  border-radius: 20px;
+  margin: var(--shared-spacing);
+  border-radius: var(--border-radius-lg);
+  padding: var(--shared-padding);
   width: -webkit-fill-available;
-  padding: 32px 64px;
-  text-align: left;
+  text-align: center;
 }
 
 .subtitle {
@@ -52,7 +59,7 @@
 .title {
   color: #454545;
   font-family: "QuickZap";
-  font-size: 30px;
+  font-size: 36px;
   font-style: normal;
   font-weight: 400;
   line-height: 32px; /* 106.667% */
@@ -259,6 +266,10 @@
 }
 
 @media (max-width: 768px) {
+  .noNfts {
+    padding: 30px 20px;
+  }
+
   .title {
     font-size: 24px;
     text-align: center;

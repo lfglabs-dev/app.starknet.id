@@ -40,19 +40,17 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     }
   };
 
+  const hasNoNfts = userNfts.length === 0;
+
   return (
     <>
       <div className={styles.container}>
-        {userNfts.length > 0 && (
+        {!hasNoNfts && (
           <div className={styles.arrows}>
             <BackButton onClick={() => back()} />
           </div>
         )}
-        <div
-          className={` ${
-            userNfts.length === 0 ? styles.noNfts : styles.gallery
-          }`}
-        >
+        <div className={` ${hasNoNfts ? styles.noNfts : styles.gallery}`}>
           <PfpGallery
             selectPfp={selectPfp}
             selectedPfp={selectedPfp}
@@ -61,7 +59,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
           />
         </div>
 
-        {userNfts.length > 0 && (
+        {!hasNoNfts && (
           <div className={styles.gallery}>
             <p className={styles.subtitle}>Get a new Profile Pic</p>
             <h2 className={styles.title}>Our NFT Collections selection</h2>
