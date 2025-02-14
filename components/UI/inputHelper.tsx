@@ -1,5 +1,5 @@
 import React, { FunctionComponent, ReactNode } from "react";
-import StyledToolTip from "./styledTooltip";
+
 
 type InputHelperProps = {
   children: ReactNode;
@@ -15,10 +15,10 @@ const InputHelper: FunctionComponent<InputHelperProps> = ({
     <div className="relative">
       {children}
       {helperText && (
-        <StyledToolTip className="cursor-pointer" title={helperText} placement="top" >
-          <> </>
-        </StyledToolTip>
-      )}
+       <div className="text-sm text-gray-500 mt-1">         
+       {helperText}
+      </div>
+    )}
     </div>
   );
 };
