@@ -16,7 +16,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 3px 15px 3px 0px;
+  padding: 3px 20px 3px 5px;
   width: 358px;
   background: radial-gradient(
     382.53% 14823.28% at 46.39% 50%,
@@ -143,7 +143,7 @@
 @media (max-width: 1024px) {
   .clickableActionPrimary,
   .clickableActionSecondary {
-    width: 100%;
+    width: fit-content;
   }
 }
 
@@ -152,6 +152,6 @@
     margin: 35px 0;
   }
   .identityActions {
-    width: 100%;
+    width: fit-content;
   }
 }
