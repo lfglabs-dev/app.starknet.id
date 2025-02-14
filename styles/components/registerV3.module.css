@@ -140,6 +140,9 @@
   line-height: 28px;
   color: #454545;
   cursor: pointer;
+  .xl\:hidden {
+    display: block;
+  }
 }
 
 .checkout {
