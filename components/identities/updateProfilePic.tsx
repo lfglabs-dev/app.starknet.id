@@ -43,10 +43,16 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.arrows}>
-          <BackButton onClick={() => back()} />
-        </div>
-        <div className={styles.gallery}>
+        {userNfts.length > 0 && (
+          <div className={styles.arrows}>
+            <BackButton onClick={() => back()} />
+          </div>
+        )}
+        <div
+          className={` ${
+            userNfts.length === 0 ? styles.noNfts : styles.gallery
+          }`}
+        >
           <PfpGallery
             selectPfp={selectPfp}
             selectedPfp={selectedPfp}
@@ -54,11 +60,14 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
             isLoading={isLoading}
           />
         </div>
-        <div className={styles.gallery}>
-          <p className={styles.subtitle}>Get a new Profile Pic</p>
-          <h2 className={styles.title}>Our NFT Collections selection</h2>
-          <SelectedCollections />
-        </div>
+
+        {userNfts.length > 0 && (
+          <div className={styles.gallery}>
+            <p className={styles.subtitle}>Get a new Profile Pic</p>
+            <h2 className={styles.title}>Our NFT Collections selection</h2>
+            <SelectedCollections />
+          </div>
+        )}
       </div>
       <ModalProfilePic
         isModalOpen={openModal}
