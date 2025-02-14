@@ -68,10 +68,21 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
             </button>
             <p className={styles.menu_title}>{title}</p>
             {modalContent}
-            <div className="mt-5 flex justify-center">
-              <Button disabled={isButtonDisabled} onClick={sendTransaction} className="!w-[30%] !text-sm">
+            <div className="flex flex-col gap-4">
+              <Button 
+                disabled={isButtonDisabled} 
+                onClick={sendTransaction} 
+                className="!w-[10rem] !h-[2.75rem] !mx-auto !text-sm !whitespace-nowrap !text-center"
+              >
                 {buttonCta}
               </Button>
+
+              <button
+                className="lg:hidden text-[#454545] text-center font-quickZap"
+                onClick={() => closeModal()}
+              >
+                Close
+              </button>
             </div>
           </div>
         )}

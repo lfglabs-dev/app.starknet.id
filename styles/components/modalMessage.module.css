@@ -59,4 +59,8 @@
     font-size: 19px;
     margin: -7px -2px 2px;
   }
+  .menu_close {
+    display: none;
+  }
+
 }
