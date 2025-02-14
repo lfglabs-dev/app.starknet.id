@@ -137,6 +137,9 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
           error={isDomainValid !== true}
           sx={{
             "& .MuiOutlinedInput-root": {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
               textAlign: "center",
               "& input": {
                 textAlign: "center",
@@ -144,6 +147,21 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
                 color:"#454545 10%",
               },
             },
+            "& .MuiInputLabel-root": {
+              width: "100%",
+              textAlign: "center",
+              left: "50%",
+              transform: "translateX(-50%)",
+              marginTop:'10px'
+            },
+            "& .MuiInputLabel-shrink": {
+              left: "auto",
+              transform: "none",
+              textAlign: "center",
+            },
+          }}
+          inputProps={{
+            style: { textAlign: "center" }, 
           }}
         />
         <div className="mt-6">
