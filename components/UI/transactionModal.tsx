@@ -78,10 +78,10 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
               </Button>
 
               <button
-                className="lg:hidden text-[#454545] text-center font-quickZap"
+                className="lg:hidden text-[#454545] text-center lg:text-sm text-xs font-quickZap"
                 onClick={() => closeModal()}
               >
-                Close
+                Cancel
               </button>
             </div>
           </div>

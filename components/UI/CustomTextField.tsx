@@ -67,5 +67,15 @@ export const CustomTextField = styled(TextField)(({ theme }) => ({
         letterSpacing: "0.2px",
       },
     },
+    "& .MuiFormHelperText-root": {
+      fontFamily: "Poppins-Regular",
+      fontWeight: "300",
+      fontSize: "10px",
+      lineHeight: "20px",
+      letterSpacing: "0%",
+      textAlign: "center",
+      color: "#454545",
+      padding: "5px 0",
+    },
   },
 }));
