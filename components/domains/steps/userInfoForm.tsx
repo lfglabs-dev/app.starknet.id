@@ -146,18 +146,20 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
               color="secondary"
               required
             />
-            {type === FormType.RENEW ? (
-              <RenewalDomainsBox
-                helperText="Check the box of the domains you want to renew"
-                setSelectedDomains={setSelectedDomains}
-                selectedDomains={formState.selectedDomains}
-              />
-            ) : null}
+            <div className="w-full">
+              {type === FormType.RENEW ? (
+                <RenewalDomainsBox
+                  helperText="Check the box of the domains you want to renew"
+                  setSelectedDomains={setSelectedDomains}
+                  selectedDomains={formState.selectedDomains}
+                />
+              ) : null}
+            </div>
           </div>
         </div>
         <div className={styles.summary}>
           <div className="flex justify-between gap-8">
-          <div onClick={handleClose} className={styles.cancelBtn}>
+          <div onClick={handleClose} className={`${styles.cancelBtn} xl:hidden`}>
     Cancel
   </div>
             {address ? (
