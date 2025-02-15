@@ -140,9 +140,6 @@
   line-height: 28px;
   color: #454545;
   cursor: pointer;
-  .xl\:hidden {
-    display: block;
-  }
 }
 
 .checkout {
@@ -167,12 +164,12 @@
 .checkoutButton {
   width: 100%;
   display: flex;
-  justify-content: center
+  justify-content: center;
 }
 
 .divider {
   width: 100%;
-  border-color: var(--background-light300)
+  border-color: var(--background-light300);
 }
 
 .pricesSummary {
@@ -255,13 +252,13 @@
 }
 
 .purchaseStepNav {
-  display: none; 
+  display: none;
 }
 
 .purchaseStepNavMobile {
   display: block;
   background-color: white;
-  border: 1px solid #4545451A;
+  border: 1px solid #4545451a;
   border-radius: 16px;
   overflow: hidden;
   margin-left: auto;
@@ -273,16 +270,16 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 200px; 
-    flex-shrink: 0; 
+    width: 200px;
+    flex-shrink: 0;
     background-color: white;
-    border: 1px solid #4545451A;
+    border: 1px solid #4545451a;
     border-radius: 16px;
     overflow: hidden;
   }
 
   .purchaseStepNavMobile {
-    display: none; 
+    display: none;
   }
 
   .step {
@@ -310,18 +307,18 @@
 }
 
 .passedStep {
-  color: var(--primary); 
+  color: var(--primary);
   font-weight: 500;
 }
 
 .activeStep {
-  color: var(--secondary); 
+  color: var(--secondary);
   font-weight: 700;
   font-family: "Poppins-Bold";
 }
 
 .disabledStep {
-  color: var(--border-color); 
+  color: var(--border-color);
   cursor: not-allowed;
 }
 
@@ -368,7 +365,7 @@
   .container {
     padding: 0px 120px;
   }
-  
+
   .pfpBtns {
     margin-top: 18px;
     display: flex;
@@ -376,15 +373,12 @@
     max-width: 100%;
   }
 
-
-
   .stepsContainer {
-  flex-direction: column;
-}
+    flex-direction: column;
+  }
 }
 
 @media (max-width: 1280px) {
-
   .image {
     visibility: hidden;
   }
@@ -417,8 +411,7 @@
   .pfpGallery {
     padding: 0px 0px 20px 0px;
 
-      height: 0px;
-
+    height: 0px;
   }
 
   .pfpBtns {
@@ -431,7 +424,6 @@
 
   .checkout {
     padding: 0px 0px 20px 0px;
-
   }
 
   .step {
@@ -448,11 +440,9 @@
   .closeIcon {
     display: none;
   }
-
 }
 
 @media screen and (max-width: 768px) {
-  
   .container {
     padding: 0px 32px;
   }
@@ -468,11 +458,11 @@
   .passedStep {
     padding: 5px;
   }
-  
+
   .activeStep {
     padding: 5px;
   }
-  
+
   .disabledStep {
     padding: 5px;
   }
@@ -494,7 +484,6 @@
   .cancelBtn {
     font-size: 14px;
   }
-
 }
 
 @media screen and (max-width: 640px) {
@@ -513,8 +502,6 @@
   .divider {
     display: none;
   }
-  
-
 }
 
 @media screen and (max-width: 400px) {
@@ -534,15 +521,14 @@
   .passedStep {
     padding: 0px;
   }
-  
+
   .activeStep {
     padding: 0px;
   }
-  
+
   .disabledStep {
     padding: 0px;
   }
-  
 }
 
 @media screen and (max-width: 350px) {
@@ -557,15 +543,15 @@
   .stepsContainer {
     gap: 3px;
   }
-  
+
   .passedStep {
     padding: 0px;
   }
-  
+
   .activeStep {
     padding: 0px;
   }
-  
+
   .disabledStep {
     padding: 0px;
   }
