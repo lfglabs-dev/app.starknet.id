@@ -29,17 +29,11 @@ const ClickableAction: FunctionComponent<ClickableActionProps> = ({
         ${width === "auto" ? styles.clickableActionAutoWidth : ""}`}
       onClick={onClick}
     >
-      <div
-        className={
-          style === "secondary"
-            ? styles.clickableIconSecondary
-            : styles.clickableIconPrimary
-        }
-      >
+      <div>
         {icon}
       </div>
 
-      <div className="ml-2">
+      <div>
         <h1 className={styles.clickableActionTitle}>{title}</h1>
         <p className={styles.clickableActionDescription}>{description}</p>
       </div>
