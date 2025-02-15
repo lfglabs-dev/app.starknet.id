@@ -50,7 +50,7 @@
 @media (max-width: 1024px) {
   .menu {
     width: 320px;
-    padding: 30px;
+    padding: 48px 30px;
     height: auto;
   }
 
