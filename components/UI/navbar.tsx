@@ -94,7 +94,8 @@ const Navbar: FunctionComponent = () => {
       // Restart the connection if there is an error except if the user has rejected the connection
       console.error(e);
       const error = e as Error;
-      if (error.name !== "UserRejectedRequestError") connectWallet(connector);
+      if (error.name !== "UserRejectedRequestError")
+        setTimeout(() => connectWallet(connector), 200);
     }
   };
 
@@ -165,10 +166,18 @@ const Navbar: FunctionComponent = () => {
                 className={styles.starknetIdLogo}
                 src="/visuals/MbLogo.svg"
                 alt="Starknet.id Logo"
-                width={ isMobile ? 40 :40}
-                height={isMobile ?  40 :90}
+                width={isMobile ? 40 : 40}
+                height={isMobile ? 40 : 90}
               />
-              <p className={`${styles.starknetId} text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${isMobile ? "hidden": "block"}`}>StarkNet ID</p>
+              <p
+                className={`${
+                  styles.starknetId
+                } text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${
+                  isMobile ? "hidden" : "block"
+                }`}
+              >
+                StarkNet ID
+              </p>
             </Link>
           </div>
           <div>
@@ -285,7 +294,7 @@ const Navbar: FunctionComponent = () => {
           >
             <div className="h-full flex flex-col">
               <div className={styles.mobileNavBarHeader}>
-                <div  className="flex gap-2 items-center">
+                <div className="flex gap-2 items-center">
                   <Link href="/" className="cursor-pointer">
                     <img
                       className={styles.starknetIdLogo}
@@ -295,7 +304,15 @@ const Navbar: FunctionComponent = () => {
                       height={30}
                     />
                   </Link>
-                  <p className={`${styles.starknetId} text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${isMobile ? "hidden": "block"}`}>StarkNet ID</p>
+                  <p
+                    className={`${
+                      styles.starknetId
+                    } text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${
+                      isMobile ? "hidden" : "block"
+                    }`}
+                  >
+                    StarkNet ID
+                  </p>
                 </div>
 
                 <div
