@@ -113,12 +113,12 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
 
   const modalContent = (
     <>
-    <div className="bg-[#FCFFFE]">
-      <p className="mt-5 text-center text-[#8C8989]">
-        As you own {domain} you can create a subdomain of it using this form.
-        This subdomain won&apos;t have any expiry date but the owner of the
-        parent domain will always be able to redeem it.
-      </p>
+      <div className="bg-[#FCFFFE]">
+        <p className="mt-5 text-center text-[#8C8989]">
+          As you own {domain} you can create a subdomain of it using this form.
+          This subdomain won&apos;t have any expiry date but the owner of the
+          parent domain will always be able to redeem it.
+        </p>
       </div>
       <div className="mt-5 flex flex-col justify-center w-full bg-[#FCFFFE]">
         <TextField
@@ -128,7 +128,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             isDomainValid !== true
               ? `"${isDomainValid}" is not a valid character`
               : "Subdomain"
-              
+
           }
           placeholder="Subdomain"
           variant="outlined"
@@ -137,35 +137,27 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
           error={isDomainValid !== true}
           sx={{
             "& .MuiOutlinedInput-root": {
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
+              height: "62px",
               textAlign: "center",
+              display: "flex",
+              alignItems: "center",
               "& input": {
                 textAlign: "center",
                 padding: "15px 0",
-                color:"#454545 10%",
+                color: "#454545 10%",
               },
             },
             "& .MuiInputLabel-root": {
               width: "100%",
               textAlign: "center",
-              left: "50%",
-              transform: "translateX(-50%)",
-              marginTop:'10px'
-            },
-            "& .MuiInputLabel-shrink": {
-              left: "auto",
-              transform: "none",
-              textAlign: "center",
             },
           }}
           inputProps={{
-            style: { textAlign: "center" }, 
+            style: { height: "60px", textAlign: "center" }, // Ensures placeholder and text are centered
           }}
         />
         <div className="mt-6">
-        <SelectIdentity tokenId={targetTokenId} changeTokenId={changeTokenId} />
+          <SelectIdentity tokenId={targetTokenId} changeTokenId={changeTokenId} />
         </div>
       </div>
     </>
