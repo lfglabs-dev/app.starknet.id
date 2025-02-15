@@ -213,8 +213,8 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                     e.preventDefault();
                     e.stopPropagation();
                     address
-                      ? () => mint()
-                      : () => setShowWalletConnectModal(true)
+                      ?  mint()
+                      :  setShowWalletConnectModal(true)
                   }}
                 >
                   <FaPlus />
