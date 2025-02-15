@@ -55,8 +55,6 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
           />
         </div>
         <div className={styles.gallery}>
-          <p className={styles.subtitle}>Get a new Profile Pic</p>
-          <h2 className={styles.title}>Our NFT Collections selection</h2>
           <SelectedCollections />
         </div>
       </div>

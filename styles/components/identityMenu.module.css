@@ -10,15 +10,12 @@
   box-sizing: border-box;
 
   /* Auto layout */
-  margin-top: 15px;
-  margin-bottom: 5px;
+  margin-top: 24px;
   display: flex;
-  flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
-  padding: 10px;
-  gap: 8px;
-  width: 358px;
+  justify-content: center;
+  padding: 10px 16px;
+  gap: 10px;
   background: radial-gradient(
     382.53% 14823.28% at 46.39% 50%,
     #fff9f0 0%,
@@ -26,13 +23,11 @@
   );
 
   /* Secondary/700 */
-  border-width: 1px 6px 4px 1px;
-  border-style: solid;
-  border-color: var(--secondary);
+  border: 1px solid #4545451A;
 
   /* Button */
-  box-shadow: 0px 6px 80px rgba(191, 158, 123, 0.07);
-  border-radius: 12px;
+  box-shadow: 0px 2px 30px 0px #0000000F;
+  border-radius: 8px;
 
   /* Inside auto layout */
   flex: none;
@@ -68,13 +63,13 @@
   font-family: "QuickZap";
   font-style: normal;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
   text-align: left;
   /* identical to box height, or 150% */
 
   /* Secondary/700 */
-  color: #402d28;
+  color: var(--secondary);
 
   /* Inside auto layout */
 

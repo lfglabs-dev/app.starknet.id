@@ -29,11 +29,17 @@ const SelectedCollections: FunctionComponent = () => {
         <ClickableAction
           title="Get your NFT"
           icon={
-            <ArrowRightIcon width="25" color={theme.palette.secondary.main} />
+            <ArrowRightIcon width="16" color={theme.palette.secondary.main} />
           }
           onClick={() => window.open("https://unframed.co/")}
-          width="auto"
+          width="fixed"
         />
+        <button
+          onClick={() => {/* TODO: Implement cancel action */}}
+          aria-label="Cancel action"
+          className={styles.btnWrapperCancelBtn}>
+          Cancel
+        </button> 
       </div>
     </>
   );
