@@ -141,19 +141,26 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
               textAlign: "center",
               display: "flex",
               alignItems: "center",
+              boxShadow: "0px 2px 30px 0px rgba(0, 0, 0, 0.06)",
+              borderRadius: "8px",
               "& input": {
                 textAlign: "center",
                 padding: "15px 0",
                 color: "#454545 10%",
               },
+              "&.Mui-focused fieldset": {
+                borderColor: "#19AA6E",
+                boxShadow: "0px 2px 30px 0px rgba(0, 0, 0, 0.06)",
+              },
             },
             "& .MuiInputLabel-root": {
               width: "100%",
               textAlign: "center",
+              color: "#454545",
             },
           }}
           inputProps={{
-            style: { height: "60px", textAlign: "center" }, // Ensures placeholder and text are centered
+            style: { height: "60px", textAlign: "center" },
           }}
         />
         <div className="mt-6">
