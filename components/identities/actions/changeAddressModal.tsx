@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { TextField } from "@mui/material";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
 import { hexToDecimal } from "../../../utils/feltService";
@@ -35,10 +34,10 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
     useSendTransaction({
       calls: identity
         ? identityChangeCalls.setStarknetAddress(
-          identity,
-          hexToDecimal(targetAddress),
-          callDataEncodedDomain
-        )
+            identity,
+            hexToDecimal(targetAddress),
+            callDataEncodedDomain
+          )
         : [],
     });
 
@@ -76,23 +75,29 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   const modalContent = (
     <div className="mt-5 flex flex-col justify-center">
       {currentTargetAddress && (
-       <p className="font-normal text-sm leading-6 tracking-normal text-[#8C8989] text-center" style={{ fontFamily: 'Poppins-Regular, sans-serif' }}>
+        <p
+          className="font-normal text-sm leading-6 tracking-normal text-[#8C8989] text-center"
+          style={{ fontFamily: "Poppins-Regular, sans-serif" }}
+        >
           A stark domain resolves to a Starknet address, the current target
           address of {identity?.domain} is{" "}
-          <strong className="font-bold text-[#454545]">{minifyAddress(currentTargetAddress)}</strong>. You can change
-          it by using this form.
+          <strong className="font-bold text-[#454545]">
+            {minifyAddress(currentTargetAddress)}
+          </strong>
+          . You can change it by using this form.
         </p>
       )}
       <div className="mt-5">
-        <CustomTextField 
-        fullWidth
+        <CustomTextField
+          fullWidth
           id="outlined-basic"
           placeholder="new target address"
           variant="outlined"
           onChange={(e) => changeAddress(e.target.value)}
           value={targetAddress ?? address}
           helperText="You need to copy paste a wallet address or it won't work"
-          required />
+          required
+        />
       </div>
     </div>
   );
