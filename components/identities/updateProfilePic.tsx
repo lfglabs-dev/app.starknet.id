@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useState } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import ModalProfilePic from "../UI/modalProfilePic";
-import BackButton from "../UI/backButton";
 import SelectedCollections from "./selectedCollections";
 import PfpGallery from "./pfpGallery";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
@@ -40,13 +39,12 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     }
   };
 
+  const hasNoNfts = userNfts.length === 0;
+
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.arrows}>
-          <BackButton onClick={() => back()} />
-        </div>
-        <div className={styles.gallery}>
+        <div className={` ${hasNoNfts ? styles.noNfts : styles.gallery}`}>
           <PfpGallery
             selectPfp={selectPfp}
             selectedPfp={selectedPfp}
@@ -54,11 +52,14 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
             isLoading={isLoading}
           />
         </div>
-        <div className={styles.gallery}>
-          <p className={styles.subtitle}>Get a new Profile Pic</p>
-          <h2 className={styles.title}>Our NFT Collections selection</h2>
-          <SelectedCollections />
-        </div>
+
+        {!hasNoNfts && (
+          <div className={styles.gallery}>
+            <p className={styles.subtitle}>Get a new Profile Pic</p>
+            <h2 className={styles.title}>Our NFT Collections selection</h2>
+            <SelectedCollections />
+          </div>
+        )}
       </div>
       <ModalProfilePic
         isModalOpen={openModal}
