@@ -1,7 +1,9 @@
 import React, { FunctionComponent } from "react";
 import Button from "../button";
-import Lottie from "lottie-react";
 import verifiedLottie from "../../../public/visuals/verifiedLottie.json";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 type SuccessScreenProps = {
   buttonText: string;

@@ -1,8 +1,10 @@
 import React, { FunctionComponent } from "react";
-import Lottie from "lottie-react";
 import ModalMessage from "../UI/modalMessage";
 import verifiedLottie from "../../public/visuals/verifiedLottie.json";
 import Button from "./button";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 type TxConfirmationModalProps = {
   txHash?: string;
