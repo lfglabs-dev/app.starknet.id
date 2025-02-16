@@ -1,9 +1,3 @@
-.sharedGalleryStyles {
-  --shared-spacing: 0 40px 20px;
-  --shared-padding: 32px 64px;
-  --border-radius-lg: 20px;
-}
-
 .container {
   display: flex;
   flex-direction: column;
@@ -28,22 +22,21 @@
 }
 
 .gallery {
+  margin: 0 40px 20px;
+  border-radius: 20px;
   background: #fffcf8;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-
-  margin: var(--shared-spacing);
-  border-radius: var(--border-radius-lg);
-  padding: var(--shared-padding);
   width: -webkit-fill-available;
+  padding: 32px 64px;
   text-align: left;
 }
 
 .noNfts {
-  margin: var(--shared-spacing);
-  border-radius: var(--border-radius-lg);
-  padding: var(--shared-padding);
+  margin: 0 40px 20px;
+  border-radius: 20px;
   width: -webkit-fill-available;
-  text-align: center;
+  padding: 32px 64px;
+  text-align: left;
 }
 
 .subtitle {
@@ -59,7 +52,7 @@
 .title {
   color: #454545;
   font-family: "QuickZap";
-  font-size: 36px;
+  font-size: 30px;
   font-style: normal;
   font-weight: 400;
   line-height: 32px; /* 106.667% */
@@ -266,15 +259,12 @@
 }
 
 @media (max-width: 768px) {
-  .noNfts {
-    padding: 30px 20px;
-  }
-
   .title {
     font-size: 24px;
     text-align: center;
     margin-bottom: 2rem;
   }
+
   .arrows {
     margin-left: 1.5rem;
   }
@@ -288,13 +278,15 @@
     width: 100%;
     padding-right: 0;
   }
-  .gallery {
+  .gallery,
+  .noNfts {
     margin: 0;
     padding: 2rem 24px;
     width: calc(100% - 3rem);
     margin-left: 1.5rem;
     margin-bottom: 3rem;
   }
+
   .nftCollectionWraper {
     flex-direction: column;
     margin: 2rem 0;
