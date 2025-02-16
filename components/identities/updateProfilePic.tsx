@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useState } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import ModalProfilePic from "../UI/modalProfilePic";
-import BackButton from "../UI/backButton";
 import SelectedCollections from "./selectedCollections";
 import PfpGallery from "./pfpGallery";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
