@@ -45,11 +45,6 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   return (
     <>
       <div className={styles.container}>
-        {!hasNoNfts && (
-          <div className={styles.arrows}>
-            <BackButton onClick={() => back()} />
-          </div>
-        )}
         <div className={` ${hasNoNfts ? styles.noNfts : styles.gallery}`}>
           <PfpGallery
             selectPfp={selectPfp}

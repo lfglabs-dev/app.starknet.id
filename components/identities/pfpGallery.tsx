@@ -54,8 +54,8 @@ const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
             <div className="flex flex-col align-middle items-center">
               <h2 className={styles.title}>NO NFTS FOUND</h2>
               <p className={styles.subtitle}>
-                You don’t own any whitelisted NFTs yet. Get your first NFT to
-                customize your profile picture and display it on your domain.
+                You don&apos;t own any whitelisted NFTs yet. Get your first NFT
+                to customize your profile picture and display it on your domain.
               </p>
             </div>
           )}
