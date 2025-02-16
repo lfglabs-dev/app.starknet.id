@@ -52,6 +52,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
             selectedPfp={selectedPfp}
             userNfts={userNfts}
             isLoading={isLoading}
+            title="Our Suggestions"
           />
         </div>
         <div className={styles.gallery}>
