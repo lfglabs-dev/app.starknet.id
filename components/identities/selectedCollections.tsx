@@ -12,7 +12,7 @@ const SelectedCollections: FunctionComponent = () => {
   
   return (
     <>
-      <div className={styles.nftCollectionWraper}>
+      <div className={`mx-auto flex flex-col justify-center ${styles.nftCollectionWraper}`}>
         {NftCollections.map((collection, index) => {
           return (
             <div
@@ -29,7 +29,8 @@ const SelectedCollections: FunctionComponent = () => {
           );
         })}
       </div>
-      <div className={styles.btnWrapper}>
+      <div className={` ${styles.btnWrapper}`}>
+        <div className="flex flex-col gap-[12px]">
         <ClickableAction
           title="Get your NFT"
           icon={
@@ -44,6 +45,7 @@ const SelectedCollections: FunctionComponent = () => {
               Cancel
             </div>
           </div>
+        </div>
       </div>
     </>
   );
