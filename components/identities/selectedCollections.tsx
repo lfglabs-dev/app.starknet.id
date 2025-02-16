@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import { NftCollections } from "../../utils/constants";
-import ClickableAction from "../UI/iconsComponents/clickableAction";
 import ArrowRightIcon from "../UI/iconsComponents/icons/arrowRightIcon";
 import theme from "../../styles/theme";
 
@@ -26,14 +25,14 @@ const SelectedCollections: FunctionComponent = () => {
         })}
       </div>
       <div className={styles.btnWrapper}>
-        <ClickableAction
-          title="Get your NFT"
-          icon={
-            <ArrowRightIcon width="16" color={theme.palette.secondary.main} />
-          }
+        <button
           onClick={() => window.open("https://unframed.co/")}
-          width="fixed"
-        />
+          aria-label="Get your NFT"
+          className={styles.btnWrapperGetNftBtn}
+        >
+          <ArrowRightIcon width="16" color={theme.palette.secondary.main} />
+          <span>Get your NFT</span>
+        </button>
         <button
           onClick={() => {/* TODO: Implement cancel action */}}
           aria-label="Cancel action"
