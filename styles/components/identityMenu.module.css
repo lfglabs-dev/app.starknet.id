@@ -16,26 +16,23 @@
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
- 
-
+  padding: 10px;
+  gap: 8px;
   width: 358px;
-  background-color: rgba(255, 255, 255, 1);
+  background: radial-gradient(
+    382.53% 14823.28% at 46.39% 50%,
+    #fff9f0 0%,
+    /* #dccab8 100% */
+  );
 
   /* Secondary/700 */
-  border: 1px solid rgba(69, 69, 69, 0.1);
-  height: 44px;
-  border-radius: 8px;
-  padding-top: 10px;
-  padding-right: 16px;
-  padding-bottom: 10px;
-  padding-left: 16px;
-  gap: 10px;
-
+  border-width: 1px 6px 4px 1px;
+  border-style: solid;
+  border-color: var(--secondary);
 
   /* Button */
-
-  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-
+  box-shadow: 0px 6px 80px rgba(191, 158, 123, 0.07);
+  border-radius: 12px;
 
   /* Inside auto layout */
   flex: none;
@@ -52,7 +49,7 @@
 }
 
 .clickableActionAutoWidth {
-  width: fit-content;
+  width: auto;
 }
 
 .clickableActionPrimary {
@@ -71,13 +68,13 @@
   font-family: "QuickZap";
   font-style: normal;
   font-weight: 400;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 24px;
   text-align: left;
   /* identical to box height, or 150% */
 
   /* Secondary/700 */
-  color: rgba(69, 69, 69, 1);
+  color: #402d28;
 
   /* Inside auto layout */
 
@@ -106,7 +103,7 @@
 
 .clickableIconPrimary,
 .clickableIconSecondary {
-  background-color: #FFFFFF;
+  background-color: var(--primary300);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -116,7 +113,7 @@
 }
 
 .clickableIconSecondary {
-  background-color: #FFFFFF;
+  background-color: var(--light-tertiary);
 }
 
 .renewalIcon {
@@ -145,10 +142,9 @@
 }
 
 @media (max-width: 1024px) {
-
   .clickableActionPrimary,
   .clickableActionSecondary {
-    width: fit-content;
+    width: 100%;
   }
 }
 
@@ -156,7 +152,6 @@
   .viewMore {
     margin: 35px 0;
   }
-
   .identityActions {
     width: 100%;
   }

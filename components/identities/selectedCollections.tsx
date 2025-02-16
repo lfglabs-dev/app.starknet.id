@@ -7,19 +7,21 @@ import theme from "../../styles/theme";
 import { useRouter } from "next/router";
 
 const SelectedCollections: FunctionComponent = () => {
-
   const router = useRouter();
-  
+
+    const nftMarketPlace : React.MouseEventHandler<HTMLButtonElement> = () => {
+      window.open("https://unframed.co/", "_blank");
+    };
   return (
     <>
-      <div className={`mx-auto flex flex-col justify-center ${styles.nftCollectionWraper}`}>
+      <div
+        className={`mx-auto flex flex-col justify-center ${styles.nftCollectionWraper}`}>
         {NftCollections.map((collection, index) => {
           return (
             <div
               className={styles.nftCollectionCard}
               key={index}
-              onClick={() => window.open(collection.externalLink)}
-            >
+              onClick={() => window.open(collection.externalLink)}>
               <div
                 style={{ backgroundImage: `url(${collection.imageUri})` }}
                 className={styles.nftCollectionImg}
@@ -30,17 +32,13 @@ const SelectedCollections: FunctionComponent = () => {
         })}
       </div>
       <div className={` ${styles.btnWrapper}`}>
-        <div className="flex flex-col gap-[12px]">
-        <ClickableAction
-          title="Get your NFT"
-          icon={
-      <ArrowRightIcon width="25" color={theme.palette.secondary.main} />
-
-          }
-          onClick={() => window.open("https://unframed.co/")}
-          width="auto"
-        />
-         <div className="">
+        <div className="flex flex-col gap-[12px] items-center">
+          
+          <button onClick={nftMarketPlace} className="flex text-[#454545] hover:text-[#454545]/80 items-center gap-[10px] w-fit justify-center border-[rgba(69, 69, 69, 0.1)]   shadow-[0px_2px_30px_0px_#0000000F] p-[10px_16px] rounded-[8px] bg-white  border-[1px] text-[14px] font-normal font-[QuickZap] ">
+            <ArrowRightIcon width="25" color={theme.palette.secondary.main} />
+            <span>GET YOUR NFT</span>
+          </button>
+          <div className="">
             <div className={styles.cancelBtn} onClick={() => router.push("/")}>
               Cancel
             </div>
