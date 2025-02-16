@@ -1,9 +1,4 @@
-import {
-  CircularProgress,
-  InputAdornment,
-  Modal,
-  TextField,
-} from "@mui/material";
+import { CircularProgress, Modal } from "@mui/material";
 import { useSendTransaction } from "@starknet-react/core";
 import React, { FunctionComponent, useEffect, useRef, useState } from "react";
 import styles from "../../../styles/components/evmModalMessage.module.css";
@@ -47,12 +42,12 @@ const AddEvmModal: FunctionComponent<AddEvmModalProps> = ({
     calls:
       identity && isValid
         ? [
-          identityChangeCalls.setUserData(
-            identity.id,
-            shortString.encodeShortString("evm-address"),
-            hexToDecimal(evmAddress)
-          ),
-        ]
+            identityChangeCalls.setUserData(
+              identity.id,
+              shortString.encodeShortString("evm-address"),
+              hexToDecimal(evmAddress)
+            ),
+          ]
         : [],
   });
 
@@ -192,13 +187,18 @@ const AddEvmModal: FunctionComponent<AddEvmModalProps> = ({
                   preferred wallet for seamless integration.
                 </p>
               </div>
-              <img title="protocol_logos" src="/visuals/ecosystemMap.svg" className={styles.cardImg} />
+              <img
+                title="protocol_logos"
+                src="/visuals/ecosystemMap.svg"
+                className={styles.cardImg}
+              />
             </div>
             <div className="mt-4 mb-4">
               <Input
                 error={!isValid}
                 className="text-center !rounded-lg shadow-md shadow-black/5 placeholder:!text-[#454545]/20 mt-4"
-                name="subdomain" placeholder="Subdomain"
+                name="subdomain"
+                placeholder="Subdomain"
                 onChange={(e) => changeAddress(e.target.value)}
                 id="outlined-basic"
                 value={fieldInput ?? ""}
@@ -211,7 +211,7 @@ const AddEvmModal: FunctionComponent<AddEvmModalProps> = ({
                   disabled={!evmAddress || !isValid}
                   onClick={() => setUserData()}
                 >
-                  CREATE SUBDOMAIN
+                  SET EVM ADDRESS
                 </Button>
               </div>
               <button
