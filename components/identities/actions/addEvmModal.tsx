@@ -194,10 +194,10 @@ const AddEvmModal: FunctionComponent<AddEvmModalProps> = ({
               </div>
               <img title="protocol_logos" src="/visuals/ecosystemMap.svg" className={styles.cardImg} />
             </div>
-            <div className="mt-6">
+            <div className="mt-4 mb-4">
               <Input
                 error={!isValid}
-                className="text-center !rounded-lg shadow-md shadow-black/5 placeholder:!text-[#454545]/20 mt-6"
+                className="text-center !rounded-lg shadow-md shadow-black/5 placeholder:!text-[#454545]/20 mt-4"
                 name="subdomain" placeholder="Subdomain"
                 onChange={(e) => changeAddress(e.target.value)}
                 id="outlined-basic"

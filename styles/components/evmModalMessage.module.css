@@ -1,12 +1,12 @@
 .menu {
   position: absolute;
-  background-color: var(--background);
+  background-color: #FCFFFE;
   align-self: center;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   border-radius: 20px;
-  padding: 45px;
+  padding: 45px 50px;
   width: 800px;
   display: flex;
   flex-direction: column;
@@ -25,8 +25,8 @@
 
 .menu_close {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 20px;
+  right: 20px;
   width: 22px;
   stroke: black;
   cursor: pointer;
@@ -58,9 +58,8 @@
 .infoCard {
   display: flex;
   flex-direction: row;
-  padding: 24px;
-  padding: 40px 48px;
-  gap: 48px;
+  padding: 18px 0px 18px 18px;
+  gap: 36px;
   border-radius: 20px;
   background: var(--background-light);
   box-shadow: 0px 2px 30px 0px #0000000f;
@@ -71,16 +70,16 @@
   color: #454545;
   font-family: "Poppins-Bold";
   font-size: 18px;
-  line-height: 24px;
+  line-height: 26px;
   font-weight: bold;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .cardDesc {
   color: var(--content600);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 400;
-  line-height: 20px;
+  line-height: 22px;
   font-family: "Poppins-Regular";
 }
 
@@ -102,7 +101,7 @@
 
   .menu_title {
     font-size: 21px;
-    margin: -7px -2px 2px;
+    margin: -2px -2px 2px;
   }
 
   .infoCard {
@@ -116,15 +115,5 @@
   .menu {
     width: 95%;
     padding: 16px;
-  }
-
-  .menu_title {
-    font-size: 21px;
-    margin: -7px -2px 2px;
-  }
-
-  .infoCard {
-    flex-direction: column;
-    padding: 24px;
   }
 }
