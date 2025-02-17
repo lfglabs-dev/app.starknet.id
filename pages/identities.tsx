@@ -103,8 +103,8 @@ const Identities: NextPage = () => {
 
   return (
     <>
-      <div className={` ${styles.screen} overflow-y-hidden hide-scrollbar`}>
-        <div>
+      <div className={styles.wrapperScreen}>
+        <div className="mt-[12vh]">
           {loading ? (
             <section className="mt-20 w-full">
               <IdentitiesSkeleton />
