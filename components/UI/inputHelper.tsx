@@ -1,7 +1,5 @@
 import React, { FunctionComponent, ReactNode } from "react";
-import InfoIcon from "./iconsComponents/icons/infoIcon";
-import StyledToolTip from "./styledTooltip";
-import theme from "../../styles/theme";
+
 
 type InputHelperProps = {
   children: ReactNode;
@@ -12,25 +10,15 @@ type InputHelperProps = {
 const InputHelper: FunctionComponent<InputHelperProps> = ({
   children,
   helperText,
-  error = false,
 }) => {
   return (
     <div className="relative">
       {children}
-      {helperText ? (
-        <StyledToolTip
-          className="cursor-pointer"
-          title={helperText}
-          placement="top"
-        >
-          <div className="absolute top-1/2 -translate-y-1/2 right-2">
-            <InfoIcon
-              width="20px"
-              color={error ? "red" : theme.palette.grey[800]}
-            />
-          </div>
-        </StyledToolTip>
-      ) : null}
+      {helperText && (
+       <div className="text-sm text-gray-500 mt-1">         
+       {helperText}
+      </div>
+    )}
     </div>
   );
 };

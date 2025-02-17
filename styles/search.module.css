@@ -5,7 +5,16 @@
   text-align: center;
   justify-content: center;
   position: relative;
-  width: 100%;
+  min-height: 100vh;
+  height: auto;
+  justify-items: center;
+}
+
+@media (min-width: 1300px) {
+  .container {
+    flex-direction: column;
+    min-height: auto;
+  }
 }
 
 .searchContainer {

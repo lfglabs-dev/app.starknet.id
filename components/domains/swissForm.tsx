@@ -26,7 +26,7 @@ const SwissForm: FunctionComponent<SwissFormProps> = ({
   return (
     <FormControl className="flex gap-4 w-full">
       <div className="flex flex-col">
-        <div className="flex gap-1 my-1">
+        <div className="flex gap-1 my-[8px]">
           <p className={textFieldStyles.legend}>
             Do you live in Switzerland ?*
           </p>
