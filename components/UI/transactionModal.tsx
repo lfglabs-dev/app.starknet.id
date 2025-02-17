@@ -10,9 +10,9 @@ const useIsMobile = () => {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(typeof window !== 'undefined' && window.innerWidth <= 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -63,7 +63,13 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={() => !isMobile && closeModal(!isSendingTx)}
+      onClose={() => {
+        const canCloseOnMobile = false;
+        const canCloseWhileSending = !isSendingTx;
+        if (!isMobile && canCloseWhileSending) {
+          closeModal(true);
+        }
+      }}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -88,13 +94,13 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
             )}
             <p className={styles.menu_title}>{title}</p>
             {modalContent}
-            <div className="mt-5 flex justify-center">
+            <div className={styles.button_container}>
               <Button disabled={isButtonDisabled} onClick={sendTransaction}>
                 {buttonCta}
               </Button>
             </div>
             {isMobile && (
-              <div className="mt-2 flex justify-center">
+              <div className={styles.cancel_button_container}>
                 <button
                   onClick={handleClose}
                   className={styles.button_cancel}

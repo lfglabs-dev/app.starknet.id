@@ -71,3 +71,15 @@
   font-weight: 400;
   line-height: 24px;
 }
+
+.button_container {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+.cancel_button_container {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
+}

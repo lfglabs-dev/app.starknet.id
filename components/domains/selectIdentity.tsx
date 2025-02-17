@@ -47,9 +47,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
     <div className="flex flex-col w-full">
       <div className="grid place-content-center my-2 ">
         <p className={textFieldStyles.legend}>
-          {matches
-            ? "Select an identity*"
-            : "Select an identity to link with your domain*"}
+        Select an identity to link with your domain*
         </p>
       </div>
       <InputHelper >
@@ -64,6 +62,9 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
             borderRadius: "8.983px",
           }}
           sx={{
+            boxShadow: "0px 2px 30px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8.983px",
+            width:'100%',
             "& .MuiSelect-select": {
               display: "flex",
               justifyContent: "center",

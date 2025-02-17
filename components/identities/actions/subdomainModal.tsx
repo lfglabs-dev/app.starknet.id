@@ -138,7 +138,8 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
           error={isDomainValid !== true}
           sx={{
             boxShadow: "0px 2px 30px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8px",
+            borderRadius: "8.983px",
+            width:'100%',
             "& label": {
               color: "#45454533",
               left: "50%",  
@@ -160,12 +161,12 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
             },
             "& .MuiOutlinedInput-root": {
               height:'62px',
+              width:'full',
               "& fieldset": {
                 borderColor: "#45454533",
                 },
                 "&.Mui-focused fieldset": {
                 borderColor: "#19AA6E",
-                boxShadow: "0px 2px 30px 0px rgba(0, 0, 0, 0.06)",
               },
             },
           }}
