@@ -208,7 +208,8 @@
   gap: 10px;
   justify-content: center;
   flex-wrap: wrap;
-  max-width: 680px;
+  max-width: 696px;
+  padding: 30px 16px 30px;
   max-height: 413px;
   overflow-y: scroll;
 }
