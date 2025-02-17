@@ -347,15 +347,17 @@
   .noNfts {
     margin: 0;
     margin-inline: 16px;
-    padding-inline: 18px;
     margin-bottom: 3rem;
   }
-
-  .nftCollectionWraper {
-    max-height: 299px;
+  .noNfts{
+    padding-inline: 18px;
   }
-  .nftCollectionCard {
-    max-width: 100%;
+  .gallery{
+    padding-inline: 0;
+  }
+  .nftCollectionWraper {
+    padding-inline: 0;
+    max-height: 299px;
   }
   .nftSection {
     min-height: auto;
