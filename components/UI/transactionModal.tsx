@@ -1,11 +1,25 @@
 import { Modal } from "@mui/material";
-import React, { FunctionComponent, ReactNode } from "react";
+import React, { FunctionComponent, ReactNode, useState, useEffect } from "react";
 import styles from "../../styles/components/modalMessage.module.css";
 import Button from "./button";
 import ConfirmationTx from "./confirmationTx";
 import IsSendingTx from "@/components/UI/isSendingTx";
 
-const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  return isMobile;
+};
 
 type TransactionModalProps = {
   title: string;
@@ -36,6 +50,8 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
   isButtonDisabled = true,
   buttonCta,
 }) => {
+  const isMobile = useIsMobile();
+
   function closeModal(canClose = true): void {
     if (!canClose) return;
     setIsTxSent(false);
@@ -72,21 +88,10 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
             )}
             <p className={styles.menu_title}>{title}</p>
             {modalContent}
-            <div className="flex flex-col gap-4 mt-6">
-              <Button
-                disabled={isButtonDisabled}
-                onClick={sendTransaction}
-                className="!w-[10rem] !h-[2.75rem] !mx-auto !text-sm !whitespace-nowrap !text-center"
-              >
+            <div className="mt-5 flex justify-center">
+              <Button disabled={isButtonDisabled} onClick={sendTransaction}>
                 {buttonCta}
               </Button>
-
-              <button
-                className="lg:hidden text-[#454545] text-center lg:text-sm text-xs font-quickZap"
-                onClick={() => closeModal()}
-              >
-                Cancel
-              </button>
             </div>
             {isMobile && (
               <div className="mt-2 flex justify-center">
