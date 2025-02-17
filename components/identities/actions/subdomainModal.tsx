@@ -14,7 +14,7 @@ type SubdomainModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
   callDataEncodedDomain: string[];
-  domain?: string;
+  domain?: string; 
 };
 
 const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
@@ -22,6 +22,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   isModalOpen,
   callDataEncodedDomain,
   domain,
+ 
 }) => {
   const [targetTokenId, setTargetTokenId] = useState<number>(0);
   const [subdomain, setSubdomain] = useState<string>("");
@@ -157,6 +158,18 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
               width: "100%",
               textAlign: "center",
               color: "#454545",
+              marginTop:"2px",
+              transition: "color 0.2s ease-in-out",
+            },
+            "& .MuiInputLabel-root.Mui-focused": {
+              color: "transparent", 
+            },
+            "& .MuiOutlinedInput-root input::placeholder": {
+              color: "#454545", 
+              transition: "color 0.2s ease-in-out",
+            },
+            "& .MuiOutlinedInput-root.Mui-focused input::placeholder": {
+              color: "transparent", 
             },
           }}
           inputProps={{
@@ -167,6 +180,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
           <SelectIdentity tokenId={targetTokenId} changeTokenId={changeTokenId} />
         </div>
       </div>
+      
     </>
   );
 
@@ -185,6 +199,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       isButtonDisabled={!subdomain || typeof isDomainValid === "string"}
       buttonCta="Create subdomain"
     />
+
   );
 };
 

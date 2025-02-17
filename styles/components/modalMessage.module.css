@@ -61,3 +61,11 @@
     margin: -7px -2px 2px;
   }
 }
+
+.button_cancel{
+  font-size: 14px;
+  color:#454545;
+  font-family: "QuickZap";
+  font-weight: 400;
+  line-height: 24px;
+}

@@ -5,6 +5,8 @@ import Button from "./button";
 import ConfirmationTx from "./confirmationTx";
 import IsSendingTx from "@/components/UI/isSendingTx";
 
+const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+
 type TransactionModalProps = {
   title: string;
   modalContent: ReactNode;
@@ -45,7 +47,7 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={() => closeModal(!isSendingTx)}
+      onClose={() => !isMobile && closeModal(!isSendingTx)}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -56,16 +58,18 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
           <IsSendingTx />
         ) : (
           <div className={styles.menu}>
-            <button className={styles.menu_close} onClick={() => closeModal()}>
-              <svg viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            </button>
+            {!isMobile && (
+              <button className={styles.menu_close} onClick={() => closeModal()}>
+                <svg viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            )}
             <p className={styles.menu_title}>{title}</p>
             {modalContent}
             <div className="mt-5 flex justify-center">
@@ -73,6 +77,16 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
                 {buttonCta}
               </Button>
             </div>
+            {isMobile && (
+              <div className="mt-2 flex justify-center">
+                <button
+                  onClick={handleClose}
+                  className={styles.button_cancel}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         )}
       </>
