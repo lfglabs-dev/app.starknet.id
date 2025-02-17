@@ -64,9 +64,7 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
       disableAutoFocus
       open={isModalOpen}
       onClose={() => {
-        const canCloseOnMobile = false;
-        const canCloseWhileSending = !isSendingTx;
-        if (!isMobile && canCloseWhileSending) {
+        if (!isMobile && !isSendingTx) {
           closeModal(true);
         }
       }}
@@ -104,6 +102,8 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
                 <button
                   onClick={handleClose}
                   className={styles.button_cancel}
+                  aria-label="Cancel and close modal"
+                  type="button"
                 >
                   Cancel
                 </button>

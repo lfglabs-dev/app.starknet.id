@@ -59,17 +59,29 @@
     font-size: 19px;
     margin: -7px -2px 2px;
   }
+
   .menu_close {
     display: none;
   }
 }
 
-.button_cancel{
+.button_cancel {
   font-size: 14px;
   color: var(--text-primary);
   font-family: "QuickZap";
   font-weight: 400;
   line-height: 24px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.button_cancel:hover {
+  opacity: 0.8;
+}
+
+.button_cancel:focus {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
 }
 
 .button_container {
