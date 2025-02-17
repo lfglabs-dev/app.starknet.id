@@ -75,7 +75,7 @@ const RenewalV2: FunctionComponent = () => {
 
   return (
     <>
-      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
+      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-3 lg:px-32 md:px-16 sm:pb-12 xl:min-h-[88vh] ">
         <aside className={`${styles.purchaseStepNav}`} role="navigation">
           <RegisterSteps
             currentStep={currentStep}
@@ -83,7 +83,6 @@ const RenewalV2: FunctionComponent = () => {
             showPfp={showPfp}
             isLoading={isLoading}
           />
-
           <img
             src="/visuals/purchaseStepVisual.svg"
             alt="Domain purchase steps visualization"
@@ -106,7 +105,7 @@ const RenewalV2: FunctionComponent = () => {
           </div>
         </div>
 
-        <div className="flex-1">
+        <div className="flex-1 w-full xl:w-[932px] xl:min-w-[932px] border-solid ">
           {currentStep === 1 && (
             <UserInfoForm type={FormType.RENEW} goToNextStep={goToNextStep} />
           )}
