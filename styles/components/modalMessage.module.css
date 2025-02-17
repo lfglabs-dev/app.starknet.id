@@ -10,6 +10,7 @@
   width: 700px;
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-direction: column;
   z-index: 1000;
 }
@@ -39,9 +40,9 @@
 }
 
 .menu_title {
-  color: var(--brown);
+  color: var(--text-primary);
   font-family: "QuickZap";
-  font-size: 21px;
+  font-size: 24px;
   font-weight: bold;
   text-align: center;
   z-index: 1000;
@@ -58,7 +59,39 @@
     font-size: 19px;
     margin: -7px -2px 2px;
   }
+
   .menu_close {
     display: none;
   }
+}
+
+.button_cancel {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: "QuickZap";
+  font-weight: 400;
+  line-height: 24px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.button_cancel:hover {
+  opacity: 0.8;
+}
+
+.button_cancel:focus {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
+}
+
+.button_container {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+.cancel_button_container {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
 }

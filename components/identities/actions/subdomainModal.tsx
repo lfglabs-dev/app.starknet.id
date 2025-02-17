@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { TextField } from "@mui/material";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { useIsValid } from "../../../hooks/naming";
 import { numberToString } from "../../../utils/stringService";
@@ -9,6 +8,7 @@ import { Call } from "starknet";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import TransactionModal from "@/components/UI/transactionModal";
+import AdvancedTextField from "@/components/UI/advancedTextField";
 
 type SubdomainModalProps = {
   handleClose: () => void;
@@ -113,28 +113,32 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
 
   const modalContent = (
     <>
-      <p className="mt-5">
-        As you own {domain} you can create a subdomain of it using this form.
-        This subdomain won&apos;t have any expiry date but the owner of the
-        parent domain will always be able to redeem it.
-      </p>
-      <div className="mt-5 flex flex-col justify-center">
-        <TextField
+      <div className="bg-[#FCFFFE]">
+        <p className="mt-5 text-center text-[#8C8989]">
+          As you own {domain} you can create a subdomain of it using this form.
+          This subdomain won&apos;t have any expiry date but the owner of the
+          parent domain will always be able to redeem it.
+        </p>
+      </div>
+      <div className="mt-5 flex flex-col justify-center w-full bg-[#FCFFFE]">
+        <AdvancedTextField
           fullWidth
-          id="outlined-basic"
           label={
             isDomainValid !== true
               ? `"${isDomainValid}" is not a valid character`
               : "Subdomain"
           }
-          placeholder="Subdomain"
-          variant="outlined"
+          value={subdomain}
           onChange={(e) => changeSubdomain(e.target.value)}
           color="secondary"
-          required
           error={isDomainValid !== true}
         />
-        <SelectIdentity tokenId={targetTokenId} changeTokenId={changeTokenId} />
+        <div className="mt-6">
+          <SelectIdentity
+            tokenId={targetTokenId}
+            changeTokenId={changeTokenId}
+          />
+        </div>
       </div>
     </>
   );
