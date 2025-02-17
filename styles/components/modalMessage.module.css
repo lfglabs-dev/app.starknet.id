@@ -35,13 +35,34 @@
   background-color: transparent;
   border: none;
 }
+.menu_cancel {
+  position: relative;
+  height: 2.8rem;
+ color: #454545;
+  background-color: transparent;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.094em;
+  border: none;
+   min-width: 5rem;
+  width: 95%;
+  margin: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  display: none;
+  text-align: center;
+
+  font-family: "QuickZap";
+}
 
 .menu_close:hover {
   stroke: rgb(124, 124, 124);
 }
 
 .menu_title {
-  color: var(--brown);
+  /* color: var(--brown); */
+color: #454545;
   font-family: "QuickZap";
   font-size: 24px;
   font-weight: bold;
@@ -67,5 +88,10 @@
    
   }
 
-
+  .menu_close {
+display: none;
+  }
+  .menu_cancel {
+display: block;
+  }
 }

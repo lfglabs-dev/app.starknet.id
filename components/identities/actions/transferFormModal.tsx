@@ -160,6 +160,8 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
       transactionHash={transferData?.transaction_hash}
       isButtonDisabled={!targetAddress}
       buttonCta="set new address"
+      buttonCloseCta ="CLose"
+      
     />
   );
 };

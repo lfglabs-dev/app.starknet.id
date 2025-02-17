@@ -16,6 +16,7 @@ type TransactionModalProps = {
   setIsTxSent: (isTxSent: boolean) => void;
   sendTransaction: () => void;
   buttonCta: string;
+  buttonCloseCta: string;
   transactionHash?: string;
   isButtonDisabled?: boolean;
 };
@@ -33,6 +34,7 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
   transactionHash,
   isButtonDisabled = true,
   buttonCta,
+  buttonCloseCta,
 }) => {
   function closeModal(canClose = true): void {
     if (!canClose) return;
@@ -71,10 +73,13 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
             <p className={styles.menu_title}>{title}</p>
             {modalContent}
             </div>
-            <div className="mt-5 flex justify-center">
+            <div className="mt-5 flex justify-center flex-col">
               <Button disabled={isButtonDisabled} onClick={sendTransaction}>
                 {buttonCta}
               </Button>
+              <button className={styles.menu_cancel}   onClick={() => closeModal()}>
+                {buttonCloseCta}
+              </button>
             </div>
           </div>
         )}
