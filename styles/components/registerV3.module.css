@@ -15,7 +15,7 @@
   width: 100%;
   flex-direction: column;
   align-items: flex-start;
-  gap: 100px;
+  gap: 15px;
   flex-shrink: 0;
   z-index: 1;
   background-color: transparent;
@@ -357,7 +357,7 @@
   height: 20px;
   position: absolute;
   top: 0px;
-  right: 50px;
+  right: 0px;
   cursor: pointer;
 }
 
