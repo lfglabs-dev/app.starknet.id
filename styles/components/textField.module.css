@@ -1,5 +1,5 @@
 .textfield {
-  border-radius: 8.983px;
+  border-radius: 8px;
   font-family: "Poppins-Regular";
 }
 
@@ -23,7 +23,7 @@
 
 .errorLegend,
 .legend {
-  color: #454545;
+  color: var(--secondary);
   /* Body/small/medium */
   font-size: 18px;
   font-style: normal;

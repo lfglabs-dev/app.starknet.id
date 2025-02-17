@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { TextField } from "@mui/material";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
 import { useIsValid } from "../../../hooks/naming";
 import { numberToString } from "../../../utils/stringService";
@@ -9,6 +8,7 @@ import { Call } from "starknet";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import TransactionModal from "@/components/UI/transactionModal";
+import AdvancedTextField from "@/components/UI/advancedTextField";
 
 type SubdomainModalProps = {
   handleClose: () => void;
@@ -22,7 +22,6 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   isModalOpen,
   callDataEncodedDomain,
   domain,
-
 }) => {
   const [targetTokenId, setTargetTokenId] = useState<number>(0);
   const [subdomain, setSubdomain] = useState<string>("");
@@ -122,66 +121,25 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
         </p>
       </div>
       <div className="mt-5 flex flex-col justify-center w-full bg-[#FCFFFE]">
-        <TextField
+        <AdvancedTextField
           fullWidth
-          id="outlined-basic"
           label={
             isDomainValid !== true
               ? `"${isDomainValid}" is not a valid character`
               : "Subdomain"
-
           }
-          placeholder="Subdomain"
-          variant="outlined"
+          value={subdomain}
           onChange={(e) => changeSubdomain(e.target.value)}
           color="secondary"
           error={isDomainValid !== true}
-          sx={{
-            boxShadow: "0px 2px 30px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8.983px;",
-            width: '100%',
-            backgroundColor: "#ffffff",
-            "& label": {
-              color: "#45454533",
-              left: "50%",
-              top: "50%",
-              transform: "translate(-50%, -50%)",
-              transition: "all 0.2s ease-in-out",
-              position: "absolute",
-              pointerEvents: "none",
-            },
-            "& .MuiInputLabel-root": {
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-            },
-            "& .MuiInputLabel-shrink": {
-              left: "10px",
-              top: "0px",
-              paddingLeft: "6px",
-              transform: "translate(0, -8.5px) scale(0.75) !important",
-            },
-            "& .MuiOutlinedInput-root": {
-              height: '62px',
-              width: 'full',
-              boxShadow: '0px 2px 30px 0px rgba(0, 0, 0, 0.06)',
-              backgroundColor: "#ffffff",
-              "& fieldset": {
-                borderColor: "#45454533",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "#19AA6E",
-              },
-            },
-          }}
-          inputProps={{
-            style: { height: "60px", textAlign: "center" },
-          }}
         />
         <div className="mt-6">
-          <SelectIdentity tokenId={targetTokenId} changeTokenId={changeTokenId} />
+          <SelectIdentity
+            tokenId={targetTokenId}
+            changeTokenId={changeTokenId}
+          />
         </div>
       </div>
-
     </>
   );
 
@@ -200,7 +158,6 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       isButtonDisabled={!subdomain || typeof isDomainValid === "string"}
       buttonCta="Create subdomain"
     />
-
   );
 };
 

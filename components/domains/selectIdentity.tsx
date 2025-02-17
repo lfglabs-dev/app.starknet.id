@@ -28,7 +28,8 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
   useEffect(() => {
     if (account) {
       fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_LINK
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
         }/addr_to_available_ids?addr=${hexToDecimal(account.address)}`
       )
         .then((response) => response.json())
@@ -47,10 +48,10 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
     <div className="flex flex-col w-full">
       <div className="grid place-content-center my-2 ">
         <p className={textFieldStyles.legend}>
-        Select an identity to link with your domain*
+          Select an identity to link with your domain*
         </p>
       </div>
-      <InputHelper >
+      <InputHelper>
         <Select
           fullWidth
           value={tokenId}
@@ -59,19 +60,20 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
           inputProps={{ MenuProps: { disableScrollLock: true } }}
           onChange={(e) => changeTokenId(Number(e.target.value))}
           style={{
-            borderRadius: "8.983px",
+            borderRadius: "8px",
           }}
           sx={{
             boxShadow: "0px 2px 30px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8.983px",
-            width:'100%',
+            borderRadius: "8px",
+            width: "100%",
             "& .MuiSelect-select": {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               backgroundColor: "#ffffff",
-              textAlign: 'center'
-
+              textAlign: "center",
+              borderRadius: "8px",
+              borderColor: "rgba(69, 69, 69, 0.20)",
             },
             "& .css-10hburv-MuiTypography-root": {
               display: "flex",
@@ -82,26 +84,27 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
               minWidth: "40px",
               display: "flex",
               alignItems: "center",
-              
             },
-           
             "& .MuiListItemText-root": {
               textAlign: "center",
               justifyContent: "center",
               display: "flex",
             },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "rgba(69, 69, 69, 0.20)",
+            },
           }}
         >
           <MenuItem value={0}>
-          <div className="flex gap-2">
-            <ListItemIcon>
-              <img
-                width={"30px"}
-                src="/visuals/StarknetIdLogo.svg"
-                alt="starknet.id avatar"
-              />
-            </ListItemIcon>
-            <ListItemText primary={defaultText} />
+            <div className="flex gap-2">
+              <ListItemIcon>
+                <img
+                  width={"30px"}
+                  src="/visuals/StarknetIdLogo.svg"
+                  alt="starknet.id avatar"
+                />
+              </ListItemIcon>
+              <ListItemText primary={defaultText} />
             </div>
           </MenuItem>
           {ownedIdentities.map((tokenId: number, index: number) => (
