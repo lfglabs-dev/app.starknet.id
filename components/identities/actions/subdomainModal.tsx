@@ -137,39 +137,36 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
           color="secondary"
           error={isDomainValid !== true}
           sx={{
+            boxShadow: "0px 2px 30px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+            "& label": {
+              color: "#45454533",
+              left: "50%",  
+              top: "50%",  
+              transform: "translate(-50%, -50%)", 
+              transition: "all 0.2s ease-in-out",
+              position: "absolute", 
+              pointerEvents: "none", 
+
+            },
+            "& .MuiInputLabel-root": {
+              left: "50%",  
+              transform: "translate(-50%, -50%)",
+            },
+            "& .MuiInputLabel-shrink": {
+              left: "10px",
+              top: "0px", 
+              transform: "translate(0, -8px) scale(0.75) !important", 
+            },
             "& .MuiOutlinedInput-root": {
-              height: "62px",
-              textAlign: "center",
-              display: "flex",
-              alignItems: "center",
-              boxShadow: "0px 2px 30px 0px rgba(0, 0, 0, 0.06)",
-              borderRadius: "8px",
-              "& input": {
-                textAlign: "center",
-                padding: "15px 0",
-                color: "#454545 10%",
-              },
-              "&.Mui-focused fieldset": {
+              height:'62px',
+              "& fieldset": {
+                borderColor: "#45454533",
+                },
+                "&.Mui-focused fieldset": {
                 borderColor: "#19AA6E",
                 boxShadow: "0px 2px 30px 0px rgba(0, 0, 0, 0.06)",
               },
-            },
-            "& .MuiInputLabel-root": {
-              width: "100%",
-              textAlign: "center",
-              color: "#454545",
-              marginTop:"2px",
-              transition: "color 0.2s ease-in-out",
-            },
-            "& .MuiInputLabel-root.Mui-focused": {
-              color: "transparent", 
-            },
-            "& .MuiOutlinedInput-root input::placeholder": {
-              color: "#454545", 
-              transition: "color 0.2s ease-in-out",
-            },
-            "& .MuiOutlinedInput-root.Mui-focused input::placeholder": {
-              color: "transparent", 
             },
           }}
           inputProps={{

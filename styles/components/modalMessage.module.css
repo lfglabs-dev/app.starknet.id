@@ -40,7 +40,7 @@
 }
 
 .menu_title {
-  color: #454545;
+  color: var(--text-primary);
   font-family: "QuickZap";
   font-size: 24px;
   font-weight: bold;
@@ -66,7 +66,7 @@
 
 .button_cancel{
   font-size: 14px;
-  color:#454545;
+  color: var(--text-primary);
   font-family: "QuickZap";
   font-weight: 400;
   line-height: 24px;
