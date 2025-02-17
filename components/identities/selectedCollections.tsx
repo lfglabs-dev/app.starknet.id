@@ -32,7 +32,7 @@ const SelectedCollections: FunctionComponent = () => {
       </div>
       <div className={styles.btnWrapper}>
         <button
-          onClick={() => window.open("https://unframed.co/")}
+          onClick={nftMarketPlace}
           aria-label="Get your NFT"
           className={styles.btnWrapperGetNftBtn}
         >
@@ -40,7 +40,7 @@ const SelectedCollections: FunctionComponent = () => {
           <span>Get your NFT</span>
         </button>
         <button
-          onClick={() => {/* TODO: Implement cancel action */}}
+          onClick={() => router.push("/")}
           aria-label="Cancel action"
           className={styles.btnWrapperCancelBtn}>
           Cancel
