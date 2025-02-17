@@ -148,8 +148,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     if (address) {
       // Our Indexer
       fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_LINK
+        `${process.env.NEXT_PUBLIC_SERVER_LINK
         }/addr_to_full_ids?addr=${hexToDecimal(address)}`
       )
         .then((response) => response.json())
@@ -167,6 +166,14 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     localStorage.setItem("SID-lastUsedConnector", connector.id);
   };
 
+  const handleIdentityClick = useCallback((e: React.MouseEvent, domainId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (domainId !== tokenId) {
+      router.push(`/identities/${domainId}`, undefined, { shallow: true });
+    }
+  }, [router, tokenId]);
+
   return (
     <>
       <div className="min-h-[88vh]">
@@ -179,40 +186,40 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
             className={`${styles.IDScreen} px-[16px] lg:px-0 overflow-x-hidden flex flex-col xl:flex-row justify-center items-center gap-[24px] `}
           >
             <div className=" w-[100%] sm:w-[358px] xl:w-[220px]">
-              <div
-                className={`
-                         ${"border w-[100%] md:w-auto h-[319px] xl:h-auto"} ${
-                  styles.sideNav
-                } relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
-              >
-                <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
-                  {ownedIdentities.map((domain, index) => (
-                    <button
-                      className={`${
-                        domain.id === router.query.tokenId ||
-                        domain.id === tokenId
-                          ? "text-[#402D28]"
-                          : " text-[#CDCCCC] hover:text-[#402D28]"
-                      } font-medium text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-full text-center xl:text-left`}
-                      key={index}
-                      onClick={() => router.push(`/identities/${domain.id}`)}
-                    >
-                      {domain.domain ? domain.domain : domain.id}
-                    </button>
-                  ))}
-                </div>
-                <button
-                  className="w-full justify-center text-center items-center font-quickZap font-normal min-h-[40px] py-5 flex gap-2 bg-white rounded-b-2xl"
-                  onClick={
-                    address
-                      ? () => mint()
-                      : () => setShowWalletConnectModal(true)
-                  }
+              {ownedIdentities.length !== 1 && (
+                <div
+                  className={`
+                         ${"border w-[100%] md:w-auto h-[319px] xl:h-auto"} ${styles.sideNav
+                    } relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
                 >
-                  <FaPlus />
-                  ADD IDENTITIES
-                </button>
-              </div>
+                  <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
+                    {ownedIdentities.map((domain, index) => (
+                      <button
+                        className={`${domain.id === router.query.tokenId ||
+                            domain.id === tokenId
+                            ? "text-[#402D28]"
+                            : " text-[#CDCCCC] hover:text-[#402D28]"
+                          } font-medium text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-full text-center xl:text-left`}
+                        key={index}
+                        onClick={() => router.push(`/identities/${domain.id}`)}
+                      >
+                        {domain.domain ? domain.domain : domain.id}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    className="w-full justify-center text-center items-center font-quickZap font-normal min-h-[40px] py-5 flex gap-2 bg-white rounded-b-2xl"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      address ? mint() : setShowWalletConnectModal(true);
+                    }}
+                  >
+                    <FaPlus />
+                    ADD IDENTITIES
+                  </button>
+                </div>
+              )}
             </div>
             <div
               className={` flex justify-center items-center ${styles.CardContainer}`}

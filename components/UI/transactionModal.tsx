@@ -72,10 +72,21 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
             )}
             <p className={styles.menu_title}>{title}</p>
             {modalContent}
-            <div className="mt-5 flex justify-center">
-              <Button disabled={isButtonDisabled} onClick={sendTransaction}>
+            <div className="flex flex-col gap-4 mt-6">
+              <Button
+                disabled={isButtonDisabled}
+                onClick={sendTransaction}
+                className="!w-[10rem] !h-[2.75rem] !mx-auto !text-sm !whitespace-nowrap !text-center"
+              >
                 {buttonCta}
               </Button>
+
+              <button
+                className="lg:hidden text-[#454545] text-center lg:text-sm text-xs font-quickZap"
+                onClick={() => closeModal()}
+              >
+                Cancel
+              </button>
             </div>
             {isMobile && (
               <div className="mt-2 flex justify-center">

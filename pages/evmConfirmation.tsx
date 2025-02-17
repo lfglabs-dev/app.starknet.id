@@ -21,21 +21,12 @@ const EvmConfirmation: NextPage = () => {
   };
 
   return (
-    <>
+    <div className={styles.main}>
       <div className={styles.container}>
-        <div className={styles.discord}>
-          <img alt="discord icon" src="/ens/discord.svg" />
-        </div>
-        <div className={styles.twitter}>
-          <img alt="twitter icon" src="/ens/twitter.svg" />
-        </div>
-        <div className={styles.github}>
-          <img alt="github icon" src="/ens/github.svg" />
-        </div>
-        <div className={styles.profile}>
-          <img alt="profile icon" src="/ens/profile.svg" />
-        </div>
-        <div>
+        <div className={styles.titleContainer}>
+          <div className={styles.balloon}>
+            <img alt="floating ballon icon" src="/visuals/balloon.webp" />
+          </div>
           <div className={styles.title}>
             You can now send money on your metamask with{" "}
             <span className={styles.highlight}>{domain}.sNid.ETH</span>
@@ -47,7 +38,7 @@ const EvmConfirmation: NextPage = () => {
             <span className={styles.strong}>{domain}.snid.eth</span>. All EVM
             records in ENS now reflect this address. Additionally, we&apos;ve
             updated your profile with your{" "}
-            <span className={styles.strong}>PFP, GitHub, Twitter</span>, and
+            <span>PFP, GitHub, Twitter</span>, and
             other verified Starknet ID information
           </div>
         </div>
@@ -55,22 +46,22 @@ const EvmConfirmation: NextPage = () => {
           <Button onClick={redirectEns}>Go to your ENS domain</Button>
         </div>
 
-        <div>
+        <div className={styles.domainBtn}>
+          <div className={styles.metamask}>
+            <img alt="metamask icon" src="/ens/metamask.svg" />
+          </div>
           <div onClick={redirect} className={styles.backButton}>
             Back to your domain
           </div>
         </div>
       </div>
-      <div className={styles.metamask}>
-        <img alt="metamask icon" src="/ens/metamask.svg" />
-      </div>
       <div className={styles.coconutLeft}>
         <img alt="coconut tree" src="/register/coconutleft.webp" />
       </div>
       <div className={styles.coconutRight}>
-        <img alt="coconut tree" src="/register/coconutright.webp" />
+        <img alt="coconut tree" src="/register/coconutright2.webp" />
       </div>
-    </>
+    </div>
   );
 };
 

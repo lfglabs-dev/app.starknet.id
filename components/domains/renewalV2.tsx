@@ -4,12 +4,12 @@ import { useAccount } from "@starknet-react/core";
 import { FormType } from "../../utils/constants";
 import { FormContext } from "@/context/FormProvider";
 import RegisterSteps from "./steps/registerSteps";
+import styles from "../../styles/components/registerV3.module.css";
 import UserInfoForm from "./steps/userInfoForm";
 import CheckoutCard from "./steps/checkoutCard";
 import SelectPfp from "./steps/selectPfp";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 import evergreenDiscounts from "@/utils/discounts/evergreen";
-
 
 const RenewalV2: FunctionComponent = () => {
   const { address } = useAccount();
@@ -75,25 +75,50 @@ const RenewalV2: FunctionComponent = () => {
 
   return (
     <>
-      <RegisterSteps
-        currentStep={currentStep}
-        setStep={goToStep}
-        showPfp={showPfp}
-        isLoading={isLoading}
-      />
-      {currentStep === 1 && (
-        <UserInfoForm
-          type={FormType.RENEW}
-          goToNextStep={goToNextStep}
-        />
-      )}
-      {currentStep === 2 && <SelectPfp goToNextStep={goToNextStep} />}
-      {currentStep === 3 && (
-        <CheckoutCard
-          type={FormType.RENEW}
-          discount={evergreenDiscounts.renewal}
-        />
-      )}
+      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
+        <aside className={`${styles.purchaseStepNav}`} role="navigation">
+          <RegisterSteps
+            currentStep={currentStep}
+            setStep={goToStep}
+            showPfp={showPfp}
+            isLoading={isLoading}
+          />
+
+          <img
+            src="/visuals/purchaseStepVisual.svg"
+            alt="Domain purchase steps visualization"
+          />
+        </aside>
+
+        <div className={`${styles.purchaseStepNavMobile}`} role="navigation">
+          <RegisterSteps
+            currentStep={currentStep}
+            setStep={goToStep}
+            showPfp={showPfp}
+            isLoading={isLoading}
+          />
+
+          <div className="flex justify-center">
+            <img
+              src="/visuals/purchaseStepVisualMobile.svg"
+              alt="Domain purchase steps visualization"
+            />
+          </div>
+        </div>
+
+        <div className="flex-1">
+          {currentStep === 1 && (
+            <UserInfoForm type={FormType.RENEW} goToNextStep={goToNextStep} />
+          )}
+          {currentStep === 2 && <SelectPfp goToNextStep={goToNextStep} />}
+          {currentStep === 3 && (
+            <CheckoutCard
+              type={FormType.RENEW}
+              discount={evergreenDiscounts.renewal}
+            />
+          )}
+        </div>
+      </div>
     </>
   );
 };

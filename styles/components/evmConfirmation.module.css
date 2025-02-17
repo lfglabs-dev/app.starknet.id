@@ -1,3 +1,6 @@
+.main {
+ background-color: #FCFFFE;
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -31,7 +34,7 @@
 
 .description {
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 28px;
   letter-spacing: 0.01em;
   text-align: center;
@@ -57,27 +60,39 @@
 
 .coconutLeft {
   position: fixed;
-  left: -150px;
-  bottom: -80px;
-  width: 390px;
+  left: -10px;
+  bottom: 0;
+  width: 330px;
   overflow: hidden;
 }
 
 .coconutRight {
   position: fixed;
-  right: -150px;
-  bottom: -80px;
-  width: 390px;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  display: flex;
+  /* flex: 1 0 400px; */
   overflow: hidden;
 }
 
-.discord {
-  position: fixed;
-  top: 100px;
-  left: 100px;
+.coconutLeft > img, .coconutRight > img {
+  width: 100%;
+}
+
+.balloon {
+  position: absolute;
+  top: -60px;
+  left: -40px;
   width: 115px;
+  height: 115px;
   overflow: hidden;
   z-index: -1;
+}
+
+.titleContainer,
+.domainBtn {
+  position: relative;
 }
 
 .twitter {
@@ -108,11 +123,28 @@
 }
 
 .metamask {
-  position: fixed;
-  bottom: 220px;
-  right: 150px;
+  position: absolute;
+  bottom: 40px;
+  left: 500px;
+  height: 205px;
   width: 130px;
   overflow: hidden;
+}
+
+@media (max-width:1500px){
+  .coconutLeft{
+    width: 280px;
+  }
+  .coconutRight{
+    width: 330px;
+  }
+
+}
+
+@media (max-width: 1300px) {
+  .metamask {
+    left: 400px;
+  }
 }
 
 @media (max-width: 1084px) {
@@ -124,16 +156,18 @@
     font-size: 30px;
     line-height: 46px;
   }
-  .coconutLeft,
-  .coconutRight {
-    display: none;
+  .coconutLeft {
+    left: -170px;
+    bottom: -140px;
   }
 
-  .discord {
-    top: 70px;
-    right: 10px;
-    left: auto;
-    width: 70px;
+  .coconutRight {
+    right: -200px;
+    bottom: -70px;
+  }
+
+  .balloon {
+    top: -100px;
   }
 
   .twitter {
@@ -155,7 +189,118 @@
   }
 
   .metamask {
-    bottom: -25px;
-    right: -25px;
+    display: none;
+  }
+}
+
+
+@media (max-width: 400px) {
+  .coconutLeft {
+    left: -110px;
+    width: 200px;
+  }
+  .description {
+    font-size: 16px;
+    max-width: 600px;
+  
+  }
+
+  .title {
+    font-family: "QuickZap";
+    font-size: 2rem;
+    line-height: 2.5rem;
+    font-weight: 500;
+    max-width: 300px;
+  }
+
+  .coconutRight {
+    width: 200px;
+    right: -100px;
+  }
+
+  .balloon {
+    /* top: -70px;
+    left: -20px; */
+    width: 80px;
+  }
+}
+
+@media (max-width: 414px){
+  .coconutLeft{
+    left: -180px;
+    bottom: -190px;
+  }
+  .titleContainer{
+    margin-top: 4rem;
+  }
+  .title{
+    max-width: 360px;
+  }
+
+  .coconutRight{
+    right: -140px;
+    bottom: -200px;
+  }
+}
+
+@media (max-width: 375px) {
+  .coconutLeft{
+    left: -100px;
+  }
+  .coconutRight{
+    right: -50px;
+    bottom: -130px;
+  }
+  .titleContainer{
+    margin-top: 0.3rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .balloon {
+    top: -50px;
+    left: -10px;
+    width: 60px;
+  }
+}
+
+@media (max-height: 700px) {
+  .container {
+    height: calc(100vh - 50px);
+  }
+  .title {
+    font-size: 2rem;
+    line-height: 2.5rem;
+  }
+  .description {
+    font-size: 14px;
+    line-height: 24px;
+  }
+  .balloon{
+    top: -60px;
+  }
+}
+@media (max-width: 834px){
+  .balloon{
+    top: -80px;
+    width: 100px;
+  }
+}
+@media (max-width: 390px) {
+  .balloon{
+    top: -10px;
+    left: -50px;
+    width: 90px;
+  }
+  .title{
+    margin-top: 4rem;
+  }
+  .coconutLeft{
+    left: -100px;
+    bottom: -150px;
+  }
+  .coconutRight{
+    right: -50px;
+    bottom: -150px;
   }
 }
