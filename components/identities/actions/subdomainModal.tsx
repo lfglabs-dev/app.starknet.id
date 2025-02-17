@@ -14,7 +14,7 @@ type SubdomainModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
   callDataEncodedDomain: string[];
-  domain?: string; 
+  domain?: string;
 };
 
 const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
@@ -22,7 +22,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   isModalOpen,
   callDataEncodedDomain,
   domain,
- 
+
 }) => {
   const [targetTokenId, setTargetTokenId] = useState<number>(0);
   const [subdomain, setSubdomain] = useState<string>("");
@@ -138,34 +138,37 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
           error={isDomainValid !== true}
           sx={{
             boxShadow: "0px 2px 30px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8.983px",
-            width:'100%',
+            borderRadius: "8.983px;",
+            width: '100%',
+            backgroundColor: "#ffffff",
             "& label": {
               color: "#45454533",
-              left: "50%",  
-              top: "50%",  
-              transform: "translate(-50%, -50%)", 
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
               transition: "all 0.2s ease-in-out",
-              position: "absolute", 
-              pointerEvents: "none", 
-
+              position: "absolute",
+              pointerEvents: "none",
             },
             "& .MuiInputLabel-root": {
-              left: "50%",  
+              left: "50%",
               transform: "translate(-50%, -50%)",
             },
             "& .MuiInputLabel-shrink": {
               left: "10px",
-              top: "0px", 
-              transform: "translate(0, -8px) scale(0.75) !important", 
+              top: "0px",
+              paddingLeft: "6px",
+              transform: "translate(0, -8.5px) scale(0.75) !important",
             },
             "& .MuiOutlinedInput-root": {
-              height:'62px',
-              width:'full',
+              height: '62px',
+              width: 'full',
+              boxShadow: '0px 2px 30px 0px rgba(0, 0, 0, 0.06)',
+              backgroundColor: "#ffffff",
               "& fieldset": {
                 borderColor: "#45454533",
-                },
-                "&.Mui-focused fieldset": {
+              },
+              "&.Mui-focused fieldset": {
                 borderColor: "#19AA6E",
               },
             },
@@ -178,7 +181,7 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
           <SelectIdentity tokenId={targetTokenId} changeTokenId={changeTokenId} />
         </div>
       </div>
-      
+
     </>
   );
 
