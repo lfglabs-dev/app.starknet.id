@@ -3,18 +3,24 @@ import styles from "../../styles/components/profilePic.module.css";
 import { NftCollections } from "../../utils/constants";
 import ArrowRightIcon from "../UI/iconsComponents/icons/arrowRightIcon";
 import theme from "../../styles/theme";
+import { useRouter } from "next/router";
 
 const SelectedCollections: FunctionComponent = () => {
+  const router = useRouter();
+  const NFT_MARKETPLACE_URL = "https://unframed.co/";
+  const nftMarketPlace: React.MouseEventHandler<HTMLButtonElement> = () => {
+    window.open(NFT_MARKETPLACE_URL, "_blank", "noopener noreferrer");
+  };
   return (
     <>
-      <div className={styles.nftCollectionWraper}>
+      <div
+        className={`mx-auto flex flex-col justify-center ${styles.nftCollectionWraper}`}>
         {NftCollections.map((collection, index) => {
           return (
             <div
               className={styles.nftCollectionCard}
               key={index}
-              onClick={() => window.open(collection.externalLink)}
-            >
+              onClick={() => window.open(collection.externalLink)}>
               <div
                 style={{ backgroundImage: `url(${collection.imageUri})` }}
                 className={styles.nftCollectionImg}

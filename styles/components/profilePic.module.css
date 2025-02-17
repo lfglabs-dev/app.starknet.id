@@ -10,6 +10,21 @@
   margin-bottom: 2rem;
 }
 
+.cancelBtn {
+  margin:10px auto;
+  text-align: center;
+  font-family: "QuickZap";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 28px;
+  color: #454545;
+  cursor: pointer;
+
+  
+  
+}
+
 .arrows {
   display: flex;
   margin: 35px 0;
@@ -89,6 +104,7 @@
   padding-bottom: 10px;
   grid-template-columns: repeat(3, 1fr);
 }
+
 .nftImg img {
   width: 100%;
   height: 100%;
