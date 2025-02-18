@@ -50,13 +50,11 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
             selectedPfp={selectedPfp}
             userNfts={userNfts}
             isLoading={isLoading}
+            title="Our Suggestions"
           />
         </div>
-
         {!hasNoNfts && (
           <div className={styles.gallery}>
-            <p className={styles.subtitle}>Get a new Profile Pic</p>
-            <h2 className={styles.title}>Our NFT Collections selection</h2>
             <SelectedCollections />
           </div>
         )}
