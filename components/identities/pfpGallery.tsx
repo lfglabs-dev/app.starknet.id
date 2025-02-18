@@ -9,6 +9,7 @@ type PfpGalleryProps = {
   isLoading?: boolean;
   selectPfp: (nft: StarkscanNftProps) => void;
   selectedPfp?: StarkscanNftProps | null;
+  title?: string
 };
 
 const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
@@ -16,6 +17,7 @@ const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
   isLoading = false,
   selectPfp,
   selectedPfp,
+  title = "Choose your NFT Profile picture"
 }) => {
   const [isHovered, setIsHovered] = useState<string | null>(null);
 
@@ -26,7 +28,7 @@ const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
     <>
       <div>
         {userNfts.length > 0 && (
-          <h2 className={styles.title}>Choose your NFT Profile picture</h2>
+          <h2 className={styles.title}>{title}</h2>
         )}
         <div className={styles.nftSection}>
           {isLoading ? (

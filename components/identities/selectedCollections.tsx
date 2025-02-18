@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import { NftCollections } from "../../utils/constants";
-import ClickableAction from "../UI/iconsComponents/clickableAction";
 import ArrowRightIcon from "../UI/iconsComponents/icons/arrowRightIcon";
 import theme from "../../styles/theme";
 import { useRouter } from "next/router";
@@ -31,18 +30,21 @@ const SelectedCollections: FunctionComponent = () => {
           );
         })}
       </div>
-      <div className={` ${styles.btnWrapper}`}>
-        <div className="flex flex-col gap-[12px] items-center">
-          <button
-            onClick={nftMarketPlace}
-            className="flex text-[#454545] transition-colors duration-300 hover:text-[#454545]/80 items-center gap-[10px] w-fit justify-center border-[rgba(69, 69, 69, 0.1)]   shadow-[0px_2px_30px_0px_#0000000F] p-[10px_16px] rounded-[8px] bg-white  border-[1px] text-[14px] font-normal font-[QuickZap] ">
-            <ArrowRightIcon width="25" color={theme.palette.secondary.main} />
-            <span>GET YOUR NFT</span>
-          </button>
-          <div className={styles.cancelBtn} onClick={() => router.push("/")}>
-            Cancel
-          </div>
-        </div>
+      <div className={styles.btnWrapper}>
+        <button
+          onClick={nftMarketPlace}
+          aria-label="Get your NFT"
+          className={styles.btnWrapperGetNftBtn}
+        >
+          <ArrowRightIcon width="16" color={theme.palette.secondary.main} />
+          <span>Get your NFT</span>
+        </button>
+        <button
+          onClick={() => router.push("/")}
+          aria-label="Cancel action"
+          className={styles.btnWrapperCancelBtn}>
+          Cancel
+        </button> 
       </div>
     </>
   );

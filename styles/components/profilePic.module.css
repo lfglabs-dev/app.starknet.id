@@ -39,16 +39,6 @@
 .gallery {
   margin: 0 40px 20px;
   border-radius: 20px;
-  background: #fffcf8;
-  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-  width: -webkit-fill-available;
-  padding: 32px 64px;
-  text-align: left;
-}
-
-.noNfts {
-  margin: 0 40px 20px;
-  border-radius: 20px;
   width: -webkit-fill-available;
   padding: 32px 64px;
   text-align: left;
@@ -80,7 +70,7 @@
 }
 
 .nftSection::-webkit-scrollbar-thumb {
-  background-color: #402d28;
+  background-color: #3F43503D;
   border-radius: 6px;
   height: 74.5px;
 }
@@ -149,7 +139,6 @@
   width: 180px;
   border-radius: 24px;
   border: 2px solid var(--primary);
-  /* background: #fff; */
   cursor: pointer;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
 
@@ -219,23 +208,32 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 1.5rem;
-  margin: 48px 0;
+  gap: 10px;
   justify-content: center;
   flex-wrap: wrap;
+  max-width: 696px;
+  padding: 30px 16px 30px;
+  max-height: 413px;
+  overflow-y: scroll;
 }
+.nftCollectionWraper::-webkit-scrollbar-thumb{
+  background-color: #3F43503D;
+  border-radius: 6px;
+  height: 74.5px;
+}
+
 
 .nftCollectionCard {
   display: flex;
-  padding: 1rem;
+  padding: 8px 8px 10px 8px;
   flex-direction: column;
   justify-content: center;
-  gap: 1rem;
+  gap: 10px;
   cursor: pointer;
-  border-radius: 20px;
+  border-radius: 8px;
   background: var(--background-light);
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-  max-width: 296px;
+  max-width: 156px;
   border: 1px solid var(--background-light);
   transition: all 0.2s ease-in-out;
 }
@@ -246,10 +244,9 @@
 }
 
 .nftCollectionImg {
-  width: 264px !important;
-  height: 200px;
-  width: 100%;
-  border-radius: 20px;
+  width: 140px;
+  height: 106px;
+  border-radius: 8px;
   object-fit: contain;
   background-size: 100%;
   background-position: center;
@@ -262,16 +259,54 @@
 
 .nftCollectionName {
   color: var(--secondary);
-  font-family: "QuickZap";
-  font-size: 18px;
+  font-size: 12px;
   font-style: normal;
-  font-weight: 400;
-  line-height: 28px;
+  font-weight: 500;
+  line-height: 16px; /* 133.33% */
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: center;
 }
 
 .btnWrapper {
-  width: 230px;
-  margin: 0 auto;
+  margin: 24px auto 0;
+}
+.btnWrapper button{
+  transition: 0.3s ease-in-out;
+}
+.btnWrapper button:hover{
+  opacity: 0.7;
+}
+.btnWrapperGetNftBtn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  gap: 10px;
+  border: 1px solid #4545451A;
+  box-shadow: 0px 2px 30px 0px #0000000F;
+  border-radius: 8px;
+  font-family: "QuickZap";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  color: var(--secondary);
+
+}
+.btnWrapperCancelBtn{
+  color: var(--secondary);
+  margin-top: 12px;
+  font-family: "QuickZap";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  padding-block: 8px;
+  width: 100%;
+
 }
 
 @media (max-width: 768px) {
@@ -297,19 +332,18 @@
   .gallery,
   .noNfts {
     margin: 0;
-    padding: 2rem 24px;
-    width: calc(100% - 3rem);
-    margin-left: 1.5rem;
+    margin-inline: 16px;
     margin-bottom: 3rem;
   }
-
-  .nftCollectionWraper {
-    flex-direction: column;
-    margin: 2rem 0;
-    gap: 2rem;
+  .noNfts{
+    padding-inline: 18px;
   }
-  .nftCollectionCard {
-    max-width: 100%;
+  .gallery{
+    padding-inline: 0;
+  }
+  .nftCollectionWraper {
+    padding-inline: 0;
+    max-height: 299px;
   }
   .nftSection {
     min-height: auto;

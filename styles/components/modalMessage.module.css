@@ -7,8 +7,7 @@
   transform: translate(-50%, -50%);
   border-radius: 20px;
   padding: 45px;
-  width: 690px;
-  min-height: 400px;
+  width: 700px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -115,16 +114,4 @@
   margin-top: 0.5rem;
   display: flex;
   justify-content: center;
-}@media (max-width: 430px) {
-  .menu {
-    width: 320px;
-   
-  }
-
-  .menu_close {
-display: none;
-  }
-  .menu_cancel {
-display: block;
-  }
 }
