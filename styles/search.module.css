@@ -5,6 +5,16 @@
   text-align: center;
   justify-content: center;
   position: relative;
+  min-height: 100vh;
+  height: auto;
+  justify-items: center;
+}
+
+@media (min-width: 1300px) {
+  .container {
+    flex-direction: column;
+    min-height: auto;
+  }
 }
 
 .searchContainer {
@@ -149,7 +159,6 @@
   border-radius: 16px;
   background: var(--background-white);
   border: 1px solid rgba(69, 69, 69, 0.1);
-  
 
   /* Small Shadow */
   box-shadow: var(--small-shadow);
@@ -170,7 +179,7 @@
 }
 
 .suggestedDomainContainer p {
-  font-family: "Poppins-Bold"; 
+  font-family: "Poppins-Bold";
 }
 
 .suggestionTable .suggestedDomainLink:last-child .suggestedDomainContainer {
@@ -278,5 +287,9 @@
   .suggestionCategory {
     margin: 0 1.5rem;
     max-width: calc(100% - 3rem);
+  }
+
+  .container {
+    justify-content: flex-start;
   }
 }

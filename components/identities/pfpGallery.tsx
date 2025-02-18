@@ -2,7 +2,6 @@ import React, { FunctionComponent, useState } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import NftCard from "../UI/nftCard";
 import { debounce } from "../../utils/debounceService";
-import WarningMessage from "../UI/warningMessage";
 import PfpSkeleton from "./skeletons/pfpSkeleton";
 
 type PfpGalleryProps = {
@@ -26,11 +25,13 @@ const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
   return (
     <>
       <div>
-        <h2 className={styles.title}>Choose your NFT Profile picture</h2>
+        {userNfts.length > 0 && (
+          <h2 className={styles.title}>Choose your NFT Profile picture</h2>
+        )}
         <div className={styles.nftSection}>
           {isLoading ? (
             <PfpSkeleton />
-          ) : userNfts && userNfts.length > 0 ? (
+          ) : userNfts.length > 0 ? (
             userNfts.map((nft, index) => {
               if (!nft.image_url) return null;
               return (
@@ -51,10 +52,11 @@ const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
             })
           ) : (
             <div className="flex flex-col align-middle items-center">
-              <img src="/visuals/notFound.webp" alt="Not found" width={201} />
-              <WarningMessage>
-                You don&apos;t own any whitelisted NFTs yet
-              </WarningMessage>
+              <h2 className={styles.title}>NO NFTS FOUND</h2>
+              <p className={styles.subtitle}>
+                You don&apos;t own any whitelisted NFTs yet. Get your first NFT
+                to customize your profile picture and display it on your domain.
+              </p>
             </div>
           )}
         </div>

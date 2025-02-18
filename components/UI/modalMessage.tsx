@@ -2,7 +2,9 @@ import React from "react";
 import styles from "../../styles/components/modalMessage.module.css";
 import { FunctionComponent, ReactNode } from "react";
 import { Modal } from "@mui/material";
-import Lottie from "lottie-react";
+import dynamic from "next/dynamic";
+
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 
 type ModalMessageProps = {
   title: string;

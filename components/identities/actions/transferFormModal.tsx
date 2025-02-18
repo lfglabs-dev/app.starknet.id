@@ -94,7 +94,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
         linking different types of data to it (Social Media, stark domain ...).
         This form enables you to send this identity to another wallet.
       </p>
-      <div className="mt-5 flex flex-col justify-center">
+      <div className="mt-5  flex flex-col justify-center  w-full">
         <TextField
           label="To Address / SNS"
           id="outlined-end-adornment"
@@ -160,7 +160,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
       transactionHash={transferData?.transaction_hash}
       isButtonDisabled={!targetAddress}
       buttonCta="set new address"
-      buttonCloseCta ="CLose"
+   
       
     />
   );

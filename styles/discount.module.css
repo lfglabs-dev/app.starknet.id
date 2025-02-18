@@ -1,13 +1,21 @@
+.screen {
+  min-height: 88vh;
+  position: relative;
+  margin-top: 12vh;
+  overflow: auto;
+}
+
 .wrapperScreen {
   display: inline-flex;
   flex-direction: column;
   width: 100%;
   justify-content: center;
-  height: calc(100% - 12vh);
+  height: 82vh;
 }
 
 .container,
 .containerVariant {
+  margin-top: 2rem;
   display: flex;
   align-items: center;
   gap: 24px;
