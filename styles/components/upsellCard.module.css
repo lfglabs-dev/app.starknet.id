@@ -57,9 +57,11 @@
 }
 
 .radioGroupContainer {
+  background-color: white;
   width: 100%;
   border: 1px solid #45454533;
   border-radius: 8px;
+  box-shadow: 0px 2px 50px rgba(0, 0, 0, 0.06);
   padding: 8px 20px;
 }
 
