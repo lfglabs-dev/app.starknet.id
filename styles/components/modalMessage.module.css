@@ -60,7 +60,7 @@
 }
 
 .menu_title {
-  color: var(--text-primary);
+  color: var(--secondary);
   font-family: "QuickZap";
   font-size: 24px;
   font-weight: bold;

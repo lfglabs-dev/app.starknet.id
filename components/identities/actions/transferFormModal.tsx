@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useContext,
 } from "react";
-import { TextField, InputAdornment } from "@mui/material";
+import {  InputAdornment } from "@mui/material";
 import { useSendTransaction } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
@@ -15,6 +15,7 @@ import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import TransactionModal from "@/components/UI/transactionModal";
+import AdvancedTextField from "@/components/UI/advancedTextField";
 
 type TransferFormModalProps = {
   identity: Identity | undefined;
@@ -94,43 +95,15 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
         linking different types of data to it (Social Media, stark domain ...).
         This form enables you to send this identity to another wallet.
       </p>
-      <div className="mt-5  flex flex-col justify-center  w-full">
-        <TextField
+      <div className="mt-5  flex flex-col justify-center w-full">
+        <AdvancedTextField
           label="To Address / SNS"
-          id="outlined-end-adornment"
-          fullWidth
+          
           value={addressInput}
-          // variant="outlined"
+        
           onChange={(e) => changeAddress(e.target.value)}
           color="secondary"
-          sx={{
-            boxShadow: "0px 2px 30px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8px",
-            "& label": {
-              color: "#45454533",
-              left: "50%",  
-              top: "50%",  
-              transform: "translate(-50%, -50%)", 
-              transition: "all 0.2s ease-in-out",
-              position: "absolute", 
-              pointerEvents: "none", 
-              
-            },
-            "& .MuiInputLabel-root": {
-              left: "50%",  
-              transform: "translate(-50%, -50%)",
-            },
-            "& .MuiInputLabel-shrink": {
-              left: "10px",
-              top: "0px", 
-              transform: "translate(0, -8px) scale(0.75) !important", 
-            },
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: "#45454533",
-              },
-            },
-          }}
+         
           required
           InputProps={{
             endAdornment: (
