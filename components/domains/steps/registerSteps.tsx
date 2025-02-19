@@ -57,7 +57,7 @@ const RegisterSteps: FunctionComponent<registerStepsProps> = ({
   ) : (
     <div className={styles.stepsContainer} aria-label="Registration steps">
       <div
-        className={`${styles.step} ${getStep(currentStep, 1)}`}
+        className={`${styles.step} bg-black ${getStep(currentStep, 1)}`}
         onClick={() => currentStep >= 1 && setStep(1)}
       >
         <div className={styles.stepContent}>
@@ -99,10 +99,10 @@ const RegisterSteps: FunctionComponent<registerStepsProps> = ({
       )}
 
       <div
-        className={`${styles.step} ${getStep(currentStep, 3)}`}
+        className={`${styles.step}  ${getStep(currentStep, 3)}`}
         onClick={() => currentStep >= 3 && setStep(3)}
       >
-        <div className={styles.stepContent}>
+        <div className='w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]'>
           <CartIcon
             width="20"
             color={getStepColor(currentStep, 3)}

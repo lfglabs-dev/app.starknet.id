@@ -3,7 +3,6 @@
   position: relative;
   margin-top: 12vh;
   overflow: auto;
-  display: flex;
   justify-content: center;
 }
 

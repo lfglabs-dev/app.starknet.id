@@ -36,7 +36,7 @@ const NftCard: FunctionComponent<NftCardProps> = ({
             />
           </div>
         ) : null}
-        <img src={getImgUrl(image)} alt={`Image of ${name}`} />
+        <img src={image} alt={`Image of ${name}`} />
       </div>
     </div>
   );

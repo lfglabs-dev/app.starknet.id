@@ -5,12 +5,15 @@ import { debounce } from "../../utils/debounceService";
 import WarningMessage from "../UI/warningMessage";
 import PfpSkeleton from "./skeletons/pfpSkeleton";
 
+
 type PfpGalleryProps = {
   userNfts: StarkscanNftProps[];
   isLoading?: boolean;
   selectPfp: (nft: StarkscanNftProps) => void;
   selectedPfp?: StarkscanNftProps | null;
 };
+
+
 
 const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
   userNfts,
@@ -22,11 +25,12 @@ const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
 
   const handleMouseEnter = debounce((id: string) => setIsHovered(id), 50);
   const handleMouseLeave = debounce(() => setIsHovered(null), 50);
+  
 
   return (
     <>
       <div>
-        <h2 className={styles.title}>Choose your NFT Profile picture</h2>
+        {/* <h2 className={styles.title}>Choose your NFT Profile picture</h2> */}
         <div className={styles.nftSection}>
           {isLoading ? (
             <PfpSkeleton />

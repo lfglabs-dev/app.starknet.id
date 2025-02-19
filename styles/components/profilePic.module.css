@@ -1,14 +1,11 @@
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  max-width: 90%;
-  width: -webkit-fill-available;
-  margin: 12vh auto 0 auto;
-  height: 100%;
-  overflow-y: auto;
-  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  margin-top: 1rem;
+  height: calc(100vh - 6rem );
 }
+
+
 
 .arrows {
   display: flex;
@@ -21,14 +18,40 @@
   font-family: "QuickZap";
 }
 
+.sideBar{
+  display: flex;
+  gap: 1rem;
+  margin-left: 2px;
+  align-items: center;
+}
+
 .gallery {
-  margin: 0 40px 20px;
   border-radius: 20px;
-  background: #fffcf8;
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
-  width: -webkit-fill-available;
-  padding: 32px 64px;
+  width: 100%;
+  max-height: 413px;
   text-align: left;
+}
+
+
+.chooseButton,
+.cancelButton{
+  color: black;
+  border: 1px solid #e2e8f0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chooseButton {
+  background: gray;
+}
+
+.cancelButton:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
 }
 
 .subtitle {
@@ -250,6 +273,7 @@
   margin: 0 auto;
 }
 
+
 @media (max-width: 768px) {
   .title {
     font-size: 24px;
@@ -259,23 +283,22 @@
   .arrows {
     margin-left: 1.5rem;
   }
+
+  .sideBar{
+    justify-content: center;
+  }
   .subtitle {
     font-size: 14px;
     font-weight: lighter;
     text-align: center;
   }
   .container {
-    max-width: 100%;
-    width: 100%;
-    padding-right: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    height: 100%;
   }
-  .gallery {
-    margin: 0;
-    padding: 2rem 24px;
-    width: calc(100% - 3rem);
-    margin-left: 1.5rem;
-    margin-bottom: 3rem;
-  }
+  
   .nftCollectionWraper {
     flex-direction: column;
     margin: 2rem 0;
