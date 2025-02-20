@@ -1,6 +1,6 @@
 .container {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: 1fr;
   margin-top: 1rem;
   height: calc(100vh - 6rem );
 }
@@ -28,13 +28,6 @@
   font-family: "QuickZap";
 }
 
-.sideBar{
-  display: flex;
-  gap: 1rem;
-  margin-left: 2px;
-  align-items: center;
-}
-
 .gallery {
   display: flex;
   align-items: center;
@@ -42,6 +35,7 @@
   border-radius: 20px;
   width: -webkit-fill-available;
   text-align: left;
+  max-height: 413px;
 }
 
 .noNfts {

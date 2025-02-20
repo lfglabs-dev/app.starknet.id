@@ -1,12 +1,10 @@
 import React, { FunctionComponent, useState } from "react";
 import styles from "../../styles/components/profilePic.module.css";
-import style from "../../styles/components/registerV3.module.css";
 import ModalProfilePic from "../UI/modalProfilePic";
 import SelectedCollections from "./selectedCollections";
 import PfpGallery from "./pfpGallery";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
 import { useAccount } from "@starknet-react/core";
-import RegisterSteps from "../domains/steps/registerSteps";
 
 type UpdateProfilePicProps = {
   tokenId: string;
@@ -54,7 +52,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
               isLoading={isLoading}
               title="Our Suggestions"
             />
-          </div>
+        </div>
 
           <div className={`hidden justify-center my-4 bg-white ${userNfts && "flex"}`}>
             <button 
@@ -71,15 +69,13 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
               Cancel
             </button>
           </div>
-
-        </div>
         
         {!hasNoNfts && (
           <div className={styles.gallery}>
             <SelectedCollections />
           </div>
         )}
-      </div>
+        </div>
       <ModalProfilePic
         isModalOpen={openModal}
         closeModal={goBack}
