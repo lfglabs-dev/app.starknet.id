@@ -54,7 +54,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
 
   return (
     <>
-      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
+      <div className="w-60 flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
         <aside className={`${styles.purchaseStepNav}`} role="navigation">
           <RegisterSteps
             currentStep={currentStep}

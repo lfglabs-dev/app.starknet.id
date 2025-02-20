@@ -45,20 +45,37 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     <>
       <div className={styles.container}>
         <div className={` ${hasNoNfts ? styles.noNfts : styles.gallery}`}>
-          <PfpGallery
-            selectPfp={selectPfp}
-            selectedPfp={selectedPfp}
-            userNfts={userNfts}
-            isLoading={isLoading}
-            title="Our Suggestions"
-          />
+            <PfpGallery
+              selectPfp={selectPfp}
+              selectedPfp={selectedPfp}
+              userNfts={userNfts}
+              isLoading={isLoading}
+              title="Our Suggestions"
+            />
         </div>
+
+          <div className={`hidden justify-center my-4 bg-white ${userNfts && "flex"}`}>
+            <button 
+              className={styles.chooseButton}
+            >
+              Choose Profile Picture
+            </button>
+          </div>
+          
+          <div className={`hidden justify-center my-4 bg-white ${userNfts && "flex"}`}>
+            <button 
+              className={styles.cancelButton}
+            >
+              Cancel
+            </button>
+          </div>
+        
         {!hasNoNfts && (
           <div className={styles.gallery}>
             <SelectedCollections />
           </div>
         )}
-      </div>
+        </div>
       <ModalProfilePic
         isModalOpen={openModal}
         closeModal={goBack}

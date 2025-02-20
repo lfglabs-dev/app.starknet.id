@@ -4,6 +4,7 @@ import NftCard from "../UI/nftCard";
 import { debounce } from "../../utils/debounceService";
 import PfpSkeleton from "./skeletons/pfpSkeleton";
 
+
 type PfpGalleryProps = {
   userNfts: StarkscanNftProps[];
   isLoading?: boolean;
@@ -11,6 +12,8 @@ type PfpGalleryProps = {
   selectedPfp?: StarkscanNftProps | null;
   title?: string
 };
+
+
 
 const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
   userNfts,
@@ -23,6 +26,7 @@ const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
 
   const handleMouseEnter = debounce((id: string) => setIsHovered(id), 50);
   const handleMouseLeave = debounce(() => setIsHovered(null), 50);
+  
 
   return (
     <>
@@ -30,6 +34,7 @@ const PfpGallery: FunctionComponent<PfpGalleryProps> = ({
         {userNfts.length > 0 && (
           <h2 className={styles.title}>{title}</h2>
         )}
+
         <div className={styles.nftSection}>
           {isLoading ? (
             <PfpSkeleton />

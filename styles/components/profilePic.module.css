@@ -1,13 +1,8 @@
 .container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  max-width: 90%;
-  width: -webkit-fill-available;
-  margin: 12vh auto 0 auto;
-  height: 100%;
-  overflow-y: auto;
-  margin-bottom: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-top: 1rem;
+  height: calc(100vh - 6rem );
 }
 
 .cancelBtn {
@@ -20,9 +15,6 @@
   line-height: 28px;
   color: #454545;
   cursor: pointer;
-
-  
-  
 }
 
 .arrows {
@@ -43,7 +35,37 @@
   border-radius: 20px;
   width: -webkit-fill-available;
   text-align: left;
+  max-height: 413px;
 }
+.noNfts {
+  margin: 0 40px 20px;
+  border-radius: 20px;
+  width: -webkit-fill-available;
+  padding: 32px 64px;
+  text-align: left;
+}
+
+
+.chooseButton,
+.cancelButton{
+  color: black;
+  border: 1px solid #e2e8f0;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.chooseButton {
+  background: gray;
+}
+
+.cancelButton:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
 
 .subtitle {
   color: #6d696a;
@@ -310,6 +332,7 @@
 
 }
 
+
 @media (max-width: 768px) {
   .title {
     font-size: 24px;
@@ -320,12 +343,19 @@
   .arrows {
     margin-left: 1.5rem;
   }
+
+  .sideBar{
+    justify-content: center;
+  }
   .subtitle {
     font-size: 14px;
     font-weight: lighter;
     text-align: center;
   }
-  .container {
+
+ 
+  
+  .nftCollectionWraper {
     max-width: 100%;
     width: 100%;
     padding-right: 0;
