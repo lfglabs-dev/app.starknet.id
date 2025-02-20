@@ -120,7 +120,10 @@
 
 .totalDueTitle {
   /* Body/normal/bold */
-  font-family: "Poppins-Bold";
+  font-family: "Poppins-bold";
+  font-style: normal;
+  font-weight: 300;
+  color: #454545;
   font-size: 20px;
   line-height: 24px; /* 120% */
   letter-spacing: 0.2px;
