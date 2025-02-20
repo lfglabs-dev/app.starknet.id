@@ -1,5 +1,10 @@
 import { Modal } from "@mui/material";
-import React, { FunctionComponent, ReactNode, useState, useEffect } from "react";
+import React, {
+  FunctionComponent,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
 import styles from "../../styles/components/modalMessage.module.css";
 import Button from "./button";
 import ConfirmationTx from "./confirmationTx";
@@ -10,12 +15,12 @@ const useIsMobile = () => {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(typeof window !== 'undefined' && window.innerWidth <= 768);
+      setIsMobile(typeof window !== "undefined" && window.innerWidth <= 768);
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   return isMobile;
@@ -32,7 +37,6 @@ type TransactionModalProps = {
   setIsTxSent: (isTxSent: boolean) => void;
   sendTransaction: () => void;
   buttonCta: string;
- 
   transactionHash?: string;
   isButtonDisabled?: boolean;
 };
@@ -50,7 +54,6 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
   transactionHash,
   isButtonDisabled = true,
   buttonCta,
-
 }) => {
   const isMobile = useIsMobile();
 
@@ -81,7 +84,10 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
         ) : (
           <div className={styles.menu}>
             {!isMobile && (
-              <button className={styles.menu_close} onClick={() => closeModal()}>
+              <button
+                className={styles.menu_close}
+                onClick={() => closeModal()}
+              >
                 <svg viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -98,7 +104,6 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
               <Button disabled={isButtonDisabled} onClick={sendTransaction}>
                 {buttonCta}
               </Button>
-          
             </div>
             {isMobile && (
               <div className={styles.cancel_button_container}>

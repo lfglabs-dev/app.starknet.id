@@ -37,7 +37,7 @@
 .menu_cancel {
   position: relative;
   height: 2.8rem;
- color: #454545;
+ color: var(--secondary);
   background-color: transparent;
   font-size: 1rem;
   font-weight: bold;

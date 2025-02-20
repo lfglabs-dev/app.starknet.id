@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useContext,
 } from "react";
-import {  InputAdornment } from "@mui/material";
+import { InputAdornment } from "@mui/material";
 import { useSendTransaction } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
@@ -98,12 +98,9 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
       <div className="mt-5  flex flex-col justify-center w-full">
         <AdvancedTextField
           label="To Address / SNS"
-          
           value={addressInput}
-        
           onChange={(e) => changeAddress(e.target.value)}
           color="secondary"
-         
           required
           InputProps={{
             endAdornment: (
@@ -132,9 +129,7 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
       sendTransaction={transferIdentityAndSetDomain}
       transactionHash={transferData?.transaction_hash}
       isButtonDisabled={!targetAddress}
-      buttonCta="set new address"
-   
-      
+      buttonCta="Send domain"
     />
   );
 };
