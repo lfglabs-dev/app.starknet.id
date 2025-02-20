@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { OutlinedInputProps } from "@mui/material";
+import { OutlinedInputProps, TextFieldProps } from "@mui/material";
 import { TextField } from "@mui/material";
 
 type AdvancedTextFieldProps = {
@@ -10,6 +10,7 @@ type AdvancedTextFieldProps = {
   color: "primary" | "secondary" | "error" | "info" | "success" | "warning";
   required?: boolean;
   error?: boolean;
+  InputProps?: TextFieldProps["InputProps"];
 };
 
 const AdvancedTextField: FunctionComponent<AdvancedTextFieldProps> = ({
@@ -20,6 +21,7 @@ const AdvancedTextField: FunctionComponent<AdvancedTextFieldProps> = ({
   color,
   required = false,
   error = false,
+  InputProps,
 }) => {
   return (
     <div className="flex flex-col justify-center w-full bg-[#FCFFFE]">
@@ -74,6 +76,7 @@ const AdvancedTextField: FunctionComponent<AdvancedTextFieldProps> = ({
         inputProps={{
           style: { height: "60px", textAlign: "center" },
         }}
+        InputProps={InputProps}
       />
     </div>
   );

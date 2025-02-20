@@ -34,13 +34,33 @@
   background-color: transparent;
   border: none;
 }
+.menu_cancel {
+  position: relative;
+  height: 2.8rem;
+ color: var(--secondary);
+  background-color: transparent;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.094em;
+  border: none;
+   min-width: 5rem;
+  width: 95%;
+  margin: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  display: none;
+  text-align: center;
+
+  font-family: "QuickZap";
+}
 
 .menu_close:hover {
   stroke: rgb(124, 124, 124);
 }
 
 .menu_title {
-  color: var(--text-primary);
+  color: var(--secondary);
   font-family: "QuickZap";
   font-size: 24px;
   font-weight: bold;
