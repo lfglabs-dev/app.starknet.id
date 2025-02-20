@@ -45,14 +45,6 @@
   text-align: left;
 }
 
-.noNfts {
-  margin: 0 40px 20px;
-  border-radius: 20px;
-  width: -webkit-fill-available;
-  padding: 32px 64px;
-  text-align: left;
-}
-
 .subtitle {
   color: #6d696a;
   font-size: 14px;
