@@ -2,7 +2,6 @@ import React, { FunctionComponent, useState } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import style from "../../styles/components/registerV3.module.css";
 import ModalProfilePic from "../UI/modalProfilePic";
-import BackButton from "../UI/backButton";
 import SelectedCollections from "./selectedCollections";
 import PfpGallery from "./pfpGallery";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
@@ -42,46 +41,18 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     }
   };
 
+  const hasNoNfts = userNfts.length === 0;
+
   return (
     <>
       <div className={styles.container}>
-        
-        <aside className={`${style.yournftStepNav}`} role="navigation">
-          {/* <RegisterSteps
-            currentStep={currentStep}
-            setStep={goToStep}
-            showPfp={userNfts && userNfts.length > 0}
-            isLoading={isLoadingNfts}
-          /> */}
-        <div className="px-3 py-2">
-          <div className={`${styles.sideBar} mb-4`}>
-            <img src="/icons/AvatarIcon.png" alt="Img" />
-            <p> Your NFT</p>
-          </div>
-          <div className={`${styles.sideBar} mb-4 text-gray-300`}>
-            <img src="/icons/Vector.png" alt="Img" />
-            <p> Starknet ID Ecosystem</p>
-          </div>
-          <div className={`${styles.sideBar} text-gray-300`}>
-            <img src="/icons/StarknetIDIcon.png" alt="Img" />
-            <p> Overall Starknet Ecosystem</p>
-          </div>
-        </div>
-        
-
-          <img
-            className="w-full"
-            src="/visuals/purchaseStepVisual.svg"
-            alt="Domain purchase steps visualization"
-          />
-        </aside>
-        <div className="bg-white flex flex-col items-center">
-          <div className={styles.gallery}>
+        <div className={` ${hasNoNfts ? styles.noNfts : styles.gallery}`}>
             <PfpGallery
               selectPfp={selectPfp}
               selectedPfp={selectedPfp}
               userNfts={userNfts}
               isLoading={isLoading}
+              title="Our Suggestions"
             />
           </div>
 
@@ -102,11 +73,12 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
           </div>
 
         </div>
-        <div className="hidden">
-          <p className={styles.subtitle}>Get a new Profile Pic</p>
-          <h2 className={styles.title}>Our NFT Collections selection</h2>
-          <SelectedCollections />
-        </div>
+        
+        {!hasNoNfts && (
+          <div className={styles.gallery}>
+            <SelectedCollections />
+          </div>
+        )}
       </div>
       <ModalProfilePic
         isModalOpen={openModal}

@@ -32,7 +32,7 @@ const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
   return isLoading ? (
     <Skeleton variant="rectangular" width="100%" height="80px" />
   ) : (
-    <div className="flex flex-col flex-wrap gap-4 justify-start items-start">
+    <div className="flex flex-col flex-wrap gap-[8px] justify-start items-start">
       <div className="flex">
         <Tooltip
           className="cursor-pointer mr-1"
@@ -45,7 +45,7 @@ const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
         </Tooltip>
         <p className={styles.legend}>Domain(s) to renew</p>
       </div>
-      <div className={styles.renewalBox}>
+      <div className={styles.renewalBox} >
         {domains.length === 0 ? (
           <p className={styles.legend}>{noDomainText}</p>
         ) : (

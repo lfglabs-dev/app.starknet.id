@@ -66,7 +66,7 @@ const UpsellCard: FunctionComponent<UpsellCardProps> = ({
           <FormControlLabel
             control={<Radio />}
             value={false}
-            label={<p className={textFieldStyles.legend}>No, thanks!</p>}
+            label={<p className={textFieldStyles.legend}>No, thanks</p>}
           />
         </div>
       </RadioGroup>

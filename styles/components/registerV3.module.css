@@ -23,7 +23,7 @@
   width: 100%;
   flex-direction: column;
   align-items: flex-start;
-  gap: 100px;
+  gap: 15px;
   flex-shrink: 0;
   z-index: 1;
   background-color: transparent;
@@ -196,9 +196,9 @@
 }
 
 .totalDueTitle {
-  font-family: "Poppins-Bold";
-  font-size: 20px;
   font-weight: 500;
+  color: #454545;
+  font-size: 20px;
   line-height: 24px; /* 120% */
   letter-spacing: 0.2px;
 }
@@ -380,7 +380,7 @@
   height: 20px;
   position: absolute;
   top: 0px;
-  right: 50px;
+  right: 0px;
   cursor: pointer;
 }
 

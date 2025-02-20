@@ -8,7 +8,7 @@ export const renewal: Upsell = {
     desc: "Unlock Extended Domain",
     catch: "3 Years for the Price of 2!",
   },
-  desc: "Don't miss out on this one-time offer! This is your chance to secure extended benefits and ensure a lasting digital presence.",
+  desc: "Take advantage of this exclusive offer! Secure your domain for three years at the price of two years.",
 };
 
 export const registration: Upsell = {
@@ -21,7 +21,7 @@ export const registration: Upsell = {
     desc: "Unlock Extended Domain",
     catch: "3 Years for the Price of 2!",
   },
-  desc: "Don't miss out on this one-time offer! This is your chance to secure extended benefits and ensure a lasting digital presence.",
+  desc: "Take advantage of this exclusive offer! Secure your domain for three years at the price of two years.",
 };
 
 const evergreenDiscounts = {
