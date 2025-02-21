@@ -57,8 +57,13 @@ const Navbar: FunctionComponent = () => {
   const [profile, setProfile] = useState<StarkProfile | undefined>(undefined);
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const { isWrongNetwork, setIsWrongNetwork } = useIsWrongNetwork();
+
   const [showWalletConnectModal, setShowWalletConnectModal] =
     useState<boolean>(false);
+
+  const [showModalExpiredDomain, setShowModalExpiredDomain] =
+    useState<boolean>(false);
+
   const router = useRouter();
   const { switchChainAsync } = useSwitchChain({
     params: {
@@ -186,7 +191,12 @@ const Navbar: FunctionComponent = () => {
                 <li className={styles.menuItem}>My Identities</li>
               </Link>
               <Link href="/">
-                <li className={styles.menuItem}>Domains</li>
+                <li
+                  className={styles.menuItem}
+                  onClick={() => setShowModalExpiredDomain(true)}
+                >
+                  Domains
+                </li>
               </Link>
               {/* <Link href="/jointhetribe">
                 <li className={styles.menuItem}>Join the tribe</li>
@@ -424,6 +434,24 @@ const Navbar: FunctionComponent = () => {
           </div>
         }
         lottie={errorLottie}
+      />
+
+      <ModalMessage
+        open={showModalExpiredDomain}
+        title={"Domain Expiration Notice"}
+        closeModal={() => setShowModalExpiredDomain(false)}
+        message={
+          <div className="mt-3 flex flex-col items-center justify-center text-center mx-3">
+            <p>
+              Your domain has expired. Would you like to renew it now to keep
+              your website active?
+            </p>
+            <div className="mt-5">
+              <Button onClick={() => alert('Renew Domain clicked')}>Renew Domain</Button>
+            </div>
+          </div>
+        }
+        // lottie={errorLottie}
       />
       <ModalWallet
         domain={domainOrAddress}
