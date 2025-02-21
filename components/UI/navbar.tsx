@@ -289,7 +289,7 @@ const Navbar: FunctionComponent = () => {
           }
         >
           <div
-            className={`fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-background px-5 ease-in flex justify-between flex-col overflow-auto
+            className={`fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-[#FCFFFE] px-5 ease-in flex justify-between flex-col overflow-auto
               ${nav ? styles.mobileNavbarShown : styles.mobileNavbarHidden}`}
           >
             <div className="h-full flex flex-col">
