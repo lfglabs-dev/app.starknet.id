@@ -45,7 +45,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <div className="lg:mt-10 flex items-center lg:justify-between justify-center sm:text-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row sm:flex-col">
+        <div className="lg:mt-10 flex-col flex items-center lg:justify-between justify-center sm:text-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row sm:flex-col">
           <div className="my-2 text-center">
             <div
               className={styles.pfpSection}
