@@ -28,8 +28,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
   useEffect(() => {
     if (account) {
       fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_LINK
+        `${process.env.NEXT_PUBLIC_SERVER_LINK
         }/addr_to_available_ids?addr=${hexToDecimal(account.address)}`
       )
         .then((response) => response.json())
@@ -46,7 +45,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
 
   return (
     <div className="flex flex-col w-full">
-      <div className="grid place-content-center my-2 ">
+      <div className="grid place-content-center my-2 md:justify-start lg:justify-start ">
         <p className={textFieldStyles.legend}>
           Select an identity to link with your domain*
         </p>
