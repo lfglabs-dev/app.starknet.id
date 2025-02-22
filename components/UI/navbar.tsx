@@ -378,7 +378,7 @@ const Navbar: FunctionComponent = () => {
 
             <div className="flex flex-col items-center my-4 w-full">
               <div className="text-background">
-                <Button onClick={onTopButtonClick}>{topButtonText()}</Button>
+                <Button className="!text-lg" onClick={onTopButtonClick}>{topButtonText()}</Button>
               </div>
               <div className="flex">
                 <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
