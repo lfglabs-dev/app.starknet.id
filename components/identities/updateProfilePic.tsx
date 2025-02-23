@@ -5,6 +5,7 @@ import SelectedCollections from "./selectedCollections";
 import PfpGallery from "./pfpGallery";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
 import { useAccount } from "@starknet-react/core";
+import Button from "@/components/UI/button";
 
 type UpdateProfilePicProps = {
   tokenId: string;
@@ -55,12 +56,12 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
           {userNfts.length > 0 && 
               <>
                 <div className="flex justify-center mt-4">
-                  <button 
-                    className={styles.confirmPpButton}
-                    onClick={() => selectPfp(selectedPfp)}
+                  <Button 
+                    onClick={() => selectPfp(selectedPfp)} 
+                    disabled={selectedPfp === null}
                   >
                     CONFIRM PROFILE PICTURE
-                  </button>
+                  </Button>
                 </div>
                 <div className="flex justify-center mt-4">
                   <button 
