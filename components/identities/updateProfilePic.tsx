@@ -50,8 +50,22 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
             selectedPfp={selectedPfp}
             userNfts={userNfts}
             isLoading={isLoading}
-            title="Our Suggestions"
+            title="Choose your NFT Profile picture"
           />
+          <div className={`hidden justify-center mt-4 ${userNfts && "flex"}`}>
+            <button 
+              className={styles.confirmPpButton}
+            >
+              CONFIRM PROFILE PICTURE
+            </button>
+          </div>
+          <div className={`hidden justify-center mt-4 ${userNfts && "flex"}`}>
+            <button 
+              className={styles.cancelButton}
+            >
+              CANCEL
+            </button>
+          </div>
         </div>
         {!hasNoNfts && (
           <div className={styles.gallery}>

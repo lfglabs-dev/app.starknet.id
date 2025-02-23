@@ -20,9 +20,20 @@
   line-height: 28px;
   color: #454545;
   cursor: pointer;
+}
 
-  
-  
+.confirmPpButton,
+.cancelButton{
+  padding: 1rem;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 900;
+  border-radius: 10px;
+}
+
+.confirmPpButton{
+  background:rgb(192, 175, 175);
+  color: #454545;
 }
 
 .arrows {
