@@ -26,7 +26,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     null
   );
 
-  const selectPfp = (nft: StarkscanNftProps) => {
+  const selectPfp = (nft: StarkscanNftProps | null) => {
     setOpenModal(true);
     setSelectedPfp(nft);
   };
@@ -52,20 +52,27 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
             isLoading={isLoading}
             title="Choose your NFT Profile picture"
           />
-          <div className={`hidden justify-center mt-4 ${userNfts && "flex"}`}>
-            <button 
-              className={styles.confirmPpButton}
-            >
-              CONFIRM PROFILE PICTURE
-            </button>
-          </div>
-          <div className={`hidden justify-center mt-4 ${userNfts && "flex"}`}>
-            <button 
-              className={styles.cancelButton}
-            >
-              CANCEL
-            </button>
-          </div>
+          {userNfts.length > 0 && 
+              <div className="flex justify-center mt-4">
+                <button 
+                  className={styles.confirmPpButton}
+                  onClick={() => selectPfp(selectedPfp)}
+                >
+                  CONFIRM PROFILE PICTURE
+                </button>
+            </div>
+          }
+
+          {userNfts.length > 0 && 
+              <div className="flex justify-center mt-4">
+              <button 
+                className={styles.cancelBtn}
+                onClick={back}
+              >
+                CANCEL
+              </button>
+            </div>
+          }
         </div>
         {!hasNoNfts && (
           <div className={styles.gallery}>
