@@ -43,7 +43,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   const minting = searchParams.get("minting") === "true";
 
   return (
-    <div className={styles.wrapper}>
+    <div  className={styles.wrapper}>
       <div className={styles.container}>
         <div className="lg:mt-10 flex-col flex items-center lg:justify-between justify-center sm:text-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row sm:flex-col">
           <div className="my-2 text-center">
@@ -201,6 +201,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
       <div className={styles.cardCode}>
         <p>{convertNumberToFixedLengthString(tokenId)}</p>
         <svg
+         className="mb-[10px] sm:mb-0"
           width="300"
           height="6"
           viewBox="0 0 380 6"
