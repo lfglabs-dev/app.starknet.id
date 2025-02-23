@@ -65,7 +65,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
                 </div>
                 <div className="flex justify-center mt-4">
                   <button 
-                    className={styles.cancelBtn}
+                    className={styles.cancelButton}
                     onClick={back}
                   >
                     CANCEL
