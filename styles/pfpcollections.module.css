@@ -1,6 +1,6 @@
 .container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: flex-start;
   max-width: 90%;
   width: -webkit-fill-available;
@@ -67,5 +67,18 @@
     margin-left: 1rem;
     margin-bottom: 3rem;
     gap: 3rem;
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    /* align-items: flex-start;
+    max-width: 90%;
+    width: -webkit-fill-available;
+    margin: 12vh auto 0 auto;
+    height: 100%;
+    overflow-y: auto; */
   }
 }

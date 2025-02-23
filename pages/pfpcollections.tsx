@@ -2,11 +2,16 @@ import React from "react";
 import type { NextPage } from "next";
 import styles from "../styles/pfpcollections.module.css";
 import PfpNftCard from "../components/pfpcollections/pfpNftCard";
-import { ourNfts, NftCollections } from "../utils/constants";
+import PtpLeftCol from "../components/pfpcollections/ptpLeftCol";
+import {
+  ourNfts,
+  NftCollections
+} from "../utils/constants";
 
 const PFPCollections: NextPage = () => {
   return (
     <div className={styles.container}>
+      <PtpLeftCol />
       <div className={styles.gallery}>
         <section>
           <p className={styles.subtitle}>Starknet ID Ecosystem</p>
