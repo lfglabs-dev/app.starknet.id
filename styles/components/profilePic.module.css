@@ -310,6 +310,33 @@
 
 }
 
+.pfpBtns {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  margin: 0 auto;
+}
+
+.pfpCancel {
+  display: flex;
+  margin: 20px auto 0;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+}
+
+.pfpCancel p {
+  margin-left: 10px;
+  color: #454545;
+  font-family: "QuickZap";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+
+
 @media (max-width: 768px) {
   .title {
     font-size: 24px;
@@ -358,5 +385,9 @@
   .nftImg {
     width: 5rem;
     height: 5rem;
+  }
+  .pfpBtns {
+    margin-top: 0px;
+    padding-bottom: 10px;
   }
 }

@@ -1,10 +1,15 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import styles from "../../styles/components/profilePic.module.css";
-import ModalProfilePic from "../UI/modalProfilePic";
-import SelectedCollections from "./selectedCollections";
 import PfpGallery from "./pfpGallery";
+import SelectedCollections from "./selectedCollections";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
-import { useAccount } from "@starknet-react/core";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
+import Button from "../UI/button";
+import { Call } from "starknet";
+import identityChangeCalls from "../../utils/callData/identityChangeCalls";
+import { hexToDecimal, toUint256 } from "../../utils/feltService";
+import { useNotificationManager } from "../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../utils/constants";
 
 type UpdateProfilePicProps = {
   tokenId: string;
@@ -20,53 +25,78 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   setPfpTxHash,
 }) => {
   const { address } = useAccount();
-  const { userNfts, isLoading } = useWhitelistedNFTs(address as string);
-  const [openModal, setOpenModal] = useState<boolean>(false);
-  const [selectedPfp, setSelectedPfp] = useState<StarkscanNftProps | null>(
-    null
-  );
+  const { userNfts, isLoading } =  useWhitelistedNFTs(address as string);
+  const [selectedPfp, setSelectedPfp] = useState<StarkscanNftProps | null>(null);
+  const [callData, setCallData] = useState<Call[]>([]);
+  const { addTransaction } = useNotificationManager();
+  const { sendAsync: execute, data: updateData } = useSendTransaction({
+    calls: callData,
+  });
 
-  const selectPfp = (nft: StarkscanNftProps) => {
-    setOpenModal(true);
-    setSelectedPfp(nft);
-  };
+  useEffect(() => {
+    if (!selectedPfp) return;
+    const nft_id = toUint256(selectedPfp.token_id);
+    setCallData([
+      identityChangeCalls.updateProfilePicture(
+        hexToDecimal(selectedPfp.contract_address),
+        nft_id.low,
+        nft_id.high,
+        tokenId
+      ),
+    ]);
+  }, [selectedPfp, tokenId]);
 
-  const goBack = (cancel: boolean) => {
-    setOpenModal(false);
-    if (!cancel) {
-      openTxModal();
-      back();
-    }
-  };
+  useEffect(() => {
+    if (!updateData?.transaction_hash) return;
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `For identity ${tokenId}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.SET_PFP,
+        hash: updateData.transaction_hash,
+        status: "pending",
+      },
+    });
+    setPfpTxHash(updateData.transaction_hash);
+    openTxModal();
+    back();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updateData]);
 
   const hasNoNfts = userNfts.length === 0;
 
   return (
-    <>
-      <div className={styles.container}>
-        <div className={` ${hasNoNfts ? styles.noNfts : styles.gallery}`}>
-          <PfpGallery
-            selectPfp={selectPfp}
-            selectedPfp={selectedPfp}
-            userNfts={userNfts}
-            isLoading={isLoading}
-            title="Our Suggestions"
-          />
-        </div>
-        {!hasNoNfts && (
-          <div className={styles.gallery}>
-            <SelectedCollections />
-          </div>
-        )}
+    <div className={styles.container}>
+      <div className={` ${hasNoNfts ? styles.noNfts : styles.gallery}`}>
+        <PfpGallery
+          selectPfp={setSelectedPfp}
+          selectedPfp={selectedPfp}
+          userNfts={userNfts}
+          isLoading={isLoading}
+          title="Our Suggestions"
+        />
       </div>
-      <ModalProfilePic
-        isModalOpen={openModal}
-        closeModal={goBack}
-        nftData={selectedPfp as StarkscanNftProps}
-        tokenId={tokenId}
-        setPfpTxHash={setPfpTxHash}
-      />
-    </>
+
+      <div className={styles.pfpBtns}>
+        <Button
+          onClick={() => selectedPfp && execute()}
+          disabled={!selectedPfp}
+        >
+          Confirm profile picture
+        </Button>
+
+        <div className={styles.pfpCancel} onClick={() => setSelectedPfp(null)}>
+          <p>Cancel</p>
+        </div>
+      </div>
+
+      {!hasNoNfts && (
+        <div className={styles.gallery}>
+          <SelectedCollections />
+        </div>
+      )}
+    </div>
   );
 };
 
