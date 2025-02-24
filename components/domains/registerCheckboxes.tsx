@@ -5,7 +5,7 @@ import { weiToEth } from "../../utils/feltService";
 import { CurrencyType } from "@/utils/constants";
 import TermCheckbox from "./termCheckbox";
 
-type RegisterCheckboxes = {
+type RegisterCheckboxesProps = {
   termsBox: boolean;
   renewalBox?: boolean;
   onChangeTermsBox: () => void;
@@ -18,9 +18,11 @@ type RegisterCheckboxes = {
   domain?: string;
   displayedCurrency?: CurrencyType;
   maxPriceRange?: bigint;
+  expiryDate?: string; // Added expiry date prop
+  isExpired?: boolean; // Added expiration status prop
 };
 
-const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
+const RegisterCheckboxes: FunctionComponent<RegisterCheckboxesProps> = ({
   onChangeRenewalBox,
   onChangeTermsBox,
   termsBox,
@@ -33,6 +35,8 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
   domain,
   displayedCurrency = CurrencyType.ETH,
   maxPriceRange,
+  expiryDate,
+  isExpired,
 }) => {
   const getHelperText = (): string => {
     return `Enabling a subscription permits Starknet ID to renew your domain automatically every year for you! This approval gives us only the possibility to renew your domain once per year ${
@@ -43,10 +47,11 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
         : ""
     } and we'll cover the transaction fee for you!`;
   };
+
   return (
     <div className="w-full mb-3">
       <div className="flex flex-col gap-3">
-        {showMainDomainBox ? (
+        {showMainDomainBox && (
           <div className="flex items-center justify-left text-xs">
             <Checkbox
               checked={mainDomainBox}
@@ -60,8 +65,9 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
               Set {domain ?? ""} as your main domain
             </p>
           </div>
-        ) : null}
-        {!isArOnforced ? (
+        )}
+
+        {!isArOnforced && (
           <InputHelper helperText={getHelperText()}>
             <div
               className="flex items-center justify-left text-xs cursor-pointer"
@@ -69,12 +75,14 @@ const RegisterCheckboxes: FunctionComponent<RegisterCheckboxes> = ({
             >
               <Checkbox checked={renewalBox} sx={{ padding: 0 }} />
               <p className="ml-2 mr-10 text-left flex items-center gap-2 relative">
-                Enable subscription and don&apos;t pay gas for your yearly
-                renewal
+                {isExpired
+                  ? `Expired on ${expiryDate}`
+                  : "Enable subscription and don't pay gas for your yearly renewal"}
               </p>
             </div>
           </InputHelper>
-        ) : null}
+        )}
+
         <TermCheckbox
           checked={termsBox}
           onChange={onChangeTermsBox}
