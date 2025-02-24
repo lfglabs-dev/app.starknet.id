@@ -199,12 +199,11 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
         </div>
       </div>
       <div className={styles.cardCode}>
-        <p className="text-sm sm:text-[18px]">
-          <span className="sm:hidden  min-w-[max-content]">{convertNumberToFixedLengthString(tokenId).slice(0, 7)}</span>
-          <span className="hidden sm:inline">{convertNumberToFixedLengthString(tokenId)}</span>
+        <p>
+          <span >{convertNumberToFixedLengthString(tokenId)}</span>
         </p>
         <svg
-          className="w-full min-w-[10px] sm:w-[200px] sm:mb-0"
+          className="w-full hidden sm:block sm:w-[200px] md:w-[300px]"
           height="6"
           viewBox="0 0 380 6"
           fill="none"
