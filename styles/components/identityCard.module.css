@@ -90,7 +90,6 @@
   border-bottom-left-radius: 30px;
   margin-top: -1px;
   z-index: 10;
-  flex-wrap: wrap; 
 
   /* Inside */
   display: flex;
@@ -103,11 +102,6 @@
   line-height: 32px;
   letter-spacing: 0.8em;
   color: var(--identity-card-footer-text);
-}
-
-.cardCode p {
-  word-break: break-word; 
-  overflow-wrap: break-word; 
 }
 
 .identityCardSkeleton {
@@ -368,3 +362,5 @@
     padding-bottom: 0;
   }
 }
+
+
