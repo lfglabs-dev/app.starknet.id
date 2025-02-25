@@ -10,7 +10,7 @@ const PFPCollections: NextPage = () => {
   const allowSwitchAnytime = true;
 
   return (
-    <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh] mt-[6rem]">
+    <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh] mt-[4rem]">
       <aside className={`${styles.purchaseStepNav}`} role="navigation">
         <div>
           <Step
