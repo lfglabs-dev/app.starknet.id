@@ -1,5 +1,11 @@
 import React, { FunctionComponent } from "react";
 
+
+interface IconProps {
+  color: string;
+  width: string;
+}
+
 const StarknetIdIcon: FunctionComponent<IconProps> = ({ color, width }) => {
   return (
     <svg width={width} height={width} viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">

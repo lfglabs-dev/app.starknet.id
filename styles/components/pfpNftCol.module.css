@@ -7,7 +7,6 @@
   position: relative;
   border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  
 }
 .sidebar_content {
   display: flex;
@@ -36,6 +35,10 @@
 .sidebar_item:hover {
   opacity: 0.8;
 }
+.sidebar_item:focus {
+  outline: 1px;
+  border-radius: 10px;
+}
 
 .smBackground {
   display: none;
@@ -53,19 +56,19 @@
 .lg_leaves {
   position: absolute;
   bottom: 0;
-   width: 100%;
+  width: 100%;
   border-radius: 24px;
 }
 .sm_land {
   position: absolute;
   bottom: 0;
-   width: 100%;
+  width: 100%;
   border-radius: 0 0 24px 24px;
 }
 .sm_leaves {
   position: absolute;
   bottom: 0;
-   width: 100%;
+  width: 100%;
   border-radius: 24px;
 }
 
@@ -80,12 +83,12 @@
     margin-right: auto;
   }
   .sidebar_content {
-  display: flex;
-  align-self: center;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: min-content;
-}
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: min-content;
+  }
   .smBackground {
     display: block;
     position: relative;

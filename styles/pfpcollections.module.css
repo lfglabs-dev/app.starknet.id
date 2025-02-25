@@ -74,11 +74,5 @@
   .container {
     display: flex;
     flex-direction: column;
-    /* align-items: flex-start;
-    max-width: 90%;
-    width: -webkit-fill-available;
-    margin: 12vh auto 0 auto;
-    height: 100%;
-    overflow-y: auto; */
   }
 }

@@ -1,51 +1,119 @@
 import React from "react";
-import styles from "../../styles/components/pfpNftCol.module.css";
 import StarknetIcon from "../UI/iconsComponents/icons/starknetIcon";
 import StarknetIdIcon from "../UI/iconsComponents/icons/starknetIdIcon";
-import Link from "next/link";
-import Image from "next/image";
+import RegisterSteps from "../domains/steps/registerSteps";
+import { useState, useEffect } from "react";
+import pfpStyles from "../../styles/pfpcollections.module.css";
+import styleR from "../../styles/components/registerV3.module.css";
+import theme from "@/styles/theme";
+import PfpNftCard from "../../components/pfpcollections/pfpNftCard";
+import { ourNfts, NftCollections } from "../../utils/constants";
 
-import lgLand from "../../public/pfpCollections/lg-land.png";
-import smLand from "../../public/pfpCollections/sm-land.png";
-
-import smLeaves from "../../public/pfpCollections/sm-grasses.png";
-import lgLeaves from "../../public/pfpCollections/lg-grasses.png";
-
-const columnMenu = [
-  {
-    Icon: StarknetIdIcon,
-    name: "Starknet ID Ecosystem",
-    url: '',
-  },
-  {
-    Icon: StarknetIcon,
-    name: "Overall Starknet Ecosystem",
-    url: '',
-  },
-];
 const ptpLeftCol = () => {
+  const columnMenu = [
+    {
+      icon: StarknetIdIcon,
+      label: "Starknet ID Ecosystem",
+    },
+    {
+      icon: StarknetIcon,
+      label: "Overall Starknet Ecosystem",
+    },
+  ];
+  const [isLoadingNfts, setIsLoadingNfts] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoadingNfts(false);
+    }, 2000);
+    if (!isLoadingNfts) return setCurrentStep(1);
+  }, [isLoadingNfts]);
+
+  const goToStep = (step: number) => {
+  console.log(step);
+    setCurrentStep(step);
+  };
+
+  const getStepClass = (currentStep: number, stepIndex: number): string => {
+    if (currentStep === stepIndex) return styleR.activeStep;
+    return styleR.inactiveStep;
+  };
+
+  const getStepColor = (currentStep: number, stepIndex: number): string => {
+    if (currentStep === stepIndex) return theme.palette.secondary.main;
+    return theme.palette.grey[200];
+  };
   return (
-    <div className={styles.sidebar}>
-      <div className={styles.sidebar_content}>
-        <div className={styles.sidebar_menu}>
-        {columnMenu.map((link, index) => (
-          <Link href={link.url} className={styles.sidebar_item} key={index}>
-            <link.Icon color="#412D29" width="16" />
-            {link.name}
-          </Link>
-        ))}
+    <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
+      <aside className={`${styleR.purchaseStepNav}`} role="navigation">
+        <RegisterSteps
+          currentStep={currentStep}
+          setStep={goToStep}
+          steps={columnMenu}
+          isRegister={false}
+          showPfp={columnMenu && columnMenu.length > 0}
+          isLoading={isLoadingNfts}
+          getStepClass={getStepClass}
+          getStepColor={getStepColor}
+        />
+
+        <img
+          src="/visuals/purchaseStepVisual.svg"
+          alt="Domain purchase steps visualization"
+        />
+      </aside>
+
+      <div className={`${styleR.purchaseStepNavMobile}`} role="navigation">
+        <RegisterSteps
+          currentStep={currentStep}
+          setStep={goToStep}
+          steps={columnMenu}
+          isRegister={false}
+          showPfp={columnMenu && columnMenu.length > 0}
+          isLoading={isLoadingNfts}
+          getStepClass={getStepClass}
+          getStepColor={getStepColor}
+        />
+
+        <div className="flex justify-center">
+          <img
+            src="/visuals/purchaseStepVisualMobile.svg"
+            alt="Domain purchase steps visualization"
+          />
         </div>
-      <div className={styles.lgBackground}>
-        <Image src={lgLand} className={styles.lg_land} alt="large land" />
-        <Image src={lgLeaves} className={styles.lg_leaves} alt="large grass" />
       </div>
-      <div className={styles.smBackground}>
-        <Image src={smLand} className={styles.sm_land} alt="small land" />
-        <Image src={smLeaves} className={styles.sm_leaves} alt="small grass" />
+
+      <div className={pfpStyles.gallery}>
+        {currentStep === 1 && (<section>
+          <p className={pfpStyles.subtitle}>Starknet ID Ecosystem</p>
+          <h2 className={pfpStyles.title}>PFP collections</h2>
+          <div className={pfpStyles.nfts}>
+            {ourNfts.map((collection, index) => (
+              <PfpNftCard
+                key={index}
+                image={collection.imageUri}
+                name={collection.name}
+                onClick={() => window.open(collection.infoPage)}
+              />
+            ))}
+          </div>
+        </section>)}
+        {currentStep === 2 && (<section>
+          <p className={pfpStyles.subtitle}>Overall Starknet Ecosystem</p>
+          <h2 className={pfpStyles.title}>Our suggestions</h2>
+          <div className={pfpStyles.nfts}>
+            {NftCollections.map((collection, index) => (
+              <PfpNftCard
+                key={index}
+                image={collection.imageUri}
+                name={collection.name}
+                onClick={() => window.open(collection.externalLink)}
+              />
+            ))}
+          </div>
+        </section>)}
       </div>
-      </div>
-      {/* <div className={styles.menuImage}>
-      </div> */}
     </div>
   );
 };

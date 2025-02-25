@@ -9,7 +9,12 @@ import styles from "../../styles/components/registerV3.module.css";
 import SelectPfp from "./steps/selectPfp";
 import RegisterSteps from "./steps/registerSteps";
 import evergreenDiscounts from "@/utils/discounts/evergreen";
+import ContactCardIcon from "@/components/UI/iconsComponents/icons/contactCardIcon";
+import PfpIcon from "@/components/UI/iconsComponents/icons/pfpIcon";
+import CartIcon from "@/components/UI/iconsComponents/icons/cartIcon";
 
+import stylesR from "../../styles/components/registerV3.module.css";
+import theme from "@/styles/theme";
 type RegisterV3Props = {
   domain: string;
   setDomain: (domain: string) => void;
@@ -19,7 +24,20 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
   const { updateFormState, userNfts, isLoadingNfts } = useContext(FormContext);
-
+  const steps = [
+  {
+    label: "Domain",
+    icon: ContactCardIcon,
+  },
+  {
+    label: "PFP",
+    icon: PfpIcon,
+  },
+  {
+    label: "Checkout",
+    icon: CartIcon,
+  },
+]
   useEffect(() => {
     if (!address) setCurrentStep(1);
   }, [address]);
@@ -51,6 +69,17 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
       setCurrentStep((prevStep) => prevStep + 1);
     }
   };
+   const getStepClass = (currentStep: number, stepIndex: number): string => {
+    if (currentStep > stepIndex) return stylesR.passedStep;
+    if (currentStep === stepIndex) return stylesR.activeStep;
+    return stylesR.disabledStep;
+  };
+
+  const getStepColor = (currentStep: number, stepIndex: number): string => {
+    if (currentStep > stepIndex) return theme.palette.primary.main;
+    if (currentStep === stepIndex) return theme.palette.secondary.main;
+    return theme.palette.grey[200];
+  };
 
   return (
     <>
@@ -59,8 +88,11 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}
+            steps={steps}
             showPfp={userNfts && userNfts.length > 0}
             isLoading={isLoadingNfts}
+            getStepClass={getStepClass}
+            getStepColor={getStepColor}
           />
 
           <img
@@ -73,8 +105,11 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}
+            steps={steps}
             showPfp={userNfts && userNfts.length > 0}
             isLoading={isLoadingNfts}
+            getStepClass={getStepClass}
+            getStepColor={getStepColor}
           />
 
           <div className="flex justify-center">

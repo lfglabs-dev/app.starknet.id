@@ -316,6 +316,11 @@
   font-weight: 700;
   font-family: "Poppins-Bold";
 }
+.inactiveStep {
+  color: #CDCCCC;
+  font-weight: 200;
+  font-family: "Poppins-Bold";
+}
 
 .disabledStep {
   color: var(--border-color);
