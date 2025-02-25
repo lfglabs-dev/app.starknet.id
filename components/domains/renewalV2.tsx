@@ -10,7 +10,10 @@ import CheckoutCard from "./steps/checkoutCard";
 import SelectPfp from "./steps/selectPfp";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 import evergreenDiscounts from "@/utils/discounts/evergreen";
-
+import ContactCardIcon from "@/components/UI/iconsComponents/icons/contactCardIcon";
+import PfpIcon from "@/components/UI/iconsComponents/icons/pfpIcon";
+import CartIcon from "@/components/UI/iconsComponents/icons/cartIcon";
+import theme from "@/styles/theme";
 const RenewalV2: FunctionComponent = () => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
@@ -18,7 +21,20 @@ const RenewalV2: FunctionComponent = () => {
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
   const [showPfp, setShowPfp] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
+   const steps = [
+    {
+      label: "Domain",
+      icon: ContactCardIcon,
+    },
+    {
+      label: "PFP",
+      icon: PfpIcon,
+    },
+    {
+      label: "Checkout",
+      icon: CartIcon,
+    },
+  ];
   useEffect(() => {
     if (!address) setCurrentStep(1);
   }, [address]);
@@ -73,6 +89,19 @@ const RenewalV2: FunctionComponent = () => {
     }
   };
 
+  const getStepClass = (currentStep: number, stepIndex: number): string => {
+    if (currentStep > stepIndex) return styles.passedStep;
+    if (currentStep === stepIndex) return styles.activeStep;
+    return styles.disabledStep;
+  };
+
+  const getStepColor = (currentStep: number, stepIndex: number): string => {
+    if (currentStep > stepIndex) return theme.palette.primary.main;
+    if (currentStep === stepIndex) return theme.palette.secondary.main;
+    return theme.palette.grey[200];
+  };
+  
+
   return (
     <>
       <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-3 lg:px-32 md:px-16 sm:pb-12 xl:min-h-[88vh] ">
@@ -82,6 +111,9 @@ const RenewalV2: FunctionComponent = () => {
             setStep={goToStep}
             showPfp={showPfp}
             isLoading={isLoading}
+            steps={steps}
+            getStepClass={getStepClass}
+            getStepColor={getStepColor}
           />
           <img
             src="/visuals/purchaseStepVisual.svg"
@@ -95,6 +127,9 @@ const RenewalV2: FunctionComponent = () => {
             setStep={goToStep}
             showPfp={showPfp}
             isLoading={isLoading}
+            steps={steps}
+            getStepClass={getStepClass}
+            getStepColor={getStepColor}
           />
 
           <div className="flex justify-center">

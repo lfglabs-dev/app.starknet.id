@@ -23,19 +23,19 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const { updateFormState, userNfts, isLoadingNfts } = useContext(FormContext);
   const steps = [
-  {
-    label: "Domain",
-    icon: ContactCardIcon,
-  },
-  {
-    label: "PFP",
-    icon: PfpIcon,
-  },
-  {
-    label: "Checkout",
-    icon: CartIcon,
-  },
-]
+    {
+      label: "Domain",
+      icon: ContactCardIcon,
+    },
+    {
+      label: "PFP",
+      icon: PfpIcon,
+    },
+    {
+      label: "Checkout",
+      icon: CartIcon,
+    },
+  ];
   useEffect(() => {
     if (!address) setCurrentStep(1);
   }, [address]);
@@ -67,7 +67,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
       setCurrentStep((prevStep) => prevStep + 1);
     }
   };
-   const getStepClass = (currentStep: number, stepIndex: number): string => {
+  const getStepClass = (currentStep: number, stepIndex: number): string => {
     if (currentStep > stepIndex) return styles.passedStep;
     if (currentStep === stepIndex) return styles.activeStep;
     return styles.disabledStep;
