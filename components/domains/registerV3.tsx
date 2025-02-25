@@ -12,8 +12,6 @@ import evergreenDiscounts from "@/utils/discounts/evergreen";
 import ContactCardIcon from "@/components/UI/iconsComponents/icons/contactCardIcon";
 import PfpIcon from "@/components/UI/iconsComponents/icons/pfpIcon";
 import CartIcon from "@/components/UI/iconsComponents/icons/cartIcon";
-
-import stylesR from "../../styles/components/registerV3.module.css";
 import theme from "@/styles/theme";
 type RegisterV3Props = {
   domain: string;
@@ -70,9 +68,9 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
     }
   };
    const getStepClass = (currentStep: number, stepIndex: number): string => {
-    if (currentStep > stepIndex) return stylesR.passedStep;
-    if (currentStep === stepIndex) return stylesR.activeStep;
-    return stylesR.disabledStep;
+    if (currentStep > stepIndex) return styles.passedStep;
+    if (currentStep === stepIndex) return styles.activeStep;
+    return styles.disabledStep;
   };
 
   const getStepColor = (currentStep: number, stepIndex: number): string => {

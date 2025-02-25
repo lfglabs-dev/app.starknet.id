@@ -317,7 +317,7 @@
   font-family: "Poppins-Bold";
 }
 .inactiveStep {
-  color: #CDCCCC;
+  color: var(--border-color);
   font-weight: 200;
   font-family: "Poppins-Bold";
 }

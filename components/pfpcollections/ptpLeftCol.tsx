@@ -9,7 +9,7 @@ import theme from "@/styles/theme";
 import PfpNftCard from "../../components/pfpcollections/pfpNftCard";
 import { ourNfts, NftCollections } from "../../utils/constants";
 
-const ptpLeftCol = () => {
+const PtpLeftCol = () => {
   const columnMenu = [
     {
       icon: StarknetIdIcon,
@@ -26,12 +26,11 @@ const ptpLeftCol = () => {
   useEffect(() => {
     setTimeout(() => {
       setIsLoadingNfts(false);
+      setCurrentStep(1);
     }, 2000);
-    if (!isLoadingNfts) return setCurrentStep(1);
   }, [isLoadingNfts]);
 
   const goToStep = (step: number) => {
-  console.log(step);
     setCurrentStep(step);
   };
 
@@ -118,4 +117,4 @@ const ptpLeftCol = () => {
   );
 };
 
-export default ptpLeftCol;
+export default PtpLeftCol;
