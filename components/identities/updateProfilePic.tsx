@@ -40,7 +40,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     }
   };
 
-  const hasNoNfts = userNfts.length === 0;
+  const hasNoNfts = userNfts.length === 1;
 
   return (
     <>
@@ -53,9 +53,9 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
             isLoading={isLoading}
             title="Choose your NFT Profile picture"
           />
-          {userNfts.length > 0 && 
+          {true && 
               <>
-                <div className="flex justify-center mt-4">
+                <div className="flex justify-center mt-1">
                   <Button 
                     onClick={() => selectPfp(selectedPfp)} 
                     disabled={selectedPfp === null}
@@ -63,7 +63,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
                     CONFIRM PROFILE PICTURE
                   </Button>
                 </div>
-                <div className="flex justify-center mt-4">
+                <div className="flex justify-center">
                   <button 
                     className={styles.btnWrapperCancelBtn}
                     onClick={back}
