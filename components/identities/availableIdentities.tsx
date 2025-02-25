@@ -44,6 +44,9 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
   const [showWalletConnectModal, setShowWalletConnectModal] =
     useState<boolean>(false);
 
+  const isDomainExpired = (expiryTimestamp: number | null): boolean =>
+    expiryTimestamp ? Math.floor(Date.now() / 1000) > expiryTimestamp : false;
+
   const callData = useMemo(() => {
     return {
       contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
@@ -176,34 +179,46 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
 
   return (
     <>
-      <div className="min-h-[88vh]">
+      <div className="min-h-[88vh] overflow-x-visible">
         {isIdentityADomain === undefined ? (
           <div>
             <IdentitiesSkeleton />
           </div>
         ) : !isUpdatingPp ? (
           <div
-            className={`${styles.IDScreen} px-[16px] lg:px-0 overflow-x-hidden flex flex-col xl:flex-row justify-center items-center gap-[24px] `}
+            className={`${styles.IDScreen} px-[16px] lg:px-0 flex flex-col xl:flex-row justify-center items-center gap-[24px] `}
           >
             <div className=" w-[100%] sm:w-[358px] xl:w-[220px]">
               {ownedIdentities.length !== 1 && (
                 <div
                   className={`
-                         ${"border w-[100%] md:w-auto h-[319px] xl:h-auto"} ${styles.sideNav
-                    } relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
+                    ${"border w-[100%] md:w-auto h-[319px] xl:h-auto"} ${styles.sideNav}
+                    relative flex flex-col items-center justify-between sm:px-[24px] md:pt-[24px] m-auto shadow-sm rounded-2xl `}
                 >
-                  <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
+                  <div className="h-full md:min-h-[80%] w-full hide-scrollbar flex flex-col gap-[2px]">
                     {ownedIdentities.map((domain, index) => (
                       <button
                         className={`${domain.id === router.query.tokenId ||
-                            domain.id === tokenId
-                            ? "text-[#402D28]"
-                            : " text-[#CDCCCC] hover:text-[#402D28]"
+                          domain.id === tokenId
+                          ? "text-[#402D28]"
+                          : " text-[#CDCCCC] hover:text-[#402D28]"
                           } font-medium text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-full text-center xl:text-left`}
                         key={index}
                         onClick={() => router.push(`/identities/${domain.id}`)}
                       >
-                        {domain.domain ? domain.domain : domain.id}
+                        <div className="flex items-center justify-center xl:justify-start">
+                          <div className="truncate max-w-[80%]">
+                            {domain.domain ? domain.domain : domain.id}
+                          </div>
+                          {isDomainExpired(domain.domain_expiry) && (
+                            <div className="relative ml-2 group">
+                              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                              <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 bg-secondary text-white text-sm px-2 py-3 rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-0 whitespace-nowrap z-50 overflow-visible">
+                                Domain Expired
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </button>
                     ))}
                   </div>
