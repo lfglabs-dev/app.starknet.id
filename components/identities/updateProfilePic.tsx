@@ -1,8 +1,12 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
-import styles from "../../styles/components/profilePic.module.css";
+import React, { FunctionComponent, useState, useEffect } from "react";
+import ModalProfilePic from "../UI/modalProfilePic";
+import profilepicstyles from "../../styles/components/profilePic.module.css";
+import styles from "@/styles/pfpcollections.module.css";
 import PfpGallery from "./pfpGallery";
-import SelectedCollections from "./selectedCollections";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
+import Step from "../domains/steps/step";
+import PfpNftCard from "../pfpcollections/pfpNftCard";
+import { NftCollections, ourNfts } from "@/utils/constants";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
 import Button from "../UI/button";
 import { Call } from "starknet";
@@ -25,13 +29,30 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   setPfpTxHash,
 }) => {
   const { address } = useAccount();
-  const { userNfts, isLoading } =  useWhitelistedNFTs(address as string);
-  const [selectedPfp, setSelectedPfp] = useState<StarkscanNftProps | null>(null);
+  const { userNfts, isLoading } = useWhitelistedNFTs("0x05f1f8de723d8117daa26ec24320d0eacabc53a3d642acb0880846486e73283a" as string);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [selectedPfp, setSelectedPfp] = useState<StarkscanNftProps | null>(
+    null
+  );
+  const [tab, setTab] = useState(0);
   const [callData, setCallData] = useState<Call[]>([]);
   const { addTransaction } = useNotificationManager();
   const { sendAsync: execute, data: updateData } = useSendTransaction({
     calls: callData,
   });
+
+  const selectPfp = (nft: StarkscanNftProps) => {
+    setOpenModal(true);
+    setSelectedPfp(nft);
+  };
+
+  const goBack = (cancel: boolean) => {
+    setOpenModal(false);
+    if (!cancel) {
+      openTxModal();
+      back();
+    }
+  };
 
   useEffect(() => {
     if (!selectedPfp) return;
@@ -61,40 +82,169 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     setPfpTxHash(updateData.transaction_hash);
     openTxModal();
     back();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updateData]);
 
   const hasNoNfts = userNfts.length === 0;
 
-  return (
-    <div className={styles.container}>
-      <div className={` ${hasNoNfts ? styles.noNfts : styles.gallery}`}>
-        <PfpGallery
-          selectPfp={setSelectedPfp}
-          selectedPfp={selectedPfp}
-          userNfts={userNfts}
-          isLoading={isLoading}
-          title="Our Suggestions"
+  const stepsData = [
+    {
+      icon: (
+        <img
+          src={
+            tab === 0
+              ? "/icons/AvatarIcon-active.svg"
+              : "/icons/AvatarIcon-inactive.svg"
+          }
+          alt="Your NFTs"
         />
-      </div>
+      ),
+      label: "Your NFTs",
+    },
+    {
+      icon: (
+        <img
+          src={
+            tab === 1
+              ? "/icons/ecosystem-active.svg"
+              : "/icons/ecosystem-inactive.svg"
+          }
+          alt="Starknet ID Ecosystem"
+        />
+      ),
+      label: "Starknet ID Ecosystem",
+    },
+    {
+      icon: (
+        <img
+          src={
+            tab === 2
+              ? "/icons/starknet-active.svg"
+              : "/icons/starknet-inactive.svg"
+          }
+          alt="Overall Starknet Ecosystem"
+        />
+      ),
+      label: "Overall Starknet Ecosystem",
+    },
+  ];
 
-      {!isLoading && (
-        <div className={styles.pfpBtns}>
-          <Button onClick={() => selectedPfp && execute()} disabled={!selectedPfp}>
-            Confirm profile picture
-          </Button>
-          <div className={styles.pfpCancel} onClick={back}>
-            <p>Cancel</p>
+  return (
+    <>
+      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
+        <aside className={styles.purchaseStepNav} role="navigation">
+          <div>
+            {stepsData.map((step, index) => (
+              <Step
+                key={index}
+                stepIndex={index}
+                currentStep={tab}
+                setStep={setTab}
+                icon={step.icon}
+                label={step.label}
+                showDoneIcon={false}
+                allowSwitchAnytime={true}
+              />
+            ))}
+          </div>
+          <img
+            src="/visuals/purchaseStepVisual.svg"
+            alt="Domain purchase steps visualization"
+          />
+        </aside>
+
+        <div className={styles.purchaseStepNavMobile} role="navigation">
+
+          {stepsData.map((step, index) => (
+            <Step
+              key={index}
+              stepIndex={index}
+              currentStep={tab}
+              setStep={setTab}
+              icon={step.icon}
+              label={step.label}
+              showDoneIcon={false}
+              allowSwitchAnytime={true}
+            />
+          ))}
+          <div className="flex justify-center">
+            <img
+              src="/visuals/purchaseStepVisualMobile.svg"
+              alt="Domain purchase steps visualization"
+            />
           </div>
         </div>
-      )}
 
-      {!hasNoNfts && (
-        <div className={styles.gallery}>
-          <SelectedCollections />
+        <div className="flex-1">
+          {tab === 0 && (
+            <section>
+              <div className={profilepicstyles.container}>
+                <div
+                  className={` ${hasNoNfts ? profilepicstyles.noNfts : profilepicstyles.gallery}`}
+                >
+                  <PfpGallery
+                    selectPfp={selectPfp}
+                    selectedPfp={selectedPfp}
+                    userNfts={userNfts}
+                    isLoading={isLoading}
+                    title="Our Suggestions"
+                  />
+                </div>
+                {!isLoading && (
+                  <div className={profilepicstyles.pfpBtns}>
+                    {!isLoading && (
+                      <Button onClick={() => selectedPfp && execute()} disabled={!selectedPfp}>
+                        Confirm profile picture
+                      </Button>
+                    )}
+                    {!isLoading && (
+                      <div className={profilepicstyles.pfpCancel} onClick={back}>
+                        <p>Cancel</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+          {tab === 1 && (
+            <section>
+              <div className={styles.nfts}>
+                {ourNfts.map((collection, index) => (
+                  <PfpNftCard
+                    key={index}
+                    image={collection.imageUri}
+                    name={collection.name}
+                    onClick={() => window.open(collection.infoPage)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+          {tab === 2 && (
+            <section>
+              <div className={styles.nfts}>
+                {NftCollections.map((collection, index) => (
+                  <PfpNftCard
+                    key={index}
+                    image={collection.imageUri}
+                    name={collection.name}
+                    onClick={() => window.open(collection.externalLink)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
-      )}
-    </div>
+      </div>
+
+      <ModalProfilePic
+        isModalOpen={openModal}
+        closeModal={goBack}
+        nftData={selectedPfp as StarkscanNftProps}
+        tokenId={tokenId}
+        setPfpTxHash={setPfpTxHash}
+      />
+    </>
   );
 };
 

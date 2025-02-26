@@ -181,6 +181,12 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoRenewalData, isAutoRenewalEnabled]); // We don't add callDataEncodedDomain because it would create an infinite loop
 
+  const isExpired = useMemo(() => {
+    return identity?.domainExpiry
+      ? identity.domainExpiry < Math.floor(Date.now() / 1000)
+      : false;
+  }, [identity]);
+
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
     addTransaction({
@@ -243,9 +249,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                 <ClickableAction
                   title="RENEW YOUR DOMAIN"
                   style="primary"
-                  description={`Will expire on ${timestampToReadableDate(
-                    identity?.domainExpiry ?? 0
-                  )}`}
+                  description={`${
+                    isExpired ? "Expired" : "Will expire"
+                  } on ${timestampToReadableDate(identity?.domainExpiry ?? 0)}`}
                   icon={
                     <RenewalIcon
                       width="18"

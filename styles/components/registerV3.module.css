@@ -263,6 +263,7 @@
   overflow: hidden;
   margin-left: auto;
   margin-right: auto;
+  padding-top: 1rem;
 }
 
 @media (min-width: 1280px) {
@@ -317,9 +318,14 @@
   font-family: "Poppins-Bold";
 }
 
-.disabledStep {
+.disabledStep,
+.unselectedStep {
   color: var(--border-color);
   cursor: not-allowed;
+}
+
+.unselectedStep {
+  cursor: pointer;
 }
 
 .stepText {
@@ -463,7 +469,8 @@
     padding: 5px;
   }
 
-  .disabledStep {
+  .disabledStep,
+  .unselectedStep {
     padding: 5px;
   }
 
@@ -526,7 +533,8 @@
     padding: 0px;
   }
 
-  .disabledStep {
+  .disabledStep,
+  .unselectedStep {
     padding: 0px;
   }
 }
@@ -552,7 +560,8 @@
     padding: 0px;
   }
 
-  .disabledStep {
+  .disabledStep,
+  .unselectedStep {
     padding: 0px;
   }
 }
