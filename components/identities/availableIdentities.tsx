@@ -182,9 +182,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
               {ownedIdentities.length !== 1 && (
                 <div
                   className={`
-                         ${"border w-[100%] md:w-auto h-[319px] xl:h-auto"} ${
-                    styles.sideNav
-                  } relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
+                         ${styles.sideNav} border w-[100%] md:w-auto h-[319px] xl:h-auto relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
                 >
                   <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
                     {ownedIdentities.map((domain, index) => (
