@@ -189,7 +189,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
                     title="Our Suggestions"
                   />
                 </div>
-                {!isLoading && (
+                {!isLoading && !hasNoNfts&& (
                   <div className={profilepicstyles.pfpBtns}>
                     {!isLoading && (
                       <Button onClick={() => selectedPfp && execute()} disabled={!selectedPfp}>
