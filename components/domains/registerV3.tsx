@@ -9,10 +9,6 @@ import styles from "../../styles/components/registerV3.module.css";
 import SelectPfp from "./steps/selectPfp";
 import RegisterSteps from "./steps/registerSteps";
 import evergreenDiscounts from "@/utils/discounts/evergreen";
-import ContactCardIcon from "@/components/UI/iconsComponents/icons/contactCardIcon";
-import PfpIcon from "@/components/UI/iconsComponents/icons/pfpIcon";
-import CartIcon from "@/components/UI/iconsComponents/icons/cartIcon";
-import theme from "@/styles/theme";
 type RegisterV3Props = {
   domain: string;
   setDomain: (domain: string) => void;
@@ -22,20 +18,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
   const { updateFormState, userNfts, isLoadingNfts } = useContext(FormContext);
-  const steps = [
-    {
-      label: "Domain",
-      icon: ContactCardIcon,
-    },
-    {
-      label: "PFP",
-      icon: PfpIcon,
-    },
-    {
-      label: "Checkout",
-      icon: CartIcon,
-    },
-  ];
+  
   useEffect(() => {
     if (!address) setCurrentStep(1);
   }, [address]);
@@ -67,30 +50,16 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
       setCurrentStep((prevStep) => prevStep + 1);
     }
   };
-  const getStepClass = (currentStep: number, stepIndex: number): string => {
-    if (currentStep > stepIndex) return styles.passedStep;
-    if (currentStep === stepIndex) return styles.activeStep;
-    return styles.disabledStep;
-  };
-
-  const getStepColor = (currentStep: number, stepIndex: number): string => {
-    if (currentStep > stepIndex) return theme.palette.primary.main;
-    if (currentStep === stepIndex) return theme.palette.secondary.main;
-    return theme.palette.grey[200];
-  };
 
   return (
     <>
-      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
-        <aside className={`${styles.purchaseStepNav}`} role="navigation">
+      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-12 lg:px-32 md:px-16 xl:h-[88vh]">
+        <aside className={styles.purchaseStepNav} role="navigation">
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}
-            steps={steps}
             showPfp={userNfts && userNfts.length > 0}
             isLoading={isLoadingNfts}
-            getStepClass={getStepClass}
-            getStepColor={getStepColor}
           />
 
           <img
@@ -99,15 +68,12 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
           />
         </aside>
 
-        <div className={`${styles.purchaseStepNavMobile}`} role="navigation">
+        <div className={styles.purchaseStepNavMobile} role="navigation">
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}
-            steps={steps}
             showPfp={userNfts && userNfts.length > 0}
             isLoading={isLoadingNfts}
-            getStepClass={getStepClass}
-            getStepColor={getStepColor}
           />
 
           <div className="flex justify-center">

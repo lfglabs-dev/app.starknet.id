@@ -5,6 +5,7 @@
   text-align: center;
   justify-content: center;
   position: relative;
+  width: 100%;
   min-height: 100vh;
   height: auto;
   justify-items: center;
@@ -14,6 +15,12 @@
   .container {
     flex-direction: column;
     min-height: auto;
+  }
+}
+
+@media (max-width: 1280px) {
+  .container {
+    justify-content: flex-start;
   }
 }
 
@@ -286,9 +293,5 @@
   .suggestionCategory {
     margin: 0 1.5rem;
     max-width: calc(100% - 3rem);
-  }
-
-  .container {
-    justify-content: flex-start;
   }
 }

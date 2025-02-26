@@ -80,7 +80,7 @@
 .cardCode {
   /* Placement */
   background-color: var(--background-white);
-  height: 83px;
+  min-height: 83px;
   width: 650px;
   max-width: 650px;
   border-width: 0px 6px 4px 2px;
@@ -101,6 +101,7 @@
   font-size: 18px;
   line-height: 32px;
   letter-spacing: 0.8em;
+  text-indent: 0.9em;
   color: var(--identity-card-footer-text);
 }
 
@@ -362,3 +363,4 @@
     padding-bottom: 0;
   }
 }
+

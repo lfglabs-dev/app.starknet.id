@@ -45,7 +45,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <div className="lg:mt-10 flex items-center lg:justify-between justify-center sm:text-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row sm:flex-col">
+        <div className="lg:mt-10 flex-col flex items-center lg:justify-between justify-center sm:text-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row sm:flex-col">
           <div className="my-2 text-center">
             <div
               className={styles.pfpSection}
@@ -199,9 +199,11 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
         </div>
       </div>
       <div className={styles.cardCode}>
-        <p>{convertNumberToFixedLengthString(tokenId)}</p>
+        <p>
+          <span >{convertNumberToFixedLengthString(tokenId)}</span>
+        </p>
         <svg
-          width="300"
+          className="w-full hidden sm:block sm:w-[200px] md:w-[300px]"
           height="6"
           viewBox="0 0 380 6"
           fill="none"

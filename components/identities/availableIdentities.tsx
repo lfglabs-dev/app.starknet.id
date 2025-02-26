@@ -148,7 +148,8 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     if (address) {
       // Our Indexer
       fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_LINK
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
         }/addr_to_full_ids?addr=${hexToDecimal(address)}`
       )
         .then((response) => response.json())
@@ -166,14 +167,6 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     localStorage.setItem("SID-lastUsedConnector", connector.id);
   };
 
-  const handleIdentityClick = useCallback((e: React.MouseEvent, domainId: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (domainId !== tokenId) {
-      router.push(`/identities/${domainId}`, undefined, { shallow: true });
-    }
-  }, [router, tokenId]);
-
   return (
     <>
       <div className="min-h-[88vh]">
@@ -189,17 +182,17 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
               {ownedIdentities.length !== 1 && (
                 <div
                   className={`
-                         ${"border w-[100%] md:w-auto h-[319px] xl:h-auto"} ${styles.sideNav
-                    } relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
+                         ${styles.sideNav} border w-[100%] md:w-auto h-[319px] xl:h-auto relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
                 >
                   <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
                     {ownedIdentities.map((domain, index) => (
                       <button
-                        className={`${domain.id === router.query.tokenId ||
-                            domain.id === tokenId
+                        className={`${
+                          domain.id === router.query.tokenId ||
+                          domain.id === tokenId
                             ? "text-[#402D28]"
                             : " text-[#CDCCCC] hover:text-[#402D28]"
-                          } font-medium text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-full text-center xl:text-left`}
+                        } font-medium text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-full text-center xl:text-left`}
                         key={index}
                         onClick={() => router.push(`/identities/${domain.id}`)}
                       >

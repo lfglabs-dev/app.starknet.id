@@ -6,7 +6,9 @@ import React, {
   useContext,
 } from "react";
 import { AiOutlineMenu } from "react-icons/ai";
-import { FaDiscord, FaGithub, FaTwitter } from "react-icons/fa";
+import TwitterIcon from "./iconsComponents/icons/twitterIcon";
+import DiscordIcon from "./iconsComponents/icons/discordIcon";
+import GitHubIcon2 from "./iconsComponents/icons/githubIcon2";
 import styles from "../../styles/components/navbar.module.css";
 import connectStyles from "../../styles/components/walletConnect.module.css";
 import Button from "./button";
@@ -289,7 +291,7 @@ const Navbar: FunctionComponent = () => {
           }
         >
           <div
-            className={`fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-background px-5 ease-in flex justify-between flex-col overflow-auto
+            className={`fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-[#FCFFFE] px-5 ease-in flex justify-between flex-col overflow-auto
               ${nav ? styles.mobileNavbarShown : styles.mobileNavbarHidden}`}
           >
             <div className="h-full flex flex-col">
@@ -378,25 +380,25 @@ const Navbar: FunctionComponent = () => {
 
             <div className="flex flex-col items-center my-4 w-full">
               <div className="text-background">
-                <Button onClick={onTopButtonClick}>{topButtonText()}</Button>
+                <Button className="!text-lg" onClick={onTopButtonClick}>{topButtonText()}</Button>
               </div>
               <div className="flex">
-                <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
+                <div className="rounded-full shadow-gray-400 p-4 cursor-pointer">
                   <Link href="https://twitter.com/Starknet_id" target="_blank">
-                    <FaTwitter size={28} color={theme.palette.grey[800]} />
+                    <TwitterIcon width="28" color="black" />{" "}
                   </Link>
                 </div>
-                <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
+                <div className="rounded-full shadow-gray-400 p-4 cursor-pointer">
                   <Link
                     href="https://discord.com/invite/8uS2Mgcsza"
                     target="_blank"
                   >
-                    <FaDiscord size={28} color={theme.palette.grey[800]} />
+                    <DiscordIcon width="28" color="#5865F2" />
                   </Link>
                 </div>
-                <div className="rounded-full shadow-gray-400 p-3 cursor-pointer hover:scale-105 ease-in duration-300 mt-2">
+                <div className="rounded-full shadow-gray-400 p-4">
                   <Link href="https://github.com/lfglabs-dev" target="_blank">
-                    <FaGithub size={28} color={theme.palette.grey[800]} />
+                    <GitHubIcon2 width="28" color="black" />
                   </Link>
                 </div>
               </div>

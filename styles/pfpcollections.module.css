@@ -19,16 +19,6 @@
   margin-bottom: 8px;
 }
 
-.title {
-  color: #454545;
-  font-family: "QuickZap";
-  font-size: 30px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 32px; /* 106.667% */
-  margin-bottom: 48px;
-}
-
 .nfts {
   display: flex;
   justify-content: center;
@@ -37,12 +27,11 @@
 }
 
 @media (max-width: 768px) {
-  .title {
-    font-size: 24px;
-  }
-  .subtitle {
-    font-size: 14px;
-    font-weight: lighter;
+  .gallery {
+    padding: auto;
+    height: 80%;
+    width: calc(100% - 2rem);
+    gap: 1rem;
   }
 
   .gallery {
