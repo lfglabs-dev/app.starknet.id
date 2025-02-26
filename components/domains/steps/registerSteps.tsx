@@ -3,7 +3,6 @@ import styles from "../../../styles/components/registerV3.module.css";
 import ContactCardIcon from "@/components/UI/iconsComponents/icons/contactCardIcon";
 import PfpIcon from "@/components/UI/iconsComponents/icons/pfpIcon";
 import CartIcon from "@/components/UI/iconsComponents/icons/cartIcon";
-import theme from "@/styles/theme";
 import { Skeleton } from "@mui/material";
 import Step from "./step";
 
@@ -12,26 +11,18 @@ type Step = {
   icon: FunctionComponent<{ width: string; color: string }>;
 };
 
-type RegisterStepsProps = {
+type registerStepsProps = {
   currentStep: number;
   setStep: (step: number) => void;
-  steps: Step[];
   showPfp?: boolean;
   isLoading?: boolean;
-  isRegister?: boolean;
-  getStepClass: (currentStep: number, stepIndex: number) => string;
-  getStepColor: (currentStep: number, stepIndex: number) => string;
-};
 };
 
-const RegisterSteps: FunctionComponent<RegisterStepsProps> = ({
+const RegisterSteps: FunctionComponent<registerStepsProps> = ({
   currentStep,
   setStep,
-  steps,
   isLoading = false,
-  isRegister = true,
-  getStepClass,
-  getStepColor,
+  showPfp=false,
 }) => {
  
   return isLoading ? (
@@ -58,19 +49,6 @@ const RegisterSteps: FunctionComponent<RegisterStepsProps> = ({
           <Skeleton variant="text" height={20} />
         </div>
       </div>
-    <div
-      className={styles.stepsContainer}
-      role="status"
-      aria-label="Loading registration steps"
-    >
-      {steps.map((_, index) => (
-        <div key={index} className="flex gap-2 items-center p-2">
-          <Skeleton variant="circular" width={24} height={24} />
-          <div className="w-12 sm:w-16 md:w-24 lg:w-36">
-            <Skeleton variant="text" height={20} />
-          </div>
-        </div>
-      ))}
     </div>
   ) : (
     <div className={styles.stepsContainer} aria-label="Registration steps">
@@ -97,31 +75,6 @@ const RegisterSteps: FunctionComponent<RegisterStepsProps> = ({
         icon={<CartIcon color={""} width={""} />}
         label="Checkout"
       />
-      {steps.map((step, index) => {
-        const stepIndex = index + 1;
-        return (
-          <div
-            key={stepIndex}
-            className={`${styles.step} ${getStepClass(currentStep, stepIndex)}`}
-            onClick={() => isRegister ? (currentStep >= stepIndex) && setStep(stepIndex) : setStep(stepIndex)}
-          >
-            <div className={styles.stepContent}>
-              <step.icon
-                width="20"
-                color={getStepColor(currentStep, stepIndex)}
-              />
-              <p className={styles.stepText}>{step.label}</p>
-            </div>
-            {(currentStep > stepIndex) && isRegister && (
-              <DoneFilledIcon
-                width="16"
-                secondColor={theme.palette.primary.main}
-                color="#FFF"
-              />
-            )}
-          </div>
-        );
-      })}
     </div>
   );
 };

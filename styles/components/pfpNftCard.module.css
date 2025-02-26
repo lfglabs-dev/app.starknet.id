@@ -37,12 +37,12 @@
 .nftCollectionName {
   color: var(--secondary);
   font-size: 12px;
-  padding: 4px;
+  padding: 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 20px; /* 111.111% */
   width: 90%;
 }

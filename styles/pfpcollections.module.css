@@ -1,13 +1,24 @@
 .gallery {
   width: -webkit-fill-available;
-  height: -webkit-fill-available;
-  padding: 64px;
-  text-align: left;
+  padding: 0 150px;
+  height: 80%;
   display: flex;
+  margin: 0 auto;
   flex-direction: row;
-  gap: 4rem;
+  justify-content: center;
   overflow: hidden;
   overflow-y: scroll;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: var(--background);
+  justify-content: space-between;
+  border-radius: 1rem;
+  overflow: hidden;
+  position: relative;
+  z-index: 0;
 }
 
 .subtitle {
@@ -23,7 +34,28 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 15px;
+  justify-content: center;
+}
+
+.purchaseStepNav {
+  display: none;
+}
+
+.purchaseStepNavMobile {
+height: 20%;
+  display: flex;
+  height: max-content;
+  flex-direction: column;
+  background-color: white;
+  box-shadow: 0px 4px 2px rgba(84, 83, 83, 0.25);
+  border: 1px solid #4545451a;
+  border-radius: 16px;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem;
 }
 
 @media (max-width: 768px) {
@@ -33,13 +65,44 @@
     width: calc(100% - 2rem);
     gap: 1rem;
   }
+  .container {
+    max-width: 100%;
+    width: 100%;
+    padding-right: 0;
+  }
+  .nfts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .purchaseStepNavMobile {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0px 4px 2px rgba(84, 83, 83, 0.25);
+  }
+}
 
-  .gallery {
-    margin: 0;
-    padding: auto;
-    width: calc(100% - 2rem);
-    margin-left: 1rem;
-    margin-bottom: 3rem;
-    gap: 3rem;
+@media (min-width: 1280px) {
+  .purchaseStepNav {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 200px;
+    flex-shrink: 0;
+    background-color: white;
+    border: 1px solid #4545451a;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0px 4px 2px rgba(84, 83, 83, 0.25);
+  }
+
+  .purchaseStepNavMobile {
+    display: none;
+  }
+
+  .step {
+    padding: 12px;
   }
 }
