@@ -78,18 +78,16 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
         />
       </div>
 
-      <div className={styles.pfpBtns}>
-        <Button
-          onClick={() => selectedPfp && execute()}
-          disabled={!selectedPfp}
-        >
-          Confirm profile picture
-        </Button>
-
-        <div className={styles.pfpCancel} onClick={() => setSelectedPfp(null)}>
-          <p>Cancel</p>
+      {!isLoading && (
+        <div className={styles.pfpBtns}>
+          <Button onClick={() => selectedPfp && execute()} disabled={!selectedPfp}>
+            Confirm profile picture
+          </Button>
+          <div className={styles.pfpCancel} onClick={back}>
+            <p>Cancel</p>
+          </div>
         </div>
-      </div>
+      )}
 
       {!hasNoNfts && (
         <div className={styles.gallery}>
