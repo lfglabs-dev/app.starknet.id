@@ -174,7 +174,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
           <div>
             <IdentitiesSkeleton />
           </div>
-        ) : false ? (
+        ) : !isUpdatingPp ? (
           <div
             className={`${styles.IDScreen} px-[16px] lg:px-0 overflow-x-hidden flex flex-col xl:flex-row justify-center items-center gap-[24px] `}
           >

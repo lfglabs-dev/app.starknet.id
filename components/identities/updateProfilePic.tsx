@@ -29,7 +29,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   setPfpTxHash,
 }) => {
   const { address } = useAccount();
-  const { userNfts, isLoading } = useWhitelistedNFTs("0x05f1f8de723d8117daa26ec24320d0eacabc53a3d642acb0880846486e73283a" as string);
+  const { userNfts, isLoading } = useWhitelistedNFTs(address as string);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [selectedPfp, setSelectedPfp] = useState<StarkscanNftProps | null>(
     null
