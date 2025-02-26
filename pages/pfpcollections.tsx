@@ -1,11 +1,11 @@
 import React from "react";
 import type { NextPage } from "next";
-import styles from "../styles/pfpcollections.module.css";
 import PtpLeftCol from "../components/pfpcollections/ptpLeftCol";
 
+import homeStyles from "../styles/Home.module.css";
 const PFPCollections: NextPage = () => {
   return (
-    <div className={styles.container}>
+    <div className={homeStyles.screen}>
       <PtpLeftCol />
     </div>
   );

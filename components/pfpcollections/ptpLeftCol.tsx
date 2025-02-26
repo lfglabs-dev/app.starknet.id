@@ -44,7 +44,7 @@ const PtpLeftCol = () => {
     return theme.palette.grey[200];
   };
   return (
-    <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
+    <div className="w-full flex flex-col xl:flex-row justify-center lg:gap-10 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh] lg:h-screen ">
       <aside className={`${styleR.purchaseStepNav}`} role="navigation">
         <RegisterSteps
           currentStep={currentStep}
@@ -84,34 +84,38 @@ const PtpLeftCol = () => {
       </div>
 
       <div className={pfpStyles.gallery}>
-        {currentStep === 1 && (<section>
-          <p className={pfpStyles.subtitle}>Starknet ID Ecosystem</p>
-          <h2 className={pfpStyles.title}>PFP collections</h2>
-          <div className={pfpStyles.nfts}>
-            {ourNfts.map((collection, index) => (
-              <PfpNftCard
-                key={index}
-                image={collection.imageUri}
-                name={collection.name}
-                onClick={() => window.open(collection.infoPage)}
-              />
-            ))}
-          </div>
-        </section>)}
-        {currentStep === 2 && (<section>
-          <p className={pfpStyles.subtitle}>Overall Starknet Ecosystem</p>
-          <h2 className={pfpStyles.title}>Our suggestions</h2>
-          <div className={pfpStyles.nfts}>
-            {NftCollections.map((collection, index) => (
-              <PfpNftCard
-                key={index}
-                image={collection.imageUri}
-                name={collection.name}
-                onClick={() => window.open(collection.externalLink)}
-              />
-            ))}
-          </div>
-        </section>)}
+        {currentStep === 1 && (
+          <section>
+            {/* <p className={pfpStyles.subtitle}>Starknet ID Ecosystem</p> */}
+            {/* <h2 className={pfpStyles.title}>PFP collections</h2> */}
+            <div className={pfpStyles.nfts}>
+              {ourNfts.map((collection, index) => (
+                <PfpNftCard
+                  key={index}
+                  image={collection.imageUri}
+                  name={collection.name}
+                  onClick={() => window.open(collection.infoPage)}
+                />
+              ))}
+            </div>
+          </section>
+        )}
+        {currentStep === 2 && (
+          <section>
+            {/* <p className={pfpStyles.subtitle}>Overall Starknet Ecosystem</p> */}
+            {/* <h2 className={pfpStyles.title}>Our suggestions</h2> */}
+            <div className={pfpStyles.nfts}>
+              {NftCollections.map((collection, index) => (
+                <PfpNftCard
+                  key={index}
+                  image={collection.imageUri}
+                  name={collection.name}
+                  onClick={() => window.open(collection.externalLink)}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </div>
   );
