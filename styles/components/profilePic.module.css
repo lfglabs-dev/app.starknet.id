@@ -101,7 +101,7 @@
   align-items: center;
   margin-left: auto;
   margin-right: auto;
-  padding-bottom: 10px;
+  padding-bottom: 35px;
   grid-template-columns: repeat(3, 1fr);
 }
 
