@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": " next dev",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint '**/*.{jsx,ts,tsx}'",
@@ -38,7 +38,7 @@
     "lottie-react": "^2.4.0",
     "mongodb": "^4.12.1",
     "next": "^14.2.3",
-    "next-axiom": "^1.1.1",
+    "next-axiom": "^1.9.1",
     "nextjs-cors": "^2.1.2",
     "posthog-js": "^1.68.4",
     "qs": "^6.12.1",
