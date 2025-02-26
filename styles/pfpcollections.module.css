@@ -35,7 +35,6 @@
   justify-content: center;
   flex-wrap: wrap;
   gap: 15px;
-  justify-content: center;
 }
 
 .purchaseStepNav {
@@ -43,7 +42,7 @@
 }
 
 .purchaseStepNavMobile {
-height: 20%;
+  height: 20%;
   display: flex;
   height: max-content;
   flex-direction: column;

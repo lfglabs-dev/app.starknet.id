@@ -6,7 +6,7 @@ import CartIcon from "@/components/UI/iconsComponents/icons/cartIcon";
 import { Skeleton } from "@mui/material";
 import Step from "./step";
 
-type Step = {
+type StepProps= {
   label: string;
   icon: FunctionComponent<{ width: string; color: string }>;
 };
