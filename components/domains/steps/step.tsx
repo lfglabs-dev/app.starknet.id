@@ -24,9 +24,9 @@ const Step: React.FC<StepProps> = ({
 }) => {
   const getStep = (currentStep: number, stepIndex: number): string => {
     if (currentStep > stepIndex)
-      return allowSwitchAnytime ? "" : styles.passedStep;
+      return allowSwitchAnytime ? styles.unselectedStep : styles.passedStep;
     if (currentStep === stepIndex) return styles.activeStep;
-    return allowSwitchAnytime ? "" : styles.disabledStep;
+    return allowSwitchAnytime ? styles.unselectedStep : styles.disabledStep;
   };
 
   const getStepColor = (currentStep: number, step: number): string => {

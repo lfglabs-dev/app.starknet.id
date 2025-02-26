@@ -7,11 +7,10 @@ import Step from "@/components/domains/steps/step";
 
 const PFPCollections: NextPage = () => {
   const [tab, setTab] = useState(0);
-  const allowSwitchAnytime = true;
 
   return (
     <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh] mt-[12vh] xl:mt-[calc(12vh + 1rem)]">
-      <aside className={`${styles.purchaseStepNav}`} role="navigation">
+      <aside className={styles.purchaseStepNav} role="navigation">
         <div>
           <Step
             stepIndex={0}
@@ -19,17 +18,17 @@ const PFPCollections: NextPage = () => {
             setStep={setTab}
             icon={
               <img
-                src={`${
+                src={
                   tab === 0
                     ? "/icons/ecosystem-active.svg"
                     : "/icons/ecosystem-inactive.svg"
-                }`}
+                }
                 alt="Starknet ID Ecosystem"
               />
             }
             label="Starknet ID Ecosystem"
             showDoneIcon={false}
-            allowSwitchAnytime={allowSwitchAnytime}
+            allowSwitchAnytime={true}
           />
           <Step
             stepIndex={1}
@@ -37,17 +36,17 @@ const PFPCollections: NextPage = () => {
             setStep={setTab}
             icon={
               <img
-                src={`${
+                src={
                   tab === 1
                     ? "/icons/starknet-active.svg"
                     : "/icons/starknet-inactive.svg"
-                }`}
+                }
                 alt="Overall Starknet Ecosystem"
               />
             }
             label="Overall Starknet Ecosystem"
             showDoneIcon={false}
-            allowSwitchAnytime={allowSwitchAnytime}
+            allowSwitchAnytime={true}
           />
         </div>
 
@@ -57,24 +56,24 @@ const PFPCollections: NextPage = () => {
         />
       </aside>
 
-      <div className={`${styles.purchaseStepNavMobile}`} role="navigation">
+      <div className={styles.purchaseStepNavMobile} role="navigation">
         <Step
           stepIndex={0}
           currentStep={tab}
           setStep={setTab}
           icon={
             <img
-              src={`${
+              src={
                 tab === 0
                   ? "/icons/ecosystem-active.svg"
                   : "/icons/ecosystem-inactive.svg"
-              }`}
+              }
               alt="Starknet ID Ecosystem"
             />
           }
           label="Starknet ID Ecosystem"
           showDoneIcon={false}
-          allowSwitchAnytime={allowSwitchAnytime}
+          allowSwitchAnytime={true}
         />
         <Step
           stepIndex={1}
@@ -82,17 +81,17 @@ const PFPCollections: NextPage = () => {
           setStep={setTab}
           icon={
             <img
-              src={`${
+              src={
                 tab === 1
                   ? "/icons/starknet-active.svg"
                   : "/icons/starknet-inactive.svg"
-              }`}
+              }
               alt="Overall Starknet Ecosystem"
             />
           }
           label="Overall Starknet Ecosystem"
           showDoneIcon={false}
-          allowSwitchAnytime={allowSwitchAnytime}
+          allowSwitchAnytime={true}
         />
 
         <div className="flex justify-center">

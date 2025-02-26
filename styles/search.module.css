@@ -18,6 +18,12 @@
   }
 }
 
+@media (max-width: 1280px) {
+  .container {
+    justify-content: flex-start;
+  }
+}
+
 .searchContainer {
   display: flex;
   flex-direction: column;
@@ -287,9 +293,5 @@
   .suggestionCategory {
     margin: 0 1.5rem;
     max-width: calc(100% - 3rem);
-  }
-
-  .container {
-    justify-content: flex-start;
   }
 }
