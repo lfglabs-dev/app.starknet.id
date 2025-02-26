@@ -1,10 +1,13 @@
 import React, { FunctionComponent, useState } from "react";
-import styles from "../../styles/components/profilePic.module.css";
 import ModalProfilePic from "../UI/modalProfilePic";
-import SelectedCollections from "./selectedCollections";
+import profilepicstyles from "@/styles/components/profilePic.module.css";
+import styles from "@/styles/pfpcollections.module.css";
 import PfpGallery from "./pfpGallery";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
 import { useAccount } from "@starknet-react/core";
+import Step from "../domains/steps/step";
+import PfpNftCard from "../pfpcollections/pfpNftCard";
+import { NftCollections, ourNfts } from "@/utils/constants";
 
 type UpdateProfilePicProps = {
   tokenId: string;
@@ -25,6 +28,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   const [selectedPfp, setSelectedPfp] = useState<StarkscanNftProps | null>(
     null
   );
+  const [tab, setTab] = useState(0);
 
   const selectPfp = (nft: StarkscanNftProps) => {
     setOpenModal(true);
@@ -41,24 +45,143 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
 
   const hasNoNfts = userNfts.length === 0;
 
+  const stepsData = [
+    {
+      icon: (
+        <img
+          src={
+            tab === 0
+              ? "/icons/AvatarIcon-active.svg"
+              : "/icons/AvatarIcon-inactive.svg"
+          }
+          alt="Your NFTs"
+        />
+      ),
+      label: "Your NFTs",
+    },
+    {
+      icon: (
+        <img
+          src={
+            tab === 1
+              ? "/icons/ecosystem-active.svg"
+              : "/icons/ecosystem-inactive.svg"
+          }
+          alt="Starknet ID Ecosystem"
+        />
+      ),
+      label: "Starknet ID Ecosystem",
+    },
+    {
+      icon: (
+        <img
+          src={
+            tab === 2
+              ? "/icons/starknet-active.svg"
+              : "/icons/starknet-inactive.svg"
+          }
+          alt="Overall Starknet Ecosystem"
+        />
+      ),
+      label: "Overall Starknet Ecosystem",
+    },
+  ];
+
   return (
     <>
-      <div className={styles.container}>
-        <div className={` ${hasNoNfts ? styles.noNfts : styles.gallery}`}>
-          <PfpGallery
-            selectPfp={selectPfp}
-            selectedPfp={selectedPfp}
-            userNfts={userNfts}
-            isLoading={isLoading}
-            title="Our Suggestions"
+      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
+        <aside className={styles.purchaseStepNav} role="navigation">
+          <div>
+            {stepsData.map((step, index) => (
+              <Step
+                key={index}
+                stepIndex={index}
+                currentStep={tab}
+                setStep={setTab}
+                icon={step.icon}
+                label={step.label}
+                showDoneIcon={false}
+                allowSwitchAnytime={true}
+              />
+            ))}
+          </div>
+          <img
+          src="/visuals/purchaseStepVisual.svg"
+          alt="Domain purchase steps visualization"
+        />
+        </aside>
+
+        <div className={styles.purchaseStepNavMobile}  role="navigation">
+          
+          {stepsData.map((step, index) => (
+            <Step
+              key={index}
+              stepIndex={index}
+              currentStep={tab}
+              setStep={setTab}
+              icon={step.icon}
+              label={step.label}
+              showDoneIcon={false}
+              allowSwitchAnytime={true}
+            />
+          ))}
+             <div className="flex justify-center">
+          <img
+            src="/visuals/purchaseStepVisualMobile.svg"
+            alt="Domain purchase steps visualization"
           />
         </div>
-        {!hasNoNfts && (
-          <div className={styles.gallery}>
-            <SelectedCollections />
-          </div>
-        )}
+        </div>
+
+        <div className="flex-1">
+          {tab === 0 && (
+            <section>
+              <div className={profilepicstyles.container}>
+                <div
+                  className={` ${hasNoNfts ? styles.noNfts : styles.gallery}`}
+                >
+                  <PfpGallery
+                    selectPfp={selectPfp}
+                    selectedPfp={selectedPfp}
+                    userNfts={userNfts}
+                    isLoading={isLoading}
+                    title="Our Suggestions"
+                  />
+                </div>
+              </div>
+            </section>
+          )}
+          {tab === 1 && (
+            <section>
+              <div className={styles.nfts}>
+                {ourNfts.map((collection, index) => (
+                  <PfpNftCard
+                    key={index}
+                    image={collection.imageUri}
+                    name={collection.name}
+                    onClick={() => window.open(collection.infoPage)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+          {tab === 2 && (
+            <section>
+              <div className={styles.nfts}>
+                {NftCollections.map((collection, index) => (
+                  <PfpNftCard
+                    key={index}
+                    image={collection.imageUri}
+                    name={collection.name}
+                    onClick={() => window.open(collection.externalLink)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
       </div>
+
       <ModalProfilePic
         isModalOpen={openModal}
         closeModal={goBack}
