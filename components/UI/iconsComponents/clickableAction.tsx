@@ -20,7 +20,7 @@ const ClickableAction: FunctionComponent<ClickableActionProps> = ({
 }) => {
   return (
     <div
-      className={` mx-auto -space-x-1 
+      className={`
         ${
           style === "secondary"
             ? styles.clickableActionSecondary
@@ -31,9 +31,9 @@ const ClickableAction: FunctionComponent<ClickableActionProps> = ({
     >
       <div
         className={
-          ` ${style === "secondary"
+          style === "secondary"
             ? styles.clickableIconSecondary
-            : styles.clickableIconPrimary}`
+            : styles.clickableIconPrimary
         }
       >
         {icon}

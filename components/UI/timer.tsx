@@ -30,7 +30,7 @@ const Timer: FunctionComponent<TimerProps> = ({ expiry, fixed = true }) => {
   const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
   return (
-    <div className={`${fixed ? `${styles.timerFixed}` : `${styles.timer}`}`}>
+    <div className={fixed ? styles.timerFixed : styles.timer}>
       <div className={styles.title}>Expires in</div>
       <div className={styles.categories}>
         <div>days</div>

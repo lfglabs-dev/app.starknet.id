@@ -76,7 +76,7 @@ const RenewalV2: FunctionComponent = () => {
   return (
     <>
       <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-3 lg:px-32 md:px-16 sm:pb-12 xl:min-h-[88vh] ">
-        <aside className={`${styles.purchaseStepNav}`} role="navigation">
+        <aside className={styles.purchaseStepNav} role="navigation">
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}
@@ -89,7 +89,7 @@ const RenewalV2: FunctionComponent = () => {
           />
         </aside>
 
-        <div className={`${styles.purchaseStepNavMobile}`} role="navigation">
+        <div className={styles.purchaseStepNavMobile} role="navigation">
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}

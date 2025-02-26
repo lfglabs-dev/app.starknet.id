@@ -79,8 +79,11 @@ const SearchPage: NextPage = () => {
 
   return (
     <div className={homeStyles.screen}>
-      <div className={styles.container}>
-        <div className="sm:w-2/5 w-4/5 mb-5 mt-2">
+      <div style={{
+        justifyContent:"start",
+        padding:'1rem'
+      }} className={styles.container}>
+        <div className="sm:w-3/5 md:w-2/5 w-4/5 mb-5 mt-2 ">
           <SearchBar
             onChangeTypedValue={(typeValue: string) => setDomain(typeValue)}
             showHistory={false}
