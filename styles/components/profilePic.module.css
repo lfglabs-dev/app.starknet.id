@@ -18,7 +18,7 @@
   font-style: normal;
   font-weight: 400;
   line-height: 28px;
-  color: #454545;
+  color: var(--secondary);
   cursor: pointer;
 
   
@@ -56,7 +56,7 @@
 }
 
 .title {
-  color: #454545;
+  color: var(--secondary);
   font-family: "QuickZap";
   font-size: 30px;
   font-style: normal;
@@ -178,7 +178,7 @@
 
 .modalBack p {
   margin-left: 10px;
-  color: #454545;
+  color: var(--secondary);
   font-family: "QuickZap";
   font-size: 18px;
   font-style: normal;
@@ -326,8 +326,7 @@
 }
 
 .pfpCancel p {
-  margin-left: 10px;
-  color: #454545;
+  color: var(--secondary);
   font-family: "QuickZap";
   font-size: 18px;
   font-style: normal;
