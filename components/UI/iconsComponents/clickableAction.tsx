@@ -8,6 +8,7 @@ type ClickableActionProps = {
   description?: string;
   style?: "primary" | "secondary";
   width?: "fixed" | "auto";
+  severe?: boolean;
 };
 
 const ClickableAction: FunctionComponent<ClickableActionProps> = ({
@@ -17,6 +18,7 @@ const ClickableAction: FunctionComponent<ClickableActionProps> = ({
   description,
   style = "secondary",
   width = "fixed",
+  severe = false,
 }) => {
   return (
     <div
@@ -26,7 +28,9 @@ const ClickableAction: FunctionComponent<ClickableActionProps> = ({
             ? styles.clickableActionSecondary
             : styles.clickableActionPrimary
         }
-        ${width === "auto" ? styles.clickableActionAutoWidth : ""}`}
+        ${width === "auto" ? styles.clickableActionAutoWidth : ""}
+        ${severe ? styles.clickableActionSevere : ""}
+        `}
       onClick={onClick}
     >
       <div

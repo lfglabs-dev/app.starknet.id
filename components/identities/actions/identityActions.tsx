@@ -186,7 +186,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       ? identity.domainExpiry < Math.floor(Date.now() / 1000)
       : false;
   }, [identity]);
-  
+
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
     addTransaction({
@@ -246,23 +246,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           {identity && isOwner && address && (
             <div className={styles.identityActions}>
               {isExpired ? (
-                <button
-                  className="flex items-center bg-white hover:opacity-80 transition-all duration-300  w-[280px] h-[60px] rounded-[12px] border-t-[1px] border-r-[4px] border-b-[4px] border-[#D32F2F] border-l-[1px] p-[8px] gap-[12px]"
-                  onClick={() => router.push("/renewal")}>
-                  <div className="bg-[#F6D5D5] w-[40px] h-[40px] flex items-center justify-center rounded-[8px] text-red">
-                    <RenewalIcon width="18" color={"#D32F2F"} />
-                  </div>
-                  <div className="flex flex-col justify-start">
-                    <span className="text-[14px] text-start font-[quickZap]">
-                      RENEW YOUR DOMAIN
-                    </span>
-                    <span className="text-[12px] text-[#8C8989]">
-                      {`Expired on ${timestampToReadableDate(
-                        identity?.domainExpiry ?? 0
-                      )}`}
-                    </span>
-                  </div>
-                </button>
+                <ClickableAction
+                  title="RENEW YOUR DOMAIN"
+                  severe={true}
+                  style="primary"
+                  description={`Expired on ${timestampToReadableDate(
+                    identity?.domainExpiry ?? 0
+                  )}`}
+                  icon={<RenewalIcon width="18" color="#d32f2f" />}
+                  onClick={() => router.push("/renewal")}
+                />
               ) : (
                 <>
                   {callDataEncodedDomain[0] === "1" ? (
@@ -357,14 +350,16 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
                       <p
                         onClick={() => setViewMoreClicked(false)}
-                        className={styles.viewMore}>
+                        className={styles.viewMore}
+                      >
                         View less
                       </p>
                     </>
                   ) : (
                     <p
                       onClick={() => setViewMoreClicked(true)}
-                      className={styles.viewMore}>
+                      className={styles.viewMore}
+                    >
                       View more
                     </p>
                   )}
