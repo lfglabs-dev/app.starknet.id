@@ -31,11 +31,6 @@
   border-radius: 10px;
 }
 
-.confirmPpButton{
-  background:rgb(192, 175, 175);
-  color: #454545;
-}
-
 .arrows {
   display: flex;
   margin: 35px 0;

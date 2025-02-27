@@ -151,26 +151,6 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
                     isLoading={isLoading}
                     title="Choose your NFT Profile picture"
                   />
-                  {userNfts.length > 0 && 
-                  <>
-                    <div className="flex justify-center">
-                      <Button 
-                        onClick={() => selectPfp(selectedPfp)} 
-                        disabled={selectedPfp === null}
-                      >
-                        CONFIRM PROFILE PICTURE
-                      </Button>
-                    </div>
-                    <div className="flex justify-center">
-                      <button 
-                        className={styles.btnWrapperCancelBtn}
-                        onClick={back}
-                      >
-                        CANCEL
-                      </button>
-                    </div>
-                  </>  
-          }
                 </div>
               </div>
             </section>
