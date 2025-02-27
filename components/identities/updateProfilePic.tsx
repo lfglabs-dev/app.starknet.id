@@ -1,13 +1,19 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useState, useEffect } from "react";
 import ModalProfilePic from "../UI/modalProfilePic";
-import profilepicstyles from "@/styles/components/profilePic.module.css";
+import profilepicstyles from "../../styles/components/profilePic.module.css";
 import styles from "@/styles/pfpcollections.module.css";
 import PfpGallery from "./pfpGallery";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
-import { useAccount } from "@starknet-react/core";
 import Step from "../domains/steps/step";
 import PfpNftCard from "../pfpcollections/pfpNftCard";
 import { NftCollections, ourNfts } from "@/utils/constants";
+import { useAccount, useSendTransaction } from "@starknet-react/core";
+import Button from "../UI/button";
+import { Call } from "starknet";
+import identityChangeCalls from "../../utils/callData/identityChangeCalls";
+import { hexToDecimal, toUint256 } from "../../utils/feltService";
+import { useNotificationManager } from "../../hooks/useNotificationManager";
+import { NotificationType, TransactionType } from "../../utils/constants";
 
 type UpdateProfilePicProps = {
   tokenId: string;
@@ -29,6 +35,11 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     null
   );
   const [tab, setTab] = useState(0);
+  const [callData, setCallData] = useState<Call[]>([]);
+  const { addTransaction } = useNotificationManager();
+  const { sendAsync: execute, data: updateData } = useSendTransaction({
+    calls: callData,
+  });
 
   const selectPfp = (nft: StarkscanNftProps) => {
     setOpenModal(true);
@@ -42,6 +53,36 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
       back();
     }
   };
+
+  useEffect(() => {
+    if (!selectedPfp) return;
+    const nft_id = toUint256(selectedPfp.token_id);
+    setCallData([
+      identityChangeCalls.updateProfilePicture(
+        hexToDecimal(selectedPfp.contract_address),
+        nft_id.low,
+        nft_id.high,
+        tokenId
+      ),
+    ]);
+  }, [selectedPfp, tokenId]);
+
+  useEffect(() => {
+    if (!updateData?.transaction_hash) return;
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `For identity ${tokenId}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.SET_PFP,
+        hash: updateData.transaction_hash,
+        status: "pending",
+      },
+    });
+    setPfpTxHash(updateData.transaction_hash);
+    openTxModal();
+    back();
+  }, [updateData]);
 
   const hasNoNfts = userNfts.length === 0;
 
@@ -106,13 +147,13 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
             ))}
           </div>
           <img
-          src="/visuals/purchaseStepVisual.svg"
-          alt="Domain purchase steps visualization"
-        />
+            src="/visuals/purchaseStepVisual.svg"
+            alt="Domain purchase steps visualization"
+          />
         </aside>
 
-        <div className={styles.purchaseStepNavMobile}  role="navigation">
-          
+        <div className={styles.purchaseStepNavMobile} role="navigation">
+
           {stepsData.map((step, index) => (
             <Step
               key={index}
@@ -125,12 +166,12 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
               allowSwitchAnytime={true}
             />
           ))}
-             <div className="flex justify-center">
-          <img
-            src="/visuals/purchaseStepVisualMobile.svg"
-            alt="Domain purchase steps visualization"
-          />
-        </div>
+          <div className="flex justify-center">
+            <img
+              src="/visuals/purchaseStepVisualMobile.svg"
+              alt="Domain purchase steps visualization"
+            />
+          </div>
         </div>
 
         <div className="flex-1">
@@ -138,7 +179,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
             <section>
               <div className={profilepicstyles.container}>
                 <div
-                  className={` ${hasNoNfts ? styles.noNfts : styles.gallery}`}
+                  className={` ${hasNoNfts ? profilepicstyles.noNfts : profilepicstyles.gallery}`}
                 >
                   <PfpGallery
                     selectPfp={selectPfp}
@@ -148,6 +189,20 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
                     title="Our Suggestions"
                   />
                 </div>
+                {!isLoading && !hasNoNfts&& (
+                  <div className={profilepicstyles.pfpBtns}>
+                    {!isLoading && (
+                      <Button onClick={() => selectedPfp && execute()} disabled={!selectedPfp}>
+                        Confirm profile picture
+                      </Button>
+                    )}
+                    {!isLoading && (
+                      <div className={profilepicstyles.pfpCancel} onClick={back}>
+                        <p>Cancel</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </section>
           )}
@@ -181,14 +236,6 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
           )}
         </div>
       </div>
-
-      <ModalProfilePic
-        isModalOpen={openModal}
-        closeModal={goBack}
-        nftData={selectedPfp as StarkscanNftProps}
-        tokenId={tokenId}
-        setPfpTxHash={setPfpTxHash}
-      />
     </>
   );
 };
