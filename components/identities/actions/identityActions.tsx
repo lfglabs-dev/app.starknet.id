@@ -186,7 +186,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       ? identity.domainExpiry < Math.floor(Date.now() / 1000)
       : false;
   }, [identity]);
-
+  
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
     addTransaction({
@@ -245,104 +245,130 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           )}
           {identity && isOwner && address && (
             <div className={styles.identityActions}>
-              {callDataEncodedDomain[0] === "1" ? (
-                <ClickableAction
-                  title="RENEW YOUR DOMAIN"
-                  style="primary"
-                  description={`${
-                    isExpired ? "Expired" : "Will expire"
-                  } on ${timestampToReadableDate(identity?.domainExpiry ?? 0)}`}
-                  icon={
-                    <RenewalIcon
-                      width="18"
-                      color={theme.palette.primary.main}
-                    />
-                  }
-                  onClick={() => router.push("/renewal")}
-                />
-              ) : null}
-
-              <ClickableAction
-                title="CHANGE DOMAIN TARGET"
-                description="Change target address"
-                icon={
-                  <SignsIcon width="23" color={theme.palette.secondary.main} />
-                }
-                onClick={() => setIsAddressFormOpen(true)}
-              />
-
-              {viewMoreClicked ? (
+              {isExpired ? (
+                <button
+                  className="flex items-center bg-white hover:opacity-80 transition-all duration-300  w-[280px] h-[60px] rounded-[12px] border-t-[1px] border-r-[4px] border-b-[4px] border-[#D32F2F] border-l-[1px] p-[8px] gap-[12px]"
+                  onClick={() => router.push("/renewal")}>
+                  <div className="bg-[#F6D5D5] w-[40px] h-[40px] flex items-center justify-center rounded-[8px] text-red">
+                    <RenewalIcon width="18" color={"#D32F2F"} />
+                  </div>
+                  <div className="flex flex-col justify-start">
+                    <span className="text-[14px] text-start font-[quickZap]">
+                      RENEW YOUR DOMAIN
+                    </span>
+                    <span className="text-[12px] text-[#8C8989]">
+                      {`Expired on ${timestampToReadableDate(
+                        identity?.domainExpiry ?? 0
+                      )}`}
+                    </span>
+                  </div>
+                </button>
+              ) : (
                 <>
-                  <ClickableAction
-                    title="MOVE YOUR IDENTITY NFT"
-                    description="Transfer your identity to another wallet"
-                    icon={
-                      <TransferIcon
-                        width="20"
-                        color={theme.palette.secondary.main}
-                      />
-                    }
-                    onClick={() => setIsTransferFormOpen(true)}
-                  />
-                  <ClickableAction
-                    title="CREATE A SUBDOMAIN"
-                    description="Create a new subdomain"
-                    icon={
-                      <PlusIcon
-                        width="18"
-                        color={theme.palette.secondary.main}
-                      />
-                    }
-                    onClick={() => setIsSubdomainFormOpen(true)}
-                  />
-                  {!isMainDomain && (
+                  {callDataEncodedDomain[0] === "1" ? (
                     <ClickableAction
-                      title="Set as main domain"
-                      description="Set this identity as your main id"
+                      title="RENEW YOUR DOMAIN"
+                      style="primary"
+                      description={`Will expire on ${timestampToReadableDate(
+                        identity?.domainExpiry ?? 0
+                      )}`}
                       icon={
-                        <MainIcon
-                          width="21"
-                          firstColor={theme.palette.secondary.main}
-                          secondColor={theme.palette.secondary.main}
+                        <RenewalIcon
+                          width="18"
+                          color={theme.palette.primary.main}
                         />
                       }
-                      onClick={() => setMainId()}
+                      onClick={() => router.push("/renewal")}
                     />
-                  )}
+                  ) : null}
 
-                  {callDataEncodedDomain[0] === "1" && !isAutoRenewalEnabled ? (
-                    <ClickableAction
-                      title="ENABLE SUBSCRIPTION"
-                      description={nextAutoRenew}
-                      style="primary"
-                      icon={<div className={styles.renewalIcon}>ON</div>}
-                      onClick={() => router.push("/subscription")}
-                    />
-                  ) : null}
-                  {callDataEncodedDomain[0] === "1" && isAutoRenewalEnabled ? (
-                    <ClickableAction
-                      title="DISABLE SUBSCRIPTION"
-                      description={nextAutoRenew}
-                      icon={<div className={styles.renewalIconOff}>OFF</div>}
-                      onClick={() => disableRenewal()}
-                    />
-                  ) : null}
-                  <p
-                    onClick={() => setViewMoreClicked(false)}
-                    className={styles.viewMore}
-                  >
-                    View less
-                  </p>
+                  <ClickableAction
+                    title="CHANGE DOMAIN TARGET"
+                    description="Change target address"
+                    icon={
+                      <SignsIcon
+                        width="23"
+                        color={theme.palette.secondary.main}
+                      />
+                    }
+                    onClick={() => setIsAddressFormOpen(true)}
+                  />
+
+                  {viewMoreClicked ? (
+                    <>
+                      <ClickableAction
+                        title="MOVE YOUR IDENTITY NFT"
+                        description="Transfer your identity to another wallet"
+                        icon={
+                          <TransferIcon
+                            width="20"
+                            color={theme.palette.secondary.main}
+                          />
+                        }
+                        onClick={() => setIsTransferFormOpen(true)}
+                      />
+                      <ClickableAction
+                        title="CREATE A SUBDOMAIN"
+                        description="Create a new subdomain"
+                        icon={
+                          <PlusIcon
+                            width="18"
+                            color={theme.palette.secondary.main}
+                          />
+                        }
+                        onClick={() => setIsSubdomainFormOpen(true)}
+                      />
+                      {!isMainDomain && (
+                        <ClickableAction
+                          title="Set as main domain"
+                          description="Set this identity as your main id"
+                          icon={
+                            <MainIcon
+                              width="21"
+                              firstColor={theme.palette.secondary.main}
+                              secondColor={theme.palette.secondary.main}
+                            />
+                          }
+                          onClick={() => setMainId()}
+                        />
+                      )}
+
+                      {callDataEncodedDomain[0] === "1" &&
+                      !isAutoRenewalEnabled ? (
+                        <ClickableAction
+                          title="ENABLE SUBSCRIPTION"
+                          description={nextAutoRenew}
+                          style="primary"
+                          icon={<div className={styles.renewalIcon}>ON</div>}
+                          onClick={() => router.push("/subscription")}
+                        />
+                      ) : null}
+                      {callDataEncodedDomain[0] === "1" &&
+                      isAutoRenewalEnabled ? (
+                        <ClickableAction
+                          title="DISABLE SUBSCRIPTION"
+                          description={nextAutoRenew}
+                          icon={
+                            <div className={styles.renewalIconOff}>OFF</div>
+                          }
+                          onClick={() => disableRenewal()}
+                        />
+                      ) : null}
+
+                      <p
+                        onClick={() => setViewMoreClicked(false)}
+                        className={styles.viewMore}>
+                        View less
+                      </p>
+                    </>
+                  ) : (
+                    <p
+                      onClick={() => setViewMoreClicked(true)}
+                      className={styles.viewMore}>
+                      View more
+                    </p>
+                  )}
                 </>
-              ) : (
-                <p
-                  onClick={() => {
-                    setViewMoreClicked(true);
-                  }}
-                  className={styles.viewMore}
-                >
-                  View more
-                </p>
               )}
             </div>
           )}
