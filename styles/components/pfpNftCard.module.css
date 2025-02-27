@@ -4,8 +4,8 @@
   align-items: center;
   cursor: pointer;
   gap: 10px;
-
   width: 156px;
+  height: 148px;
   padding: 8px;
   border-radius: 16px;
   background: #fff;    
@@ -36,14 +36,18 @@
   color: #444;
   font-size: 12px;
   font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 90%;
+   overflow: hidden;
   text-align: center;
 }
 
 @media (max-width: 768px) {
   .nftCard {
-    width: 100%;
+    width: 156px;
     max-width: 200px; 
-    height: auto;
+    height: 148px;
   }
 
   .nftCardImg {
