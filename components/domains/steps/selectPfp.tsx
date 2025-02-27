@@ -49,9 +49,7 @@ const SelectPfp: FunctionComponent<SelectPfpProps> = ({ goToNextStep }) => {
           </div>
         </div>
         <div className={styles.closeIcon}>
-          <button
-            onClick={() => router.push("/")}
-          >
+          <button onClick={() => router.back()}>
             <CloseIcon />
           </button>
         </div>

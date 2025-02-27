@@ -106,7 +106,7 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   };
 
   const handleClose = () => {
-    router.push("/");
+    router.back();
   };
 
   return (

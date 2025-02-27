@@ -141,6 +141,14 @@
   justify-content: center;
 }
 
+.clickableActionSevere {
+  border-color: var(--negative);
+}
+
+.clickableActionSevere .clickableIconPrimary {
+  background-color: #f6d5d5;
+}
+
 @media (max-width: 1024px) {
   .clickableActionPrimary,
   .clickableActionSecondary {
