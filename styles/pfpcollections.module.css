@@ -1,14 +1,3 @@
-.gallery {
-  width: -webkit-fill-available;
-  padding: 0 150px;
-  height: 80%;
-  display: flex;
-  margin: 0 auto;
-  flex-direction: row;
-  justify-content: center;
-  overflow: hidden;
-  overflow-y: scroll;
-}
 .container {
   display: flex;
   flex-direction: column;
@@ -30,11 +19,23 @@
   margin-bottom: 8px;
 }
 
+.title {
+  color: #454545;
+  font-family: "QuickZap";
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 32px; /* 106.667% */
+  margin-bottom: 48px;
+}
+
 .nfts {
+  margin: 0 150px;
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 10px;
+  justify-content: center;
+  height: 80%;
 }
 
 .purchaseStepNav {
@@ -42,27 +43,27 @@
 }
 
 .purchaseStepNavMobile {
-  height: 20%;
   display: flex;
-  height: max-content;
   flex-direction: column;
   background-color: white;
-  box-shadow: 0px 4px 2px rgba(84, 83, 83, 0.25);
   border: 1px solid #4545451a;
   border-radius: 16px;
+  overflow: hidden;
   margin-left: auto;
   margin-right: auto;
   justify-content: center;
   align-items: center;
   padding-top: 1rem;
+  
 }
 
 @media (max-width: 768px) {
-  .gallery {
-    padding: auto;
-    height: 80%;
-    width: calc(100% - 2rem);
-    gap: 1rem;
+  .title {
+    font-size: 24px;
+  }
+  .subtitle {
+    font-size: 14px;
+    font-weight: lighter;
   }
   .container {
     max-width: 100%;
@@ -73,13 +74,18 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+    padding: 1rem;
+    margin: 0 ;
+    overflow-x: hidden;
+    height: 60vh;
+
   }
   .purchaseStepNavMobile {
-    margin-bottom: 20px;
+    min-height: fit-content;
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0px 4px 2px rgba(84, 83, 83, 0.25);
+    box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.06);
   }
 }
 
@@ -94,7 +100,7 @@
     border: 1px solid #4545451a;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0px 4px 2px rgba(84, 83, 83, 0.25);
+    box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.06);
   }
 
   .purchaseStepNavMobile {

@@ -10,6 +10,7 @@ import CheckoutCard from "./steps/checkoutCard";
 import SelectPfp from "./steps/selectPfp";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 import evergreenDiscounts from "@/utils/discounts/evergreen";
+
 const RenewalV2: FunctionComponent = () => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
@@ -71,7 +72,6 @@ const RenewalV2: FunctionComponent = () => {
       setCurrentStep((prevStep) => prevStep + 1);
     }
   };
-
 
   return (
     <>

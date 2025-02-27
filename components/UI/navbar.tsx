@@ -66,7 +66,7 @@ const Navbar: FunctionComponent = () => {
     params: {
       chainId:
         network === "testnet"
-          ? StarknetChainId.SN_SEPOLIA
+          ? "StarknetChainId.SN_SEPOLIA"
           : StarknetChainId.SN_MAIN,
     },
   });

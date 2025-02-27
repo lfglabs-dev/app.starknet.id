@@ -6,11 +6,6 @@ import CartIcon from "@/components/UI/iconsComponents/icons/cartIcon";
 import { Skeleton } from "@mui/material";
 import Step from "./step";
 
-type StepProps= {
-  label: string;
-  icon: FunctionComponent<{ width: string; color: string }>;
-};
-
 type registerStepsProps = {
   currentStep: number;
   setStep: (step: number) => void;
@@ -21,10 +16,9 @@ type registerStepsProps = {
 const RegisterSteps: FunctionComponent<registerStepsProps> = ({
   currentStep,
   setStep,
+  showPfp = true,
   isLoading = false,
-  showPfp=false,
 }) => {
- 
   return isLoading ? (
     <div
       className={styles.stepsContainer}

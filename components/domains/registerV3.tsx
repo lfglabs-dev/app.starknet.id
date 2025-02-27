@@ -9,6 +9,7 @@ import styles from "../../styles/components/registerV3.module.css";
 import SelectPfp from "./steps/selectPfp";
 import RegisterSteps from "./steps/registerSteps";
 import evergreenDiscounts from "@/utils/discounts/evergreen";
+
 type RegisterV3Props = {
   domain: string;
   setDomain: (domain: string) => void;
@@ -18,7 +19,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
   const { updateFormState, userNfts, isLoadingNfts } = useContext(FormContext);
-  
+
   useEffect(() => {
     if (!address) setCurrentStep(1);
   }, [address]);
@@ -53,7 +54,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
 
   return (
     <>
-      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16  xl:h-[88vh]">
+      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
         <aside className={styles.purchaseStepNav} role="navigation">
           <RegisterSteps
             currentStep={currentStep}
