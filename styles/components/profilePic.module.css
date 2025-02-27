@@ -23,9 +23,15 @@
   line-height: 28px;
   color: var(--secondary);
   cursor: pointer;
+}
 
-  
-  
+.confirmPpButton,
+.cancelButton{
+  padding: 1rem;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 900;
+  border-radius: 10px;
 }
 
 .arrows {
@@ -93,7 +99,7 @@
   align-items: center;
   margin-left: auto;
   margin-right: auto;
-  padding-bottom: 10px;
+  padding-bottom: 35px;
   grid-template-columns: repeat(3, 1fr);
 }
 

@@ -4,11 +4,11 @@ import profilepicstyles from "../../styles/components/profilePic.module.css";
 import styles from "@/styles/pfpcollections.module.css";
 import PfpGallery from "./pfpGallery";
 import useWhitelistedNFTs from "@/hooks/useWhitelistedNFTs";
+import Button from "@/components/UI/button";
 import Step from "../domains/steps/step";
 import PfpNftCard from "../pfpcollections/pfpNftCard";
 import { NftCollections, ourNfts } from "@/utils/constants";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
-import Button from "../UI/button";
 import { Call } from "starknet";
 import identityChangeCalls from "../../utils/callData/identityChangeCalls";
 import { hexToDecimal, toUint256 } from "../../utils/feltService";
@@ -41,7 +41,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     calls: callData,
   });
 
-  const selectPfp = (nft: StarkscanNftProps) => {
+  const selectPfp = (nft: StarkscanNftProps | null) => {
     setOpenModal(true);
     setSelectedPfp(nft);
   };
@@ -130,6 +130,8 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
 
   return (
     <>
+
+
       <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
         <aside className={styles.purchaseStepNav} role="navigation">
           <div>
@@ -186,7 +188,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
                     selectedPfp={selectedPfp}
                     userNfts={userNfts}
                     isLoading={isLoading}
-                    title="Our Suggestions"
+                    title="Choose your NFT Profile picture"
                   />
                 </div>
                 {!isLoading && !hasNoNfts&& (
