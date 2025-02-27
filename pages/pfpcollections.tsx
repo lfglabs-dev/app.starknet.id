@@ -9,7 +9,7 @@ const PFPCollections: NextPage = () => {
   const [tab, setTab] = useState(0);
 
   return (
-    <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh] mt-[12vh] xl:mt-[calc(12vh + 1rem)]">
+    <div className="w-full flex flex-col xl:flex-row justify-center h-full gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh] mt-[12vh] xl:mt-[calc(12vh + 1rem)]">
       <aside className={styles.purchaseStepNav} role="navigation">
         <div>
           <Step
