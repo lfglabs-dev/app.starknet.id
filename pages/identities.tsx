@@ -110,7 +110,7 @@ const Identities: NextPage = () => {
               <IdentitiesSkeleton />
             </section>
           ) : ownedIdentities.length + externalDomains.length === 0 ||
-            !address ? (
+          !address  ? (
             <div className={styles.containerGallery}>
               <h1 className="title text-center mb-[16px]">
                 All Your Identities in One Place
@@ -135,7 +135,7 @@ const Identities: NextPage = () => {
             </div>
           ) : (
             <div className="max-h-[88vh]">
-              <AvailableIdentities tokenId={ownedIdentities[0].id} />
+              <AvailableIdentities tokenId={ownedIdentities[0].id}/>
             </div>
           )}
         </div>
