@@ -236,14 +236,6 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
           )}
         </div>
       </div>
-
-      <ModalProfilePic
-        isModalOpen={openModal}
-        closeModal={goBack}
-        nftData={selectedPfp as StarkscanNftProps}
-        tokenId={tokenId}
-        setPfpTxHash={setPfpTxHash}
-      />
     </>
   );
 };
