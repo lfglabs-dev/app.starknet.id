@@ -29,6 +29,13 @@
   margin-bottom: 48px;
 }
 
+.nfts {
+  margin: 0 150px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
 
 .purchaseStepNav {
   display: none;
@@ -54,57 +61,34 @@
   .title {
     font-size: 24px;
   }
-  
+
   .subtitle {
     font-size: 14px;
     font-weight: lighter;
   }
-  
+
   .container {
     max-width: 100%;
     width: 100%;
     padding-right: 0;
   }
-  
+
   .nfts {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
     margin: 0;
+    justify-items: center;
   }
-  
+
   .purchaseStepNavMobile {
     min-height: fit-content;
-    width: 100%;
-  }
-}
-
-/* Tablet styles - use desktop-like layout but with adjusted proportions */
-@media (min-width: 766px) and (max-width: 1279px) {
-
-  .purchaseStepNav {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    width: 200px;
-    flex-shrink: 0;
-    background-color: white;
-    border: 1px solid #4545451a;
-    border-radius: 16px;
-    overflow: hidden;
+    align-items: center;
     box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.06);
   }
-
-  .purchaseStepNavMobile {
-    display: none;
-  }
-
-  .step {
-    padding: 12px;
-  }
-
-
 }
 
 /* Desktop styles */
@@ -129,5 +113,4 @@
   .step {
     padding: 12px;
   }
-  
 }

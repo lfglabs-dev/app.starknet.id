@@ -5,6 +5,13 @@ import PfpNftCard from "../components/pfpcollections/pfpNftCard";
 import { ourNfts, NftCollections } from "../utils/constants";
 import Step from "@/components/domains/steps/step";
 
+type Collection = {
+  imageUri: string;
+  name: string;
+  infoPage?: string;
+  externalLink?: string;
+};
+
 // Define tab configuration
 const TABS = [
   {
@@ -12,14 +19,15 @@ const TABS = [
     label: "Starknet ID Ecosystem",
     iconPrefix: "ecosystem",
     collections: ourNfts,
-    onCardClick: (collection: any) => window.open(collection.infoPage),
+    onCardClick: (collection: Collection) => window.open(collection.infoPage),
   },
   {
     index: 1,
     label: "Overall Starknet Ecosystem",
     iconPrefix: "starknet",
     collections: NftCollections,
-    onCardClick: (collection: any) => window.open(collection.externalLink),
+    onCardClick: (collection: Collection) =>
+      window.open(collection.externalLink),
   },
 ];
 
@@ -27,7 +35,7 @@ const PFPCollections: NextPage = () => {
   const [currentTab, setCurrentTab] = useState(0);
 
   // Render step component with proper icon based on active state
-  const renderStep = (tabConfig: typeof TABS[0]) => (
+  const renderStep = (tabConfig: (typeof TABS)[0]) => (
     <Step
       stepIndex={tabConfig.index}
       currentStep={currentTab}
@@ -52,7 +60,7 @@ const PFPCollections: NextPage = () => {
   const renderCollectionCards = () => {
     const activeTab = TABS[currentTab];
     return (
-      <div className={'mx-auto flex flex-wrap gap-2 justify-center'}>
+      <div className={"mx-auto flex flex-wrap gap-2 justify-center"}>
         {activeTab.collections.map((collection, index) => (
           <PfpNftCard
             key={index}
@@ -69,9 +77,7 @@ const PFPCollections: NextPage = () => {
     <div className="w-full flex flex-col md:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 h-[88vh] mt-[12vh] xl:mt-[calc(12vh + 1rem)]">
       {/* Desktop Navigation */}
       <aside className={styles.purchaseStepNav} role="navigation">
-        <div>
-          {TABS.map((tab) => renderStep(tab))}
-        </div>
+        <div>{TABS.map((tab) => renderStep(tab))}</div>
         <img
           src="/visuals/purchaseStepVisual.svg"
           alt="Domain purchase steps visualization"
@@ -91,7 +97,7 @@ const PFPCollections: NextPage = () => {
 
       {/* Content Section */}
       <div className="flex-1 ">
-        <section className=" max-w-[680px] mx-auto flex justify-center">
+        <section className="max-w-[680px] mx-auto flex justify-center">
           {renderCollectionCards()}
         </section>
       </div>
