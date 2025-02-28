@@ -53,29 +53,35 @@
   justify-content: center;
   align-items: center;
   padding-top: 1rem;
+  box-shadow: 0px 2px 20px rgba(0, 0, 0, 0.06);
 }
 
-@media (max-width: 768px) {
+/* Mobile styles - apply for smaller devices only */
+@media (max-width: 765px) {
   .title {
     font-size: 24px;
   }
+
   .subtitle {
     font-size: 14px;
     font-weight: lighter;
   }
+
   .container {
     max-width: 100%;
     width: 100%;
     padding-right: 0;
   }
+
   .nfts {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     padding: 1rem;
-    margin: 0 ;
-
+    margin: 0;
+    justify-items: center;
   }
+
   .purchaseStepNavMobile {
     min-height: fit-content;
     display: flex;
@@ -85,6 +91,7 @@
   }
 }
 
+/* Desktop styles */
 @media (min-width: 1280px) {
   .purchaseStepNav {
     display: flex;

@@ -5,95 +5,88 @@ import PfpNftCard from "../components/pfpcollections/pfpNftCard";
 import { ourNfts, NftCollections } from "../utils/constants";
 import Step from "@/components/domains/steps/step";
 
+type Collection = {
+  imageUri: string;
+  name: string;
+  infoPage?: string;
+  externalLink?: string;
+};
+
+// Define tab configuration
+const TABS = [
+  {
+    index: 0,
+    label: "Starknet ID Ecosystem",
+    iconPrefix: "ecosystem",
+    collections: ourNfts,
+    onCardClick: (collection: Collection) => window.open(collection.infoPage),
+  },
+  {
+    index: 1,
+    label: "Overall Starknet Ecosystem",
+    iconPrefix: "starknet",
+    collections: NftCollections,
+    onCardClick: (collection: Collection) =>
+      window.open(collection.externalLink),
+  },
+];
+
 const PFPCollections: NextPage = () => {
-  const [tab, setTab] = useState(0);
+  const [currentTab, setCurrentTab] = useState(0);
+
+  // Render step component with proper icon based on active state
+  const renderStep = (tabConfig: (typeof TABS)[0]) => (
+    <Step
+      stepIndex={tabConfig.index}
+      currentStep={currentTab}
+      setStep={setCurrentTab}
+      icon={
+        <img
+          src={
+            currentTab === tabConfig.index
+              ? `/icons/${tabConfig.iconPrefix}-active.svg`
+              : `/icons/${tabConfig.iconPrefix}-inactive.svg`
+          }
+          alt={tabConfig.label}
+        />
+      }
+      label={tabConfig.label}
+      showDoneIcon={false}
+      allowSwitchAnytime={true}
+    />
+  );
+
+  // Render NFT collection cards
+  const renderCollectionCards = () => {
+    const activeTab = TABS[currentTab];
+    return (
+      <div className={"mx-auto flex flex-wrap gap-2 justify-center"}>
+        {activeTab.collections.map((collection, index) => (
+          <PfpNftCard
+            key={index}
+            image={collection.imageUri}
+            name={collection.name}
+            onClick={() => activeTab.onCardClick(collection)}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
-    <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh] mt-[12vh] xl:mt-[calc(12vh + 1rem)]">
+    <div className="w-full flex flex-col md:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 h-[88vh] mt-[12vh] xl:mt-[calc(12vh + 1rem)]">
+      {/* Desktop Navigation */}
       <aside className={styles.purchaseStepNav} role="navigation">
-        <div>
-          <Step
-            stepIndex={0}
-            currentStep={tab}
-            setStep={setTab}
-            icon={
-              <img
-                src={
-                  tab === 0
-                    ? "/icons/ecosystem-active.svg"
-                    : "/icons/ecosystem-inactive.svg"
-                }
-                alt="Starknet ID Ecosystem"
-              />
-            }
-            label="Starknet ID Ecosystem"
-            showDoneIcon={false}
-            allowSwitchAnytime={true}
-          />
-          <Step
-            stepIndex={1}
-            currentStep={tab}
-            setStep={setTab}
-            icon={
-              <img
-                src={
-                  tab === 1
-                    ? "/icons/starknet-active.svg"
-                    : "/icons/starknet-inactive.svg"
-                }
-                alt="Overall Starknet Ecosystem"
-              />
-            }
-            label="Overall Starknet Ecosystem"
-            showDoneIcon={false}
-            allowSwitchAnytime={true}
-          />
-        </div>
-
+        <div>{TABS.map((tab) => renderStep(tab))}</div>
         <img
           src="/visuals/purchaseStepVisual.svg"
           alt="Domain purchase steps visualization"
         />
       </aside>
 
+      {/* Mobile Navigation */}
       <div className={styles.purchaseStepNavMobile} role="navigation">
-        <Step
-          stepIndex={0}
-          currentStep={tab}
-          setStep={setTab}
-          icon={
-            <img
-              src={
-                tab === 0
-                  ? "/icons/ecosystem-active.svg"
-                  : "/icons/ecosystem-inactive.svg"
-              }
-              alt="Starknet ID Ecosystem"
-            />
-          }
-          label="Starknet ID Ecosystem"
-          showDoneIcon={false}
-          allowSwitchAnytime={true}
-        />
-        <Step
-          stepIndex={1}
-          currentStep={tab}
-          setStep={setTab}
-          icon={
-            <img
-              src={
-                tab === 1
-                  ? "/icons/starknet-active.svg"
-                  : "/icons/starknet-inactive.svg"
-              }
-              alt="Overall Starknet Ecosystem"
-            />
-          }
-          label="Overall Starknet Ecosystem"
-          showDoneIcon={false}
-          allowSwitchAnytime={true}
-        />
-
+        {TABS.map((tab) => renderStep(tab))}
         <div className="flex justify-center">
           <img
             src="/visuals/purchaseStepVisualMobile.svg"
@@ -102,34 +95,11 @@ const PFPCollections: NextPage = () => {
         </div>
       </div>
 
-      <div className="flex-1">
-        {tab === 0 ? (
-          <section>
-            <div className={styles.nfts}>
-              {ourNfts.map((collection, index) => (
-                <PfpNftCard
-                  key={index}
-                  image={collection.imageUri}
-                  name={collection.name}
-                  onClick={() => window.open(collection.infoPage)}
-                />
-              ))}
-            </div>
-          </section>
-        ) : (
-          <section>
-            <div className={styles.nfts}>
-              {NftCollections.map((collection, index) => (
-                <PfpNftCard
-                  key={index}
-                  image={collection.imageUri}
-                  name={collection.name}
-                  onClick={() => window.open(collection.externalLink)}
-                />
-              ))}
-            </div>
-          </section>
-        )}
+      {/* Content Section */}
+      <div className="flex-1 ">
+        <section className="max-w-[680px] mx-auto flex justify-center">
+          {renderCollectionCards()}
+        </section>
       </div>
     </div>
   );
