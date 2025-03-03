@@ -133,7 +133,7 @@
 }
 
 .expiryContainerIcon {
-  color: #d32f2f;
+  color: var(--negative);
 }
 
 .notExpiryContainer {
@@ -151,7 +151,7 @@
 }
 
 .expiryText {
-  color: var(--primary-700, #454545);
+  color: var(--secondary);
   text-align: center;
 
   /* Body/micro/medium */
@@ -162,7 +162,7 @@
 }
 
 .notExpiryText {
-  color: var(--primary-700, #000);
+  color: var(--black);
   text-align: center;
 
   /* Body/micro/medium */
