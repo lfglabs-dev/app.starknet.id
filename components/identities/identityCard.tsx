@@ -41,6 +41,9 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   const handleMouseLeave = debounce(() => setIsHovered(false), 50);
   const searchParams = useSearchParams();
   const minting = searchParams.get("minting") === "true";
+  const isDomainExpired = identity?.domainExpiry
+    ? new Date(identity.domainExpiry * 1000) < new Date()
+    : false;
 
   return (
     <div className={styles.wrapper}>
@@ -97,7 +100,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
               <Tooltip title="Expiry date of this domain" arrow>
                 <div
                   className={
-                    new Date(identity.domainExpiry * 1000) < new Date()
+                    isDomainExpired
                       ? styles.expiryContainer // Expired (red)
                       : styles.notExpiryContainer // Not expired (green)
                   }
@@ -105,14 +108,14 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                   <CalendarIcon
                     width="16"
                     color={
-                      new Date(identity.domainExpiry * 1000) < new Date()
+                      isDomainExpired
                         ? styles.expiryContainerIcon // Red for expired
                         : theme.palette.primary.main // Green for active
                     }
                   />
                   <p
                     className={
-                      new Date(identity.domainExpiry * 1000) < new Date()
+                      isDomainExpired
                         ? styles.expiryText // Red for expired text
                         : styles.notExpiryText // Green for active text
                     }
