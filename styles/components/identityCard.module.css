@@ -126,6 +126,24 @@
   gap: 8px;
   border-radius: 8px;
   margin-top: 8px;
+  background: var(--primary-700, #f6d5d5);
+
+  /* Small Shadow */
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+}
+
+.expiryContainerIcon {
+  color: "#D32F2F";
+}
+
+.notExpiryContainer {
+  display: inline-flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  margin-top: 8px;
   background: var(--primary-700, #dcf2e9);
 
   /* Small Shadow */
@@ -133,6 +151,17 @@
 }
 
 .expiryText {
+  color: var(--primary-700, #454545);
+  text-align: center;
+
+  /* Body/micro/medium */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 133.333% */
+}
+
+.notExpiryText {
   color: var(--primary-700, #000);
   text-align: center;
 
@@ -363,4 +392,3 @@
     padding-bottom: 0;
   }
 }
-

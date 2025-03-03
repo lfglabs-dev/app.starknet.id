@@ -45,7 +45,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <div className="lg:mt-10 flex-col flex items-center lg:justify-between justify-center sm:text-center gap-3 sm:gap-5 my-2 flex-wrap lg:flex-row sm:flex-col">
+        <div className="flex flex-col flex-wrap items-center justify-center gap-3 my-2 lg:mt-10 lg:justify-between sm:text-center sm:gap-5 lg:flex-row sm:flex-col">
           <div className="my-2 text-center">
             <div
               className={styles.pfpSection}
@@ -95,9 +95,28 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
             </div>
             {identity?.domainExpiry ? (
               <Tooltip title="Expiry date of this domain" arrow>
-                <div className={styles.expiryContainer}>
-                  <CalendarIcon width="16" color={theme.palette.primary.main} />
-                  <p className={styles.expiryText}>
+                <div
+                  className={
+                    new Date(identity.domainExpiry * 1000) < new Date()
+                      ? styles.expiryContainer // Expired (red)
+                      : styles.notExpiryContainer // Not expired (green)
+                  }
+                >
+                  <CalendarIcon
+                    width="16"
+                    color={
+                      new Date(identity.domainExpiry * 1000) < new Date()
+                        ? styles.expiryContainerIcon // Red for expired
+                        : theme.palette.primary.main // Green for active
+                    }
+                  />
+                  <p
+                    className={
+                      new Date(identity.domainExpiry * 1000) < new Date()
+                        ? styles.expiryText // Red for expired text
+                        : styles.notExpiryText // Green for active text
+                    }
+                  >
                     {timestampToReadableDate(identity.domainExpiry)}
                   </p>
                 </div>
@@ -105,7 +124,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
             ) : null}
           </div>
           {minting ? (
-            <div className="text-left h-full py-2">
+            <div className="h-full py-2 text-left">
               <h1 className="text-3xl font-bold font-quickZap">
                 Minting your identity...
               </h1>
@@ -134,7 +153,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                               <h2>{minifyAddress(identity.targetAddress)}</h2>
                               <CopyContent
                                 value={identity?.targetAddress}
-                                className="cursor-pointer ml-3"
+                                className="ml-3 cursor-pointer"
                               />
                             </div>
                           ) : null}
@@ -150,7 +169,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                               <h2>{minifyAddress(identity.targetAddress)}</h2>
                               <CopyContent
                                 value={identity?.targetAddress}
-                                className="cursor-pointer ml-3"
+                                className="ml-3 cursor-pointer"
                               />
                             </div>
                           ) : null}
@@ -200,7 +219,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
       </div>
       <div className={styles.cardCode}>
         <p>
-          <span >{convertNumberToFixedLengthString(tokenId)}</span>
+          <span>{convertNumberToFixedLengthString(tokenId)}</span>
         </p>
         <svg
           className="w-full hidden sm:block sm:w-[200px] md:w-[300px]"
