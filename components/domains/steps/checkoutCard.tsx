@@ -174,7 +174,6 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
         .catch((err) => console.log("Error on sending metadata:", err));
     }
 
-
     addTransaction({
       timestamp: Date.now(),
       subtext:
@@ -239,8 +238,8 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
   return (
     <>
       {reducedDuration > 0 &&
-        invalidBalance &&
-        reducedDuration !== formState.durationInYears * 365 ? (
+      invalidBalance &&
+      reducedDuration !== formState.durationInYears * 365 ? (
         <ReduceDuration
           newDuration={reducedDuration}
           currentDuration={formState.durationInYears}
@@ -300,7 +299,11 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
             />
             <div className={styles.checkoutButton}>
               <div
-                className={(!termsBox || invalidBalance) ? "flex flex-col-reverse gap-2" : "flex gap-4"}
+                className={
+                  !termsBox || invalidBalance
+                    ? "flex flex-col-reverse gap-2"
+                    : "flex gap-4"
+                }
               >
                 <div className="flex sm:hidden">
                   <div
@@ -332,9 +335,7 @@ const CheckoutCard: FunctionComponent<CheckoutCardProps> = ({
           </div>
         </div>
         <div className={styles.closeIcon}>
-          <button
-            onClick={() => router.push("/")}
-          >
+          <button onClick={() => router.back()}>
             <CloseIcon />
           </button>
         </div>

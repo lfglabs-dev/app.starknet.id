@@ -8,6 +8,7 @@ type ClickableActionProps = {
   description?: string;
   style?: "primary" | "secondary";
   width?: "fixed" | "auto";
+  severe?: boolean;
 };
 
 const ClickableAction: FunctionComponent<ClickableActionProps> = ({
@@ -17,23 +18,26 @@ const ClickableAction: FunctionComponent<ClickableActionProps> = ({
   description,
   style = "secondary",
   width = "fixed",
+  severe = false,
 }) => {
   return (
     <div
-      className={` mx-auto -space-x-1 
+      className={`
         ${
           style === "secondary"
             ? styles.clickableActionSecondary
             : styles.clickableActionPrimary
         }
-        ${width === "auto" ? styles.clickableActionAutoWidth : ""}`}
+        ${width === "auto" ? styles.clickableActionAutoWidth : ""}
+        ${severe ? styles.clickableActionSevere : ""}
+        `}
       onClick={onClick}
     >
       <div
         className={
-          ` ${style === "secondary"
+          style === "secondary"
             ? styles.clickableIconSecondary
-            : styles.clickableIconPrimary}`
+            : styles.clickableIconPrimary
         }
       >
         {icon}

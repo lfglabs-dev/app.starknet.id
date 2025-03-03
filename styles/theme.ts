@@ -17,6 +17,10 @@ const theme = createTheme({
       200: "#CDCCCC",
       800: "#454545",
     },
+    error: {
+      main: "#d32f2f",
+      light: "#f6d5d5",
+    },
   },
 });
 

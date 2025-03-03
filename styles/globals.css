@@ -27,13 +27,14 @@
   --tertiary-600: #ccb297;
   --light-tertiary: #f5f0eb;
   --border-color: #cdcccc;
-  --background: #FCFFFE;
+  --background: #fcfffe;
   --background-light: #ffffff;
   --background-light300: #f8f7f7;
   --background-white: #ffffff;
   --dark-content: #454545;
   --content600: #8c8989;
   --negative: #d32f2f;
+  --negative-light: #f6d5d5;
   --black: #000000;
   --identity-card-footer-text: #e2dfde;
   --identity-card-border-color: #293e28;
