@@ -109,7 +109,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                     width="16"
                     color={
                       isDomainExpired
-                        ? styles.expiryContainerIcon // Red for expired
+                        ? theme.palette.error.main // Red for expired
                         : theme.palette.primary.main // Green for active
                     }
                   />

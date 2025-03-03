@@ -132,10 +132,6 @@
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
 }
 
-.expiryContainerIcon {
-  color: var(--negative);
-}
-
 .notExpiryContainer {
   display: inline-flex;
   padding: 4px 8px;
