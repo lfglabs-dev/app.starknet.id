@@ -126,7 +126,7 @@
   gap: 8px;
   border-radius: 8px;
   margin-top: 8px;
-  background: var(--primary-700, #f6d5d5);
+  background: var(--negative-light);
 
   /* Small Shadow */
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
@@ -140,7 +140,7 @@
   gap: 8px;
   border-radius: 8px;
   margin-top: 8px;
-  background: var(--primary-700, #dcf2e9);
+  background: var(--primary300);
 
   /* Small Shadow */
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
