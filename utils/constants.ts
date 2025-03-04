@@ -31,7 +31,7 @@ export const NftCollections = [
   },
   {
     imageUri:
-      "https://storage.nfte.ai/asset/collection/featured/c6fc5552-1051-4f68-87c9-fcd6ddc1f026.jpeg",
+      "https://s.nfte.so/asset/collection/featured/c6fc5552-1051-4f68-87c9-fcd6ddc1f026.jpeg",
     name: "Blobert",
     externalLink: "https://element.market/collections/blobert",
   },
@@ -57,7 +57,8 @@ export const NftCollections = [
     imageUri:
       "https://i.nfte.ai/ia/l1001/35199/2945561246737408481_662150591.avif",
     name: "Ventorians NFT Collection",
-    externalLink: "https://element.market/collections/ventorians-nft-collection",
+    externalLink:
+      "https://element.market/collections/ventorians-nft-collection",
   },
   {
     imageUri:
