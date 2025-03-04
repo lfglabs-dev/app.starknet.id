@@ -27,19 +27,19 @@ const RegisterSteps: FunctionComponent<registerStepsProps> = ({
     >
       <div className="flex gap-2 items-center p-2">
         <Skeleton variant="circular" width={24} height={24} />
-        <div className="w-12 sm:w-16 md:w-24 lg:w-36">
+        <div className="w-12 sm:w-16 md:w-16 lg:w-18 xl:w-24">
           <Skeleton variant="text" height={20} />
         </div>
       </div>
       <div className="flex gap-2 items-center p-2">
         <Skeleton variant="circular" width={24} height={24} />
-        <div className="w-12 sm:w-16 md:w-24 lg:w-36">
+        <div className="w-12 sm:w-16 md:w-16 lg:w-18 xl:w-24">
           <Skeleton variant="text" height={20} />
         </div>
       </div>
       <div className="flex gap-2 items-center p-2">
         <Skeleton variant="circular" width={24} height={24} />
-        <div className="w-12 sm:w-16 md:w-24 lg:w-36">
+        <div className="w-12 sm:w-16 md:w-16 lg:w-18 xl:w-24">
           <Skeleton variant="text" height={20} />
         </div>
       </div>
