@@ -1,3 +1,4 @@
+
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import { NftCollections } from "../../utils/constants";
@@ -8,27 +9,27 @@ import { useRouter } from "next/router";
 const SelectedCollections: FunctionComponent = () => {
   const router = useRouter();
   const NFT_MARKETPLACE_URL = "https://unframed.co/";
+  
   const nftMarketPlace: React.MouseEventHandler<HTMLButtonElement> = () => {
     window.open(NFT_MARKETPLACE_URL, "_blank", "noopener noreferrer");
   };
+  
   return (
     <>
-      <div
-        className={`mx-auto flex flex-col justify-center ${styles.nftCollectionWraper}`}>
-        {NftCollections.map((collection, index) => {
-          return (
+      <div className={`mx-auto flex flex-col justify-center ${styles.nftCollectionWraper}`}>
+        {NftCollections.map((collection, index) => (
+          <div
+            className={styles.nftCollectionCard}
+            key={index}
+            onClick={() => window.open(collection.externalLink)}
+          >
             <div
-              className={styles.nftCollectionCard}
-              key={index}
-              onClick={() => window.open(collection.externalLink)}>
-              <div
-                style={{ backgroundImage: `url(${collection.imageUri})` }}
-                className={styles.nftCollectionImg}
-              />
-              <div className={styles.nftCollectionName}>{collection.name}</div>
-            </div>
-          );
-        })}
+              style={{ backgroundImage: `url(${collection.imageUri})` }}
+              className={styles.nftCollectionImg}
+            />
+            <div className={styles.nftCollectionName}>{collection.name}</div>
+          </div>
+        ))}
       </div>
       <div className={styles.btnWrapper}>
         <button
@@ -42,9 +43,10 @@ const SelectedCollections: FunctionComponent = () => {
         <button
           onClick={() => router.push("/")}
           aria-label="Cancel action"
-          className={styles.btnWrapperCancelBtn}>
+          className={styles.btnWrapperCancelBtn}
+        >
           Cancel
-        </button> 
+        </button>
       </div>
     </>
   );

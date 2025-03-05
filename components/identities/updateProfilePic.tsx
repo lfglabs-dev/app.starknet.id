@@ -1,5 +1,4 @@
 import React, { FunctionComponent, useState, useEffect } from "react";
-import ModalProfilePic from "../UI/modalProfilePic";
 import profilepicstyles from "../../styles/components/profilePic.module.css";
 import styles from "@/styles/pfpcollections.module.css";
 import PfpGallery from "./pfpGallery";
@@ -30,7 +29,6 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
 }) => {
   const { address } = useAccount();
   const { userNfts, isLoading } = useWhitelistedNFTs(address as string);
-  const [openModal, setOpenModal] = useState<boolean>(false);
   const [selectedPfp, setSelectedPfp] = useState<StarkscanNftProps | null>(
     null
   );
@@ -42,17 +40,9 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   });
 
   const selectPfp = (nft: StarkscanNftProps | null) => {
-    setOpenModal(true);
-    setSelectedPfp(nft);
-  };
+      setSelectedPfp(nft);
+    };
 
-  const goBack = (cancel: boolean) => {
-    setOpenModal(false);
-    if (!cancel) {
-      openTxModal();
-      back();
-    }
-  };
 
   useEffect(() => {
     if (!selectedPfp) return;
@@ -82,7 +72,7 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
     setPfpTxHash(updateData.transaction_hash);
     openTxModal();
     back();
-  }, [updateData]);
+  }, [updateData, addTransaction, back, openTxModal, setPfpTxHash, tokenId]);
 
   const hasNoNfts = userNfts.length === 0;
 
@@ -242,4 +232,6 @@ const UpdateProfilePic: FunctionComponent<UpdateProfilePicProps> = ({
   );
 };
 
+
 export default UpdateProfilePic;
+
