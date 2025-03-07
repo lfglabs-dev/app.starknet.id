@@ -11,11 +11,15 @@ const theme = createTheme({
       light: "#eae0d5",
     },
     background: {
-      default: "#F5F5F5",
+      default: "#FFF",
     },
     grey: {
       200: "#CDCCCC",
       800: "#454545",
+    },
+    error: {
+      main: "#d32f2f",
+      light: "#f6d5d5",
     },
   },
 });

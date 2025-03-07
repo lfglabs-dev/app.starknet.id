@@ -23,7 +23,7 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
   const { account } = useAccount();
   const [ownedIdentities, setOwnedIdentities] = useState<number[] | []>([]);
   const matches = useMediaQuery("(max-width: 1084px)");
-  const defaultText = matches ? "Mint a new one" : "Mint a new Starknet ID";
+  const defaultText = matches ? "Mint a new one" : "Mint a new starknet id";
 
   useEffect(() => {
     if (account) {
@@ -45,14 +45,12 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex my-1">
+      <div className="grid place-content-center my-2 md:justify-start lg:justify-start ">
         <p className={textFieldStyles.legend}>
-          {matches
-            ? "Select an identity*"
-            : "Select an identity to link with your domain*"}
+          Select an identity to link with your domain*
         </p>
       </div>
-      <InputHelper helperText="check how to mint a new token">
+      <InputHelper>
         <Select
           fullWidth
           value={tokenId}
@@ -61,14 +59,20 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
           inputProps={{ MenuProps: { disableScrollLock: true } }}
           onChange={(e) => changeTokenId(Number(e.target.value))}
           style={{
-            borderRadius: "8.983px",
+            borderRadius: "8px",
           }}
           sx={{
+            boxShadow: "0px 2px 30px rgba(0, 0, 0, 0.1)",
+            borderRadius: "8px",
+            width: "100%",
             "& .MuiSelect-select": {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "#ffffff"
+              backgroundColor: "#ffffff",
+              textAlign: "center",
+              borderRadius: "8px",
+              borderColor: "rgba(69, 69, 69, 0.20)",
             },
             "& .css-10hburv-MuiTypography-root": {
               display: "flex",
@@ -77,18 +81,30 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
             },
             "& .css-cveggr-MuiListItemIcon-root": {
               minWidth: "40px",
+              display: "flex",
+              alignItems: "center",
+            },
+            "& .MuiListItemText-root": {
+              textAlign: "center",
+              justifyContent: "center",
+              display: "flex",
+            },
+            "& .MuiOutlinedInput-notchedOutline": {
+              borderColor: "rgba(69, 69, 69, 0.20)",
             },
           }}
         >
           <MenuItem value={0}>
-            <ListItemIcon>
-              <img
-                width={"30px"}
-                src="/visuals/StarknetIdLogo.svg"
-                alt="starknet.id avatar"
-              />
-            </ListItemIcon>
-            <ListItemText primary={defaultText} />
+            <div className="flex gap-2">
+              <ListItemIcon>
+                <img
+                  width={"30px"}
+                  src="/visuals/StarknetIdLogo.svg"
+                  alt="starknet.id avatar"
+                />
+              </ListItemIcon>
+              <ListItemText primary={defaultText} />
+            </div>
           </MenuItem>
           {ownedIdentities.map((tokenId: number, index: number) => (
             <MenuItem key={index} value={tokenId}>

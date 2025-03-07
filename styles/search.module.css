@@ -5,6 +5,23 @@
   text-align: center;
   justify-content: center;
   position: relative;
+  width: 100%;
+  min-height: 100vh;
+  height: auto;
+  justify-items: center;
+}
+
+@media (min-width: 1300px) {
+  .container {
+    flex-direction: column;
+    min-height: auto;
+  }
+}
+
+@media (max-width: 1280px) {
+  .container {
+    justify-content: flex-start;
+  }
 }
 
 .searchContainer {
@@ -27,7 +44,6 @@
   position: absolute;
   display: flex;
   flex-direction: column;
-  width: 548px;
   align-items: flex-start;
   border-radius: 1rem;
   background: #fff;
@@ -149,7 +165,6 @@
   border-radius: 16px;
   background: var(--background-white);
   border: 1px solid rgba(69, 69, 69, 0.1);
-  
 
   /* Small Shadow */
   box-shadow: var(--small-shadow);
@@ -170,7 +185,7 @@
 }
 
 .suggestedDomainContainer p {
-  font-family: "Poppins-Bold"; 
+  font-family: "Poppins-Bold";
 }
 
 .suggestionTable .suggestedDomainLink:last-child .suggestedDomainContainer {

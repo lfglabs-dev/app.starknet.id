@@ -34,7 +34,7 @@ const NumberTextField: FunctionComponent<NumberTextFieldProps> = ({
 }) => {
   return (
     <div className="flex flex-col w-full">
-      <div className="flex gap-1 my-1">
+      <div className="flex gap-1 my-[8px] justify-center md:justify-start lg:justify-start">
         {helperText ? (
           <Tooltip
             className="cursor-pointer"

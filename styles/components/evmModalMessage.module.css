@@ -1,12 +1,12 @@
 .menu {
   position: absolute;
-  background-color: var(--background);
+  background-color: #FCFFFE;
   align-self: center;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   border-radius: 20px;
-  padding: 45px;
+  padding: 45px 50px;
   width: 800px;
   display: flex;
   flex-direction: column;
@@ -25,8 +25,8 @@
 
 .menu_close {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 20px;
+  right: 20px;
   width: 22px;
   stroke: black;
   cursor: pointer;
@@ -42,47 +42,55 @@
 .menu_title {
   color: #454545;
   font-family: "QuickZap";
-  font-size: 30px;
-  font-weight: bold;
+  font-size: 24px;
+  font-weight: 400;
   text-align: center;
 }
 
 .menu_subtitle {
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 20px;
   text-align: center;
+  color: #8c8989;
 }
 
 .infoCard {
   display: flex;
   flex-direction: row;
-  padding: 24px;
-  padding: 40px 48px;
-  gap: 48px;
+  padding: 18px 0px 18px 18px;
+  gap: 36px;
   border-radius: 20px;
   background: var(--background-light);
   box-shadow: 0px 2px 30px 0px #0000000f;
-  margin-top: 24px;
+  margin-top: 0px;
 }
 
 .cardTitle {
   color: #454545;
-  font-family: "QuickZap";
-  font-size: 21px;
+  font-family: "Poppins-Bold";
+  font-size: 18px;
+  line-height: 26px;
   font-weight: bold;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .cardDesc {
-  color: var(--content-600);
-  font-size: 12px;
+  color: var(--content600);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 22px;
+  font-family: "Poppins-Regular";
 }
 
 .cardImg {
   width: 100%;
   height: auto;
   max-width: 250px;
+}
+
+.cardInput {
+  @apply !bg-white h-[68px] w-full text-center border border-[#4545451A]/20 rounded-lg shadow-sm placeholder:text-[#454545]/20 p-5;
 }
 
 @media (max-width: 850px) {
@@ -93,7 +101,7 @@
 
   .menu_title {
     font-size: 21px;
-    margin: -7px -2px 2px;
+    margin: -2px -2px 2px;
   }
 
   .infoCard {
@@ -105,17 +113,7 @@
 
 @media (max-width: 625px) {
   .menu {
-    width: 320px;
-    padding: 30px;
-  }
-
-  .menu_title {
-    font-size: 21px;
-    margin: -7px -2px 2px;
-  }
-
-  .infoCard {
-    flex-direction: column;
-    padding: 24px;
+    width: 95%;
+    padding: 16px;
   }
 }

@@ -17,7 +17,7 @@ import RenewalDomainsBox from "../renewalDomainsBox";
 import { areDomainSelected } from "@/utils/priceService";
 import CloseIcon from "@/components/UI/iconsComponents/icons/closeIcon";
 import ConnectButton from "@/components/UI/connectButton";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
 type UserInfoFormProps = {
   type: FormType;
@@ -48,7 +48,6 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
     updateFormState({ selectedDomains });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedDomains, type]); // Don't call updateFromState on every render
-
 
   function changeTokenId(value: number): void {
     updateFormState({ tokenId: value });
@@ -92,7 +91,8 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   };
 
   const getButtonText = (): string => {
-    return type === FormType.RENEW && !areDomainSelected(formState.selectedDomains)
+    return type === FormType.RENEW &&
+      !areDomainSelected(formState.selectedDomains)
       ? "Select a domain to renew"
       : "Next step";
   };
@@ -106,17 +106,17 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
   };
 
   const handleClose = () => {
-    router.push('/');
+    router.back();
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <div className={styles.closeIcon} onClick={handleClose}>
-          <CloseIcon  />
+          <CloseIcon />
         </div>
         <div className={styles.form}>
-          <div className="flex flex-col items-center gap-4 self-stretch">
+          <div className="flex flex-col items-center self-stretch pt-[30px] xl:pt-[60px]">
             <h3 className={styles.domain}>{getTitle()}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
@@ -146,28 +146,32 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
               color="secondary"
               required
             />
-            {type === FormType.RENEW ? (
-              <RenewalDomainsBox
-                helperText="Check the box of the domains you want to renew"
-                setSelectedDomains={setSelectedDomains}
-                selectedDomains={formState.selectedDomains}
-              />
-            ) : null}
+            <div className="w-full">
+              {type === FormType.RENEW ? (
+                <RenewalDomainsBox
+                  helperText="Check the box of the domains you want to renew"
+                  setSelectedDomains={setSelectedDomains}
+                  selectedDomains={formState.selectedDomains}
+                />
+              ) : null}
+            </div>
           </div>
         </div>
         <div className={styles.summary}>
           <div className="flex justify-between gap-8">
-          <div onClick={handleClose} className={styles.cancelBtn}>
-    Cancel
-  </div>
+            <div
+              onClick={handleClose}
+              className={`${styles.cancelBtn} xl:hidden `}
+            >
+              Cancel
+            </div>
             {address ? (
               <Button onClick={goToNextStep} disabled={isDisabled()}>
                 {getButtonText()}
               </Button>
             ) : (
-                <ConnectButton />
+              <ConnectButton />
             )}
-            
           </div>
         </div>
       </div>

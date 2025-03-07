@@ -80,7 +80,7 @@
 .cardCode {
   /* Placement */
   background-color: var(--background-white);
-  height: 83px;
+  min-height: 83px;
   width: 650px;
   max-width: 650px;
   border-width: 0px 6px 4px 2px;
@@ -101,6 +101,7 @@
   font-size: 18px;
   line-height: 32px;
   letter-spacing: 0.8em;
+  text-indent: 0.9em;
   color: var(--identity-card-footer-text);
 }
 
@@ -125,14 +126,39 @@
   gap: 8px;
   border-radius: 8px;
   margin-top: 8px;
-  background: var(--primary-700, #dcf2e9);
+  background: var(--negative-light);
+
+  /* Small Shadow */
+  box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
+}
+
+.notExpiryContainer {
+  display: inline-flex;
+  padding: 4px 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  margin-top: 8px;
+  background: var(--primary300);
 
   /* Small Shadow */
   box-shadow: 0px 2px 30px 0px rgba(0, 0, 0, 0.06);
 }
 
 .expiryText {
-  color: var(--primary-700, #000);
+  color: var(--secondary);
+  text-align: center;
+
+  /* Body/micro/medium */
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px; /* 133.333% */
+}
+
+.notExpiryText {
+  color: var(--black);
   text-align: center;
 
   /* Body/micro/medium */

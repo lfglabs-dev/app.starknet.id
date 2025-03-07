@@ -4,7 +4,7 @@ import React, {
   useEffect,
   useContext,
 } from "react";
-import { TextField, InputAdornment } from "@mui/material";
+import { InputAdornment } from "@mui/material";
 import { useSendTransaction } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import { isHexString, minifyAddress } from "../../../utils/stringService";
@@ -15,6 +15,7 @@ import { NotificationType, TransactionType } from "../../../utils/constants";
 import { Identity } from "../../../utils/apiWrappers/identity";
 import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import TransactionModal from "@/components/UI/transactionModal";
+import AdvancedTextField from "@/components/UI/advancedTextField";
 
 type TransferFormModalProps = {
   identity: Identity | undefined;
@@ -89,18 +90,15 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
 
   const modalContent = (
     <>
-      <p className="mt-5">
+      <p className="mt-5 md:text-sm text-xs text-center text-[#8C8989] md:leading-6">
         An Identity is an NFT that everyone can mint for free that permits
         linking different types of data to it (Social Media, stark domain ...).
         This form enables you to send this identity to another wallet.
       </p>
-      <div className="mt-5 flex flex-col justify-center">
-        <TextField
+      <div className="mt-5  flex flex-col justify-center w-full">
+        <AdvancedTextField
           label="To Address / SNS"
-          id="outlined-end-adornment"
-          fullWidth
           value={addressInput}
-          variant="outlined"
           onChange={(e) => changeAddress(e.target.value)}
           color="secondary"
           required

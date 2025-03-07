@@ -1,9 +1,30 @@
 import { Modal } from "@mui/material";
-import React, { FunctionComponent, ReactNode } from "react";
+import React, {
+  FunctionComponent,
+  ReactNode,
+  useState,
+  useEffect,
+} from "react";
 import styles from "../../styles/components/modalMessage.module.css";
 import Button from "./button";
 import ConfirmationTx from "./confirmationTx";
 import IsSendingTx from "@/components/UI/isSendingTx";
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(typeof window !== "undefined" && window.innerWidth <= 768);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  return isMobile;
+};
 
 type TransactionModalProps = {
   title: string;
@@ -34,6 +55,8 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
   isButtonDisabled = true,
   buttonCta,
 }) => {
+  const isMobile = useIsMobile();
+
   function closeModal(canClose = true): void {
     if (!canClose) return;
     setIsTxSent(false);
@@ -45,7 +68,11 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
     <Modal
       disableAutoFocus
       open={isModalOpen}
-      onClose={() => closeModal(!isSendingTx)}
+      onClose={() => {
+        if (!isMobile && !isSendingTx) {
+          closeModal(true);
+        }
+      }}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -56,23 +83,40 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
           <IsSendingTx />
         ) : (
           <div className={styles.menu}>
-            <button className={styles.menu_close} onClick={() => closeModal()}>
-              <svg viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            </button>
+            {!isMobile && (
+              <button
+                className={styles.menu_close}
+                onClick={() => closeModal()}
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            )}
             <p className={styles.menu_title}>{title}</p>
             {modalContent}
-            <div className="mt-5 flex justify-center">
+            <div className={styles.button_container}>
               <Button disabled={isButtonDisabled} onClick={sendTransaction}>
                 {buttonCta}
               </Button>
             </div>
+            {isMobile && (
+              <div className={styles.cancel_button_container}>
+                <button
+                  onClick={handleClose}
+                  className={styles.button_cancel}
+                  aria-label="Cancel and close modal"
+                  type="button"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         )}
       </>

@@ -16,7 +16,7 @@
   border-radius: 8px;
   min-width: 5rem;
   width: 95%;
-  margin: 10px;
+  margin: 0 10px;
   cursor: pointer;
   transition: transform 450ms var(--nimiq-ease),    box-shadow 450ms var(--nimiq-ease);
   will-change: box-shadow;
@@ -62,6 +62,8 @@
   transform: none;
   cursor: default;
 }
+
+
 
 /* Color variations */
 

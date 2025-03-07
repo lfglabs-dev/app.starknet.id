@@ -26,7 +26,7 @@ const SwissForm: FunctionComponent<SwissFormProps> = ({
   return (
     <FormControl className="flex gap-4 w-full">
       <div className="flex flex-col">
-        <div className="flex gap-1 my-1">
+        <div className="flex gap-1 my-[8px] justify-center md:justify-start lg:justify-start">
           <p className={textFieldStyles.legend}>
             Do you live in Switzerland ?*
           </p>
@@ -45,7 +45,7 @@ const SwissForm: FunctionComponent<SwissFormProps> = ({
               value={isSwissResident}
               onChange={onSwissResidentChange}
             >
-              <div className="flex flex-row gap-4">
+              <div className="flex flex-row gap-4 justify-center md:justify-start lg:justify-start">
                 <FormControlLabel
                   value={true}
                   control={<Radio />}

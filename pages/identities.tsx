@@ -103,14 +103,14 @@ const Identities: NextPage = () => {
 
   return (
     <>
-      <div className={` ${styles.screen} overflow-y-hidden hide-scrollbar`}>
-        <div>
+      <div className={styles.wrapperScreen}>
+        <div className="mt-[12vh]">
           {loading ? (
             <section className="mt-20 w-full">
               <IdentitiesSkeleton />
             </section>
           ) : ownedIdentities.length + externalDomains.length === 0 ||
-            !address ? (
+          !address  ? (
             <div className={styles.containerGallery}>
               <h1 className="title text-center mb-[16px]">
                 All Your Identities in One Place
@@ -134,8 +134,8 @@ const Identities: NextPage = () => {
               </div>
             </div>
           ) : (
-            <div className="max-h-[88vh] xl:overflow-hidden hide-scrollbar">
-              <AvailableIdentities tokenId={ownedIdentities[0].id} />
+            <div className="max-h-[88vh]">
+              <AvailableIdentities tokenId={ownedIdentities[0].id}/>
             </div>
           )}
         </div>

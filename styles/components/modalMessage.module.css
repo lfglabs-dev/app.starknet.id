@@ -8,9 +8,9 @@
   border-radius: 20px;
   padding: 45px;
   width: 700px;
-  min-height: 400px;
   display: flex;
   justify-content: center;
+  align-items: center;
   flex-direction: column;
   z-index: 1000;
 }
@@ -34,15 +34,35 @@
   background-color: transparent;
   border: none;
 }
+.menu_cancel {
+  position: relative;
+  height: 2.8rem;
+ color: var(--secondary);
+  background-color: transparent;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.094em;
+  border: none;
+   min-width: 5rem;
+  width: 95%;
+  margin: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  display: none;
+  text-align: center;
+
+  font-family: "QuickZap";
+}
 
 .menu_close:hover {
   stroke: rgb(124, 124, 124);
 }
 
 .menu_title {
-  color: var(--brown);
+  color: var(--secondary);
   font-family: "QuickZap";
-  font-size: 21px;
+  font-size: 24px;
   font-weight: bold;
   text-align: center;
   z-index: 1000;
@@ -51,7 +71,7 @@
 @media (max-width: 1024px) {
   .menu {
     width: 320px;
-    padding: 30px;
+    padding: 48px 30px;
     height: auto;
   }
 
@@ -59,4 +79,39 @@
     font-size: 19px;
     margin: -7px -2px 2px;
   }
+
+  .menu_close {
+    display: none;
+  }
+}
+
+.button_cancel {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-family: "QuickZap";
+  font-weight: 400;
+  line-height: 24px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.button_cancel:hover {
+  opacity: 0.8;
+}
+
+.button_cancel:focus {
+  outline: 2px solid var(--text-primary);
+  outline-offset: 2px;
+}
+
+.button_container {
+  margin-top: 1.25rem;
+  display: flex;
+  justify-content: center;
+}
+
+.cancel_button_container {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: center;
 }

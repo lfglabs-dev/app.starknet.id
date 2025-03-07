@@ -15,9 +15,7 @@ type RegisterV3Props = {
   setDomain: (domain: string) => void;
 };
 
-const RegisterV3: FunctionComponent<RegisterV3Props> = ({
-  domain,
-}) => {
+const RegisterV3: FunctionComponent<RegisterV3Props> = ({ domain }) => {
   const { address } = useAccount();
   const [currentStep, setCurrentStep] = useState(1);
   const { updateFormState, userNfts, isLoadingNfts } = useContext(FormContext);
@@ -56,8 +54,8 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
 
   return (
     <>
-      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[calc(100vh-6rem)]">
-        <aside className={`${styles.purchaseStepNav}`} role="navigation">
+      <div className="w-full flex flex-col xl:flex-row justify-center gap-4 px-3 py-4 lg:px-32 md:px-16 sm:py-12 xl:h-[88vh]">
+        <aside className={styles.purchaseStepNav} role="navigation">
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}
@@ -71,7 +69,7 @@ const RegisterV3: FunctionComponent<RegisterV3Props> = ({
           />
         </aside>
 
-        <div className={`${styles.purchaseStepNavMobile}`} role="navigation">
+        <div className={styles.purchaseStepNavMobile} role="navigation">
           <RegisterSteps
             currentStep={currentStep}
             setStep={goToStep}
