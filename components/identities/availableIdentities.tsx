@@ -20,6 +20,7 @@ import WalletConnect from "@/components/UI/walletConnect";
 import { Connector } from "starknetkit";
 import { FaPlus } from "react-icons/fa";
 import IdentitiesSkeleton from "./skeletons/identitiesSkeleton";
+import { Tooltip } from 'react-tooltip';
 
 const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
   const router = useRouter();
@@ -187,7 +188,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                   className={`
                          ${styles.sideNav} border w-[100%] md:w-auto h-[319px] xl:h-auto relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
                 >
-                  <div className="h-full md:min-h-[80%] w-full hide-scrollbar flex flex-col gap-[2px]">
+                  <div className="h-full md:min-h-[80%] w-full flex flex-col gap-[2px] overflow-y-scroll">
                     {ownedIdentities.map((domain, index) => (
                       <button
                         className={`${
@@ -199,17 +200,25 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                         key={index}
                         onClick={() => router.push(`/identities/${domain.id}`)}
                       >
-                        <div className="flex items-center justify-center xl:justify-start">
-                          <div className="truncate max-w-[80%]">
+                        <div className="flex items-center justify-between w-full">
+                          <div className="truncate max-w-[90%]">
                             {domain.domain ? domain.domain : domain.id}
                           </div>
                           {isDomainExpired(domain.domain_expiry) && (
-                            <div className="relative ml-2 group">
-                              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                              <div className="absolute left-full ml-2 top-1/2 transform -translate-y-1/2 bg-secondary text-white text-sm px-2 py-3 rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-0 whitespace-nowrap z-50 overflow-visible">
-                                Domain Expired
+                            <>
+                              <div className="group z-50 text-sm">
+                                <a
+                                  data-tooltip-id="my-tooltip"
+                                  data-tooltip-content="Domain Expired"
+                                  data-tooltip-place="right"
+                                  color="secondary"
+                                >
+                                  <div className="w-2 h-2 m-1 bg-red-500 rounded-full">
+                                  </div>
+                                </a>
+                                <Tooltip id="my-tooltip" noArrow={true} style={{ padding: '8px 12px' }} />
                               </div>
-                            </div>
+                            </>
                           )}
                         </div>
                       </button>

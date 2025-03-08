@@ -46,6 +46,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.4.0",
     "react-loader-spinner": "5.4.5",
+    "react-tooltip": "^5.28.0",
     "starknet": "^6.11.0",
     "starknetid.js": "^4.0.1",
     "starknetkit": "2.6.2",
