@@ -18,8 +18,11 @@ import IdentityActionsSkeleton from "@/components/identities/skeletons/identityA
 import { hexToDecimal } from "@/utils/feltService";
 import WalletConnect from "@/components/UI/walletConnect";
 import { Connector } from "starknetkit";
-import { FaPlus } from "react-icons/fa";
+import { FaCircle, FaPlus } from "react-icons/fa";
 import IdentitiesSkeleton from "./skeletons/identitiesSkeleton";
+import { Tooltip } from "@mui/material";
+import { isIdentityExpired } from "../../utils/dateService";
+import DomainExpiredModal from "@/components/UI/domainExpiredModal";
 
 const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
   const router = useRouter();
@@ -43,6 +46,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
   const randomTokenId: number = Math.floor(Math.random() * 1000000000000);
   const [showWalletConnectModal, setShowWalletConnectModal] =
     useState<boolean>(false);
+  const [domainExpiredModalOpen, setDomainExpiredModalOpen] = useState(false);
 
   const callData = useMemo(() => {
     return {
@@ -178,6 +182,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
           <div
             className={`${styles.IDScreen} px-[16px] lg:px-0 overflow-x-hidden flex flex-col xl:flex-row justify-center items-center gap-[24px] `}
           >
+              {/*          LEFT SIDE NAV            */}
             <div className=" w-[100%] sm:w-[358px] xl:w-[220px]">
               {ownedIdentities.length !== 1 && (
                 <div
@@ -186,18 +191,36 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                 >
                   <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
                     {ownedIdentities.map((domain, index) => (
-                      <button
-                        className={`${
-                          domain.id === router.query.tokenId ||
-                          domain.id === tokenId
-                            ? "text-[#402D28]"
-                            : " text-[#CDCCCC] hover:text-[#402D28]"
-                        } font-medium text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-full text-center xl:text-left`}
-                        key={index}
-                        onClick={() => router.push(`/identities/${domain.id}`)}
-                      >
-                        {domain.domain ? domain.domain : domain.id}
-                      </button>
+                      <div key={index} className="flex w-full items-center justify-start gap-1">
+                        <button
+                          className={`${
+                            domain.id === router.query.tokenId ||
+                            domain.id === tokenId
+                              ? "text-[#402D28]"
+                              : " text-[#CDCCCC] font-normal hover:text-[#402D28]"
+                          } font-bold text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-center xl:text-left`}
+                          key={index}
+                          onClick={() => router.push(`/identities/${domain.id}`)}
+                        >
+                          {domain.domain ? domain.domain : domain.id}
+                        </button>
+                        {isIdentityExpired(domain) && (
+                            <Tooltip
+                             title="Domain Expired"
+                             componentsProps={{
+                               tooltip: {
+                                 sx: {
+                                   bgcolor: "#402D28",
+                                 },
+                                },
+                              }}
+                           >
+                            <div  onClick={() => setDomainExpiredModalOpen(true)} className="flex w-[16px] h-[16px] hover:cursor-pointer items-center justify-center">
+                              <FaCircle className="text-red-500 text-[8px] ml-1" />
+                            </div>
+                          </Tooltip>
+                        )}
+                      </div>
                     ))}
                   </div>
                   <button
@@ -214,6 +237,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                 </div>
               )}
             </div>
+            {/*           MAIN CARD            */}
             <div
               className={` flex justify-center items-center ${styles.CardContainer}`}
             >
@@ -225,6 +249,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                 ppImageUrl={ppImageUrl}
               />
             </div>
+            {/*           RIGHT SIDE ACTIONS            */}
             <div className=" min-w-[280px]">
               {hideActions ? (
                 minting && <IdentityActionsSkeleton />
@@ -247,6 +272,14 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
           />
         )}
       </div>
+      <DomainExpiredModal
+        open={domainExpiredModalOpen}
+        onClose={() => setDomainExpiredModalOpen(false)}
+        onRenew={() => {
+          setDomainExpiredModalOpen(false);
+          router.push("/renewal");
+        }}
+      />
       <TxConfirmationModal
         txHash={ppTxHash}
         isTxModalOpen={isTxModalOpen}
