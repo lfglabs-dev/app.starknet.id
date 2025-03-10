@@ -278,7 +278,7 @@ const Navbar: FunctionComponent = () => {
               <AiOutlineMenu
                 color={theme.palette.secondary.main}
                 size={25}
-                className="mr-3"
+                className="mr-4"
               />
             </div>
           </div>
