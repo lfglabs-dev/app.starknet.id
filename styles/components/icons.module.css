@@ -38,7 +38,10 @@
   align-items: center;
   justify-content: center;
 }
-
+.clickableIconTwitter{
+  background-color: #000000;
+  color: #ffffff;
+}
 .clickableIconAnima {
   background-color: #55acee;
   border-radius: 25%;
