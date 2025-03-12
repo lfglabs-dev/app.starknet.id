@@ -4,7 +4,7 @@ import styles from "../../../styles/components/identitiesV1.module.css";
 
 const IdentitiesSkeleton: FunctionComponent = () => {
   return (
-    <div className="mt-12">
+    <div className="">
       <div className={styles.identitiesSkeleton}>
         <Skeleton variant="rounded" width={300} height={546} className="" />
         <Skeleton

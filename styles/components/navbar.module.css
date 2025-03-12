@@ -63,7 +63,9 @@
   padding-right: 4rem;
   height: 12vh;
   z-index: 12;
+  margin-bottom: 2rem; /* Add margin-bottom here */
 }
+
 
 .mobileNavBarHeader {
   display: flex;
