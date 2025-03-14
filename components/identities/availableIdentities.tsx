@@ -114,6 +114,10 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
         })
         .then((data: IdentityData) => {
           if (minting) endMinting();
+          // For testing: Set domain expiry to 1 day ago
+          if (data?.domain) {
+            data.domain.expiry = Math.floor(Date.now() / 1000) - (24 * 60 * 60);
+          }
           setIdentity(new Identity(data));
           setIsIdentityADomain(Boolean(data?.domain));
         })
@@ -121,6 +125,10 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
           // Domain data might not be indexed yet, so we check local storage
           const domainData = getDomainData(tokenId);
           if (domainData) {
+            // For testing: Set domain expiry to 1 day ago
+            if (domainData?.domain) {
+              domainData.domain.expiry = Math.floor(Date.now() / 1000) - (24 * 60 * 60);
+            }
             setIdentity(new Identity(domainData));
             setIsIdentityADomain(Boolean(domainData?.domain));
           } else {
@@ -158,7 +166,14 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
       )
         .then((response) => response.json())
         .then((data) => {
-          setOwnedIdentities(data.full_ids);
+          // For testing: Set all domain expiry dates to 1 day ago
+          const modifiedData = data.full_ids.map((id: any) => {
+            if (id.domain) {
+              id.domain_expiry = Math.floor(Date.now() / 1000) - (24 * 60 * 60);
+            }
+            return id;
+          });
+          setOwnedIdentities(modifiedData);
         });
     }
   }, [address, router.asPath]);
@@ -184,7 +199,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
           >
               {/*          LEFT SIDE NAV            */}
             <div className=" w-[100%] sm:w-[358px] xl:w-[220px]">
-              {ownedIdentities.length !== 1 && (
+              {ownedIdentities.length !== 0 && (
                 <div
                   className={`
                          ${styles.sideNav} border w-[100%] md:w-auto h-[319px] xl:h-auto relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
@@ -200,7 +215,12 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                               : " text-[#CDCCCC] font-normal hover:text-[#402D28]"
                           } font-bold text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-center xl:text-left`}
                           key={index}
-                          onClick={() => router.push(`/identities/${domain.id}`)}
+                          onClick={() => {
+                            router.push(`/identities/${domain.id}`);
+                            if (isIdentityExpired(domain)) {
+                              setDomainExpiredModalOpen(true);
+                            }
+                          }}
                         >
                           {domain.domain ? domain.domain : domain.id}
                         </button>
@@ -215,7 +235,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                                 },
                               }}
                            >
-                            <div  onClick={() => setDomainExpiredModalOpen(true)} className="flex w-[16px] h-[16px] hover:cursor-pointer items-center justify-center">
+                            <div className="flex w-[16px] h-[16px] items-center justify-center">
                               <FaCircle className="text-red-500 text-[8px] ml-1" />
                             </div>
                           </Tooltip>
