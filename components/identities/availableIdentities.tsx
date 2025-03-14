@@ -198,7 +198,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
             className={`${styles.IDScreen} px-[16px] lg:px-0 overflow-x-hidden flex flex-col xl:flex-row justify-center items-center gap-[24px] `}
           >
               {/*          LEFT SIDE NAV            */}
-            <div className=" w-[100%] sm:w-[358px] xl:w-[220px]">
+            <div className=" w-[100%] sm:w-[358px] xl:min-w-[220px] xl:w-fit xl:max-w-[300px]">
               {ownedIdentities.length !== 0 && (
                 <div
                   className={`
@@ -213,7 +213,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                             domain.id === tokenId
                               ? "text-[#402D28]"
                               : " text-[#CDCCCC] font-normal hover:text-[#402D28]"
-                          } font-bold text-lg sm:text-md lg:text-lg leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-center xl:text-left`}
+                          } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-center xl:text-left`}
                           key={index}
                           onClick={() => {
                             router.push(`/identities/${domain.id}`);
