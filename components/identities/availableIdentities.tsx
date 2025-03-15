@@ -201,11 +201,11 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                           } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-center xl:text-left`}
                           key={index}
                           onClick={() => {
-                            router.push(`/identities/${domain.id}`);
-                            if (isIdentityExpired(domain)) {
-                              setDomainExpiredModalOpen(true);
-                            }
-                          }}
+                              if (isIdentityExpired(domain)) {
+                                setDomainExpiredModalOpen(true);
+                              }
+                              router.push(`/identities/${domain.id}`);
+                            }}
                         >
                           {domain.domain ? domain.domain : domain.id}
                         </button>
