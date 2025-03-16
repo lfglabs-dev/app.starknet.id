@@ -47,6 +47,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
   const [showWalletConnectModal, setShowWalletConnectModal] =
     useState<boolean>(false);
   const [domainExpiredModalOpen, setDomainExpiredModalOpen] = useState(false);
+  const [selectedExpiredDomain, setSelectedExpiredDomain] = useState<FullId | null>(null);
 
   const callData = useMemo(() => {
     return {
@@ -201,11 +202,13 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                           } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-center xl:text-left`}
                           key={index}
                           onClick={() => {
-                              if (isIdentityExpired(domain)) {
-                                setDomainExpiredModalOpen(true);
-                              }
+                            if (isIdentityExpired(domain)) {
+                              setSelectedExpiredDomain(domain);
+                              setDomainExpiredModalOpen(true);
+                            } else {
                               router.push(`/identities/${domain.id}`);
-                            }}
+                            }
+                          }}
                         >
                           {domain.domain ? domain.domain : domain.id}
                         </button>
@@ -279,7 +282,12 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
       </div>
       <DomainExpiredModal
         open={domainExpiredModalOpen}
-        onClose={() => setDomainExpiredModalOpen(false)}
+        onClose={() => {
+          setDomainExpiredModalOpen(false);
+          if (selectedExpiredDomain) {
+            router.push(`/identities/${selectedExpiredDomain.id}`);
+          }
+        }}
         onRenew={() => {
           setDomainExpiredModalOpen(false);
           router.push("/renewal");
