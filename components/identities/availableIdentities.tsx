@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styles from "../../styles/components/identitiesV1.module.css";
 import { useRouter } from "next/router";
 import IdentityCard from "../../components/identities/identityCard";
@@ -48,6 +48,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     useState<boolean>(false);
   const [domainExpiredModalOpen, setDomainExpiredModalOpen] = useState(false);
   const [selectedExpiredDomain, setSelectedExpiredDomain] = useState<FullId | null>(null);
+  const hasOpenedModal = useRef(false);
 
   const callData = useMemo(() => {
     return {
@@ -164,6 +165,26 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     }
   }, [address, router.asPath]);
 
+  const isCurrentIdentityExpired = useMemo(() => {
+    if (!identity || !isIdentityADomain) return false;
+    return identity?.domainExpiry
+      ? new Date(identity.domainExpiry * 1000) < new Date()
+      : false;
+  }, [identity, isIdentityADomain]);
+
+  useEffect(() => {
+  if (isCurrentIdentityExpired && isOwner && !domainExpiredModalOpen && identity && !hasOpenedModal.current) {
+    setSelectedExpiredDomain({
+      id: tokenId,
+      domain: identity.domain,
+      domain_expiry: identity.domainExpiry
+    } as FullId);
+    setDomainExpiredModalOpen(true);
+    hasOpenedModal.current = true;
+  }
+}, [isCurrentIdentityExpired, isOwner, domainExpiredModalOpen, identity, tokenId, selectedExpiredDomain]);
+  
+
   const connectWallet = async (connector: Connector) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -202,13 +223,11 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                           } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-center xl:text-left`}
                           key={index}
                           onClick={() => {
+                            router.push(`/identities/${domain.id}`);
                             if (isIdentityExpired(domain)) {
                               setSelectedExpiredDomain(domain);
                               setDomainExpiredModalOpen(true);
-                            } else {
-                              router.push(`/identities/${domain.id}`);
-                            }
-                          }}
+                            }}}
                         >
                           {domain.domain ? domain.domain : domain.id}
                         </button>
@@ -284,9 +303,6 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
         open={domainExpiredModalOpen}
         onClose={() => {
           setDomainExpiredModalOpen(false);
-          if (selectedExpiredDomain) {
-            router.push(`/identities/${selectedExpiredDomain.id}`);
-          }
         }}
         onRenew={() => {
           setDomainExpiredModalOpen(false);
