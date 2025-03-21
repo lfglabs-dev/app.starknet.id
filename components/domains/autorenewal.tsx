@@ -30,7 +30,6 @@ import {
 } from "../../utils/constants";
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
-import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import ConnectButton from "../UI/connectButton";
 import {
   getAutoRenewAllowance,
@@ -57,7 +56,6 @@ const Subscription: FunctionComponent = () => {
   const [displayedCurrencies, setDisplayedCurrencies] = useState<
     CurrencyType[]
   >([CurrencyType.ETH, CurrencyType.STRK]);
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [salt, setSalt] = useState<string | undefined>();
@@ -131,7 +129,7 @@ const Subscription: FunctionComponent = () => {
         status: "pending",
       },
     });
-    setIsTxModalOpen(true);
+    router.push("/subscriptionConfirmation");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autorenewData]); // We only need renewData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
@@ -387,11 +385,6 @@ const Subscription: FunctionComponent = () => {
         </div>
       </div>
       <img className={styles.image} src="/visuals/register.webp" />
-      <RegisterConfirmationModal
-        txHash={autorenewData?.transaction_hash}
-        isTxModalOpen={isTxModalOpen}
-        closeModal={() => window.history.back()}
-      />
       <Notification
         visible={currencyError}
         onClose={() => setCurrencyError(false)}
