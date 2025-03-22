@@ -23,6 +23,7 @@
   flex-shrink: 0;
   z-index: 1;
   background-color: #fff;
+  overflow-y: auto;
 }
 
 .price {
