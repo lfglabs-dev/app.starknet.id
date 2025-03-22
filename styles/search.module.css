@@ -295,3 +295,25 @@
     max-width: calc(100% - 3rem);
   }
 }
+
+.cancelContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.cancelButton {
+  background: #d83a3a;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.cancelButton:hover {
+  background: #b52e2e;
+}
