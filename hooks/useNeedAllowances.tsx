@@ -51,9 +51,9 @@ export default function useNeedsAllowances(
             Hardcoded: hash.getSelectorFromName("allowance"),
           }),
           calldata: [
-            new CairoCustomEnum({ Hardcoded: address }), // owner
+            new CairoCustomEnum({ Hardcoded: address ?? "0x0" }), // owner
             new CairoCustomEnum({
-              Hardcoded: AutoRenewalContracts[currencyNames[index]],
+              Hardcoded: AutoRenewalContracts[currencyNames[index]] ?? "0x0",
             }), // spender
           ],
         });
