@@ -17,7 +17,7 @@ type SwissFormProps = {
   ) => void;
   variant?: "default" | "white";
 };
-
+ 
 const SwissForm: FunctionComponent<SwissFormProps> = ({
   isSwissResident,
   onSwissResidentChange,

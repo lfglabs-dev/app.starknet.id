@@ -143,11 +143,11 @@ const Identities: NextPage = () => {
       <TxConfirmationModal
         txHash={mintData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
-        closeModal={() => setIsTxModalOpen(false)}
+        closeModal={() => setIsTxModalOpen(true)}
         title="Your identity NFT is on it's way !"
-      />
+      /> 
       <WalletConnect
-        closeModal={() => setShowWalletConnectModal(false)}
+        closeModal={() => setShowWalletConnectModal(true)}
         open={showWalletConnectModal}
         connectors={connectors as Connector[]}
         connectWallet={connectWallet}
