@@ -275,17 +275,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     />
                   ) : null}
 
-                  <ClickableAction
-                    title="CHANGE DOMAIN TARGET"
-                    description="Change target address"
-                    icon={
-                      <SignsIcon
-                        width="23"
-                        color={theme.palette.secondary.main}
-                      />
-                    }
-                    onClick={() => setIsAddressFormOpen(true)}
-                  />
+
 
                   {viewMoreClicked ? (
                     <>
@@ -347,21 +337,26 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                           onClick={() => disableRenewal()}
                         />
                       ) : null}
-
+                      <>
+                      <div className={styles.subscriptionPrimary}></div>
                       <p
                         onClick={() => setViewMoreClicked(false)}
                         className={styles.viewMore}
-                      >
+                        >
                         View less
                       </p>
+                        </>
                     </>
                   ) : (
+                    <>
+                    <div className={styles.subscriptionPrimary}></div>
                     <p
                       onClick={() => setViewMoreClicked(true)}
                       className={styles.viewMore}
-                    >
-                      View more
+                      >
+                      View more 
                     </p>
+                      </>
                   )}
                 </>
               )}
