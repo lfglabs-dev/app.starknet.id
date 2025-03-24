@@ -1,12 +1,10 @@
 .screen {
-  min-height: 88vh;
-  height: auto;
+  height: 88vh;
   position: relative;
   margin-top: 12vh;
   overflow: auto;
   display: flex;
   justify-content: center;
-  padding-bottom: 40px;
 }
 
 .wrapperScreen {
