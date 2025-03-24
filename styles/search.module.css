@@ -15,6 +15,7 @@
   .container {
     flex-direction: column;
     min-height: auto;
+    padding-bottom: 10px;
   }
 }
 
