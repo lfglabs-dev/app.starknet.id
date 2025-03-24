@@ -19,6 +19,9 @@ const SubscriptionConfirmation: NextPage = () => {
     <>
       <div className={styles.container}>
         <div>
+          <div className={styles.subtitle}>Thanks</div>
+        </div>
+        <div>
           <div className={styles.title}>
             Your subscription is <br className="hidden sm:block" />
             <span className={styles.highlight}>active!</span>
