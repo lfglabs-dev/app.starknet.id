@@ -1,15 +1,16 @@
 /**
-    * @description      : 
-    * @author           : 
-    * @group            : 
-    * @created          : 24/03/2025 - 14:03:52
+    * @description      : fix : Enable Subscription Form - Edit input size of ETH OR STRK
+    * @author           : pheoheayo
+    * @group            : odhack-12 contributor
+    * @created          : 24/03/2025 - 14:22:53
     * 
     * MODIFICATION LOG
     * - Version         : 1.0.0
     * - Date            : 24/03/2025
-    * - Author          : 
-    * - Modification    : 
+    * - Author          : pheobeayo
+    * - Modification    : fix:Enable Subscription Form - Edit input size of ETH OR STRK 
 **/
+
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/registerV2.module.css";
 import {
