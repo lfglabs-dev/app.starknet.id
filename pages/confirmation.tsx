@@ -72,10 +72,10 @@ const Confirmation: NextPage = () => {
         </div>
       </div>
       <div className={styles.coconutLeft}>
-        <img alt="coconut" src="/visuals/leftTree.svg" />
+        <img alt="coconut" src="/visuals/leftTree.png" />
       </div>
       <div className={styles.coconutRight}>
-        <img alt="coconut" src="/visuals/rightTree.svg" />
+        <img alt="coconut" src="/visuals/rightTree.png" />
       </div>
     </>
   );
