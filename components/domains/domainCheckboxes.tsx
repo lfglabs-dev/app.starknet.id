@@ -32,7 +32,7 @@ const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
   return isLoading ? (
     <Skeleton variant="rectangular" width="100%" height="80px" />
   ) : (
-    <div className="flex flex-col flex-wrap gap-[8px] justify-start items-start">
+    <div className="flex w-full flex-col flex-wrap gap-[8px] justify-start items-start">
       <div className="flex">
         <Tooltip
           className="cursor-pointer mr-1"

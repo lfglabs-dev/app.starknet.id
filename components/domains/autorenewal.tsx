@@ -313,12 +313,14 @@ const Subscription: FunctionComponent = () => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
+      <div
+        className={styles.card}
+      >
         <div className={styles.form}>
           <BackButton onClick={() => router.back()} />
-          <div className="flex flex-col items-start gap-0 self-stretch">
+          <div className="flex flex-col  items-center gap-0 self-stretch">
             <h3 className={styles.domain}>Enable subscription</h3>
-            <p className="py-2 text-left">
+            <p className="py-2 text-center">
               Enable subscription to ensure uninterrupted ownership and
               benefits. Never worry about expiration dates again.
             </p>
@@ -356,35 +358,36 @@ const Subscription: FunctionComponent = () => {
             renewalBox={false}
             isArOnforced={true}
           />
-          {address ? (
-            <Button
-              onClick={() =>
-                execute().then(() => {
-                  setDomainsMinting(selectedDomains);
-                })
-              }
-              disabled={
-                domainsMinting === selectedDomains ||
-                !address ||
-                !termsBox ||
-                !areDomainSelected(selectedDomains) ||
-                callData.length === 0 // Cover the case where there are no domains to subscribe
-              }
-            >
-              {!termsBox
-                ? "Please accept terms & policies"
-                : !areDomainSelected(selectedDomains)
-                  ? "Select a domain to subscribe"
-                  : callData.length === 0
-                    ? "You're already subscribed"
-                    : "Enable subscription"}
-            </Button>
-          ) : (
-            <ConnectButton />
-          )}
+            {address ? (
+              <div className="mx-auto w-[max-content]">
+              <Button
+                onClick={() =>
+                  execute().then(() => {
+                    setDomainsMinting(selectedDomains);
+                  })
+                }
+                disabled={
+                  domainsMinting === selectedDomains ||
+                  !address ||
+                  !termsBox ||
+                  !areDomainSelected(selectedDomains) ||
+                  callData.length === 0 // Cover the case where there are no domains to subscribe
+                }
+              >
+                {!termsBox
+                  ? "Please accept terms & policies"
+                  : !areDomainSelected(selectedDomains)
+                    ? "Select a domain to subscribe"
+                    : callData.length === 0
+                      ? "You're already subscribed"
+                      : "Enable subscription"}
+              </Button>
+              </div>
+            ) : (
+              <ConnectButton />
+            )}
         </div>
       </div>
-      <img className={styles.image} src="/visuals/register.webp" />
       <Notification
         visible={currencyError}
         onClose={() => setCurrencyError(false)}
