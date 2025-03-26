@@ -18,6 +18,7 @@ import UnframedIcon from "../../UI/iconsComponents/icons/unframedIcon";
 import SignsIcon from "../../UI/iconsComponents/icons/signsIcon";
 import { Call } from "starknet";
 import { useRouter } from "next/router";
+import autoRenewalCalls from "../../../utils/callData/autoRenewalCalls";
 import { useNotificationManager } from "../../../hooks/useNotificationManager";
 import { NotificationType, TransactionType } from "../../../utils/constants";
 import { posthog } from "posthog-js";
@@ -55,10 +56,44 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   );
   const router = useRouter();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
+  
+  const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
+    useState<boolean>(false);
+  const [autoRenewalData, setAutoRenewalData] = useState<RenewalData[]>([]);
+  const [hasReverseAddressRecord, setHasReverseAddressRecord] =
+    useState<boolean>(false);
+  const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
+    []
+  );
+  const { sendAsync: disableRenewal, data: disableRenewalData } =
+    useSendTransaction({
+      calls: disableRenewalCalldata,
+    });
 
-  // Removed: Auto-renewal and subscription-related state and effects
 
-  // Add all subdomains to the parameters
+  useEffect(() => {
+    if (starknetIdNavigator !== null && address !== undefined) {
+      starknetIdNavigator.getStarkName(address).then((name: string) => {
+        if (name !== identity?.domain) setIsMainDomain(false);
+      });
+    }
+  }, [address, identity, starknetIdNavigator]);
+
+  const nextAutoRenew = useMemo(() => {
+    const now = Math.floor(Date.now() / 1000);
+    const monthInSeconds = 60 * 60 * 24 * 30;
+    if (identity?.domainExpiry) {
+      if (identity?.domainExpiry + monthInSeconds < now) {
+        return "Next today";
+      } else {
+        return (
+          "Next payment on " +
+          timestampToReadableDate(identity?.domainExpiry - monthInSeconds)
+        );
+      }
+    }
+  }, [identity]);
+
   const callDataEncodedDomain: string[] = [encodedDomains.length.toString()];
   encodedDomains.forEach((domain) => {
     callDataEncodedDomain.push(domain.toString(10));
@@ -68,11 +103,45 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     calls: identity
       ? identityChangeCalls.setAsMainId(
           identity,
-          false, // Simplified hasReverseAddressRecord
+          hasReverseAddressRecord,
           callDataEncodedDomain
         )
       : [],
   });
+
+  useEffect(() => {
+    if (!address) return;
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/addr_has_rev?addr=${address}`)
+      .then((response) => response.json())
+      .then((reverseAddressData) => {
+        setHasReverseAddressRecord(reverseAddressData.has_rev);
+      });
+  }, [address]);
+
+  useEffect(() => {
+    if (!address || !identity?.domain || !isOwner) return;
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_SERVER_LINK
+      }/renewal/get_renewal_data?addr=${hexToDecimal(address)}&domain=${
+        identity.domain
+      }`
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.error && data.length > 0) {
+          const filteredData = data.filter((elem: RenewalData) => elem.enabled);
+          if (filteredData.length > 0) {
+            setIsAutoRenewalEnabled(true);
+            setAutoRenewalData(filteredData);
+          } else {
+            setIsAutoRenewalEnabled(false);
+          }
+        } else {
+          setIsAutoRenewalEnabled(false);
+        }
+      });
+  }, [address, tokenId, identity, isOwner]);
 
   useEffect(() => {
     if (!mainDomainData?.transaction_hash) return;
@@ -88,8 +157,40 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     });
     setTxHash(mainDomainData.transaction_hash);
     setIsTxModalOpen(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mainDomainData]);
+
+  useEffect(() => {
+    if (isAutoRenewalEnabled) {
+      const disableCallData: Call[] = [];
+      autoRenewalData.forEach((renewalData) => {
+        disableCallData.push(
+          autoRenewalCalls.disableRenewal(
+            renewalData.auto_renew_contract ??
+              (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
+            callDataEncodedDomain[1].toString()
+          )
+        );
+      });
+      setDisableRenewalCalldata(disableCallData);
+    }
+  }, [autoRenewalData, isAutoRenewalEnabled]); 
+
+  useEffect(() => {
+    if (!disableRenewalData?.transaction_hash) return;
+    addTransaction({
+      timestamp: Date.now(),
+      subtext: `Disabled auto renewal for ${identity?.domain}`,
+      type: NotificationType.TRANSACTION,
+      data: {
+        type: TransactionType.DISABLE_AUTORENEW,
+        hash: disableRenewalData.transaction_hash,
+        status: "pending",
+      },
+    });
+    setTxHash(disableRenewalData.transaction_hash);
+    setIsTxModalOpen(true);
+    posthog?.capture("disable-ar"); 
+  }, [disableRenewalData]); 
 
   const isExpired = useMemo(() => {
     return identity?.domainExpiry
@@ -267,4 +368,4 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   );
 };
 
-export default IdentityActions
+export default IdentityActions;
