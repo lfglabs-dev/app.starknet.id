@@ -194,13 +194,11 @@
   background: radial-gradient(
     382.53% 14823.28% at 46.39% 50%,
     #fff9f0 0%,
-    /* #dccab8 100% */
   );
 
   /* Secondary/700 */
   border-width: 1px;
   border-style: solid;
-  /* border-color: var(--secondary); */
 
   /* Button */
   box-shadow: 0px #4545451A;

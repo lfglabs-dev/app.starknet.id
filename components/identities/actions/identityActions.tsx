@@ -104,10 +104,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const { sendAsync: setMainId, data: mainDomainData } = useSendTransaction({
     calls: identity
       ? identityChangeCalls.setAsMainId(
-          identity,
-          hasReverseAddressRecord,
-          callDataEncodedDomain
-        )
+        identity,
+        hasReverseAddressRecord,
+        callDataEncodedDomain
+      )
       : [],
   });
 
@@ -123,10 +123,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   useEffect(() => {
     if (!address || !identity?.domain || !isOwner) return;
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_SERVER_LINK
-      }/renewal/get_renewal_data?addr=${hexToDecimal(address)}&domain=${
-        identity.domain
+      `${process.env.NEXT_PUBLIC_SERVER_LINK
+      }/renewal/get_renewal_data?addr=${hexToDecimal(address)}&domain=${identity.domain
       }`
     )
       .then((response) => response.json())
@@ -171,7 +169,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           autoRenewalCalls.disableRenewal(
             // auto_renew_contract is defined only for altcoins, if undefined we use the ETH renewal contract address
             renewalData.auto_renew_contract ??
-              (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
+            (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
             callDataEncodedDomain[1].toString()
           )
         );
@@ -317,7 +315,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       )}
 
                       {callDataEncodedDomain[0] === "1" &&
-                      !isAutoRenewalEnabled ? (
+                        !isAutoRenewalEnabled ? (
                         <ClickableAction
                           title="ENABLE SUBSCRIPTION"
                           description={nextAutoRenew}
@@ -327,7 +325,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                         />
                       ) : null}
                       {callDataEncodedDomain[0] === "1" &&
-                      isAutoRenewalEnabled ? (
+                        isAutoRenewalEnabled ? (
                         <ClickableAction
                           title="DISABLE SUBSCRIPTION"
                           description={nextAutoRenew}
@@ -338,25 +336,36 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                         />
                       ) : null}
                       <>
-                      <div className={styles.subscriptionPrimary}></div>
-                      <p
-                        onClick={() => setViewMoreClicked(false)}
-                        className={styles.viewMore}
+                        <div className={styles.subscriptionPrimary}></div>
+                        <p
+                          onClick={() => setViewMoreClicked(false)}
+                          className={styles.viewMore}
                         >
-                        View less
-                      </p>
-                        </>
+                          View less
+                        </p>
+                      </>
                     </>
                   ) : (
                     <>
-                    <div className={styles.subscriptionPrimary}></div>
-                    <p
-                      onClick={() => setViewMoreClicked(true)}
-                      className={styles.viewMore}
+                      <ClickableAction
+
+                        title="CHANGE DOMAIN TARGET"
+                        description="Change target address"
+                        icon={
+                          <SignsIcon
+                            width="23"
+                            color={theme.palette.secondary.main}
+                          />
+                        }
+                        onClick={() => setIsAddressFormOpen(true)}
+                      />
+                      <p
+                        onClick={() => setViewMoreClicked(true)}
+                        className={styles.viewMore}
                       >
-                      View more 
-                    </p>
-                      </>
+                        View more
+                      </p>
+                    </>
                   )}
                 </>
               )}
