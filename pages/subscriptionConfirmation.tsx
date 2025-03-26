@@ -1,40 +1,35 @@
-import React from "react";
 import { NextPage } from "next";
 import { useAccount } from "@starknet-react/core";
-import { useRouter } from "next/router";
 import styles from "../styles/components/confirmation.module.css";
-import Button from "@/components/UI/button";
-import { minifyAddress } from "@/utils/stringService";
 import theme from "@/styles/theme";
 import CopyIcon from "@/components/UI/iconsComponents/icons/copyIcon";
 import DoneFilledIcon from "@/components/UI/iconsComponents/icons/doneFilledIcon";
 import { useCopyToClipboard } from "@/hooks/useCopy";
+import { minifyAddress } from "@/utils/stringService";
 
-const Confirmation: NextPage = () => {
-  const router = useRouter();
-  const { address } = useAccount();
-  const tokenId: string = router.query.tokenId as string;
+
+
+const SubscriptionConfirmation: NextPage = () => {
   const { copied, copyToClipboard } = useCopyToClipboard();
+  const { address } = useAccount();
 
-  const redirect = () => {
-    if (tokenId) router.push(`/identities/${tokenId}?minting=true`);
-    else router.push(`/identities`);
-  };
 
   return (
     <>
       <div className={styles.container}>
-        <div className={styles.balloon}>
+      <div className={styles.balloon}>
           <img alt="balloon" src="/register/balloon.webp" />
         </div>
         <div className={styles.coconut}>
           <img alt="coconut" src="/register/coconut.webp" />
         </div>
         <div>
-          <div className={styles.subtitle}>Referral</div>
+          <div className={styles.subtitle}>Thanks</div>
+        </div>
+        <div>
           <div className={styles.title}>
-            It&apos;s now time to earn <br className="hidden sm:block" />
-            <span className={styles.highlight}>crypto!</span>
+            Your subscription is <br className="hidden sm:block" />
+            <span className={styles.highlight}>active!</span>
           </div>
         </div>
         <div>
@@ -65,20 +60,15 @@ const Confirmation: NextPage = () => {
             />
           )}
         </div>
-        <div>
-          <Button onClick={redirect} radius={"12px"}>
-            Go to your domain
-          </Button>
-        </div>
-      </div>
-      <div className={styles.coconutLeft}>
-        <img alt="coconut" src="/visuals/leftTree.png" />
+        <div className={styles.coconutLeft}>
+        <img alt="palm tree left" src="/visuals/leftTree.png" />
       </div>
       <div className={styles.coconutRight}>
-        <img alt="coconut" src="/visuals/rightTree.png" />
+        <img alt="palm tree right" src="/visuals/rightTree.png" />
+      </div>
       </div>
     </>
   );
 };
 
-export default Confirmation;
+export default SubscriptionConfirmation;
