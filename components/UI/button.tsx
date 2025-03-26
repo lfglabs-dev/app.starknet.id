@@ -2,11 +2,11 @@ import React, { FunctionComponent, ReactNode } from "react";
 import styles from "../../styles/components/button.module.css";
 
 type ButtonProps = {
-  onClick: () => void;
+  onClick?: () => void;
   children: string | ReactNode;
   className?: string;
   disabled?: boolean;
-  variation?: string;
+  variation?: "primary" | "secondary" | "danger" | "success";
   radius?: string;
 };
 
@@ -22,7 +22,9 @@ const Button: FunctionComponent<ButtonProps> = ({
     <button
       disabled={disabled}
       onClick={onClick}
-      className={`${className} ${styles["nq-button"]} ${styles[variation]}`} 
+      className={
+        `${className} ${styles["nq-button"]} ${styles[variation]} px-4 py-2 font-semibold text-white rounded-lg hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-opacity-50 `
+      }
       style={radius ? { borderRadius: radius } : undefined}
     >
       {children}
