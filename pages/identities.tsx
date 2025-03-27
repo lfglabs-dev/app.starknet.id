@@ -133,13 +133,14 @@ const Identities: NextPage = () => {
             <div className="max-h-[88vh]">
               <AvailableIdentities tokenId={ownedIdentities[0].id} />
 
-              {/* Cancel Subscription Button */}
+                         {/* Cancel Subscription Button */}
             <div className="mt-6 flex justify-center">
-              <button
-             className="bg-red-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-700 transition-all duration-300 ease-in-out"
-            >
-            Cancel Subscription
-              </button>
+              <CancelSubscription
+                onCancel={() => {
+                  // Handle post-cancellation logic here
+                  console.log("Subscription canceled");
+                }}
+              />
             </div>
           </div>
           )}

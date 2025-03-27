@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 interface CancelSubscriptionProps {
-  onCancel: () => void; // Callback function when subscription is canceled
+  onCancel: () => void; 
 }
 
 const CancelSubscription: React.FC<CancelSubscriptionProps> = ({ onCancel }) => {
@@ -11,18 +11,26 @@ const CancelSubscription: React.FC<CancelSubscriptionProps> = ({ onCancel }) => 
     setLoading(true);
 
     try {
-      // Call backend API or blockchain function here
-      // Example: await fetch("/api/cancel-subscription", { method: "POST" });
+      const response = await fetch("/api/cancel-subscription", { 
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userId: "12345" }), 
+      });
 
-      // Simulating an API call delay
-      setTimeout(() => {
-        setLoading(false);
-        alert("Subscription canceled successfully!");
-        onCancel();
-      }, 2000);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to cancel subscription");
+      }
+
+      setLoading(false);
+      console.log("Subscription canceled successfully!");
+      onCancel(); 
     } catch (error) {
       setLoading(false);
-      alert("Failed to cancel subscription. Please try again.");
+      console.error("Cancel Subscription Error:", error);
     }
   };
 
