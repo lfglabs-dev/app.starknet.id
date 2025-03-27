@@ -9,11 +9,6 @@ const AutoRenewalPage: NextPage = () => {
     <div className={homeStyles.screen}>
       <div className={styles.container}>
         <AutoRenewal />
-
-        {/* Cancel Subscription Button */}
-        <div className={styles.cancelContainer}>
-          <button className={styles.cancelButton}>Cancel Subscription</button>
-        </div>
       </div>
     </div>
   );

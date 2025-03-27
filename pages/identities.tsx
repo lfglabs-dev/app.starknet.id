@@ -16,6 +16,7 @@ import { NotificationType, TransactionType } from "../utils/constants";
 import WalletConnect from "@/components/UI/walletConnect";
 import { Connector } from "starknetkit";
 import AddButton from "@/components/UI/AddButtonIdentities";
+import CancelSubscription from "@/components/UI/CancelSubscription";
 import AvailableIdentities from "@/components/identities/availableIdentities";
 
 const Identities: NextPage = () => {
@@ -31,15 +32,14 @@ const Identities: NextPage = () => {
   const [showWalletConnectModal, setShowWalletConnectModal] =
     useState<boolean>(false);
 
-  //Mint
   const callData = useMemo(() => {
     return {
       contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
       entrypoint: "mint",
       calldata: [randomTokenId.toString()],
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // We want this to run only once
+  }, []); 
+
   const { sendAsync: execute, data: mintData } = useSendTransaction({
     calls: [callData],
   });
@@ -47,7 +47,6 @@ const Identities: NextPage = () => {
   useEffect(() => {
     if (address) {
       setLoading(true);
-      // Our Indexer
       fetch(
         `${
           process.env.NEXT_PUBLIC_SERVER_LINK
@@ -86,16 +85,13 @@ const Identities: NextPage = () => {
       },
     });
     setIsTxModalOpen(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mintData]); // We want this to run only when the tx is sent
+  }, [mintData]); 
 
   function mint() {
     execute();
   }
 
   const connectWallet = async (connector: Connector) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     await connectAsync({ connector });
     localStorage.setItem("SID-connectedWallet", connector.id);
     localStorage.setItem("SID-lastUsedConnector", connector.id);
@@ -110,7 +106,7 @@ const Identities: NextPage = () => {
               <IdentitiesSkeleton />
             </section>
           ) : ownedIdentities.length + externalDomains.length === 0 ||
-          !address  ? (
+          !address ? (
             <div className={styles.containerGallery}>
               <h1 className="title text-center mb-[16px]">
                 All Your Identities in One Place
@@ -135,8 +131,17 @@ const Identities: NextPage = () => {
             </div>
           ) : (
             <div className="max-h-[88vh]">
-              <AvailableIdentities tokenId={ownedIdentities[0].id}/>
+              <AvailableIdentities tokenId={ownedIdentities[0].id} />
+
+              {/* Cancel Subscription Button */}
+            <div className="mt-6 flex justify-center">
+              <button
+             className="bg-red-600 text-white px-6 py-3 rounded-lg shadow-md hover:bg-red-700 transition-all duration-300 ease-in-out"
+            >
+            Cancel Subscription
+              </button>
             </div>
+          </div>
           )}
         </div>
       </div>
@@ -144,7 +149,7 @@ const Identities: NextPage = () => {
         txHash={mintData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
         closeModal={() => setIsTxModalOpen(false)}
-        title="Your identity NFT is on it's way !"
+        title="Your identity NFT is on its way!"
       />
       <WalletConnect
         closeModal={() => setShowWalletConnectModal(false)}
