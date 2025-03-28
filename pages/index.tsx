@@ -1,4 +1,5 @@
 import type { NextPage } from "next";
+import React from "react";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/domain.module.css";
 import SearchBar from "../components/UI/searchBar";

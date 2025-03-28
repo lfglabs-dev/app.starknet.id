@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
+import React from "react";
 import Navbar from "../components/UI/navbar";
 import Head from "next/head";
 import { ThemeProvider } from "@mui/material";
