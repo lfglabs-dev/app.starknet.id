@@ -1,4 +1,3 @@
-import React from "react";
 import type { NextPage } from "next";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/domain.module.css";

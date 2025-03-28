@@ -1,4 +1,3 @@
-import React from "react";
 import { NextPage } from "next";
 import { useAccount } from "@starknet-react/core";
 import styles from "../styles/components/confirmation.module.css";
@@ -8,16 +7,19 @@ import DoneFilledIcon from "@/components/UI/iconsComponents/icons/doneFilledIcon
 import { useCopyToClipboard } from "@/hooks/useCopy";
 import { minifyAddress } from "@/utils/stringService";
 
-
-
 const SubscriptionConfirmation: NextPage = () => {
   const { copied, copyToClipboard } = useCopyToClipboard();
   const { address } = useAccount();
 
-
   return (
     <>
       <div className={styles.container}>
+        <div className={styles.balloon}>
+          <img alt="balloon" src="/register/balloon.webp" />
+        </div>
+        <div className={styles.coconut}>
+          <img alt="coconut" src="/register/coconut.webp" />
+        </div>
         <div>
           <div className={styles.subtitle}>Thanks</div>
         </div>
@@ -54,6 +56,12 @@ const SubscriptionConfirmation: NextPage = () => {
               secondColor={theme.palette.primary.main}
             />
           )}
+        </div>
+        <div className={styles.coconutLeft}>
+          <img alt="palm tree left" src="/visuals/leftTree.svg" />
+        </div>
+        <div className={styles.coconutRight}>
+          <img alt="palm tree right" src="/visuals/rightTree.svg" />
         </div>
       </div>
     </>
