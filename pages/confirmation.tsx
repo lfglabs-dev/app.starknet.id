@@ -1,5 +1,5 @@
-import React from "react";
 import { NextPage } from "next";
+import React from "react";
 import { useAccount } from "@starknet-react/core";
 import { useRouter } from "next/router";
 import styles from "../styles/components/confirmation.module.css";

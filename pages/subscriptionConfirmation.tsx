@@ -1,4 +1,5 @@
 import { NextPage } from "next";
+import React from "react";
 import { useAccount } from "@starknet-react/core";
 import styles from "../styles/components/confirmation.module.css";
 import theme from "@/styles/theme";
