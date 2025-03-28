@@ -158,6 +158,7 @@
   align-items: flex-start;
   gap: 4px;
   cursor: pointer;
+  width: 100%;
 }
 
 .activeSwitch {
