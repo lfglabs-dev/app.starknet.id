@@ -1,16 +1,3 @@
-/**
-    * @description      : fix : Enable Subscription Form - Edit input size of ETH OR STRK
-    * @author           : pheoheayo
-    * @group            : odhack-12 contributor
-    * @created          : 24/03/2025 - 14:22:53
-    * 
-    * MODIFICATION LOG
-    * - Version         : 1.0.0
-    * - Date            : 24/03/2025
-    * - Author          : pheobeayo
-    * - Modification    : fix:Enable Subscription Form - Edit input size of ETH OR STRK 
-**/
-
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/registerV2.module.css";
 import {
@@ -20,6 +7,7 @@ import {
 } from "../../utils/constants";
 import { ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material";
 import { areArraysEqual } from "@/utils/arrayService";
+import ArrowDownIcon from "../UI/iconsComponents/icons/arrowDownIcon";
 
 type ArCurrencyDropdownProps = {
   onCurrencySwitch: (type: CurrencyType[]) => void;
@@ -44,6 +32,9 @@ const ArCurrencyDropdown: FunctionComponent<ArCurrencyDropdownProps> = ({
     "& .css-10hburv-MuiTypography-root": {
       fontFamily: "Poppins-Regular",
     },
+    "& .MuiSvgIcon-root": {
+      display: "none", 
+    },
   };
 
   function onArCurrencyChange(ArCurrency: ArCurrency) {
@@ -66,7 +57,7 @@ const ArCurrencyDropdown: FunctionComponent<ArCurrencyDropdownProps> = ({
   }
 
   return (
-    <div className={styles.currencySwitcher}>
+    <div className={styles.currencySwitcher} style={{ position: "relative" }}>
       <Select
         fullWidth
         value={getArCurrency(displayedCurrency)}
@@ -75,8 +66,10 @@ const ArCurrencyDropdown: FunctionComponent<ArCurrencyDropdownProps> = ({
         onChange={(e) => onArCurrencyChange(e.target.value as ArCurrency)}
         style={{
           borderRadius: "8.983px",
+          position: "relative",
         }}
         sx={selectStyle}
+        
         renderValue={(selected) => {
           const currencyKey =
             selected && ArCurrencyIcon[selected] ? selected : "ETH OR STRK";
@@ -108,6 +101,17 @@ const ArCurrencyDropdown: FunctionComponent<ArCurrencyDropdownProps> = ({
           </MenuItem>
         ))}
       </Select>
+      <div
+        style={{
+          position: "absolute",
+          right: "12px",
+          top: "50%",
+          transform: "translateY(-50%)",
+          pointerEvents: "none",
+        }}
+      >
+        <ArrowDownIcon width="16" color="#000" />
+      </div>
     </div>
   );
 };
