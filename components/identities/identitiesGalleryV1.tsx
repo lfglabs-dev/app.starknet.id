@@ -1,7 +1,5 @@
-import {
-  FunctionComponent, useEffect,
-  useState
-} from "react";
+import { FunctionComponent, useEffect, useState } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import styles from "../../styles/components/identitiesV1.module.css";
 import { hexToDecimal } from "../../utils/feltService";
