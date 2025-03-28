@@ -116,7 +116,12 @@ const UserInfoForm: FunctionComponent<UserInfoFormProps> = ({
           <CloseIcon />
         </div>
         <div className={styles.form}>
+          
           <div className="flex flex-col items-center self-stretch pt-[30px] xl:pt-[60px]">
+          <div className="flex flex-col items-center">
+            <h3 className={styles.enablesubscription}>enable subscription</h3>
+          <p className={styles.subcriptionDescription}>Enable subscription to ensure uninterrupted ownership and benefits. Never worry about expiration dates again.</p>
+          </div>
             <h3 className={styles.domain}>{getTitle()}</h3>
           </div>
           <div className="flex flex-col items-start gap-6 self-stretch">
