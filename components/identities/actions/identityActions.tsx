@@ -347,18 +347,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     </>
                   ) : (
                     <>
-                      <ClickableAction
-
-                        title="CHANGE DOMAIN TARGET"
-                        description="Change target address"
-                        icon={
-                          <SignsIcon
-                            width="23"
-                            color={theme.palette.secondary.main}
-                          />
-                        }
-                        onClick={() => setIsAddressFormOpen(true)}
-                      />
+                      <div className={styles.subscriptionPrimary}></div>
                       <p
                         onClick={() => setViewMoreClicked(true)}
                         className={styles.viewMore}
