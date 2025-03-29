@@ -321,7 +321,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
                     </>)}
 
-                    
+
                   {/* I include the fale in order to hide the button */}
 
                   {callDataEncodedDomain[0] === "1" && false &&
@@ -335,7 +335,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     />
                   ) : null}
 
-                  {/* I include the fale in order to hide the button */}
+                  {/* This is the the old  */}
                   {callDataEncodedDomain[0] === "1" && false &&
                     isAutoRenewalEnabled ? (
                     <ClickableAction
@@ -347,29 +347,41 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       onClick={() => disableRenewal()}
                     />
                   ) : null}
+                  <>
+                  
+                    {/* This should be the auto renewal disabled */}
+                    {
+                      callDataEncodedDomain[0] === "1" &&
+                        isAutoRenewalEnabled ?
+                        <div className={styles.subscriptionPrimary}></div>
+                        : null
+                    }
+
+                    {/* This should be the auto renewal enabled */}
+                    {
+                      callDataEncodedDomain[0] === "1" &&
+                        !isAutoRenewalEnabled ?
+                        <div className={styles.subscriptionPrimary}></div>
+                        : null
+                    }
+                  </>
 
                   <>
                     {viewMoreClicked ? (
-                      <>
-                        <div className={styles.subscriptionPrimary}></div>
-                        <p
-                          onClick={() => setViewMoreClicked(false)}
-                          className={styles.viewMore}
-                        >
-                          View less
-                        </p>
-                      </>
-                  ) : (
-                  <>
-                    <div className={styles.subscriptionPrimary}></div>
-                    <p
-                      onClick={() => setViewMoreClicked(true)}
-                      className={styles.viewMore}
-                    >
-                      View more
-                    </p>
-                  </>
-                  )}
+                      <p
+                        onClick={() => setViewMoreClicked(false)}
+                        className={styles.viewMore}
+                      >
+                        View less
+                      </p>
+                    ) : (
+                      <p
+                        onClick={() => setViewMoreClicked(true)}
+                        className={styles.viewMore}
+                      >
+                        View more
+                      </p>
+                    )}
 
                   </>
                 </>
@@ -402,8 +414,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           title="Your Transaction is on it's way !"
         />
       </>
-      </div>
-      );
+    </div>
+  );
 };
 
-      export default IdentityActions;
+export default IdentityActions;
