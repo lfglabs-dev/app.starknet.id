@@ -56,7 +56,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   );
   const router = useRouter();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
-  // AutoRenewals
+  
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const [autoRenewalData, setAutoRenewalData] = useState<RenewalData[]>([]);
@@ -70,8 +70,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       calls: disableRenewalCalldata,
     });
 
-  // check if address_to_domain matches the domain of the identity
-  // if not, show set as main domain button
+
   useEffect(() => {
     if (starknetIdNavigator !== null && address !== undefined) {
       starknetIdNavigator.getStarkName(address).then((name: string) => {
@@ -95,7 +94,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     }
   }, [identity]);
 
-  // Add all subdomains to the parameters
   const callDataEncodedDomain: string[] = [encodedDomains.length.toString()];
   encodedDomains.forEach((domain) => {
     callDataEncodedDomain.push(domain.toString(10));
@@ -130,7 +128,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       .then((response) => response.json())
       .then((data) => {
         if (!data.error && data.length > 0) {
-          // filter results to only show enabled renewals
           const filteredData = data.filter((elem: RenewalData) => elem.enabled);
           if (filteredData.length > 0) {
             setIsAutoRenewalEnabled(true);
@@ -158,7 +155,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     });
     setTxHash(mainDomainData.transaction_hash);
     setIsTxModalOpen(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mainDomainData]);
 
   useEffect(() => {
@@ -167,7 +163,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       autoRenewalData.forEach((renewalData) => {
         disableCallData.push(
           autoRenewalCalls.disableRenewal(
-            // auto_renew_contract is defined only for altcoins, if undefined we use the ETH renewal contract address
             renewalData.auto_renew_contract ??
             (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
             callDataEncodedDomain[1].toString()
@@ -176,14 +171,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       });
       setDisableRenewalCalldata(disableCallData);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoRenewalData, isAutoRenewalEnabled]); // We don't add callDataEncodedDomain because it would create an infinite loop
-
-  const isExpired = useMemo(() => {
-    return identity?.domainExpiry
-      ? identity.domainExpiry < Math.floor(Date.now() / 1000)
-      : false;
-  }, [identity]);
+  }, [autoRenewalData, isAutoRenewalEnabled]); 
 
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
@@ -199,9 +187,14 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     });
     setTxHash(disableRenewalData.transaction_hash);
     setIsTxModalOpen(true);
-    posthog?.capture("disable-ar"); // track events for analytics
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [disableRenewalData]); // We want to execute this effect only once, when the transaction is sent
+    posthog?.capture("disable-ar"); 
+  }, [disableRenewalData]); 
+
+  const isExpired = useMemo(() => {
+    return identity?.domainExpiry
+      ? identity.domainExpiry < Math.floor(Date.now() / 1000)
+      : false;
+  }, [identity]);
 
   return (
     <div className={styles.actionsContainer}>
