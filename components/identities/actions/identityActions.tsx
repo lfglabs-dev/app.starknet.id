@@ -56,7 +56,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   );
   const router = useRouter();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
-  
+
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const [autoRenewalData, setAutoRenewalData] = useState<RenewalData[]>([]);
@@ -171,7 +171,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       });
       setDisableRenewalCalldata(disableCallData);
     }
-  }, [autoRenewalData, isAutoRenewalEnabled]); 
+  }, [autoRenewalData, isAutoRenewalEnabled]);
 
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
@@ -187,8 +187,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     });
     setTxHash(disableRenewalData.transaction_hash);
     setIsTxModalOpen(true);
-    posthog?.capture("disable-ar"); 
-  }, [disableRenewalData]); 
+    posthog?.capture("disable-ar");
+  }, [disableRenewalData]);
 
   const isExpired = useMemo(() => {
     return identity?.domainExpiry
@@ -268,8 +268,19 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
 
 
-                  {viewMoreClicked ? (
+                  {viewMoreClicked && (
                     <>
+                      <ClickableAction
+                        title="CHANGE DOMAIN TARGET"
+                        description="Change target address"
+                        icon={
+                          <SignsIcon
+                            width="23"
+                            color={theme.palette.secondary.main}
+                          />
+                        }
+                        onClick={() => setIsAddressFormOpen(true)}
+                      />
                       <ClickableAction
                         title="MOVE YOUR IDENTITY NFT"
                         description="Transfer your identity to another wallet"
@@ -307,27 +318,38 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                         />
                       )}
 
-                      {callDataEncodedDomain[0] === "1" &&
-                        !isAutoRenewalEnabled ? (
-                        <ClickableAction
-                          title="ENABLE SUBSCRIPTION"
-                          description={nextAutoRenew}
-                          style="primary"
-                          icon={<div className={styles.renewalIcon}>ON</div>}
-                          onClick={() => router.push("/subscription")}
-                        />
-                      ) : null}
-                      {callDataEncodedDomain[0] === "1" &&
-                        isAutoRenewalEnabled ? (
-                        <ClickableAction
-                          title="DISABLE SUBSCRIPTION"
-                          description={nextAutoRenew}
-                          icon={
-                            <div className={styles.renewalIconOff}>OFF</div>
-                          }
-                          onClick={() => disableRenewal()}
-                        />
-                      ) : null}
+
+                    </>)}
+
+                    
+                  {/* I include the fale in order to hide the button */}
+
+                  {callDataEncodedDomain[0] === "1" && false &&
+                    !isAutoRenewalEnabled ? (
+                    <ClickableAction
+                      title="ENABLE SUBSCRIPTION"
+                      description={nextAutoRenew}
+                      style="primary"
+                      icon={<div className={styles.renewalIcon}>ON</div>}
+                      onClick={() => router.push("/subscription")}
+                    />
+                  ) : null}
+
+                  {/* I include the fale in order to hide the button */}
+                  {callDataEncodedDomain[0] === "1" && false &&
+                    isAutoRenewalEnabled ? (
+                    <ClickableAction
+                      title="DISABLE SUBSCRIPTION"
+                      description={nextAutoRenew}
+                      icon={
+                        <div className={styles.renewalIconOff}>OFF</div>
+                      }
+                      onClick={() => disableRenewal()}
+                    />
+                  ) : null}
+
+                  <>
+                    {viewMoreClicked ? (
                       <>
                         <div className={styles.subscriptionPrimary}></div>
                         <p
@@ -337,18 +359,19 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                           View less
                         </p>
                       </>
-                    </>
                   ) : (
-                    <>
-                      <div className={styles.subscriptionPrimary}></div>
-                      <p
-                        onClick={() => setViewMoreClicked(true)}
-                        className={styles.viewMore}
-                      >
-                        View more
-                      </p>
-                    </>
+                  <>
+                    <div className={styles.subscriptionPrimary}></div>
+                    <p
+                      onClick={() => setViewMoreClicked(true)}
+                      className={styles.viewMore}
+                    >
+                      View more
+                    </p>
+                  </>
                   )}
+
+                  </>
                 </>
               )}
             </div>
@@ -379,8 +402,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
           title="Your Transaction is on it's way !"
         />
       </>
-    </div>
-  );
+      </div>
+      );
 };
 
-export default IdentityActions;
+      export default IdentityActions;
