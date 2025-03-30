@@ -107,7 +107,7 @@
   align-items: flex-start;
   gap: 24px;
   align-self: stretch;
-  /* border-top: 1px solid var(--content-400, #cdcccc); */
+  border-top: 1px solid var(--content-400, #F8F7F7);
 }
 
 .pricesSummary {
@@ -161,6 +161,7 @@
   align-items: flex-start;
   gap: 4px;
   cursor: pointer;
+  width: 100%;
 }
 
 .activeSwitch {

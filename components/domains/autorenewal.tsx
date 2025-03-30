@@ -43,6 +43,8 @@ import useNeedAllowances from "@/hooks/useNeedAllowances";
 import useNeedSubscription from "@/hooks/useNeedSubscription";
 import AutoRenewalDomainsBox from "./autoRenewalDomainsBox";
 import Notification from "../UI/notification";
+import CloseIcon from "../UI/iconsComponents/icons/closeIcon";
+
 
 
 const Subscription: FunctionComponent = () => {
@@ -312,13 +314,19 @@ const Subscription: FunctionComponent = () => {
   ]);
 
   return (
+    <>
+    <button 
+    onClick={() => router.back()} 
+    className="absolute top-10 md:top-4 right-10 md:right-20 z-10"
+    aria-label="Close"
+  >
+    <CloseIcon />
+  </button>
     <div className={styles.container}>
-      <div
-        className={styles.card}
-      >
+    
+      <div className={styles.card}>
         <div className={styles.form}>
-          <BackButton onClick={() => router.back()} />
-          <div className="flex flex-col  items-center gap-0 self-stretch">
+          <div className="flex flex-col items-start gap-0 self-stretch">
             <h3 className={styles.domain}>Enable subscription</h3>
             <p className="py-2 text-center">
               Enable subscription to ensure uninterrupted ownership and
@@ -395,6 +403,7 @@ const Subscription: FunctionComponent = () => {
         <p>Failed to get token quote. Please use ETH for now.</p>
       </Notification>
     </div>
+    </>
   );
 };
 
