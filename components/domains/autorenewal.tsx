@@ -9,6 +9,7 @@ import { applyRateToBigInt } from "../../utils/feltService";
 import { Call } from "starknet";
 import { posthog } from "posthog-js";
 import styles from "../../styles/components/registerV2.module.css";
+
 import SwissForm from "./swissForm";
 import { computeMetadataHash, generateSalt } from "../../utils/userDataService";
 import {
@@ -17,6 +18,7 @@ import {
   getTotalYearlyPrice,
 } from "../../utils/priceService";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
+import CloseIcon from "../UI/iconsComponents/icons/closeIcon";
 import BackButton from "../UI/backButton";
 import { useRouter } from "next/router";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
@@ -77,6 +79,11 @@ const Subscription: FunctionComponent = () => {
   const { needSubscription, isLoading: needSubscriptionLoading } =
     useNeedSubscription(address);
   const [currencyError, setCurrencyError] = useState<boolean>(false);
+
+  // CloseIcon click handler to go back
+  const handleCloseClick = () => {
+    router.back(); // Go back to the previous page
+  };
 
   useEffect(() => {
     if (!address) return;
@@ -314,13 +321,19 @@ const Subscription: FunctionComponent = () => {
   ]);
 
   return (
-    <div className={styles.container}>
+    
       <div className={styles.card}>
         <div className={styles.form}>
-          <BackButton onClick={() => router.back()} />
+                {/* Close Icon Button */}
+          <div
+            onClick={handleCloseClick}
+            className={styles.closeIcon}
+          >
+            <CloseIcon />
+          </div>
           <div className="flex flex-col items-start gap-0 self-stretch">
-            <h3 className={styles.domain}>Enable subscription</h3>
-            <p className="py-2 text-left">
+          <h3 className={`${styles.domain} text-center w-full`}>Enable subscription</h3>
+            <p className="py-2 text-center font-poppins text-[#8C8989] text-[14px] leading-[24px] tracking-[0%]">
               Enable subscription to ensure uninterrupted ownership and
               benefits. Never worry about expiration dates again.
             </p>
@@ -334,6 +347,7 @@ const Subscription: FunctionComponent = () => {
                 }
               />
             ) : null}
+            <div className="w-full">
             <AutoRenewalDomainsBox
               needSubscription={needSubscription}
               isLoading={needSubscriptionLoading}
@@ -341,9 +355,11 @@ const Subscription: FunctionComponent = () => {
               setSelectedDomains={setSelectedDomains}
               selectedDomains={selectedDomains}
             />
+            </div>
           </div>
         </div>
-        <div className={styles.summary}>
+        <div className="summary flex flex-col items-start gap-6 self-stretch pt-6 px-12 pb-0">
+        <div className="gap-1 w-full text-left">
           <p className={styles.legend}>Your subscription currency</p>
           <ArCurrencyDropdown
             displayedCurrency={displayedCurrencies as CurrencyType[]}
@@ -351,6 +367,8 @@ const Subscription: FunctionComponent = () => {
               setDisplayedCurrencies as (type: CurrencyType[]) => void
             }
           />
+          </div>
+          <div className="w-full">
           <RegisterCheckboxes
             onChangeTermsBox={() => setTermsBox(!termsBox)}
             termsBox={termsBox}
@@ -358,7 +376,10 @@ const Subscription: FunctionComponent = () => {
             renewalBox={false}
             isArOnforced={true}
           />
+          </div>
+          <div className="flex justify-center w-full -mt-6">
           {address ? (
+             <div className="w-auto">
             <Button
               onClick={() =>
                 execute().then(() => {
@@ -381,12 +402,13 @@ const Subscription: FunctionComponent = () => {
                     ? "You're already subscribed"
                     : "Enable subscription"}
             </Button>
+            </div>
           ) : (
             <ConnectButton />
           )}
         </div>
-      </div>
-      <img className={styles.image} src="/visuals/register.webp" />
+        </div>
+      
       <RegisterConfirmationModal
         txHash={autorenewData?.transaction_hash}
         isTxModalOpen={isTxModalOpen}
@@ -399,7 +421,10 @@ const Subscription: FunctionComponent = () => {
         <p>Failed to get token quote. Please use ETH for now.</p>
       </Notification>
     </div>
+    
+    
   );
 };
+
 
 export default Subscription;

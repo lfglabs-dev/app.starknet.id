@@ -51,12 +51,12 @@ const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
         ) : (
           domains.map((domain) => (
             <div key={domain} className="flex items-center gap-1">
-              <p className={styles.domainsToRenew}>{domain}</p>
               <Checkbox
                 checked={Boolean(selectedDomains?.[domain])}
                 onChange={() => handleCheckboxChange(domain)}
                 sx={{ padding: 0 }}
               />
+               <p className={styles.domainsToRenew}>{domain}</p>
             </div>
           ))
         )}
