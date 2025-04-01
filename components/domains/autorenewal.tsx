@@ -17,7 +17,6 @@ import {
   getTotalYearlyPrice,
 } from "../../utils/priceService";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
-import BackButton from "../UI/backButton";
 import { useRouter } from "next/router";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
@@ -315,95 +314,94 @@ const Subscription: FunctionComponent = () => {
 
   return (
     <>
-    <button 
-    onClick={() => router.back()} 
-    className="absolute top-10 md:top-4 right-10 md:right-20 z-10"
-    aria-label="Close"
-  >
-    <CloseIcon />
-  </button>
-    <div className={styles.container}>
-    
-      
-      <div className={styles.card}>
-        <div className={styles.form}>
-     
-          <div className="flex flex-col items-start gap-0 self-stretch">
-            <h3 className={styles.domain}>Enable subscription</h3>
-            <p className="py-2 text-left">
-              Enable subscription to ensure uninterrupted ownership and
-              benefits. Never worry about expiration dates again.
-            </p>
-          </div>
-          <div className="flex flex-col items-start gap-6 self-stretch">
-            {needMedadata ? (
-              <SwissForm
-                isSwissResident={isSwissResident}
-                onSwissResidentChange={() =>
-                  setIsSwissResident(!isSwissResident)
-                }
-              />
-            ) : null}
-            <AutoRenewalDomainsBox
-              needSubscription={needSubscription}
-              isLoading={needSubscriptionLoading}
-              helperText="Check the box of the domains you want to subscribe"
-              setSelectedDomains={setSelectedDomains}
-              selectedDomains={selectedDomains}
-            />
-          </div>
-        </div>
-        <div className={styles.summary}>
-          <p className={styles.legend}>Your subscription currency</p>
-          <ArCurrencyDropdown
-            displayedCurrency={displayedCurrencies as CurrencyType[]}
-            onCurrencySwitch={
-              setDisplayedCurrencies as (type: CurrencyType[]) => void
-            }
-          />
-          <RegisterCheckboxes
-            onChangeTermsBox={() => setTermsBox(!termsBox)}
-            termsBox={termsBox}
-            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
-            renewalBox={false}
-            isArOnforced={true}
-          />
-          {address ? (
-            <Button
-              onClick={() =>
-                execute().then(() => {
-                  setDomainsMinting(selectedDomains);
-                })
-              }
-              disabled={
-                domainsMinting === selectedDomains ||
-                !address ||
-                !termsBox ||
-                !areDomainSelected(selectedDomains) ||
-                callData.length === 0 // Cover the case where there are no domains to subscribe
-              }
-            >
-              {!termsBox
-                ? "Please accept terms & policies"
-                : !areDomainSelected(selectedDomains)
-                  ? "Select a domain to subscribe"
-                  : callData.length === 0
-                    ? "You're already subscribed"
-                    : "Enable subscription"}
-            </Button>
-          ) : (
-            <ConnectButton />
-          )}
-        </div>
-      </div>
-      <img className={styles.image} src="/visuals/register.webp" />
-      <Notification
-        visible={currencyError}
-        onClose={() => setCurrencyError(false)}
+      <button
+        onClick={() => router.back()}
+        className="absolute top-10 md:top-4 right-10 md:right-20 z-10"
+        aria-label="Close"
       >
-        <p>Failed to get token quote. Please use ETH for now.</p>
-      </Notification>
-    </div>
+        <CloseIcon />
+      </button>
+      <div className={styles.container}>
+
+
+        <div className={styles.card}>
+          <div className={styles.form}>
+
+            <div className="flex flex-col items-start gap-0 self-stretch">
+              <h3 className={styles.domain}>Enable subscription</h3>
+              <p className="py-2 text-center text-[#8C8989] text-sm leading-6"> Enable subscription to ensure 
+                uninterrupted ownership and benefits. Never worry about expiration dates again.
+                 </p>
+            </div>
+            <div className="flex flex-col items-start gap-6 self-stretch">
+              {needMedadata ? (
+                <SwissForm
+                  isSwissResident={isSwissResident}
+                  onSwissResidentChange={() =>
+                    setIsSwissResident(!isSwissResident)
+                  }
+                />
+              ) : null}
+              <AutoRenewalDomainsBox
+                needSubscription={needSubscription}
+                isLoading={needSubscriptionLoading}
+                helperText="Check the box of the domains you want to subscribe"
+                setSelectedDomains={setSelectedDomains}
+                selectedDomains={selectedDomains}
+              />
+            </div>
+          </div>
+          <div className={styles.summary}>
+            <p className={styles.legend}>Your subscription currency</p>
+            <ArCurrencyDropdown
+              displayedCurrency={displayedCurrencies as CurrencyType[]}
+              onCurrencySwitch={
+                setDisplayedCurrencies as (type: CurrencyType[]) => void
+              }
+            />
+            <RegisterCheckboxes
+              onChangeTermsBox={() => setTermsBox(!termsBox)}
+              termsBox={termsBox}
+              onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+              renewalBox={false}
+              isArOnforced={true}
+            />
+            {address ? (
+              <Button
+                onClick={() =>
+                  execute().then(() => {
+                    setDomainsMinting(selectedDomains);
+                  })
+                }
+                disabled={
+                  domainsMinting === selectedDomains ||
+                  !address ||
+                  !termsBox ||
+                  !areDomainSelected(selectedDomains) ||
+                  callData.length === 0 // Cover the case where there are no domains to subscribe
+                }
+              >
+                {!termsBox
+                  ? "Please accept terms & policies"
+                  : !areDomainSelected(selectedDomains)
+                    ? "Select a domain to subscribe"
+                    : callData.length === 0
+                      ? "You're already subscribed"
+                      : "Enable subscription"}
+              </Button>
+            ) : (
+              <ConnectButton />
+            )}
+          </div>
+        </div>
+        <img className={styles.image} src="/visuals/register.webp" />
+        <Notification
+          visible={currencyError}
+          onClose={() => setCurrencyError(false)}
+        >
+          <p>Failed to get token quote. Please use ETH for now.</p>
+        </Notification>
+      </div>
     </>
   );
 };
