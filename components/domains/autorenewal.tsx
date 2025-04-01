@@ -317,7 +317,7 @@ const Subscription: FunctionComponent = () => {
     <>
     <button 
     onClick={() => router.back()} 
-    className="absolute top-10 md:top-4 right-10 md:right-20 z-10"
+    className="absolute top-4 right-10 md:right-20 z-10"
     aria-label="Close"
   >
     <CloseIcon />
@@ -326,7 +326,7 @@ const Subscription: FunctionComponent = () => {
     
       <div className={styles.card}>
         <div className={styles.form}>
-          <div className="flex flex-col items-start gap-0 self-stretch">
+          <div className="flex flex-col items-center gap-0 self-stretch">
             <h3 className={styles.domain}>Enable subscription</h3>
             <p className="py-2 text-center">
               Enable subscription to ensure uninterrupted ownership and
