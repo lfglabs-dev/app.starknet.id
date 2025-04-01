@@ -316,7 +316,7 @@ const Subscription: FunctionComponent = () => {
     <>
       <button
         onClick={() => router.back()}
-        className="absolute top-10 md:top-4 right-10 md:right-20 z-10"
+        className="absolute top-4 right-10 md:right-20 z-10"
         aria-label="Close"
       >
         <CloseIcon />
@@ -327,7 +327,7 @@ const Subscription: FunctionComponent = () => {
         <div className={styles.card}>
           <div className={styles.form}>
 
-            <div className="flex flex-col items-start gap-0 self-stretch">
+            <div className="flex flex-col items-center gap-0 self-stretch">
               <h3 className={styles.domain}>Enable subscription</h3>
               <p className="py-2 text-center text-[#8C8989] text-sm leading-6"> Enable subscription to ensure 
                 uninterrupted ownership and benefits. Never worry about expiration dates again.
@@ -366,8 +366,9 @@ const Subscription: FunctionComponent = () => {
               renewalBox={false}
               isArOnforced={true}
             />
-            {address ? (
-              <Button
+            { address ? (
+             <div className="max-w-full mx-auto">
+               <Button
                 onClick={() =>
                   execute().then(() => {
                     setDomainsMinting(selectedDomains);
@@ -389,12 +390,12 @@ const Subscription: FunctionComponent = () => {
                       ? "You're already subscribed"
                       : "Enable subscription"}
               </Button>
+             </div>
             ) : (
               <ConnectButton />
             )}
           </div>
         </div>
-        <img className={styles.image} src="/visuals/register.webp" />
         <Notification
           visible={currencyError}
           onClose={() => setCurrencyError(false)}
