@@ -56,7 +56,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   );
   const router = useRouter();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
-  
+
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const [autoRenewalData, setAutoRenewalData] = useState<RenewalData[]>([]);
@@ -69,7 +69,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     useSendTransaction({
       calls: disableRenewalCalldata,
     });
-
 
   useEffect(() => {
     if (starknetIdNavigator !== null && address !== undefined) {
@@ -173,7 +172,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       });
       setDisableRenewalCalldata(disableCallData);
     }
-  }, [autoRenewalData, isAutoRenewalEnabled]); 
+  }, [autoRenewalData, isAutoRenewalEnabled]);
 
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
@@ -189,8 +188,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     });
     setTxHash(disableRenewalData.transaction_hash);
     setIsTxModalOpen(true);
-    posthog?.capture("disable-ar"); 
-  }, [disableRenewalData]); 
+    posthog?.capture("disable-ar");
+  }, [disableRenewalData]);
 
   const isExpired = useMemo(() => {
     return identity?.domainExpiry
@@ -318,6 +317,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                           onClick={() => setMainId()}
                         />
                       )}
+
+                      <p>card</p>
 
                       <p
                         onClick={() => setViewMoreClicked(false)}
