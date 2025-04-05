@@ -319,7 +319,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                         />
                       )}
 
-                      <div className={styles.subscriptionPrimary}></div>
+                      <div className={styles.subscriptionSecondary}></div>
 
                       <p
                         onClick={() => setViewMoreClicked(false)}
