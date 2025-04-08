@@ -27,6 +27,7 @@ import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 import RenewalIcon from "@/components/UI/iconsComponents/icons/renewalIcon";
+import SubscriptionCard from "./subscriptionCard";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -65,6 +66,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
     []
   );
+  const [SubscriptionActive, setSubscriptionActive] = useState<boolean>(true);
 
   const { sendAsync: disableRenewal, data: disableRenewalData } =
     useSendTransaction({
@@ -318,8 +320,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                           onClick={() => setMainId()}
                         />
                       )}
-
-                      <div className={styles.subscriptionSecondary}></div>
+                      {SubscriptionActive && <SubscriptionCard />}
 
                       <p
                         onClick={() => setViewMoreClicked(false)}

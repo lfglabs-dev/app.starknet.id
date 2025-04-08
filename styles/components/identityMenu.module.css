@@ -186,8 +186,8 @@
   border-width: 1px;
   border-style: solid;
 
-  /* Button */
-  box-shadow: 0px #4545451a;
+  /* Button - Enhanced with a nice shadow */
+  box-shadow: 0px 4px 12px rgba(69, 69, 69, 0.15);
   border-radius: 12px;
 
   /* Inside auto layout */
