@@ -66,7 +66,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
     []
   );
-  const [SubscriptionActive, setSubscriptionActive] = useState<boolean>(true);
 
   const { sendAsync: disableRenewal, data: disableRenewalData } =
     useSendTransaction({
@@ -320,7 +319,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                           onClick={() => setMainId()}
                         />
                       )}
-                      {SubscriptionActive && <SubscriptionCard />}
+                      <SubscriptionCard />
 
                       <p
                         onClick={() => setViewMoreClicked(false)}
