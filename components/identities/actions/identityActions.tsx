@@ -55,6 +55,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isMainDomain, setIsMainDomain] = useState<boolean>(
     identity ? identity.isMain : false
   );
+  const [subscriptionActive, setSubscriptionActive] = useState<boolean>(true);
+
   const router = useRouter();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
 
@@ -319,7 +321,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                           onClick={() => setMainId()}
                         />
                       )}
-                      <SubscriptionCard />
+                      <SubscriptionCard
+                        subscriptionActive={subscriptionActive}
+                      />
 
                       <p
                         onClick={() => setViewMoreClicked(false)}

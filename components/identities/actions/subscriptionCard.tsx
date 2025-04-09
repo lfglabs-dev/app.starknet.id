@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "../../../styles/components/identityMenu.module.css";
-function SubscriptionCard() {
-  const [subscriptionActive, setSubscriptionActive] = useState<boolean>(true);
 
+interface SubscriptionCardProps {
+  subscriptionActive: boolean;
+}
+
+function SubscriptionCard({ subscriptionActive }: SubscriptionCardProps) {
   return subscriptionActive ? (
     <div className={styles.subscriptionSecondary}></div>
   ) : (
