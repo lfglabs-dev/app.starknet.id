@@ -55,7 +55,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isMainDomain, setIsMainDomain] = useState<boolean>(
     identity ? identity.isMain : false
   );
-  const [subscriptionActive, setSubscriptionActive] = useState<boolean>(true);
+  const [isSubscriptionActive, setIsSubscriptionActive] =
+    useState<boolean>(true);
 
   const router = useRouter();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
@@ -322,7 +323,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                         />
                       )}
                       <SubscriptionCard
-                        subscriptionActive={subscriptionActive}
+                        isSubscriptionActive={isSubscriptionActive}
                       />
 
                       <p

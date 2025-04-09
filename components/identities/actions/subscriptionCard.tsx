@@ -2,11 +2,11 @@ import React from "react";
 import styles from "../../../styles/components/identityMenu.module.css";
 
 interface SubscriptionCardProps {
-  subscriptionActive: boolean;
+  isSubscriptionActive: boolean;
 }
 
-function SubscriptionCard({ subscriptionActive }: SubscriptionCardProps) {
-  return subscriptionActive ? (
+function SubscriptionCard({ isSubscriptionActive }: SubscriptionCardProps) {
+  return isSubscriptionActive ? (
     <div className={styles.subscriptionSecondary}></div>
   ) : (
     <div className={styles.subscriptionPrimary}></div>
