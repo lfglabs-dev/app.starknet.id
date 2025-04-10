@@ -9,7 +9,7 @@ function SubscriptionCard({ isSubscriptionActive }: SubscriptionCardProps) {
   return isSubscriptionActive ? (
     <div className={styles.subscriptionSecondary}></div>
   ) : (
-    <div className={styles.subscriptionPrimary}></div>
+    <div className={styles.subscriptionSecondary}></div>
   );
 }
 
