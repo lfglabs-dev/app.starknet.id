@@ -19,7 +19,6 @@ import {
 } from "../../utils/priceService";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
 import CloseIcon from "../UI/iconsComponents/icons/closeIcon";
-import BackButton from "../UI/backButton";
 import { useRouter } from "next/router";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
@@ -32,7 +31,6 @@ import {
 } from "../../utils/constants";
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
-import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import ConnectButton from "../UI/connectButton";
 import {
   getAutoRenewAllowance,
@@ -46,6 +44,7 @@ import useNeedAllowances from "@/hooks/useNeedAllowances";
 import useNeedSubscription from "@/hooks/useNeedSubscription";
 import AutoRenewalDomainsBox from "./autoRenewalDomainsBox";
 import Notification from "../UI/notification";
+import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 
 
 const Subscription: FunctionComponent = () => {
@@ -59,7 +58,6 @@ const Subscription: FunctionComponent = () => {
   const [displayedCurrencies, setDisplayedCurrencies] = useState<
     CurrencyType[]
   >([CurrencyType.ETH, CurrencyType.STRK]);
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [salt, setSalt] = useState<string | undefined>();
@@ -79,6 +77,7 @@ const Subscription: FunctionComponent = () => {
   const { needSubscription, isLoading: needSubscriptionLoading } =
     useNeedSubscription(address);
   const [currencyError, setCurrencyError] = useState<boolean>(false);
+  const [isTxModalOpen, setIsTxModalOpen] = useState<boolean>(false);
 
   // CloseIcon click handler to go back
   const handleCloseClick = () => {
@@ -138,7 +137,7 @@ const Subscription: FunctionComponent = () => {
         status: "pending",
       },
     });
-    setIsTxModalOpen(true);
+    router.push("/subscriptionConfirmation");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autorenewData]); // We only need renewData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
@@ -321,108 +320,106 @@ const Subscription: FunctionComponent = () => {
   ]);
 
   return (
-    
-      <div className={styles.card}>
-        <div className={styles.form}>
-                {/* Close Icon Button */}
-          <div
-            onClick={handleCloseClick}
-            className={styles.closeIcon}
-          >
-            <CloseIcon />
-          </div>
-          <div className="flex flex-col items-start gap-0 self-stretch">
-          <h3 className={`${styles.domain} text-center w-full`}>Enable subscription</h3>
-            <p className="py-2 text-center font-poppins text-[#8C8989] text-[14px] leading-[24px] tracking-[0%]">
-              Enable subscription to ensure uninterrupted ownership and
-              benefits. Never worry about expiration dates again.
-            </p>
-          </div>
-          <div className="flex flex-col items-start gap-6 self-stretch">
-            {needMedadata ? (
-              <SwissForm
-                isSwissResident={isSwissResident}
-                onSwissResidentChange={() =>
-                  setIsSwissResident(!isSwissResident)
-                }
-              />
-            ) : null}
-            <div className="w-full">
-            <AutoRenewalDomainsBox
-              needSubscription={needSubscription}
-              isLoading={needSubscriptionLoading}
-              helperText="Check the box of the domains you want to subscribe"
-              setSelectedDomains={setSelectedDomains}
-              selectedDomains={selectedDomains}
+    <div className={styles.card}>
+      <div className={styles.form}>
+              {/* Close Icon Button */}
+        <div
+          onClick={handleCloseClick}
+          className={styles.closeIcon}
+        >
+          <CloseIcon />
+        </div>
+        <div className="flex flex-col items-start gap-0 self-stretch">
+        <h3 className={`${styles.domain} text-center w-full`}>Enable subscription</h3>
+          <p className="py-2 text-center font-poppins text-[#8C8989] text-[14px] leading-[24px] tracking-[0%]">
+            Enable subscription to ensure uninterrupted ownership and
+            benefits. Never worry about expiration dates again.
+          </p>
+        </div>
+        <div className="flex flex-col items-start gap-6 self-stretch">
+          {needMedadata ? (
+            <SwissForm
+              isSwissResident={isSwissResident}
+              onSwissResidentChange={() =>
+                setIsSwissResident(!isSwissResident)
+              }
             />
-            </div>
-          </div>
-        </div>
-        <div className="summary flex flex-col items-start gap-6 self-stretch pt-6 px-12 pb-0">
-        <div className="gap-1 w-full text-left">
-          <p className={styles.legend}>Your subscription currency</p>
-          <ArCurrencyDropdown
-            displayedCurrency={displayedCurrencies as CurrencyType[]}
-            onCurrencySwitch={
-              setDisplayedCurrencies as (type: CurrencyType[]) => void
-            }
-          />
-          </div>
+          ) : null}
           <div className="w-full">
-          <RegisterCheckboxes
-            onChangeTermsBox={() => setTermsBox(!termsBox)}
-            termsBox={termsBox}
-            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
-            renewalBox={false}
-            isArOnforced={true}
+          <AutoRenewalDomainsBox
+            needSubscription={needSubscription}
+            isLoading={needSubscriptionLoading}
+            helperText="Check the box of the domains you want to subscribe"
+            setSelectedDomains={setSelectedDomains}
+            selectedDomains={selectedDomains}
           />
           </div>
-          <div className="flex justify-center w-full -mt-6">
-          {address ? (
-             <div className="w-auto">
-            <Button
-              onClick={() =>
-                execute().then(() => {
-                  setDomainsMinting(selectedDomains);
-                })
-              }
-              disabled={
-                domainsMinting === selectedDomains ||
-                !address ||
-                !termsBox ||
-                !areDomainSelected(selectedDomains) ||
-                callData.length === 0 // Cover the case where there are no domains to subscribe
-              }
-            >
-              {!termsBox
-                ? "Please accept terms & policies"
-                : !areDomainSelected(selectedDomains)
-                  ? "Select a domain to subscribe"
-                  : callData.length === 0
-                    ? "You're already subscribed"
-                    : "Enable subscription"}
-            </Button>
-            </div>
-          ) : (
-            <ConnectButton />
-          )}
         </div>
+      </div>
+      <div className="summary flex flex-col items-start gap-6 self-stretch pt-6 px-12 pb-0">
+      <div className="gap-1 w-full text-left">
+        <p className={styles.legend}>Your subscription currency</p>
+        <ArCurrencyDropdown
+          displayedCurrency={displayedCurrencies as CurrencyType[]}
+          onCurrencySwitch={
+            setDisplayedCurrencies as (type: CurrencyType[]) => void
+          }
+        />
         </div>
-      
-      <RegisterConfirmationModal
-        txHash={autorenewData?.transaction_hash}
-        isTxModalOpen={isTxModalOpen}
-        closeModal={() => window.history.back()}
-      />
-      <Notification
-        visible={currencyError}
-        onClose={() => setCurrencyError(false)}
-      >
-        <p>Failed to get token quote. Please use ETH for now.</p>
-      </Notification>
-    </div>
+        <div className="w-full">
+        <RegisterCheckboxes
+          onChangeTermsBox={() => setTermsBox(!termsBox)}
+          termsBox={termsBox}
+          onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+          renewalBox={false}
+          isArOnforced={true}
+        />
+        </div>
+        <div className="flex justify-center w-full -mt-6">
+        {address ? (
+           <div className="w-auto">
+          <Button
+            onClick={() =>
+              execute().then(() => {
+                setDomainsMinting(selectedDomains);
+                setIsTxModalOpen(true);
+              })
+            }
+            disabled={
+              domainsMinting === selectedDomains ||
+              !address ||
+              !termsBox ||
+              !areDomainSelected(selectedDomains) ||
+              callData.length === 0 // Cover the case where there are no domains to subscribe
+            }
+          >
+            {!termsBox
+              ? "Please accept terms & policies"
+              : !areDomainSelected(selectedDomains)
+                ? "Select a domain to subscribe"
+                : callData.length === 0
+                  ? "You're already subscribed"
+                  : "Enable subscription"}
+          </Button>
+          </div>
+        ) : (
+          <ConnectButton />
+        )}
+      </div>
+      </div>
     
-    
+    <RegisterConfirmationModal
+      txHash={autorenewData?.transaction_hash}
+      isTxModalOpen={isTxModalOpen}
+      closeModal={() => window.history.back()}
+    />
+    <Notification
+      visible={currencyError}
+      onClose={() => setCurrencyError(false)}
+    >
+      <p>Failed to get token quote. Please use ETH for now.</p>
+    </Notification>
+  </div>
   );
 };
 
