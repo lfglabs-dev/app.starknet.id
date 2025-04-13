@@ -1,10 +1,7 @@
-import React from "react";
-import { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
-import {
-  selectedDomainsToArray,
-} from "../../utils/stringService";
+import { selectedDomainsToArray } from "../../utils/stringService";
 import { applyRateToBigInt } from "../../utils/feltService";
 import { Call } from "starknet";
 import { posthog } from "posthog-js";
@@ -46,56 +43,47 @@ import AutoRenewalDomainsBox from "./autoRenewalDomainsBox";
 import Notification from "../UI/notification";
 import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 
-
 const Subscription: FunctionComponent = () => {
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
   const [salesTaxRate, setSalesTaxRate] = useState<number>(0);
   const [salesTaxAmount, setSalesTaxAmount] = useState<bigint>(BigInt(0));
   const [callData, setCallData] = useState<Call[]>([]);
-  const [priceInEth, setPriceInEth] = useState<bigint>(BigInt(0)); // price in ETH
-  const [price, setPrice] = useState<bigint>(BigInt(0)); // price in displayedCurrencies, set to priceInEth on first load as ETH is the default currency
-  const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null); // null if in ETH
-  const [displayedCurrencies, setDisplayedCurrencies] = useState<
-    CurrencyType[]
-  >([CurrencyType.ETH, CurrencyType.STRK]);
+  const [priceInEth, setPriceInEth] = useState<bigint>(BigInt(0));
+  const [price, setPrice] = useState<bigint>(BigInt(0));
+  const [quoteData, setQuoteData] = useState<QuoteQueryData | null>(null);
+  const [displayedCurrencies, setDisplayedCurrencies] = useState<CurrencyType[]>([
+    CurrencyType.ETH,
+    CurrencyType.STRK,
+  ]);
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [salt, setSalt] = useState<string | undefined>();
   const [metadataHash, setMetadataHash] = useState<string | undefined>();
   const [needMedadata, setNeedMetadata] = useState<boolean>(true);
-  const [selectedDomains, setSelectedDomains] =
-    useState<Record<string, boolean>>();
+  const [selectedDomains, setSelectedDomains] = useState<Record<string, boolean>>();
   const { address } = useAccount();
-  const { sendAsync: execute, data: autorenewData } = useSendTransaction({
-    calls: callData,
-  });
-  const [domainsMinting, setDomainsMinting] =
-    useState<Record<string, boolean>>();
+  const { sendAsync: execute, data: autorenewData } = useSendTransaction({ calls: callData });
+  const [domainsMinting, setDomainsMinting] = useState<Record<string, boolean>>();
   const { addTransaction } = useNotificationManager();
   const router = useRouter();
   const allowanceStatus = useNeedAllowances(address);
-  const { needSubscription, isLoading: needSubscriptionLoading } =
-    useNeedSubscription(address);
+  const { needSubscription, isLoading: needSubscriptionLoading } = useNeedSubscription(address);
   const [currencyError, setCurrencyError] = useState<boolean>(false);
   const [isTxModalOpen, setIsTxModalOpen] = useState<boolean>(false);
 
-  // CloseIcon click handler to go back
   const handleCloseClick = () => {
-    router.back(); // Go back to the previous page
+    router.back();
   };
 
   useEffect(() => {
     if (!address) return;
-    fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_LINK}/renewal/get_metahash?addr=${address}`
-    )
+    fetch(`${process.env.NEXT_PUBLIC_SERVER_LINK}/renewal/get_metahash?addr=${address}`)
       .then((response) => response.json())
       .then((data) => {
         if (data.meta_hash && parseInt(data.meta_hash) !== 0) {
           setNeedMetadata(false);
           setMetadataHash(data.meta_hash);
-          if (data.tax_rate) setSalesTaxRate(data.tax_rate);
-          else setSalesTaxRate(0);
+          setSalesTaxRate(data.tax_rate || 0);
         } else setNeedMetadata(true);
       })
       .catch((err) => {
@@ -106,9 +94,9 @@ const Subscription: FunctionComponent = () => {
 
   useEffect(() => {
     if (!autorenewData?.transaction_hash || !salt || !metadataHash) return;
+
     posthog?.capture("enable-ar");
 
-    // register the metadata to the sales manager db
     if (needMedadata) {
       fetch(`${process.env.NEXT_PUBLIC_SALES_SERVER_LINK}/add_metadata`, {
         method: "POST",
@@ -119,13 +107,8 @@ const Subscription: FunctionComponent = () => {
           tax_state: isSwissResident ? "switzerland" : "none",
           salt: salt,
         }),
-      })
-        .then((res) => res.json())
-        .catch((error) => {
-          console.log("Error on sending metadata:", error);
-        });
+      }).catch((error) => console.log("Error on sending metadata:", error));
     }
-
 
     addTransaction({
       timestamp: Date.now(),
@@ -138,36 +121,28 @@ const Subscription: FunctionComponent = () => {
       },
     });
     router.push("/subscriptionConfirmation");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autorenewData]); // We only need renewData here because we don't want to send the metadata twice (we send it once the tx is sent)
+  }, [autorenewData]);
 
-  // on first load, we generate a salt
   useEffect(() => {
     if (!selectedDomains) return;
-
     setSalt(generateSalt());
   }, [selectedDomains]);
 
   useEffect(() => {
-    // salt must not be empty to preserve privacy
     if (!salt || !needMedadata) return;
 
     (async () => {
-      setMetadataHash(
-        await computeMetadataHash(
-          "none",
-          isSwissResident ? "switzerland" : "none",
-          salt
-        )
+      const hash = await computeMetadataHash(
+        "none",
+        isSwissResident ? "switzerland" : "none",
+        salt
       );
+      setMetadataHash(hash);
     })();
   }, [salt, isSwissResident, needMedadata]);
 
-  // refetch new quote if the timestamp from quote is expired
   useEffect(() => {
-    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
-      CurrencyType.ETH,
-    ]);
+    const isCurrencyETH = areArraysEqual(displayedCurrencies, [CurrencyType.ETH]);
     const contractToQuote =
       displayedCurrencies.length > 1
         ? ERC20Contract.STRK
@@ -188,47 +163,31 @@ const Subscription: FunctionComponent = () => {
     };
 
     const scheduleRefetch = () => {
-      const now = parseInt((new Date().getTime() / 1000).toFixed(0));
-      const timeLimit = now - 60; // 60 seconds
-      // Check if we need to refetch
-      if (!quoteData || isCurrencyETH) {
-        setQuoteData(null);
-        // we don't need to check for quote until displayedCurrencies is updated
-        return;
-      }
-
+      if (!quoteData || isCurrencyETH) return;
+      const now = Math.floor(Date.now() / 1000);
+      const timeLimit = now - 60;
       if (quoteData.max_quote_validity <= timeLimit) {
         fetchQuote();
       }
-
-      // Calculate the time until the next validity check
       const timeUntilNextCheck = quoteData.max_quote_validity - timeLimit;
       setTimeout(scheduleRefetch, Math.max(15000, timeUntilNextCheck * 100));
     };
 
-    // Initial fetch
     fetchQuote();
-    // Start the refetch scheduling
     scheduleRefetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [displayedCurrencies, price]); // We don't add quoteData because it would create an infinite loop
+  }, [displayedCurrencies, price]);
 
-  // if selectedDomains or duration have changed, we update priceInEth
   useEffect(() => {
     if (!selectedDomains) return;
     setPriceInEth(getTotalYearlyPrice(selectedDomains));
   }, [selectedDomains]);
 
-  // if priceInEth or quoteData have changed, we update the price in altcoin
   useEffect(() => {
-    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
-      CurrencyType.ETH,
-    ]);
+    const isCurrencyETH = areArraysEqual(displayedCurrencies, [CurrencyType.ETH]);
     if (isCurrencyETH) {
       setPrice(priceInEth);
     } else if (quoteData && priceInEth) {
-      const priceInAltcoin = getDomainPriceAltcoin(quoteData.quote, priceInEth);
-      setPrice(priceInAltcoin);
+      setPrice(getDomainPriceAltcoin(quoteData.quote, priceInEth));
     }
   }, [priceInEth, quoteData, displayedCurrencies]);
 
@@ -236,27 +195,19 @@ const Subscription: FunctionComponent = () => {
     if (!needMedadata && price) {
       setSalesTaxAmount(applyRateToBigInt(price, salesTaxRate));
     } else {
-      if (isSwissResident) {
-        setSalesTaxRate(swissVatRate);
-        setSalesTaxAmount(applyRateToBigInt(price, swissVatRate));
-      } else {
-        setSalesTaxRate(0);
-        setSalesTaxAmount(BigInt(0));
-      }
+      const rate = isSwissResident ? swissVatRate : 0;
+      setSalesTaxRate(rate);
+      setSalesTaxAmount(applyRateToBigInt(price, rate));
     }
-  }, [isSwissResident, price, needMedadata, salesTaxRate]);
+  }, [isSwissResident, price, needMedadata]);
 
-  // Build the autorenewal call
   useEffect(() => {
-    const isCurrencyETH = areArraysEqual(displayedCurrencies, [
-      CurrencyType.ETH,
-    ]);
+    const isCurrencyETH = areArraysEqual(displayedCurrencies, [CurrencyType.ETH]);
     if (!isCurrencyETH && !quoteData) return;
     if (selectedDomains && metadataHash) {
       const calls: Call[] = [];
 
-      displayedCurrencies.map((currency) => {
-        // Add ERC20 allowance for all currencies if needed
+      displayedCurrencies.forEach((currency) => {
         if (allowanceStatus[currency].needsAllowance) {
           const amountToApprove = getApprovalAmount(
             price,
@@ -274,24 +225,11 @@ const Subscription: FunctionComponent = () => {
           );
         }
 
-        // Add AutoRenewal calls for all currencies
-        selectedDomainsToArray(selectedDomains).map((domain) => {
+        selectedDomainsToArray(selectedDomains).forEach((domain) => {
           if (needSubscription && needSubscription[domain]?.[currency]) {
-            const encodedDomain = utils
-              .encodeDomain(domain)
-              .map((element) => element.toString())[0];
-
-            const domainPrice = getDomainPrice(
-              domain,
-              currency,
-              365,
-              quoteData?.quote
-            );
-            const allowance = getAutoRenewAllowance(
-              currency,
-              salesTaxRate,
-              domainPrice
-            );
+            const encodedDomain = utils.encodeDomain(domain)[0].toString();
+            const domainPrice = getDomainPrice(domain, currency, 365, quoteData?.quote);
+            const allowance = getAutoRenewAllowance(currency, salesTaxRate, domainPrice);
 
             calls.push(
               autoRenewalCalls.enableRenewal(
@@ -304,6 +242,7 @@ const Subscription: FunctionComponent = () => {
           }
         });
       });
+
       setCallData(calls);
     }
   }, [
@@ -322,106 +261,98 @@ const Subscription: FunctionComponent = () => {
   return (
     <div className={styles.card}>
       <div className={styles.form}>
-              {/* Close Icon Button */}
-        <div
-          onClick={handleCloseClick}
-          className={styles.closeIcon}
-        >
+        <div onClick={handleCloseClick} className={styles.closeIcon}>
           <CloseIcon />
         </div>
         <div className="flex flex-col items-start gap-0 self-stretch">
-        <h3 className={`${styles.domain} text-center w-full`}>Enable subscription</h3>
+          <h3 className={`${styles.domain} text-center w-full`}>Enable subscription</h3>
           <p className="py-2 text-center font-poppins text-[#8C8989] text-[14px] leading-[24px] tracking-[0%]">
             Enable subscription to ensure uninterrupted ownership and
             benefits. Never worry about expiration dates again.
           </p>
         </div>
         <div className="flex flex-col items-start gap-6 self-stretch">
-          {needMedadata ? (
+          {needMedadata && (
             <SwissForm
               isSwissResident={isSwissResident}
-              onSwissResidentChange={() =>
-                setIsSwissResident(!isSwissResident)
-              }
+              onSwissResidentChange={() => setIsSwissResident(!isSwissResident)}
             />
-          ) : null}
+          )}
           <div className="w-full">
-          <AutoRenewalDomainsBox
-            needSubscription={needSubscription}
-            isLoading={needSubscriptionLoading}
-            helperText="Check the box of the domains you want to subscribe"
-            setSelectedDomains={setSelectedDomains}
-            selectedDomains={selectedDomains}
-          />
+            <AutoRenewalDomainsBox
+              needSubscription={needSubscription}
+              isLoading={needSubscriptionLoading}
+              helperText="Check the box of the domains you want to subscribe"
+              setSelectedDomains={setSelectedDomains}
+              selectedDomains={selectedDomains}
+            />
           </div>
         </div>
       </div>
+
       <div className="summary flex flex-col items-start gap-6 self-stretch pt-6 px-12 pb-0">
-      <div className="gap-1 w-full text-left">
-        <p className={styles.legend}>Your subscription currency</p>
-        <ArCurrencyDropdown
-          displayedCurrency={displayedCurrencies as CurrencyType[]}
-          onCurrencySwitch={
-            setDisplayedCurrencies as (type: CurrencyType[]) => void
-          }
-        />
+        <div className="gap-1 w-full text-left">
+          <p className={styles.legend}>Your subscription currency</p>
+          <ArCurrencyDropdown
+            displayedCurrency={displayedCurrencies}
+            onCurrencySwitch={setDisplayedCurrencies}
+          />
         </div>
+
         <div className="w-full">
-        <RegisterCheckboxes
-          onChangeTermsBox={() => setTermsBox(!termsBox)}
-          termsBox={termsBox}
-          onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
-          renewalBox={false}
-          isArOnforced={true}
-        />
+          <RegisterCheckboxes
+            onChangeTermsBox={() => setTermsBox(!termsBox)}
+            termsBox={termsBox}
+            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+            renewalBox={false}
+            isArOnforced={true}
+          />
         </div>
+
         <div className="flex justify-center w-full -mt-6">
-        {address ? (
-           <div className="w-auto">
-          <Button
-            onClick={() =>
-              execute().then(() => {
-                setDomainsMinting(selectedDomains);
-                setIsTxModalOpen(true);
-              })
-            }
-            disabled={
-              domainsMinting === selectedDomains ||
-              !address ||
-              !termsBox ||
-              !areDomainSelected(selectedDomains) ||
-              callData.length === 0 // Cover the case where there are no domains to subscribe
-            }
-          >
-            {!termsBox
-              ? "Please accept terms & policies"
-              : !areDomainSelected(selectedDomains)
-                ? "Select a domain to subscribe"
-                : callData.length === 0
+          {address ? (
+            <div className="w-auto">
+              <Button
+                onClick={() =>
+                  execute().then(() => {
+                    setDomainsMinting(selectedDomains);
+                    setIsTxModalOpen(true);
+                  })
+                }
+                disabled={
+                  domainsMinting === selectedDomains ||
+                  !address ||
+                  !termsBox ||
+                  !areDomainSelected(selectedDomains) ||
+                  callData.length === 0
+                }
+              >
+                {!termsBox
+                  ? "Please accept terms & policies"
+                  : !areDomainSelected(selectedDomains)
+                  ? "Select a domain to subscribe"
+                  : callData.length === 0
                   ? "You're already subscribed"
                   : "Enable subscription"}
-          </Button>
-          </div>
-        ) : (
-          <ConnectButton />
-        )}
+              </Button>
+            </div>
+          ) : (
+            <ConnectButton />
+          )}
+        </div>
       </div>
-      </div>
-    
-    <RegisterConfirmationModal
-      txHash={autorenewData?.transaction_hash}
-      isTxModalOpen={isTxModalOpen}
-      closeModal={() => window.history.back()}
-    />
-    <Notification
-      visible={currencyError}
-      onClose={() => setCurrencyError(false)}
-    >
-      <p>Failed to get token quote. Please use ETH for now.</p>
-    </Notification>
-  </div>
+
+      <RegisterConfirmationModal
+        txHash={autorenewData?.transaction_hash}
+        isTxModalOpen={isTxModalOpen}
+        closeModal={() => window.history.back()}
+      />
+
+      <Notification visible={currencyError} onClose={() => setCurrencyError(false)}>
+        <p>Failed to get token quote. Please use ETH for now.</p>
+      </Notification>
+    </div>
   );
 };
-
 
 export default Subscription;
