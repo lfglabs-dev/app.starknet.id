@@ -142,6 +142,29 @@ const Navbar: FunctionComponent = () => {
       setShowWallet(true);
     }
   }
+  const handleIdentitiesRedirect = () => {
+    console.log("Attempting to redirect to /identities");
+    console.log("Current route:", router.pathname);
+    console.log("isWrongNetwork:", isWrongNetwork);
+    console.log("isConnected:", isConnected);
+
+    if (isWrongNetwork) {
+      console.log("Cannot redirect: Wrong network detected");
+      return;
+    }
+
+    if (!isConnected) {
+      console.log("Cannot redirect: User not connected");
+      setShowWalletConnectModal(true);
+      return;
+    }
+
+    router.push("/identities").then(() => {
+      console.log("Redirected to /identities");
+    }).catch((err) => {
+      console.error("Error redirecting to /identities:", err);
+    });
+  };
 
   function topButtonText(): string | undefined {
     const textToReturn = isConnected ? domainOrAddress : "connect wallet";
@@ -172,11 +195,9 @@ const Navbar: FunctionComponent = () => {
                 height={isMobile ? 40 : 90}
               />
               <p
-                className={`${
-                  styles.starknetId
-                } text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${
-                  isMobile ? "hidden" : "block"
-                }`}
+                className={`${styles.starknetId
+                  } text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${isMobile ? "hidden" : "block"
+                  }`}
               >
                 StarkNet ID
               </p>
@@ -184,9 +205,14 @@ const Navbar: FunctionComponent = () => {
           </div>
           <div>
             <ul className="hidden lg:flex gap-1 items-center">
-              <Link href="/identities">
-                <li className={styles.menuItem}>My Identities</li>
-              </Link>
+              <li className={styles.menuItem}
+                onClick={() => {
+                  handleNav();
+                  handleIdentitiesRedirect();
+                }}
+              >
+                My Identities
+              </li>
               <Link href="/">
                 <li className={styles.menuItem}>Domains</li>
               </Link>
@@ -208,8 +234,8 @@ const Navbar: FunctionComponent = () => {
                     isConnected
                       ? () => setShowWallet(true)
                       : lastConnector
-                      ? () => connectWallet(lastConnector)
-                      : () => setShowWalletConnectModal(true)
+                        ? () => connectWallet(lastConnector)
+                        : () => setShowWalletConnectModal(true)
                   }
                   variation={isConnected ? "white" : "primary"}
                   radius="8px"
@@ -307,11 +333,9 @@ const Navbar: FunctionComponent = () => {
                     />
                   </Link>
                   <p
-                    className={`${
-                      styles.starknetId
-                    } text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${
-                      isMobile ? "hidden" : "block"
-                    }`}
+                    className={`${styles.starknetId
+                      } text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${isMobile ? "hidden" : "block"
+                      }`}
                   >
                     StarkNet ID
                   </p>
@@ -364,9 +388,8 @@ const Navbar: FunctionComponent = () => {
                       </li>
                     </Link>
                     <Link
-                      href={`${
-                        process.env.NEXT_PUBLIC_STARKNET_ID as string
-                      }/affiliates/individual-program`}
+                      href={`${process.env.NEXT_PUBLIC_STARKNET_ID as string
+                        }/affiliates/individual-program`}
                       target="_blank"
                     >
                       <li className={styles.menuItemSmall} onClick={handleNav}>
