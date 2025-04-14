@@ -27,7 +27,8 @@ import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 import RenewalIcon from "@/components/UI/iconsComponents/icons/renewalIcon";
-import SubscriptionCard from "./subscriptionCard";
+import SubscriptionCard from "./ActiveSubscriptionCard";
+import ActiveSubscriptionCard from "./ActiveSubscriptionCard";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -55,8 +56,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isMainDomain, setIsMainDomain] = useState<boolean>(
     identity ? identity.isMain : false
   );
-  const [isSubscriptionActive, setIsSubscriptionActive] =
-    useState<boolean>(true);
 
   const router = useRouter();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
@@ -322,10 +321,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                           onClick={() => setMainId()}
                         />
                       )}
-                      <SubscriptionCard
-                        isSubscriptionActive={isSubscriptionActive}
-                      />
 
+                      {callDataEncodedDomain?.[0] === "1" &&
+                        isAutoRenewalEnabled && <ActiveSubscriptionCard />}
                       <p
                         onClick={() => setViewMoreClicked(false)}
                         className={styles.viewMore}
