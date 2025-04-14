@@ -27,6 +27,7 @@ import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 import RenewalIcon from "@/components/UI/iconsComponents/icons/renewalIcon";
+import ActiveSubscriptionCard from "./ActiveSubscriptionCard";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -54,9 +55,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isMainDomain, setIsMainDomain] = useState<boolean>(
     identity ? identity.isMain : false
   );
+
   const router = useRouter();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
-  
+
   const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
     useState<boolean>(false);
   const [autoRenewalData, setAutoRenewalData] = useState<RenewalData[]>([]);
@@ -65,11 +67,11 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
     []
   );
+
   const { sendAsync: disableRenewal, data: disableRenewalData } =
     useSendTransaction({
       calls: disableRenewalCalldata,
     });
-
 
   useEffect(() => {
     if (starknetIdNavigator !== null && address !== undefined) {
@@ -173,7 +175,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       });
       setDisableRenewalCalldata(disableCallData);
     }
-  }, [autoRenewalData, isAutoRenewalEnabled]); 
+  }, [autoRenewalData, isAutoRenewalEnabled]);
 
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
@@ -189,8 +191,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     });
     setTxHash(disableRenewalData.transaction_hash);
     setIsTxModalOpen(true);
-    posthog?.capture("disable-ar"); 
-  }, [disableRenewalData]); 
+    posthog?.capture("disable-ar");
+  }, [disableRenewalData]);
 
   const isExpired = useMemo(() => {
     return identity?.domainExpiry
@@ -319,6 +321,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                         />
                       )}
 
+                      {callDataEncodedDomain?.[0] === "1" &&
+                        isAutoRenewalEnabled && <ActiveSubscriptionCard />}
                       <p
                         onClick={() => setViewMoreClicked(false)}
                         className={styles.viewMore}
