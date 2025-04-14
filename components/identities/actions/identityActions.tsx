@@ -27,7 +27,6 @@ import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 import RenewalIcon from "@/components/UI/iconsComponents/icons/renewalIcon";
-import SubscriptionCard from "./ActiveSubscriptionCard";
 import ActiveSubscriptionCard from "./ActiveSubscriptionCard";
 
 type IdentityActionsProps = {
