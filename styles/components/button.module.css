@@ -12,6 +12,7 @@
   letter-spacing: 0;
   border: none;
   padding: 10px 16px;
+  margin: 0 auto;
   border-radius: 8px;
   min-width: 5rem;
   cursor: pointer;
