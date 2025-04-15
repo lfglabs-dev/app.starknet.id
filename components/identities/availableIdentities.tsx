@@ -154,8 +154,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     if (address) {
       // Our Indexer
       fetch(
-        `${
-          process.env.NEXT_PUBLIC_SERVER_LINK
+        `${process.env.NEXT_PUBLIC_SERVER_LINK
         }/addr_to_full_ids?addr=${hexToDecimal(address)}`
       )
         .then((response) => response.json())
@@ -173,17 +172,17 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
   }, [identity, isIdentityADomain]);
 
   useEffect(() => {
-  if (isCurrentIdentityExpired && isOwner && !domainExpiredModalOpen && identity && !hasOpenedModal.current) {
-    setSelectedExpiredDomain({
-      id: tokenId,
-      domain: identity.domain,
-      domain_expiry: identity.domainExpiry
-    } as FullId);
-    setDomainExpiredModalOpen(true);
-    hasOpenedModal.current = true;
-  }
-}, [isCurrentIdentityExpired, isOwner, domainExpiredModalOpen, identity, tokenId, selectedExpiredDomain]);
-  
+    if (isCurrentIdentityExpired && isOwner && !domainExpiredModalOpen && identity && !hasOpenedModal.current) {
+      setSelectedExpiredDomain({
+        id: tokenId,
+        domain: identity.domain,
+        domain_expiry: identity.domainExpiry
+      } as FullId);
+      setDomainExpiredModalOpen(true);
+      hasOpenedModal.current = true;
+    }
+  }, [isCurrentIdentityExpired, isOwner, domainExpiredModalOpen, identity, tokenId, selectedExpiredDomain]);
+
 
   const connectWallet = async (connector: Connector) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -204,44 +203,45 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
           <div
             className={`${styles.IDScreen} px-[16px] lg:px-0 overflow-x-hidden flex flex-col xl:flex-row justify-center items-center gap-[24px] `}
           >
-              {/*          LEFT SIDE NAV            */}
+            {/*          LEFT SIDE NAV            */}
             <div className=" w-[100%] sm:w-[358px] xl:min-w-[220px] xl:w-fit xl:max-w-[310px]">
               {ownedIdentities.length !== 0 && (
                 <div
                   className={`
-                         ${styles.sideNav} border w-[100%] md:w-auto h-[319px] xl:h-auto relative flex flex-col items-center justify-between sm:px-[24px]  md:pt-[24px] m-auto shadow-sm rounded-2xl `}
+               ${styles.sideNav} border w-[100%] md:w-auto h-[319px] xl:h-auto relative flex flex-col items-center justify-between sm:px-[24px] md:pt-[24px] m-auto shadow-sm rounded-2xl max-w-full overflow-x-hidden
+             `}
                 >
-                  <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
+                  <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[4px] ">
                     {ownedIdentities.map((domain, index) => (
-                      <div key={index} className="flex w-full items-center justify-start gap-1">
+                      <div key={index} className="flex w-full items-center justify-center gap-1">
                         <button
-                          className={`${
-                            domain.id === router.query.tokenId ||
-                            domain.id === tokenId
+                          className={`${domain.id === router.query.tokenId ||
+                              domain.id === tokenId
                               ? "text-[#402D28]"
                               : " text-[#CDCCCC] font-normal hover:text-[#402D28]"
-                          } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-center xl:text-left`}
+                            } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-center xl:text-left`}
                           key={index}
                           onClick={() => {
                             router.push(`/identities/${domain.id}`);
                             if (isIdentityExpired(domain)) {
                               setSelectedExpiredDomain(domain);
                               setDomainExpiredModalOpen(true);
-                            }}}
+                            }
+                          }}
                         >
                           {domain.domain ? domain.domain : domain.id}
                         </button>
                         {isIdentityExpired(domain) && (
-                            <Tooltip
-                             title="Domain Expired"
-                             componentsProps={{
-                               tooltip: {
-                                 sx: {
-                                   bgcolor: "#402D28",
-                                 },
+                          <Tooltip
+                            title="Domain Expired"
+                            componentsProps={{
+                              tooltip: {
+                                sx: {
+                                  bgcolor: "#402D28",
                                 },
-                              }}
-                           >
+                              },
+                            }}
+                          >
                             <div className="flex w-[16px] h-[16px] items-center justify-center">
                               <FaCircle className="text-red-500 text-[8px] ml-1" />
                             </div>
