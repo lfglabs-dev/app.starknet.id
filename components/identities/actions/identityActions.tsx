@@ -269,8 +269,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       onClick={() => router.push("/renewal")}
                     />
                   ) : null}
+                   <div className="w-full mt-4 h-[124px] pt-4 pr-3 pb-4 pl-3 gap-4 rounded-[16px] border-[1px] border-[#4545451A] bg-white shadow-[0px_2px_30px_0px_rgba(0,0,0,0.06)]">
+                    {/* Content for subscription */}
+                  </div>
 
-                  <ClickableAction
+                  {viewMoreClicked ? (
+                    <>
+                     <ClickableAction
                     title="CHANGE DOMAIN TARGET"
                     description="Change target address"
                     icon={
@@ -281,9 +286,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     }
                     onClick={() => setIsAddressFormOpen(true)}
                   />
-
-                  {viewMoreClicked ? (
-                    <>
                       <ClickableAction
                         title="MOVE YOUR IDENTITY NFT"
                         description="Transfer your identity to another wallet"
