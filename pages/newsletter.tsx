@@ -45,10 +45,10 @@ const NewsletterPage: NextPage = () => {
         <Image src="/visuals/coconut.webp" alt="coconut" fill />
       </div>
       <div className={styles.tree1}>
-        <Image src="/visuals/coconutTree1.webp" alt="coconut tree" fill />
+        <Image src="/visuals/leftTree.svg" alt="coconut tree" fill />
       </div>
       <div className={styles.tree2}>
-        <Image src="/visuals/coconutTree2.webp" alt="coconut tree" fill />
+        <Image src="/visuals/rightTree.svg" alt="coconut tree" fill />
       </div>
       <p className={styles.subtitle}>Newsletter</p>
       <h1 className={styles.title}>

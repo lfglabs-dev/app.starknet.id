@@ -5,18 +5,16 @@
 
 .nq-button {
   position: relative;
-  height: 2.8rem;
+  line-height: 1.5rem;
   color: var(--background);
-  font-size: 1rem;
-  font-weight: bold;
+  font-size: 0.875rem;
   text-transform: uppercase;
-  letter-spacing: 0.094em;
+  letter-spacing: 0;
   border: none;
-  padding: 0 1rem;
+  padding: 10px 16px;
+  margin: 0 auto;
   border-radius: 8px;
   min-width: 5rem;
-  width: 95%;
-  margin: 0 10px;
   cursor: pointer;
   transition: transform 450ms var(--nimiq-ease),    box-shadow 450ms var(--nimiq-ease);
   will-change: box-shadow;
