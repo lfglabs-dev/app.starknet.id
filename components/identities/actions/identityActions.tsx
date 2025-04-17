@@ -104,10 +104,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const { sendAsync: setMainId, data: mainDomainData } = useSendTransaction({
     calls: identity
       ? identityChangeCalls.setAsMainId(
-          identity,
-          hasReverseAddressRecord,
-          callDataEncodedDomain
-        )
+        identity,
+        hasReverseAddressRecord,
+        callDataEncodedDomain
+      )
       : [],
   });
 
@@ -123,10 +123,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   useEffect(() => {
     if (!address || !identity?.domain || !isOwner) return;
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_SERVER_LINK
-      }/renewal/get_renewal_data?addr=${hexToDecimal(address)}&domain=${
-        identity.domain
+      `${process.env.NEXT_PUBLIC_SERVER_LINK
+      }/renewal/get_renewal_data?addr=${hexToDecimal(address)}&domain=${identity.domain
       }`
     )
       .then((response) => response.json())
@@ -168,7 +166,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
         disableCallData.push(
           autoRenewalCalls.disableRenewal(
             renewalData.auto_renew_contract ??
-              (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
+            (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
             callDataEncodedDomain[1].toString()
           )
         );
@@ -269,23 +267,23 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       onClick={() => router.push("/renewal")}
                     />
                   ) : null}
-                   <div className="w-full mt-4 h-[124px] pt-4 pr-3 pb-4 pl-3 gap-4 rounded-[16px] border-[1px] border-[#4545451A] bg-white shadow-[0px_2px_30px_0px_rgba(0,0,0,0.06)]">
+                  {!isAutoRenewalEnabled && <div className="w-full mt-4 h-[124px] pt-4 pr-3 pb-4 pl-3 gap-4 rounded-[16px] border-[1px] border-[#4545451A] bg-white shadow-[0px_2px_30px_0px_rgba(0,0,0,0.06)]" aria-label="Inactive subscription information">
                     {/* Content for subscription */}
-                  </div>
+                  </div>}
 
                   {viewMoreClicked ? (
                     <>
-                     <ClickableAction
-                    title="CHANGE DOMAIN TARGET"
-                    description="Change target address"
-                    icon={
-                      <SignsIcon
-                        width="23"
-                        color={theme.palette.secondary.main}
+                      <ClickableAction
+                        title="CHANGE DOMAIN TARGET"
+                        description="Change target address"
+                        icon={
+                          <SignsIcon
+                            width="23"
+                            color={theme.palette.secondary.main}
+                          />
+                        }
+                        onClick={() => setIsAddressFormOpen(true)}
                       />
-                    }
-                    onClick={() => setIsAddressFormOpen(true)}
-                  />
                       <ClickableAction
                         title="MOVE YOUR IDENTITY NFT"
                         description="Transfer your identity to another wallet"
