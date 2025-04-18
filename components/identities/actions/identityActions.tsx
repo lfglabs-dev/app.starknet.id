@@ -198,6 +198,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       : false;
   }, [identity]);
 
+  const showChangeTargetButtonByDefault = !isMainDomain || !isAutoRenewalEnabled;
+
   return (
     <div className={styles.actionsContainer}>
       <>
@@ -267,23 +269,39 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       onClick={() => router.push("/renewal")}
                     />
                   ) : null}
+                    {showChangeTargetButtonByDefault && !viewMoreClicked && (
+                    <ClickableAction
+                      title="CHANGE DOMAIN TARGET"
+                      description="Change target address"
+                      icon={
+                        <SignsIcon
+                          width="23"
+                          color={theme.palette.secondary.main}
+                        />
+                      }
+                      onClick={() => setIsAddressFormOpen(true)}
+                    />
+                  )}
+
                   {!isAutoRenewalEnabled && <div className="w-full mt-4 h-[124px] pt-4 pr-3 pb-4 pl-3 gap-4 rounded-[16px] border-[1px] border-[#4545451A] bg-white shadow-[0px_2px_30px_0px_rgba(0,0,0,0.06)]" aria-label="Inactive subscription information">
                     {/* Content for subscription */}
                   </div>}
 
                   {viewMoreClicked ? (
                     <>
-                      <ClickableAction
-                        title="CHANGE DOMAIN TARGET"
-                        description="Change target address"
-                        icon={
-                          <SignsIcon
-                            width="23"
-                            color={theme.palette.secondary.main}
-                          />
-                        }
-                        onClick={() => setIsAddressFormOpen(true)}
-                      />
+                        {!showChangeTargetButtonByDefault && (
+                        <ClickableAction
+                          title="CHANGE DOMAIN TARGET"
+                          description="Change target address"
+                          icon={
+                            <SignsIcon
+                              width="23"
+                              color={theme.palette.secondary.main}
+                            />
+                          }
+                          onClick={() => setIsAddressFormOpen(true)}
+                        />
+                      )}
                       <ClickableAction
                         title="MOVE YOUR IDENTITY NFT"
                         description="Transfer your identity to another wallet"
