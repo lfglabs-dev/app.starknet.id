@@ -66,6 +66,7 @@ const ArCurrencyDropdown: FunctionComponent<ArCurrencyDropdownProps> = ({
         onChange={(e) => onArCurrencyChange(e.target.value as ArCurrency)}
         style={{
           borderRadius: "8.983px",
+          textAlign:"left",
           position: "relative",
         }}
         sx={selectStyle}
