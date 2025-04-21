@@ -4,8 +4,8 @@ import { Html, Head, Main, NextScript } from "next/document";
 export default function Document() {
   return (
     <Html>
-      <link rel="icon" href="/visuals/StarknetIdLogo.svg" />
       <Head>
+        <link rel="icon" href="/visuals/favicon.ico" />
         <meta charSet="utf-8" />
         <meta name="theme-color" content="#2CAA6E" />
         <meta property="og:site_name" content="Starknet.id" />
