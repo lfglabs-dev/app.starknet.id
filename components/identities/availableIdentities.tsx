@@ -18,7 +18,7 @@ import IdentityActionsSkeleton from "@/components/identities/skeletons/identityA
 import { hexToDecimal } from "@/utils/feltService";
 import WalletConnect from "@/components/UI/walletConnect";
 import { Connector } from "starknetkit";
-import { FaCircle, FaPlus } from "react-icons/fa";
+import { FaCircle, FaPlus, FaBars } from "react-icons/fa"; // Añadimos FaBars
 import IdentitiesSkeleton from "./skeletons/identitiesSkeleton";
 import { Tooltip } from "@mui/material";
 import { isIdentityExpired } from "../../utils/dateService";
@@ -27,7 +27,6 @@ import DomainExpiredModal from "@/components/UI/domainExpiredModal";
 const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
   const router = useRouter();
   const { address } = useAccount();
-  //const tokenId: string = router.query.tokenId as string;
   const [identity, setIdentity] = useState<Identity>();
   const [isIdentityADomain, setIsIdentityADomain] = useState<
     boolean | undefined
@@ -56,7 +55,6 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
       entrypoint: "mint",
       calldata: [randomTokenId.toString()],
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const { sendAsync: execute } = useSendTransaction({
     calls: [callData],
@@ -120,7 +118,6 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
           setIsIdentityADomain(Boolean(data?.domain));
         })
         .catch(() => {
-          // Domain data might not be indexed yet, so we check local storage
           const domainData = getDomainData(tokenId);
           if (domainData) {
             setIdentity(new Identity(domainData));
@@ -150,11 +147,12 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
   function mint() {
     execute();
   }
+
   useEffect(() => {
     if (address) {
-      // Our Indexer
       fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_LINK
+        `${
+          process.env.NEXT_PUBLIC_SERVER_LINK
         }/addr_to_full_ids?addr=${hexToDecimal(address)}`
       )
         .then((response) => response.json())
@@ -183,10 +181,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     }
   }, [isCurrentIdentityExpired, isOwner, domainExpiredModalOpen, identity, tokenId, selectedExpiredDomain]);
 
-
   const connectWallet = async (connector: Connector) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     await connectAsync({ connector });
     localStorage.setItem("SID-connectedWallet", connector.id);
     localStorage.setItem("SID-lastUsedConnector", connector.id);
@@ -201,25 +196,25 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
           </div>
         ) : !isUpdatingPp ? (
           <div
-            className={`${styles.IDScreen} px-[16px] lg:px-0 overflow-x-hidden flex flex-col xl:flex-row justify-center items-center gap-[24px] `}
+            className={`${styles.IDScreen} px-[16px] lg:px-0 overflow-x-hidden flex flex-col xl:flex-row justify-center items-center gap-[24px]`}
           >
-            {/*          LEFT SIDE NAV            */}
-            <div className=" w-[100%] sm:w-[358px] xl:min-w-[220px] xl:w-fit xl:max-w-[310px]">
+            {/* LEFT SIDE NAV */}
+            <div className="w-[100%] sm:w-[358px] xl:min-w-[220px] xl:w-fit xl:max-w-[310px]">
               {ownedIdentities.length !== 0 && (
                 <div
                   className={`
-               ${styles.sideNav} border w-[100%] md:w-auto h-[319px] xl:h-auto relative flex flex-col items-center justify-between sm:px-[24px] md:pt-[24px] m-auto shadow-sm rounded-2xl max-w-full overflow-x-hidden
-             `}
+                    ${styles.sideNav} border w-[100%] md:w-auto h-[319px] xl:h-auto relative flex flex-col items-center justify-between sm:px-[24px] md:pt-[24px] m-auto shadow-sm rounded-2xl max-w-full overflow-x-hidden
+                  `}
                 >
-                  <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[4px] ">
+                  <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[8px]">
                     {ownedIdentities.map((domain, index) => (
-                      <div key={index} className="flex w-full items-center justify-center gap-1">
+                      <div key={index} className="flex w-full items-center justify-start gap-1">
                         <button
-                          className={`${domain.id === router.query.tokenId ||
-                              domain.id === tokenId
+                          className={`${
+                            domain.id === router.query.tokenId || domain.id === tokenId
                               ? "text-[#402D28]"
                               : " text-[#CDCCCC] font-normal hover:text-[#402D28]"
-                            } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-center xl:text-left`}
+                          } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-left min-w-[200px]`}
                           key={index}
                           onClick={() => {
                             router.push(`/identities/${domain.id}`);
@@ -251,23 +246,24 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                     ))}
                   </div>
                   <button
-                    className="w-full justify-center text-center items-center font-quickZap font-normal min-h-[40px] py-5 flex gap-2 bg-white rounded-b-2xl"
+                    className="w-full justify-between text-center items-center font-quickZap font-normal min-h-[40px] py-5 flex gap-2 bg-white rounded-b-2xl px-5"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       address ? mint() : setShowWalletConnectModal(true);
                     }}
                   >
-                    <FaPlus />
-                    ADD IDENTITIES
+                    <div className="flex items-center gap-2">
+                      <FaPlus />
+                      ADD IDENTITIES
+                    </div>
+                    <FaBars className="md:hidden" /> {/* Ícono visible solo en mobile */}
                   </button>
                 </div>
               )}
             </div>
-            {/*           MAIN CARD            */}
-            <div
-              className={` flex justify-center items-center ${styles.CardContainer}`}
-            >
+            {/* MAIN CARD */}
+            <div className={`flex justify-center items-center ${styles.CardContainer}`}>
               <IdentityCard
                 identity={identity}
                 tokenId={tokenId}
@@ -276,8 +272,8 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                 ppImageUrl={ppImageUrl}
               />
             </div>
-            {/*           RIGHT SIDE ACTIONS            */}
-            <div className=" min-w-[280px]">
+            {/* RIGHT SIDE ACTIONS */}
+            <div className="min-w-[280px]">
               {hideActions ? (
                 minting && <IdentityActionsSkeleton />
               ) : (
@@ -301,9 +297,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
       </div>
       <DomainExpiredModal
         open={domainExpiredModalOpen}
-        onClose={() => {
-          setDomainExpiredModalOpen(false);
-        }}
+        onClose={() => setDomainExpiredModalOpen(false)}
         onRenew={() => {
           setDomainExpiredModalOpen(false);
           router.push("/renewal");
@@ -313,7 +307,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
         txHash={ppTxHash}
         isTxModalOpen={isTxModalOpen}
         closeModal={() => setIsTxModalOpen(false)}
-        title="Your new profile picture is being set !"
+        title="Your new profile picture is being set!"
       />
       <WalletConnect
         closeModal={() => setShowWalletConnectModal(false)}

@@ -177,10 +177,10 @@
 
 .sideNav {
   background-color: white;
-  text-align: center;
+  text-align: left; /* Alineamos el texto a la izquierda */
   box-shadow: var(--small-shadow);
   max-width: 100%;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
 
 @media (min-width: 1290px) {
@@ -188,7 +188,6 @@
     height: calc(80vh - 6rem);
   }
 }
-
 
 @media (max-width: 640px) {
   .sideNav {
@@ -198,5 +197,9 @@
 
   .sideNav button {
     font-size: 14px; 
+  }
+
+  .sideNav .identity-item:not(:last-child) {
+    border-bottom: 1px solid #e0e0e0; 
   }
 }
