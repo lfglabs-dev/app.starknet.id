@@ -198,7 +198,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       : false;
   }, [identity]);
 
-  const showChangeTargetButtonByDefault = !isMainDomain || !isAutoRenewalEnabled;
+  // Determine whether to show change target button by default or in the "view more" section
+  // Show by default for subdomains (callDataEncodedDomain[0] !== "1") or when auto-renewal is enabled
+  const showChangeTargetButtonByDefault = !(callDataEncodedDomain?.[0] === "1" && !isAutoRenewalEnabled);
 
   return (
     <div className={styles.actionsContainer}>
@@ -269,7 +271,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       onClick={() => router.push("/renewal")}
                     />
                   ) : null}
-                    {showChangeTargetButtonByDefault && !viewMoreClicked && (
+                  
+             
+                  {showChangeTargetButtonByDefault && !viewMoreClicked && (
                     <ClickableAction
                       title="CHANGE DOMAIN TARGET"
                       description="Change target address"
@@ -283,13 +287,19 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     />
                   )}
 
-                  {!isAutoRenewalEnabled && <div className="w-full mt-4 h-[124px] pt-4 pr-3 pb-4 pl-3 gap-4 rounded-[16px] border-[1px] border-[#4545451A] bg-white shadow-[0px_2px_30px_0px_rgba(0,0,0,0.06)]" aria-label="Inactive subscription information">
-                    {/* Content for subscription */}
-                  </div>}
+            
+                  {callDataEncodedDomain?.[0] === "1" && !isAutoRenewalEnabled && (
+                    <div 
+                      className="w-full mt-4 h-[124px] pt-4 pr-3 pb-4 pl-3 gap-4 rounded-[16px] border-[1px] border-[#4545451A] bg-white shadow-[0px_2px_30px_0px_rgba(0,0,0,0.06)]" 
+                      aria-label="Inactive subscription information"
+                    >
+                      {/* Content for subscription */}
+                    </div>
+                  )}
 
                   {viewMoreClicked ? (
                     <>
-                        {!showChangeTargetButtonByDefault && (
+                      {!showChangeTargetButtonByDefault && (
                         <ClickableAction
                           title="CHANGE DOMAIN TARGET"
                           description="Change target address"
