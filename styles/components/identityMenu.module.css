@@ -174,7 +174,7 @@
   margin-bottom: 5px;
   display: flex;
   height: 124px;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   padding: 10px;
