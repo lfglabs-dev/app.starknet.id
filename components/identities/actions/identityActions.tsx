@@ -59,8 +59,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const router = useRouter();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
 
-  const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
-    useState<boolean>(false);
+  const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] = useState({
+    domain: "",
+    enabled: false,
+  });
   const [autoRenewalData, setAutoRenewalData] = useState<RenewalData[]>([]);
   const [hasReverseAddressRecord, setHasReverseAddressRecord] =
     useState<boolean>(false);
@@ -104,10 +106,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const { sendAsync: setMainId, data: mainDomainData } = useSendTransaction({
     calls: identity
       ? identityChangeCalls.setAsMainId(
-        identity,
-        hasReverseAddressRecord,
-        callDataEncodedDomain
-      )
+          identity,
+          hasReverseAddressRecord,
+          callDataEncodedDomain
+        )
       : [],
   });
 
@@ -121,25 +123,45 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   }, [address]);
 
   useEffect(() => {
+    if (!identity?.domain) return;
+    setIsAutoRenewalEnabled((prev) => ({
+      domain: identity.domain as string,
+      enabled: prev.enabled,
+    }));
+  }, [identity]);
+
+  useEffect(() => {
     if (!address || !identity?.domain || !isOwner) return;
     fetch(
-      `${process.env.NEXT_PUBLIC_SERVER_LINK
-      }/renewal/get_renewal_data?addr=${hexToDecimal(address)}&domain=${identity.domain
+      `${
+        process.env.NEXT_PUBLIC_SERVER_LINK
+      }/renewal/get_renewal_data?addr=${hexToDecimal(address)}&domain=${
+        identity.domain
       }`
     )
       .then((response) => response.json())
+      .catch((error) => {
+        console.error("Error fetching renewal data:", error);
+      })
       .then((data) => {
-        if (!data.error && data.length > 0) {
+        let res = false;
+        if (data && !data.error && data.length > 0) {
           const filteredData = data.filter((elem: RenewalData) => elem.enabled);
           if (filteredData.length > 0) {
-            setIsAutoRenewalEnabled(true);
+            res = true;
             setAutoRenewalData(filteredData);
           } else {
-            setIsAutoRenewalEnabled(false);
+            res = false;
           }
-        } else {
-          setIsAutoRenewalEnabled(false);
         }
+        setIsAutoRenewalEnabled((prev) =>
+          prev.domain === identity.domain
+            ? {
+                domain: identity.domain as string,
+                enabled: res,
+              }
+            : prev
+        );
       });
   }, [address, tokenId, identity, isOwner]);
 
@@ -160,20 +182,20 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   }, [mainDomainData]);
 
   useEffect(() => {
-    if (isAutoRenewalEnabled) {
+    if (isAutoRenewalEnabled.enabled) {
       const disableCallData: Call[] = [];
       autoRenewalData.forEach((renewalData) => {
         disableCallData.push(
           autoRenewalCalls.disableRenewal(
             renewalData.auto_renew_contract ??
-            (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
+              (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
             callDataEncodedDomain[1].toString()
           )
         );
       });
       setDisableRenewalCalldata(disableCallData);
     }
-  }, [autoRenewalData, isAutoRenewalEnabled]);
+  }, [autoRenewalData, isAutoRenewalEnabled.enabled]);
 
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
@@ -200,7 +222,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
   // Determine whether to show change target button by default or in the "view more" section
   // Show by default for subdomains (callDataEncodedDomain[0] !== "1") or when auto-renewal is enabled
-  const showChangeTargetButtonByDefault = !(callDataEncodedDomain?.[0] === "1" && !isAutoRenewalEnabled);
+  const showChangeTargetButtonByDefault = !(
+    callDataEncodedDomain?.[0] === "1" && !isAutoRenewalEnabled.enabled
+  );
 
   return (
     <div className={styles.actionsContainer}>
@@ -271,9 +295,8 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       onClick={() => router.push("/renewal")}
                     />
                   ) : null}
-                  
-             
-                  {showChangeTargetButtonByDefault && !viewMoreClicked && (
+
+                  {showChangeTargetButtonByDefault && (
                     <ClickableAction
                       title="CHANGE DOMAIN TARGET"
                       description="Change target address"
@@ -287,15 +310,15 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     />
                   )}
 
-            
-                  {callDataEncodedDomain?.[0] === "1" && !isAutoRenewalEnabled && (
-                    <div 
-                      className="w-full mt-4 h-[124px] pt-4 pr-3 pb-4 pl-3 gap-4 rounded-[16px] border-[1px] border-[#4545451A] bg-white shadow-[0px_2px_30px_0px_rgba(0,0,0,0.06)]" 
-                      aria-label="Inactive subscription information"
-                    >
-                      {/* Content for subscription */}
-                    </div>
-                  )}
+                  {callDataEncodedDomain?.[0] === "1" &&
+                    !isAutoRenewalEnabled.enabled && (
+                      <div
+                        className="w-full mt-4 h-[124px] pt-4 pr-3 pb-4 pl-3 gap-4 rounded-[16px] border-[1px] border-[#4545451A] bg-white shadow-[0px_2px_30px_0px_rgba(0,0,0,0.06)]"
+                        aria-label="Inactive subscription information"
+                      >
+                        {/* Content for subscription */}
+                      </div>
+                    )}
 
                   {viewMoreClicked ? (
                     <>
@@ -350,7 +373,9 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                       )}
 
                       {callDataEncodedDomain?.[0] === "1" &&
-                        isAutoRenewalEnabled && <ActiveSubscriptionCard />}
+                        isAutoRenewalEnabled.enabled && (
+                          <ActiveSubscriptionCard />
+                        )}
                       <p
                         onClick={() => setViewMoreClicked(false)}
                         className={styles.viewMore}
