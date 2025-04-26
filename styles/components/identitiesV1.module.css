@@ -177,7 +177,7 @@
 
 .sideNav {
   background-color: white;
-  text-align: left; /* Alineamos el texto a la izquierda */
+  text-align: left;
   box-shadow: var(--small-shadow);
   max-width: 100%;
   overflow-x: hidden;
