@@ -18,7 +18,7 @@ import IdentityActionsSkeleton from "@/components/identities/skeletons/identityA
 import { hexToDecimal } from "@/utils/feltService";
 import WalletConnect from "@/components/UI/walletConnect";
 import { Connector } from "starknetkit";
-import { FaCircle, FaPlus } from "react-icons/fa";
+import { FaCircle, FaPlus, FaBars } from "react-icons/fa"; // Añadimos FaBars
 import IdentitiesSkeleton from "./skeletons/identitiesSkeleton";
 import { Tooltip } from "@mui/material";
 import { isIdentityExpired } from "../../utils/dateService";
@@ -214,7 +214,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                             domain.id === router.query.tokenId || domain.id === tokenId
                               ? "text-[#402D28]"
                               : " text-[#CDCCCC] font-normal hover:text-[#402D28]"
-                          } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-left`}
+                          } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-left min-w-[200px]`}
                           key={index}
                           onClick={() => {
                             router.push(`/identities/${domain.id}`);
@@ -257,6 +257,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                       <FaPlus />
                       ADD IDENTITIES
                     </div>
+                    <FaBars className="md:hidden" /> {/* Ícono visible solo en mobile */}
                   </button>
                 </div>
               )}
