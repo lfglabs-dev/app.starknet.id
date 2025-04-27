@@ -40,20 +40,20 @@
 }
 
 .legend {
-  color: #6d696a;
+  color: var(--secondary);
   /* Body/small/medium */
-  font-size: 14px;
+  font-size: 16px;
   font-style: normal;
   font-weight: 500;
   line-height: 20px; /* 142.857% */
 }
 
 .domainsToRenew {
-  color: #6d696a;
+  color: var(--secondary);
   /* Body/small/medium */
-  font-size: 11px;
+  font-size: 14px;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 20px; /* 142.857% */
 }
 
