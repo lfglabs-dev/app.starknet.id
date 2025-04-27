@@ -33,18 +33,9 @@ const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
   ) : (
     <div className="flex w-full flex-col flex-wrap gap-[8px] justify-start items-start">
       <div className="flex">
-        {/* <Tooltip
-          className="cursor-pointer mr-1"
-          title={helperText}
-          placement="top"
-        >
-          <div>
-            <InfoIcon width="20px" color={"#454545"} />
-          </div>
-        </Tooltip> */}
         <p className={styles.legend}>Domain(s) to renew</p>
       </div>
-      <div className={styles.renewalBox} >
+      <div className={styles.renewalBox}>
         {domains.length === 0 ? (
           <p className={styles.domainsToRenew}>{noDomainText}</p>
         ) : (
