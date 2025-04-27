@@ -22,7 +22,7 @@ const TermCheckbox: FunctionComponent<TermCheckboxProps> = ({
           variant === "white" ? styles.whiteCheckbox : styles.defaultCheckbox
         }
         onClick={onChange}
-        checkedIcon={ < CustomCheckmarkIcon /> }
+        checkedIcon={<CustomCheckmarkIcon />}
       />
       <p className="ml-2 text-left">
         <span className="cursor-pointer" onClick={onChange}>

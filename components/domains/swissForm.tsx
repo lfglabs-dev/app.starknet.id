@@ -7,8 +7,7 @@ import {
 import textFieldStyles from "../../styles/components/textField.module.css";
 import variantStyles from "../../styles/components/variants.module.css";
 import InputHelper from "../UI/inputHelper";
-import NewCustomRadio from "../UI/iconsComponents/icons/customRadio";
-
+import Radio from "../UI/iconsComponents/icons/customRadio";
 
 type SwissFormProps = {
   isSwissResident: boolean;
@@ -49,12 +48,12 @@ const SwissForm: FunctionComponent<SwissFormProps> = ({
               <div className="flex flex-row justify-center md:justify-start lg:justify-start">
                 <FormControlLabel
                   value={true}
-                  control={<NewCustomRadio />}
+                  control={<Radio />}
                   label={<p className={textFieldStyles.smallLegend}>Yes</p>}
                 />
                 <FormControlLabel
                   value={false}
-                  control={<NewCustomRadio />}
+                  control={<Radio />}
                   label={<p className={textFieldStyles.smallLegend}>No</p>}
                 />
               </div>
