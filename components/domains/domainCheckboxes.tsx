@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/registerV2.module.css";
-import { Checkbox, Skeleton, Tooltip } from "@mui/material";
-import InfoIcon from "../UI/iconsComponents/icons/infoIcon";
+import { Checkbox, Skeleton } from "@mui/material";
+import CustomCheckmarkIcon from "../UI/iconsComponents/icons/customCheckMark";
 
 type DomainCheckboxes = {
-  helperText: string;
+  helperText?: string;
   setSelectedDomains: React.Dispatch<
     React.SetStateAction<Record<string, boolean> | undefined>
   >;
@@ -15,7 +15,6 @@ type DomainCheckboxes = {
 };
 
 const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
-  helperText,
   setSelectedDomains,
   selectedDomains,
   isLoading,
@@ -34,29 +33,21 @@ const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
   ) : (
     <div className="flex w-full flex-col flex-wrap gap-[8px] justify-start items-start">
       <div className="flex">
-        <Tooltip
-          className="cursor-pointer mr-1"
-          title={helperText}
-          placement="top"
-        >
-          <div>
-            <InfoIcon width="20px" color={"#454545"} />
-          </div>
-        </Tooltip>
         <p className={styles.legend}>Domain(s) to renew</p>
       </div>
-      <div className={styles.renewalBox} >
+      <div className={styles.renewalBox}>
         {domains.length === 0 ? (
-          <p className={styles.legend}>{noDomainText}</p>
+          <p className={styles.domainsToRenew}>{noDomainText}</p>
         ) : (
           domains.map((domain) => (
-            <div key={domain} className="flex items-center gap-1">
-              <p className={styles.domainsToRenew}>{domain}</p>
+            <div key={domain} className="flex items-center gap-2">
               <Checkbox
                 checked={Boolean(selectedDomains?.[domain])}
                 onChange={() => handleCheckboxChange(domain)}
                 sx={{ padding: 0 }}
+                checkedIcon={<CustomCheckmarkIcon />}
               />
+              <p className={styles.domainsToRenew}>{domain}</p>
             </div>
           ))
         )}
