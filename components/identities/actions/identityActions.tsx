@@ -374,7 +374,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
                       {callDataEncodedDomain?.[0] === "1" &&
                         isAutoRenewalEnabled.enabled && (
-                          <ActiveSubscriptionCard />
+                          <ActiveSubscriptionCard identity={identity} />
                         )}
                       <p
                         onClick={() => setViewMoreClicked(false)}
