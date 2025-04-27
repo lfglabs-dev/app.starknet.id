@@ -1,6 +1,7 @@
 import { Checkbox } from "@mui/material";
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/variants.module.css";
+import CustomCheckmarkIcon from "../UI/iconsComponents/icons/customCheckMark";
 
 type TermCheckboxProps = {
   checked: boolean;
@@ -21,6 +22,7 @@ const TermCheckbox: FunctionComponent<TermCheckboxProps> = ({
           variant === "white" ? styles.whiteCheckbox : styles.defaultCheckbox
         }
         onClick={onChange}
+        checkedIcon={ < CustomCheckmarkIcon /> }
       />
       <p className="ml-2 text-left">
         <span className="cursor-pointer" onClick={onChange}>

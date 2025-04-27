@@ -2,12 +2,13 @@ import React, { FunctionComponent } from "react";
 import {
   FormControl,
   FormControlLabel,
-  Radio,
   RadioGroup,
 } from "@mui/material";
 import textFieldStyles from "../../styles/components/textField.module.css";
 import variantStyles from "../../styles/components/variants.module.css";
 import InputHelper from "../UI/inputHelper";
+import NewCustomRadio from "../UI/iconsComponents/icons/customRadio";
+
 
 type SwissFormProps = {
   isSwissResident: boolean;
@@ -45,16 +46,16 @@ const SwissForm: FunctionComponent<SwissFormProps> = ({
               value={isSwissResident}
               onChange={onSwissResidentChange}
             >
-              <div className="flex flex-row gap-4 justify-center md:justify-start lg:justify-start">
+              <div className="flex flex-row justify-center md:justify-start lg:justify-start">
                 <FormControlLabel
                   value={true}
-                  control={<Radio />}
-                  label={<p className={textFieldStyles.legend}>Yes</p>}
+                  control={<NewCustomRadio />}
+                  label={<p className={textFieldStyles.smallLegend}>Yes</p>}
                 />
                 <FormControlLabel
                   value={false}
-                  control={<Radio />}
-                  label={<p className={textFieldStyles.legend}>No</p>}
+                  control={<NewCustomRadio />}
+                  label={<p className={textFieldStyles.smallLegend}>No</p>}
                 />
               </div>
             </RadioGroup>

@@ -345,7 +345,7 @@ const Subscription: FunctionComponent = () => {
               <AutoRenewalDomainsBox
                 needSubscription={needSubscription}
                 isLoading={needSubscriptionLoading}
-                helperText="Check the box of the domains you want to subscribe"
+                
                 setSelectedDomains={setSelectedDomains}
                 selectedDomains={selectedDomains}
               />
