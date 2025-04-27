@@ -28,6 +28,7 @@ import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 import RenewalIcon from "@/components/UI/iconsComponents/icons/renewalIcon";
 import ActiveSubscriptionCard from "./ActiveSubscriptionCard";
+import Button from "@/components/UI/button";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -317,6 +318,11 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                         aria-label="Inactive subscription information"
                       >
                         {/* Content for subscription */}
+                        <Button
+                          onClick={() => router.push("/subscription")}
+                        >
+                          Activate subscription
+                        </Button>
                       </div>
                     )}
 
