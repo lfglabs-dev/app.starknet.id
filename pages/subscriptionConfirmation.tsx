@@ -7,10 +7,13 @@ import CopyIcon from "@/components/UI/iconsComponents/icons/copyIcon";
 import DoneFilledIcon from "@/components/UI/iconsComponents/icons/doneFilledIcon";
 import { useCopyToClipboard } from "@/hooks/useCopy";
 import { minifyAddress } from "@/utils/stringService";
+import Button from "@/components/UI/button";
+import { useRouter } from "next/router";
 
 const SubscriptionConfirmation: NextPage = () => {
   const { copied, copyToClipboard } = useCopyToClipboard();
   const { address } = useAccount();
+  const router = useRouter();
 
   return (
     <>
@@ -64,7 +67,9 @@ const SubscriptionConfirmation: NextPage = () => {
         <div className={styles.coconutRight}>
           <img alt="palm tree right" src="/visuals/rightTree.svg" />
         </div>
-        <button className={styles.button}>GO TO YOUR DOMAIN</button>
+        <Button onClick={() => router.push("/identities")}>
+          GO TO YOUR DOMAIN
+        </Button>
       </div>
     </>
   );
