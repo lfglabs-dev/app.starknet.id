@@ -5,13 +5,13 @@ import { Identity } from "@/utils/apiWrappers/identity";
 
 interface ActiveSubscriptionCardProps {
   identity: Identity;
+  disableRenewal: () => void;
 }
 
-function ActiveSubscriptionCard({ identity }: ActiveSubscriptionCardProps) {
-  const cancelSubscription = () => {
-    return 0;
-  };
-
+function ActiveSubscriptionCard({
+  identity,
+  disableRenewal,
+}: ActiveSubscriptionCardProps) {
   return (
     <div className={`${styles.subscriptionSecondary} text-center`}>
       <div>
@@ -26,7 +26,7 @@ function ActiveSubscriptionCard({ identity }: ActiveSubscriptionCardProps) {
         type="button"
         style={{ backgroundColor: "#cd3a31" }}
         className="font-quickZap font-normal text-[12px] text-[#ffffff] p-[10px] rounded-lg uppercase mt-[6px]"
-        onClick={cancelSubscription}
+        onClick={disableRenewal}
       >
         CANCEL SUBSCRIPTION
       </button>
