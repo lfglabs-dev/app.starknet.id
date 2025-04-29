@@ -26,7 +26,7 @@ function ActiveSubscriptionCard({
         type="button"
         style={{ backgroundColor: "#cd3a31" }}
         className="font-quickZap font-normal text-[12px] text-[#ffffff] p-[10px] rounded-lg uppercase mt-[6px]"
-        onClick={disableRenewal}
+        onClick={() => disableRenewal()}
       >
         CANCEL SUBSCRIPTION
       </button>
