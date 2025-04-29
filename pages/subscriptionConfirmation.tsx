@@ -64,6 +64,7 @@ const SubscriptionConfirmation: NextPage = () => {
         <div className={styles.coconutRight}>
           <img alt="palm tree right" src="/visuals/rightTree.svg" />
         </div>
+        <button className={styles.button}>GO TO YOUR DOMAIN</button>
       </div>
     </>
   );
