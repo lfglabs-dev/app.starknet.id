@@ -25,7 +25,7 @@ function ActiveSubscriptionCard({ identity }: ActiveSubscriptionCardProps) {
       <button
         type="button"
         style={{ backgroundColor: "#cd3a31" }}
-        className="font-quickZap font-normal text-[12px] text-[#ffffff] p-3 rounded-xl uppercase mt-[6px]"
+        className="font-quickZap font-normal text-[12px] text-[#ffffff] p-[10px] rounded-xl uppercase mt-[6px]"
         onClick={cancelSubscription}
       >
         CANCEL SUBSCRIPTION
