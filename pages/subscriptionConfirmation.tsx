@@ -7,10 +7,18 @@ import CopyIcon from "@/components/UI/iconsComponents/icons/copyIcon";
 import DoneFilledIcon from "@/components/UI/iconsComponents/icons/doneFilledIcon";
 import { useCopyToClipboard } from "@/hooks/useCopy";
 import { minifyAddress } from "@/utils/stringService";
+import Button from "@/components/UI/button";
+import { useRouter } from "next/router";
 
 const SubscriptionConfirmation: NextPage = () => {
   const { copied, copyToClipboard } = useCopyToClipboard();
   const { address } = useAccount();
+  const router = useRouter();
+  const tokenId: string = router.query.tokenId as string;
+  const redirect = () => {
+    if (tokenId) router.push(`/identities/${tokenId}?minting=true`);
+    else router.push("/identities");
+  };
 
   return (
     <>
@@ -33,23 +41,23 @@ const SubscriptionConfirmation: NextPage = () => {
         <div>
           <div>Refer your friends to Starknet ID and earn crypto ! </div>
           <div className="font-extrabold">
-            Earn up to 10$ per friends with your referral link below.
+            Earn up to 8$ per friends with your referral link below.
           </div>
         </div>
         <div
           className={styles.copyAddr}
           onClick={() =>
             copyToClipboard(
-              `${process.env.NEXT_PUBLIC_APP_LINK}?sponsor=${address}`
+              `${process.env.NEXT_PUBLIC_STARKNET_ID}?sponsor=${address}`
             )
           }
         >
-          {`${process.env.NEXT_PUBLIC_APP_LINK?.replace(
+          {`${process.env.NEXT_PUBLIC_STARKNET_ID?.replace(
             "https://",
             ""
           )}/${minifyAddress(address)}`}
           {!copied ? (
-            <CopyIcon width="25" color={theme.palette.secondary.main} />
+            <CopyIcon variant="new" width="25" color={theme.palette.secondary.main} />
           ) : (
             <DoneFilledIcon
               width="25"
@@ -57,6 +65,9 @@ const SubscriptionConfirmation: NextPage = () => {
               secondColor={theme.palette.primary.main}
             />
           )}
+        </div>
+        <div>
+          <Button onClick={redirect}>GO TO YOUR DOMAIN</Button>
         </div>
         <div className={styles.coconutLeft}>
           <img alt="palm tree left" src="/visuals/leftTree.svg" />

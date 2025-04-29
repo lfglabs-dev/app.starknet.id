@@ -19,7 +19,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 48px;
+  gap: 24px;
   flex-shrink: 0;
   z-index: 1;
   background-color: #fff;
@@ -37,6 +37,13 @@
   font-weight: 700;
   line-height: 1.5rem /* 24px */;
   white-space: nowrap;
+}
+
+.divider {
+  background-color: var(--background-light300, #F8F7F7);
+  width: 100%;
+  height: 1px;
+  margin-bottom: 4px;
 }
 
 .legend {
@@ -106,7 +113,6 @@
   align-items: flex-start;
   gap: 24px;
   align-self: stretch;
-  border-top: 1px solid var(--content-400, #F8F7F7);
 }
 
 .pricesSummary {
