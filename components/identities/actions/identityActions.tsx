@@ -318,9 +318,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                         aria-label="Inactive subscription information"
                       >
                         {/* Content for subscription */}
-                        <Button
-                          onClick={() => router.push("/subscription")}
-                        >
+                        <Button onClick={() => router.push("/subscription")}>
                           Activate subscription
                         </Button>
                       </div>
@@ -380,7 +378,10 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
 
                       {callDataEncodedDomain?.[0] === "1" &&
                         isAutoRenewalEnabled.enabled && (
-                          <ActiveSubscriptionCard />
+                          <ActiveSubscriptionCard
+                            identity={identity}
+                            disableRenewal={disableRenewal}
+                          />
                         )}
                       <p
                         onClick={() => setViewMoreClicked(false)}
