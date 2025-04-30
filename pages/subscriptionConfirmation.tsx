@@ -67,9 +67,11 @@ const SubscriptionConfirmation: NextPage = () => {
         <div className={styles.coconutRight}>
           <img alt="palm tree right" src="/visuals/rightTree.svg" />
         </div>
-        <Button onClick={() => router.push("/identities")}>
-          GO TO YOUR DOMAIN
-        </Button>
+        <div className="mt-5">
+          <Button onClick={() => router.push("/identities")}>
+            GO TO YOUR DOMAIN
+          </Button>
+        </div>
       </div>
     </>
   );
