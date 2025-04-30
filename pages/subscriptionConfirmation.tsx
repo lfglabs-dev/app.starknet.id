@@ -48,11 +48,11 @@ const SubscriptionConfirmation: NextPage = () => {
           className={styles.copyAddr}
           onClick={() =>
             copyToClipboard(
-              `${process.env.NEXT_PUBLIC_STARKNET_ID}?sponsor=${address}`
+              `${process.env.NEXT_PUBLIC_APP_LINK}?sponsor=${address}`
             )
           }
         >
-          {`${process.env.NEXT_PUBLIC_STARKNET_ID?.replace(
+          {`${process.env.NEXT_PUBLIC_APP_LINK?.replace(
             "https://",
             ""
           )}/${minifyAddress(address)}`}
