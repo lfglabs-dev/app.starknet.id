@@ -57,7 +57,7 @@ const SubscriptionConfirmation: NextPage = () => {
             ""
           )}/${minifyAddress(address)}`}
           {!copied ? (
-            <CopyIcon variant="new" width="25" color={theme.palette.secondary.main} />
+            <CopyIcon width="25" color={theme.palette.secondary.main} />
           ) : (
             <DoneFilledIcon
               width="25"

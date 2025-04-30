@@ -3,11 +3,9 @@ import React, { FunctionComponent } from "react";
 interface IconProps {
   color: string;
   width: string;
-  variant?: 'default' | 'new';
 }
 
-const CopyIcon: FunctionComponent<IconProps> = ({ color, width, variant = 'default' }) => {
-  if (variant === 'new') {
+const CopyIcon: FunctionComponent<IconProps> = ({ color, width }) => {
     return (
       <svg
         width={width}
@@ -20,27 +18,6 @@ const CopyIcon: FunctionComponent<IconProps> = ({ color, width, variant = 'defau
       <path d="M14.7508 2.16602H11.2508C8.68155 2.16602 7.4766 3.07776 7.22557 5.28186C7.17305 5.74297 7.55494 6.12435 8.01903 6.12435H9.75078C13.2508 6.12435 14.8758 7.74935 14.8758 11.2493V12.9811C14.8758 13.4452 15.2572 13.8271 15.7183 13.7746C17.9224 13.5235 18.8341 12.3186 18.8341 9.74935V6.24935C18.8341 3.33268 17.6674 2.16602 14.7508 2.16602Z" fill={color}/>
       </svg>
     );
-  }
-
-  return (
-    <svg
-      width={width}
-      height={width}
-      viewBox="0 0 14 14"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <g id="CopyIcon">
-        <path
-          id="Union"
-          fillRule="evenodd"
-          clipRule="evenodd"
-          d="M3.01703 11.0889V4.61101C3.06656 3.93747 3.60539 2.57851 5.36451 2.53097C7.12363 2.48342 8.98972 2.51116 9.70288 2.53097C9.9406 2.54087 10.4279 2.56663 10.4755 2.5904C10.5349 2.62011 10 1.31266 8.66286 1.31266H4.74049C3.76981 1.30275 1.82844 1.75244 1.82844 3.63042V9.42482C1.81853 9.74178 2.04238 10.5183 3.01703 11.0889ZM4.16732 8.64424V5.67275C4.10789 4.97941 5.06353 3.59271 6.56116 3.59271H10.4075C11.8112 3.5927 12.1606 3.93741 12.1606 5.67275V10.754C12.1705 11.3978 11.7922 12.6855 10.1995 12.6855H5.95023C5.33613 12.7152 4.10791 12.3883 4.10791 10.8431C4.10791 9.29797 4.14752 8.73339 4.16732 8.64424Z"
-          fill={color}
-        />
-      </g>
-    </svg>
-  );
-};
+  };
 
 export default CopyIcon;
