@@ -63,8 +63,8 @@
 
 .balloon {
   position: fixed;
-  top: 100px;
-  left: 100px;
+  top: 28%;
+  left: 18%;
   width: 115px;
   overflow: hidden;
   z-index: -1;
@@ -72,8 +72,8 @@
 
 .coconut {
   position: fixed;
-  top: 320px;
-  right: 160px;
+  top: 52%;
+  right: 19%;
   width: 55px;
   overflow: hidden;
   z-index: -1;

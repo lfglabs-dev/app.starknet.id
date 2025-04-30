@@ -330,7 +330,7 @@ const Subscription: FunctionComponent = () => {
             <div className="flex flex-col items-center gap-0 self-stretch">
               <h3 className={styles.domain}>Enable subscription</h3>
               <p className="py-2 text-center text-[#8C8989] text-sm leading-6"> Enable subscription to ensure 
-                uninterrupted ownership and benefits. Never worry about expiration dates again.
+                uninterrupted ownership and benefits.<br/> Never worry about expiration dates again.
                  </p>
             </div>
             <div className="flex flex-col items-start gap-6 self-stretch">
@@ -352,6 +352,8 @@ const Subscription: FunctionComponent = () => {
             </div>
           </div>
           <div className={styles.summary}>
+            <div className={styles.divider}></div>
+            <div className="flex flex-col items-start gap-2 self-stretch">
             <p className={styles.legend}>Your subscription currency</p>
             <ArCurrencyDropdown
               displayedCurrency={displayedCurrencies as CurrencyType[]}
@@ -359,6 +361,7 @@ const Subscription: FunctionComponent = () => {
                 setDisplayedCurrencies as (type: CurrencyType[]) => void
               }
             />
+            </div>
             <RegisterCheckboxes
               onChangeTermsBox={() => setTermsBox(!termsBox)}
               termsBox={termsBox}
