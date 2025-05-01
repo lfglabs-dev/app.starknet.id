@@ -314,17 +314,17 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                   {callDataEncodedDomain?.[0] === "1" &&
                     !isAutoRenewalEnabled.enabled && (
                       <div
-                        className="w-full mt-4 h-[124px] pt-4 pr-3 pb-4 pl-3 gap-4 rounded-[16px] border-[1px] border-[#4545451A] bg-white shadow-[0px_2px_30px_0px_rgba(0,0,0,0.06)] flex flex-col items-center"
+                        className="w-full mt-4 h-fit pt-4 pr-3 pb-4 pl-3 rounded-[16px] border-[1px] border-[#4545451A] bg-white shadow-[0px_2px_30px_0px_rgba(0,0,0,0.06)] flex flex-col items-center"
                         aria-label="Inactive subscription information"
                       >
                         {/* Content for subscription */}
                         <p
-                          className="font-normal text-md text-gray-800"
+                          className="text-base font-normal text-[#402d28] mb-0"
                           style={{ fontFamily: "QuickZap" }}
                         >
                           YOUR SUBSCRIPTION IS INACTIVE
                         </p>
-                        <p className="mb-2 text-gray-500">
+                        <p className="text-[#454545] text-xs mb-5">
                           No upcoming payments
                         </p>
                         <Button onClick={() => router.push("/subscription")}>
