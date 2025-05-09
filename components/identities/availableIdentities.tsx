@@ -263,8 +263,11 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                                   fontWeight: 500,
                                   fontSize: "14px",
                                   lineHeight: "20px",
-                                  letterSpacing: "0%",
-                                  color: "#fff",
+                                  letterSpacing: "0",
+                                  color: "#FFFFFF",
+                                  display: "inline-block",
+                                  width: "100%",
+                                  textAlign: "center",
                                 }}
                               >
                                 Domain Expired
@@ -279,7 +282,9 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
-                                  textAlign: "center",
+                                  borderRadius: "8px",
+                                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+                                  padding: "0 12px",
                                 },
                               },
                             }}

@@ -2,9 +2,7 @@ import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
-import {
-  selectedDomainsToArray,
-} from "../../utils/stringService";
+import { selectedDomainsToArray } from "../../utils/stringService";
 import { applyRateToBigInt } from "../../utils/feltService";
 import { Call } from "starknet";
 import { posthog } from "posthog-js";
@@ -43,8 +41,6 @@ import useNeedSubscription from "@/hooks/useNeedSubscription";
 import AutoRenewalDomainsBox from "./autoRenewalDomainsBox";
 import Notification from "../UI/notification";
 import CloseIcon from "../UI/iconsComponents/icons/closeIcon";
-
-
 
 const Subscription: FunctionComponent = () => {
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
@@ -118,7 +114,6 @@ const Subscription: FunctionComponent = () => {
           console.log("Error on sending metadata:", error);
         });
     }
-
 
     addTransaction({
       timestamp: Date.now(),
@@ -322,16 +317,16 @@ const Subscription: FunctionComponent = () => {
         <CloseIcon />
       </button>
       <div className={styles.container}>
-
-
         <div className={styles.card}>
           <div className={styles.form}>
-
             <div className="flex flex-col items-center gap-0 self-stretch">
               <h3 className={styles.domain}>Enable subscription</h3>
-              <p className="py-2 text-center text-[#8C8989] text-sm leading-6"> Enable subscription to ensure 
-                uninterrupted ownership and benefits.<br/> Never worry about expiration dates again.
-                 </p>
+              <p className="py-2 text-center text-[#8C8989] text-sm leading-6">
+                {" "}
+                Enable subscription to ensure uninterrupted ownership and
+                benefits.
+                <br /> Never worry about expiration dates again.
+              </p>
             </div>
             <div className="flex flex-col items-start gap-6 self-stretch">
               {needMedadata ? (
@@ -345,7 +340,6 @@ const Subscription: FunctionComponent = () => {
               <AutoRenewalDomainsBox
                 needSubscription={needSubscription}
                 isLoading={needSubscriptionLoading}
-                
                 setSelectedDomains={setSelectedDomains}
                 selectedDomains={selectedDomains}
               />
@@ -354,13 +348,13 @@ const Subscription: FunctionComponent = () => {
           <div className={styles.summary}>
             <div className={styles.divider}></div>
             <div className="flex flex-col items-start gap-2 self-stretch">
-            <p className={styles.legend}>Your subscription currency</p>
-            <ArCurrencyDropdown
-              displayedCurrency={displayedCurrencies as CurrencyType[]}
-              onCurrencySwitch={
-                setDisplayedCurrencies as (type: CurrencyType[]) => void
-              }
-            />
+              <p className={styles.legend}>Your subscription currency</p>
+              <ArCurrencyDropdown
+                displayedCurrency={displayedCurrencies as CurrencyType[]}
+                onCurrencySwitch={
+                  setDisplayedCurrencies as (type: CurrencyType[]) => void
+                }
+              />
             </div>
             <RegisterCheckboxes
               onChangeTermsBox={() => setTermsBox(!termsBox)}
@@ -369,31 +363,31 @@ const Subscription: FunctionComponent = () => {
               renewalBox={false}
               isArOnforced={true}
             />
-            { address ? (
-             <div className="max-w-full mx-auto">
-               <Button
-                onClick={() =>
-                  execute().then(() => {
-                    setDomainsMinting(selectedDomains);
-                  })
-                }
-                disabled={
-                  domainsMinting === selectedDomains ||
-                  !address ||
-                  !termsBox ||
-                  !areDomainSelected(selectedDomains) ||
-                  callData.length === 0 // Cover the case where there are no domains to subscribe
-                }
-              >
-                {!termsBox
-                  ? "Please accept terms & policies"
-                  : !areDomainSelected(selectedDomains)
+            {address ? (
+              <div className="max-w-full mx-auto">
+                <Button
+                  onClick={() =>
+                    execute().then(() => {
+                      setDomainsMinting(selectedDomains);
+                    })
+                  }
+                  disabled={
+                    domainsMinting === selectedDomains ||
+                    !address ||
+                    !termsBox ||
+                    !areDomainSelected(selectedDomains) ||
+                    callData.length === 0 // Cover the case where there are no domains to subscribe
+                  }
+                >
+                  {!termsBox
+                    ? "Please accept terms & policies"
+                    : !areDomainSelected(selectedDomains)
                     ? "Select a domain to subscribe"
                     : callData.length === 0
-                      ? "You're already subscribed"
-                      : "Enable subscription"}
-              </Button>
-             </div>
+                    ? "You're already subscribed"
+                    : "Enable subscription"}
+                </Button>
+              </div>
             ) : (
               <ConnectButton />
             )}
