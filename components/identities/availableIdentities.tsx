@@ -263,6 +263,10 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                                   bgcolor: "#402D28",
                                   height: "36px",
                                   width: "135px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  textAlign: "center",
                                 },
                               },
                             }}
