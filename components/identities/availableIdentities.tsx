@@ -261,6 +261,8 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                               tooltip: {
                                 sx: {
                                   bgcolor: "#402D28",
+                                  height: "36px",
+                                  width: "135px",
                                 },
                               },
                             }}
