@@ -257,19 +257,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                         {isIdentityExpired(domain) && (
                           <Tooltip
                             title={
-                              <span
-                                style={{
-                                  fontFamily: "Poppins",
-                                  fontWeight: 500,
-                                  fontSize: "14px",
-                                  lineHeight: "20px",
-                                  letterSpacing: "0",
-                                  color: "#FFFFFF",
-                                  display: "inline-block",
-                                  width: "100%",
-                                  textAlign: "center",
-                                }}
-                              >
+                              <span className="font-poppins font-medium text-sm leading-5 tracking-normal text-white w-full text-center">
                                 Domain Expired
                               </span>
                             }
