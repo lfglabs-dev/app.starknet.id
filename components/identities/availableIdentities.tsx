@@ -256,11 +256,23 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                         </button>
                         {isIdentityExpired(domain) && (
                           <Tooltip
-                            title="Domain Expired"
+                            title={
+                              <span className="font-poppins font-medium text-sm leading-5 tracking-normal text-white w-full text-center">
+                                Domain Expired
+                              </span>
+                            }
                             componentsProps={{
                               tooltip: {
                                 sx: {
                                   bgcolor: "#402D28",
+                                  height: "36px",
+                                  width: "135px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  borderRadius: "8px",
+                                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+                                  padding: "0 12px",
                                 },
                               },
                             }}
