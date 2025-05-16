@@ -234,7 +234,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                     {ownedIdentities.map((domain, index) => (
                       <div
                         key={index}
-                        className="flex w-full items-center justify-start gap-1"
+                        className="flex w-full items-center justify-start gap-1 "
                       >
                         <button
                           className={`${
@@ -242,7 +242,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                             domain.id === tokenId
                               ? "text-[#402D28]"
                               : " text-[#CDCCCC] font-normal hover:text-[#402D28]"
-                          } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit text-center xl:text-left`}
+                          } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-fit max-sm:pl-4  xl:text-left`}
                           key={index}
                           onClick={() => {
                             router.push(`/identities/${domain.id}`);
