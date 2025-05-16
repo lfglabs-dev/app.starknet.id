@@ -232,28 +232,23 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                 >
                   <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
                     {ownedIdentities.map((domain, index) => (
-                      <div
-                        key={index}
-                        className="flex w-full items-center justify-start gap-1 "
-                      >
-                        <button
-                          className={`${
-                            domain.id === router.query.tokenId ||
-                            domain.id === tokenId
-                              ? "text-[#402D28]"
-                              : " text-[#CDCCCC] font-normal hover:text-[#402D28]"
-                          } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 block w-full max-sm:pl-4  xl:text-left`}
-                          key={index}
-                          onClick={() => {
-                            router.push(`/identities/${domain.id}`);
-                            if (isIdentityExpired(domain)) {
-                              setSelectedExpiredDomain(domain);
-                              setDomainExpiredModalOpen(true);
-                            }
-                          }}
-                        >
-                          {domain.domain ? domain.domain : domain.id}
-                        </button>
+                    <div key={index} className="w-full">
+                    <button
+                      className={`${
+                        domain.id === router.query.tokenId || domain.id === tokenId
+                          ? "text-[#402D28]"
+                          : "text-[#CDCCCC] font-normal hover:text-[#402D28]"
+                      } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 w-full max-sm:pl-4 text-left`}
+                      onClick={() => {
+                        router.push(`/identities/${domain.id}`);
+                        if (isIdentityExpired(domain)) {
+                          setSelectedExpiredDomain(domain);
+                          setDomainExpiredModalOpen(true);
+                        }
+                      }}
+                    >
+                      <span className="flex items-center gap-1">
+                        {domain.domain ? domain.domain : domain.id}
                         {isIdentityExpired(domain) && (
                           <Tooltip
                             title={
@@ -277,12 +272,12 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                               },
                             }}
                           >
-                            <div className="flex w-[16px] h-[16px] items-center justify-center">
-                              <FaCircle className="text-red-500 text-[8px] ml-1" />
-                            </div>
+                            <FaCircle className="text-red-500 text-[8px]" />
                           </Tooltip>
                         )}
-                      </div>
+                      </span>
+                    </button>
+                  </div>
                     ))}
                   </div>
                   <button
