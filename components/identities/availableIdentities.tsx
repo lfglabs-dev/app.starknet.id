@@ -232,52 +232,54 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                 >
                   <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
                     {ownedIdentities.map((domain, index) => (
-                    <div key={index} className="w-full">
-                    <button
-                      className={`${
-                        domain.id === router.query.tokenId || domain.id === tokenId
-                          ? "text-[#402D28]"
-                          : "text-[#CDCCCC] font-normal hover:text-[#402D28]"
-                      } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 w-full max-sm:pl-4 text-left`}
-                      onClick={() => {
-                        router.push(`/identities/${domain.id}`);
-                        if (isIdentityExpired(domain)) {
-                          setSelectedExpiredDomain(domain);
-                          setDomainExpiredModalOpen(true);
-                        }
-                      }}
-                    >
-                      <span className="flex items-center gap-1">
-                        {domain.domain ? domain.domain : domain.id}
-                        {isIdentityExpired(domain) && (
-                          <Tooltip
-                            title={
-                              <span className="font-poppins font-medium text-sm leading-5 tracking-normal text-white w-full text-center">
-                                Domain Expired
-                              </span>
+                      <div key={index} className="w-full">
+                        <button
+                          className={`${
+                            domain.id === router.query.tokenId ||
+                            domain.id === tokenId
+                              ? "text-[#402D28]"
+                              : "text-[#CDCCCC] font-normal hover:text-[#402D28]"
+                          } font-bold text-lg sm:text-md lg:text-md leading-5 cursor-pointer transition-all duration-300 border-[#4545451A] border-b-[1px] md:border-none md:py-0 py-6 md:my-3 w-full max-sm:pl-4 text-left items-center flex justify-center xl:justify-start`}
+                          onClick={() => {
+                            router.push(`/identities/${domain.id}`);
+                            if (isIdentityExpired(domain)) {
+                              setSelectedExpiredDomain(domain);
+                              setDomainExpiredModalOpen(true);
                             }
-                            componentsProps={{
-                              tooltip: {
-                                sx: {
-                                  bgcolor: "#402D28",
-                                  height: "36px",
-                                  width: "135px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  borderRadius: "8px",
-                                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
-                                  padding: "0 12px",
-                                },
-                              },
-                            }}
-                          >
-                            <FaCircle className="text-red-500 text-[8px]" />
-                          </Tooltip>
-                        )}
-                      </span>
-                    </button>
-                  </div>
+                          }}
+                        >
+                          <span className="flex items-center gap-1">
+                            {domain.domain ? domain.domain : domain.id}
+                            {isIdentityExpired(domain) && (
+                              <Tooltip
+                                title={
+                                  <span className="font-poppins font-medium text-sm leading-5 tracking-normal text-white w-full text-center">
+                                    Domain Expired
+                                  </span>
+                                }
+                                componentsProps={{
+                                  tooltip: {
+                                    sx: {
+                                      bgcolor: "#402D28",
+                                      height: "36px",
+                                      width: "135px",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      borderRadius: "8px",
+                                      boxShadow:
+                                        "0px 4px 12px rgba(0, 0, 0, 0.2)",
+                                      padding: "0 12px",
+                                    },
+                                  },
+                                }}
+                              >
+                                <FaCircle className="text-red-500 text-[8px]" />
+                              </Tooltip>
+                            )}
+                          </span>
+                        </button>
+                      </div>
                     ))}
                   </div>
                   <button
