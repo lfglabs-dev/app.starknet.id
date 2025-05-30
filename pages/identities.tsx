@@ -104,9 +104,9 @@ const Identities: NextPage = () => {
   return (
     <>
       <div className={styles.wrapperScreen}>
-        <div className="mt-[12vh]">
+        <div className="mt-[5rem]">
           {loading ? (
-            <section className="mt-20 w-full">
+            <section className="w-full mt-20">
               <IdentitiesSkeleton />
             </section>
           ) : ownedIdentities.length + externalDomains.length === 0 ||
@@ -115,7 +115,7 @@ const Identities: NextPage = () => {
               <h1 className="title text-center mb-[16px]">
                 All Your Identities in One Place
               </h1>
-              <p className="description text-center max-w-2xl">
+              <p className="max-w-2xl text-center description">
                 Easily access and manage all your identities from one
                 centralized location. Streamline your digital presence with
                 convenience and control.
