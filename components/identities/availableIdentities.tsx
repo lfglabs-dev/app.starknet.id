@@ -228,7 +228,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
               {ownedIdentities.length !== 0 && (
                 <div
                   className={`
-                         ${styles.sideNav} border w-[100%] md:w-auto h-[319px] xl:h-auto relative flex flex-col items-center md:justify-between sm:px-[24px] md:pt-[24px] m-auto shadow-sm rounded-2xl mt-[48px] md:mt-0`}
+                         ${styles.sideNav} border w-[100%] md:w-auto h-[319px] xl:h-auto relative flex flex-col items-center md:justify-between sm:px-[24px] md:pt-[24px] m-auto shadow-sm rounded-2xl mt-[1rem] md:mt-0`}
                 >
                   <div className="h-full md:min-h-[80%] w-full overflow-y-auto hide-scrollbar flex flex-col gap-[2px] ">
                     {ownedIdentities.map((domain, index) => (
@@ -253,7 +253,7 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
                             {isIdentityExpired(domain) && (
                               <Tooltip
                                 title={
-                                  <span className="font-poppins font-medium text-sm leading-5 tracking-normal text-white w-full text-center">
+                                  <span className="w-full text-sm font-medium leading-5 tracking-normal text-center text-white font-poppins">
                                     Domain Expired
                                   </span>
                                 }
