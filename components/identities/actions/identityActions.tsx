@@ -322,13 +322,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                           className="text-base font-normal text-[#402d28] mb-0"
                           style={{ fontFamily: "QuickZap" }}
                         >
-                          YOUR SUBSCRIPTION IS INACTIVE
+                          Your subscription is inactive
                         </p>
                         <p className="text-[#454545] text-xs mb-5">
-                          No upcoming payments
+                          Perfect time to enhance your profile
                         </p>
                         <Button onClick={() => router.push("/subscription")}>
-                          Activate subscription
+                          RENEW YOUR DOMAIN
                         </Button>
                       </div>
                     )}
