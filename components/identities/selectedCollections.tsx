@@ -1,4 +1,3 @@
-
 import React, { FunctionComponent } from "react";
 import styles from "../../styles/components/profilePic.module.css";
 import { NftCollections } from "../../utils/constants";
@@ -9,14 +8,16 @@ import { useRouter } from "next/router";
 const SelectedCollections: FunctionComponent = () => {
   const router = useRouter();
   const NFT_MARKETPLACE_URL = "https://unframed.co/";
-  
+
   const nftMarketPlace: React.MouseEventHandler<HTMLButtonElement> = () => {
     window.open(NFT_MARKETPLACE_URL, "_blank", "noopener noreferrer");
   };
-  
+
   return (
     <>
-      <div className={`mx-auto flex flex-col justify-center ${styles.nftCollectionWraper}`}>
+      <div
+        className={`mx-auto flex flex-col justify-center ${styles.nftCollectionWraper}`}
+      >
         {NftCollections.map((collection, index) => (
           <div
             className={styles.nftCollectionCard}

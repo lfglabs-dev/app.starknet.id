@@ -27,6 +27,8 @@ import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
 import PyramidIcon from "../../UI/iconsComponents/icons/pyramidIcon";
 import { StarknetIdJsContext } from "@/context/StarknetIdJsProvider";
 import RenewalIcon from "@/components/UI/iconsComponents/icons/renewalIcon";
+import ActiveSubscriptionCard from "./ActiveSubscriptionCard";
+import Button from "@/components/UI/button";
 
 type IdentityActionsProps = {
   identity?: Identity;
@@ -54,24 +56,26 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   const [isMainDomain, setIsMainDomain] = useState<boolean>(
     identity ? identity.isMain : false
   );
+
   const router = useRouter();
   const { starknetIdNavigator } = useContext(StarknetIdJsContext);
-  // AutoRenewals
-  const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] =
-    useState<boolean>(false);
+
+  const [isAutoRenewalEnabled, setIsAutoRenewalEnabled] = useState({
+    domain: "",
+    enabled: false,
+  });
   const [autoRenewalData, setAutoRenewalData] = useState<RenewalData[]>([]);
   const [hasReverseAddressRecord, setHasReverseAddressRecord] =
     useState<boolean>(false);
   const [disableRenewalCalldata, setDisableRenewalCalldata] = useState<Call[]>(
     []
   );
+
   const { sendAsync: disableRenewal, data: disableRenewalData } =
     useSendTransaction({
       calls: disableRenewalCalldata,
     });
 
-  // check if address_to_domain matches the domain of the identity
-  // if not, show set as main domain button
   useEffect(() => {
     if (starknetIdNavigator !== null && address !== undefined) {
       starknetIdNavigator.getStarkName(address).then((name: string) => {
@@ -95,7 +99,6 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     }
   }, [identity]);
 
-  // Add all subdomains to the parameters
   const callDataEncodedDomain: string[] = [encodedDomains.length.toString()];
   encodedDomains.forEach((domain) => {
     callDataEncodedDomain.push(domain.toString(10));
@@ -121,6 +124,14 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
   }, [address]);
 
   useEffect(() => {
+    if (!identity?.domain) return;
+    setIsAutoRenewalEnabled((prev) => ({
+      domain: identity.domain as string,
+      enabled: prev.enabled,
+    }));
+  }, [identity]);
+
+  useEffect(() => {
     if (!address || !identity?.domain || !isOwner) return;
     fetch(
       `${
@@ -130,19 +141,28 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       }`
     )
       .then((response) => response.json())
+      .catch((error) => {
+        console.error("Error fetching renewal data:", error);
+      })
       .then((data) => {
-        if (!data.error && data.length > 0) {
-          // filter results to only show enabled renewals
+        let res = false;
+        if (data && !data.error && data.length > 0) {
           const filteredData = data.filter((elem: RenewalData) => elem.enabled);
           if (filteredData.length > 0) {
-            setIsAutoRenewalEnabled(true);
+            res = true;
             setAutoRenewalData(filteredData);
           } else {
-            setIsAutoRenewalEnabled(false);
+            res = false;
           }
-        } else {
-          setIsAutoRenewalEnabled(false);
         }
+        setIsAutoRenewalEnabled((prev) =>
+          prev.domain === identity.domain
+            ? {
+                domain: identity.domain as string,
+                enabled: res,
+              }
+            : prev
+        );
       });
   }, [address, tokenId, identity, isOwner]);
 
@@ -160,16 +180,14 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     });
     setTxHash(mainDomainData.transaction_hash);
     setIsTxModalOpen(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mainDomainData]);
 
   useEffect(() => {
-    if (isAutoRenewalEnabled) {
+    if (isAutoRenewalEnabled.enabled) {
       const disableCallData: Call[] = [];
       autoRenewalData.forEach((renewalData) => {
         disableCallData.push(
           autoRenewalCalls.disableRenewal(
-            // auto_renew_contract is defined only for altcoins, if undefined we use the ETH renewal contract address
             renewalData.auto_renew_contract ??
               (process.env.NEXT_PUBLIC_RENEWAL_CONTRACT as string),
             callDataEncodedDomain[1].toString()
@@ -178,14 +196,7 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
       });
       setDisableRenewalCalldata(disableCallData);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoRenewalData, isAutoRenewalEnabled]); // We don't add callDataEncodedDomain because it would create an infinite loop
-
-  const isExpired = useMemo(() => {
-    return identity?.domainExpiry
-      ? identity.domainExpiry < Math.floor(Date.now() / 1000)
-      : false;
-  }, [identity]);
+  }, [autoRenewalData, isAutoRenewalEnabled.enabled]);
 
   useEffect(() => {
     if (!disableRenewalData?.transaction_hash) return;
@@ -201,9 +212,20 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
     });
     setTxHash(disableRenewalData.transaction_hash);
     setIsTxModalOpen(true);
-    posthog?.capture("disable-ar"); // track events for analytics
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [disableRenewalData]); // We want to execute this effect only once, when the transaction is sent
+    posthog?.capture("disable-ar");
+  }, [disableRenewalData]);
+
+  const isExpired = useMemo(() => {
+    return identity?.domainExpiry
+      ? identity.domainExpiry < Math.floor(Date.now() / 1000)
+      : false;
+  }, [identity]);
+
+  // Determine whether to show change target button by default or in the "view more" section
+  // Show by default for subdomains (callDataEncodedDomain[0] !== "1") or when auto-renewal is enabled
+  const showChangeTargetButtonByDefault = !(
+    callDataEncodedDomain?.[0] === "1" && !isAutoRenewalEnabled.enabled
+  );
 
   return (
     <div className={styles.actionsContainer}>
@@ -275,20 +297,57 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                     />
                   ) : null}
 
-                  <ClickableAction
-                    title="CHANGE DOMAIN TARGET"
-                    description="Change target address"
-                    icon={
-                      <SignsIcon
-                        width="23"
-                        color={theme.palette.secondary.main}
-                      />
-                    }
-                    onClick={() => setIsAddressFormOpen(true)}
-                  />
+                  {showChangeTargetButtonByDefault && (
+                    <ClickableAction
+                      title="CHANGE DOMAIN TARGET"
+                      description="Change target address"
+                      icon={
+                        <SignsIcon
+                          width="23"
+                          color={theme.palette.secondary.main}
+                        />
+                      }
+                      onClick={() => setIsAddressFormOpen(true)}
+                    />
+                  )}
+
+                  {callDataEncodedDomain?.[0] === "1" &&
+                    !isAutoRenewalEnabled.enabled && (
+                      <div
+                        className="w-full mt-4 h-fit pt-4 pr-3 pb-4 pl-3 rounded-[16px] border-[1px] border-[#4545451A] bg-white shadow-[0px_2px_30px_0px_rgba(0,0,0,0.06)] flex flex-col items-center"
+                        aria-label="Inactive subscription information"
+                      >
+                        {/* Content for subscription */}
+                        <p
+                          className="text-base font-normal text-[#402d28] mb-0"
+                          style={{ fontFamily: "QuickZap" }}
+                        >
+                          YOUR SUBSCRIPTION IS INACTIVE
+                        </p>
+                        <p className="text-[#454545] text-xs mb-5">
+                          No upcoming payments
+                        </p>
+                        <Button onClick={() => router.push("/subscription")}>
+                          Activate subscription
+                        </Button>
+                      </div>
+                    )}
 
                   {viewMoreClicked ? (
                     <>
+                      {!showChangeTargetButtonByDefault && (
+                        <ClickableAction
+                          title="CHANGE DOMAIN TARGET"
+                          description="Change target address"
+                          icon={
+                            <SignsIcon
+                              width="23"
+                              color={theme.palette.secondary.main}
+                            />
+                          }
+                          onClick={() => setIsAddressFormOpen(true)}
+                        />
+                      )}
                       <ClickableAction
                         title="MOVE YOUR IDENTITY NFT"
                         description="Transfer your identity to another wallet"
@@ -326,28 +385,13 @@ const IdentityActions: FunctionComponent<IdentityActionsProps> = ({
                         />
                       )}
 
-                      {callDataEncodedDomain[0] === "1" &&
-                      !isAutoRenewalEnabled ? (
-                        <ClickableAction
-                          title="ENABLE SUBSCRIPTION"
-                          description={nextAutoRenew}
-                          style="primary"
-                          icon={<div className={styles.renewalIcon}>ON</div>}
-                          onClick={() => router.push("/subscription")}
-                        />
-                      ) : null}
-                      {callDataEncodedDomain[0] === "1" &&
-                      isAutoRenewalEnabled ? (
-                        <ClickableAction
-                          title="DISABLE SUBSCRIPTION"
-                          description={nextAutoRenew}
-                          icon={
-                            <div className={styles.renewalIconOff}>OFF</div>
-                          }
-                          onClick={() => disableRenewal()}
-                        />
-                      ) : null}
-
+                      {callDataEncodedDomain?.[0] === "1" &&
+                        isAutoRenewalEnabled.enabled && (
+                          <ActiveSubscriptionCard
+                            identity={identity}
+                            disableRenewal={disableRenewal}
+                          />
+                        )}
                       <p
                         onClick={() => setViewMoreClicked(false)}
                         className={styles.viewMore}

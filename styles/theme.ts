@@ -15,6 +15,7 @@ const theme = createTheme({
     },
     grey: {
       200: "#CDCCCC",
+      600: "#8C8989",
       800: "#454545",
     },
     error: {

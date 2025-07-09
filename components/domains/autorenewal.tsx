@@ -2,9 +2,7 @@ import React from "react";
 import { FunctionComponent, useEffect, useState } from "react";
 import Button from "../UI/button";
 import { useAccount, useSendTransaction } from "@starknet-react/core";
-import {
-  selectedDomainsToArray,
-} from "../../utils/stringService";
+import { selectedDomainsToArray } from "../../utils/stringService";
 import { applyRateToBigInt } from "../../utils/feltService";
 import { Call } from "starknet";
 import { posthog } from "posthog-js";
@@ -17,7 +15,6 @@ import {
   getTotalYearlyPrice,
 } from "../../utils/priceService";
 import autoRenewalCalls from "../../utils/callData/autoRenewalCalls";
-import BackButton from "../UI/backButton";
 import { useRouter } from "next/router";
 import { useNotificationManager } from "../../hooks/useNotificationManager";
 import {
@@ -30,7 +27,6 @@ import {
 } from "../../utils/constants";
 import RegisterCheckboxes from "../domains/registerCheckboxes";
 import { utils } from "starknetid.js";
-import RegisterConfirmationModal from "../UI/registerConfirmationModal";
 import ConnectButton from "../UI/connectButton";
 import {
   getAutoRenewAllowance,
@@ -44,7 +40,7 @@ import useNeedAllowances from "@/hooks/useNeedAllowances";
 import useNeedSubscription from "@/hooks/useNeedSubscription";
 import AutoRenewalDomainsBox from "./autoRenewalDomainsBox";
 import Notification from "../UI/notification";
-
+import CloseIcon from "../UI/iconsComponents/icons/closeIcon";
 
 const Subscription: FunctionComponent = () => {
   const [isSwissResident, setIsSwissResident] = useState<boolean>(false);
@@ -57,7 +53,6 @@ const Subscription: FunctionComponent = () => {
   const [displayedCurrencies, setDisplayedCurrencies] = useState<
     CurrencyType[]
   >([CurrencyType.ETH, CurrencyType.STRK]);
-  const [isTxModalOpen, setIsTxModalOpen] = useState(false);
   const [termsBox, setTermsBox] = useState<boolean>(true);
   const [renewalBox, setRenewalBox] = useState<boolean>(true);
   const [salt, setSalt] = useState<string | undefined>();
@@ -120,7 +115,6 @@ const Subscription: FunctionComponent = () => {
         });
     }
 
-
     addTransaction({
       timestamp: Date.now(),
       subtext: "Domain subscription",
@@ -131,7 +125,7 @@ const Subscription: FunctionComponent = () => {
         status: "pending",
       },
     });
-    setIsTxModalOpen(true);
+    router.push("/subscriptionConfirmation");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autorenewData]); // We only need renewData here because we don't want to send the metadata twice (we send it once the tx is sent)
 
@@ -314,91 +308,99 @@ const Subscription: FunctionComponent = () => {
   ]);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        <div className={styles.form}>
-          <BackButton onClick={() => router.back()} />
-          <div className="flex flex-col items-start gap-0 self-stretch">
-            <h3 className={styles.domain}>Enable subscription</h3>
-            <p className="py-2 text-left">
-              Enable subscription to ensure uninterrupted ownership and
-              benefits. Never worry about expiration dates again.
-            </p>
+    <>
+      <button
+        onClick={() => router.back()}
+        className="absolute top-4 right-10 md:right-20 z-10"
+        aria-label="Close"
+      >
+        <CloseIcon />
+      </button>
+      <div className={styles.container}>
+        <div className={styles.card}>
+          <div className={styles.form}>
+            <div className="flex flex-col items-center gap-0 self-stretch">
+              <h3 className={styles.domain}>Enable subscription</h3>
+              <p className="py-2 text-center text-[#8C8989] text-sm leading-6">
+                {" "}
+                Enable subscription to ensure uninterrupted ownership and
+                benefits.
+                <br /> Never worry about expiration dates again.
+              </p>
+            </div>
+            <div className="flex flex-col items-start gap-6 self-stretch">
+              {needMedadata ? (
+                <SwissForm
+                  isSwissResident={isSwissResident}
+                  onSwissResidentChange={() =>
+                    setIsSwissResident(!isSwissResident)
+                  }
+                />
+              ) : null}
+              <AutoRenewalDomainsBox
+                needSubscription={needSubscription}
+                isLoading={needSubscriptionLoading}
+                setSelectedDomains={setSelectedDomains}
+                selectedDomains={selectedDomains}
+              />
+            </div>
           </div>
-          <div className="flex flex-col items-start gap-6 self-stretch">
-            {needMedadata ? (
-              <SwissForm
-                isSwissResident={isSwissResident}
-                onSwissResidentChange={() =>
-                  setIsSwissResident(!isSwissResident)
+          <div className={styles.summary}>
+            <div className={styles.divider}></div>
+            <div className="flex flex-col items-start gap-2 self-stretch">
+              <p className={styles.legend}>Your subscription currency</p>
+              <ArCurrencyDropdown
+                displayedCurrency={displayedCurrencies as CurrencyType[]}
+                onCurrencySwitch={
+                  setDisplayedCurrencies as (type: CurrencyType[]) => void
                 }
               />
-            ) : null}
-            <AutoRenewalDomainsBox
-              needSubscription={needSubscription}
-              isLoading={needSubscriptionLoading}
-              helperText="Check the box of the domains you want to subscribe"
-              setSelectedDomains={setSelectedDomains}
-              selectedDomains={selectedDomains}
+            </div>
+            <RegisterCheckboxes
+              onChangeTermsBox={() => setTermsBox(!termsBox)}
+              termsBox={termsBox}
+              onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
+              renewalBox={false}
+              isArOnforced={true}
             />
-          </div>
-        </div>
-        <div className={styles.summary}>
-          <p className={styles.legend}>Your subscription currency</p>
-          <ArCurrencyDropdown
-            displayedCurrency={displayedCurrencies as CurrencyType[]}
-            onCurrencySwitch={
-              setDisplayedCurrencies as (type: CurrencyType[]) => void
-            }
-          />
-          <RegisterCheckboxes
-            onChangeTermsBox={() => setTermsBox(!termsBox)}
-            termsBox={termsBox}
-            onChangeRenewalBox={() => setRenewalBox(!renewalBox)}
-            renewalBox={false}
-            isArOnforced={true}
-          />
-          {address ? (
-            <Button
-              onClick={() =>
-                execute().then(() => {
-                  setDomainsMinting(selectedDomains);
-                })
-              }
-              disabled={
-                domainsMinting === selectedDomains ||
-                !address ||
-                !termsBox ||
-                !areDomainSelected(selectedDomains) ||
-                callData.length === 0 // Cover the case where there are no domains to subscribe
-              }
-            >
-              {!termsBox
-                ? "Please accept terms & policies"
-                : !areDomainSelected(selectedDomains)
-                  ? "Select a domain to subscribe"
-                  : callData.length === 0
+            {address ? (
+              <div className="max-w-full mx-auto">
+                <Button
+                  onClick={() =>
+                    execute().then(() => {
+                      setDomainsMinting(selectedDomains);
+                    })
+                  }
+                  disabled={
+                    domainsMinting === selectedDomains ||
+                    !address ||
+                    !termsBox ||
+                    !areDomainSelected(selectedDomains) ||
+                    callData.length === 0 // Cover the case where there are no domains to subscribe
+                  }
+                >
+                  {!termsBox
+                    ? "Please accept terms & policies"
+                    : !areDomainSelected(selectedDomains)
+                    ? "Select a domain to subscribe"
+                    : callData.length === 0
                     ? "You're already subscribed"
                     : "Enable subscription"}
-            </Button>
-          ) : (
-            <ConnectButton />
-          )}
+                </Button>
+              </div>
+            ) : (
+              <ConnectButton />
+            )}
+          </div>
         </div>
+        <Notification
+          visible={currencyError}
+          onClose={() => setCurrencyError(false)}
+        >
+          <p>Failed to get token quote. Please use ETH for now.</p>
+        </Notification>
       </div>
-      <img className={styles.image} src="/visuals/register.webp" />
-      <RegisterConfirmationModal
-        txHash={autorenewData?.transaction_hash}
-        isTxModalOpen={isTxModalOpen}
-        closeModal={() => window.history.back()}
-      />
-      <Notification
-        visible={currencyError}
-        onClose={() => setCurrencyError(false)}
-      >
-        <p>Failed to get token quote. Please use ETH for now.</p>
-      </Notification>
-    </div>
+    </>
   );
 };
 
