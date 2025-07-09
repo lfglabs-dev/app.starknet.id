@@ -1,8 +1,8 @@
 import { useConnect, useProvider } from "@starknet-react/core";
 import { useEffect, useState } from "react";
 import { wallet } from "starknet";
-import getStarknet, { StarknetWindowObject } from "get-starknet-core";
-import { AccountDeploymentData } from "starknet-types-07";
+import getStarknet, { StarknetWindowObject } from "@starknet-io/get-starknet-core";
+import { AccountDeploymentData } from "@starknet-io/types-js";
 
 export default function isStarknetDeployed(address?: string) {
   const { provider } = useProvider();
