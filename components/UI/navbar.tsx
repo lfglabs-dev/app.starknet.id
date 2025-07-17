@@ -1,5 +1,6 @@
 "use client"
 
+import React from "react";
 import Link from "next/link"
 import { useState, useEffect, type FunctionComponent, useContext } from "react"
 import { AiOutlineMenu } from "react-icons/ai"
