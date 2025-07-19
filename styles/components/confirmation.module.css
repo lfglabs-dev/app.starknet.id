@@ -10,6 +10,7 @@
   position: relative;
   z-index: 1;
   overflow: hidden;
+  padding-top: 55px;
 }
 
 .subtitle {
@@ -72,8 +73,8 @@
 
 .balloon {
   position: fixed;
-  top: 28%;
-  left: 18%;
+  top: 25%;
+  left: 20%;
   width: 115px;
   overflow: hidden;
   z-index: -1;
@@ -82,7 +83,7 @@
 .coconut {
   position: fixed;
   top: 52%;
-  right: 19%;
+  right: 21%;
   width: 55px;
   overflow: hidden;
   z-index: -1;
