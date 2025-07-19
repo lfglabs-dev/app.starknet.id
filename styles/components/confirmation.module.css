@@ -44,7 +44,14 @@
   cursor: pointer;
   font-size: 14px;
   line-height: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
+}
+
+.content {
+  line-height: 28px;
+  font-size: 16px;
+  padding-top: 10px;
+  padding-bottom: 7px;
 }
 
 .coconutLeft {
