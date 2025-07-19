@@ -158,7 +158,7 @@
 }
 
 .notExpiryText {
-  color: var(--black);
+  color: var(--dark-content);
   text-align: center;
 
   /* Body/micro/medium */
