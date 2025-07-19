@@ -40,7 +40,7 @@ const SubscriptionConfirmation: NextPage = () => {
         </div>
         <div>
           <div>Refer your friends to Starknet ID and earn crypto ! </div>
-          <div className="font-extrabold">
+          <div className="stronger">
             Earn up to 8$ per friends with your referral link below.
           </div>
         </div>
