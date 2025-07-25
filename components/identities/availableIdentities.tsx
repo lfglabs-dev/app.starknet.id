@@ -204,6 +204,13 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     selectedExpiredDomain,
   ]);
 
+    useEffect(() => {
+    // Check if we're on the main identities page (without specific tokenId)
+    if (router.pathname === "/identities" && !router.query.tokenId) {
+      setIsUpdatingPp(false)
+    }
+  }, [router.pathname, router.query.tokenId])
+
   const connectWallet = async (connector: Connector) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

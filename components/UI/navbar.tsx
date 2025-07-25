@@ -1,154 +1,162 @@
-"use client"
-
-import React from "react";
-import Link from "next/link"
-import { useState, useEffect, type FunctionComponent, useContext } from "react"
-import { AiOutlineMenu } from "react-icons/ai"
-import TwitterIcon from "./iconsComponents/icons/twitterIcon"
-import DiscordIcon from "./iconsComponents/icons/discordIcon"
-import GitHubIcon2 from "./iconsComponents/icons/githubIcon2"
-import styles from "../../styles/components/navbar.module.css"
-import connectStyles from "../../styles/components/walletConnect.module.css"
-import Button from "./button"
-import { useConnect, useAccount, useDisconnect, useSwitchChain } from "@starknet-react/core"
-import ModalMessage from "./modalMessage"
-import { useDisplayName } from "../../hooks/displayName.tsx"
-import { useMediaQuery } from "@mui/material"
-import { CircularProgress } from "@mui/material"
-import ModalWallet from "./modalWallet"
-import { useTheme } from "@mui/material/styles"
-import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon"
-import DesktopNav from "./desktopNav"
-import CloseFilledIcon from "./iconsComponents/icons/closeFilledIcon"
-import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider"
-import { StarknetChainId, type StarkProfile } from "starknetid.js"
-import type { Connector } from "starknetkit"
-import { getConnectorIcon, getLastConnected, getLastConnector, supportSwitchNetwork } from "@/utils/connectorWrapper"
-import WalletConnect from "./walletConnect"
-import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon"
-import errorLottie from "../../public/visuals/errorLottie.json"
-import { useRouter } from "next/router"
-import useIsWrongNetwork from "@/hooks/isWrongNetwork"
+import Link from "next/link";
+import React, {
+  useState,
+  useEffect,
+  FunctionComponent,
+  useContext,
+} from "react";
+import { AiOutlineMenu } from "react-icons/ai";
+import TwitterIcon from "./iconsComponents/icons/twitterIcon";
+import DiscordIcon from "./iconsComponents/icons/discordIcon";
+import GitHubIcon2 from "./iconsComponents/icons/githubIcon2";
+import styles from "../../styles/components/navbar.module.css";
+import connectStyles from "../../styles/components/walletConnect.module.css";
+import Button from "./button";
+import {
+  useConnect,
+  useAccount,
+  useDisconnect,
+  useSwitchChain,
+} from "@starknet-react/core";
+import ModalMessage from "./modalMessage";
+import { useDisplayName } from "../../hooks/displayName.tsx";
+import { useMediaQuery } from "@mui/material";
+import { CircularProgress } from "@mui/material";
+import ModalWallet from "./modalWallet";
+import { useTheme } from "@mui/material/styles";
+import ProfilFilledIcon from "./iconsComponents/icons/profilFilledIcon";
+import DesktopNav from "./desktopNav";
+import CloseFilledIcon from "./iconsComponents/icons/closeFilledIcon";
+import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
+import { StarknetChainId, StarkProfile } from "starknetid.js";
+import { Connector } from "starknetkit";
+import {
+  getConnectorIcon,
+  getLastConnected,
+  getLastConnector,
+  supportSwitchNetwork,
+} from "@/utils/connectorWrapper";
+import WalletConnect from "./walletConnect";
+import ArrowDownIcon from "./iconsComponents/icons/arrowDownIcon";
+import errorLottie from "../../public/visuals/errorLottie.json";
+import { useRouter } from "next/router";
+import useIsWrongNetwork from "@/hooks/isWrongNetwork";
 
 const Navbar: FunctionComponent = () => {
-  const theme = useTheme()
-  const [nav, setNav] = useState<boolean>(false)
-  const [desktopNav, setDesktopNav] = useState<boolean>(false)
-  const { address } = useAccount()
-  const [isConnected, setIsConnected] = useState<boolean>(false)
-  const { connectAsync, connectors, connector } = useConnect()
-  const { disconnect } = useDisconnect()
-  const isMobile = useMediaQuery("(max-width:425px)")
-  const domainOrAddress = useDisplayName(address ?? "", isMobile)
-  const network = process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet"
-  const [txLoading, setTxLoading] = useState<number>(0)
-  const [showWallet, setShowWallet] = useState<boolean>(false)
-  const [profile, setProfile] = useState<StarkProfile | undefined>(undefined)
-  const { starknetIdNavigator } = useContext(StarknetIdJsContext)
-  const { isWrongNetwork, setIsWrongNetwork } = useIsWrongNetwork()
-  const [showWalletConnectModal, setShowWalletConnectModal] = useState<boolean>(false)
-  const router = useRouter()
+  const theme = useTheme();
+  const [nav, setNav] = useState<boolean>(false);
+  const [desktopNav, setDesktopNav] = useState<boolean>(false);
+  const { address } = useAccount();
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const { connectAsync, connectors, connector } = useConnect();
+  const { disconnect } = useDisconnect();
+  const isMobile = useMediaQuery("(max-width:425px)");
+  const domainOrAddress = useDisplayName(address ?? "", isMobile);
+  const network =
+    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
+  const [txLoading, setTxLoading] = useState<number>(0);
+  const [showWallet, setShowWallet] = useState<boolean>(false);
+  const [profile, setProfile] = useState<StarkProfile | undefined>(undefined);
+  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
+  const { isWrongNetwork, setIsWrongNetwork } = useIsWrongNetwork();
+  const [showWalletConnectModal, setShowWalletConnectModal] =
+    useState<boolean>(false);
+  const router = useRouter();
   const { switchChainAsync } = useSwitchChain({
     params: {
-      chainId: network === "testnet" ? StarknetChainId.SN_SEPOLIA : StarknetChainId.SN_MAIN,
+      chainId:
+        network === "testnet"
+          ? StarknetChainId.SN_SEPOLIA
+          : StarknetChainId.SN_MAIN,
     },
-  })
+  });
 
   useEffect(() => {
-    const pageName = router.pathname.split("/")[1]
-    if (pageName !== "gift" && pageName !== "register") return
-    if (isMobile) setShowWalletConnectModal(true)
-  }, [isMobile, router.pathname])
+    const pageName = router.pathname.split("/")[1];
+    if (pageName !== "gift" && pageName !== "register") return;
+    if (isMobile) setShowWalletConnectModal(true);
+  }, [isMobile, router.pathname]);
 
-  const [lastConnector, setLastConnector] = useState<Connector | null>(null)
-
+  const [lastConnector, setLastConnector] = useState<Connector | null>(null);
   // could be replaced by a useProfileData from starknet-react when updated
   useEffect(() => {
     if (starknetIdNavigator !== null && address !== undefined) {
-      starknetIdNavigator.getProfileData(address).then(setProfile)
+      starknetIdNavigator.getProfileData(address).then(setProfile);
     }
-  }, [address, starknetIdNavigator])
+  }, [address, starknetIdNavigator]);
 
   const connectWallet = async (connector: Connector) => {
     try {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      await connectAsync({ connector })
-      localStorage.setItem("SID-connectedWallet", connector.id)
-      localStorage.setItem("SID-lastUsedConnector", connector.id)
+      await connectAsync({ connector });
+      localStorage.setItem("SID-connectedWallet", connector.id);
+      localStorage.setItem("SID-lastUsedConnector", connector.id);
     } catch (e) {
       // Restart the connection if there is an error except if the user has rejected the connection
-      console.error(e)
-      const error = e as Error
-      if (error.name !== "UserRejectedRequestError") setTimeout(() => connectWallet(connector), 200)
+      console.error(e);
+      const error = e as Error;
+      if (error.name !== "UserRejectedRequestError")
+        setTimeout(() => connectWallet(connector), 200);
     }
-  }
+  };
 
   // Autoconnect
   useEffect(() => {
     const connectToStarknet = async () => {
-      if (isConnected || isMobile) return
-      const connector = getLastConnected()
-      if (connector && connector.available()) await connectWallet(connector)
-    }
-    connectToStarknet()
+      if (isConnected || isMobile) return;
+      const connector = getLastConnected();
+      if (connector && connector.available()) await connectWallet(connector);
+    };
+    connectToStarknet();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectors]) // Disable to make sure it only runs once
+  }, [connectors]); // Disable to make sure it only runs once
 
   useEffect(() => {
-    address ? setIsConnected(true) : setIsConnected(false)
-  }, [address])
+    address ? setIsConnected(true) : setIsConnected(false);
+  }, [address]);
 
   useEffect(() => {
-    setLastConnector(getLastConnector())
-  }, [isConnected])
+    setLastConnector(getLastConnector());
+  }, [isConnected]);
 
   function disconnectByClick(): void {
-    disconnect()
-    setIsConnected(false)
-    setShowWallet(false)
-    localStorage.removeItem("SID-connectedWallet")
+    disconnect();
+    setIsConnected(false);
+    setShowWallet(false);
+    localStorage.removeItem("SID-connectedWallet");
   }
 
   function handleNav(): void {
-    setNav(!nav)
+    setNav(!nav);
   }
 
   function handleDesktopNav(): void {
-    setDesktopNav(!desktopNav)
+    setDesktopNav(!desktopNav);
   }
 
   function onTopButtonClick(): void {
     if (!isConnected) {
-      setShowWalletConnectModal(true)
+      setShowWalletConnectModal(true);
     } else {
-      setShowWallet(true)
+      setShowWallet(true);
     }
   }
 
   function topButtonText(): string | undefined {
-    const textToReturn = isConnected ? domainOrAddress : "connect wallet"
-    return textToReturn
+    const textToReturn = isConnected ? domainOrAddress : "connect wallet";
+
+    return textToReturn;
   }
 
   const switchNetwork = async () => {
     if (supportSwitchNetwork(connector)) {
-      const res = await switchChainAsync()
-      if (res) setIsWrongNetwork(false)
+      const res = await switchChainAsync();
+      if (res) setIsWrongNetwork(false);
     } else {
-      disconnectByClick()
+      disconnectByClick();
     }
-  }
-
-  // Fixed function to handle mobile navigation clicks
-  const handleMobileNavClick = (href: string) => {
-    // Close the mobile menu first
-    setNav(false)
-    // Small delay to ensure menu closes before navigation
-    setTimeout(() => {
-      router.push(href)
-    }, 100)
-  }
+  };
 
   return (
     <>
@@ -164,7 +172,9 @@ const Navbar: FunctionComponent = () => {
                 height={isMobile ? 40 : 90}
               />
               <p
-                className={`${styles.starknetId} text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${
+                className={`${
+                  styles.starknetId
+                } text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${
                   isMobile ? "hidden" : "block"
                 }`}
               >
@@ -183,7 +193,12 @@ const Navbar: FunctionComponent = () => {
               {/* <Link href="/jointhetribe">
                 <li className={styles.menuItem}>Join the tribe</li>
               </Link> */}
-              <div onClick={handleDesktopNav} className={styles.menuBurger} aria-expanded={nav} id="burger">
+              <div
+                onClick={handleDesktopNav}
+                className={styles.menuBurger}
+                aria-expanded={nav}
+                id="burger"
+              >
                 <AiOutlineMenu color={theme.palette.secondary.main} size={25} />
                 {desktopNav ? <DesktopNav close={handleDesktopNav} /> : null}
               </div>
@@ -193,8 +208,8 @@ const Navbar: FunctionComponent = () => {
                     isConnected
                       ? () => setShowWallet(true)
                       : lastConnector
-                        ? () => connectWallet(lastConnector)
-                        : () => setShowWalletConnectModal(true)
+                      ? () => connectWallet(lastConnector)
+                      : () => setShowWalletConnectModal(true)
                   }
                   variation={isConnected ? "white" : "primary"}
                   radius="8px"
@@ -216,13 +231,16 @@ const Navbar: FunctionComponent = () => {
                           <p className="mr-3">{domainOrAddress}</p>
                           {profile?.profilePicture ? (
                             <img
-                              src={profile?.profilePicture || "/placeholder.svg"}
+                              src={profile?.profilePicture}
                               width="32"
                               height="32"
                               className="rounded-full"
                             />
                           ) : (
-                            <ProfilFilledIcon width="24" color={theme.palette.secondary.main} />
+                            <ProfilFilledIcon
+                              width="24"
+                              color={theme.palette.secondary.main}
+                            />
                           )}
                         </div>
                       )}
@@ -231,7 +249,7 @@ const Navbar: FunctionComponent = () => {
                     <div className={connectStyles.connectBtn}>
                       {lastConnector ? (
                         <img
-                          src={getConnectorIcon(lastConnector.id) || "/placeholder.svg"}
+                          src={getConnectorIcon(lastConnector.id)}
                           className={connectStyles.btnIcon}
                         />
                       ) : null}
@@ -240,11 +258,15 @@ const Navbar: FunctionComponent = () => {
                         <div
                           className={connectStyles.arrowDown}
                           onClick={(e) => {
-                            setShowWalletConnectModal(true)
-                            e.stopPropagation()
+                            setShowWalletConnectModal(true);
+                            e.stopPropagation();
                           }}
                         >
-                          <ArrowDownIcon width="18" color="#FFF" className={connectStyles.arrowDownIcon} />
+                          <ArrowDownIcon
+                            width="18"
+                            color="#FFF"
+                            className={connectStyles.arrowDownIcon}
+                          />
                         </div>
                       ) : null}
                     </div>
@@ -253,15 +275,24 @@ const Navbar: FunctionComponent = () => {
               </div>
             </ul>
             <div onClick={handleNav} className="lg:hidden">
-              <AiOutlineMenu color={theme.palette.secondary.main} size={25} className="mr-3" />
+              <AiOutlineMenu
+                color={theme.palette.secondary.main}
+                size={25}
+                className="mr-3"
+              />
             </div>
           </div>
         </div>
-        <div className={nav ? "lg:hidden fixed left-0 top-0 w-full h-screen bg-black/10 z-10" : ""}>
+        <div
+          className={
+            nav
+              ? "lg:hidden fixed left-0 top-0 w-full h-screen bg-black/10 z-10"
+              : ""
+          }
+        >
           <div
-            className={`fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-[#FCFFFE] px-5 ease-in flex justify-between flex-col overflow-auto ${
-              nav ? styles.mobileNavbarShown : styles.mobileNavbarHidden
-            }`}
+            className={`fixed left-0 top-0 w-full sm:w-[60%] lg:w-[45%] h-screen bg-[#FCFFFE] px-5 ease-in flex justify-between flex-col overflow-auto
+              ${nav ? styles.mobileNavbarShown : styles.mobileNavbarHidden}`}
           >
             <div className="h-full flex flex-col">
               <div className={styles.mobileNavBarHeader}>
@@ -276,67 +307,77 @@ const Navbar: FunctionComponent = () => {
                     />
                   </Link>
                   <p
-                    className={`${styles.starknetId} text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${
+                    className={`${
+                      styles.starknetId
+                    } text-[#454545] text-lg  tracking-wide whitespace-nowrap text-nowrap leading-10 font-quickZap ${
                       isMobile ? "hidden" : "block"
                     }`}
                   >
                     StarkNet ID
                   </p>
                 </div>
-                <div onClick={handleNav} className="cursor-pointer p-1 rounded-full">
-                  <CloseFilledIcon width="32" color={theme.palette.background.default} />
+
+                <div
+                  onClick={handleNav}
+                  className="cursor-pointer p-1 rounded-full"
+                >
+                  <CloseFilledIcon
+                    width="32"
+                    color={theme.palette.background.default}
+                  />
                 </div>
               </div>
               <div className="py-4 my-auto text-center font-extrabold">
                 <div>
                   <ul className="uppercase">
-                    {/* Fixed mobile navigation links */}
-                    <li className={styles.menuItemSmall} onClick={() => handleMobileNavClick("/identities")}>
-                      My Identities
-                    </li>
-                    <li className={styles.menuItemSmall} onClick={() => handleMobileNavClick("/")}>
-                      Domains
-                    </li>
-                    <li className={styles.menuItemSmall} onClick={() => handleMobileNavClick("/pfpcollections")}>
-                      PFP collections
-                    </li>
-                    <li className={styles.menuItemSmall} onClick={() => handleMobileNavClick("/newsletter")}>
-                      Newsletter
-                    </li>
-                    <li
-                      className={styles.menuItemSmall}
-                      onClick={() => {
-                        setNav(false)
-                        window.open(process.env.NEXT_PUBLIC_STARKNET_ID as string, "_blank")
-                      }}
+                    <Link href="/identities">
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
+                        My Identities
+                      </li>
+                    </Link>
+                    <Link href="/">
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
+                        Domains
+                      </li>
+                    </Link>
+                    <Link href="/pfpcollections">
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
+                        PFP collections
+                      </li>
+                    </Link>
+                    <Link href="/newsletter">
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
+                        Newsletter
+                      </li>
+                    </Link>
+                    <Link
+                      href={`${process.env.NEXT_PUBLIC_STARKNET_ID as string}`}
+                      target="_blank"
                     >
-                      Website
-                    </li>
-                    <li
-                      className={styles.menuItemSmall}
-                      onClick={() => {
-                        setNav(false)
-                        window.open("https://docs.starknet.id/", "_blank")
-                      }}
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
+                        Website
+                      </li>
+                    </Link>
+                    <Link href="https://docs.starknet.id/" target="_blank">
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
+                        Documentation
+                      </li>
+                    </Link>
+                    <Link
+                      href={`${
+                        process.env.NEXT_PUBLIC_STARKNET_ID as string
+                      }/affiliates/individual-program`}
+                      target="_blank"
                     >
-                      Documentation
-                    </li>
-                    <li
-                      className={styles.menuItemSmall}
-                      onClick={() => {
-                        setNav(false)
-                        window.open(
-                          `${process.env.NEXT_PUBLIC_STARKNET_ID as string}/affiliates/individual-program`,
-                          "_blank",
-                        )
-                      }}
-                    >
-                      Affiliation
-                    </li>
+                      <li className={styles.menuItemSmall} onClick={handleNav}>
+                        Affiliation
+                      </li>
+                    </Link>
                   </ul>
                 </div>
               </div>
             </div>
+
             <div className="flex flex-col items-center my-4 w-full">
               <div className="text-background">
                 <Button className="!text-lg" onClick={onTopButtonClick}>
@@ -350,7 +391,10 @@ const Navbar: FunctionComponent = () => {
                   </Link>
                 </div>
                 <div className="rounded-full shadow-gray-400 p-4 cursor-pointer">
-                  <Link href="https://discord.com/invite/8uS2Mgcsza" target="_blank">
+                  <Link
+                    href="https://discord.com/invite/8uS2Mgcsza"
+                    target="_blank"
+                  >
                     <DiscordIcon width="28" color="#5865F2" />
                   </Link>
                 </div>
@@ -370,10 +414,15 @@ const Navbar: FunctionComponent = () => {
         closeModal={() => setIsWrongNetwork(false)}
         message={
           <div className="mt-3 flex flex-col items-center justify-center text-center mx-3">
-            <p>This app only supports Starknet {network}, you have to change your network to be able use it.</p>
+            <p>
+              This app only supports Starknet {network}, you have to change your
+              network to be able use it.
+            </p>
             <div className="mt-5">
               <Button onClick={() => switchNetwork()}>
-                {supportSwitchNetwork(connector) ? `Switch to ${network}` : "Disconnect"}
+                {supportSwitchNetwork(connector)
+                  ? `Switch to ${network}`
+                  : "Disconnect"}
               </Button>
             </div>
           </div>
@@ -394,7 +443,7 @@ const Navbar: FunctionComponent = () => {
         connectWallet={connectWallet}
       />
     </>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;
