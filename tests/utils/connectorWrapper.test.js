@@ -74,8 +74,8 @@ describe("getConnectorName function", () => {
     expect(getConnectorName("braavos")).toBe("Braavos");
     expect(getConnectorName("bitkeep")).toBe("Bitget Wallet");
     expect(getConnectorName("okxwallet")).toBe("OKX Wallet");
-    expect(getConnectorName("argentMobile")).toBe("Ready");
-    expect(getConnectorName("argentWebWallet")).toBe("Ready");
+    expect(getConnectorName("argentMobile")).toBe("Ready (mobile)");
+    expect(getConnectorName("argentWebWallet")).toBe("Email");
   });
 
   it("should return the ID itself if no wallet matches the ID", () => {
