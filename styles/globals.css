@@ -15,6 +15,10 @@
     font-family: "Poppins-Bold";
     src: url(../public/fonts/poppins/Poppins-Bold.ttf);
   }
+  @font-face {
+    font-family: "Poppins-ExtraBold";
+    src: url(../public/fonts/poppins/Poppins-ExtraBold.ttf);
+  }
 }
 
 :root {
@@ -115,6 +119,10 @@ a {
 
 strong {
   font-family: "Poppins-Bold";
+}
+
+.stronger {
+  font-family: "Poppins-ExtraBold";
 }
 
 .wallet-adapter-button {
