@@ -70,12 +70,12 @@ describe("getConnectorIcon function", () => {
 
 describe("getConnectorName function", () => {
   it("should return the name for a wallet when the ID matches", () => {
-    expect(getConnectorName("argentX")).toBe("Argent X");
+    expect(getConnectorName("argentX")).toBe("Ready");
     expect(getConnectorName("braavos")).toBe("Braavos");
     expect(getConnectorName("bitkeep")).toBe("Bitget Wallet");
     expect(getConnectorName("okxwallet")).toBe("OKX Wallet");
-    expect(getConnectorName("argentMobile")).toBe("Argent (mobile)");
-    expect(getConnectorName("argentWebWallet")).toBe("Email");
+    expect(getConnectorName("argentMobile")).toBe("Ready");
+    expect(getConnectorName("argentWebWallet")).toBe("Ready");
   });
 
   it("should return the ID itself if no wallet matches the ID", () => {

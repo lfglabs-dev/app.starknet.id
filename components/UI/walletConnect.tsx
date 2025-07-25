@@ -116,11 +116,11 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
                     <p>
                       {needInstall(connector, isAvailable) ? "Install " : ""}
                       {isInArgentMobileAppBrowser()
-                        ? "Argent"
+                        ? "Ready"
                         : getConnectorName(connector.id)}
                     </p>
                     {connector.id === "argentWebWallet" ? (
-                      <span className={styles.legend}>Powered by Argent</span>
+                      <span className={styles.legend}>Powered by Ready</span>
                     ) : null}
                   </div>
                   <div></div>

@@ -73,7 +73,7 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result and to be able to use the app.
 
-Lastly, connect your wallet (e.g ArgentX, ensure its in testnet mode if you want to use testnet)
+Lastly, connect your wallet (e.g Ready, ensure its in testnet mode if you want to use testnet)
 
 **NB:** You need to have mainnet token balance to pay for gas fees if you are using mainnet.
 
