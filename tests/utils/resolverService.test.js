@@ -48,7 +48,7 @@ describe("getResolverCondition", () => {
   it("returns correct message for xplorer domain kind", () => {
     const result = getResolverCondition("xplorer");
     expect(result).toBe(
-      "You can only transfer your subdomain to a Argent X wallet"
+      "You can only transfer your subdomain to a Ready wallet"
     );
   });
 

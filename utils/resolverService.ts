@@ -10,7 +10,7 @@ export function getResolverCondition(
   domainKind: DomainKind
 ): string | undefined {
   return domainKind === "xplorer"
-    ? "You can only transfer your subdomain to a Argent X wallet"
+    ? "You can only transfer your subdomain to a Ready wallet"
     : domainKind === "braavos"
     ? "You can only transfer your subdomain to a Braavos wallet"
     : undefined;

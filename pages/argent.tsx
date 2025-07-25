@@ -55,9 +55,9 @@ const Argent: NextPage = () => {
           <div className="mb-10">
             <ArgentIcon width="150px" color="#FF875B" />
           </div>
-          <div className={styles.title}>Connect Argent wallet</div>
+          <div className={styles.title}>Connect Ready wallet</div>
           <div className={styles.description}>
-            To access this discount, you need to connect an Argent wallet.
+            To access this discount, you need to connect a Ready wallet.
           </div>
           {!account ? (
             <div className="flex items-center mt-3">
