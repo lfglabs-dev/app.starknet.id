@@ -29,11 +29,21 @@ import IdentitiesSkeleton from "./skeletons/identitiesSkeleton";
 import { Tooltip } from "@mui/material";
 import { isIdentityExpired } from "../../utils/dateService";
 import DomainExpiredModal from "@/components/UI/domainExpiredModal";
+import { useIdentityRefresh } from "../../hooks/useIdentityRefresh";
 
 const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
   const router = useRouter();
   const { address } = useAccount();
-  //const tokenId: string = router.query.tokenId as string;
+  
+  let registerRefreshCallback: ((tokenId: string, callback: () => void) => void) | null = null;
+  let unregisterRefreshCallback: ((tokenId: string) => void) | null = null;
+  try {
+    const context = useIdentityRefresh();
+    registerRefreshCallback = context.registerRefreshCallback;
+    unregisterRefreshCallback = context.unregisterRefreshCallback;
+  } catch {
+    console.error("Unable to refresh user identity.");
+  }
   const [identity, setIdentity] = useState<Identity>();
   const [isIdentityADomain, setIsIdentityADomain] = useState<
     boolean | undefined
@@ -150,9 +160,19 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     if (tokenId) {
       refreshData();
       const timer = setInterval(() => refreshData(), 30e3);
-      return () => clearInterval(timer);
+      
+      if (registerRefreshCallback) {
+        registerRefreshCallback(tokenId, refreshData);
+      }
+      
+      return () => {
+        clearInterval(timer);
+        if (unregisterRefreshCallback) {
+          unregisterRefreshCallback(tokenId);
+        }
+      };
     }
-  }, [tokenId, refreshData]);
+  }, [tokenId, refreshData, registerRefreshCallback, unregisterRefreshCallback]);
 
   function mint() {
     execute();

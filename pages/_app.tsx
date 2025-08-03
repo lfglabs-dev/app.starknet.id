@@ -17,6 +17,7 @@ import posthog from "posthog-js";
 import AcceptCookies from "../components/legal/acceptCookies";
 import { Chain, sepolia, mainnet } from "@starknet-react/chains";
 import { getConnectors } from "@/utils/connectorWrapper";
+import { IdentityRefreshProvider } from "../components/providers/IdentityRefreshProvider";
 
 if (typeof window !== "undefined") {
   posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY as string, {
@@ -52,21 +53,23 @@ function MyApp({ Component, pageProps }: AppProps) {
         autoConnect
       >
         <StarknetIdJsProvider>
-          <ThemeProvider theme={theme}>
-            <Head>
-              <title>Starknet.id</title>
-              <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1"
-              />
-            </Head>
-            <Navbar />
-            <AcceptCookies message="We'd love to count you on our traffic stats to ensure you get the best experience on our website !" />
-            <PostHogProvider client={posthog}>
-              <Component {...pageProps} />
-            </PostHogProvider>
-          </ThemeProvider>
-          <Analytics />
+          <IdentityRefreshProvider>
+            <ThemeProvider theme={theme}>
+              <Head>
+                <title>Starknet.id</title>
+                <meta
+                  name="viewport"
+                  content="width=device-width, initial-scale=1"
+                />
+              </Head>
+              <Navbar />
+              <AcceptCookies message="We'd love to count you on our traffic stats to ensure you get the best experience on our website !" />
+              <PostHogProvider client={posthog}>
+                <Component {...pageProps} />
+              </PostHogProvider>
+            </ThemeProvider>
+            <Analytics />
+          </IdentityRefreshProvider>
         </StarknetIdJsProvider>
       </StarknetConfig>
     </>
