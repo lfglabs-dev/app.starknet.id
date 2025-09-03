@@ -11,8 +11,8 @@ export const formatDomainData = (
   selectedPfp?: StarkscanNftProps | undefined
 ) => {
   // Add pfp verifier data
-  let extended_verifier_data = [];
-  let verifier_data = [];
+  const extended_verifier_data = [];
+  const verifier_data = [];
   if (selectedPfp) {
     const nftData = selectedPfp;
     const nft_id = toUint256(nftData.token_id);
@@ -51,8 +51,8 @@ export const formatDomainData = (
 };
 
 export const storeDomainData = (tokenId: string, domainData: IdentityData) => {
-  let existingDataRaw = localStorage.getItem("SID-domainData");
-  let existingData: Record<string, IdentityData> = existingDataRaw
+  const existingDataRaw = localStorage.getItem("SID-domainData");
+  const existingData: Record<string, IdentityData> = existingDataRaw
     ? JSON.parse(existingDataRaw)
     : {};
 
@@ -62,8 +62,8 @@ export const storeDomainData = (tokenId: string, domainData: IdentityData) => {
 };
 
 export const getDomainData = (tokenId: string): IdentityData | undefined => {
-  let existingDataRaw = localStorage.getItem("SID-domainData");
-  let existingData: Record<string, IdentityData> = existingDataRaw
+  const existingDataRaw = localStorage.getItem("SID-domainData");
+  const existingData: Record<string, IdentityData> = existingDataRaw
     ? JSON.parse(existingDataRaw)
     : {};
   // if data exists & creation_date is less than 10mn ago, use it

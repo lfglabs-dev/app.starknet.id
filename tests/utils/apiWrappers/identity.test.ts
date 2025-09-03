@@ -1,5 +1,7 @@
 import { Identity } from "../../../utils/apiWrappers/identity";
-require("dotenv").config({ path: ".env.test" });
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.test" });
 
 describe("Should test Identity object", () => {
   it("Should return the right address", () => {

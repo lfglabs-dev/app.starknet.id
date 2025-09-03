@@ -21,7 +21,7 @@ export async function computeMetadataHash(
 ): Promise<string> {
   const message: string = [email, taxState, salt].join("|");
   const encoder = new TextEncoder();
-  const data: Uint8Array = encoder.encode(message);
+  const data = encoder.encode(message);
   const hashBuffer: ArrayBuffer = await crypto.subtle.digest("SHA-256", data);
 
   const hashArray: number[] = Array.from(new Uint8Array(hashBuffer));

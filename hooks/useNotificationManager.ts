@@ -50,7 +50,9 @@ export function useNotificationManager() {
               console.log("Error while fetching transaction receipt", err);
               updatedTransactions[index].data.txStatus = undefined;
             },
-            success: () => {},
+            success: () => {
+              // Success callback - intentionally empty
+            },
           });
           setNotifications(updatedTransactions);
         } else if (transactionReceipt.isSuccess()) {
