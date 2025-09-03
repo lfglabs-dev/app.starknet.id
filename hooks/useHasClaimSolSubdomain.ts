@@ -23,8 +23,8 @@ export default function useHasClaimSolSubdomain(
 
   useEffect(() => {
     if (!address || claimedError || !claimedData) return;
-    let domains: string[] = [];
-    (claimedData as BigInt[]).map((claimAddr, index) => {
+    const domains: string[] = [];
+    (claimedData as bigint[]).map((claimAddr, index) => {
       if (claimAddr.toString() === hexToDecimal(address)) {
         domains.push(snsDomains[index]);
       }
