@@ -38,9 +38,9 @@ const SubscriptionConfirmation: NextPage = () => {
             <span className={styles.highlight}>active!</span>
           </div>
         </div>
-        <div>
+        <div className={styles.content}>
           <div>Refer your friends to Starknet ID and earn crypto ! </div>
-          <div className="font-extrabold">
+          <div className="stronger">
             Earn up to 8$ per friends with your referral link below.
           </div>
         </div>
@@ -57,7 +57,7 @@ const SubscriptionConfirmation: NextPage = () => {
             ""
           )}/${minifyAddress(address)}`}
           {!copied ? (
-            <CopyIcon width="25" color={theme.palette.secondary.main} />
+            <CopyIcon width="20" color={theme.palette.secondary.main} />
           ) : (
             <DoneFilledIcon
               width="25"

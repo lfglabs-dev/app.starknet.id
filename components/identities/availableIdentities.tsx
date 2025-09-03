@@ -204,6 +204,27 @@ const AvailableIdentities = ({ tokenId }: { tokenId: string }) => {
     selectedExpiredDomain,
   ]);
 
+    useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      // If navigating to /identities (main page), reset the profile editing state
+      if (url === "/identities") {
+        setIsUpdatingPp(false)
+      }
+    }
+
+    router.events.on("routeChangeStart", handleRouteChange)
+
+    // Also check on mount if we're on the main identities page
+    if (router.asPath === "/identities") {
+      setIsUpdatingPp(false)
+    }
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChange)
+    }
+  }, [router])
+
+
   const connectWallet = async (connector: Connector) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

@@ -63,6 +63,7 @@
   padding-right: 4rem;
   height: 12vh;
   z-index: 12;
+  padding-top: 15px;
 }
 
 .mobileNavBarHeader {
