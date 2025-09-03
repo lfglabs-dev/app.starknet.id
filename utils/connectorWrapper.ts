@@ -7,6 +7,7 @@ import { constants } from "starknet";
 import { Connector as StarknetReactConnector } from "@starknet-react/core";
 import { getStarknet } from "@starknet-io/get-starknet-core";
 
+
 export const getConnectors = () => {
   // For Metamask
   getStarknet();
@@ -32,6 +33,7 @@ export const getConnectors = () => {
 
   return connectors;
 };
+
 
 export const sortConnectors = (connectors: Connector[]) => {
   const available: Connector[] = [];
@@ -99,6 +101,7 @@ export const supportSwitchNetwork = (connector?: StarknetReactConnector) => {
   return connector && connector.id === "argentX";
 };
 
+
 const wallets = [
   {
     id: "argentX",
@@ -111,18 +114,22 @@ const wallets = [
       edge: "https://microsoftedge.microsoft.com/addons/detail/argent-x/ajcicjlkibolbeaaagejfhnofogocgcj",
     },
     website: "https://www.argent.xyz/argent-x/",
+    available: true,
+    
   },
   {
     id: "argentMobile",
     name: "Ready (mobile)",
     icon: "data:image/svg+xml;base64,PHN2ZwogICAgd2lkdGg9IjMyIgogICAgaGVpZ2h0PSIzMiIKICAgIHZpZXdCb3g9IjAgMCAzMiAzMiIKICAgIGZpbGw9Im5vbmUiCiAgICB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgPgogICAgPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiByeD0iOCIgZmlsbD0iI0ZGODc1QiIgLz4KICAgIDxwYXRoCiAgICAgIGQ9Ik0xOC4zMTYgOEgxMy42ODRDMTMuNTI5MiA4IDEzLjQwNTIgOC4xMjcyIDEzLjQwMTggOC4yODUzMUMxMy4zMDgyIDEyLjcyOTYgMTEuMDMyMyAxNi45NDc3IDcuMTE1MTMgMTkuOTM1NUM2Ljk5MDc3IDIwLjAzMDMgNi45NjI0MyAyMC4yMDg1IDcuMDUzMzUgMjAuMzM2OUw5Ljc2MzQ5IDI0LjE2NTRDOS44NTU2OSAyNC4yOTU3IDEwLjAzNTMgMjQuMzI1MSAxMC4xNjE4IDI0LjIyOTRDMTIuNjExMSAyMi4zNzM0IDE0LjU4MTIgMjAuMTM0NSAxNiAxNy42NTI5QzE3LjQxODcgMjAuMTM0NSAxOS4zODkgMjIuMzczNCAyMS44MzgzIDI0LjIyOTRDMjEuOTY0NiAyNC4zMjUxIDIyLjE0NDMgMjQuMjk1NyAyMi4yMzY2IDI0LjE2NTRMMjQuOTQ2NyAyMC4zMzY5QzI1LjAzNzUgMjAuMjA4NSAyNS4wMDkyIDIwLjAzMDMgMjQuODg1IDE5LjkzNTVDMjAuOTY3NiAxNi45NDc3IDE4LjY5MTggMTIuNzI5NiAxOC41OTgzIDguMjg1MzFDMTguNTk0OSA4LjEyNzIgMTguNDcwOCA4IDE4LjMxNiA4WiIKICAgICAgZmlsbD0id2hpdGUiCiAgICAvPgogIDwvc3ZnPg==",
     website: "https://www.argent.xyz/argent-x/",
+    available: true,
   },
   {
     id: "argentWebWallet",
     name: "Email",
     icon: "data:image/svg+xml;base64,PHN2Zwp3aWR0aD0iMzIiCmhlaWdodD0iMjgiCnZpZXdCb3g9IjAgMCAxOCAxNCIKZmlsbD0ibm9uZSIKeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgo+CjxwYXRoCiAgZmlsbC1ydWxlPSJldmVub2RkIgogIGNsaXAtcnVsZT0iZXZlbm9kZCIKICBkPSJNMS41IDAuNDM3NUMwLjk4MjIzMyAwLjQzNzUgMC41NjI1IDAuODU3MjMzIDAuNTYyNSAxLjM3NVYxMkMwLjU2MjUgMTIuNDE0NCAwLjcyNzEyIDEyLjgxMTggMS4wMjAxNSAxMy4xMDQ5QzEuMzEzMTcgMTMuMzk3OSAxLjcxMDYgMTMuNTYyNSAyLjEyNSAxMy41NjI1SDE1Ljg3NUMxNi4yODk0IDEzLjU2MjUgMTYuNjg2OCAxMy4zOTc5IDE2Ljk3OTkgMTMuMTA0OUMxNy4yNzI5IDEyLjgxMTggMTcuNDM3NSAxMi40MTQ0IDE3LjQzNzUgMTJWMS4zNzVDMTcuNDM3NSAwLjg1NzIzMyAxNy4wMTc4IDAuNDM3NSAxNi41IDAuNDM3NUgxLjVaTTIuNDM3NSAzLjUwNjE2VjExLjY4NzVIMTUuNTYyNVYzLjUwNjE2TDkuNjMzNDkgOC45NDEwOEM5LjI3NTA3IDkuMjY5NjQgOC43MjQ5MyA5LjI2OTY0IDguMzY2NTEgOC45NDEwOEwyLjQzNzUgMy41MDYxNlpNMTQuMDg5OSAyLjMxMjVIMy45MTAxM0w5IDYuOTc4MjJMMTQuMDg5OSAyLjMxMjVaIgogIGZpbGw9ImN1cnJlbnRDb2xvciIKLz4KPC9zdmc+",
     website: "https://www.argent.xyz/argent-x/",
+    available: true,
   },
   {
     id: "braavos",
@@ -135,6 +142,7 @@ const wallets = [
       edge: "https://microsoftedge.microsoft.com/addons/detail/braavos-wallet/hkkpjehhcnhgefhbdcgfkeegglpjchdc",
     },
     website: "https://braavos.app/",
+    available: true,
   },
   {
     id: "bitkeep",
@@ -145,6 +153,7 @@ const wallets = [
         "https://chromewebstore.google.com/detail/bitget-wallet-formerly-bi/jiidiaalihmmhddjgbnbgdfflelocpak",
     },
     website: "https://web3.bitget.com/",
+    available: false,
   },
   {
     id: "okxwallet",
@@ -158,6 +167,7 @@ const wallets = [
       safari: "https://apps.apple.com/us/app/okx-wallet/id6463797825",
     },
     website: "https://www.okx.com/",
+    available: false,
   },
   {
     id: "keplr",
@@ -171,6 +181,7 @@ const wallets = [
       edge: "https://microsoftedge.microsoft.com/addons/detail/keplr/ocodgmmffbkkeecmadcijjhkmeohinei",
     },
     website: "https://www.keplr.app/",
+    available: true,
   },
   {
     id: "metamask",
