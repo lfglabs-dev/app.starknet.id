@@ -3,11 +3,12 @@ import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
 import { hexToDecimal } from "../utils/feltService";
-import { NotificationType } from "../utils/constants";
+import { NotificationType, TransactionType } from "../utils/constants";
 import {
   RejectedTransactionReceiptResponse,
   RevertedTransactionReceiptResponse,
 } from "starknet";
+import { useIdentityRefresh } from "./useIdentityRefresh";
 
 const notificationsAtom = atomWithStorage<SIDNotification<NotificationData>[]>(
   "userNotifications_SID",
@@ -18,6 +19,14 @@ export function useNotificationManager() {
   const { provider } = useProvider();
   const { address } = useAccount();
   const [notifications, setNotifications] = useAtom(notificationsAtom);
+  
+  let refreshIdentity: ((tokenId: string) => void) | null = null;
+  try {
+    const context = useIdentityRefresh();
+    refreshIdentity = context.refreshIdentity;
+  } catch {
+    
+  }
 
   useEffect(() => {
     const checkTransactionStatus = async (
@@ -60,6 +69,21 @@ export function useNotificationManager() {
             transactionReceipt.finality_status;
           updatedTransactions[index].data.status = "success";
           setNotifications(updatedTransactions);
+
+          const verificationTypes = [
+            TransactionType.VERIFIER_GITHUB,
+            TransactionType.VERIFIER_TWITTER,
+            TransactionType.VERIFIER_DISCORD,
+            TransactionType.VERIFIER_POP
+          ];
+          
+          if (verificationTypes.includes(transaction.type) && refreshIdentity) {
+            const subtextMatch = notification.subtext?.match(/Starknet ID #(\d+)/);
+            if (subtextMatch) {
+              const tokenId = subtextMatch[1];
+              setTimeout(() => refreshIdentity(tokenId), 1000);
+            }
+          }
         }
       }
     };
@@ -69,7 +93,7 @@ export function useNotificationManager() {
     }, 5000);
 
     return () => clearInterval(intervalId);
-  }, [notifications, address, provider, setNotifications]);
+  }, [notifications, address, provider, setNotifications, refreshIdentity]);
 
   const filteredNotifications = address
     ? notifications.filter(
