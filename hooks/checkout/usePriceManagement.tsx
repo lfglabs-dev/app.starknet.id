@@ -183,6 +183,12 @@ export const usePriceManagement = (
       const tokenBalance = tokenBalances[displayedCurrency];
       if (!tokenBalance) return;
       const _price = formState.isUpselled ? discountedPrice : price;
+      console.log(
+        "tokenBalance",
+        BigInt(tokenBalance),
+        "price",
+        BigInt(_price)
+      );
       if (tokenBalance && BigInt(tokenBalance) >= BigInt(_price))
         setInvalidBalance(false);
       else setInvalidBalance(true);

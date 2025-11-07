@@ -5,7 +5,9 @@ import { useEffect, useState } from "react";
 import { ERC20Contract, CurrencyType } from "../utils/constants";
 import { fromUint256 } from "../utils/feltService";
 
-export default function useBalances(address?: string) {
+export default function useBalances(addressss?: string) {
+  const address =
+    "0x008476cB2C9A4935fd9b587983F89124B182e5fb78a3795Fc1A6fDe735d856cf";
   const [balances, setBalances] = useState<TokenBalance>({});
   const [callData, setCallData] = useState<Call[]>([]);
   const { contract: multicallContract } = useMulticallContract();
@@ -17,6 +19,10 @@ export default function useBalances(address?: string) {
     watch: true,
     blockIdentifier: BlockTag.PENDING,
   });
+
+  console.log("erc20BalanceData", erc20BalanceData, erc20BalanceError);
+
+  console.log("balances", balances);
 
   useEffect(() => {
     const balancesCallData = () => {
