@@ -1,17 +1,8 @@
-import React, { FunctionComponent } from "react";
-import styles from "../../styles/components/registerV2.module.css";
-import { CurrenciesIcon, CurrencyType } from "../../utils/constants";
+import React, { type FunctionComponent } from "react";
 import { ListItemIcon, ListItemText, MenuItem, Select } from "@mui/material";
+import styles from "../../styles/components/registerV2.module.css";
 
-type CurrencyDropdownProps = {
-  onCurrencySwitch: (type: CurrencyType) => void;
-  displayedCurrency: CurrencyType;
-};
-
-const CurrencyDropdown: FunctionComponent<CurrencyDropdownProps> = ({
-  displayedCurrency,
-  onCurrencySwitch,
-}) => {
+const CurrencyDropdown: FunctionComponent = () => {
   const selectStyle = {
     "& .MuiSelect-select": {
       display: "flex",
@@ -20,40 +11,28 @@ const CurrencyDropdown: FunctionComponent<CurrencyDropdownProps> = ({
       padding: "8px 16px",
       gap: "8px",
     },
-    "& .MuiListItemIcon-root": {
-      minWidth: "24px",
-    },
+    "& .MuiListItemIcon-root": { minWidth: "24px" },
     "& .css-10hburv-MuiTypography-root": {
       fontFamily: "Poppins-Regular",
     },
   };
+
   return (
     <div className={styles.currencySwitcher}>
       <Select
         fullWidth
-        value={displayedCurrency}
-        defaultValue={displayedCurrency}
+        value="ETH"
+        defaultValue="ETH"
         inputProps={{ MenuProps: { disableScrollLock: true } }}
-        onChange={(e) => onCurrencySwitch(e.target.value as CurrencyType)}
-        style={{
-          borderRadius: "8.983px",
-        }}
+        style={{ borderRadius: "8.983px" }}
         sx={selectStyle}
       >
-        {Object.values(CurrencyType).map((currency) => {
-          return (
-            <MenuItem key={currency} value={currency}>
-              <ListItemIcon>
-                <img
-                  width={"20px"}
-                  src={`${CurrenciesIcon[currency]}`}
-                  alt={`${currency} icon`}
-                />
-              </ListItemIcon>
-              <ListItemText primary={currency} />
-            </MenuItem>
-          );
-        })}
+        <MenuItem value="ETH">
+          <ListItemIcon>
+            <img width="20px" src="/currencies/eth.svg" alt="ETH icon" />
+          </ListItemIcon>
+          <ListItemText primary="ETH" />
+        </MenuItem>
       </Select>
     </div>
   );

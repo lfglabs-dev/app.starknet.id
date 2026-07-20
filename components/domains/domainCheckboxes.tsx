@@ -1,32 +1,29 @@
-import React, { FunctionComponent } from "react";
-import styles from "../../styles/components/registerV2.module.css";
+import type { Dispatch, FunctionComponent, SetStateAction } from "react";
 import { Checkbox, Skeleton } from "@mui/material";
-import CustomCheckmarkIcon from "../UI/iconsComponents/icons/customCheckMark";
+import CustomCheckmarkIcon from "@/components/UI/iconsComponents/icons/customCheckMark";
+import styles from "@/styles/components/registerV2.module.css";
 
-type DomainCheckboxes = {
-  helperText?: string;
-  setSelectedDomains: React.Dispatch<
-    React.SetStateAction<Record<string, boolean> | undefined>
-  >;
+type DomainCheckboxesProps = {
+  setSelectedDomains: Dispatch<SetStateAction<Record<string, boolean>>>;
   isLoading: boolean;
   domains: string[];
-  selectedDomains?: Record<string, boolean>;
+  selectedDomains: Record<string, boolean>;
   noDomainText?: string;
 };
 
-const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
+const DomainCheckboxes: FunctionComponent<DomainCheckboxesProps> = ({
   setSelectedDomains,
   selectedDomains,
   isLoading,
   domains,
   noDomainText = "You don't have any domain to renew or you're not connected to your wallet",
 }) => {
-  const handleCheckboxChange = (domain: string) => {
-    setSelectedDomains((prevState) => ({
-      ...prevState,
-      [domain]: !prevState?.[domain],
+  function handleCheckboxChange(domain: string): void {
+    setSelectedDomains((current) => ({
+      ...current,
+      [domain]: !current[domain],
     }));
-  };
+  }
 
   return isLoading ? (
     <Skeleton variant="rectangular" width="100%" height="80px" />
@@ -42,7 +39,7 @@ const DomainCheckboxes: FunctionComponent<DomainCheckboxes> = ({
           domains.map((domain) => (
             <div key={domain} className="flex items-center gap-2">
               <Checkbox
-                checked={Boolean(selectedDomains?.[domain])}
+                checked={Boolean(selectedDomains[domain])}
                 onChange={() => handleCheckboxChange(domain)}
                 sx={{ padding: 0 }}
                 checkedIcon={<CustomCheckmarkIcon />}

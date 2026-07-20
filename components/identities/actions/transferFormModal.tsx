@@ -1,91 +1,90 @@
-import React, {
-  FunctionComponent,
-  useState,
-  useEffect,
-  useContext,
-} from "react";
+import React, { type FunctionComponent, useEffect, useState } from "react";
 import { InputAdornment } from "@mui/material";
-import { useSendTransaction } from "@starknet-react/core";
-import { useRouter } from "next/router";
-import { isHexString, minifyAddress } from "../../../utils/stringService";
-import { utils } from "starknetid.js";
-import { StarknetIdJsContext } from "../../../context/StarknetIdJsProvider";
-import { useNotificationManager } from "../../../hooks/useNotificationManager";
-import { NotificationType, TransactionType } from "../../../utils/constants";
-import { Identity } from "../../../utils/apiWrappers/identity";
-import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
+import { useAccount } from "@starknet-react/core";
 import TransactionModal from "@/components/UI/transactionModal";
 import AdvancedTextField from "@/components/UI/advancedTextField";
+import { usePreparedTransaction } from "@/hooks/useTransactions";
+import {
+  readDomainId,
+  readOwnerOf,
+  readUserData,
+  STARKNET_FIELD,
+} from "@/lib/chain/contracts";
+import { normalizeDomain } from "@/lib/chain/domain";
+import { normalizeAddress } from "@/lib/core/address";
+import { prepareTransferIntent } from "@/lib/transactions/intents";
+import { shortAddress } from "@/lib/ui/identity";
 
 type TransferFormModalProps = {
-  identity: Identity | undefined;
+  tokenId: string;
   handleClose: () => void;
   isModalOpen: boolean;
 };
 
 const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
-  identity,
+  tokenId,
   handleClose,
   isModalOpen,
 }) => {
-  const [targetAddress, setTargetAddress] = useState<string>("");
-  const router = useRouter();
-  const { tokenId } = router.query;
-  const { addTransaction } = useNotificationManager();
-  const [addressInput, setAddressInput] = useState<string>("");
-  const { starknetIdNavigator } = useContext(StarknetIdJsContext);
+  const { address } = useAccount();
+  const submitPrepared = usePreparedTransaction();
+  const [targetAddress, setTargetAddress] = useState("");
+  const [addressInput, setAddressInput] = useState("");
   const [isTxSent, setIsTxSent] = useState(false);
   const [isSendingTx, setIsSendingTx] = useState(false);
-
-  const { sendAsync: transfer_identity_and_set_domain, data: transferData } =
-    useSendTransaction({
-      calls: identity
-        ? identityChangeCalls.transfer(identity, targetAddress)
-        : [],
-    });
+  const [transactionHash, setTransactionHash] = useState<string>();
 
   useEffect(() => {
-    if (!transferData?.transaction_hash) return;
-    addTransaction({
-      timestamp: Date.now(),
-      subtext: `Identity ${tokenId} transferred`,
-      type: NotificationType.TRANSACTION,
-      data: {
-        type: TransactionType.TRANSFER_IDENTITY,
-        hash: transferData.transaction_hash,
-        status: "pending",
-      },
-    });
-    setIsTxSent(true);
-    setIsSendingTx(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transferData]);
-
-  useEffect(() => {
-    if (isHexString(addressInput)) {
-      setTargetAddress(addressInput);
-    } else if (utils.isStarkDomain(addressInput)) {
-      starknetIdNavigator?.getAddressFromStarkName(addressInput).then((res) => {
-        if (!res || res === "0x0") setTargetAddress("");
-        else setTargetAddress(res);
-      });
-    } else {
-      setTargetAddress("");
+    let cancelled = false;
+    const value = addressInput.trim();
+    setTargetAddress("");
+    if (!value) return;
+    try {
+      setTargetAddress(normalizeAddress(value));
+      return;
+    } catch {
+      // Domain destinations resolve through the mainnet naming contracts.
     }
-  }, [addressInput, starknetIdNavigator]);
+    if (!value.toLowerCase().endsWith(".stark")) return;
+    const timer = window.setTimeout(() => {
+      void (async () => {
+        try {
+          const id = await readDomainId(normalizeDomain(value));
+          if (id === "0") return;
+          const [target, owner] = await Promise.all([
+            readUserData(id, STARKNET_FIELD),
+            readOwnerOf(id),
+          ]);
+          if (!cancelled && owner) {
+            setTargetAddress(
+              BigInt(target) === 0n ? owner : normalizeAddress(target)
+            );
+          }
+        } catch {
+          if (!cancelled) setTargetAddress("");
+        }
+      })();
+    }, 250);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [addressInput]);
 
   async function transferIdentityAndSetDomain(): Promise<void> {
+    if (!address) return;
     try {
       setIsSendingTx(true);
-      await transfer_identity_and_set_domain();
+      const hash = await submitPrepared(() =>
+        prepareTransferIntent(address, tokenId, targetAddress)
+      );
+      setTransactionHash(hash);
+      setIsTxSent(true);
+      setIsSendingTx(false);
     } catch (error) {
       setIsSendingTx(false);
       console.error("Failed to transfer identity and set domain:", error);
     }
-  }
-
-  function changeAddress(value: string): void {
-    setAddressInput(value);
   }
 
   const modalContent = (
@@ -99,14 +98,14 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
         <AdvancedTextField
           label="To Address / SNS"
           value={addressInput}
-          onChange={(e) => changeAddress(e.target.value)}
+          onChange={(event) => setAddressInput(event.target.value)}
           color="secondary"
           required
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                {targetAddress && utils.isStarkDomain(addressInput)
-                  ? `(${minifyAddress(targetAddress)})`
+                {targetAddress && addressInput.toLowerCase().endsWith(".stark")
+                  ? `(${shortAddress(targetAddress)})`
                   : ""}
               </InputAdornment>
             ),
@@ -126,8 +125,8 @@ const TransferFormModal: FunctionComponent<TransferFormModalProps> = ({
       isSendingTx={isSendingTx}
       setIsSendingTx={setIsSendingTx}
       setIsTxSent={setIsTxSent}
-      sendTransaction={transferIdentityAndSetDomain}
-      transactionHash={transferData?.transaction_hash}
+      sendTransaction={() => void transferIdentityAndSetDomain()}
+      transactionHash={transactionHash}
       isButtonDisabled={!targetAddress}
       buttonCta="Send domain"
     />

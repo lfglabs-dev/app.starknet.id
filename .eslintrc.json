@@ -1,26 +1,15 @@
 {
   "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended",
+    "next/core-web-vitals",
     "plugin:@typescript-eslint/recommended"
   ],
-  "plugins": [
-    // ... other plugins
-    "react-hooks"
-  ],
   "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint", "react-hooks"],
   "rules": {
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
     "@next/next/no-img-element": "off",
-    "react-hooks/exhaustive-deps": "warn" // or "error" if you want it to be treated as an error
+    "react-hooks/exhaustive-deps": "error"
   },
-  "overrides": [
-    {
-      "files": ["**/*.test.js"],
-      "rules": {
-        "no-undef": "off"
-        // ... other rules
-      }
-    }
-  ],
   "root": true
 }

@@ -1,16 +1,9 @@
-import React, { FunctionComponent } from "react";
+import React, { type FunctionComponent } from "react";
 import { useRouter } from "next/router";
 import { Modal, useMediaQuery } from "@mui/material";
-import { Connector } from "starknetkit";
-import styles from "../../styles/components/walletConnect.module.css";
+import type { Connector } from "@starknet-react/core";
 import CloseIcon from "./iconsComponents/icons/closeIcon";
-import {
-  getConnectorDiscovery,
-  getConnectorIcon,
-  getConnectorName,
-  sortConnectors,
-} from "@/utils/connectorWrapper";
-import { isInArgentMobileAppBrowser } from "starknetkit/argentMobile";
+import styles from "../../styles/components/walletConnect.module.css";
 
 type WalletConnectProps = {
   closeModal: () => void;
@@ -26,47 +19,17 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
   connectWallet,
 }) => {
   const router = useRouter();
-  const connect = (connector: Connector) => {
-    connectWallet(connector);
-    closeModal();
-  };
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const braavos = connectors.find((connector) => connector.id === "braavos");
 
-  const filterConnectors = (connectors: Connector[]) => {
-    if (isInArgentMobileAppBrowser()) {
-      // Filter connectors and remove duplicates
-      const uniqueConnectors = connectors
-        .filter(
-          (connector) =>
-            connector.id === "argentMobile" || connector.id === "argentX"
-        )
-        .reduce((map, connector) => map.set(connector.id, connector), new Map())
-        .values();
-
-      return Array.from(uniqueConnectors);
-    }
-    if (!isMobile) return connectors;
-    return connectors.filter((connector) => connector.id !== "argentX");
-  };
-
-  const openBraavosMobile = () => {
-    window.open(`braavos://dapp/app.starknet.id${router.pathname}`);
-  };
-
-  const needInstall = (connector: Connector, isAvailable: boolean) => {
-    if (connector.id === "braavos" && isMobile) {
-      return false;
-    }
-    return !isAvailable;
-  };
-
-  const tryConnect = (connector: Connector, isAvailable: boolean) => {
-    if (isAvailable) {
-      connect(connector);
-    } else if (isMobile && connector.id === "braavos") {
-      openBraavosMobile();
+  const tryConnect = () => {
+    if (braavos?.available()) {
+      connectWallet(braavos);
+      closeModal();
+    } else if (isMobile) {
+      window.open(`braavos://dapp/app.starknet.id${router.pathname}`);
     } else {
-      window.open(getConnectorDiscovery(connector.id));
+      window.open("https://braavos.app/", "_blank", "noopener,noreferrer");
     }
   };
 
@@ -95,39 +58,17 @@ const WalletConnect: FunctionComponent<WalletConnectProps> = ({
             <span>Connect to</span>
             <p>Starknet ID</p>
           </div>
-          {sortConnectors(filterConnectors(connectors)).map(
-            (connector: Connector) => {
-              const isAvailable = connector.available();
-              return (
-                <div
-                  key={connector.id}
-                  className={styles.wallet}
-                  onClick={() => tryConnect(connector, isAvailable)}
-                >
-                  <img
-                    src={
-                      isInArgentMobileAppBrowser()
-                        ? getConnectorIcon("argentMobile")
-                        : getConnectorIcon(connector.id)
-                    }
-                    className={styles.walletIcon}
-                  />
-                  <div className={styles.walletName}>
-                    <p>
-                      {needInstall(connector, isAvailable) ? "Install " : ""}
-                      {isInArgentMobileAppBrowser()
-                        ? "Ready"
-                        : getConnectorName(connector.id)}
-                    </p>
-                    {connector.id === "argentWebWallet" ? (
-                      <span className={styles.legend}>Powered by Ready</span>
-                    ) : null}
-                  </div>
-                  <div></div>
-                </div>
-              );
-            }
-          )}
+          <div className={styles.wallet} onClick={tryConnect}>
+            <img
+              src="/braavos/braavosLogo.svg"
+              className={styles.walletIcon}
+              alt="Braavos logo"
+            />
+            <div className={styles.walletName}>
+              <p>{braavos?.available() || isMobile ? "" : "Install "}Braavos</p>
+            </div>
+            <div></div>
+          </div>
         </div>
       </div>
     </Modal>

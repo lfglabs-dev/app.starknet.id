@@ -1,46 +1,34 @@
-import React, { FunctionComponent, useState } from "react";
-import styles from "../../styles/components/identityCard.module.css";
-import {
-  convertNumberToFixedLengthString,
-  minifyAddress,
-  shortenDomain,
-} from "../../utils/stringService";
-import SocialMediaActions from "./actions/socialmediaActions";
+import React, { type FunctionComponent } from "react";
 import { Skeleton, Tooltip, useMediaQuery } from "@mui/material";
+import { useRouter } from "next/router";
+import styles from "../../styles/components/identityCard.module.css";
 import CalendarIcon from "../UI/iconsComponents/icons/calendarValidateIcon";
 import theme from "../../styles/theme";
-import { timestampToReadableDate } from "../../utils/dateService";
-import EditIcon from "../UI/iconsComponents/icons/editIcon";
-import { debounce } from "../../utils/debounceService";
-import { Identity } from "../../utils/apiWrappers/identity";
 import CopyContent from "../UI/copyContent";
-import AddEvmAction from "./actions/addEvmAction";
-import { useSearchParams } from "next/navigation";
+import { IdentityAvatar } from "@/components/IdentityAvatar";
+import type { IdentityView } from "@/lib/ui/identity";
+import {
+  identitySerial,
+  readableDate,
+  shortAddress,
+  shortDomain,
+} from "@/lib/ui/identity";
 
 type IdentityCardProps = {
-  identity?: Identity;
+  identity?: IdentityView;
   tokenId: string;
-  isOwner: boolean;
-  onPPClick?: () => void;
-  ppImageUrl: string;
 };
 
 const IdentityCard: FunctionComponent<IdentityCardProps> = ({
   tokenId,
   identity,
-  isOwner,
-  onPPClick,
-  ppImageUrl,
 }) => {
   const responsiveDomainOrId = identity?.domain
-    ? shortenDomain(identity.domain, 25)
+    ? shortDomain(identity.domain, 25)
     : `SID: ${tokenId}`;
-  const [isHovered, setIsHovered] = useState(false);
   const isMobile = useMediaQuery("(max-width:1124px)");
-  const handleMouseEnter = debounce(() => setIsHovered(true), 50);
-  const handleMouseLeave = debounce(() => setIsHovered(false), 50);
-  const searchParams = useSearchParams();
-  const minting = searchParams.get("minting") === "true";
+  const router = useRouter();
+  const minting = router.query.minting === "true";
   const isDomainExpired = identity?.domainExpiry
     ? new Date(identity.domainExpiry * 1000) < new Date()
     : false;
@@ -50,77 +38,36 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
       <div className={styles.container}>
         <div className="flex flex-col flex-wrap items-center justify-center gap-3 my-2 lg:mt-10 lg:justify-between sm:text-center sm:gap-5 lg:flex-row sm:flex-col">
           <div className="my-2 text-center">
-            <div
-              className={styles.pfpSection}
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
-              {isHovered && isOwner && !isMobile ? (
-                <div
-                  className={styles.pfp}
-                  onClick={() => onPPClick && onPPClick()}
-                >
-                  <EditIcon width="28" color={theme.palette.secondary.main} />
-                  <p>Edit your NFT</p>
-                </div>
-              ) : (
-                <>
-                  {ppImageUrl ? (
-                    <img
-                      src={ppImageUrl}
-                      height={170}
-                      width={170}
-                      alt="identicon"
-                      className={styles.pfpImg}
-                    />
-                  ) : (
-                    <Skeleton
-                      variant="rectangular"
-                      width={170}
-                      height={170}
-                      className={styles.pfpImg}
-                    />
-                  )}
-                  {isOwner && isMobile ? (
-                    <div
-                      className={styles.mobilePfp}
-                      onClick={() => onPPClick && onPPClick()}
-                    >
-                      <EditIcon
-                        width="16"
-                        color={theme.palette.secondary.main}
-                      />
-                      <p>Edit</p>
-                    </div>
-                  ) : null}
-                </>
-              )}
+            <div className={styles.pfpSection}>
+              <IdentityAvatar
+                tokenId={tokenId}
+                size={170}
+                className={styles.pfpImg}
+              />
             </div>
             {identity?.domainExpiry ? (
               <Tooltip title="Expiry date of this domain" arrow>
                 <div
                   className={
                     isDomainExpired
-                      ? styles.expiryContainer // Expired (red)
-                      : styles.notExpiryContainer // Not expired (green)
+                      ? styles.expiryContainer
+                      : styles.notExpiryContainer
                   }
                 >
                   <CalendarIcon
                     width="16"
                     color={
                       isDomainExpired
-                        ? theme.palette.error.main // Red for expired
-                        : theme.palette.primary.main // Green for active
+                        ? theme.palette.error.main
+                        : theme.palette.primary.main
                     }
                   />
                   <p
                     className={
-                      isDomainExpired
-                        ? styles.expiryText // Red for expired text
-                        : styles.notExpiryText // Green for active text
+                      isDomainExpired ? styles.expiryText : styles.notExpiryText
                     }
                   >
-                    {timestampToReadableDate(identity.domainExpiry)}
+                    {readableDate(identity.domainExpiry)}
                   </p>
                 </div>
               </Tooltip>
@@ -153,9 +100,9 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                           </div>
                           {identity?.domain ? (
                             <div className={styles.addressBar}>
-                              <h2>{minifyAddress(identity.targetAddress)}</h2>
+                              <h2>{shortAddress(identity.targetAddress)}</h2>
                               <CopyContent
-                                value={identity?.targetAddress}
+                                value={identity.targetAddress}
                                 className="ml-3 cursor-pointer"
                               />
                             </div>
@@ -169,9 +116,9 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                         <>
                           {identity?.domain ? (
                             <div className={styles.addressBar}>
-                              <h2>{minifyAddress(identity.targetAddress)}</h2>
+                              <h2>{shortAddress(identity.targetAddress)}</h2>
                               <CopyContent
-                                value={identity?.targetAddress}
+                                value={identity.targetAddress}
                                 className="ml-3 cursor-pointer"
                               />
                             </div>
@@ -189,12 +136,6 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
                   )}
                 </div>
               </div>
-              <AddEvmAction identity={identity} isOwner={isOwner} />
-              <SocialMediaActions
-                identity={identity}
-                isOwner={isOwner}
-                tokenId={tokenId}
-              />
             </div>
 
             <img
@@ -222,7 +163,7 @@ const IdentityCard: FunctionComponent<IdentityCardProps> = ({
       </div>
       <div className={styles.cardCode}>
         <p>
-          <span>{convertNumberToFixedLengthString(tokenId)}</span>
+          <span>{identitySerial(tokenId)}</span>
         </p>
         <svg
           className="w-full hidden sm:block sm:w-[200px] md:w-[300px]"
