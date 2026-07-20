@@ -5,47 +5,29 @@ import {
   Select,
   useMediaQuery,
 } from "@mui/material";
-import { useAccount } from "@starknet-react/core";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import { hexToDecimal } from "../../utils/feltService";
-import textFieldStyles from "../../styles/components/textField.module.css";
-import InputHelper from "../UI/inputHelper";
+import type { FunctionComponent } from "react";
+import { IdentityAvatar } from "@/components/IdentityAvatar";
+import type { OwnedIdentity } from "@/lib/core/types";
+import textFieldStyles from "@/styles/components/textField.module.css";
+import InputHelper from "@/components/UI/inputHelper";
 
 type SelectIdentityProps = {
-  tokenId: number;
-  changeTokenId: (value: number) => void;
+  identities: OwnedIdentity[];
+  value: string;
+  onChange: (value: string) => void;
 };
 
 const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
-  tokenId,
-  changeTokenId,
+  identities,
+  value,
+  onChange,
 }) => {
-  const { account } = useAccount();
-  const [ownedIdentities, setOwnedIdentities] = useState<number[] | []>([]);
   const matches = useMediaQuery("(max-width: 1084px)");
   const defaultText = matches ? "Mint a new one" : "Mint a new starknet id";
 
-  useEffect(() => {
-    if (account) {
-      fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_LINK
-        }/addr_to_available_ids?addr=${hexToDecimal(account.address)}`
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          const dataFiltered = data.ids.filter(
-            (element: string, index: number) => {
-              return data.ids.indexOf(element) === index;
-            }
-          );
-          setOwnedIdentities(dataFiltered);
-        });
-    }
-  }, [account]);
-
   return (
     <div className="flex flex-col w-full">
-      <div className="grid place-content-center my-2 md:justify-start lg:justify-start ">
+      <div className="grid place-content-center my-2 md:justify-start lg:justify-start">
         <p className={textFieldStyles.legend}>
           Select an identity to link with your domain*
         </p>
@@ -53,14 +35,12 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
       <InputHelper>
         <Select
           fullWidth
-          value={tokenId}
+          value={value}
           IconComponent={() => null}
-          defaultValue={ownedIdentities[0]}
+          defaultValue={identities[0]?.tokenId ?? "new"}
           inputProps={{ MenuProps: { disableScrollLock: true } }}
-          onChange={(e) => changeTokenId(Number(e.target.value))}
-          style={{
-            borderRadius: "8px",
-          }}
+          onChange={(event) => onChange(String(event.target.value))}
+          style={{ borderRadius: "8px" }}
           sx={{
             boxShadow: "0px 2px 30px rgba(0, 0, 0, 0.1)",
             borderRadius: "8px",
@@ -94,28 +74,20 @@ const SelectIdentity: FunctionComponent<SelectIdentityProps> = ({
             },
           }}
         >
-          <MenuItem value={0}>
+          <MenuItem value="new">
             <div className="flex gap-2">
               <ListItemIcon>
-                <img
-                  width={"30px"}
-                  src="/visuals/StarknetIdLogo.svg"
-                  alt="starknet.id avatar"
-                />
+                <img width="30" src="/visuals/StarknetIdLogo.svg" alt="starknet.id avatar" />
               </ListItemIcon>
               <ListItemText primary={defaultText} />
             </div>
           </MenuItem>
-          {ownedIdentities.map((tokenId: number, index: number) => (
-            <MenuItem key={index} value={tokenId}>
+          {identities.map((identity) => (
+            <MenuItem key={identity.tokenId} value={identity.tokenId}>
               <ListItemIcon>
-                <img
-                  width={"25px"}
-                  src={`https://identicon.starknet.id/${tokenId}`}
-                  alt="starknet.id avatar"
-                />
+                <IdentityAvatar tokenId={identity.tokenId} size={25} />
               </ListItemIcon>
-              <ListItemText primary={tokenId} />
+              <ListItemText primary={identity.tokenId} />
             </MenuItem>
           ))}
         </Select>

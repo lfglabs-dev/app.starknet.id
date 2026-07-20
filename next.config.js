@@ -1,29 +1,49 @@
 /** @type {import('next').NextConfig} */
-const { withAxiom } = require("next-axiom");
-
-module.exports = withAxiom({
-  rewrites() {
-    return {
-      beforeFiles: [],
-    };
-  },
+const nextConfig = {
   reactStrictMode: true,
-  webpack: (config, { isServer }) => {
-    if (!isServer) {
-      config.resolve.fallback = { fs: false, net: false, tls: false };
-    }
-    return config;
+  poweredByHeader: false,
+  async redirects() {
+    const identities = [
+      "/argent",
+      "/discord",
+      "/evmConfirmation",
+      "/externaldomains/:path*",
+      "/github",
+      "/gift",
+      "/pfpcollections",
+      "/solana",
+      "/twitter",
+    ];
+    const renewal = [
+      "/freerenewal",
+      "/subscription",
+      "/subscriptionConfirmation",
+    ];
+    const removed = ["/newsletter", "/newsletter/:path*", "/quantumleap"];
+
+    return [
+      ...identities.map((source) => ({
+        source,
+        destination: "/identities",
+        permanent: false,
+      })),
+      ...renewal.map((source) => ({
+        source,
+        destination: "/renewal",
+        permanent: false,
+      })),
+      ...removed.map((source) => ({
+        source,
+        destination: "/removed",
+        permanent: false,
+      })),
+      {
+        source: "/confirmation",
+        destination: "/identities",
+        permanent: false,
+      },
+    ];
   },
-  images: {
-    domains: [
-      "www.starknet.id",
-      "starknet.id",
-      "app.starknet.id",
-      "starknetid.netlify.app",
-    ],
-  },
-  i18n: {
-    locales: ["en-US", "zh-CN"],
-    defaultLocale: "en-US",
-  },
-});
+};
+
+module.exports = nextConfig;

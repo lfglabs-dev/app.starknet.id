@@ -1,82 +1,44 @@
-# 🌴 Starknet id protocol interface 🌴
+# Starknet ID mainnet frontend
 
-An open source interface for the decentralized identity protocol Starknet id.
+This repository contains the mainnet-only Starknet ID frontend. It has no
+persistent application backend, database, indexer, signer, bot, telemetry
+client, or scheduled workload.
 
-Enabling users to:
+All authoritative state comes from Starknet. The browser sends reads, receipt
+polls, fee estimates, and simulations to two stateless same-origin functions:
 
-- Create Starknet identities and domains
-- Manage and monitor their starknet identities and domains
-- Make calls to the starknet id serverless API
+- `POST /api/rpc` protects the server-side Starkscan key and falls back to
+  Cartridge only for idempotent reads.
+- `GET /api/indexer/identities` obtains untrusted identity transfer
+  candidates from Starkscan. Every candidate is validated against `owner_of`.
 
-## Prerequisite 🌴
+Braavos receives calls only after state is re-read, fees are estimated, and the
+same call list simulates successfully. The application never handles wallet
+secrets.
 
-You should install a browser extension for any of these wallets below:
+## Local setup
 
-- ArgentX (Recommended)
-- Metamask
-- Bravoos
-- OKX
-- Bitget
-- Keplr
-
-![](/public/visuals/wallets.webp)
-
-To learn how to add browser extensions, go [here](https://support.google.com/chrome_webstore/answer/2664769?hl=en)
-
-Once wallet extension of your choice is installed and properly setup, switch to sepolia testnet for development purposes.
-Request for testnet STRK tokens [here](https://sepolia.app.starknet.id) to pay for gas (transaction fees)
-
-## How to use 🌴
-
-First step, clone this repo.
-
-```bash
-git clone https://github.com/lfglabs-dev/app.starknet.id.git
+```sh
+cp .env.example .env.local
+bun install
+bun run dev
 ```
 
-Second step, install the dependencies.
+Set `STARKSCAN_API_KEY` in `.env.local`. Contract addresses and ABIs are
+part of the typed `SN_MAIN` manifest and are not environment-driven.
 
-```bash
-npm install
-# or
-yarn add
+## Checks
+
+```sh
+bun test
+bun run lint
+bun run build
 ```
 
-If you face any issue installing the project dependencies, use this command.
+Live integration checks are opt-in:
 
-```bash
-npm install --force
-# or
-yarn install --force
+```sh
+RUN_LIVE_MAINNET_TESTS=true bun test tests/live
 ```
 
-## Setting up Development Server for testnet 🌴
-
-- In the root of your project, create a `.env.local` file.
-- Copy all the content in `.env.test` into your newly created file.
-- Go to [here](https://sepolia.app.starknet.id/) and mint your domains.
-
-**NB**: longer domain names cost less.
-
-## Setting up Development Server for mainnet 🌴
-
-- In the root of your project, create a `.env.local` file.
-- Copy all the content in `.env.example` into your newly created file
-
-Start the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result and to be able to use the app.
-
-Lastly, connect your wallet (e.g Ready, ensure its in testnet mode if you want to use testnet)
-
-**NB:** You need to have mainnet token balance to pay for gas fees if you are using mainnet.
-
-## License 🌴
-
-Currently there is no license, this means you cannot modify or redistribute this code without explicit permission from the copyright holder.
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for the Vercel firewall and rollout steps.

@@ -1,7 +1,6 @@
 import React, { FunctionComponent } from "react";
 import styles from "../../../styles/components/registerV3.module.css";
 import ContactCardIcon from "@/components/UI/iconsComponents/icons/contactCardIcon";
-import PfpIcon from "@/components/UI/iconsComponents/icons/pfpIcon";
 import CartIcon from "@/components/UI/iconsComponents/icons/cartIcon";
 import { Skeleton } from "@mui/material";
 import Step from "./step";
@@ -9,14 +8,12 @@ import Step from "./step";
 type registerStepsProps = {
   currentStep: number;
   setStep: (step: number) => void;
-  showPfp?: boolean;
   isLoading?: boolean;
 };
 
 const RegisterSteps: FunctionComponent<registerStepsProps> = ({
   currentStep,
   setStep,
-  showPfp = true,
   isLoading = false,
 }) => {
   return isLoading ? (
@@ -25,12 +22,6 @@ const RegisterSteps: FunctionComponent<registerStepsProps> = ({
       role="status"
       aria-label="Loading registration steps"
     >
-      <div className="flex gap-2 items-center p-2">
-        <Skeleton variant="circular" width={24} height={24} />
-        <div className="w-12 sm:w-16 md:w-16 lg:w-18 xl:w-24">
-          <Skeleton variant="text" height={20} />
-        </div>
-      </div>
       <div className="flex gap-2 items-center p-2">
         <Skeleton variant="circular" width={24} height={24} />
         <div className="w-12 sm:w-16 md:w-16 lg:w-18 xl:w-24">
@@ -53,15 +44,6 @@ const RegisterSteps: FunctionComponent<registerStepsProps> = ({
         icon={<ContactCardIcon color={""} width={""} />}
         label="Domain"
       />
-      {showPfp && (
-        <Step
-          stepIndex={2}
-          currentStep={currentStep}
-          setStep={setStep}
-          icon={<PfpIcon color={""} width={""} />}
-          label="PFP"
-        />
-      )}
       <Step
         stepIndex={3}
         currentStep={currentStep}

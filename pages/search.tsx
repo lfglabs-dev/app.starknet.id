@@ -1,104 +1,89 @@
-import React from "react";
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import homeStyles from "../styles/Home.module.css";
 import styles from "../styles/search.module.css";
 import SearchBar from "../components/UI/searchBar";
-import { formatHexString, isStarkRootDomain } from "../utils/stringService";
 import IdentityCard from "../components/identities/identityCard";
 import IdentityCardSkeleton from "../components/identities/skeletons/identityCardSkeleton";
-import { useAccount } from "@starknet-react/core";
 import SuggestedDomains from "../components/domains/suggestedDomains";
-import { Identity } from "../utils/apiWrappers/identity";
-import { hexToDecimal } from "../utils/feltService";
+import type { IdentityView } from "@/lib/ui/identity";
+import {
+  readDomainExpiry,
+  readDomainId,
+  readOwnerOf,
+  readUserData,
+  STARKNET_FIELD,
+} from "@/lib/chain/contracts";
+import { isRootDomain, normalizeDomain } from "@/lib/chain/domain";
 
 const SearchPage: NextPage = () => {
   const router = useRouter();
-  const [domain, setDomain] = useState<string>("");
-  const [identity, setIdentity] = useState<Identity>();
-  const { address } = useAccount();
-  const [isOwner, setIsOwner] = useState(true);
-  const [ppImageUrl, setPpImageUrl] = useState("");
+  const [domain, setDomain] = useState("");
+  const [identity, setIdentity] = useState<IdentityView>();
 
   useEffect(() => {
-    if (!identity || !address) {
-      setIsOwner(false);
-      return;
+    if (typeof router.query.domain !== "string") return;
+    try {
+      const normalized = normalizeDomain(router.query.domain);
+      if (isRootDomain(normalized)) setDomain(normalized);
+    } catch {
+      setDomain("");
     }
-    setIsOwner(identity.ownerAddress === formatHexString(address));
-  }, [identity, address]);
+  }, [router.query.domain]);
 
   useEffect(() => {
-    if (
-      router?.query?.domain &&
-      isStarkRootDomain(router.query.domain as string)
-    ) {
-      setDomain(router.query.domain as string);
-    }
-  }, [router]);
-
-  useEffect(() => {
-    if (isStarkRootDomain(domain)) {
-      const refreshData = () =>
-        fetch(
-          `${process.env.NEXT_PUBLIC_SERVER_LINK}/domain_to_data?domain=${domain}`
-        )
-          .then(async (response) => {
-            if (!response.ok) {
-              throw new Error(await response.text());
-            }
-            return response.json();
-          })
-          .then((data: IdentityData) => {
-            setIdentity(new Identity(data));
-          });
-      refreshData();
-      const timer = setInterval(() => refreshData(), 30e3);
-      return () => clearInterval(timer);
-    }
-  }, [domain]);
-
-  useEffect(() => {
-    if (!identity) {
-      setPpImageUrl("");
-      return;
-    }
-
-    const fetchProfilePic = async () => {
+    if (!isRootDomain(domain)) return;
+    let cancelled = false;
+    async function refreshData(): Promise<void> {
       try {
-        const imgUrl = await identity.getPfpFromVerifierData();
-        setPpImageUrl(imgUrl);
-      } catch (error) {
-        setPpImageUrl("");
+        const [tokenId, expiry] = await Promise.all([
+          readDomainId(domain),
+          readDomainExpiry(domain),
+        ]);
+        if (tokenId === "0") return;
+        const [owner, target] = await Promise.all([
+          readOwnerOf(tokenId),
+          readUserData(tokenId, STARKNET_FIELD),
+        ]);
+        if (!cancelled && owner) {
+          setIdentity({
+            tokenId,
+            owner,
+            isMain: false,
+            targetAddress: BigInt(target) === 0n ? owner : target,
+            domain,
+            domainExpiry: Number(expiry),
+          });
+        }
+      } catch {
+        if (!cancelled) setIdentity(undefined);
       }
+    }
+    void refreshData();
+    const timer = window.setInterval(() => void refreshData(), 30_000);
+    return () => {
+      cancelled = true;
+      window.clearInterval(timer);
     };
-
-    fetchProfilePic();
-  }, [identity]);
+  }, [domain]);
 
   return (
     <div className={homeStyles.screen}>
-      <div style={{
-        justifyContent:"start",
-        padding:'1rem'
-      }} className={styles.container}>
+      <div
+        style={{ justifyContent: "start", padding: "1rem" }}
+        className={styles.container}
+      >
         <div className="sm:w-3/5 md:w-2/5 w-4/5 mb-5 mt-2 ">
           <SearchBar
-            onChangeTypedValue={(typeValue: string) => setDomain(typeValue)}
+            onChangeTypedValue={(typedValue: string) =>
+              setDomain(normalizeDomain(typedValue))
+            }
             showHistory={false}
           />
         </div>
         {identity ? (
-          <IdentityCard
-            tokenId={hexToDecimal(identity.id)}
-            identity={identity}
-            isOwner={isOwner}
-            ppImageUrl={ppImageUrl}
-            onPPClick={() =>
-              router.push(`/identities/${hexToDecimal(identity.id)}`)
-            }
-          />
+          <IdentityCard tokenId={identity.tokenId} identity={identity} />
         ) : (
           <IdentityCardSkeleton />
         )}

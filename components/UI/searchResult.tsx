@@ -1,11 +1,12 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { type FunctionComponent, useEffect, useState } from "react";
 import styles from "../../styles/search.module.css";
 import SearchBadge from "./searchBadge";
+import type { DomainSearchResult } from "./searchBar";
 
 type SearchResultProps = {
-  search: (result: SearchResult) => void;
-  currentResult: SearchResult | null | undefined;
-  history: SearchResult[];
+  search: (result: DomainSearchResult) => void;
+  currentResult: DomainSearchResult | null | undefined;
+  history: DomainSearchResult[];
   showHistory: boolean;
 };
 
@@ -15,18 +16,18 @@ const SearchResult: FunctionComponent<SearchResultProps> = ({
   history,
   showHistory,
 }) => {
-  const [searchResults, setSearchResults] = useState<SearchResult[]>();
+  const [searchResults, setSearchResults] = useState<DomainSearchResult[]>();
+
   useEffect(() => {
-    if (!history) return;
     if (!currentResult || currentResult.name === "") {
       setSearchResults(history);
       return;
     }
     const filtered = history.filter(
-      (result) => result.name !== currentResult?.name
+      (result) => result.name !== currentResult.name
     );
     setSearchResults(
-      filtered.length > 4 && currentResult?.name !== ""
+      filtered.length > 4 && currentResult.name !== ""
         ? filtered.slice(0, 4)
         : filtered
     );
@@ -44,18 +45,16 @@ const SearchResult: FunctionComponent<SearchResultProps> = ({
         </div>
       ) : null}
       {showHistory &&
-        searchResults?.map((result: SearchResult) => {
-          return (
-            <div
-              key={result.lastAccessed}
-              className={styles.result}
-              onClick={() => search(result)}
-            >
-              <div>{result.name}.stark</div>
-              <SearchBadge error={result.error} message={result.message} />
-            </div>
-          );
-        })}
+        searchResults?.map((result) => (
+          <div
+            key={result.lastAccessed}
+            className={styles.result}
+            onClick={() => search(result)}
+          >
+            <div>{result.name}.stark</div>
+            <SearchBadge error={result.error} message={result.message} />
+          </div>
+        ))}
     </div>
   );
 };

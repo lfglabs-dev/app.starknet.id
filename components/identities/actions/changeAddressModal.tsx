@@ -1,67 +1,47 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
-import { useAccount, useSendTransaction } from "@starknet-react/core";
-import { isHexString, minifyAddress } from "../../../utils/stringService";
-import { hexToDecimal } from "../../../utils/feltService";
-import { useNotificationManager } from "../../../hooks/useNotificationManager";
-import { NotificationType, TransactionType } from "../../../utils/constants";
-import { Identity } from "../../../utils/apiWrappers/identity";
-import identityChangeCalls from "../../../utils/callData/identityChangeCalls";
+import React, { type FunctionComponent, useEffect, useState } from "react";
+import { useAccount } from "@starknet-react/core";
 import TransactionModal from "@/components/UI/transactionModal";
 import { CustomTextField } from "@/components/UI/CustomTextField";
+import { usePreparedTransaction } from "@/hooks/useTransactions";
+import { normalizeAddress } from "@/lib/core/address";
+import { prepareSetTargetIntent } from "@/lib/transactions/intents";
+import type { IdentityView } from "@/lib/ui/identity";
+import { shortAddress } from "@/lib/ui/identity";
 
 type ChangeAddressModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
-  callDataEncodedDomain: string[];
-  identity?: Identity;
+  identity?: IdentityView;
+  tokenId: string;
   currentTargetAddress?: string;
 };
 
 const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   handleClose,
   isModalOpen,
-  callDataEncodedDomain,
   identity,
+  tokenId,
   currentTargetAddress = "0",
 }) => {
   const { address } = useAccount();
-  const [targetAddress, setTargetAddress] = useState<string>("");
-  const { addTransaction } = useNotificationManager();
+  const submitPrepared = usePreparedTransaction();
+  const [targetAddress, setTargetAddress] = useState("");
   const [isTxSent, setIsTxSent] = useState(false);
   const [isSendingTx, setIsSendingTx] = useState(false);
+  const [transactionHash, setTransactionHash] = useState<string>();
 
-  const { sendAsync: set_domain_to_address, data: domainToAddressData } =
-    useSendTransaction({
-      calls: identity
-        ? identityChangeCalls.setStarknetAddress(
-            identity,
-            hexToDecimal(targetAddress),
-            callDataEncodedDomain
-          )
-        : [],
-    });
-
-  useEffect(() => {
-    if (!domainToAddressData?.transaction_hash) return;
-    addTransaction({
-      timestamp: Date.now(),
-      subtext: "Address updated",
-      type: NotificationType.TRANSACTION,
-      data: {
-        type: TransactionType.CHANGE_ADDRESS,
-        hash: domainToAddressData.transaction_hash,
-        status: "pending",
-      },
-    });
-    setIsTxSent(true);
-    setIsSendingTx(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [domainToAddressData]);
+  useEffect(() => setTargetAddress(""), [tokenId]);
 
   async function setDomainToAddress(): Promise<void> {
+    if (!address) return;
     try {
       setIsSendingTx(true);
-      await set_domain_to_address();
+      const hash = await submitPrepared(() =>
+        prepareSetTargetIntent(address, tokenId, targetAddress)
+      );
+      setTransactionHash(hash);
+      setIsTxSent(true);
+      setIsSendingTx(false);
     } catch (error) {
       setIsSendingTx(false);
       console.error("Failed to set domain to address:", error);
@@ -69,7 +49,11 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
   }
 
   function changeAddress(value: string): void {
-    isHexString(value) ? setTargetAddress(value) : null;
+    try {
+      setTargetAddress(normalizeAddress(value));
+    } catch {
+      setTargetAddress("");
+    }
   }
 
   const modalContent = (
@@ -82,7 +66,7 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
           A stark domain resolves to a Starknet address, the current target
           address of {identity?.domain} is{" "}
           <strong className="font-bold text-[#454545]">
-            {minifyAddress(currentTargetAddress)}
+            {shortAddress(currentTargetAddress)}
           </strong>
           . You can change it by using this form.
         </p>
@@ -93,8 +77,8 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
           id="outlined-basic"
           placeholder="new target address"
           variant="outlined"
-          onChange={(e) => changeAddress(e.target.value)}
-          value={targetAddress ?? address}
+          onChange={(event) => changeAddress(event.target.value)}
+          value={targetAddress}
           helperText="You need to copy paste a wallet address or it won't work"
           required
         />
@@ -112,8 +96,8 @@ const ChangeAddressModal: FunctionComponent<ChangeAddressModalProps> = ({
       isSendingTx={isSendingTx}
       setIsSendingTx={setIsSendingTx}
       setIsTxSent={setIsTxSent}
-      sendTransaction={setDomainToAddress}
-      transactionHash={domainToAddressData?.transaction_hash}
+      sendTransaction={() => void setDomainToAddress()}
+      transactionHash={transactionHash}
       isButtonDisabled={!targetAddress}
       buttonCta="Set new address"
     />

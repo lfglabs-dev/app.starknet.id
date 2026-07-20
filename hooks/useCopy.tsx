@@ -1,16 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export const useCopyToClipboard = () => {
+export function useCopyToClipboard() {
   const [copied, setCopied] = useState(false);
 
-  const copyToClipboard = (text: string | undefined) => {
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 1_500);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+
+  async function copyToClipboard(text: string | undefined): Promise<void> {
     if (!text) return;
+    await navigator.clipboard.writeText(text);
     setCopied(true);
-    navigator.clipboard.writeText(text);
-    setTimeout(() => {
-      setCopied(false);
-    }, 1500);
-  };
+  }
 
   return { copied, copyToClipboard };
-};
+}
