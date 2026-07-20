@@ -1,20 +1,17 @@
-import React, { useEffect } from "react";
-import styles from "../../styles/components/walletMessage.module.css";
-import { FunctionComponent } from "react";
+import React, { useEffect, type FunctionComponent } from "react";
 import { Modal } from "@mui/material";
-import { useAccount } from "@starknet-react/core";
 import ClickableAction from "./iconsComponents/clickableAction";
 import CloseIcon from "./iconsComponents/icons/closeIcon";
-import ArgentIcon from "./iconsComponents/icons/argentIcon";
-import theme from "../../styles/theme";
 import ExitIcon from "./iconsComponents/icons/exitIcon";
 import CopyIcon from "./iconsComponents/icons/copyIcon";
 import DoneIcon from "./iconsComponents/icons/doneIcon";
-import { useNotificationManager } from "../../hooks/useNotificationManager";
 import { useCopyToClipboard } from "@/hooks/useCopy";
-import { getConnectorIcon } from "@/utils/connectorWrapper";
+import { useTransactions } from "@/hooks/useTransactions";
+import theme from "../../styles/theme";
+import styles from "../../styles/components/walletMessage.module.css";
 
 type ModalWalletProps = {
+  address?: string;
   closeModal: () => void;
   open: boolean;
   domain: string;
@@ -23,31 +20,22 @@ type ModalWalletProps = {
 };
 
 const ModalWallet: FunctionComponent<ModalWalletProps> = ({
+  address,
   closeModal,
   open,
   domain,
   disconnectByClick,
   setTxLoading,
 }) => {
-  const { address, connector } = useAccount();
   const { copied, copyToClipboard } = useCopyToClipboard();
-  const network =
-    process.env.NEXT_PUBLIC_IS_TESTNET === "true" ? "testnet" : "mainnet";
-  // Argent web wallet is detectable only like this
-  const isWebWallet = (connector as any)?._wallet?.id === "argentWebWallet";
-  const { notifications } = useNotificationManager();
+  const { transactions } = useTransactions();
 
   useEffect(() => {
-    if (notifications) {
-      // Give the number of tx that are loading
-      setTxLoading(
-        notifications.filter(
-          (notif: SIDNotification<TransactionData>) =>
-            notif.data.status === "pending"
-        ).length
-      );
-    }
-  }, [notifications, setTxLoading]);
+    setTxLoading(
+      transactions.filter((transaction) => transaction.status === "pending")
+        .length
+    );
+  }, [setTxLoading, transactions]);
 
   return (
     <Modal
@@ -63,14 +51,12 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
         </button>
         <div className={styles.menu_title}>
           <div className={styles.menu_title}>
-            {connector && (
-              <img
-                src={getConnectorIcon(connector.id)}
-                width={25}
-                height={25}
-                alt="connector logo"
-              />
-            )}
+            <img
+              src="/braavos/braavosLogo.svg"
+              width={25}
+              height={25}
+              alt="Braavos logo"
+            />
             <p className="ml-2">Connected with &nbsp;{domain}&nbsp;</p>
           </div>
         </div>
@@ -82,66 +68,43 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
             width="auto"
           />
           <ClickableAction
-            onClick={() => copyToClipboard(address)}
+            onClick={() => void copyToClipboard(address)}
             icon={
               copied ? (
                 <DoneIcon width="25" color={theme.palette.primary.main} />
               ) : (
-                <CopyIcon width="25" color={"currentColor"} />
+                <CopyIcon width="25" color="currentColor" />
               )
             }
             title="Copy Address"
             width="auto"
           />
-          {isWebWallet && (
-            <ClickableAction
-              onClick={() =>
-                window.open(
-                  network === "mainnet"
-                    ? "https://web.argent.xyz"
-                    : "https://web.hydrogen.argent47.net",
-                  "_blank",
-                  "noopener noreferrer"
-                )
-              }
-              icon={<ArgentIcon color={"#f36a3d"} width={"25px"} />}
-              title="Web wallet Dashboard"
-              width="auto"
-            />
-          )}
         </div>
         <div className={styles.menu_txs}>
           <div className={styles.tx_title}>My transactions</div>
           <div className={styles.tx_section}>
-            {notifications && notifications.length > 0 ? (
-              notifications.map((tx) => {
-                return (
-                  <div className={styles.menu_tx} key={tx.data?.hash}>
-                    <a
-                      href={`https://${
-                        network === "testnet" ? "sepolia." : ""
-                      }starkscan.co/tx/${tx.data?.hash}`}
-                      className={styles.tx_hash}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {tx.data?.hash?.slice(0, 6) +
-                        "..." +
-                        tx.data?.hash?.slice(
-                          tx.data?.hash.length - 6,
-                          tx.data?.hash.length
-                        )}
-                    </a>
-                    <div>
-                      {tx.data.status === "pending"
-                        ? "PENDING"
-                        : tx.data.status === "error"
-                        ? "REJECTED"
-                        : tx.data && tx.data?.txStatus}
-                    </div>
+            {transactions.length > 0 ? (
+              transactions.map((transaction) => (
+                <div className={styles.menu_tx} key={transaction.hash}>
+                  <a
+                    href={`https://starkscan.co/tx/${transaction.hash}`}
+                    className={styles.tx_hash}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {`${transaction.hash.slice(0, 6)}...${transaction.hash.slice(
+                      -6
+                    )}`}
+                  </a>
+                  <div>
+                    {transaction.status === "pending"
+                      ? "PENDING"
+                      : transaction.status === "reverted"
+                      ? "REJECTED"
+                      : "ACCEPTED_ON_L2"}
                   </div>
-                );
-              })
+                </div>
+              ))
             ) : (
               <p className={styles.tx_empty}>No ongoing transactions</p>
             )}
@@ -151,4 +114,5 @@ const ModalWallet: FunctionComponent<ModalWalletProps> = ({
     </Modal>
   );
 };
+
 export default ModalWallet;

@@ -25,7 +25,7 @@ const CopyContent: FunctionComponent<CopyContentProps> = ({
           <Tooltip title="Copy" arrow>
             <div
               className={styles.contentCopy}
-              onClick={() => copyToClipboard(value)}
+              onClick={() => void copyToClipboard(value)}
             >
               <CopyIcon width="20" color={"currentColor"} />
             </div>

@@ -1,23 +1,20 @@
 import { Modal } from "@mui/material";
 import React, {
-  FunctionComponent,
-  ReactNode,
-  useState,
+  type FunctionComponent,
+  type ReactNode,
   useEffect,
+  useState,
 } from "react";
-import styles from "../../styles/components/modalMessage.module.css";
 import Button from "./button";
 import ConfirmationTx from "./confirmationTx";
-import IsSendingTx from "@/components/UI/isSendingTx";
+import IsSendingTx from "./isSendingTx";
+import styles from "../../styles/components/modalMessage.module.css";
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(typeof window !== "undefined" && window.innerWidth <= 768);
-    };
-
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
@@ -69,9 +66,7 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
       disableAutoFocus
       open={isModalOpen}
       onClose={() => {
-        if (!isMobile && !isSendingTx) {
-          closeModal(true);
-        }
+        if (!isMobile && !isSendingTx) closeModal(true);
       }}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
@@ -84,10 +79,7 @@ const TransactionModal: FunctionComponent<TransactionModalProps> = ({
         ) : (
           <div className={styles.menu}>
             {!isMobile && (
-              <button
-                className={styles.menu_close}
-                onClick={() => closeModal()}
-              >
+              <button className={styles.menu_close} onClick={() => closeModal()}>
                 <svg viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"

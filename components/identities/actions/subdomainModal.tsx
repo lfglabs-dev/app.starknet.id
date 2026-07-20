@@ -1,110 +1,52 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
-import { useAccount, useSendTransaction } from "@starknet-react/core";
-import { useIsValid } from "../../../hooks/naming";
-import { numberToString } from "../../../utils/stringService";
-import SelectIdentity from "../../domains/selectIdentity";
-import { utils } from "starknetid.js";
-import { Call } from "starknet";
-import { useNotificationManager } from "../../../hooks/useNotificationManager";
-import { NotificationType, TransactionType } from "../../../utils/constants";
+import React, { type FunctionComponent, useState } from "react";
+import { useAccount } from "@starknet-react/core";
 import TransactionModal from "@/components/UI/transactionModal";
 import AdvancedTextField from "@/components/UI/advancedTextField";
+import SelectIdentity from "@/components/domains/selectIdentity";
+import { usePreparedTransaction } from "@/hooks/useTransactions";
+import type { OwnedIdentity } from "@/lib/core/types";
+import { prepareSubdomainIntent } from "@/lib/transactions/intents";
 
 type SubdomainModalProps = {
   handleClose: () => void;
   isModalOpen: boolean;
-  callDataEncodedDomain: string[];
   domain?: string;
+  identities: OwnedIdentity[];
 };
 
 const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
   handleClose,
   isModalOpen,
-  callDataEncodedDomain,
   domain,
+  identities,
 }) => {
-  const [targetTokenId, setTargetTokenId] = useState<number>(0);
-  const [subdomain, setSubdomain] = useState<string>("");
-  const encodedSubdomain: string = utils
-    .encodeDomain(subdomain)[0]
-    .toString(10);
-  const isDomainValid = useIsValid(subdomain);
-  const [callData, setCallData] = useState<Call[]>([]);
   const { address } = useAccount();
-  const { addTransaction } = useNotificationManager();
-  const { sendAsync: transfer_domain, data: transferDomainData } =
-    useSendTransaction({
-      calls: callData,
-    });
+  const submitPrepared = usePreparedTransaction();
+  const [targetTokenId, setTargetTokenId] = useState("new");
+  const [subdomain, setSubdomain] = useState("");
   const [isTxSent, setIsTxSent] = useState(false);
   const [isSendingTx, setIsSendingTx] = useState(false);
-
-  function changeTokenId(value: number): void {
-    setTargetTokenId(value);
-  }
-
-  function changeSubdomain(value: string): void {
-    setSubdomain(value);
-  }
-
-  useEffect(() => {
-    const newTokenId: number = Math.floor(Math.random() * 1000000000000);
-
-    if (targetTokenId !== 0) {
-      setCallData([
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "transfer_domain",
-          calldata: [
-            numberToString(Number(callDataEncodedDomain[0]) + 1),
-            encodedSubdomain,
-            ...callDataEncodedDomain.slice(1),
-            numberToString(targetTokenId),
-          ],
-        },
-      ]);
-    } else {
-      setCallData([
-        {
-          contractAddress: process.env.NEXT_PUBLIC_IDENTITY_CONTRACT as string,
-          entrypoint: "mint",
-          calldata: [numberToString(newTokenId)],
-        },
-        {
-          contractAddress: process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-          entrypoint: "transfer_domain",
-          calldata: [
-            numberToString(Number(callDataEncodedDomain[0]) + 1),
-            encodedSubdomain,
-            ...callDataEncodedDomain.slice(1),
-            numberToString(newTokenId),
-          ],
-        },
-      ]);
-    }
-  }, [targetTokenId, encodedSubdomain, callDataEncodedDomain, address]);
-
-  useEffect(() => {
-    if (!transferDomainData?.transaction_hash) return;
-    addTransaction({
-      timestamp: Date.now(),
-      subtext: `For ${domain}`,
-      type: NotificationType.TRANSACTION,
-      data: {
-        type: TransactionType.SUBDOMAIN_CREATION,
-        hash: transferDomainData.transaction_hash,
-        status: "pending",
-      },
-    });
-    setIsTxSent(true);
-    setIsSendingTx(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transferDomainData]);
+  const [transactionHash, setTransactionHash] = useState<string>();
+  const invalidCharacter = Array.from(subdomain).find(
+    (character) => !"abcdefghijklmnopqrstuvwxyz0123456789-这来".includes(character)
+  );
 
   async function transferDomain(): Promise<void> {
+    if (!address || !domain) return;
     try {
       setIsSendingTx(true);
-      await transfer_domain();
+      const hash = await submitPrepared(() =>
+        prepareSubdomainIntent({
+          owner: address,
+          rootDomain: domain,
+          label: subdomain,
+          targetTokenId: targetTokenId === "new" ? undefined : targetTokenId,
+          mintIdentity: targetTokenId === "new",
+        })
+      );
+      setTransactionHash(hash);
+      setIsTxSent(true);
+      setIsSendingTx(false);
     } catch (error) {
       setIsSendingTx(false);
       console.error("Failed to transfer domain:", error);
@@ -124,19 +66,20 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
         <AdvancedTextField
           fullWidth
           label={
-            isDomainValid !== true
-              ? `"${isDomainValid}" is not a valid character`
+            invalidCharacter
+              ? `"${invalidCharacter}" is not a valid character`
               : "Subdomain"
           }
           value={subdomain}
-          onChange={(e) => changeSubdomain(e.target.value)}
+          onChange={(event) => setSubdomain(event.target.value.toLowerCase())}
           color="secondary"
-          error={isDomainValid !== true}
+          error={Boolean(invalidCharacter)}
         />
         <div className="mt-6">
           <SelectIdentity
-            tokenId={targetTokenId}
-            changeTokenId={changeTokenId}
+            identities={identities}
+            value={targetTokenId}
+            onChange={setTargetTokenId}
           />
         </div>
       </div>
@@ -153,9 +96,9 @@ const SubdomainModal: FunctionComponent<SubdomainModalProps> = ({
       isSendingTx={isSendingTx}
       setIsSendingTx={setIsSendingTx}
       setIsTxSent={setIsTxSent}
-      sendTransaction={transferDomain}
-      transactionHash={transferDomainData?.transaction_hash}
-      isButtonDisabled={!subdomain || typeof isDomainValid === "string"}
+      sendTransaction={() => void transferDomain()}
+      transactionHash={transactionHash}
+      isButtonDisabled={!subdomain || Boolean(invalidCharacter)}
       buttonCta="Create subdomain"
     />
   );

@@ -1,7 +1,7 @@
-import React from "react";
 import { Html, Head, Main, NextScript } from "next/document";
 
 export default function Document() {
+  const appUrl = "https://app.starknet.id";
   return (
     <Html>
       <Head>
@@ -15,11 +15,8 @@ export default function Document() {
           property="og:description"
           content="Starknet ID: Your profile, seamlessly connecting you to the entire Starknet ecosystem."
         />
-        <meta property="og:url" content={process.env.NEXT_PUBLIC_APP_LINK} />
-        <meta
-          property="og:image"
-          content={`${process.env.NEXT_PUBLIC_APP_LINK}/visuals/starknetIdMetaImage.webp`}
-        />
+        <meta property="og:url" content={appUrl} />
+        <meta property="og:image" content={`${appUrl}/visuals/starknetIdMetaImage.webp`} />
         <meta
           name="description"
           content="Starknet ID: Your profile, seamlessly connecting you to the entire Starknet ecosystem."
@@ -32,7 +29,7 @@ export default function Document() {
         />
         <meta
           name="twitter:image"
-          content={`${process.env.NEXT_PUBLIC_APP_LINK}/visuals/starknetIdMetaImage.webp`}
+          content={`${appUrl}/visuals/starknetIdMetaImage.webp`}
         />
         <meta name="twitter:card" content="player" />
         <meta name="twitter:site" content="@Starknet_id" />
@@ -40,7 +37,6 @@ export default function Document() {
         <meta name="twitter:player:width" content="360" />
         <meta name="twitter:player:height" content="560" />
       </Head>
-
       <body className="default_background_color">
         <Main />
         <NextScript />

@@ -1,38 +1,30 @@
-import React from "react";
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import homeStyles from "../../styles/Home.module.css";
-import styles from "../../styles/search.module.css";
-import {
-  getDomainWithoutStark,
-  isStarkRootDomain,
-} from "../../utils/stringService";
-import RegisterV3 from "../../components/domains/registerV3";
-import { FormProvider } from "@/context/FormProvider";
+import homeStyles from "@/styles/Home.module.css";
+import styles from "@/styles/search.module.css";
+import RegisterV3 from "@/components/domains/registerV3";
+import { isRootDomain, normalizeDomain } from "@/lib/chain/domain";
 
 const RegistrationPage: NextPage = () => {
   const router = useRouter();
-  const [domain, setDomain] = useState<string>("");
+  const [domain, setDomain] = useState("");
 
   useEffect(() => {
-    if (
-      router?.query?.domainToRegister &&
-      isStarkRootDomain(router.query.domainToRegister as string)
-    ) {
-      setDomain(router.query.domainToRegister as string);
+    if (typeof router.query.domainToRegister !== "string") return;
+    try {
+      const normalized = normalizeDomain(router.query.domainToRegister);
+      if (isRootDomain(normalized)) setDomain(normalized);
+      else void router.replace("/");
+    } catch {
+      void router.replace("/");
     }
   }, [router]);
 
   return (
     <div className={homeStyles.screen}>
       <div className={styles.container}>
-        <FormProvider>
-          <RegisterV3
-            domain={getDomainWithoutStark(domain)}
-            setDomain={setDomain}
-          />
-        </FormProvider>
+        {domain ? <RegisterV3 domain={domain} setDomain={setDomain} /> : null}
       </div>
     </div>
   );

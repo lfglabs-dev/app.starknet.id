@@ -1,22 +1,25 @@
 import React, {
-  useContext,
+  type FunctionComponent,
+  type KeyboardEvent,
   useEffect,
-  useMemo,
   useRef,
-  FunctionComponent,
   useState,
-  KeyboardEvent,
 } from "react";
 import { useRouter } from "next/router";
 import { TextField, styled } from "@mui/material";
 import styles from "../../styles/search.module.css";
 import SearchResult from "../UI/searchResult";
-import { utils } from "starknetid.js";
-import { Abi, Contract, Provider, Result } from "starknet";
-import naming_abi from "../../abi/starknet/naming_abi.json";
-import { StarknetIdJsContext } from "../../context/StarknetIdJsProvider";
-import { isValidDomain, getDomainWithStark } from "../../utils/stringService";
-import { useIsValid } from "../../hooks/naming";
+import { readDomainExpiry } from "@/lib/chain/contracts";
+import { normalizeDomain } from "@/lib/chain/domain";
+
+export type DomainSearchResult = {
+  name: string;
+  error: boolean;
+  message: string;
+  lastAccessed: number;
+};
+
+const BASIC_ALPHABET = "abcdefghijklmnopqrstuvwxyz0123456789-";
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
@@ -38,9 +41,7 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
       textAlign: "center",
       zIndex: "1",
     },
-    "&:hover fieldset": {
-      border: "1px solid #CDCCCC",
-    },
+    "&:hover fieldset": { border: "1px solid #CDCCCC" },
     "& ::placeholder": {
       color: "#B0AEAE",
       textAlign: "center",
@@ -52,12 +53,8 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
       justifyContent: "center",
       alignItems: "center",
     },
-    "&.Mui-focused ::placeholder": {
-      color: "transparent",
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: theme.palette.primary.main,
-    },
+    "&.Mui-focused ::placeholder": { color: "transparent" },
+    "&.Mui-focused fieldset": { borderColor: theme.palette.primary.main },
   },
   [theme.breakpoints.down("sm")]: {
     "& .MuiOutlinedInput-root": {
@@ -79,7 +76,7 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
 type SearchBarProps = {
   onChangeTypedValue?: (typedValue: string) => void;
   showHistory: boolean;
-  onSearch?: (result: SearchResult) => void;
+  onSearch?: (result: DomainSearchResult) => void;
   is5LettersOnly?: boolean;
 };
 
@@ -91,40 +88,72 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
 }) => {
   const router = useRouter();
   const resultsRef = useRef<HTMLDivElement>(null);
-  const controllerRef = useRef<AbortController | null>(null);
-  const latestRequestRef = useRef<number>(0);
-  const [typedValue, setTypedValue] = useState<string>("");
-  const isValid = useIsValid(typedValue);
-  const [currentResult, setCurrentResult] = useState<SearchResult | null>();
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [showResults, setShowResults] = useState<boolean>(false);
-  const { provider } = useContext(StarknetIdJsContext);
+  const latestRequestRef = useRef(0);
+  const [typedValue, setTypedValue] = useState("");
+  const invalidCharacter = Array.from(typedValue).find(
+    (character) => !BASIC_ALPHABET.includes(character)
+  );
+  const [currentResult, setCurrentResult] =
+    useState<DomainSearchResult | null>();
+  const [searchResults, setSearchResults] = useState<DomainSearchResult[]>([]);
+  const [showResults, setShowResults] = useState(false);
 
-  const contract = useMemo(() => {
-    return new Contract(
-      naming_abi as Abi,
-      process.env.NEXT_PUBLIC_NAMING_CONTRACT as string,
-      provider as Provider
+  async function getStatus(
+    name: string,
+    lastAccessed?: number
+  ): Promise<DomainSearchResult> {
+    const invalid = Array.from(name).find(
+      (character) => !BASIC_ALPHABET.includes(character)
     );
-  }, [provider]);
+    if (invalid) {
+      return {
+        name,
+        error: true,
+        message: `${invalid} is not a valid character`,
+        lastAccessed: lastAccessed ?? Date.now(),
+      };
+    }
+    if (is5LettersOnly && name.length < 5) {
+      return {
+        name,
+        error: true,
+        message: "Only 5 letters domains for this discount",
+        lastAccessed: lastAccessed ?? Date.now(),
+      };
+    }
+    const expiry = await readDomainExpiry(normalizeDomain(name));
+    const available = Number(expiry) < Date.now() / 1000;
+    return {
+      name,
+      error: !available,
+      message: available ? "Available" : "Unavailable",
+      lastAccessed: lastAccessed ?? Date.now(),
+    };
+  }
 
   useEffect(() => {
-    const existingResults =
-      JSON.parse(localStorage.getItem("search-history") as string) || [];
+    let existingResults: { name: string; lastAccessed: number }[] = [];
+    try {
+      existingResults =
+        JSON.parse(localStorage.getItem("search-history") as string) || [];
+    } catch {
+      localStorage.removeItem("search-history");
+    }
     const firstResults = existingResults.slice(0, 2);
-    const resultPromises = firstResults.map(
-      (result: { name: string; lastAccessed: number }) =>
+    Promise.all(
+      firstResults.map((result) =>
         getStatus(result.name, result.lastAccessed)
-    );
-    Promise.all(resultPromises).then((fullResults) => {
+      )
+    ).then((fullResults) => {
       fullResults.sort(
-        (firstResult: SearchResult, secondResult: SearchResult) =>
+        (firstResult, secondResult) =>
           secondResult.lastAccessed - firstResult.lastAccessed
       );
       setSearchResults(fullResults);
     });
+    // Search history is hydrated once, as in the original component.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // We don't add getStatus because this would cause an infinite loop
+  }, []);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -137,10 +166,8 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         setShowResults(true);
       }
     }
-    document?.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document?.removeEventListener("mousedown", handleClickOutside);
-    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   function handleChange(value: string) {
@@ -149,135 +176,70 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
   }
 
   useEffect(() => {
-    if (typedValue) {
-      // Cancel previous request
-      if (controllerRef.current) {
-        controllerRef.current.abort();
-      }
-
-      // Create a new AbortController
-      controllerRef.current = new AbortController();
-      const currentRequest = latestRequestRef.current;
-
-      getStatus(typedValue, undefined, controllerRef.current.signal)
-        .then((result) => {
-          if (currentRequest === latestRequestRef.current) {
-            setCurrentResult(result);
-          }
-        })
-        .catch((error) => {
-          if (error.name !== "AbortError") {
-            console.error("An unexpected error occurred:", error);
-          }
-        });
-    } else {
+    if (!typedValue) {
       setCurrentResult(null);
+      return;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [typedValue]); // We won't add getStatus because this would cause an infinite loop
-
-  async function getStatus(
-    name: string,
-    lastAccessed?: number,
-    signal?: AbortSignal
-  ): Promise<SearchResult> {
-    const valid = isValidDomain(name);
-    if (valid !== true) {
-      return {
-        name,
-        error: true,
-        message: valid + " is not a valid character",
-        lastAccessed: lastAccessed ?? Date.now(),
-      };
-    } else if (is5LettersOnly && name.length < 5) {
-      return {
-        name,
-        error: true,
-        message: "Only 5 letters domains for this discount",
-        lastAccessed: lastAccessed ?? Date.now(),
-      };
-    } else {
-      const currentTimeStamp = new Date().getTime() / 1000;
-      const encoded = name
-        ? utils.encodeDomain(name).map((elem) => elem.toString())
-        : [];
-      return new Promise((resolve, reject) => {
-        if (signal?.aborted) {
-          return reject("Aborted");
+    const currentRequest = latestRequestRef.current;
+    void getStatus(typedValue)
+      .then((result) => {
+        if (currentRequest === latestRequestRef.current) {
+          setCurrentResult(result);
         }
-        contract?.call("domain_to_data", [encoded]).then((res: Result) => {
-          const callResult = res as CallResult;
-          if (Number(callResult?.["expiry"]) < currentTimeStamp) {
-            resolve({
-              name,
-              error: false,
-              message: "Available",
-              lastAccessed: lastAccessed ?? Date.now(),
-            });
-          } else {
-            resolve({
-              name,
-              error: true,
-              message: "Unavailable",
-              lastAccessed: lastAccessed ?? Date.now(),
-            });
-          }
-        });
-      });
-    }
-  }
+      })
+      .catch((error) => console.error("An unexpected error occurred:", error));
+    // Status lookup intentionally follows only the typed value.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typedValue]);
 
-  function search(result: SearchResult) {
-    if (
-      typeof isValidDomain(result.name) === "boolean" &&
-      result?.name.length > 0
-    ) {
+  function search(result: DomainSearchResult) {
+    const valid = !Array.from(result.name).some(
+      (character) => !BASIC_ALPHABET.includes(character)
+    );
+    if (valid && result.name.length > 0) {
       onChangeTypedValue?.(result.name);
-      showHistory && saveSearch(result as SearchResult);
+      if (showHistory) saveSearch(result);
       setCurrentResult(null);
       setTypedValue("");
-      onSearch
-        ? !result.error
-          ? onSearch(result)
-          : null
-        : !result.error
-        ? router.push(`/register/${getDomainWithStark(result.name)}`)
-        : router.push(`/search?domain=${getDomainWithStark(result.name)}`);
+      if (onSearch) {
+        if (!result.error) onSearch(result);
+      } else if (!result.error) {
+        void router.push(`/register/${result.name}.stark`);
+      } else {
+        void router.push(`/search?domain=${result.name}.stark`);
+      }
     }
   }
 
-  function saveSearch(newResult: SearchResult) {
-    setSearchResults((prevResults) => {
-      const updatedResults = [...(prevResults || [])]; // Clone the previous results
+  function saveSearch(newResult: DomainSearchResult) {
+    setSearchResults((previousResults) => {
+      const updatedResults = [...previousResults];
       const existingResult = updatedResults.find(
         (result) => result.name === newResult.name
       );
-
-      if (existingResult) {
-        existingResult.lastAccessed = Date.now();
-      } else {
+      if (existingResult) existingResult.lastAccessed = Date.now();
+      else {
         newResult.lastAccessed = Date.now();
         updatedResults.unshift(newResult);
       }
-
-      updatedResults.sort((a, b) => b.lastAccessed - a.lastAccessed);
-      const localStorageResults = updatedResults.map((result) => ({
-        name: result.name,
-        lastAccessed: result.lastAccessed,
-      }));
+      updatedResults.sort((left, right) => right.lastAccessed - left.lastAccessed);
       localStorage.setItem(
         "search-history",
-        JSON.stringify(localStorageResults)
+        JSON.stringify(
+          updatedResults.map(({ name, lastAccessed }) => ({
+            name,
+            lastAccessed,
+          }))
+        )
       );
-
       return updatedResults;
     });
   }
 
-  function onEnter(ev: KeyboardEvent<HTMLDivElement>) {
-    if (ev.key === "Enter") {
-      search(currentResult as SearchResult);
-      ev.preventDefault();
+  function onEnter(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key === "Enter" && currentResult) {
+      search(currentResult);
+      event.preventDefault();
     }
   }
 
@@ -288,10 +250,10 @@ const SearchBar: FunctionComponent<SearchBarProps> = ({
         id="outlined-basic"
         placeholder="Search your username"
         variant="outlined"
-        onChange={(e) => handleChange(e.target.value)}
+        onChange={(event) => handleChange(event.target.value)}
         value={typedValue}
-        error={isValid != true}
-        onKeyDown={(ev) => onEnter(ev)}
+        error={Boolean(invalidCharacter)}
+        onKeyDown={onEnter}
         autoComplete="off"
       />
       {showResults && (typedValue.length > 0 || searchResults.length > 0) ? (

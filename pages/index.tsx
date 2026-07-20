@@ -21,6 +21,7 @@ const Domain: NextPage = () => {
           <img
             src="/visuals/domainVisual.webp"
             className={styles.illustration}
+            alt=""
           />
         </div>
       </div>
